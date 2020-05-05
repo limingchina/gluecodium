@@ -318,10 +318,12 @@ feature(Constants cpp android swift dart SOURCES
 feature(Equatable cpp android swift dart SOURCES
     src/test/EquatableImpl.cpp
     src/test/RefEquality.cpp
+    src/test/SimpleEquality.cpp
 
     lime/hello/HelloWorldEquatable.lime
     lime/test/Equatable.lime
     lime/test/RefEquality.lime
+    lime/test/SimpleEquality.lime
 )
 
 feature(Nullable cpp android swift dart SOURCES
