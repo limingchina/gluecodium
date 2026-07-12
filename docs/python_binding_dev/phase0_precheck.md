@@ -32,7 +32,7 @@ directory is discoverable via `pybind11::pybind11` / `pybind11_get_include()`.
 | `std::vector<T>` | Emitted via `CppNameResolver.kt:256` | ✅ pybind11/stl.h |
 | `std::unordered_map<K,V>` | Emitted via `CppNameResolver.kt:262` | ✅ pybind11/stl.h |
 | `std::unordered_set<T>` | Emitted via `CppNameResolver.kt:267` | ✅ pybind11/stl.h |
-| `Return<T, Error>` exception mapping | Custom template class (`Return.mustache`); API: `has_value()`, `error()`, `unsafe_value()`, `safe_value()`, `operator bool`. **Not** a standard STL/pybind11 type | ⚠️ **Custom type_caster required** |
+| `Return<T, Error>` exception mapping | Custom template class (`Return.mustache`); API: `has_value()`, `error()`, `unsafe_value()`, `safe_value()`, `operator bool`. **Not** a standard STL/pybind11 type | ✅ **Spike proven** — see `spike_return_caster.md` |
 
 ### Evidence
 
@@ -48,10 +48,11 @@ directory is discoverable via `pybind11::pybind11` / `pybind11_get_include()`.
 
 ## Key findings & risks
 
-1. **`Return<T, Error>` is the only hard blocker** (matches the plan's Risk table, "Medium"). It is a
-   hand-written template (value/error union) with no pybind11 equivalent. A custom `type_caster` or a
-   thin wrapper (exposing `.value` / `.error` / `.has_value`) must be prototyped early — this is the
-   highest-priority spike before M2.
+1. **`Return<T, Error>` — was the only hard blocker** (plan Risk table, "Medium"). It is a
+   hand-written template (value/error union) with no pybind11 equivalent. **Spike completed 2026-07-12**:
+   a custom `type_caster` was prototyped, compiled, and run successfully
+   (see `spike_return_caster.md`). Success → inner value returned; failure → `RuntimeError`
+   carrying the error message. **De-risked.**
 2. **All STL containers map automatically** once `#include <pybind11/stl.h>` is added — no custom
    casters needed for `optional`/`vector`/`map`/`set`.
 3. **`Date`/`Duration`/`Locale`** (per plan §4.1) still need custom casters via `pybind11/chrono.h` +
@@ -64,13 +65,14 @@ directory is discoverable via `pybind11::pybind11` / `pybind11_get_include()`.
 ## Recommended next steps
 
 - [x] Install pybind11 (`pip3 install pybind11`) — **done**, version 3.0.4.
-- [ ] **Spike**: prototype a `Return<T, Error>` type_caster (value-or-error → Python `tuple`/`Exception`)
-      to de-risk the Medium-impact item before M2.
-- [ ] Confirm `Date`/`Duration` caster approach via `pybind11/chrono.h`.
+- [x] **Spike**: prototype a `Return<T, Error>` type_caster — **done**, compiles & passes all 6 checks
+      (see `spike_return_caster.md`). De-risks the Medium-impact item before M2.
+- [ ] Confirm `Date`/`Duration` caster approach via `pybind11/chrono.h` (separate from `Return`).
 
 ---
 
 ## Precheck verdict
 
-**GREEN** for everything except the `Return<T, Error>` caster, which is already flagged in the plan and
-should be prototyped first. No blockers to starting Phase 1 (LIME model layer extensions).
+**GREEN** — all Phase 0 items resolved. pybind11 3.0.4 installed; C++ headers are includable; STL
+containers map automatically; and the `Return<T, Error>` caster spike is proven. No blockers remain for
+starting Phase 1 (LIME model layer extensions).
