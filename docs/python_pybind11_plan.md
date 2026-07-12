@@ -1,80 +1,80 @@
-# Gluecodium Python 生成器计划 (pybind11 方案)
+# Gluecodium Python Generator Plan (pybind11 Approach)
 
-> **状态**: 设计阶段
-> **作者**: l2ming
-> **日期**: 2026-07-13
-> **关联**: 基于 Gluecodium 现有架构（Dart FFI / Swift CBridge 生成器为参考）
+> **Status**: Design phase
+> **Author**: l2ming
+> **Date**: 2026-07-13
+> **Related**: Based on the existing Gluecodium architecture (using the Dart FFI / Swift CBridge generators as reference)
 
 ---
 
-## 1. 背景与动机
+## 1. Background and Motivation
 
-Gluecodium 当前支持 C++ / Java / Kotlin / Swift / Dart 五种目标语言。Python 作为数据科学、机器学习和自动化测试领域的主流语言，在跨平台项目中需求日益增长。
+Gluecodium currently supports five target languages: C++ / Java / Kotlin / Swift / Dart. Python, as a mainstream language in data science, machine learning, and automated testing, is increasingly in demand in cross-platform projects.
 
-### 1.1 方案选择：pybind11
+### 1.1 Approach Selection: pybind11
 
-| 方案 | 优势 | 劣势 |
-|------|------|------|
-| **ctypes/cffi over C-ABI shim** | 复用 Dart FFI 的 C-ABI 层，零编译依赖 | 需手工实现引用计数、异常封送、GIL 安全回调 |
-| **pybind11 生成绑定** ✅ | 自动处理引用计数、异常转换、GIL、STL 容器转换；生成代码量少 | 新增编译时依赖（pybind11 + 编译扩展模块）；架构上偏离 JNI/FFI 模式 |
+| Approach | Advantages | Disadvantages |
+|----------|------------|---------------|
+| **ctypes/cffi over C-ABI shim** | Reuses Dart FFI's C-ABI layer, zero compile-time dependency | Requires manual implementation of reference counting, exception marshalling, and GIL-safe callbacks |
+| **pybind11 generated bindings** ✅ | Automatically handles reference counting, exception conversion, GIL, and STL container conversion; less generated code | Adds a compile-time dependency (pybind11 + compiled extension module); deviates architecturally from the JNI/FFI pattern |
 
-**选择 pybind11 的理由**：
-- Python 的 GIL 和对象模型与 pybind11 天然契合
-- 引用计数、异常封送、回调线程安全由 pybind11 框架处理，大幅减少生成代码的复杂度
-- CPython 本身就是编译扩展模块，编译依赖对 Python 生态是可接受的
-- pybind11 是 CPython 生态中最成熟的 C++ 绑定框架，社区活跃
+**Reasons for choosing pybind11**:
+- Python's GIL and object model fit naturally with pybind11
+- Reference counting, exception marshalling, and callback thread-safety are handled by the pybind11 framework, greatly reducing the complexity of the generated code
+- CPython itself is a compiled extension module, so the compile dependency is acceptable for the Python ecosystem
+- pybind11 is the most mature C++ binding framework in the CPython ecosystem, with an active community
 
-### 1.2 架构对比
+### 1.2 Architecture Comparison
 
 ```
-现有 Dart 架构:
+Existing Dart architecture:
   LimeIDL → LIME Model → DartGenerator
-    ├── Dart 代码 (dart/ffi 调用)
-    └── FFI C++ 代码 (C-ABI shim → C++ API)
+    ├── Dart code (dart/ffi calls)
+    └── FFI C++ code (C-ABI shim → C++ API)
 
-现有 Swift 架构:
+Existing Swift architecture:
   LimeIDL → LIME Model → SwiftGenerator
-    ├── Swift 代码
-    └── CBridge C/C++ 代码 (C-ABI shim → C++ API)
+    ├── Swift code
+    └── CBridge C/C++ code (C-ABI shim → C++ API)
 
-新 Python 架构 (pybind11):
+New Python architecture (pybind11):
   LimeIDL → LIME Model → PythonGenerator
-    ├── Python 代码 (.py + .pyi 类型存根)
-    └── pybind11 C++ 代码 (直接包装 C++ API，无需 C-ABI 中间层)
+    ├── Python code (.py + .pyi type stubs)
+    └── pybind11 C++ code (wraps the C++ API directly, no C-ABI intermediate layer)
 ```
 
-**关键差异**：pybind11 方案不需要 C-ABI 中间层（ unlike Dart FFI / Swift CBridge），pybind11 的 `.cpp` 绑定文件直接 `#include` C++ 头文件并调用 C++ API。
+**Key difference**: The pybind11 approach does not need a C-ABI intermediate layer (unlike Dart FFI / Swift CBridge); pybind11's `.cpp` binding files directly `#include` the C++ headers and call the C++ API.
 
 ---
 
-## 2. 实施阶段
+## 2. Implementation Phases
 
-### Phase 0 — 前置准备
+### Phase 0 — Prerequisites
 
-#### 0.1 确认 pybind11 版本与依赖
-- pybind11 >= 2.11.0 (支持 C++17, Python 3.8+)
-- 目标平台: Linux (gcc/clang), macOS (clang), Windows (MSVC)
-- Python: 3.8+ (与 pybind11 最低支持版本对齐)
+#### 0.1 Confirm pybind11 version and dependencies
+- pybind11 >= 2.11.0 (supports C++17, Python 3.8+)
+- Target platforms: Linux (gcc/clang), macOS (clang), Windows (MSVC)
+- Python: 3.8+ (aligned with pybind11's minimum supported version)
 
-#### 0.2 验证 C++ 生成器兼容性
-- 确认现有 C++ 生成器产出的头文件可被 pybind11 直接 `#include`
-- 确认 `std::optional`, `std::vector`, `std::map`, `std::set` 等类型在 pybind11 中的转换支持
-- 确认 `Return<T, Error>` 类型在 pybind11 中的异常映射可行性
+#### 0.2 Verify C++ generator compatibility
+- Confirm that the headers produced by the existing C++ generator can be directly `#include`d by pybind11
+- Confirm conversion support in pybind11 for types such as `std::optional`, `std::vector`, `std::map`, `std::set`
+- Confirm the feasibility of exception mapping for the `Return<T, Error>` type in pybind11
 
 ---
 
-### Phase 1 — LIME 模型层扩展
+### Phase 1 — LIME Model Layer Extensions
 
-#### 1.1 添加 `PYTHON` 属性类型
+#### 1.1 Add the `PYTHON` attribute type
 
-**文件**: `lime-runtime/src/main/java/com/here/gluecodium/model/lime/LimeAttributeType.kt`
+**File**: `lime-runtime/src/main/java/com/here/gluecodium/model/lime/LimeAttributeType.kt`
 
 ```kotlin
-// 在枚举中添加：
+// Add to the enum:
 PYTHON("Python", LimeAttributeValueType.NAME),
 ```
 
-这使得 LimeIDL 可以使用 `@Python` 属性：
+This enables LimeIDL to use the `@Python` attribute:
 ```lime
 @Python(Name = "customName")
 class MyClass { ... }
@@ -86,23 +86,23 @@ class InternalOnly { ... }
 fun internalMethod() { ... }
 ```
 
-#### 1.2 更新注解解析器
+#### 1.2 Update the annotation converter
 
-**文件**: `lime-loader/src/main/java/com/here/gluecodium/loader/AntlrLimeConverter.kt`
+**File**: `lime-loader/src/main/java/com/here/gluecodium/loader/AntlrLimeConverter.kt`
 
-在 `convertAnnotationType()` 方法中添加：
+Add to the `convertAnnotationType()` method:
 ```kotlin
 "Python" -> LimeAttributeType.PYTHON
 ```
 
-在 `propagateParentAttributes()` 方法中，将 `PYTHON` 加入遍历列表：
+In the `propagateParentAttributes()` method, add `PYTHON` to the traversal list:
 ```kotlin
 listOf(JAVA, SWIFT, DART, KOTLIN, PYTHON).forEach { ... }
 ```
 
-#### 1.3 添加 Python 名称规则
+#### 1.3 Add Python naming rules
 
-**新文件**: `gluecodium/src/main/resources/namerules/python.properties`
+**New file**: `gluecodium/src/main/resources/namerules/python.properties`
 
 ```properties
 field=snake_case
@@ -118,85 +118,85 @@ error.suffix=Error
 join.infix=_
 ```
 
-#### 1.4 更新 `GeneratorOptions`
+#### 1.4 Update `GeneratorOptions`
 
-**文件**: `gluecodium/src/main/java/com/here/gluecodium/generator/common/GeneratorOptions.kt`
+**File**: `gluecodium/src/main/java/com/here/gluecodium/generator/common/GeneratorOptions.kt`
 
-添加 Python 相关选项字段：
+Add Python-related option fields:
 ```kotlin
 var pythonPackages: List<String> = listOf(),
 var pythonInternalPackages: List<String> = listOf(),
 var pythonNameRules: Configuration = ConfigurationProperties.fromResource(
     Gluecodium::class.java, "/namerules/python.properties"
 ),
-var pythonModule: String = "generated",  // Python 模块名
+var pythonModule: String = "generated",  // Python module name
 ```
 
 ---
 
-### Phase 2 — 生成器骨架
+### Phase 2 — Generator Skeleton
 
-#### 2.1 创建 Python 生成器包
+#### 2.1 Create the Python generator package
 
 ```
 gluecodium/src/main/java/com/here/gluecodium/generator/python/
-├── PythonGenerator.kt              # 主生成器类，实现 Generator 接口
-├── PythonNameResolver.kt           # LIME → Python 名称解析
-├── Pybind11NameResolver.kt         # LIME → C++ pybind11 名称解析
-├── PythonImportResolver.kt         # Python import 解析
-├── PythonImportsCollector.kt       # Python import 收集器
-├── Pybind11IncludeResolver.kt      # C++ include 解析
-├── PythonGeneratorPredicates.kt    # 模板谓词
-├── PythonCommentsProcessor.kt      # 文档注释处理
-├── PythonOverloadsValidator.kt     # 重载验证器
-├── Pybind11Helpers.kt              # pybind11 辅助工具
+├── PythonGenerator.kt              # Main generator class, implements the Generator interface
+├── PythonNameResolver.kt           # LIME → Python name resolution
+├── Pybind11NameResolver.kt         # LIME → C++ pybind11 name resolution
+├── PythonImportResolver.kt         # Python import resolution
+├── PythonImportsCollector.kt       # Python import collector
+├── Pybind11IncludeResolver.kt      # C++ include resolution
+├── PythonGeneratorPredicates.kt    # Template predicates
+├── PythonCommentsProcessor.kt      # Documentation comment processing
+├── PythonOverloadsValidator.kt     # Overloads validator
+├── Pybind11Helpers.kt              # pybind11 helper utilities
 └── package-info.java
 ```
 
-#### 2.2 实现 `PythonGenerator` 类
+#### 2.2 Implement the `PythonGenerator` class
 
-**文件**: `gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt`
+**File**: `gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt`
 
-参照 `DartGenerator` 的结构：
+Modeled after the structure of `DartGenerator`:
 
 ```kotlin
 internal class PythonGenerator : Generator {
     override val shortName = "python"
 
     override fun initialize(options: GeneratorOptions) {
-        // 初始化名称规则、命名空间、模块名等
+        // Initialize naming rules, namespace, module name, etc.
     }
 
     override fun generate(limeModel: LimeModel): List<GeneratedFile> {
-        // 1. 过滤模型 (LimeModelSkipPredicates + PYTHON 属性)
-        // 2. 创建名称解析器
-        // 3. 运行验证器
-        // 4. 为每个顶层元素生成:
-        //    a. Python 模块文件 (.py)
-        //    b. pybind11 绑定文件 (.cpp)
-        // 5. 生成公共文件 (setup.py, __init__.py, 类型转换等)
+        // 1. Filter the model (LimeModelSkipPredicates + PYTHON attribute)
+        // 2. Create the name resolvers
+        // 3. Run validators
+        // 4. For each top-level element, generate:
+        //    a. Python module file (.py)
+        //    b. pybind11 binding file (.cpp)
+        // 5. Generate common files (setup.py, __init__.py, type conversion, etc.)
     }
 }
 ```
 
-生成器产出两类文件：
-- **MAIN**: 每个顶层 LIME 元素对应一个 `.py` 文件和一个 `.cpp` pybind11 绑定文件
-- **COMMON**: `setup.py`/`pyproject.toml`、类型转换辅助代码、`__init__.py`
+The generator produces two categories of files:
+- **MAIN**: Each top-level LIME element corresponds to one `.py` file and one `.cpp` pybind11 binding file
+- **COMMON**: `setup.py`/`pyproject.toml`, type conversion helper code, `__init__.py`
 
-#### 2.3 注册生成器
+#### 2.3 Register the generator
 
-**文件**: `gluecodium/src/main/resources/META-INF/services/com.here.gluecodium.generator.common.Generator`
+**File**: `gluecodium/src/main/resources/META-INF/services/com.here.gluecodium.generator.common.Generator`
 
-添加一行：
+Add a line:
 ```
 com.here.gluecodium.generator.python.PythonGenerator
 ```
 
-#### 2.4 CLI 选项支持
+#### 2.4 CLI option support
 
-**文件**: `gluecodium/src/main/java/com/here/gluecodium/cli/OptionReader.kt`
+**File**: `gluecodium/src/main/java/com/here/gluecodium/cli/OptionReader.kt`
 
-添加 CLI 选项：
+Add CLI options:
 ```kotlin
 addOption("pythonpackage", true, "Python package name for generated sources")
 addOption("pythonintpackage", "python-internal-package", true, 
@@ -205,49 +205,49 @@ addOption("pythonmodule", true, "Name of the generated Python extension module")
 addOption("pythonnamerules", true, "Python name rules property file")
 ```
 
-在 `read()` 方法中添加对应的选项解析逻辑。
+Add the corresponding option parsing logic in the `read()` method.
 
 ---
 
-### Phase 3 — 模板系统
+### Phase 3 — Template System
 
-#### 3.1 创建 Mustache 模板
+#### 3.1 Create Mustache templates
 
-**目录**: `gluecodium/src/main/resources/templates/python/`
+**Directory**: `gluecodium/src/main/resources/templates/python/`
 
 ```
 templates/python/
-├── PythonFile.mustache              # Python 文件框架
-├── PythonClass.mustache             # Python 类定义
-├── PythonInterface.mustache         # Python 接口/协议
-├── PythonStruct.mustache            # Python 结构体 (dataclass)
-├── PythonEnumeration.mustache       # Python 枚举
-├── PythonException.mustache         # Python 异常类
-├── PythonLambda.mustache            # Python 回调类型
-├── PythonProperty.mustache          # Python 属性
-├── PythonFunction.mustache          # Python 函数声明
-├── PythonFunctionBody.mustache      # Python 函数体 (调用 native)
-├── PythonField.mustache             # Python 字段
-├── PythonDocumentation.mustache     # 文档字符串
-├── PythonImport.mustache            # import 语句
-├── PythonAttributes.mustache        # 属性装饰器
-├── PythonSetupPy.mustache           # setup.py 构建脚本
+├── PythonFile.mustache              # Python file skeleton
+├── PythonClass.mustache             # Python class definition
+├── PythonInterface.mustache         # Python interface/protocol
+├── PythonStruct.mustache            # Python struct (dataclass)
+├── PythonEnumeration.mustache       # Python enumeration
+├── PythonException.mustache         # Python exception class
+├── PythonLambda.mustache            # Python callback type
+├── PythonProperty.mustache          # Python property
+├── PythonFunction.mustache          # Python function declaration
+├── PythonFunctionBody.mustache      # Python function body (calls native)
+├── PythonField.mustache             # Python field
+├── PythonDocumentation.mustache     # docstring
+├── PythonImport.mustache            # import statement
+├── PythonAttributes.mustache        # attribute decorators
+├── PythonSetupPy.mustache           # setup.py build script
 ├── PythonPyproject.mustache         # pyproject.toml
 ├── PythonInit.mustache              # __init__.py
-├── Pybind11Module.mustache          # pybind11 模块入口
-├── Pybind11Class.mustache           # pybind11 类绑定
-├── Pybind11Struct.mustache          # pybind11 结构体绑定
-├── Pybind11Enum.mustache            # pybind11 枚举绑定
-├── Pybind11Function.mustache        # pybind11 函数绑定
-├── Pybind11Property.mustache        # pybind11 属性绑定
-├── Pybind11Exception.mustache       # pybind11 异常映射
-├── Pybind11Lambda.mustache          # pybind11 回调包装
-└── Pybind11TypeCaster.mustache      # 自定义类型转换器
+├── Pybind11Module.mustache          # pybind11 module entry point
+├── Pybind11Class.mustache           # pybind11 class binding
+├── Pybind11Struct.mustache          # pybind11 struct binding
+├── Pybind11Enum.mustache            # pybind11 enum binding
+├── Pybind11Function.mustache        # pybind11 function binding
+├── Pybind11Property.mustache        # pybind11 property binding
+├── Pybind11Exception.mustache       # pybind11 exception mapping
+├── Pybind11Lambda.mustache          # pybind11 callback wrapper
+└── Pybind11TypeCaster.mustache      # custom type caster
 ```
 
-#### 3.2 pybind11 绑定模板示例
+#### 3.2 pybind11 binding template example
 
-**`Pybind11Class.mustache`** (概念示例):
+**`Pybind11Class.mustache`** (conceptual example):
 ```cpp
 // 为 class {{resolveName}} 生成 pybind11 绑定
 py::class_<{{resolveName "C++"}}, {{trampolineClassName}}>(module, "{{resolveName}}")
@@ -264,7 +264,7 @@ py::class_<{{resolveName "C++"}}, {{trampolineClassName}}>(module, "{{resolveNam
     ;
 ```
 
-**`Pybind11Module.mustache`** (概念示例):
+**`Pybind11Module.mustache`** (conceptual example):
 ```cpp
 #include <pybind11/pybind11.h>
 #include "{{headerInclude}}"
@@ -278,9 +278,9 @@ PYBIND11_MODULE({{moduleName}}, m) {
 }
 ```
 
-#### 3.3 Python 代码模板示例
+#### 3.3 Python code template example
 
-**`PythonClass.mustache`** (概念示例):
+**`PythonClass.mustache`** (conceptual example):
 ```python
 class {{resolveName}}({{parentClass}}):
     """{{documentation}}"""
@@ -302,54 +302,54 @@ class {{resolveName}}({{parentClass}}):
 
 ---
 
-### Phase 4 — 类型映射
+### Phase 4 — Type Mapping
 
-#### 4.1 基本类型映射
+#### 4.1 Basic type mapping
 
-| LIME 类型 | C++ 类型 | Python 类型 | pybind11 转换 |
-|-----------|----------|-------------|---------------|
+| LIME type | C++ type | Python type | pybind11 conversion |
+|-----------|----------|-------------|--------------------|
 | `Void` | `void` | `None` | `void` |
-| `Boolean` | `bool` | `bool` | 自动 |
-| `Byte` | `int8_t` | `int` | 自动 |
-| `Short` | `int16_t` | `int` | 自动 |
-| `Int` | `int32_t` | `int` | 自动 |
-| `Long` | `int64_t` | `int` | 自动 |
-| `UByte` | `uint8_t` | `int` | 自动 |
-| `UShort` | `uint16_t` | `int` | 自动 |
-| `UInt` | `uint32_t` | `int` | 自动 |
-| `ULong` | `uint64_t` | `int` | 自动 |
-| `Float` | `float` | `float` | 自动 |
-| `Double` | `double` | `float` | 自动 |
-| `String` | `std::string` | `str` | 自动 |
-| `Blob` | `std::vector<uint8_t>` | `bytes` | 自动 |
-| `Date` | `std::chrono::system_clock::time_point` | `datetime.datetime` | 自定义 caster |
-| `Duration` | `std::chrono::nanoseconds` | `datetime.timedelta` | 自定义 caster |
-| `Locale` | 自定义 Locale 类型 | `str` (BCP 47) 或自定义 | 自定义 caster |
+| `Boolean` | `bool` | `bool` | automatic |
+| `Byte` | `int8_t` | `int` | automatic |
+| `Short` | `int16_t` | `int` | automatic |
+| `Int` | `int32_t` | `int` | automatic |
+| `Long` | `int64_t` | `int` | automatic |
+| `UByte` | `uint8_t` | `int` | automatic |
+| `UShort` | `uint16_t` | `int` | automatic |
+| `UInt` | `uint32_t` | `int` | automatic |
+| `ULong` | `uint64_t` | `int` | automatic |
+| `Float` | `float` | `float` | automatic |
+| `Double` | `double` | `float` | automatic |
+| `String` | `std::string` | `str` | automatic |
+| `Blob` | `std::vector<uint8_t>` | `bytes` | automatic |
+| `Date` | `std::chrono::system_clock::time_point` | `datetime.datetime` | custom caster |
+| `Duration` | `std::chrono::nanoseconds` | `datetime.timedelta` | custom caster |
+| `Locale` | custom Locale type | `str` (BCP 47) or custom | custom caster |
 
-#### 4.2 复合类型映射
+#### 4.2 Compound type mapping
 
-| LIME 类型 | C++ 类型 | Python 类型 | pybind11 处理 |
-|-----------|----------|-------------|---------------|
-| `List<T>` | `std::vector<T>` | `list[T]` | 自动 (需 `#include <pybind11/stl.h>`) |
-| `Set<T>` | `std::unordered_set<T>` | `set[T]` | 自动 |
-| `Map<K,V>` | `std::unordered_map<K,V>` | `dict[K,V]` | 自动 |
-| `T?` (nullable) | `std::optional<T>` | `Optional[T]` | 自动 (需 `#include <pybind11/stl.h>`) |
+| LIME type | C++ type | Python type | pybind11 handling |
+|-----------|----------|-------------|------------------|
+| `List<T>` | `std::vector<T>` | `list[T]` | automatic (requires `#include <pybind11/stl.h>`) |
+| `Set<T>` | `std::unordered_set<T>` | `set[T]` | automatic |
+| `Map<K,V>` | `std::unordered_map<K,V>` | `dict[K,V]` | automatic |
+| `T?` (nullable) | `std::optional<T>` | `Optional[T]` | automatic (requires `#include <pybind11/stl.h>`) |
 
-#### 4.3 用户定义类型映射
+#### 4.3 User-defined type mapping
 
-| LIME 类型 | C++ 类型 | Python 类型 | pybind11 处理 |
-|-----------|----------|-------------|---------------|
-| `struct` | C++ struct/class | `@dataclass` 或普通类 | pybind11 `py::class_` 绑定 |
-| `class` | C++ 抽象类 | Python 类 (包装 C++ 指针) | pybind11 `py::class_` + trampoline |
-| `interface` | C++ 纯虚类 | Python ABC/Protocol | pybind11 trampoline + `py::class_` |
+| LIME type | C++ type | Python type | pybind11 handling |
+|-----------|----------|-------------|------------------|
+| `struct` | C++ struct/class | `@dataclass` or plain class | pybind11 `py::class_` binding |
+| `class` | C++ abstract class | Python class (wraps C++ pointer) | pybind11 `py::class_` + trampoline |
+| `interface` | C++ pure virtual class | Python ABC/Protocol | pybind11 trampoline + `py::class_` |
 | `enum` | C++ enum | `enum.Enum` | pybind11 `py::enum_` |
-| `exception` | C++ exception | Python Exception 子类 | pybind11 `py::exception` + 异常翻译 |
-| `lambda` | C++ `std::function` | Python callable | pybind11 自动转换 |
-| `typealias` | C++ `using`/`typedef` | Python type alias | 在 `.pyi` 中声明 |
+| `exception` | C++ exception | Python Exception subclass | pybind11 `py::exception` + exception translation |
+| `lambda` | C++ `std::function` | Python callable | pybind11 automatic conversion |
+| `typealias` | C++ `using`/`typedef` | Python type alias | declared in `.pyi` |
 
-#### 4.4 日期/Duration 自定义类型转换器
+#### 4.4 Date/Duration custom type caster
 
-**`Pybind11TypeCaster.mustache`** (概念示例):
+**`Pybind11TypeCaster.mustache`** (conceptual example):
 ```cpp
 #include <pybind11/chrono.h>
 #include <chrono>
@@ -375,31 +375,31 @@ namespace pybind11::detail {
 
 ---
 
-### Phase 5 — 对象生命周期与回调
+### Phase 5 — Object Lifecycle and Callbacks
 
-#### 5.1 对象生命周期管理
+#### 5.1 Object lifecycle management
 
-pybind11 自动管理引用计数，但需要注意：
+pybind11 manages reference counting automatically, but the following needs attention:
 
-**C++ → Python (返回值)**:
-- pybind11 默认使用 `return_value_policy::automatic`
-- 对于返回 C++ 对象指针的函数，需要配置合适的策略：
-  - `return_value_policy::reference_internal` — 对象生命周期绑定到 Python wrapper
-  - `return_value_policy::take_ownership` — Python 接管所有权
+**C++ → Python (return values)**:
+- pybind11 uses `return_value_policy::automatic` by default
+- For functions returning pointers to C++ objects, an appropriate policy must be configured:
+  - `return_value_policy::reference_internal` — object lifetime is bound to the Python wrapper
+  - `return_value_policy::take_ownership` — Python takes ownership
 
-**Python → C++ (参数传递)**:
-- pybind11 自动处理值传递和引用传递
-- 对于接口实现（Python 类继承 C++ 接口），需要 trampoline 类
+**Python → C++ (argument passing)**:
+- pybind11 handles value and reference passing automatically
+- For interface implementations (Python class inheriting a C++ interface), a trampoline class is needed
 
-#### 5.2 引用相等性 (Referential Equality)
+#### 5.2 Referential Equality
 
-Gluecodium 要求跨语言边界保持引用相等性。pybind11 方案需要：
+Gluecodium requires referential equality to be preserved across language boundaries. The pybind11 approach needs:
 
-1. **Wrapper Cache**: 维护 `C++ 指针 → Python 对象` 的映射表
-2. 当 C++ 返回已有对象的指针时，查找 cache 返回同一 Python 对象
-3. 参照 Dart 的 `InstanceCache` 和 Swift 的 `WrapperCache` 实现
+1. **Wrapper Cache**: Maintain a mapping table from `C++ pointer → Python object`
+2. When C++ returns a pointer to an existing object, look it up in the cache and return the same Python object
+3. Model after Dart's `InstanceCache` and Swift's `WrapperCache` implementations
 
-**`Pybind11WrapperCache.mustache`** (概念示例):
+**`Pybind11WrapperCache.mustache`** (conceptual example):
 ```cpp
 // Wrapper cache: C++ raw pointer → Python object
 class WrapperCache {
@@ -421,29 +421,29 @@ private:
 };
 ```
 
-#### 5.3 C++ → Python 回调 (GIL 安全)
+#### 5.3 C++ → Python callbacks (GIL safety)
 
-当 C++ 线程调用 Python 回调时，必须持有 GIL：
+When a C++ thread calls a Python callback, the GIL must be held:
 
 ```cpp
-// 在 trampoline 类中:
+// In the trampoline class:
 void onCallback(int value) override {
-    py::gil_scoped_acquire gil;  // 获取 GIL
+    py::gil_scoped_acquire gil;  // Acquire the GIL
     PYBIND11_OVERRIDE(void, BaseClass, onCallback, value);
 }
 ```
 
-**关键点**：
-- 所有 trampoline 方法的 `PYBIND11_OVERRIDE` 宏内部需要 `py::gil_scoped_acquire`
-- 如果回调可能从非 Python 线程触发，需要确保 Python 解释器已初始化
-- 参照 Dart 的 `CallbacksQueue` 和 `IsolateContext` 机制
+**Key points**:
+- All trampoline methods' `PYBIND11_OVERRIDE` macros need `py::gil_scoped_acquire` inside
+- If a callback may be triggered from a non-Python thread, ensure the Python interpreter is initialized
+- Model after Dart's `CallbacksQueue` and `IsolateContext` mechanisms
 
-#### 5.4 异常映射
+#### 5.4 Exception mapping
 
-| C++ 异常 | Python 异常 |
-|----------|-------------|
+| C++ exception | Python exception |
+|---------------|----------------|
 | `std::exception` | `RuntimeError` |
-| Gluecodium `Return<T, Error>` 失败 | 生成的 `Error` 子类异常 |
+| Gluecodium `Return<T, Error>` failure | generated `Error` subclass exception |
 | `std::bad_optional_access` | `ValueError` |
 | `std::out_of_range` | `IndexError` |
 | `std::invalid_argument` | `ValueError` |
@@ -460,57 +460,57 @@ py::register_exception_translator([](std::exception_ptr p) {
 });
 ```
 
-#### 5.5 异步支持 (`@Async`)
+#### 5.5 Async support (`@Async`)
 
-- `@Async` 函数映射为 Python `asyncio` 协程
-- pybind11 绑定返回 `Future` 对象，Python 端 `await`
-- 需要 `PyGILState_Ensure`/`Release` 在后台线程完成时获取 GIL 设置结果
-- 参照 Dart 的 `DartAsyncHelpers` 实现异步桥接
+- `@Async` functions map to Python `asyncio` coroutines
+- pybind11 bindings return a `Future` object, awaited on the Python side
+- `PyGILState_Ensure`/`Release` is needed to acquire the GIL and set the result when the background thread completes
+- Model after Dart's `DartAsyncHelpers` for the async bridge
 
 ---
 
-### Phase 6 — 输出文件结构
+### Phase 6 — Output File Structure
 
-#### 6.1 生成文件布局
+#### 6.1 Generated file layout
 
 ```
 output/
-├── python/                              # Python 源代码
-│   ├── __init__.py                      # 包初始化 (COMMON)
-│   ├── setup.py                         # 构建脚本 (COMMON)
-│   ├── pyproject.toml                   # PEP 518 构建配置 (COMMON)
-│   ├── _type_converters.py              # 内部类型转换辅助 (COMMON)
-│   ├── _wrapper_cache.py                # 引用缓存 (COMMON)
+├── python/                              # Python source code
+│   ├── __init__.py                      # Package initialization (COMMON)
+│   ├── setup.py                         # Build script (COMMON)
+│   ├── pyproject.toml                   # PEP 518 build configuration (COMMON)
+│   ├── _type_converters.py              # Internal type conversion helpers (COMMON)
+│   ├── _wrapper_cache.py                # Reference cache (COMMON)
 │   ├── _native_base.py                  # Native base wrapper (COMMON)
-│   └── src/                             # 生成的 Python 源码
+│   └── src/                             # Generated Python sources
 │       └── <package_path>/
 │           ├── __init__.py
-│           ├── <module>.py              # 每个顶层 LIME 元素的 Python 接口
-│           └── <module>.pyi             # 类型存根 (type stubs)
+│           ├── <module>.py              # Python interface for each top-level LIME element
+│           └── <module>.pyi             # Type stubs
 │
-└── pybind11/                            # pybind11 C++ 绑定源码
-    ├── <module>_bindings.cpp            # 每个顶层元素的 pybind11 绑定
+└── pybind11/                            # pybind11 C++ binding sources
+    ├── <module>_bindings.cpp            # pybind11 binding for each top-level element
     ├── _wrapper_cache.h                 # Wrapper cache (COMMON)
-    ├── _type_casters.h                  # 自定义类型转换器 (COMMON)
-    └── _module_init.cpp                 # 模块初始化 (COMMON)
+    ├── _type_casters.h                  # Custom type casters (COMMON)
+    └── _module_init.cpp                 # Module initialization (COMMON)
 ```
 
-#### 6.2 构建产物
+#### 6.2 Build artifacts
 
-构建后产生 Python 扩展模块：
+The build produces a Python extension module:
 - Linux: `.<module_name>.cpython-3x-x86_64-linux-gnu.so`
 - macOS: `.<module_name>.cpython-3x-darwin.so`
 - Windows: `.<module_name>.cp3x-win_amd64.pyd`
 
 ---
 
-### Phase 7 — CMake 集成
+### Phase 7 — CMake Integration
 
-#### 7.1 添加 Python 生成器到 CMake 支持列表
+#### 7.1 Add the Python generator to the CMake supported list
 
-**文件**: `cmake/modules/gluecodium/gluecodium/KnownOptionalProperties.cmake`
+**File**: `cmake/modules/gluecodium/gluecodium/KnownOptionalProperties.cmake`
 
-添加 Python 相关 CMake target 属性：
+Add Python-related CMake target properties:
 ```cmake
 _gluecodium_define_target_property(
   GLUECODIUM_PYTHON_PACKAGE
@@ -527,7 +527,7 @@ _gluecodium_define_target_property(
 _gluecodium_define_target_property(
   GLUECODIUM_PYTHON_MODULE_NAME
   BRIEF_DOCS "Name of the generated Python extension module"
-  FULL_DOCs "Name of the generated Python extension module for pybind11."
+  FULL_DOCS "Name of the generated Python extension module for pybind11."
 )
 
 _gluecodium_define_target_property(
@@ -537,11 +537,11 @@ _gluecodium_define_target_property(
 )
 ```
 
-#### 7.2 更新生成文件列表
+#### 7.2 Update the generated files list
 
-**文件**: `cmake/modules/gluecodium/gluecodium/details/ListGeneratedFiles.cmake`
+**File**: `cmake/modules/gluecodium/gluecodium/details/ListGeneratedFiles.cmake`
 
-添加 Python/pybind11 文件收集逻辑：
+Add Python/pybind11 file collection logic:
 ```cmake
 if(python IN_LIST _generators)
   list(APPEND _python_generated_files
@@ -551,13 +551,13 @@ if(python IN_LIST _generators)
 endif()
 ```
 
-#### 7.3 添加 Python 到支持生成器列表
+#### 7.3 Add Python to the supported generators list
 
-**文件**: `cmake/modules/gluecodium/gluecodium/details/ReadRequiredProperties.cmake`
+**File**: `cmake/modules/gluecodium/gluecodium/details/ReadRequiredProperties.cmake`
 
-确保 `python` 在 `GLUECODIUM_SUPPORTED_GENERATORS` 列表中。
+Ensure `python` is in the `GLUECODIUM_SUPPORTED_GENERATORS` list.
 
-**文件**: `cmake/tests/utils/get_supported_gluecodium_generators.cmake`
+**File**: `cmake/tests/utils/get_supported_gluecodium_generators.cmake`
 
 ```cmake
 find_program(_python_exe python3)
@@ -566,19 +566,19 @@ if(_python_exe)
 endif()
 ```
 
-#### 7.4 pybind11 CMake 集成
+#### 7.4 pybind11 CMake integration
 
-**新文件**: `cmake/modules/gluecodium/Python.cmake`
+**New file**: `cmake/modules/gluecodium/Python.cmake`
 
 ```cmake
-# Python 模块: 查找 pybind11 并配置 Python 扩展模块构建
+# Python module: find pybind11 and configure the Python extension module build
 function(gluecodium_target_python_sources _target)
   find_package(pybind11 REQUIRED)
   
-  # 获取生成的 pybind11 .cpp 文件
+  # Get the generated pybind11 .cpp files
   get_target_property(_pybind11_sources ${_target} GLUECODIUM_PYBIND11_SOURCES)
   
-  # 创建 Python 扩展模块
+  # Create the Python extension module
   pybind11_add_module(${_target}_python ${_pybind11_sources})
   target_link_libraries(${_target}_python PRIVATE ${_target})
 endfunction()
@@ -586,15 +586,15 @@ endfunction()
 
 ---
 
-### Phase 8 — 测试
+### Phase 8 — Testing
 
-#### 8.1 Smoke 测试 (单元测试)
+#### 8.1 Smoke tests (unit tests)
 
-**目录**: `gluecodium/src/test/resources/smoke/`
+**Directory**: `gluecodium/src/test/resources/smoke/`
 
-为每个现有 smoke 测试用例添加 `output/python/` 和 `output/pybind11/` 输出目录。
+Add `output/python/` and `output/pybind11/` output directories for each existing smoke test case.
 
-参照现有 Dart smoke 测试结构：
+Modeled after the existing Dart smoke test structure:
 ```
 smoke/basic_types/
 ├── input/
@@ -602,19 +602,19 @@ smoke/basic_types/
 └── output/
     ├── cpp/
     ├── dart/
-    └── python/              # 新增
+    └── python/              # new
         └── src/
             └── smoke/
                 └── basic_types.py
-    └── pybind11/            # 新增
+    └── pybind11/            # new
         └── basic_types_bindings.cpp
 ```
 
-更新 smoke 测试的 Java 测试类，添加 Python 生成器的断言。
+Update the smoke test Java classes to add assertions for the Python generator.
 
-#### 8.2 功能测试
+#### 8.2 Functional tests
 
-**新目录**: `functional-tests/functional/python/`
+**New directory**: `functional-tests/functional/python/`
 
 ```
 functional-tests/functional/python/
@@ -647,7 +647,7 @@ functional-tests/functional/python/
     └── skip_element_test.py
 ```
 
-**`CMakeLists.txt`** (参照 `functional-tests/functional/dart/CMakeLists.txt`):
+**`CMakeLists.txt`** (modeled after `functional-tests/functional/dart/CMakeLists.txt`):
 ```cmake
 cmake_minimum_required(VERSION 3.10)
 project(test_python)
@@ -659,70 +659,70 @@ endif()
 find_program(PYTHON_EXE python3)
 find_package(pybind11 REQUIRED)
 
-# 构建 Python 扩展模块
+# Build the Python extension module
 pybind11_add_module(functional_python ${PYBIND11_SOURCES})
 target_link_libraries(functional_python PRIVATE functional)
 
-# 运行 pytest
+# Run pytest
 add_test(NAME unit_tests_python
   COMMAND ${PYTHON_EXE} -m pytest test/
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 ```
 
-#### 8.3 功能测试构建脚本
+#### 8.3 Functional test build script
 
-**新文件**: `functional-tests/scripts/build-python-functional`
+**New file**: `functional-tests/scripts/build-python-functional`
 
-参照 `build-dart-functional`：
+Modeled after `build-dart-functional`:
 ```bash
 #!/bin/bash
-# 构建 Python 功能测试
-# 1. 运行 Gluecodium 生成 C++ + Python 代码
-# 2. 使用 CMake 编译 C++ 库和 pybind11 扩展模块
-# 3. 运行 pytest
+# Build the Python functional tests
+# 1. Run Gluecodium to generate C++ + Python code
+# 2. Use CMake to compile the C++ library and pybind11 extension module
+# 3. Run pytest
 ```
 
 ---
 
-### Phase 9 — 文档
+### Phase 9 — Documentation
 
-#### 9.1 更新用户指南
+#### 9.1 Update the user guide
 
-**文件**: `docs/guide.md`
-- 添加 Python 生成器使用说明
-- 添加 `-generators cpp,python` 使用示例
+**File**: `docs/guide.md`
+- Add Python generator usage instructions
+- Add a `-generators cpp,python` usage example
 
-#### 9.2 更新 LimeIDL 参考
+#### 9.2 Update the LimeIDL reference
 
-**文件**: `docs/lime_idl.md`
-- 添加 `@Python` 属性说明
+**File**: `docs/lime_idl.md`
+- Add the `@Python` attribute description
 
-#### 9.3 更新属性参考
+#### 9.3 Update the attributes reference
 
-**文件**: `docs/lime_attributes.md`
-- 添加 `@Python(Name=...)`, `@Python(Skip)`, `@Python(Internal)`, `@Python(Public)` 说明
+**File**: `docs/lime_attributes.md`
+- Add `@Python(Name=...)`, `@Python(Skip)`, `@Python(Internal)`, `@Python(Public)` descriptions
 
-#### 9.4 更新外部类型文档
+#### 9.4 Update the external types documentation
 
-**文件**: `docs/external_types.md`
-- 添加 Python 外部类型描述块格式
+**File**: `docs/external_types.md`
+- Add the Python external type descriptor block format
 
-#### 9.5 新增 Python 特定文档
+#### 9.5 Add Python-specific documentation
 
-**新文件**: `docs/python.md`
-- Python 生成器架构说明
-- pybind11 依赖和构建要求
-- 类型映射表
-- 异步支持说明
-- GIL 和线程安全注意事项
+**New file**: `docs/python.md`
+- Python generator architecture description
+- pybind11 dependencies and build requirements
+- Type mapping table
+- Async support description
+- GIL and thread-safety notes
 
 ---
 
-### Phase 10 — Gradle 插件支持
+### Phase 10 — Gradle Plugin Support
 
-**文件**: `gluecodium-gradle/src/main/java/com/here/gluecodium/gradle/GluecodiumExtension.kt` (或对应文件)
+**File**: `gluecodium-gradle/src/main/java/com/here/gluecodium/gradle/GluecodiumExtension.kt` (or the corresponding file)
 
-添加 Python 相关 Gradle 配置：
+Add Python-related Gradle configuration:
 ```groovy
 gluecodium {
     pythonPackage = 'com.example.myapp'
@@ -732,94 +732,94 @@ gluecodium {
 
 ---
 
-## 3. 实施顺序
+## 3. Implementation Order
 
 ```
-Phase 1 (LIME 模型层)
+Phase 1 (LIME model layer)
     │
-    ├──→ Phase 2 (生成器骨架) ──→ Phase 3 (模板系统)
+    ├──→ Phase 2 (Generator skeleton) ──→ Phase 3 (Template system)
     │                                    │
-    │                                    └──→ Phase 4 (类型映射)
+    │                                    └──→ Phase 4 (Type mapping)
     │                                              │
-    │                                              └──→ Phase 5 (生命周期与回调)
+    │                                              └──→ Phase 5 (Lifecycle and callbacks)
     │                                                        │
-    │                                                        └──→ Phase 6 (输出结构)
+    │                                                        └──→ Phase 6 (Output structure)
     │                                                                  │
     │                                                                  └──→ Phase 7 (CMake)
     │                                                                            │
-    └──────────────────────────────────────────────────────────→ Phase 8 (测试)
+    └──────────────────────────────────────────────────────────→ Phase 8 (Testing)
                                                                                        │
-                                                                                       └──→ Phase 9-10 (文档与插件)
+                                                                                       └──→ Phase 9-10 (Docs and plugin)
 ```
 
-**建议的分步交付里程碑**：
+**Suggested incremental delivery milestones**:
 
-| 里程碑 | 内容 | 预估工作量 |
-|--------|------|-----------|
-| **M1** | Phase 1-2: LIME 属性 + 生成器骨架 + CLI 注册 + 基本框架能跑通 | 3-5 天 |
-| **M2** | Phase 3-4: 模板 + 基本类型/struct/enum 映射 | 5-7 天 |
-| **M3** | Phase 5: class/interface + 回调 + GIL + 引用相等性 | 7-10 天 |
-| **M4** | Phase 4 续: 集合/异常/nullable + Phase 6: 输出结构完善 | 3-5 天 |
-| **M5** | Phase 7: CMake 集成 | 2-3 天 |
-| **M6** | Phase 8: Smoke 测试 + 功能测试 | 5-7 天 |
-| **M7** | Phase 9-10: 文档 + Gradle 插件 | 2-3 天 |
+| Milestone | Content | Estimated effort |
+|-----------|---------|------------------|
+| **M1** | Phase 1-2: LIME attribute + generator skeleton + CLI registration + basic framework working | 3-5 days |
+| **M2** | Phase 3-4: Templates + basic type/struct/enum mapping | 5-7 days |
+| **M3** | Phase 5: class/interface + callbacks + GIL + referential equality | 7-10 days |
+| **M4** | Phase 4 cont.: collections/exceptions/nullable + Phase 6: output structure refinement | 3-5 days |
+| **M5** | Phase 7: CMake integration | 2-3 days |
+| **M6** | Phase 8: Smoke tests + functional tests | 5-7 days |
+| **M7** | Phase 9-10: Docs + Gradle plugin | 2-3 days |
 
-**总预估**: 4-6 周
-
----
-
-## 4. 风险与缓解措施
-
-| 风险 | 影响 | 缓解措施 |
-|------|------|----------|
-| pybind11 对 `Return<T, Error>` 类型的支持需要自定义转换器 | 中 | 提前验证 `Return<T, Error>` 的 type_caster 可行性 |
-| GIL 死锁风险（C++ 持有锁时回调 Python） | 高 | 在 trampoline 中严格使用 `py::gil_scoped_acquire`/`py::gil_scoped_release` |
-| 引用相等性实现复杂度 | 中 | 参照 Dart `InstanceCache` 和 Swift `WrapperCache` 的成熟实现 |
-| 多平台编译（Windows MSVC + pybind11） | 中 | CI 中添加 Windows 构建测试 |
-| Python GIL 与 C++ 线程的交互 | 高 | 在设计文档中明确线程模型，参照 Dart 的 isolate 机制 |
-| pybind11 版本兼容性 | 低 | 固定最低版本 2.11.0，CI 矩阵测试 |
+**Total estimate**: 4-6 weeks
 
 ---
 
-## 5. 需要修改的文件清单
+## 4. Risks and Mitigations
 
-### 新增文件
-| 文件路径 | 说明 |
-|----------|------|
-| `gluecodium/src/main/java/.../generator/python/*.kt` | Python 生成器实现 (约 10 个文件) |
-| `gluecodium/src/main/resources/templates/python/*.mustache` | Mustache 模板 (约 25 个文件) |
-| `gluecodium/src/main/resources/namerules/python.properties` | Python 命名规则 |
-| `functional-tests/functional/python/*` | Python 功能测试 |
-| `functional-tests/scripts/build-python-functional` | Python 测试构建脚本 |
-| `cmake/modules/gluecodium/Python.cmake` | CMake Python 模块 |
-| `docs/python.md` | Python 生成器文档 |
-
-### 修改文件
-| 文件路径 | 修改内容 |
-|----------|----------|
-| `lime-runtime/.../LimeAttributeType.kt` | 添加 `PYTHON` 枚举值 |
-| `lime-loader/.../AntlrLimeConverter.kt` | 添加 `"Python"` 注解解析 |
-| `gluecodium/.../common/GeneratorOptions.kt` | 添加 Python 选项字段 |
-| `gluecodium/.../cli/OptionReader.kt` | 添加 Python CLI 选项 |
-| `gluecodium/src/main/resources/META-INF/services/...Generator` | 注册 PythonGenerator |
-| `cmake/.../KnownOptionalProperties.cmake` | 添加 Python CMake 属性 |
-| `cmake/.../ListGeneratedFiles.cmake` | 添加 Python 文件收集 |
-| `cmake/.../get_supported_gluecodium_generators.cmake` | 添加 Python 检测 |
-| `docs/guide.md` | 添加 Python 使用说明 |
-| `docs/lime_idl.md` | 添加 `@Python` 属性说明 |
-| `docs/lime_attributes.md` | 添加 `@Python` 属性参考 |
-| `docs/external_types.md` | 添加 Python 外部类型说明 |
-| `AGENTS.md` | 更新支持语言列表和结构说明 |
+| Risk | Impact | Mitigation |
+|------|--------|------------|
+| pybind11 support for the `Return<T, Error>` type requires a custom converter | Medium | Verify the feasibility of a `Return<T, Error>` type_caster early |
+| GIL deadlock risk (C++ holds a lock while calling back into Python) | High | Strictly use `py::gil_scoped_acquire`/`py::gil_scoped_release` in trampolines |
+| Referential equality implementation complexity | Medium | Model after Dart's mature `InstanceCache` and Swift's `WrapperCache` implementations |
+| Multi-platform compilation (Windows MSVC + pybind11) | Medium | Add Windows build tests in CI |
+| Python GIL vs C++ thread interaction | High | Clarify the threading model in the design doc, model after Dart's isolate mechanism |
+| pybind11 version compatibility | Low | Pin the minimum version to 2.11.0, CI matrix testing |
 
 ---
 
-## 6. 验收标准
+## 5. List of Files to Modify
 
-- [ ] `./gradlew build` 通过（包含新增的 smoke 测试）
-- [ ] `-generators cpp,python` 能成功生成 Python + pybind11 C++ 代码
-- [ ] 生成的 pybind11 代码能在 Linux/macOS/Windows 上编译通过
-- [ ] 功能测试覆盖所有现有测试用例（与 Dart/Swift 对齐）
-- [ ] 引用相等性测试通过
-- [ ] GIL 安全的回调测试通过
-- [ ] `@Python(Skip)` / `@Python(Internal)` / `@Python(Name=...)` 属性正常工作
-- [ ] 文档完整，包含使用指南和类型映射表
+### New files
+| File path | Description |
+|-----------|-------------|
+| `gluecodium/src/main/java/.../generator/python/*.kt` | Python generator implementation (~10 files) |
+| `gluecodium/src/main/resources/templates/python/*.mustache` | Mustache templates (~25 files) |
+| `gluecodium/src/main/resources/namerules/python.properties` | Python naming rules |
+| `functional-tests/functional/python/*` | Python functional tests |
+| `functional-tests/scripts/build-python-functional` | Python test build script |
+| `cmake/modules/gluecodium/Python.cmake` | CMake Python module |
+| `docs/python.md` | Python generator documentation |
+
+### Modified files
+| File path | Change |
+|-----------|--------|
+| `lime-runtime/.../LimeAttributeType.kt` | Add the `PYTHON` enum value |
+| `lime-loader/.../AntlrLimeConverter.kt` | Add `"Python"` annotation parsing |
+| `gluecodium/.../common/GeneratorOptions.kt` | Add Python option fields |
+| `gluecodium/.../cli/OptionReader.kt` | Add Python CLI options |
+| `gluecodium/src/main/resources/META-INF/services/...Generator` | Register PythonGenerator |
+| `cmake/.../KnownOptionalProperties.cmake` | Add Python CMake properties |
+| `cmake/.../ListGeneratedFiles.cmake` | Add Python file collection |
+| `cmake/.../get_supported_gluecodium_generators.cmake` | Add Python detection |
+| `docs/guide.md` | Add Python usage instructions |
+| `docs/lime_idl.md` | Add `@Python` attribute description |
+| `docs/lime_attributes.md` | Add `@Python` attribute reference |
+| `docs/external_types.md` | Add Python external type description |
+| `AGENTS.md` | Update the supported languages list and structure description |
+
+---
+
+## 6. Acceptance Criteria
+
+- [ ] `./gradlew build` passes (including the new smoke tests)
+- [ ] `-generators cpp,python` successfully generates Python + pybind11 C++ code
+- [ ] The generated pybind11 code compiles on Linux/macOS/Windows
+- [ ] Functional tests cover all existing test cases (aligned with Dart/Swift)
+- [ ] Referential equality tests pass
+- [ ] GIL-safe callback tests pass
+- [ ] `@Python(Skip)` / `@Python(Internal)` / `@Python(Name=...)` attributes work correctly
+- [ ] Documentation is complete, including usage guide and type mapping table
