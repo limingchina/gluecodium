@@ -71,6 +71,14 @@ data class GeneratorOptions(
             Gluecodium::class.java,
             "/namerules/dart.properties",
         ),
+    var pythonPackages: List<String> = listOf(),
+    var pythonInternalPackages: List<String> = listOf(),
+    var pythonNameRules: Configuration =
+        ConfigurationProperties.fromResource(
+            Gluecodium::class.java,
+            "/namerules/python.properties",
+        ),
+    var pythonModule: String = "generated",
     var tags: Set<String> = emptySet(),
 ) {
     companion object {
