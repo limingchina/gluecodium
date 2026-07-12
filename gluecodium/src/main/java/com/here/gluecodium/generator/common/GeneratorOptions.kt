@@ -85,6 +85,7 @@ data class GeneratorOptions(
         const val WARNING_DOC_LINKS = "DocLinks"
         const val WARNING_DEPRECATED_ATTRIBUTES = "DeprecatedAttributes"
         const val WARNING_DART_OVERLOADS = "DartOverloads"
+        const val WARNING_PYTHON_OVERLOADS = "PythonOverloads"
         const val WARNING_LIME_FUNCTION_DOCS = "LimeFunctionDocs"
         const val WARNING_LIME_LAMBDA_DOCS = "LimeLambdaDocs"
         const val WARNING_LIME_PROPERTIES_DOCS = "LimePropertiesDocs"

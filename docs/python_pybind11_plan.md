@@ -132,6 +132,11 @@ var pythonNameRules: Configuration = ConfigurationProperties.fromResource(
 var pythonModule: String = "generated",  // Python module name
 ```
 
+> **Status**: ✅ Implemented in Phase 1 (commit `be4747f9a`). The CLI options from
+> Phase 2.4 were also pulled forward and implemented as part of Phase 1 (see §2.4 and
+> `docs/python_binding_dev/phase1_implementation.md` §1.5), since the options/CLI layer
+> is needed for end-to-end use and is harmless to add before the generator exists.
+
 ---
 
 ### Phase 2 — Generator Skeleton
@@ -193,6 +198,11 @@ com.here.gluecodium.generator.python.PythonGenerator
 ```
 
 #### 2.4 CLI option support
+
+> **Status**: ✅ Implemented in Phase 1 (commit `be4747f9a`). Pulled forward from Phase 2
+> because the options/CLI layer is required for end-to-end use and is safe to add before
+> the generator exists. See `docs/python_binding_dev/phase1_implementation.md` §1.5 for the
+> verification (all four options appear in `-help`, `@Python` parses via `-validate`).
 
 **File**: `gluecodium/src/main/java/com/here/gluecodium/cli/OptionReader.kt`
 
