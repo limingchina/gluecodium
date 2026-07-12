@@ -55,8 +55,10 @@ directory is discoverable via `pybind11::pybind11` / `pybind11_get_include()`.
    carrying the error message. **De-risked.**
 2. **All STL containers map automatically** once `#include <pybind11/stl.h>` is added — no custom
    casters needed for `optional`/`vector`/`map`/`set`.
-3. **`Date`/`Duration`/`Locale`** (per plan §4.1) still need custom casters via `pybind11/chrono.h` +
-   `Locale` — these are separate from `Return` and can follow the same pattern.
+3. **`Date`/`Duration`** — **confirmed via spike** (see `spike_chrono_caster.md`): `pybind11/chrono.h`
+   handles both automatically. `Date` → `std::chrono::system_clock::time_point` ↔ `datetime.datetime`;
+   `Duration` → `std::chrono::seconds` (note: plan §4.1 said `nanoseconds`; actual generator emits
+   `seconds`) ↔ `datetime.timedelta`. `Locale` still needs a custom caster (separate from `Return`/`Date`).
 4. **pybind11 is not yet a build dependency** — `cmake/modules/gluecodium/Python.cmake` (plan §7.4) and
    `find_package(pybind11 REQUIRED)` need to be added before any functional test compiles.
 
@@ -67,7 +69,9 @@ directory is discoverable via `pybind11::pybind11` / `pybind11_get_include()`.
 - [x] Install pybind11 (`pip3 install pybind11`) — **done**, version 3.0.4.
 - [x] **Spike**: prototype a `Return<T, Error>` type_caster — **done**, compiles & passes all 6 checks
       (see `spike_return_caster.md`). De-risks the Medium-impact item before M2.
-- [ ] Confirm `Date`/`Duration` caster approach via `pybind11/chrono.h` (separate from `Return`).
+- [x] Confirm `Date`/`Duration` caster approach via `pybind11/chrono.h` — **done**, compiles & passes
+      all 7 checks (see `spike_chrono_caster.md`). `Duration` maps to `std::chrono::seconds`, not
+      `nanoseconds` as plan §4.1 stated.
 
 ---
 
