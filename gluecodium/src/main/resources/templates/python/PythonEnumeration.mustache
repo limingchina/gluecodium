@@ -1,6 +1,9 @@
-{{! Python enumeration skeleton (Phase 2). }}
+{{! Python enumeration. }}
 from enum import Enum
 
 
 class {{resolveName}}(Enum):
     """{{resolveName comment}}"""
+{{#enumerators}}
+
+    {{resolveName}} = {{iter.position}}{{/enumerators}}

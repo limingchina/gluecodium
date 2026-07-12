@@ -1,4 +1,4 @@
-{{! pybind11 exception binding skeleton (Phase 2). }}
-{
+{{! pybind11 exception binding. }}
+void register_{{resolveName}}(py::module_& module) {
     py::exception<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}");
 }

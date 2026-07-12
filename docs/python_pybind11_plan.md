@@ -221,6 +221,12 @@ Add the corresponding option parsing logic in the `read()` method.
 
 ### Phase 3 — Template System
 
+> **Status**: ✅ Implemented (commit `TBD` — see `docs/python_binding_dev/phase3_implementation.md`).
+> Core per-type templates (class/interface/struct/enum/exception) plus shared partials
+> (function/property/field) generate real Python wrappers and pybind11 `register_*`
+> functions. Module init (`PYBIND11_MODULE`) and common files (setup.py/pyproject) are
+> Phase 6.
+
 #### 3.1 Create Mustache templates
 
 **Directory**: `gluecodium/src/main/resources/templates/python/`

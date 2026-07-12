@@ -1,5 +1,12 @@
-{{! pybind11 struct binding skeleton (Phase 2). }}
-{
+{{! pybind11 struct binding. }}
+void register_{{resolveName}}(py::module_& module) {
     py::class_<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}")
+{{#fields}}
+        .def_readwrite("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
+{{/fields}}
+{{#functions}}
+{{>python/Pybind11Function}}{{/functions}}
+{{#properties}}
+{{>python/Pybind11Property}}{{/properties}}
         ;
 }
