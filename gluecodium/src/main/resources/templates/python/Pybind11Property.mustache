@@ -1,0 +1,2 @@
+{{! pybind11 property binding (getter + optional setter). }}
+        .def_property("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}{{#if hasSetter}}, &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}{{/if}})

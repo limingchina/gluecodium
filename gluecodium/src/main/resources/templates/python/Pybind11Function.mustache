@@ -1,0 +1,2 @@
+{{! pybind11 method binding. }}
+        .def("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})

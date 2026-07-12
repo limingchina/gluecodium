@@ -1,0 +1,5 @@
+{{! Python method/function body (delegates to native C++ object via pybind11). }}
+{{#if comment}}{{prefix comment "    "}}
+{{/if}}    def {{resolveName}}(self{{#parameters}}, {{resolveName}}: {{resolveName typeRef}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
+{{#if comment}}        """{{comment}}"""
+{{/if}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})

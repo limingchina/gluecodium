@@ -1,3 +1,7 @@
-{{! Python exception skeleton (Phase 2). }}
+{{! Python exception class. }}
 class {{resolveName}}(Exception):
     """{{resolveName comment}}"""
+
+    def __init__(self, message: str):
+        super().__init__(message)
+        self.message = message

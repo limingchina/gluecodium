@@ -1,6 +1,15 @@
-{{! Python struct (dataclass) skeleton (Phase 2). }}
+{{! Python struct: dataclass-like wrapper around the native C++ object. }}
 class {{resolveName}}:
     """{{resolveName comment}}"""
 
     def __init__(self, native):
         self._native = native
+{{#fields}}
+
+{{>python/PythonField}}{{/fields}}
+{{#functions}}
+
+{{>python/PythonFunction}}{{/functions}}
+{{#properties}}
+
+{{>python/PythonProperty}}{{/properties}}

@@ -1,6 +1,12 @@
-{{! Python interface/protocol skeleton (Phase 2). }}
+{{! Python interface: base class (protocol) wrapping the native C++ object. }}
 class {{resolveName}}:
     """{{resolveName comment}}"""
 
     def __init__(self, native):
         self._native = native
+{{#functions}}
+
+{{>python/PythonFunction}}{{/functions}}
+{{#properties}}
+
+{{>python/PythonProperty}}{{/properties}}

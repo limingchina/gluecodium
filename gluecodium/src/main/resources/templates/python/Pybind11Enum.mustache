@@ -1,5 +1,8 @@
-{{! pybind11 enum binding skeleton (Phase 2). }}
-{
+{{! pybind11 enum binding. }}
+void register_{{resolveName}}(py::module_& module) {
     py::enum_<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}")
+{{#enumerators}}
+        .value("{{resolveName}}", {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
+{{/enumerators}}
         ;
 }

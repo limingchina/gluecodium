@@ -1,5 +1,9 @@
-{{! pybind11 interface binding skeleton (Phase 2). }}
-{
-    py::class_<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}")
+{{! pybind11 interface binding (trampoline for Python subclassing). }}
+void register_{{resolveName}}(py::module_& module) {
+    py::class_<{{resolveName model "Pybind11"}}, std::shared_ptr<{{resolveName model "Pybind11"}}>>(module, "{{resolveName}}")
+{{#functions}}
+{{>python/Pybind11Function}}{{/functions}}
+{{#properties}}
+{{>python/Pybind11Property}}{{/properties}}
         ;
 }
