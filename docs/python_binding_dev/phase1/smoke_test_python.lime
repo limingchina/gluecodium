@@ -1,0 +1,17 @@
+package com.example.test
+
+@Python(Name = "RenamedClass")
+class MyClass {
+    @Python(Skip)
+    fun hiddenMethod(): Void
+
+    @Python(Internal)
+    fun internalMethod(): String
+
+    fun visibleMethod(param: Int): String
+}
+
+@Python(Skip)
+class SkippedClass {
+    fun wontBeGenerated(): Void
+}
