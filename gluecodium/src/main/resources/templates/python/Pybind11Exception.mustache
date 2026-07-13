@@ -1,4 +1,11 @@
-{{! pybind11 exception binding. }}
+{{! pybind11 exception binding + translator to the generated Python Error subclass. }}
 void register_{{resolveName}}(py::module_& module) {
-    py::exception<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}");
+    static py::exception<{{resolveName model "Pybind11"}}> exc(module, "{{resolveName}}");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const {{resolveName model "Pybind11"}}& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
 }

@@ -1,2 +1,7 @@
 {{! pybind11 property binding (getter + optional setter). }}
-        .def_property("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}{{#if hasSetter}}, &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}{{/if}})
+{{#ifPredicate "hasSetter"}}
+        .def_property("{{resolveName}}", py::overload_cast<>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}, py::const_), py::overload_cast<const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}))
+{{/ifPredicate}}
+{{#unlessPredicate "hasSetter"}}
+        .def_property_readonly("{{resolveName}}", py::overload_cast<>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}, py::const_))
+{{/unlessPredicate}}

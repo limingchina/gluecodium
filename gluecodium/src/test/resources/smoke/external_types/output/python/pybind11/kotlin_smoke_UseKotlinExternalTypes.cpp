@@ -1,8 +1,14 @@
 
 
+#include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
 #include "kotlin_smoke/Currency.h"
 #include "kotlin_smoke/KotlinExternalTypesStruct.h"
 #include "kotlin_smoke/Month.h"
@@ -11,6 +17,9 @@
 #include "kotlin_smoke/TimeZone.h"
 #include "kotlin_smoke/UseKotlinExternalTypes.h"
 #include "kotlin_smoke/VeryBoolean.h"
+
+// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
+using UseKotlinExternalTypes = ::gluecodium::kotlin_smoke::UseKotlinExternalTypes;
 
 void register_UseKotlinExternalTypes(py::module_& module) {
     py::class_<UseKotlinExternalTypes>(module, "UseKotlinExternalTypes")

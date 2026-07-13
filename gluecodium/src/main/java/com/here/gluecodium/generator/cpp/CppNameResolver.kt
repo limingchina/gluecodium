@@ -75,6 +75,9 @@ internal class CppNameResolver(
     private val signatureResolver = CppSignatureResolver(limeReferenceMap, nameCache.nameRules)
     private val limeToCppNames = buildPathMap()
 
+    /** Fully-qualified C++ name (with namespace and internal namespace), e.g. `com::example::lifecycle::Producer`. */
+    fun resolveFullName(element: LimeNamedElement): String = nameCache.getFullyQualifiedName(element)
+
     override fun resolveName(element: Any): String =
         when (element) {
             is LimeComment -> resolveComment(element)

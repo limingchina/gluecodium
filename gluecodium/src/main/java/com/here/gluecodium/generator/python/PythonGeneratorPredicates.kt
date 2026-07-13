@@ -20,11 +20,13 @@
 package com.here.gluecodium.generator.python
 
 import com.here.gluecodium.generator.common.CommonGeneratorPredicates
+import com.here.gluecodium.generator.cpp.CppNameResolver
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeSignatureResolver
 import com.here.gluecodium.model.lime.LimeStruct
+import com.here.gluecodium.model.lime.LimeTypeRef
 
 /**
  * List of predicates used by `ifPredicate`/`unlessPredicate` template helpers in the Python generator.
@@ -58,6 +60,30 @@ internal class PythonGeneratorPredicates(
                         limeStruct.allFieldsConstructor == null
                     else -> false
                 }
+            },
+            // Whether the C++ representation of a type reference needs a '&' suffix when used as a
+            // function parameter (mirrors the C++ generator's needsRefSuffix predicate). Used by the
+            // pybind11 trampoline so its override signatures match the base class exactly.
+            "needsRefSuffix" to { limeTypeRef: Any ->
+                limeTypeRef is LimeTypeRef && CppNameResolver.needsRefSuffix(limeTypeRef)
+            },
+            // Whether a property has a setter. Used (instead of a `{{#setter}}` section) so the
+            // template context (`this`) stays the property and `resolveSetterName` receives the
+            // property rather than the setter function.
+            "hasSetter" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeProperty && limeElement.setter != null
+            },
+            // Whether the element lives inside a non-empty namespace (i.e. its LimePath head is not
+            // empty). Used by the pybind11 file template to emit `using` aliases so the generated
+            // code can refer to the C++ type by its short name.
+            "hasNamespace" to { limeElement: Any ->
+                limeElement is LimeNamedElement && limeElement.path.head.isNotEmpty()
+            },
+            // Whether the element is a LimeException. Exceptions are represented as `std::error_code`
+            // in C++ (no dedicated type/header), so the pybind11 file template skips the `using`
+            // alias for them.
+            "isException" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeException
             },
         )
 }

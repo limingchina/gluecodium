@@ -488,6 +488,12 @@ py::register_exception_translator([](std::exception_ptr p) {
 - `PyGILState_Ensure`/`Release` is needed to acquire the GIL and set the result when the background thread completes
 - Model after Dart's `DartAsyncHelpers` for the async bridge
 
+> **Status**: ✅ Implemented in Phase 5 (commit `TBD` — see `docs/python_binding_dev/phase5_implementation.md`).
+> Covers 5.1 (object lifecycle via pybind11 `shared_ptr` holder + `return_value_policy`), 5.2 (wrapper
+> cache header `_wrapper_cache.h`), 5.3 (GIL-safe trampoline overrides with `py::gil_scoped_acquire` +
+> `PYBIND11_OVERRIDE`), and 5.4 (exception translator mapping `std::error_code` to the generated Python
+> `Error` subclass). 5.5 (`@Async`) is **not** yet implemented — deferred to a later phase.
+
 ---
 
 ### Phase 6 — Output File Structure

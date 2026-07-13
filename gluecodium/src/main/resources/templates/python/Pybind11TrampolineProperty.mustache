@@ -1,0 +1,11 @@
+{{! Trampoline override for a single interface property (getter + optional setter). }}
+    {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName this "Pybind11" "getter"}}() const override {
+        py::gil_scoped_acquire gil;
+        PYBIND11_OVERRIDE({{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
+    }
+{{#ifPredicate "hasSetter"}}
+    void {{resolveName this "Pybind11" "setter"}}(const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value) override {
+        py::gil_scoped_acquire gil;
+        PYBIND11_OVERRIDE(void, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "setter"}}, value);
+    }
+{{/ifPredicate}}
