@@ -128,6 +128,14 @@ passes `c++ -fsyntax-only` (with `-I<python3.12> -I<pybind11> -I<cpp/include>`)
 for **all** `*.cpp` and `*.h` files in `python/pybind11/`. All generated
 `*.py` files pass `python3 -m py_compile`.
 
+**End-to-end runtime verification** is provided by the runnable sample project in
+`docs/python_binding_dev/sample_project/` (see `docs/python_binding_dev/sample_project.md`).
+It builds a real CPython extension via CMake and drives it from Python, exercising object
+creation, method calls, GIL-safe callbacks, properties, and `throws` error mapping — i.e.
+the full Phase 5 feature set. Note that the sample supplies a `PYBIND11_MODULE` entry point
+and re-binds `class`/`interface`/`struct` types with the holders/constructors Phase 5 does
+not yet emit (see the sample doc's "Known limitations worked around" section).
+
 ```bash
 export JAVA_HOME=/opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk/Contents/Home
 ./gradlew :gluecodium:installDist -q
