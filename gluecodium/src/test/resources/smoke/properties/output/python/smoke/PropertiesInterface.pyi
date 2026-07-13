@@ -2,14 +2,20 @@
 
 from smoke.ExampleStruct import ExampleStruct
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class PropertiesInterface(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, PropertiesInterface):
+            super().__init__(native)
+        else:
+            super().__init__(generated.PropertiesInterface())
 
 
     @property
@@ -17,4 +23,7 @@ class PropertiesInterface(_NativeBase):
         """"""
         return self._native.struct_property
 
+    @struct_property.setter
+    def struct_property(self, value: ExampleStruct):
+        self._native.struct_property = value
 

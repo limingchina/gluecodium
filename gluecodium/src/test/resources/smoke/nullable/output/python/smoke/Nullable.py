@@ -1,12 +1,17 @@
 
 
+from __future__ import annotations
+
 from smoke.SomeEnum import SomeEnum
 from smoke.SomeInterface import SomeInterface
 from smoke.SomeStruct import SomeStruct
 from smoke.dict[int, str] import dict[int, str]
 from smoke.list[str] import list[str]
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Nullable(_NativeBase):
@@ -38,17 +43,17 @@ class Nullable(_NativeBase):
 
     def method_with_some_struct(self, input: Optional[SomeStruct]) -> Optional[SomeStruct]:
         """"""
-        return self._native.method_with_some_struct(input)
+        return self._native.method_with_some_struct(input._native)
 
 
     def method_with_some_enum(self, input: Optional[SomeEnum]) -> Optional[SomeEnum]:
         """"""
-        return self._native.method_with_some_enum(input)
+        return self._native.method_with_some_enum(input._native)
 
 
     def method_with_some_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
         """"""
-        return self._native.method_with_some_array(input)
+        return self._native.method_with_some_array(input._native)
 
 
     def method_with_inline_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
@@ -58,12 +63,12 @@ class Nullable(_NativeBase):
 
     def method_with_some_map(self, input: Optional[dict[int, str]]) -> Optional[dict[int, str]]:
         """"""
-        return self._native.method_with_some_map(input)
+        return self._native.method_with_some_map(input._native)
 
 
     def method_with_instance(self, input: Optional[SomeInterface]) -> Optional[SomeInterface]:
         """"""
-        return self._native.method_with_instance(input)
+        return self._native.method_with_instance(input._native)
 
 
     @property
@@ -71,6 +76,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.string_property
 
+    @string_property.setter
+    def string_property(self, value):
+        self._native.string_property = value
 
 
     @property
@@ -78,6 +86,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.is_bool_property
 
+    @is_bool_property.setter
+    def is_bool_property(self, value):
+        self._native.is_bool_property = value
 
 
     @property
@@ -85,6 +96,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.double_property
 
+    @double_property.setter
+    def double_property(self, value):
+        self._native.double_property = value
 
 
     @property
@@ -92,6 +106,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.int_property
 
+    @int_property.setter
+    def int_property(self, value):
+        self._native.int_property = value
 
 
     @property
@@ -99,6 +116,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.struct_property
 
+    @struct_property.setter
+    def struct_property(self, value):
+        self._native.struct_property = value
 
 
     @property
@@ -106,6 +126,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.enum_property
 
+    @enum_property.setter
+    def enum_property(self, value):
+        self._native.enum_property = value
 
 
     @property
@@ -113,6 +136,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.array_property
 
+    @array_property.setter
+    def array_property(self, value):
+        self._native.array_property = value
 
 
     @property
@@ -120,6 +146,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.inline_array_property
 
+    @inline_array_property.setter
+    def inline_array_property(self, value):
+        self._native.inline_array_property = value
 
 
     @property
@@ -127,6 +156,9 @@ class Nullable(_NativeBase):
         """"""
         return self._native.map_property
 
+    @map_property.setter
+    def map_property(self, value):
+        self._native.map_property = value
 
 
     @property
@@ -134,4 +166,7 @@ class Nullable(_NativeBase):
         """"""
         return self._native.instance_property
 
+    @instance_property.setter
+    def instance_property(self, value):
+        self._native.instance_property = value
 

@@ -1,8 +1,10 @@
 
 
-from smoke.SimpleClass import SimpleClass
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class SimpleClass(_NativeBase):
@@ -19,5 +21,5 @@ class SimpleClass(_NativeBase):
 
     def use_simple_class(self, input: SimpleClass) -> SimpleClass:
         """"""
-        return self._native.use_simple_class(input)
+        return self._native.use_simple_class(input._native)
 

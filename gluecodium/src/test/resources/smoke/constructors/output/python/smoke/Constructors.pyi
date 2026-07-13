@@ -1,10 +1,12 @@
 
 
 from smoke.ConstructorExplodedError import ConstructorExplodedError
-from smoke.Constructors import Constructors
 from smoke.ErrorEnum import ErrorEnum
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Constructors(_NativeBase):
@@ -13,33 +15,45 @@ class Constructors(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def create(self) -> Constructors:
+    def create() -> Constructors:
         """"""
-        return self._native.create()
+        native_result = generated.Constructors.create()
+        return Constructors(native_result)
 
+    @staticmethod
 
-    def create(self, other: Constructors) -> Constructors:
+    def create(other: Constructors) -> Constructors:
         """"""
-        return self._native.create(other)
+        native_result = generated.Constructors.create(other)
+        return Constructors(native_result)
 
+    @staticmethod
 
-    def create(self, foo: str, bar: int) -> Constructors:
+    def create(foo: str, bar: int) -> Constructors:
         """"""
-        return self._native.create(foo, bar)
+        native_result = generated.Constructors.create(foo, bar)
+        return Constructors(native_result)
 
+    @staticmethod
 
-    def create(self, input: str) -> Constructors:
+    def create(input: str) -> Constructors:
         """"""
-        return self._native.create(input)
+        native_result = generated.Constructors.create(input)
+        return Constructors(native_result)
 
+    @staticmethod
 
-    def create(self, input: list[float]) -> Constructors:
+    def create(input: list[float]) -> Constructors:
         """"""
-        return self._native.create(input)
+        native_result = generated.Constructors.create(input)
+        return Constructors(native_result)
 
+    @staticmethod
 
-    def create(self, input: int) -> Constructors:
+    def create(input: int) -> Constructors:
         """"""
-        return self._native.create(input)
+        native_result = generated.Constructors.create(input)
+        return Constructors(native_result)
 

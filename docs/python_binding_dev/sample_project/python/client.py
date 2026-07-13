@@ -17,8 +17,9 @@
 
 """End-to-end client for the Gluecodium-generated greeter bindings.
 
-This script exercises the native pybind11 extension module produced by
-Gluecodium's `python` generator. It demonstrates:
+This script exercises the generated Python wrapper classes produced by
+Gluecodium's `python` generator (which sit on top of the native pybind11
+extension module). It demonstrates:
 
   * instantiating a generated class (`Greeter.create()`),
   * calling a method that returns a value,
@@ -27,18 +28,18 @@ Gluecodium's `python` generator. It demonstrates:
     trampoline), and
   * reading/writing a generated `property`.
 
-NOTE: The `python` generator is currently at Phase 5. The generated `.py`
-wrapper classes are not yet directly importable (they have a circular
-self-import and no factory), so this client drives the *native* pybind11
-classes directly. Once Phase 6 lands (a `PYBIND11_MODULE` entry point plus
-importable wrappers), the same logic can be written against the generated
-`com.example.greeter.Greeter` Python class instead.
+The generated `.py` wrapper classes are directly importable (each package
+directory ships an `__init__.py`, the circular self-import is filtered out, and
+the wrappers expose factory constructors), so this client drives the generated
+`com.example.greeter.Greeter` Python class directly.
 """
 
-import greeter
+from com.example.greeter.Greeter import Greeter
+from com.example.greeter.Greeting import Greeting
+from com.example.greeter.GreetingListener import GreetingListener
 
 
-class PrintingListener(greeter.GreetingListener):
+class PrintingListener(GreetingListener):
     """A Python implementation of the generated GreetingListener interface."""
 
     def __init__(self):
@@ -51,7 +52,7 @@ class PrintingListener(greeter.GreetingListener):
 
 
 def main() -> None:
-    greeter_obj = greeter.Greeter.create()
+    greeter_obj = Greeter.create()
     print("Created:", greeter_obj)
 
     # A normal greeting returns a string.
@@ -78,7 +79,7 @@ def main() -> None:
         print("greet('') raised:", type(exc).__name__, "-", exc)
 
     # Structs are passed by copy and expose read/write fields.
-    g = greeter.Greeting("Bob", 3)
+    g = Greeting("Bob", 3)
     print("Greeting struct:", g.name, g.count)
 
 

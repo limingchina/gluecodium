@@ -134,9 +134,19 @@ gluecodium_target_python_sources(greeter_cpp
   OUTPUT_DIR "${GEN_OUTPUT}"
   OUTPUT greeter_python)
 
-# Copy the Python client next to the built module so `import greeter` resolves.
+# Copy the Python client and the generated wrapper package next to the built module so
+# `import greeter` and `from com.example.greeter.Greeter import Greeter` both resolve.
+# The wrapper package contents are flattened into the module directory (not under a
+# `python/` subdir) so the `com/` package sits alongside the `.so`.
 add_custom_command(TARGET ${greeter_python} POST_BUILD
   COMMAND "${CMAKE_COMMAND}" -E copy
           "${CMAKE_CURRENT_SOURCE_DIR}/python/client.py"
           "$<TARGET_FILE_DIR:${greeter_python}>/client.py"
-  COMMENT "Copying Python client next to the extension module")
+  COMMAND "${CMAKE_COMMAND}" -E copy_directory
+          "${PY_OUTPUT}/com"
+          "$<TARGET_FILE_DIR:${greeter_python}>/com"
+  COMMAND "${CMAKE_COMMAND}" -E copy
+          "${PY_OUTPUT}/__init__.py"
+          "${PY_OUTPUT}/_native_base.py"
+          "$<TARGET_FILE_DIR:${greeter_python}>/"
+  COMMENT "Copying Python client and wrapper package next to the extension module")

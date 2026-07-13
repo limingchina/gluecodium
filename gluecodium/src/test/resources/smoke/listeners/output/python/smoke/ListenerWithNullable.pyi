@@ -1,14 +1,20 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ListenerWithNullable(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, ListenerWithNullable):
+            super().__init__(native)
+        else:
+            super().__init__(generated.ListenerWithNullable())
 
 
     def method_with_byte(self, input: Optional[int]) -> Optional[int]:

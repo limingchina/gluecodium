@@ -6,7 +6,10 @@ from fire.ExternalEnum3 import ExternalEnum3
 from smoke.EnumWrapper import EnumWrapper
 from smoke.ExternalEnum3 import ExternalEnum3
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class EnumDefaultsExternal(_NativeBase):

@@ -1,5 +1,9 @@
 {{! Python method/function body (delegates to native C++ object via pybind11). }}
-{{#if comment}}{{prefix comment "    "}}
-{{/if}}    def {{resolveName}}(self{{#parameters}}, {{resolveName}}: {{resolveName typeRef}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
+{{#if isStatic}}    @staticmethod
+{{/if}}{{#if comment}}{{prefix comment "    "}}
+{{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
 {{#if comment}}        """{{comment}}"""
-{{/if}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
+{{/if}}{{#if isStatic}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
+        return {{resolveName returnType}}(native_result)
+{{/if}}{{#unless isStatic}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
+{{/unless}}

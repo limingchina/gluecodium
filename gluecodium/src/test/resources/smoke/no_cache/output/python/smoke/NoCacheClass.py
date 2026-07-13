@@ -1,8 +1,12 @@
 
 
-from smoke.NoCacheClass import NoCacheClass
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class NoCacheClass(_NativeBase):
@@ -11,10 +15,12 @@ class NoCacheClass(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def make(self) -> NoCacheClass:
+    def make() -> NoCacheClass:
         """"""
-        return self._native.make()
+        native_result = generated.NoCacheClass.make()
+        return NoCacheClass(native_result)
 
 
     def foo(self):

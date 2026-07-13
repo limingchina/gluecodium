@@ -2,7 +2,10 @@
 
 from smoke.SomeLambda import SomeLambda
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ClassWithStructWithSkipLambdaInPlatform(_NativeBase):

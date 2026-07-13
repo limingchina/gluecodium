@@ -1,10 +1,15 @@
 
 
+from __future__ import annotations
+
 from smoke.ErrorStruct import ErrorStruct
 from smoke.InternalErrorCode import InternalErrorCode
 from smoke.SimpleEnum import SimpleEnum
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Enums(_NativeBase):
@@ -13,23 +18,31 @@ class Enums(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def method_with_enumeration(self, input: SimpleEnum) -> SimpleEnum:
+    def method_with_enumeration(input: SimpleEnum) -> SimpleEnum:
         """"""
-        return self._native.method_with_enumeration(input)
+        native_result = generated.Enums.method_with_enumeration(input)
+        return SimpleEnum(native_result)
 
+    @staticmethod
 
-    def flip_enum_value(self, input: InternalErrorCode) -> InternalErrorCode:
+    def flip_enum_value(input: InternalErrorCode) -> InternalErrorCode:
         """"""
-        return self._native.flip_enum_value(input)
+        native_result = generated.Enums.flip_enum_value(input)
+        return InternalErrorCode(native_result)
 
+    @staticmethod
 
-    def extract_enum_from_struct(self, input: ErrorStruct) -> InternalErrorCode:
+    def extract_enum_from_struct(input: ErrorStruct) -> InternalErrorCode:
         """"""
-        return self._native.extract_enum_from_struct(input)
+        native_result = generated.Enums.extract_enum_from_struct(input)
+        return InternalErrorCode(native_result)
 
+    @staticmethod
 
-    def create_struct_with_enum_inside(self, type: InternalErrorCode, message: str) -> ErrorStruct:
+    def create_struct_with_enum_inside(type: InternalErrorCode, message: str) -> ErrorStruct:
         """"""
-        return self._native.create_struct_with_enum_inside(type, message)
+        native_result = generated.Enums.create_struct_with_enum_inside(type, message)
+        return ErrorStruct(native_result)
 

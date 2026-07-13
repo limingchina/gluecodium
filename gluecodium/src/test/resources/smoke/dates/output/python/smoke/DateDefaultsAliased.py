@@ -1,25 +1,65 @@
 
 
+from __future__ import annotations
+
 from smoke.datetime.datetime import datetime.datetime
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class DateDefaultsAliased(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], DateDefaultsAliased):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.DateDefaultsAliased(*args))
 
 
-    date_time: datetime.datetime
+    @property
+    def date_time(self) -> datetime.datetime:
+        """"""
+        return self._native.date_time
+
+    @date_time.setter
+    def date_time(self, value: datetime.datetime):
+        self._native.date_time = value
 
 
-    date_time_utc: datetime.datetime
+
+    @property
+    def date_time_utc(self) -> datetime.datetime:
+        """"""
+        return self._native.date_time_utc
+
+    @date_time_utc.setter
+    def date_time_utc(self, value: datetime.datetime):
+        self._native.date_time_utc = value
 
 
-    before_epoch: datetime.datetime
+
+    @property
+    def before_epoch(self) -> datetime.datetime:
+        """"""
+        return self._native.before_epoch
+
+    @before_epoch.setter
+    def before_epoch(self, value: datetime.datetime):
+        self._native.before_epoch = value
 
 
-    exactly_epoch: datetime.datetime
+
+    @property
+    def exactly_epoch(self) -> datetime.datetime:
+        """"""
+        return self._native.exactly_epoch
+
+    @exactly_epoch.setter
+    def exactly_epoch(self, value: datetime.datetime):
+        self._native.exactly_epoch = value
+
 

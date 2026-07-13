@@ -2,7 +2,10 @@
 
 from smoke.PI import PI
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class AttributesClass(_NativeBase):
@@ -22,4 +25,7 @@ class AttributesClass(_NativeBase):
         """"""
         return self._native.prop
 
+    @prop.setter
+    def prop(self, value: str):
+        self._native.prop = value
 

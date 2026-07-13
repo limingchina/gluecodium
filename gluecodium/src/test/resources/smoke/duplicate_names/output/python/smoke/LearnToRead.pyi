@@ -3,18 +3,40 @@
 from smoke.Alphabet import Alphabet
 from smoke.foo.Alphabet import Alphabet
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class LearnToRead(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], LearnToRead):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.LearnToRead(*args))
 
 
-    field_a: Alphabet
+    @property
+    def field_a(self) -> Alphabet:
+        """"""
+        return self._native.field_a
+
+    @field_a.setter
+    def field_a(self, value: Alphabet):
+        self._native.field_a = value
 
 
-    field_b: Alphabet
+
+    @property
+    def field_b(self) -> Alphabet:
+        """"""
+        return self._native.field_b
+
+    @field_b.setter
+    def field_b(self, value: Alphabet):
+        self._native.field_b = value
+
 

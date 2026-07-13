@@ -2,7 +2,10 @@
 
 from smoke.off.SomeStruct import SomeStruct
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class NestedPackages(_NativeBase):
@@ -11,8 +14,10 @@ class NestedPackages(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def basic_method(self, input: SomeStruct) -> SomeStruct:
+    def basic_method(input: SomeStruct) -> SomeStruct:
         """"""
-        return self._native.basic_method(input)
+        native_result = generated.NestedPackages.basic_method(input)
+        return SomeStruct(native_result)
 

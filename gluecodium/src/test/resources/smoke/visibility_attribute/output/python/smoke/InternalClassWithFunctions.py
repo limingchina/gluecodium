@@ -1,8 +1,12 @@
 
 
-from smoke.InternalClassWithFunctions import InternalClassWithFunctions
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class InternalClassWithFunctions(_NativeBase):
@@ -16,13 +20,17 @@ class InternalClassWithFunctions(_NativeBase):
         """"""
         return self._native.foo_bar()
 
+    @staticmethod
 
-    def make(self) -> InternalClassWithFunctions:
+    def make() -> InternalClassWithFunctions:
         """"""
-        return self._native.make()
+        native_result = generated.InternalClassWithFunctions.make()
+        return InternalClassWithFunctions(native_result)
 
+    @staticmethod
 
-    def make(self, foo: str) -> InternalClassWithFunctions:
+    def make(foo: str) -> InternalClassWithFunctions:
         """"""
-        return self._native.make(foo)
+        native_result = generated.InternalClassWithFunctions.make(foo)
+        return InternalClassWithFunctions(native_result)
 

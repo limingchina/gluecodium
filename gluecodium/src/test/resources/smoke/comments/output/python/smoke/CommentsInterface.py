@@ -1,16 +1,24 @@
 
 
+from __future__ import annotations
+
 from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class CommentsInterface(_NativeBase):
     """This is some very useful interface."""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, CommentsInterface):
+            super().__init__(native)
+        else:
+            super().__init__(generated.CommentsInterface())
 
     This is some very useful method that measures the usefulness of its input.
     def some_method_with_all_comments(self, input: str) -> bool:
@@ -68,4 +76,7 @@ class CommentsInterface(_NativeBase):
         """Some very useful property."""
         return self._native.is_some_property
 
+    @is_some_property.setter
+    def is_some_property(self, value: bool):
+        self._native.is_some_property = value
 

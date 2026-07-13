@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 from dont.smoke.DontSmokeEnum import DontSmokeEnum
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class SomeSkippedClass(_NativeBase):

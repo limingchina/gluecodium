@@ -5,7 +5,10 @@ from smoke.DartColor import DartColor
 from smoke.DartSeason import DartSeason
 from smoke.Rectangle import Rectangle
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class UseDartExternalTypes(_NativeBase):
@@ -14,23 +17,31 @@ class UseDartExternalTypes(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def rectangle_round_trip(self, input: Rectangle) -> Rectangle:
+    def rectangle_round_trip(input: Rectangle) -> Rectangle:
         """"""
-        return self._native.rectangle_round_trip(input)
+        native_result = generated.UseDartExternalTypes.rectangle_round_trip(input)
+        return Rectangle(native_result)
 
+    @staticmethod
 
-    def compression_state_round_trip(self, input: CompressionState) -> CompressionState:
+    def compression_state_round_trip(input: CompressionState) -> CompressionState:
         """"""
-        return self._native.compression_state_round_trip(input)
+        native_result = generated.UseDartExternalTypes.compression_state_round_trip(input)
+        return CompressionState(native_result)
 
+    @staticmethod
 
-    def color_round_trip(self, input: DartColor) -> DartColor:
+    def color_round_trip(input: DartColor) -> DartColor:
         """"""
-        return self._native.color_round_trip(input)
+        native_result = generated.UseDartExternalTypes.color_round_trip(input)
+        return DartColor(native_result)
 
+    @staticmethod
 
-    def season_round_trip(self, input: DartSeason) -> DartSeason:
+    def season_round_trip(input: DartSeason) -> DartSeason:
         """"""
-        return self._native.season_round_trip(input)
+        native_result = generated.UseDartExternalTypes.season_round_trip(input)
+        return DartSeason(native_result)
 

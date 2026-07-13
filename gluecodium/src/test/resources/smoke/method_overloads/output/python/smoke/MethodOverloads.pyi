@@ -4,7 +4,10 @@ from smoke.Point import Point
 from smoke.list[int] import list[int]
 from smoke.list[str] import list[str]
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class MethodOverloads(_NativeBase):
@@ -31,22 +34,22 @@ class MethodOverloads(_NativeBase):
 
     def is_boolean(self, input: Point) -> bool:
         """"""
-        return self._native.is_boolean(input)
+        return self._native.is_boolean(input._native)
 
 
     def is_boolean(self, input1: bool, input2: int, input3: str, input4: Point) -> bool:
         """"""
-        return self._native.is_boolean(input1, input2, input3, input4)
+        return self._native.is_boolean(input1, input2, input3, input4._native)
 
 
     def is_boolean(self, input: list[str]) -> bool:
         """"""
-        return self._native.is_boolean(input)
+        return self._native.is_boolean(input._native)
 
 
     def is_boolean(self, input: list[int]) -> bool:
         """"""
-        return self._native.is_boolean(input)
+        return self._native.is_boolean(input._native)
 
 
     def is_boolean(self) -> bool:
@@ -61,5 +64,5 @@ class MethodOverloads(_NativeBase):
 
     def is_float(self, input: list[int]) -> bool:
         """"""
-        return self._native.is_float(input)
+        return self._native.is_float(input._native)
 

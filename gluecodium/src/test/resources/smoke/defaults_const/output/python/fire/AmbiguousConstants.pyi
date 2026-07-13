@@ -3,7 +3,10 @@
 from fire.DUMMY import DUMMY
 from fire.SomeStruct import SomeStruct
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class AmbiguousConstants(_NativeBase):

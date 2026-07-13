@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.FreeEnum import FreeEnum
 
 class FreeError(Exception):

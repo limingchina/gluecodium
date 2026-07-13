@@ -6,7 +6,10 @@ from fire.Enum3 import Enum3
 from smoke.Enum3 import Enum3
 from smoke.EnumWrapper import EnumWrapper
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class EnumDefaults(_NativeBase):

@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from kotlin_smoke.Currency import Currency
 from kotlin_smoke.KotlinExternalTypesStruct import KotlinExternalTypesStruct
 from kotlin_smoke.Month import Month
@@ -8,7 +10,10 @@ from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
 from kotlin_smoke.VeryBoolean import VeryBoolean
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class UseKotlinExternalTypes(_NativeBase):
@@ -17,38 +22,52 @@ class UseKotlinExternalTypes(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def currency_round_trip(self, input: Currency) -> Currency:
+    def currency_round_trip(input: Currency) -> Currency:
         """"""
-        return self._native.currency_round_trip(input)
+        native_result = generated.UseKotlinExternalTypes.currency_round_trip(input)
+        return Currency(native_result)
 
+    @staticmethod
 
-    def time_zone_round_trip(self, input: TimeZone) -> TimeZone:
+    def time_zone_round_trip(input: TimeZone) -> TimeZone:
         """"""
-        return self._native.time_zone_round_trip(input)
+        native_result = generated.UseKotlinExternalTypes.time_zone_round_trip(input)
+        return TimeZone(native_result)
 
+    @staticmethod
 
-    def month_round_trip(self, input: Month) -> Month:
+    def month_round_trip(input: Month) -> Month:
         """"""
-        return self._native.month_round_trip(input)
+        native_result = generated.UseKotlinExternalTypes.month_round_trip(input)
+        return Month(native_result)
 
+    @staticmethod
 
-    def color_round_trip(self, input: SystemColor) -> SystemColor:
+    def color_round_trip(input: SystemColor) -> SystemColor:
         """"""
-        return self._native.color_round_trip(input)
+        native_result = generated.UseKotlinExternalTypes.color_round_trip(input)
+        return SystemColor(native_result)
 
+    @staticmethod
 
-    def season_round_trip(self, input: Season) -> Season:
+    def season_round_trip(input: Season) -> Season:
         """"""
-        return self._native.season_round_trip(input)
+        native_result = generated.UseKotlinExternalTypes.season_round_trip(input)
+        return Season(native_result)
 
+    @staticmethod
 
-    def struct_round_trip(self, input: KotlinExternalTypesStruct) -> KotlinExternalTypesStruct:
+    def struct_round_trip(input: KotlinExternalTypesStruct) -> KotlinExternalTypesStruct:
         """"""
-        return self._native.struct_round_trip(input)
+        native_result = generated.UseKotlinExternalTypes.struct_round_trip(input)
+        return KotlinExternalTypesStruct(native_result)
 
+    @staticmethod
 
-    def very_boolean_unbox(self, input: VeryBoolean) -> bool:
+    def very_boolean_unbox(input: VeryBoolean) -> bool:
         """"""
-        return self._native.very_boolean_unbox(input)
+        native_result = generated.UseKotlinExternalTypes.very_boolean_unbox(input)
+        return bool(native_result)
 

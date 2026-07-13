@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.EnumWithAlias import EnumWithAlias
 
 class AliasError(Exception):

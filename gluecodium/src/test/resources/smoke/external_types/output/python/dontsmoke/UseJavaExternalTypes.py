@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.Currency import Currency
 from smoke.JavaExternalTypesStruct import JavaExternalTypesStruct
 from smoke.Month import Month
@@ -7,7 +9,10 @@ from smoke.Season import Season
 from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class UseJavaExternalTypes(_NativeBase):
@@ -16,33 +21,45 @@ class UseJavaExternalTypes(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def currency_round_trip(self, input: Currency) -> Currency:
+    def currency_round_trip(input: Currency) -> Currency:
         """"""
-        return self._native.currency_round_trip(input)
+        native_result = generated.UseJavaExternalTypes.currency_round_trip(input)
+        return Currency(native_result)
 
+    @staticmethod
 
-    def time_zone_round_trip(self, input: TimeZone) -> TimeZone:
+    def time_zone_round_trip(input: TimeZone) -> TimeZone:
         """"""
-        return self._native.time_zone_round_trip(input)
+        native_result = generated.UseJavaExternalTypes.time_zone_round_trip(input)
+        return TimeZone(native_result)
 
+    @staticmethod
 
-    def month_round_trip(self, input: Month) -> Month:
+    def month_round_trip(input: Month) -> Month:
         """"""
-        return self._native.month_round_trip(input)
+        native_result = generated.UseJavaExternalTypes.month_round_trip(input)
+        return Month(native_result)
 
+    @staticmethod
 
-    def color_round_trip(self, input: SystemColor) -> SystemColor:
+    def color_round_trip(input: SystemColor) -> SystemColor:
         """"""
-        return self._native.color_round_trip(input)
+        native_result = generated.UseJavaExternalTypes.color_round_trip(input)
+        return SystemColor(native_result)
 
+    @staticmethod
 
-    def season_round_trip(self, input: Season) -> Season:
+    def season_round_trip(input: Season) -> Season:
         """"""
-        return self._native.season_round_trip(input)
+        native_result = generated.UseJavaExternalTypes.season_round_trip(input)
+        return Season(native_result)
 
+    @staticmethod
 
-    def struct_round_trip(self, input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
+    def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
         """"""
-        return self._native.struct_round_trip(input)
+        native_result = generated.UseJavaExternalTypes.struct_round_trip(input)
+        return JavaExternalTypesStruct(native_result)
 

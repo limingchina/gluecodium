@@ -5,7 +5,10 @@ from smoke.SomethingWrongError import SomethingWrongError
 from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ExcludedCommentsOnly(_NativeBase):
@@ -30,4 +33,7 @@ class ExcludedCommentsOnly(_NativeBase):
         """"""
         return self._native.is_some_property
 
+    @is_some_property.setter
+    def is_some_property(self, value: bool):
+        self._native.is_some_property = value
 

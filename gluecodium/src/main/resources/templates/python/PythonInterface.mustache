@@ -1,12 +1,18 @@
 {{! Python interface: base class (protocol) wrapping the native C++ object. }}
+
 from _native_base import _NativeBase
+
+import {{nativeModule}}
 
 
 class {{resolveName}}(_NativeBase):
     """{{resolveName comment}}"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, {{typeName}}):
+            super().__init__(native)
+        else:
+            super().__init__({{nativeModule}}.{{resolveName}}())
 {{#functions}}
 
 {{>python/PythonFunction}}{{/functions}}

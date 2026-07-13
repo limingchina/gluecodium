@@ -1,8 +1,12 @@
 
 
-from smoke.SkipOverloadsInDart import SkipOverloadsInDart
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class SkipOverloadsInDart(_NativeBase):
@@ -11,13 +15,17 @@ class SkipOverloadsInDart(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def make(self) -> SkipOverloadsInDart:
+    def make() -> SkipOverloadsInDart:
         """"""
-        return self._native.make()
+        native_result = generated.SkipOverloadsInDart.make()
+        return SkipOverloadsInDart(native_result)
 
+    @staticmethod
 
-    def make(self, input: str) -> SkipOverloadsInDart:
+    def make(input: str) -> SkipOverloadsInDart:
         """"""
-        return self._native.make(input)
+        native_result = generated.SkipOverloadsInDart.make(input)
+        return SkipOverloadsInDart(native_result)
 

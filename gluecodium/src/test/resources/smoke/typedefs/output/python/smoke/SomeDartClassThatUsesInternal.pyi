@@ -2,7 +2,10 @@
 
 from smoke.DartInternalClassWithInternalTypedef import DartInternalClassWithInternalTypedef
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class SomeDartClassThatUsesInternal(_NativeBase):
@@ -14,5 +17,5 @@ class SomeDartClassThatUsesInternal(_NativeBase):
 
     def add_entity(self, entity: DartInternalClassWithInternalTypedef):
         """"""
-        return self._native.add_entity(entity)
+        return self._native.add_entity(entity._native)
 

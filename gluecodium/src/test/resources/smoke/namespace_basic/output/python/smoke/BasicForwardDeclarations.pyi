@@ -2,7 +2,10 @@
 
 from smoke.Basic import Basic
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class BasicForwardDeclarations(_NativeBase):

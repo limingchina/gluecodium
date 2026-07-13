@@ -1,10 +1,15 @@
 
 
+from __future__ import annotations
+
 from smoke.SomeEnum import SomeEnum
 from smoke.SomethingWrongError import SomethingWrongError
 from smoke.bool import bool
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class UnicodeComments(_NativeBase):

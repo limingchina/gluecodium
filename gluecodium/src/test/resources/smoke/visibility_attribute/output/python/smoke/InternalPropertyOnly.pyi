@@ -1,7 +1,10 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class InternalPropertyOnly(_NativeBase):
@@ -16,4 +19,7 @@ class InternalPropertyOnly(_NativeBase):
         """"""
         return self._native.foo
 
+    @foo.setter
+    def foo(self, value: str):
+        self._native.foo = value
 

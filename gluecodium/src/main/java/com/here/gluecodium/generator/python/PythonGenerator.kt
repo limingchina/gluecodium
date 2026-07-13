@@ -38,6 +38,7 @@ import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeTypeHelper
 import com.here.gluecodium.validator.LimeOverloadsValidator
+import java.io.File
 import java.util.logging.Logger
 
 /**
@@ -70,6 +71,7 @@ internal class PythonGenerator : Generator {
     private lateinit var limeReferenceMap: Map<String, com.here.gluecodium.model.lime.LimeElement>
     private lateinit var pythonNameResolver: PythonNameResolver
     private lateinit var pybind11NameResolver: Pybind11NameResolver
+    private lateinit var cppNameCache: CppNameCache
 
     override val shortName = "python"
 
@@ -110,11 +112,12 @@ internal class PythonGenerator : Generator {
             throw GluecodiumExecutionException("Validation errors found, see log for details.")
         }
 
+        cppNameCache = CppNameCache(rootNamespace, pybind11FilteredModel.referenceMap, cppNameRules)
         pybind11NameResolver =
             Pybind11NameResolver(
                 pybind11FilteredModel.referenceMap,
                 internalNamespace,
-                CppNameCache(rootNamespace, pybind11FilteredModel.referenceMap, cppNameRules),
+                cppNameCache,
                 cppNameRules,
             )
         val nameResolvers =
@@ -144,7 +147,7 @@ internal class PythonGenerator : Generator {
             throw GluecodiumExecutionException("Validation errors found, see log for details.")
         }
 
-        return pythonFiles + pybind11Files + generateCommonFiles(pybind11FilteredModel, nameResolvers, predicates.predicates)
+        return pythonFiles + pybind11Files + generateCommonFiles(pybind11FilteredModel, pythonFilteredModel, nameResolvers, predicates.predicates)
     }
 
     private fun generatePythonFile(
@@ -152,12 +155,22 @@ internal class PythonGenerator : Generator {
         nameResolvers: Map<String, NameResolver>,
         predicates: Map<String, (Any) -> Boolean>,
     ): List<GeneratedFile> {
-        val imports = pythonImportsCollector.collectImports(limeElement)
+        // Drop the self-import: a type that references itself (e.g. `Greeter.create()` returns
+        // `Greeter`) would otherwise emit `from ...Greeter import Greeter` inside Greeter.py,
+        // which is a circular import and breaks direct importability of the wrapper.
+        val selfModulePath = (limeElement.path.head + pythonNameResolver.resolveName(limeElement)).joinToString(".")
+        val imports =
+            pythonImportsCollector.collectImports(limeElement)
+                .filterNot { it.modulePath == selfModulePath }
+                .distinct()
+                .sorted()
         val templateData =
             mapOf(
                 "model" to limeElement,
-                "imports" to imports.distinct().sorted(),
+                "imports" to imports,
                 "moduleName" to pythonModule,
+                "nativeModule" to pythonModule,
+                "typeName" to pythonNameResolver.resolveName(limeElement),
                 "contentTemplate" to selectPythonTemplate(limeElement),
             )
         val content = TemplateEngine.render("python/PythonFile", templateData, nameResolvers, predicates)
@@ -190,7 +203,12 @@ internal class PythonGenerator : Generator {
                 "moduleName" to pythonModule,
                 "includes" to includes,
                 "internalNamespace" to internalNamespace,
-                "fullName" to pybind11NameResolver.resolveFullName(limeElement),
+                "fullName" to
+                    if (limeType is com.here.gluecodium.model.lime.LimeException) {
+                        ""
+                    } else {
+                        cppNameCache.getFullyQualifiedName(limeElement)
+                    },
                 "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
                 "trampolineName" to (pythonNameResolver.resolveName(limeElement) + "Trampoline"),
                 "contentTemplate" to selectPybind11Template(limeElement),
@@ -201,6 +219,7 @@ internal class PythonGenerator : Generator {
 
     private fun generateCommonFiles(
         pybind11FilteredModel: LimeModel,
+        pythonFilteredModel: LimeModel,
         nameResolvers: Map<String, NameResolver>,
         predicates: Map<String, (Any) -> Boolean>,
     ): List<GeneratedFile> {
@@ -210,7 +229,10 @@ internal class PythonGenerator : Generator {
         // Custom type caster for Gluecodium's Return<T, Error> adapter. The include path for the
         // generated Return.h follows the C++ internal namespace (e.g. "lorem_ipsum/Return.h").
         val returnInclude = (internalNamespace + "Return.h").joinToString("/")
-        val casterTemplateData = mapOf("returnInclude" to returnInclude)
+        val casterTemplateData = mapOf(
+            "returnInclude" to returnInclude,
+            "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
+        )
         val casterContent =
             TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
 
@@ -241,6 +263,17 @@ internal class PythonGenerator : Generator {
         val pyprojectContent = TemplateEngine.render("python/PythonPyproject", mapOf("moduleName" to pythonModule), nameResolvers, predicates)
         val nativeBaseContent = TemplateEngine.render("python/PythonNativeBase", emptyMap<String, Any>(), nameResolvers, predicates)
 
+        // Per-package __init__.py files so the generated wrappers form an importable package
+        // hierarchy (e.g. com/__init__.py, com/example/__init__.py, com/example/greeter/__init__.py).
+        // Without these, `import com.example.greeter.Greeter` fails with ModuleNotFoundError.
+        val packageInitFiles =
+            pythonFilteredModel.topElements
+                .flatMap { it.path.head }
+                .distinct()
+                .map { PythonNameRules.PYTHON_TARGET_DIRECTORY + it + File.separator + "__init__.py" }
+                .map { GeneratedFile(initContent, it) }
+                .toList()
+
         return listOf(
             GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
             GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
@@ -249,7 +282,7 @@ internal class PythonGenerator : Generator {
             GeneratedFile(setupPyContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "setup.py"),
             GeneratedFile(pyprojectContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "pyproject.toml"),
             GeneratedFile(nativeBaseContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "_native_base.py"),
-        )
+        ) + packageInitFiles
     }
 
     private fun selectPythonTemplate(limeElement: LimeNamedElement) =

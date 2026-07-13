@@ -1,21 +1,36 @@
 
 
-from kotlin_smoke.VeryBoolean import VeryBoolean
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class VeryBoolean(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], VeryBoolean):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.VeryBoolean(*args))
 
 
-    value: bool
-
-
-    def make(self, value: bool) -> VeryBoolean:
+    @property
+    def value(self) -> bool:
         """"""
-        return self._native.make(value)
+        return self._native.value
+
+    @value.setter
+    def value(self, value: bool):
+        self._native.value = value
+
+
+    @staticmethod
+
+    def make(value: bool) -> VeryBoolean:
+        """"""
+        native_result = generated.VeryBoolean.make(value)
+        return VeryBoolean(native_result)
 

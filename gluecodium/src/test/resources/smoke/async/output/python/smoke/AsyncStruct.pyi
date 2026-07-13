@@ -2,17 +2,31 @@
 
 from smoke.ThrowMeError import ThrowMeError
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class AsyncStruct(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], AsyncStruct):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.AsyncStruct(*args))
 
 
-    string_field: str
+    @property
+    def string_field(self) -> str:
+        """"""
+        return self._native.string_field
+
+    @string_field.setter
+    def string_field(self, value: str):
+        self._native.string_field = value
+
 
 
     def async_void(self, input: bool):
@@ -34,8 +48,10 @@ class AsyncStruct(_NativeBase):
         """"""
         return self._native.async_int_throws(input)
 
+    @staticmethod
 
-    def async_static(self, input: bool):
+    def async_static(input: bool):
         """"""
-        return self._native.async_static(input)
+        native_result = generated.AsyncStruct.async_static(input)
+        return None(native_result)
 

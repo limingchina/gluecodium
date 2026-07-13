@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 from smoke.InnerName import InnerName
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class UseInnerName(_NativeBase):

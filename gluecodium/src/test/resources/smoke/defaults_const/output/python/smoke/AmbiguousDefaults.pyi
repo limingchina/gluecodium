@@ -3,18 +3,40 @@
 from fire.AmbiguousEnum import AmbiguousEnum
 from fire.SomeStruct import SomeStruct
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class AmbiguousDefaults(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], AmbiguousDefaults):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.AmbiguousDefaults(*args))
 
 
-    field1: AmbiguousEnum
+    @property
+    def field1(self) -> AmbiguousEnum:
+        """"""
+        return self._native.field1
+
+    @field1.setter
+    def field1(self, value: AmbiguousEnum):
+        self._native.field1 = value
 
 
-    field2: SomeStruct
+
+    @property
+    def field2(self) -> SomeStruct:
+        """"""
+        return self._native.field2
+
+    @field2.setter
+    def field2(self, value: SomeStruct):
+        self._native.field2 = value
+
 

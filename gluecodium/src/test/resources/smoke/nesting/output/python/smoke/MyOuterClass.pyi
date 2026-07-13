@@ -2,7 +2,10 @@
 
 from smoke.MyParentInterface import MyParentInterface
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class MyOuterClass(_NativeBase):

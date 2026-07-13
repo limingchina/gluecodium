@@ -2,7 +2,10 @@
 
 from smoke.ParentClass import ParentClass
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildClassFromClass(

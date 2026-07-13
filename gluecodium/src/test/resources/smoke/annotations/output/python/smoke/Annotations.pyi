@@ -1,8 +1,10 @@
 
 
-from smoke.Annotations import Annotations
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class Annotations(_NativeBase):
@@ -14,5 +16,5 @@ class Annotations(_NativeBase):
 
     def test_optional(self, self: Annotations) -> Optional[bool]:
         """"""
-        return self._native.test_optional(self)
+        return self._native.test_optional(self._native)
 

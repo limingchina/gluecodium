@@ -76,7 +76,7 @@ cd build && python3 client.py
 Expected output:
 
 ```
-Created: <greeter.Greeter object at 0x...>
+Created: <com.example.greeter.Greeter object at 0x...>
 greet('World') -> Hello, World!
 [listener] greeted: Ada
 greeting_count -> 2
@@ -172,11 +172,11 @@ limitations are:
    at call sites, so referential equality is not yet enforced.
 3. The **`Locale`** caster is still missing.
 
-Additionally, the generated **Python wrapper classes** (`python/com/example/
-greeter/*.py`) currently have a circular self-import and no factory, so they are
-not directly importable. The client therefore drives the **native** pybind11
-classes directly. Once that is fixed, the same client logic can be written
-against the generated `com.example.greeter.Greeter` Python class instead.
+The generated **Python wrapper classes** (`python/com/example/greeter/*.py`) are now
+**directly importable and constructible**: each package directory gets an `__init__.py`,
+the circular self-import is filtered out, and the wrappers expose factory constructors
+(`Greeter.create()`, `Greeting(name, count)`, `GreetingListener()` subclassing). The
+`python/client.py` therefore drives the generated wrappers directly.
 
 The error raised on `greet("")` currently carries the qualified enum name
 (`::com::example::greeter::GreeterErrorCode::EMPTY_NAME`) because the generated

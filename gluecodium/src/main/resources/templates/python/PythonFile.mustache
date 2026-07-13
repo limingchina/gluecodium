@@ -18,6 +18,8 @@
   !}}
 {{#if copyrightHeader}}{{prefix copyrightHeader "# "}}{{/if}}
 
+from __future__ import annotations
+
 {{#imports}}
 {{#importedName}}from {{modulePath}} import {{importedName}}
 {{/importedName}}{{^importedName}}import {{modulePath}}

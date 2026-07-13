@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 import datetime
 from smoke.FreeEnum import FreeEnum
 

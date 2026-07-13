@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 import datetime
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Dates(_NativeBase):
@@ -27,6 +32,9 @@ class Dates(_NativeBase):
         """"""
         return self._native.date_property
 
+    @date_property.setter
+    def date_property(self, value: datetime.datetime):
+        self._native.date_property = value
 
 
     @property
@@ -34,4 +42,7 @@ class Dates(_NativeBase):
         """"""
         return self._native.date_set
 
+    @date_set.setter
+    def date_set(self, value: set[datetime.datetime]):
+        self._native.date_set = value
 

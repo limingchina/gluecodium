@@ -1,7 +1,12 @@
 
 
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class ParentClass(_NativeBase):
@@ -21,4 +26,7 @@ class ParentClass(_NativeBase):
         """"""
         return self._native.parent_property
 
+    @parent_property.setter
+    def parent_property(self, value: str):
+        self._native.parent_property = value
 

@@ -2,7 +2,10 @@
 
 from smoke.InternalStruct import InternalStruct
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class PublicClass(_NativeBase):
@@ -14,7 +17,7 @@ class PublicClass(_NativeBase):
 
     def internal_method(self, input: InternalStruct) -> InternalStruct:
         """"""
-        return self._native.internal_method(input)
+        return self._native.internal_method(input._native)
 
 
     @property
@@ -22,4 +25,7 @@ class PublicClass(_NativeBase):
         """"""
         return self._native.internal_struct_property
 
+    @internal_struct_property.setter
+    def internal_struct_property(self, value: InternalStruct):
+        self._native.internal_struct_property = value
 
