@@ -101,3 +101,12 @@ Date/Duration/Locale/List/Map/Set/nullable, typealias, lambda), `-generators pyt
 Phase 5 — Object Lifecycle and Callbacks: trampoline classes for interfaces (so Python can implement
 them), referential-equality wrapper cache, GIL-safe callbacks, and exception translation wiring the
 `Return` caster's failure path to the generated `Error` subclass.
+
+## Smoke tests (separate doc)
+The implemented features (Phases 1–4) are now covered by smoke tests — see
+`docs/python_binding_dev/phase4_smoke_tests.md`. Summary: pybind11 output was nested under
+`python/` so the `SmokeTest` harness discovers both `.py` and `.cpp` reference files; reference
+output was generated for all existing smoke features that parse successfully, plus a dedicated
+`python_attributes` feature exercising the `@Python(Name/Skip/Internal)` attribute. 43 python
+smoke tests run, 5 skipped (pre-existing parse failures shared by all generators, and the
+python-specific `name_clash_overloads` filename collision), 0 failed.
