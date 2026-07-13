@@ -320,6 +320,11 @@ class {{resolveName}}({{parentClass}}):
 
 ### Phase 4 — Type Mapping
 
+> **Status**: ✅ Implemented (commit `TBD` — see `docs/python_binding_dev/phase4_implementation.md`).
+> Basic types (incl. Date/Duration/Locale), compound types (List/Set/Map/nullable), and
+> typealias/lambda all map correctly. The `Return<T,Error>` pybind11 caster is generated as a
+> common header (`_return_caster.h`), proven from the Phase 0 spike.
+
 #### 4.1 Basic type mapping
 
 | LIME type | C++ type | Python type | pybind11 conversion |

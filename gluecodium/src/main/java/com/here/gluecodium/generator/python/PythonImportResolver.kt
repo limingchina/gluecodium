@@ -52,7 +52,17 @@ internal class PythonImportResolver(
         }
 
     private fun resolveTypeImports(limeType: LimeType): List<PythonImport> {
-        if (limeType is com.here.gluecodium.model.lime.LimeBasicType) return emptyList()
+        if (limeType is com.here.gluecodium.model.lime.LimeBasicType) {
+            return when (limeType.typeId) {
+                com.here.gluecodium.model.lime.LimeBasicType.TypeId.DATE,
+                com.here.gluecodium.model.lime.LimeBasicType.TypeId.DURATION,
+                -> listOf(PythonImport("datetime"))
+                else -> emptyList()
+            }
+        }
+        // Generic (container) types are builtins in Python; their element types are resolved
+        // separately by resolveGenericTypeImports, so no import is needed here.
+        if (limeType is com.here.gluecodium.model.lime.LimeGenericType) return emptyList()
         val externalImport = resolveExternalImport(limeType)
         if (externalImport != null) return listOf(externalImport)
         return listOf(createImport(limeType))
