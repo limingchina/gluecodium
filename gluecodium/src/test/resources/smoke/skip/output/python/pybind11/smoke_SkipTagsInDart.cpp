@@ -1,12 +1,42 @@
 
 
+#include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
 #include "smoke/SkipTagsInDart.h"
 
+// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
+using SkipTagsInDart = ::gluecodium::smoke::SkipTagsInDart;
+
+class SkipTagsInDartTrampoline : public SkipTagsInDart {
+public:
+    using SkipTagsInDart::SkipTagsInDart;
+
+    void skip_tagged(
+            /* no args */ ) override {
+        py::gil_scoped_acquire gil;
+        PYBIND11_OVERRIDE(void, SkipTagsInDart, skip_tagged);
+    }
+    void dont_skip_tagged(
+            /* no args */ ) override {
+        py::gil_scoped_acquire gil;
+        PYBIND11_OVERRIDE(void, SkipTagsInDart, dont_skip_tagged);
+    }
+    void skip_tagged_list(
+            /* no args */ ) override {
+        py::gil_scoped_acquire gil;
+        PYBIND11_OVERRIDE(void, SkipTagsInDart, skip_tagged_list);
+    }
+};
+
 void register_SkipTagsInDart(py::module_& module) {
-    py::class_<SkipTagsInDart, std::shared_ptr<SkipTagsInDart>>(module, "SkipTagsInDart")
+    py::class_<SkipTagsInDart, std::shared_ptr<SkipTagsInDart>, SkipTagsInDartTrampoline>(module, "SkipTagsInDart")
         .def("skip_tagged", &SkipTagsInDart::skip_tagged)
         .def("dont_skip_tagged", &SkipTagsInDart::dont_skip_tagged)
         .def("skip_tagged_list", &SkipTagsInDart::skip_tagged_list)

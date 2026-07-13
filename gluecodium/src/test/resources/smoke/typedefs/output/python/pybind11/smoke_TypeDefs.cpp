@@ -1,13 +1,22 @@
 
 
+#include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
 #include "gluecodium/VectorHash.h"
 #include "smoke/TypeCollection.h"
 #include "smoke/TypeDefs.h"
 #include "string"
 #include "vector"
+
+// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
+using TypeDefs = ::gluecodium::smoke::TypeDefs;
 
 void register_TypeDefs(py::module_& module) {
     py::class_<TypeDefs>(module, "TypeDefs")
@@ -17,7 +26,7 @@ void register_TypeDefs(py::module_& module) {
         .def("return_test_struct_type_def", &TypeDefs::return_test_struct_type_def, py::arg("input"))
         .def("return_nested_struct_type_def", &TypeDefs::return_nested_struct_type_def, py::arg("input"))
         .def("return_type_def_point_from_type_collection", &TypeDefs::return_type_def_point_from_type_collection, py::arg("input"))
-        .def_property("primitive_type_property", &TypeDefs::get_primitive_type_property)
+        .def_property("primitive_type_property", py::overload_cast<>(&TypeDefs::get_primitive_type_property, py::const_), py::overload_cast<const ::std::vector< double >&>(&TypeDefs::set_primitive_type_property))
         ;
 }
 

@@ -1,12 +1,24 @@
 
 
+#include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
-#include "smoke/Async.h"
-#include "smoke/AsyncErrorCode.h"
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+
 
 void register_AsyncError(py::module_& module) {
-    py::exception<::std::error_code>(module, "AsyncError");
+    static py::exception<::std::error_code> exc(module, "AsyncError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
 }
 

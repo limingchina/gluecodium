@@ -16,6 +16,7 @@
 #include <system_error>
 #include <type_traits>
 
+#include "_wrapper_cache.h"
 #include <gluecodium/Return.h>
 
 namespace pybind11::detail {

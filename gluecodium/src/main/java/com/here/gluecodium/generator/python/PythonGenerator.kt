@@ -69,6 +69,7 @@ internal class PythonGenerator : Generator {
 
     private lateinit var limeReferenceMap: Map<String, com.here.gluecodium.model.lime.LimeElement>
     private lateinit var pythonNameResolver: PythonNameResolver
+    private lateinit var pybind11NameResolver: Pybind11NameResolver
 
     override val shortName = "python"
 
@@ -109,16 +110,17 @@ internal class PythonGenerator : Generator {
             throw GluecodiumExecutionException("Validation errors found, see log for details.")
         }
 
+        pybind11NameResolver =
+            Pybind11NameResolver(
+                pybind11FilteredModel.referenceMap,
+                internalNamespace,
+                CppNameCache(rootNamespace, pybind11FilteredModel.referenceMap, cppNameRules),
+                cppNameRules,
+            )
         val nameResolvers =
             mapOf(
                 "" to pythonNameResolver,
-                "Pybind11" to
-                    Pybind11NameResolver(
-                        pybind11FilteredModel.referenceMap,
-                        internalNamespace,
-                        CppNameCache(rootNamespace, pybind11FilteredModel.referenceMap, cppNameRules),
-                        cppNameRules,
-                    ),
+                "Pybind11" to pybind11NameResolver,
             )
         val predicates = PythonGeneratorPredicates(LimeOverloadsValidatorSignatureResolver(pybind11FilteredModel), pythonFilteredModel.referenceMap)
 
@@ -169,12 +171,24 @@ internal class PythonGenerator : Generator {
         predicates: Map<String, (Any) -> Boolean>,
     ): List<GeneratedFile> {
         val limeType = limeElement as? com.here.gluecodium.model.lime.LimeType ?: return emptyList()
-        val includes = includeCollector.collectImports(limeType).distinct().sorted()
+        // Exceptions are represented as std::error_code in C++ (no dedicated header is generated),
+        // so the include collector would resolve a non-existent header. The exception translator
+        // only needs the common pybind11 headers, so we skip per-element includes for exceptions.
+        val includes =
+            if (limeType is com.here.gluecodium.model.lime.LimeException) {
+                emptyList()
+            } else {
+                includeCollector.collectImports(limeType).distinct().sorted()
+            }
         val templateData =
             mapOf(
                 "model" to limeElement,
                 "moduleName" to pythonModule,
                 "includes" to includes,
+                "internalNamespace" to internalNamespace,
+                "fullName" to pybind11NameResolver.resolveFullName(limeElement),
+                "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
+                "trampolineName" to (pythonNameResolver.resolveName(limeElement) + "Trampoline"),
                 "contentTemplate" to selectPybind11Template(limeElement),
             )
         val content = TemplateEngine.render("python/Pybind11File", templateData, nameResolvers, predicates)
@@ -195,9 +209,15 @@ internal class PythonGenerator : Generator {
         val casterContent =
             TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
 
+        // Wrapper cache: preserves referential equality across the C++ <-> Python boundary by
+        // mapping a C++ instance pointer to a single Python wrapper object.
+        val wrapperCacheContent =
+            TemplateEngine.render("python/Pybind11WrapperCache", emptyMap<String, Any>(), nameResolvers, predicates)
+
         return listOf(
             GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
             GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
+            GeneratedFile(wrapperCacheContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_wrapper_cache.h"),
         )
     }
 

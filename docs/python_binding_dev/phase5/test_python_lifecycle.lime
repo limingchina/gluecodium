@@ -1,0 +1,26 @@
+package com.example.lifecycle
+
+interface Listener {
+    fun onEvent(value: Int)
+    fun onData(items: List<String>, mapping: Map<String, Int>, flags: Set<Int>)
+    property count: Int
+}
+
+class Producer {
+    constructor create()
+    fun addListener(listener: Listener)
+    fun next(): Int
+    property lastValue: Int
+}
+
+exception MyError(ErrorCode)
+
+enum ErrorCode {
+    NONE,
+    FAILED
+}
+
+class Service {
+    constructor create()
+    fun doWork(fail: Boolean): String throws MyError
+}

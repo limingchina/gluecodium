@@ -40,6 +40,7 @@ internal class Pybind11NameResolver(
     nameCache: CppNameCache,
     cppNameRules: CppNameRules,
 ) : NameResolver {
+    private val internalNs: List<String> = internalNamespace
     private val cppNameResolver =
         CppNameResolver(limeReferenceMap, internalNamespace, nameCache, forceFollowThrough = true)
 
@@ -49,8 +50,14 @@ internal class Pybind11NameResolver(
 
     override fun resolveSetterName(element: Any) = cppNameResolver.resolveSetterName(element)
 
-    /** Resolve the fully-qualified C++ name (with namespace) for a named element. */
-    fun resolveFullName(element: LimeNamedElement): String = nameCache.getFullyQualifiedName(element)
-
-    private val nameCache: CppNameCache = nameCache
+    /**
+     * Resolve the fully-qualified C++ name (with namespace) for a named element, e.g.
+     * `com::example::lifecycle::Producer`. Built directly from the Lime path so it works for every
+     * element (including exceptions, which have no dedicated C++ header) without relying on the
+     * C++ name cache's per-element name rules.
+     */
+    fun resolveFullName(element: LimeNamedElement): String {
+        val parts: List<String> = listOf("") + internalNs + element.path.head + element.path.tail
+        return parts.joinToString("::")
+    }
 }

@@ -24,11 +24,17 @@ import com.here.gluecodium.generator.common.Include
 import com.here.gluecodium.generator.cpp.CppIncludeResolver
 import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.model.lime.LimeElement
+import com.here.gluecodium.model.lime.LimeException
+import com.here.gluecodium.model.lime.LimeTypeRef
 
 /**
  * Resolves C++ includes needed by the generated pybind11 binding code. Delegates to the existing
  * [CppIncludeResolver] (which already knows about the generated C++ headers, STL types, and the
  * Gluecodium helper includes such as `Return.h`).
+ *
+ * Exceptions are represented as `std::error_code` in C++ (no dedicated header is generated), so a
+ * type reference whose target is a [LimeException] is skipped — its include would otherwise point
+ * at a non-existent header. The required `Return.h` is already pulled in via `_return_caster.h`.
  */
 internal class Pybind11IncludeResolver(
     limeReferenceMap: Map<String, LimeElement>,
@@ -38,5 +44,9 @@ internal class Pybind11IncludeResolver(
     private val cppIncludeResolver = CppIncludeResolver(limeReferenceMap, cppNameRules, internalNamespace)
 
     override fun resolveElementImports(limeElement: LimeElement): List<Include> =
-        cppIncludeResolver.resolveElementImports(limeElement)
+        if (limeElement is LimeTypeRef && limeElement.type.actualType is LimeException) {
+            emptyList()
+        } else {
+            cppIncludeResolver.resolveElementImports(limeElement)
+        }
 }

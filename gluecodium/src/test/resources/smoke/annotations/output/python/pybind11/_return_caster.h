@@ -16,6 +16,7 @@
 #include <system_error>
 #include <type_traits>
 
+#include "_wrapper_cache.h"
 #include <Return.h>
 
 namespace pybind11::detail {

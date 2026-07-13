@@ -1,8 +1,14 @@
 
 
+#include <Python.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
 #include "gluecodium/TimePointHash.h"
 #include "gluecodium/UnorderedSetHash.h"
 #include "smoke/Dates.h"
@@ -10,12 +16,15 @@
 #include "optional"
 #include "unordered_set"
 
+// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
+using Dates = ::gluecodium::smoke::Dates;
+
 void register_Dates(py::module_& module) {
     py::class_<Dates>(module, "Dates")
         .def("date_method", &Dates::date_method, py::arg("input"))
         .def("nullable_date_method", &Dates::nullable_date_method, py::arg("input"))
-        .def_property("date_property", &Dates::get_date_property)
-        .def_property("date_set", &Dates::get_date_set)
+        .def_property("date_property", py::overload_cast<>(&Dates::get_date_property, py::const_), py::overload_cast<const ::std::chrono::system_clock::time_point&>(&Dates::set_date_property))
+        .def_property("date_set", py::overload_cast<>(&Dates::get_date_set, py::const_), py::overload_cast<const ::std::unordered_set< ::std::chrono::system_clock::time_point, ::gluecodium::hash< ::std::chrono::system_clock::time_point > >&>(&Dates::set_date_set))
         ;
 }
 
