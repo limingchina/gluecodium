@@ -13,7 +13,10 @@ Phase 8 covers three sub-parts:
   configures CMake with `GLUECODIUM_GENERATORS_DEFAULT="cpp;python"`, builds the
   pybind11 extension module, copies the generated wrapper package next to the `.so`,
   and runs pytest via ctest.
-- **8.2 Functional tests (pytest)** — ⚠️ BLOCKED on generator correctness.
+- **8.2 Functional tests (pytest)** — 🟡 PARTIAL. The `Constants` feature now
+  generates correct Python and its pytest (`constants_test.py`) passes (6 tests).
+  The other 21 functional test files still fail collection because their features
+  are narrowed out (kept for future fixes).
 
 ## What works
 
@@ -23,6 +26,15 @@ All pybind11 binding `.cpp` files compile cleanly once the feature set is narrow
 (see below). The CMake integration (parent `functional/CMakeLists.txt` + the
 `functional/python/CMakeLists.txt` test driver) is in place and the build script
 drives it end-to-end.
+
+The `Constants` feature now generates correct Python (module-level constants, nested
+enums, `True`/`False`/`float('nan')` literals) and its pytest passes:
+
+```bash
+cd functional-tests/build-python/functional/python
+PYTHONPATH=".../build-python/functional" python3.14 -m pytest tests/constants_test.py
+# 6 passed
+```
 
 ## Generator bugs fixed during Phase 8
 
@@ -40,6 +52,21 @@ drives it end-to-end.
 4. **Self-import** (`PythonGenerator.kt`) — types referencing themselves (e.g.
    `Greeter.create()` returns `Greeter`) emitted a circular `from ...Greeter import
    Greeter`. Filtered out in `generatePythonFile`.
+5. **Constant generation** (`PythonImportResolver.kt`, `PythonNameResolver.kt`,
+   templates) — constants were emitted as bogus cross-module imports
+   (`from test.X import X`) and bare `NaN`/`true` literals. Fixed by:
+   - `PythonImportResolver.resolveElementImports` now returns `emptyList()` for
+     `LimeConstant` (constants are module-level variables, never imported).
+   - `PythonImportResolver.resolveValueImports` returns `emptyList()` for
+     `LimeValue.Constant` (constant-to-constant references resolve in place).
+   - `PythonNameResolver.resolveValue` renders booleans as `True`/`False` and
+     `LimeValue.Special` literals as `float('nan')`/`float('inf')`/`float('-inf')`.
+   - Templates (`PythonClass`/`PythonStruct`/`PythonInterface`) emit nested
+     enumerations and constants via `{{#enumerations}}`/`{{#constants}}`; new
+     `PythonConstant.mustache` renders `NAME = value`.
+   - `constants_test.py` imports from the generated `PascalCase` modules
+     (`test.Constants`, `test.ConstantsSkipCpp`) and asserts the NaN/Infinity
+     constants.
 
 ## Feature set narrowed (Option A)
 
@@ -72,30 +99,20 @@ Only **5 features remain enabled for `python`**: `Constants`, `CircularDependenc
 
 ## Remaining blocker (8.2)
 
-Even the simplest enabled feature (`Constants`) generates broken Python:
-
-```python
-# test/Constants.py
-from test.DOUBLE_CONSTANT import DOUBLE_CONSTANT   # <-- submodule does not exist
-from test.INT_CONSTANT import INT_CONSTANT
-...
-```
-
-The generator emits each constant as a cross-module import instead of a module-level
-variable. Root cause: `PythonImportsCollector` uses `collectValueImports = true`,
-which turns constant-to-constant references into bogus imports. The submodules are
-never generated, so `import test.Constants` fails and pytest cannot collect.
-
-Additionally, the functional test files written in `functional/python/test/` assume
-a `snake_case` module naming (e.g. `test.constants`), but the generator emits
-`PascalCase` module names matching the Lime type (e.g. `test.Constants`). Every test
-file's imports would need rewriting once the generator is fixed.
+The `Constants` feature is now fixed and its pytest passes. The remaining blocker is
+the broader generator gaps (overloads, trampolines, external types, collections,
+dates/durations, lambdas, properties, ref-equality, visibility, name-clashes,
+threading) that keep the other ~40 functional features narrowed out. Those features'
+test files still fail collection because their Lime inputs are not generated for
+`python` yet — they are intentionally kept in `functional/python/test/` for future
+fixes.
 
 ## Follow-up work (not in this phase)
 
-1. Fix constant generation (module-level variables, not cross-module imports).
+1. ~~Fix constant generation (module-level variables, not cross-module imports).~~ ✅ DONE.
 2. Fix the broader generator gaps listed above (overloads, trampolines, external
    types, collections, dates/durations, lambdas, properties, ref-equality,
    visibility, name-clashes, threading) and re-enable the features one by one.
-3. Rewrite the functional pytest files to match the actual generated `PascalCase`
-   module/class names, then run them green.
+3. Rewrite the remaining functional pytest files to match the actual generated
+   `PascalCase` module/class names, then run them green as each feature is
+   re-enabled.
