@@ -280,6 +280,39 @@ _gluecodium_define_target_property(
 )
 
 _gluecodium_define_target_property(
+  GLUECODIUM_PYTHON_PACKAGE
+  BRIEF_DOCS "The base Python package to use for generated Python sources"
+  FULL_DOCS
+    "The base Python package to use for generated Python sources, for example \"com.my_company\"."
+    "This property is initialized by the value of the GLUECODIUM_PYTHON_PACKAGE_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
+  GLUECODIUM_PYTHON_INTERNAL_PACKAGE
+  BRIEF_DOCS "The sub-package to use for internal Python code"
+  FULL_DOCS
+    "The sub-package to use for internal Python code. This value is appended with separator '.' to a value passed with GLUECODIUM_PYTHON_PACKAGE"
+    "This property is initialized by the value of the GLUECODIUM_PYTHON_INTERNAL_PACKAGE_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
+  GLUECODIUM_PYTHON_MODULE_NAME
+  BRIEF_DOCS "Name of the generated Python extension module"
+  FULL_DOCS
+    "Name of the generated Python extension module for pybind11 (the PYBIND11_MODULE name)."
+    "This property is initialized by the value of the GLUECODIUM_PYTHON_MODULE_NAME_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
+  GLUECODIUM_PYTHON_NAMERULES
+  BRIEF_DOCS "The path to a file with name rules for Python"
+  FULL_DOCS
+    "The path to a file with name rules for Python."
+    ${_gluecodium_namerules_doc}
+    "This property is initialized by the value of the GLUECODIUM_PYTHON_NAMERULES_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
   GLUECODIUM_WERROR
   BRIEF_DOCS "The list of warnings to treat as errors."
   FULL_DOCS

@@ -40,5 +40,12 @@ function(get_supported_gluecodium_generators result)
     list(APPEND _gluecodium_generator dart)
   endif()
 
+  # Python bindings require pybind11 (and a Python interpreter) to be compiled.
+  find_program(_python_exe python3)
+  find_package(pybind11 QUIET)
+  if(_python_exe AND pybind11_FOUND)
+    list(APPEND _gluecodium_generator python)
+  endif()
+
   set(${result} ${_gluecodium_generator} PARENT_SCOPE)
 endfunction()

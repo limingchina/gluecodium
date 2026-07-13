@@ -539,6 +539,14 @@ The build produces a Python extension module:
 
 ### Phase 7 — CMake Integration
 
+> **Status**: ✅ Implemented (commit `TBD` — see `docs/python_binding_dev/phase7_implementation.md`).
+> Adds the four `GLUECODIUM_PYTHON_*` target properties, registers `python` in
+> `GLUECODIUM_SUPPORTED_GENERATORS`, wires the properties into the Gluecodium options file
+> (`runGenerate.cmake`), and provides the `gluecodium_target_python_sources()` helper
+> (`Python.cmake`) that globs the generated `python/pybind11/*.cpp` sources and builds the
+> CPython extension module. The sample project (`docs/python_binding_dev/sample_project/`)
+> was adapted to use the helper and verified to build + run end-to-end.
+
 #### 7.1 Add the Python generator to the CMake supported list
 
 **File**: `cmake/modules/gluecodium/gluecodium/KnownOptionalProperties.cmake`

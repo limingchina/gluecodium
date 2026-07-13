@@ -161,9 +161,10 @@ The client imports the native extension module `greeter` and:
 
 ## Known limitations (Phase 6 of the Python generator)
 
-The sample now runs **without any hand-written pybind11 glue** — the generator
-emits the `PYBIND11_MODULE` entry point, the `std::shared_ptr` holder for
-`class` types, and `py::init<>()` for `struct`/`interface` types. The remaining
+The sample runs **without any hand-written pybind11 glue** — the generator emits the
+`PYBIND11_MODULE` entry point, the `std::shared_ptr` holder for `class` types, and
+`py::init<>()` for `struct`/`interface` types, and the CMake build (Phase 7) drives the
+extension module through the `gluecodium_target_python_sources()` helper. The remaining
 limitations are:
 
 1. **`@Async`** functions are not yet bound (Phase 5.5, deferred).
@@ -174,7 +175,7 @@ limitations are:
 Additionally, the generated **Python wrapper classes** (`python/com/example/
 greeter/*.py`) currently have a circular self-import and no factory, so they are
 not directly importable. The client therefore drives the **native** pybind11
-classes directly. Once Phase 6 lands, the same client logic can be written
+classes directly. Once that is fixed, the same client logic can be written
 against the generated `com.example.greeter.Greeter` Python class instead.
 
 The error raised on `greet("")` currently carries the qualified enum name
