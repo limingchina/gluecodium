@@ -29,9 +29,13 @@ import com.here.gluecodium.model.lime.LimeAttributeValueType.NAME
 import com.here.gluecodium.model.lime.LimeBasicType
 import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeElement
+import com.here.gluecodium.model.lime.LimeList
+import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeReturnType
+import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeType
+import com.here.gluecodium.model.lime.LimeTypeAlias
 import com.here.gluecodium.model.lime.LimeTypeRef
 
 /**
@@ -50,6 +54,10 @@ internal class PythonNameResolver(
             is LimeBasicType -> resolveBasicType(element)
             is LimeReturnType -> resolveName(element.typeRef)
             is LimeTypeRef -> resolveTypeRefName(element)
+            is LimeList -> "list[" + resolveName(element.elementType) + "]"
+            is LimeSet -> "set[" + resolveName(element.elementType) + "]"
+            is LimeMap -> "dict[" + resolveName(element.keyType) + ", " + resolveName(element.valueType) + "]"
+            is LimeTypeAlias -> resolveName(element.typeRef)
             is LimeType -> nameRules.getName(element)
             is LimeNamedElement -> getPlatformName(element) ?: nameRules.getName(element)
             else -> throw GluecodiumExecutionException("Unsupported element type ${element.javaClass.name}")
@@ -71,6 +79,9 @@ internal class PythonNameResolver(
             LimeBasicType.TypeId.STRING -> "str"
             LimeBasicType.TypeId.BLOB -> "bytes"
             LimeBasicType.TypeId.FLOAT, LimeBasicType.TypeId.DOUBLE -> "float"
+            LimeBasicType.TypeId.DATE -> "datetime.datetime"
+            LimeBasicType.TypeId.DURATION -> "datetime.timedelta"
+            LimeBasicType.TypeId.LOCALE -> "str"
             else -> "int"
         }
     }

@@ -187,7 +187,18 @@ internal class PythonGenerator : Generator {
     ): List<GeneratedFile> {
         val initTemplateData = mapOf("moduleName" to pythonModule)
         val initContent = TemplateEngine.render("python/PythonInit", initTemplateData, nameResolvers, predicates)
-        return listOf(GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"))
+
+        // Custom type caster for Gluecodium's Return<T, Error> adapter. The include path for the
+        // generated Return.h follows the C++ internal namespace (e.g. "lorem_ipsum/Return.h").
+        val returnInclude = (internalNamespace + "Return.h").joinToString("/")
+        val casterTemplateData = mapOf("returnInclude" to returnInclude)
+        val casterContent =
+            TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
+
+        return listOf(
+            GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
+            GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
+        )
     }
 
     private fun selectPythonTemplate(limeElement: LimeNamedElement) =

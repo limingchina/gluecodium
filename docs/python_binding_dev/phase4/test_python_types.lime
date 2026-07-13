@@ -1,0 +1,32 @@
+package com.example.types
+
+struct Point {
+    x: Double = 0.0
+    y: Double = 0.0
+}
+
+interface Listener {
+    fun onEvent(value: Int)
+    fun onData(items: List<String>, mapping: Map<String, Int>, flags: Set<Int>)
+}
+
+class Calculator {
+    constructor create()
+    fun add(a: Int, b: Int): Int
+    fun divide(a: Double, b: Double): Double
+    fun now(): Date
+    fun elapsed(since: Date): Duration
+    fun tag(): Locale
+    fun names(): List<String>
+    fun lookup(): Map<String, Point>
+    fun maybe(value: Int?): String?
+    fun compute(input: List<Point>?): Map<String, Int>?
+}
+
+typealias Coordinate
+    = Point
+typealias NameList
+    = List<String>
+
+lambda Callback
+    = (Int) -> Void
