@@ -1,19 +1,43 @@
 
 
+from __future__ import annotations
+
 import datetime
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class DateInterval(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], DateInterval):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.DateInterval(*args))
 
 
-    start: datetime.datetime
+    @property
+    def start(self) -> datetime.datetime:
+        """"""
+        return self._native.start
+
+    @start.setter
+    def start(self, value: datetime.datetime):
+        self._native.start = value
 
 
-    end: datetime.datetime
+
+    @property
+    def end(self) -> datetime.datetime:
+        """"""
+        return self._native.end
+
+    @end.setter
+    def end(self, value: datetime.datetime):
+        self._native.end = value
+
 

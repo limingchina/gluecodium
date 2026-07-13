@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.Payload import Payload
 
 class WithPayloadError(Exception):

@@ -3,7 +3,10 @@
 from smoke.AnotherExternalStruct import AnotherExternalStruct
 from smoke.ExternalStruct import ExternalStruct
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Structs(_NativeBase):
@@ -12,13 +15,17 @@ class Structs(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def get_external_struct(self) -> ExternalStruct:
+    def get_external_struct() -> ExternalStruct:
         """"""
-        return self._native.get_external_struct()
+        native_result = generated.Structs.get_external_struct()
+        return ExternalStruct(native_result)
 
+    @staticmethod
 
-    def get_another_external_struct(self) -> AnotherExternalStruct:
+    def get_another_external_struct() -> AnotherExternalStruct:
         """"""
-        return self._native.get_another_external_struct()
+        native_result = generated.Structs.get_another_external_struct()
+        return AnotherExternalStruct(native_result)
 

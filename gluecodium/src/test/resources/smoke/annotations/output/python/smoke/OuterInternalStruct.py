@@ -1,15 +1,31 @@
 
 
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class OuterInternalStruct(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], OuterInternalStruct):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.OuterInternalStruct(*args))
 
 
-    some_field: int
+    @property
+    def some_field(self) -> int:
+        """"""
+        return self._native.some_field
+
+    @some_field.setter
+    def some_field(self, value: int):
+        self._native.some_field = value
+
 

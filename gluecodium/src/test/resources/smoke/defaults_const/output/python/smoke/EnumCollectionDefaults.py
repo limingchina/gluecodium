@@ -1,21 +1,53 @@
 
 
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class EnumCollectionDefaults(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], EnumCollectionDefaults):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.EnumCollectionDefaults(*args))
 
 
-    list_field: list[Enum1]
+    @property
+    def list_field(self) -> list[Enum1]:
+        """"""
+        return self._native.list_field
+
+    @list_field.setter
+    def list_field(self, value: list[Enum1]):
+        self._native.list_field = value
 
 
-    set_field: set[Enum2]
+
+    @property
+    def set_field(self) -> set[Enum2]:
+        """"""
+        return self._native.set_field
+
+    @set_field.setter
+    def set_field(self, value: set[Enum2]):
+        self._native.set_field = value
 
 
-    map_field: dict[Enum3, Enum4]
+
+    @property
+    def map_field(self) -> dict[Enum3, Enum4]:
+        """"""
+        return self._native.map_field
+
+    @map_field.setter
+    def map_field(self, value: dict[Enum3, Enum4]):
+        self._native.map_field = value
+
 

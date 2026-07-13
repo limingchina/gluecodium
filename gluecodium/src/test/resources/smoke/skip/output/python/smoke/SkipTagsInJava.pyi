@@ -1,14 +1,20 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class SkipTagsInJava(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, SkipTagsInJava):
+            super().__init__(native)
+        else:
+            super().__init__(generated.SkipTagsInJava())
 
 
     def skip_tagged(self):

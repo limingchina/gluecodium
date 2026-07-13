@@ -1,10 +1,15 @@
 
 
+from __future__ import annotations
+
 from smoke.SomeEnum import SomeEnum
 from smoke.SomeStruct import SomeStruct
 from smoke.SomethingWrongError import SomethingWrongError
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class CommentsLinks(_NativeBase):
@@ -82,7 +87,7 @@ Not working for Java:
 
 Not working for Swift:
 * named comment: [Alternative name for the link, stripped for Swift][comments.VeryUseful]"""
-        return self._native.random_method(input_parameter)
+        return self._native.random_method(input_parameter._native)
 
     Links to method overloads:
     * other one: [random_method(SomeEnum)]

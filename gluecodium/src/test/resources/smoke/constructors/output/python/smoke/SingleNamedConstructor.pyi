@@ -1,8 +1,10 @@
 
 
-from smoke.SingleNamedConstructor import SingleNamedConstructor
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class SingleNamedConstructor(_NativeBase):
@@ -11,8 +13,10 @@ class SingleNamedConstructor(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def create(self) -> SingleNamedConstructor:
+    def create() -> SingleNamedConstructor:
         """"""
-        return self._native.create()
+        native_result = generated.SingleNamedConstructor.create()
+        return SingleNamedConstructor(native_result)
 

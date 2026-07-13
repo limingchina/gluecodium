@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 import datetime
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class DurationMilliseconds(_NativeBase):
@@ -27,4 +32,7 @@ class DurationMilliseconds(_NativeBase):
         """"""
         return self._native.duration_property
 
+    @duration_property.setter
+    def duration_property(self, value: datetime.timedelta):
+        self._native.duration_property = value
 

@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 from smoke.InternalInterfaceParent import InternalInterfaceParent
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class InternalClassInherits(

@@ -5,7 +5,10 @@ from smoke.InnerClass import InnerClass
 from smoke.InnerInterface import InnerInterface
 from smoke.LevelFour import LevelFour
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class LevelOne(_NativeBase):

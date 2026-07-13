@@ -7,7 +7,10 @@ from smoke.IncludableStruct import IncludableStruct
 from smoke.ParentInterfaceWithIncludes import ParentInterfaceWithIncludes
 from smoke.ShouldNotInclude import ShouldNotInclude
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildClassWithIncludes(

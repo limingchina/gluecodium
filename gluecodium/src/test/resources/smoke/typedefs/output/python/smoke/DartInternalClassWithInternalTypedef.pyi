@@ -3,7 +3,10 @@
 from smoke.dict[str, int] import dict[str, int]
 from smoke.list[str] import list[str]
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class DartInternalClassWithInternalTypedef(_NativeBase):
@@ -18,6 +21,9 @@ class DartInternalClassWithInternalTypedef(_NativeBase):
         """"""
         return self._native.numbers
 
+    @numbers.setter
+    def numbers(self, value: dict[str, int]):
+        self._native.numbers = value
 
 
     @property
@@ -25,4 +31,7 @@ class DartInternalClassWithInternalTypedef(_NativeBase):
         """"""
         return self._native.labels
 
+    @labels.setter
+    def labels(self, value: list[str]):
+        self._native.labels = value
 

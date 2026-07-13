@@ -1,9 +1,14 @@
 
 
+from __future__ import annotations
+
 from smoke.SomeError import SomeError
 from smoke.SomeTypeCollectionError import SomeTypeCollectionError
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class UseTcException(_NativeBase):

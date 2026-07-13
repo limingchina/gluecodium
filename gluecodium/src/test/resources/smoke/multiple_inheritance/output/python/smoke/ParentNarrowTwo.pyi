@@ -1,14 +1,20 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ParentNarrowTwo(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, ParentNarrowTwo):
+            super().__init__(native)
+        else:
+            super().__init__(generated.ParentNarrowTwo())
 
 
     def parent_function_two(self):
@@ -21,4 +27,7 @@ class ParentNarrowTwo(_NativeBase):
         """"""
         return self._native.parent_property_two
 
+    @parent_property_two.setter
+    def parent_property_two(self, value: str):
+        self._native.parent_property_two = value
 

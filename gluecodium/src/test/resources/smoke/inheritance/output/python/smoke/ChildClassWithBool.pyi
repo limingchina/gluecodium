@@ -2,7 +2,10 @@
 
 from smoke.ParentInterfaceWithBool import ParentInterfaceWithBool
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildClassWithBool(

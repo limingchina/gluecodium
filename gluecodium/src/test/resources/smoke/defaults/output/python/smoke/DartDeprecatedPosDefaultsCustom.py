@@ -1,24 +1,49 @@
 
 
-from smoke.DartDeprecatedPosDefaultsCustom import DartDeprecatedPosDefaultsCustom
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class DartDeprecatedPosDefaultsCustom(_NativeBase):
     """Foo Bar this is a comment"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], DartDeprecatedPosDefaultsCustom):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.DartDeprecatedPosDefaultsCustom(*args))
 
 
-    int_field: int
-
-
-    string_field: str
-
-
-    def custom(self) -> DartDeprecatedPosDefaultsCustom:
+    @property
+    def int_field(self) -> int:
         """"""
-        return self._native.custom()
+        return self._native.int_field
+
+    @int_field.setter
+    def int_field(self, value: int):
+        self._native.int_field = value
+
+
+
+    @property
+    def string_field(self) -> str:
+        """"""
+        return self._native.string_field
+
+    @string_field.setter
+    def string_field(self, value: str):
+        self._native.string_field = value
+
+
+    @staticmethod
+
+    def custom() -> DartDeprecatedPosDefaultsCustom:
+        """"""
+        native_result = generated.DartDeprecatedPosDefaultsCustom.custom()
+        return DartDeprecatedPosDefaultsCustom(native_result)
 

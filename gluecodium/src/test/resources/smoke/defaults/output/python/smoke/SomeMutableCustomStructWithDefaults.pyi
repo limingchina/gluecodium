@@ -1,21 +1,51 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class SomeMutableCustomStructWithDefaults(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], SomeMutableCustomStructWithDefaults):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.SomeMutableCustomStructWithDefaults(*args))
 
 
-    int_field: int
+    @property
+    def int_field(self) -> int:
+        """"""
+        return self._native.int_field
+
+    @int_field.setter
+    def int_field(self, value: int):
+        self._native.int_field = value
 
 
-    string_field: str
+
+    @property
+    def string_field(self) -> str:
+        """"""
+        return self._native.string_field
+
+    @string_field.setter
+    def string_field(self, value: str):
+        self._native.string_field = value
 
 
-    list_field: list[int]
+
+    @property
+    def list_field(self) -> list[int]:
+        """"""
+        return self._native.list_field
+
+    @list_field.setter
+    def list_field(self, value: list[int]):
+        self._native.list_field = value
+
 

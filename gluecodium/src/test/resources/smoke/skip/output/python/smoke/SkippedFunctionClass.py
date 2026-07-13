@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 from dont.smoke.DontSmokeEnum import DontSmokeEnum
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class SkippedFunctionClass(_NativeBase):
@@ -14,5 +19,5 @@ class SkippedFunctionClass(_NativeBase):
 
     def do_foo(self, input: DontSmokeEnum):
         """"""
-        return self._native.do_foo(input)
+        return self._native.do_foo(input._native)
 

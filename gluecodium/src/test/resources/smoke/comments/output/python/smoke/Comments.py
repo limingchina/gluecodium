@@ -1,11 +1,16 @@
 
 
+from __future__ import annotations
+
 from smoke.SomeEnum import SomeEnum
 from smoke.SomethingWrongError import SomethingWrongError
 from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Comments(_NativeBase):
@@ -80,6 +85,9 @@ class Comments(_NativeBase):
         """Some very useful property."""
         return self._native.is_some_property
 
+    @is_some_property.setter
+    def is_some_property(self, value: bool):
+        self._native.is_some_property = value
 
     OnlyGetterProperty, which does not have a setter.
     @property
@@ -94,4 +102,7 @@ class Comments(_NativeBase):
         """A flag that determines if [OnlyGetterProperty] is visible on the screen."""
         return self._native.is_is_visible
 
+    @is_is_visible.setter
+    def is_is_visible(self, value: bool):
+        self._native.is_is_visible = value
 

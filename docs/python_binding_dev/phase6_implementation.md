@@ -148,3 +148,26 @@ failures / intentional validation failures) and also have no `output/python/` di
 - The wrapper cache is generated but not yet wired into `return_value_policy` at call sites
   (referential equality not yet enforced) — unchanged from Phase 5.
 - `Locale` caster still missing — unchanged from Phase 4/5.
+
+### 5.1 Importability (fixed after the initial Phase 6 commit)
+
+The initial Phase 6 commit (`3675a2d27`) only added the output *file structure* (module init,
+`.pyi` stubs, build files) and did **not** make the generated `.py` wrappers actually
+importable. The following were fixed in a follow-up:
+
+- **Circular self-import** — `PythonImportResolver` emitted `from ...Greeter import Greeter`
+  inside `Greeter.py` for self-referencing types (e.g. `Greeter.create()` returns `Greeter`).
+  `PythonGenerator.generatePythonFile` now filters out the self-import (mirroring the Dart
+  generator's `.filterNot { it.filePath.endsWith(filePath) }`).
+- **Missing package `__init__.py`** — only the top-level `python/__init__.py` existed, so
+  `import com.example.greeter.Greeter` failed with `ModuleNotFoundError`. `generateCommonFiles`
+  now emits an `__init__.py` for every package directory prefix.
+- **No factory** — wrappers only accepted a `native` handle. Struct/interface wrappers now
+  forward constructor args to the native type (`Greeting(name, count)`, `GreetingListener()`),
+  and `class` static factories (`Greeter.create()`) wrap the native result. Wrapper-type
+  method parameters are unwrapped via `._native` (new `isWrapperType` predicate).
+- **Forward-reference annotations** — `from __future__ import annotations` is emitted at the top
+  of every wrapper file so `-> Greeter` self-references resolve lazily.
+- **Property setters / struct fields** — `PythonProperty` now uses `{{#ifPredicate "hasSetter"}}`
+  (the previous `{{#if hasSetter}}` never invoked the predicate), and `PythonField` emits
+  read/write properties delegating to the native object.

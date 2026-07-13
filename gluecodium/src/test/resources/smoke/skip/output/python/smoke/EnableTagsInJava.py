@@ -1,14 +1,22 @@
 
 
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class EnableTagsInJava(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, EnableTagsInJava):
+            super().__init__(native)
+        else:
+            super().__init__(generated.EnableTagsInJava())
 
 
     def enable_tagged(self):

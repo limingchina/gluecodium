@@ -1,9 +1,14 @@
 
 
+from __future__ import annotations
+
 from smoke.AsyncError import AsyncError
 from smoke.AsyncErrorCode import AsyncErrorCode
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class AsyncClass(_NativeBase):
@@ -32,8 +37,10 @@ class AsyncClass(_NativeBase):
         """"""
         return self._native.async_int_throws(input)
 
+    @staticmethod
 
-    def async_static(self, input: bool):
+    def async_static(input: bool):
         """"""
-        return self._native.async_static(input)
+        native_result = generated.AsyncClass.async_static(input)
+        return None(native_result)
 

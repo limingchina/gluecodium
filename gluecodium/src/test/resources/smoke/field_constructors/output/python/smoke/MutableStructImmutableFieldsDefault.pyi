@@ -2,21 +2,51 @@
 
 from smoke.ImmutableDefaultCtor import ImmutableDefaultCtor
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class MutableStructImmutableFieldsDefault(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], MutableStructImmutableFieldsDefault):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.MutableStructImmutableFieldsDefault(*args))
 
 
-    struct_field: ImmutableDefaultCtor
+    @property
+    def struct_field(self) -> ImmutableDefaultCtor:
+        """"""
+        return self._native.struct_field
+
+    @struct_field.setter
+    def struct_field(self, value: ImmutableDefaultCtor):
+        self._native.struct_field = value
 
 
-    int_field: int
+
+    @property
+    def int_field(self) -> int:
+        """"""
+        return self._native.int_field
+
+    @int_field.setter
+    def int_field(self, value: int):
+        self._native.int_field = value
 
 
-    bool_field: bool
+
+    @property
+    def bool_field(self) -> bool:
+        """"""
+        return self._native.bool_field
+
+    @bool_field.setter
+    def bool_field(self, value: bool):
+        self._native.bool_field = value
+
 

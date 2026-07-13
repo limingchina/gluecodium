@@ -1,21 +1,38 @@
 
 
-from smoke.SwiftExternalCtor import SwiftExternalCtor
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class SwiftExternalCtor(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], SwiftExternalCtor):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.SwiftExternalCtor(*args))
 
 
-    field: str
-
-
-    def make(self, field: str) -> SwiftExternalCtor:
+    @property
+    def field(self) -> str:
         """"""
-        return self._native.make(field)
+        return self._native.field
+
+    @field.setter
+    def field(self, value: str):
+        self._native.field = value
+
+
+    @staticmethod
+
+    def make(field: str) -> SwiftExternalCtor:
+        """"""
+        native_result = generated.SwiftExternalCtor.make(field)
+        return SwiftExternalCtor(native_result)
 

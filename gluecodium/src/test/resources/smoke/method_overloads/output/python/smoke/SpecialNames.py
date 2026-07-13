@@ -1,8 +1,12 @@
 
 
-from smoke.SpecialNames import SpecialNames
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class SpecialNames(_NativeBase):
@@ -31,8 +35,10 @@ class SpecialNames(_NativeBase):
         """"""
         return self._native._uppercase()
 
+    @staticmethod
 
-    def make(self, result: str) -> SpecialNames:
+    def make(result: str) -> SpecialNames:
         """"""
-        return self._native.make(result)
+        native_result = generated.SpecialNames.make(result)
+        return SpecialNames(native_result)
 

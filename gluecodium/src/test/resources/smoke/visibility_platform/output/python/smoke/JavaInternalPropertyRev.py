@@ -1,7 +1,12 @@
 
 
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class JavaInternalPropertyRev(_NativeBase):
@@ -16,4 +21,7 @@ class JavaInternalPropertyRev(_NativeBase):
         """"""
         return self._native.app_context
 
+    @app_context.setter
+    def app_context(self, value):
+        self._native.app_context = value
 

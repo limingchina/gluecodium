@@ -1,27 +1,60 @@
 
 
-from smoke.FieldCustomConstructorsMix import FieldCustomConstructorsMix
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class FieldCustomConstructorsMix(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], FieldCustomConstructorsMix):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.FieldCustomConstructorsMix(*args))
 
 
-    string_field: str
-
-
-    int_field: int
-
-
-    bool_field: bool
-
-
-    def create_me(self, int_value: int, dummy: float) -> FieldCustomConstructorsMix:
+    @property
+    def string_field(self) -> str:
         """"""
-        return self._native.create_me(int_value, dummy)
+        return self._native.string_field
+
+    @string_field.setter
+    def string_field(self, value: str):
+        self._native.string_field = value
+
+
+
+    @property
+    def int_field(self) -> int:
+        """"""
+        return self._native.int_field
+
+    @int_field.setter
+    def int_field(self, value: int):
+        self._native.int_field = value
+
+
+
+    @property
+    def bool_field(self) -> bool:
+        """"""
+        return self._native.bool_field
+
+    @bool_field.setter
+    def bool_field(self, value: bool):
+        self._native.bool_field = value
+
+
+    @staticmethod
+
+    def create_me(int_value: int, dummy: float) -> FieldCustomConstructorsMix:
+        """"""
+        native_result = generated.FieldCustomConstructorsMix.create_me(int_value, dummy)
+        return FieldCustomConstructorsMix(native_result)
 

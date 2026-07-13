@@ -2,7 +2,10 @@
 
 from smoke.InternalNestedLambda import InternalNestedLambda
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ClassWithInternalLambda(_NativeBase):
@@ -11,8 +14,10 @@ class ClassWithInternalLambda(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def invoke_internal_lambda(self, lambda: InternalNestedLambda, value: str) -> bool:
+    def invoke_internal_lambda(lambda: InternalNestedLambda, value: str) -> bool:
         """"""
-        return self._native.invoke_internal_lambda(lambda, value)
+        native_result = generated.ClassWithInternalLambda.invoke_internal_lambda(lambda, value)
+        return bool(native_result)
 

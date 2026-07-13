@@ -2,7 +2,10 @@
 
 from smoke.ParentInterface import ParentInterface
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildClassFromInterface(

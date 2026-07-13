@@ -1,9 +1,11 @@
 
 
-from smoke.EquatableClass import EquatableClass
 from smoke.PointerEquatableClass import PointerEquatableClass
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class EquatableClass(_NativeBase):

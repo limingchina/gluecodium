@@ -1,5 +1,8 @@
 {{! Python class: thin wrapper around the native C++ object exposed via pybind11. }}
+
 from _native_base import _NativeBase
+
+import {{nativeModule}}
 
 
 class {{resolveName}}{{#if parents}}(

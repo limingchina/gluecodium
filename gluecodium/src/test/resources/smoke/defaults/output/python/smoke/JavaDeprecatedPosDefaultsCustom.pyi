@@ -1,24 +1,47 @@
 
 
-from smoke.JavaDeprecatedPosDefaultsCustom import JavaDeprecatedPosDefaultsCustom
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class JavaDeprecatedPosDefaultsCustom(_NativeBase):
     """Foo Bar this is a comment"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], JavaDeprecatedPosDefaultsCustom):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.JavaDeprecatedPosDefaultsCustom(*args))
 
     first init!
-    first_init_field: int
+    @property
+    def first_init_field(self) -> int:
+        """first init!"""
+        return self._native.first_init_field
+
+    @first_init_field.setter
+    def first_init_field(self, value: int):
+        self._native.first_init_field = value
+
 
     first free!
-    first_free_field: str
+    @property
+    def first_free_field(self) -> str:
+        """first free!"""
+        return self._native.first_free_field
+
+    @first_free_field.setter
+    def first_free_field(self, value: str):
+        self._native.first_free_field = value
 
 
-    def custom(self) -> JavaDeprecatedPosDefaultsCustom:
+    @staticmethod
+
+    def custom() -> JavaDeprecatedPosDefaultsCustom:
         """"""
-        return self._native.custom()
+        native_result = generated.JavaDeprecatedPosDefaultsCustom.custom()
+        return JavaDeprecatedPosDefaultsCustom(native_result)
 

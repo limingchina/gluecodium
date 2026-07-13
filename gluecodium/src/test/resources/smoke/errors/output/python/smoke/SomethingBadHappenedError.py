@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.SomeInternalEnum import SomeInternalEnum
 
 class SomethingBadHappenedError(Exception):

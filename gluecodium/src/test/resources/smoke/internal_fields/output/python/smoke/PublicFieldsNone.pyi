@@ -1,15 +1,29 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class PublicFieldsNone(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], PublicFieldsNone):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.PublicFieldsNone(*args))
 
 
-    internal_field: str
+    @property
+    def internal_field(self) -> str:
+        """"""
+        return self._native.internal_field
+
+    @internal_field.setter
+    def internal_field(self, value: str):
+        self._native.internal_field = value
+
 

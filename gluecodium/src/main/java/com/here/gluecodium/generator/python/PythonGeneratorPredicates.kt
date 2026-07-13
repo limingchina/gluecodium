@@ -52,6 +52,12 @@ internal class PythonGeneratorPredicates(
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     signatureResolver.isOverloaded(limeFunction)
             },
+            // Whether a type reference refers to a user-defined (generated-wrapper) type that must be
+            // unwrapped to its native `_native` handle before being passed to a pybind11 call.
+            "isWrapperType" to { limeTypeRef: Any ->
+                limeTypeRef is LimeTypeRef &&
+                    limeTypeRef.type.let { it !is com.here.gluecodium.model.lime.LimeBasicType && it !is com.here.gluecodium.model.lime.LimeGenericType }
+            },
             "needsAllFieldsConstructor" to { limeStruct: Any ->
                 when {
                     limeStruct !is LimeStruct -> false
@@ -77,7 +83,10 @@ internal class PythonGeneratorPredicates(
             // empty). Used by the pybind11 file template to emit `using` aliases so the generated
             // code can refer to the C++ type by its short name.
             "hasNamespace" to { limeElement: Any ->
-                limeElement is LimeNamedElement && limeElement.path.head.isNotEmpty()
+                limeElement is com.here.gluecodium.model.lime.LimeClass ||
+                    limeElement is com.here.gluecodium.model.lime.LimeStruct ||
+                    limeElement is com.here.gluecodium.model.lime.LimeInterface ||
+                    limeElement is com.here.gluecodium.model.lime.LimeEnumeration
             },
             // Whether the element is a LimeException. Exceptions are represented as `std::error_code`
             // in C++ (no dedicated type/header), so the pybind11 file template skips the `using`
@@ -97,6 +106,9 @@ internal class PythonGeneratorPredicates(
             "needsAllFieldsConstructor" to { limeElement: Any ->
                 when {
                     limeElement !is com.here.gluecodium.model.lime.LimeStruct -> false
+                    // A default constructor (all fields defaulted) already covers the no-arg case,
+                    // so the all-fields constructor would be a redundant duplicate py::init<>().
+                    limeElement.uninitializedFields.isEmpty() -> false
                     limeElement.fieldConstructors.isEmpty() -> true
                     com.here.gluecodium.generator.common.CommonGeneratorPredicates
                         .hasImmutableFields(limeElement) -> limeElement.allFieldsConstructor == null

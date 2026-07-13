@@ -1,10 +1,15 @@
 
 
+from __future__ import annotations
+
 from smoke.forward.InnerInnerClass2 import InnerInnerClass2
 from smoke.forward.InnerInterface1 import InnerInterface1
 from smoke.forward.InnerInterface2 import InnerInterface2
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class InnerClassForwardDeclarations(_NativeBase):

@@ -1,21 +1,53 @@
 
 
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class PublicStructWithNonDefaultInternalField(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], PublicStructWithNonDefaultInternalField):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.PublicStructWithNonDefaultInternalField(*args))
 
 
-    defaulted_field: int
+    @property
+    def defaulted_field(self) -> int:
+        """"""
+        return self._native.defaulted_field
+
+    @defaulted_field.setter
+    def defaulted_field(self, value: int):
+        self._native.defaulted_field = value
 
 
-    internal_field: str
+
+    @property
+    def internal_field(self) -> str:
+        """"""
+        return self._native.internal_field
+
+    @internal_field.setter
+    def internal_field(self, value: str):
+        self._native.internal_field = value
 
 
-    public_field: bool
+
+    @property
+    def public_field(self) -> bool:
+        """"""
+        return self._native.public_field
+
+    @public_field.setter
+    def public_field(self, value: bool):
+        self._native.public_field = value
+
 

@@ -1,7 +1,10 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class SkipPlatforms(_NativeBase):
@@ -10,23 +13,31 @@ class SkipPlatforms(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def not_in_java(self, input: str) -> str:
+    def not_in_java(input: str) -> str:
         """"""
-        return self._native.not_in_java(input)
+        native_result = generated.SkipPlatforms.not_in_java(input)
+        return str(native_result)
 
+    @staticmethod
 
-    def not_in_swift(self, input: bool) -> bool:
+    def not_in_swift(input: bool) -> bool:
         """"""
-        return self._native.not_in_swift(input)
+        native_result = generated.SkipPlatforms.not_in_swift(input)
+        return bool(native_result)
 
+    @staticmethod
 
-    def not_in_dart(self, input: float) -> float:
+    def not_in_dart(input: float) -> float:
         """"""
-        return self._native.not_in_dart(input)
+        native_result = generated.SkipPlatforms.not_in_dart(input)
+        return float(native_result)
 
+    @staticmethod
 
-    def not_in_kotlin(self, input: float) -> float:
+    def not_in_kotlin(input: float) -> float:
         """"""
-        return self._native.not_in_kotlin(input)
+        native_result = generated.SkipPlatforms.not_in_kotlin(input)
+        return float(native_result)
 

@@ -2,7 +2,10 @@
 
 from smoke.InterfaceWithOverloads import InterfaceWithOverloads
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildClassNameClash(

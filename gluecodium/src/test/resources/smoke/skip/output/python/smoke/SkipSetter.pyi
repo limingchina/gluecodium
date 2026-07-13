@@ -1,14 +1,20 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class SkipSetter(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, SkipSetter):
+            super().__init__(native)
+        else:
+            super().__init__(generated.SkipSetter())
 
 
     @property
@@ -16,4 +22,7 @@ class SkipSetter(_NativeBase):
         """"""
         return self._native.foo
 
+    @foo.setter
+    def foo(self, value: str):
+        self._native.foo = value
 

@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 from smoke.PI import PI
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class AttributesWithComments(_NativeBase):
@@ -22,4 +27,7 @@ class AttributesWithComments(_NativeBase):
         """Property comment"""
         return self._native.prop
 
+    @prop.setter
+    def prop(self, value: str):
+        self._native.prop = value
 

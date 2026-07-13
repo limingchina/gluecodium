@@ -4,7 +4,10 @@ from another.SomeCoolClassType import SomeCoolClassType
 from smoke.ParentInterface import ParentInterface
 from smoke.ParentNarrowOne import ParentNarrowOne
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class FirstParentIsInterfaceClass(
@@ -26,4 +29,7 @@ class FirstParentIsInterfaceClass(
         """"""
         return self._native.child_property
 
+    @child_property.setter
+    def child_property(self, value: str):
+        self._native.child_property = value
 

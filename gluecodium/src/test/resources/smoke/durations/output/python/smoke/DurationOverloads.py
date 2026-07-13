@@ -1,8 +1,13 @@
 
 
+from __future__ import annotations
+
 import datetime
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class DurationOverloads(_NativeBase):

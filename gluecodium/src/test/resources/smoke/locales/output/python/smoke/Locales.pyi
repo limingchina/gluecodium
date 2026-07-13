@@ -1,7 +1,10 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Locales(_NativeBase):
@@ -21,4 +24,7 @@ class Locales(_NativeBase):
         """"""
         return self._native.locale_property
 
+    @locale_property.setter
+    def locale_property(self, value: str):
+        self._native.locale_property = value
 

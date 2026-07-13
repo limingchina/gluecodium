@@ -1,7 +1,12 @@
 
 
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class ExternalClass(_NativeBase):

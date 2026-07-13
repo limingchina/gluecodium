@@ -1,11 +1,13 @@
 
 
-from smoke.ChildConstructors import ChildConstructors
 from smoke.ConstructorExplodedError import ConstructorExplodedError
 from smoke.Constructors import Constructors
 from smoke.ErrorEnum import ErrorEnum
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildConstructors(
@@ -15,13 +17,17 @@ class ChildConstructors(
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def create(self) -> ChildConstructors:
+    def create() -> ChildConstructors:
         """"""
-        return self._native.create()
+        native_result = generated.ChildConstructors.create()
+        return ChildConstructors(native_result)
 
+    @staticmethod
 
-    def create(self, other: Constructors) -> ChildConstructors:
+    def create(other: Constructors) -> ChildConstructors:
         """"""
-        return self._native.create(other)
+        native_result = generated.ChildConstructors.create(other)
+        return ChildConstructors(native_result)
 

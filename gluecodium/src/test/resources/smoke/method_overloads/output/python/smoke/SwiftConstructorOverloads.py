@@ -1,8 +1,12 @@
 
 
-from smoke.SwiftConstructorOverloads import SwiftConstructorOverloads
+from __future__ import annotations
+
+
 
 from _native_base import _NativeBase
+
+import generated
 
 
 class SwiftConstructorOverloads(_NativeBase):
@@ -11,13 +15,17 @@ class SwiftConstructorOverloads(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def make(self, input: str) -> SwiftConstructorOverloads:
+    def make(input: str) -> SwiftConstructorOverloads:
         """"""
-        return self._native.make(input)
+        native_result = generated.SwiftConstructorOverloads.make(input)
+        return SwiftConstructorOverloads(native_result)
 
+    @staticmethod
 
-    def make_do(self, throughput: str) -> SwiftConstructorOverloads:
+    def make_do(throughput: str) -> SwiftConstructorOverloads:
         """"""
-        return self._native.make_do(throughput)
+        native_result = generated.SwiftConstructorOverloads.make_do(throughput)
+        return SwiftConstructorOverloads(native_result)
 

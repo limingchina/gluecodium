@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.ExternalError import ExternalError
 from smoke.ExternalErrors import ExternalErrors
 from smoke.InternalError import InternalError
@@ -7,7 +9,10 @@ from smoke.InternalErrorCode import InternalErrorCode
 from smoke.Payload import Payload
 from smoke.WithPayloadError import WithPayloadError
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Errors(_NativeBase):
@@ -16,28 +21,38 @@ class Errors(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def method_with_errors(self):
+    def method_with_errors():
         """"""
-        return self._native.method_with_errors()
+        native_result = generated.Errors.method_with_errors()
+        return None(native_result)
 
+    @staticmethod
 
-    def method_with_external_errors(self):
+    def method_with_external_errors():
         """"""
-        return self._native.method_with_external_errors()
+        native_result = generated.Errors.method_with_external_errors()
+        return None(native_result)
 
+    @staticmethod
 
-    def method_with_errors_and_return_value(self) -> str:
+    def method_with_errors_and_return_value() -> str:
         """"""
-        return self._native.method_with_errors_and_return_value()
+        native_result = generated.Errors.method_with_errors_and_return_value()
+        return str(native_result)
 
+    @staticmethod
 
-    def method_with_payload_error(self):
+    def method_with_payload_error():
         """"""
-        return self._native.method_with_payload_error()
+        native_result = generated.Errors.method_with_payload_error()
+        return None(native_result)
 
+    @staticmethod
 
-    def method_with_payload_error_and_return_value(self) -> str:
+    def method_with_payload_error_and_return_value() -> str:
         """"""
-        return self._native.method_with_payload_error_and_return_value()
+        native_result = generated.Errors.method_with_payload_error_and_return_value()
+        return str(native_result)
 

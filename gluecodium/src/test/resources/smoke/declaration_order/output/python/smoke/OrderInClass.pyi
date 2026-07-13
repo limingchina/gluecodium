@@ -6,7 +6,10 @@ from smoke.dict[int, list[NestedStruct]] import dict[int, list[NestedStruct]]
 from smoke.int import int
 from smoke.list[NestedStruct] import list[NestedStruct]
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class OrderInClass(_NativeBase):

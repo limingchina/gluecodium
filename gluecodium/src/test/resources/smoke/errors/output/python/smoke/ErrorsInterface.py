@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.ERROR_MESSAGE import ERROR_MESSAGE
 from smoke.ExternalError import ExternalError
 from smoke.ExternalErrors import ExternalErrors
@@ -7,14 +9,20 @@ from smoke.InternalError import InternalError
 from smoke.Payload import Payload
 from smoke.WithPayloadError import WithPayloadError
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ErrorsInterface(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, ErrorsInterface):
+            super().__init__(native)
+        else:
+            super().__init__(generated.ErrorsInterface())
 
 
     def method_with_errors(self):
@@ -31,13 +39,17 @@ class ErrorsInterface(_NativeBase):
         """"""
         return self._native.method_with_errors_and_return_value()
 
+    @staticmethod
 
-    def method_with_payload_error(self):
+    def method_with_payload_error():
         """"""
-        return self._native.method_with_payload_error()
+        native_result = generated.ErrorsInterface.method_with_payload_error()
+        return None(native_result)
 
+    @staticmethod
 
-    def method_with_payload_error_and_return_value(self) -> str:
+    def method_with_payload_error_and_return_value() -> str:
         """"""
-        return self._native.method_with_payload_error_and_return_value()
+        native_result = generated.ErrorsInterface.method_with_payload_error_and_return_value()
+        return str(native_result)
 

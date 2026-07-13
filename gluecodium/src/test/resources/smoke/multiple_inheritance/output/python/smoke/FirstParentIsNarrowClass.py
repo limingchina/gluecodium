@@ -1,9 +1,14 @@
 
 
+from __future__ import annotations
+
 from smoke.ParentNarrowOne import ParentNarrowOne
 from smoke.ParentNarrowTwo import ParentNarrowTwo
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class FirstParentIsNarrowClass(
@@ -25,4 +30,7 @@ class FirstParentIsNarrowClass(
         """"""
         return self._native.child_property
 
+    @child_property.setter
+    def child_property(self, value: str):
+        self._native.child_property = value
 

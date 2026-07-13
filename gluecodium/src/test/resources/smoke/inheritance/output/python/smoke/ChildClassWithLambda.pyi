@@ -2,7 +2,10 @@
 
 from smoke.InterfaceWithLambda import InterfaceWithLambda
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildClassWithLambda(

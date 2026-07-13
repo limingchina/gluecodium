@@ -1,9 +1,14 @@
 
 
+from __future__ import annotations
+
 from smoke.SomeEnum import SomeEnum
 from smoke.SomethingWrongError import SomethingWrongError
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class PlatformComments(_NativeBase):

@@ -1,9 +1,11 @@
 
 
-from smoke.ChildWithCustomConstructor import ChildWithCustomConstructor
 from smoke.ParentWithCustomConstructor import ParentWithCustomConstructor
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ChildWithCustomConstructor(
@@ -13,8 +15,10 @@ class ChildWithCustomConstructor(
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
 
-    def make(self) -> ChildWithCustomConstructor:
+    def make() -> ChildWithCustomConstructor:
         """"""
-        return self._native.make()
+        native_result = generated.ChildWithCustomConstructor.make()
+        return ChildWithCustomConstructor(native_result)
 

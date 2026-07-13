@@ -1,17 +1,33 @@
 
 
+from __future__ import annotations
+
 from smoke.DEFAULT_TRUTH import DEFAULT_TRUTH
 from smoke.JavaExternalCtor import JavaExternalCtor
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class UseJavaExternalConst(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], UseJavaExternalConst):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.UseJavaExternalConst(*args))
 
 
-    string_field: str
+    @property
+    def string_field(self) -> str:
+        """"""
+        return self._native.string_field
+
+    @string_field.setter
+    def string_field(self, value: str):
+        self._native.string_field = value
+
 

@@ -1,18 +1,26 @@
 
 
+from __future__ import annotations
+
 from smoke.CalculationResult import CalculationResult
 from smoke.ResultEnum import ResultEnum
 from smoke.ResultStruct import ResultStruct
 from smoke.dict[str, float] import dict[str, float]
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class ListenersWithReturnValues(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        if isinstance(native, ListenersWithReturnValues):
+            super().__init__(native)
+        else:
+            super().__init__(generated.ListenersWithReturnValues())
 
 
     def fetch_data_double(self) -> float:

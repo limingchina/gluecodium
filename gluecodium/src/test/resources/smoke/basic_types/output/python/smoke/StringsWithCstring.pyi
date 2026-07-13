@@ -1,7 +1,10 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class StringsWithCstring(_NativeBase):
@@ -10,13 +13,17 @@ class StringsWithCstring(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @staticmethod
     Method that takes a C string as input and returns an std::string it as output.
-    def return_input_string_type(self, input_string: str) -> str:
+    def return_input_string_type(input_string: str) -> str:
         """Method that takes a C string as input and returns an std::string it as output."""
-        return self._native.return_input_string_type(input_string)
+        native_result = generated.StringsWithCstring.return_input_string_type(input_string)
+        return str(native_result)
 
+    @staticmethod
     Method that takes a C string as input and returns an std::string it as output.
-    def return_input_string(self, input_string: str) -> str:
+    def return_input_string(input_string: str) -> str:
         """Method that takes a C string as input and returns an std::string it as output."""
-        return self._native.return_input_string(input_string)
+        native_result = generated.StringsWithCstring.return_input_string(input_string)
+        return str(native_result)
 

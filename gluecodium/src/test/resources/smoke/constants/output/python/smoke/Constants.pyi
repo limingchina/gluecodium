@@ -8,12 +8,18 @@ from smoke.INT_CONSTANT import INT_CONSTANT
 from smoke.STRING_CONSTANT import STRING_CONSTANT
 from smoke.UINT_CONSTANT import UINT_CONSTANT
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class Constants(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], Constants):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.Constants(*args))
 

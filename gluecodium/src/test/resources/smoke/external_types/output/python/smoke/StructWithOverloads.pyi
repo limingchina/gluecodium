@@ -1,17 +1,31 @@
 
 
 
+
 from _native_base import _NativeBase
+
+import generated
 
 
 class StructWithOverloads(_NativeBase):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], StructWithOverloads):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.StructWithOverloads(*args))
 
 
-    overloaded_accessors: int
+    @property
+    def overloaded_accessors(self) -> int:
+        """"""
+        return self._native.overloaded_accessors
+
+    @overloaded_accessors.setter
+    def overloaded_accessors(self, value: int):
+        self._native.overloaded_accessors = value
+
 
 
     def overloaded_method(self) -> str:

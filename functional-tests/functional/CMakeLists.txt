@@ -301,7 +301,7 @@ feature(Serialization android android-kotlin swift SOURCES
     input/lime/Serialization.lime
 )
 
-feature(CircularDependencies cpp android android-kotlin swift dart SOURCES
+feature(CircularDependencies cpp android android-kotlin swift dart python SOURCES
     input/lime/Circular.lime
 )
 
@@ -344,7 +344,7 @@ feature(UnderscorePackage cpp android android-kotlin swift dart SOURCES
     input/lime/UseUnderscorePackage.lime
 )
 
-feature(Constants cpp android android-kotlin swift dart SOURCES
+feature(Constants cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Constants.cpp
 
     input/lime/Constants.lime
@@ -398,7 +398,7 @@ feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
     input/lime/StructsWithConstants.lime
 )
 
-feature(DeclarationOrder cpp android android-kotlin swift dart SOURCES
+feature(DeclarationOrder cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StructsWithMethodsDeclarationOrder.cpp
 
     input/lime/OrderWithInterface.lime
@@ -418,11 +418,11 @@ feature(PlatformNames cpp android android-kotlin swift dart SOURCES
     input/lime/PlatformNames.lime
 )
 
-feature(EscapedNames cpp android android-kotlin swift dart SOURCES
+feature(EscapedNames cpp android android-kotlin swift dart python SOURCES
     input/lime/KeywordNames.lime
 )
 
-feature(FullName dart SOURCES
+feature(FullName dart python SOURCES
     input/lime/FullName.lime
 )
 
@@ -553,6 +553,7 @@ set_target_properties(functional_bindings PROPERTIES
     GLUECODIUM_CBRIDGE_INTERNAL_PREFIX "libfunctional_"
     GLUECODIUM_DART_LIBRARY_NAME "functional"
     GLUECODIUM_DART_NAMERULES "${CMAKE_CURRENT_SOURCE_DIR}/../config/dart.properties"
+    GLUECODIUM_PYTHON_MODULE_NAME "functional"
     GLUECODIUM_COPYRIGHT_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/../config/COPYRIGHT"
     GLUECODIUM_DOCS_PLACEHOLDERS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../config/placeholders.properties"
     GLUECODIUM_TAGS "${CUSTOM_GLUECODIUM_TAGS}"
@@ -651,9 +652,37 @@ elseif(dart IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
         COMMAND ${CMAKE_COMMAND}
             -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/input/src/dart ${CMAKE_CURRENT_BINARY_DIR}/dart-merged/lib/src
         )
+elseif(python IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
+    gluecodium_read_required_properties(functional_bindings
+        OUTPUT_MAIN_DIR _main_output)
+
+    # Build the CPython extension module from the generated pybind11 sources.
+    # The generate command lives on `functional_bindings`, so that is the target
+    # whose output directory holds the python/pybind11/*.cpp sources.
+    gluecodium_target_python_sources(functional_bindings
+        OUTPUT_DIR ${_main_output}
+        OUTPUT functional_python)
+
+    # Copy the generated Python wrapper package next to the built extension module so that
+    # `import functional` (the .so) and `from test.X import Y` (the wrappers) both resolve.
+    add_custom_command(TARGET ${functional_python} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/test
+                "$<TARGET_FILE_DIR:${functional_python}>/test"
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${_main_output}/python/__init__.py
+                ${_main_output}/python/_native_base.py
+                "$<TARGET_FILE_DIR:${functional_python}>/"
+        COMMENT "Copying Python wrapper package next to the extension module")
+
+    # The generated pybind11 sources reference the functional tests' hand-written C++ headers
+    # (e.g. external types under input/src/cpp/include/), so expose that directory too.
+    target_include_directories(${functional_python} PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/input/src/cpp")
 endif()
 
 set(CPP_INPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/input/src/cpp")
 
 add_subdirectory(cpp)
 add_subdirectory(dart)
+add_subdirectory(python)

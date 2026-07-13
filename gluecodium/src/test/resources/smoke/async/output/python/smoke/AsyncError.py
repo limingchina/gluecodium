@@ -1,5 +1,7 @@
 
 
+from __future__ import annotations
+
 from smoke.AsyncErrorCode import AsyncErrorCode
 
 class AsyncError(Exception):

@@ -1,0 +1,8 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "functional-python-tests"
+version = "0.0.1"
+dependencies = ["pytest"]
