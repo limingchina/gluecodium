@@ -16,6 +16,8 @@ using RouteUtils = ::gluecodium::smoke::RouteUtils;
 
 void register_RouteUtils(py::module_& module) {
     py::class_<RouteUtils>(module, "RouteUtils")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

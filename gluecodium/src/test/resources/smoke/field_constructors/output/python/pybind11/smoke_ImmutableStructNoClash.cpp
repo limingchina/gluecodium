@@ -21,6 +21,8 @@ void register_ImmutableStructNoClash(py::module_& module) {
         .def_readwrite("string_field", &ImmutableStructNoClash::string_field)
         .def_readwrite("int_field", &ImmutableStructNoClash::int_field)
         .def_readwrite("bool_field", &ImmutableStructNoClash::bool_field)
+        .def(py::init<>())
+        .def(py::init<::std::string, int32_t, bool>(), py::arg("string_field"), py::arg("int_field"), py::arg("bool_field"))
         ;
 }
 

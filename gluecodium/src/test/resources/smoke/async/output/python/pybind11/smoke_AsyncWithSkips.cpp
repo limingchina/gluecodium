@@ -16,7 +16,7 @@ namespace py = pybind11;
 using AsyncWithSkips = ::gluecodium::smoke::AsyncWithSkips;
 
 void register_AsyncWithSkips(py::module_& module) {
-    py::class_<AsyncWithSkips>(module, "AsyncWithSkips")
+    py::class_<AsyncWithSkips, std::shared_ptr<AsyncWithSkips>>(module, "AsyncWithSkips")
         .def("make_shared_instance", &AsyncWithSkips::make_shared_instance, py::arg("android_context"))
         .def("make_shared_instance", &AsyncWithSkips::make_shared_instance)
         ;

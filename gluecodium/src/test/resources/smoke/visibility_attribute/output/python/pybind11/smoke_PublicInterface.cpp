@@ -23,6 +23,7 @@ public:
 
 void register_PublicInterface(py::module_& module) {
     py::class_<PublicInterface, std::shared_ptr<PublicInterface>, PublicInterfaceTrampoline>(module, "PublicInterface")
+        .def(py::init<>())
         ;
 }
 

@@ -21,7 +21,7 @@ namespace py = pybind11;
 using Structs = ::gluecodium::smoke::Structs;
 
 void register_Structs(py::module_& module) {
-    py::class_<Structs>(module, "Structs")
+    py::class_<Structs, std::shared_ptr<Structs>>(module, "Structs")
         .def("swap_point_coordinates", &Structs::swap_point_coordinates, py::arg("input"))
         .def("return_all_types_struct", &Structs::return_all_types_struct, py::arg("input"))
         .def("create_point", &Structs::create_point, py::arg("x"), py::arg("y"))

@@ -15,7 +15,7 @@ namespace py = pybind11;
 using InternalPropertyOnly = ::gluecodium::smoke::InternalPropertyOnly;
 
 void register_InternalPropertyOnly(py::module_& module) {
-    py::class_<InternalPropertyOnly>(module, "InternalPropertyOnly")
+    py::class_<InternalPropertyOnly, std::shared_ptr<InternalPropertyOnly>>(module, "InternalPropertyOnly")
         .def_property("foo", py::overload_cast<>(&InternalPropertyOnly::get_foo, py::const_), py::overload_cast<const ::std::string&>(&InternalPropertyOnly::set_foo))
         ;
 }

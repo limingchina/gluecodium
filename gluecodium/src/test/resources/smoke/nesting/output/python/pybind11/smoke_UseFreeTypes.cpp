@@ -18,7 +18,7 @@ namespace py = pybind11;
 using UseFreeTypes = ::gluecodium::smoke::UseFreeTypes;
 
 void register_UseFreeTypes(py::module_& module) {
-    py::class_<UseFreeTypes>(module, "UseFreeTypes")
+    py::class_<UseFreeTypes, std::shared_ptr<UseFreeTypes>>(module, "UseFreeTypes")
         .def("do_stuff", &UseFreeTypes::do_stuff, py::arg("point"), py::arg("mode"))
         ;
 }

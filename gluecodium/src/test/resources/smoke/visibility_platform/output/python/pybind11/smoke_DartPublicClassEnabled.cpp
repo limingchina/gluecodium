@@ -15,7 +15,7 @@ namespace py = pybind11;
 using DartPublicClassEnabled = ::gluecodium::smoke::DartPublicClassEnabled;
 
 void register_DartPublicClassEnabled(py::module_& module) {
-    py::class_<DartPublicClassEnabled>(module, "DartPublicClassEnabled")
+    py::class_<DartPublicClassEnabled, std::shared_ptr<DartPublicClassEnabled>>(module, "DartPublicClassEnabled")
         ;
 }
 

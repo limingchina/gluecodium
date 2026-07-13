@@ -37,6 +37,7 @@ public:
 
 void register_SkipTagsInKotlin(py::module_& module) {
     py::class_<SkipTagsInKotlin, std::shared_ptr<SkipTagsInKotlin>, SkipTagsInKotlinTrampoline>(module, "SkipTagsInKotlin")
+        .def(py::init<>())
         .def("skip_tagged", &SkipTagsInKotlin::skip_tagged)
         .def("dont_skip_tagged", &SkipTagsInKotlin::dont_skip_tagged)
         .def("skip_tagged_list", &SkipTagsInKotlin::skip_tagged_list)

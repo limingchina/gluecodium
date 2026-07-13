@@ -17,6 +17,7 @@ public:
 
 void register_{{resolveName}}(py::module_& module) {
     py::class_<{{resolveName model "Pybind11"}}, std::shared_ptr<{{resolveName model "Pybind11"}}>, {{resolveName}}Trampoline>(module, "{{resolveName}}")
+        .def(py::init<>())
 {{#functions}}
 {{>python/Pybind11Function}}{{/functions}}
 {{#properties}}

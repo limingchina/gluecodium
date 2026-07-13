@@ -19,7 +19,7 @@ namespace py = pybind11;
 using EquatableClass = ::gluecodium::smoke::EquatableClass;
 
 void register_EquatableClass(py::module_& module) {
-    py::class_<EquatableClass>(module, "EquatableClass")
+    py::class_<EquatableClass, std::shared_ptr<EquatableClass>>(module, "EquatableClass")
         ;
 }
 

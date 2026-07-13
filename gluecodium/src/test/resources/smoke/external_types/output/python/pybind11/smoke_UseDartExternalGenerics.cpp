@@ -24,7 +24,7 @@ namespace py = pybind11;
 using UseDartExternalGenerics = ::gluecodium::smoke::UseDartExternalGenerics;
 
 void register_UseDartExternalGenerics(py::module_& module) {
-    py::class_<UseDartExternalGenerics>(module, "UseDartExternalGenerics")
+    py::class_<UseDartExternalGenerics, std::shared_ptr<UseDartExternalGenerics>>(module, "UseDartExternalGenerics")
         .def("use_generics", &UseDartExternalGenerics::use_generics, py::arg("list"), py::arg("set"))
         ;
 }

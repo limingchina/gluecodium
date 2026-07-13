@@ -16,6 +16,8 @@ using EnableIfTypesSkipped = ::gluecodium::smoke::EnableIfTypesSkipped;
 
 void register_EnableIfTypesSkipped(py::module_& module) {
     py::class_<EnableIfTypesSkipped>(module, "EnableIfTypesSkipped")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

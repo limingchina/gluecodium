@@ -17,7 +17,7 @@ namespace py = pybind11;
 using BasicForwardDeclarations = ::gluecodium::smoke::BasicForwardDeclarations;
 
 void register_BasicForwardDeclarations(py::module_& module) {
-    py::class_<BasicForwardDeclarations>(module, "BasicForwardDeclarations")
+    py::class_<BasicForwardDeclarations, std::shared_ptr<BasicForwardDeclarations>>(module, "BasicForwardDeclarations")
         .def("use_basic", &BasicForwardDeclarations::use_basic)
         ;
 }

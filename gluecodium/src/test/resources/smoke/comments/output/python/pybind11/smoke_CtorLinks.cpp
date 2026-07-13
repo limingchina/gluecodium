@@ -18,7 +18,7 @@ namespace py = pybind11;
 using CtorLinks = ::gluecodium::smoke::CtorLinks;
 
 void register_CtorLinks(py::module_& module) {
-    py::class_<CtorLinks>(module, "CtorLinks")
+    py::class_<CtorLinks, std::shared_ptr<CtorLinks>>(module, "CtorLinks")
         ;
 }
 

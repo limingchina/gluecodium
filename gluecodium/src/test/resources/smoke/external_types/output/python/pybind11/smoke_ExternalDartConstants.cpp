@@ -16,6 +16,8 @@ using ExternalDartConstants = ::gluecodium::smoke::ExternalDartConstants;
 
 void register_ExternalDartConstants(py::module_& module) {
     py::class_<ExternalDartConstants>(module, "ExternalDartConstants")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

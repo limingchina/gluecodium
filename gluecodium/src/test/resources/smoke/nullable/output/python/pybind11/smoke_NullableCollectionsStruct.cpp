@@ -27,6 +27,7 @@ void register_NullableCollectionsStruct(py::module_& module) {
     py::class_<NullableCollectionsStruct>(module, "NullableCollectionsStruct")
         .def_readwrite("dates", &NullableCollectionsStruct::dates)
         .def_readwrite("structs", &NullableCollectionsStruct::structs)
+        .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::unordered_map< int32_t, std::optional< ::smoke::Nullable::SomeStruct > >>(), py::arg("dates"), py::arg("structs"))
         ;
 }
 

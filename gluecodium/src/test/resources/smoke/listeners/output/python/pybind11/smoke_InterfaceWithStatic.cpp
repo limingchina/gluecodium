@@ -44,6 +44,7 @@ public:
 
 void register_InterfaceWithStatic(py::module_& module) {
     py::class_<InterfaceWithStatic, std::shared_ptr<InterfaceWithStatic>, InterfaceWithStaticTrampoline>(module, "InterfaceWithStatic")
+        .def(py::init<>())
         .def("regular_function", &InterfaceWithStatic::regular_function)
         .def("static_function", &InterfaceWithStatic::static_function)
         .def_property("regular_property", py::overload_cast<>(&InterfaceWithStatic::get_regular_property, py::const_), py::overload_cast<const ::std::string&>(&InterfaceWithStatic::set_regular_property))

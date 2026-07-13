@@ -16,7 +16,7 @@ namespace py = pybind11;
 using FirstParentIsClassClass = ::gluecodium::smoke::FirstParentIsClassClass;
 
 void register_FirstParentIsClassClass(py::module_& module) {
-    py::class_<FirstParentIsClassClass>(module, "FirstParentIsClassClass")
+    py::class_<FirstParentIsClassClass, std::shared_ptr<FirstParentIsClassClass>>(module, "FirstParentIsClassClass")
         .def("child_function", &FirstParentIsClassClass::child_function)
         .def_property("child_property", py::overload_cast<>(&FirstParentIsClassClass::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsClassClass::set_child_property))
         ;

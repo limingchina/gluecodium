@@ -33,6 +33,7 @@ public:
 
 void register_InterfaceWithOverloads(py::module_& module) {
     py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "InterfaceWithOverloads")
+        .def(py::init<>())
         .def("parent_method", &InterfaceWithOverloads::parent_method)
         .def("parent_method", &InterfaceWithOverloads::parent_method, py::arg("input"))
         ;

@@ -17,7 +17,7 @@ namespace py = pybind11;
 using BasicTypes = ::gluecodium::smoke::BasicTypes;
 
 void register_BasicTypes(py::module_& module) {
-    py::class_<BasicTypes>(module, "BasicTypes")
+    py::class_<BasicTypes, std::shared_ptr<BasicTypes>>(module, "BasicTypes")
         .def("string_function", &BasicTypes::string_function, py::arg("input"))
         .def("bool_function", &BasicTypes::bool_function, py::arg("input"))
         .def("float_function", &BasicTypes::float_function, py::arg("input"))

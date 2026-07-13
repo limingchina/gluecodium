@@ -15,7 +15,7 @@ namespace py = pybind11;
 using InternalClassWithStaticProperty = ::gluecodium::smoke::InternalClassWithStaticProperty;
 
 void register_InternalClassWithStaticProperty(py::module_& module) {
-    py::class_<InternalClassWithStaticProperty>(module, "InternalClassWithStaticProperty")
+    py::class_<InternalClassWithStaticProperty, std::shared_ptr<InternalClassWithStaticProperty>>(module, "InternalClassWithStaticProperty")
         .def_property("foo_bar", py::overload_cast<>(&InternalClassWithStaticProperty::get_foo_bar, py::const_), py::overload_cast<const ::std::string&>(&InternalClassWithStaticProperty::set_foo_bar))
         ;
 }

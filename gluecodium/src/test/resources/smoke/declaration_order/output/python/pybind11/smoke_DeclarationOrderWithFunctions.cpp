@@ -17,6 +17,8 @@ using DeclarationOrderWithFunctions = ::gluecodium::smoke::DeclarationOrderWithF
 
 void register_DeclarationOrderWithFunctions(py::module_& module) {
     py::class_<DeclarationOrderWithFunctions>(module, "DeclarationOrderWithFunctions")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

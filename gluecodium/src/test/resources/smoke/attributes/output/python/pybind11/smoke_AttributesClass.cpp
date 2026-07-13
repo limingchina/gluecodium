@@ -16,7 +16,7 @@ namespace py = pybind11;
 using AttributesClass = ::gluecodium::smoke::AttributesClass;
 
 void register_AttributesClass(py::module_& module) {
-    py::class_<AttributesClass>(module, "AttributesClass")
+    py::class_<AttributesClass, std::shared_ptr<AttributesClass>>(module, "AttributesClass")
         .def("very_fun", &AttributesClass::very_fun, py::arg("param"))
         .def_property("prop", py::overload_cast<>(&AttributesClass::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesClass::set_prop))
         ;

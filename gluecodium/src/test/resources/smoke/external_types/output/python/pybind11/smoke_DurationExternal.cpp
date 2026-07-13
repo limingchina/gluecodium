@@ -18,6 +18,7 @@ using DurationExternal = ::gluecodium::smoke::DurationExternal;
 void register_DurationExternal(py::module_& module) {
     py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "DurationExternal")
         .def_readwrite("value", &std::chrono::duration<uint64_t, std::ratio<1,1000>>::value)
+        .def(py::init<uint64_t>(), py::arg("value"))
         ;
 }
 

@@ -23,6 +23,8 @@ void register_LocaleDefaults(py::module_& module) {
         .def_readwrite("serbian_cyrillic", &LocaleDefaults::serbian_cyrillic)
         .def_readwrite("traditional_chinese_taiwan", &LocaleDefaults::traditional_chinese_taiwan)
         .def_readwrite("zuerich_german", &LocaleDefaults::zuerich_german)
+        .def(py::init<>())
+        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
         ;
 }
 

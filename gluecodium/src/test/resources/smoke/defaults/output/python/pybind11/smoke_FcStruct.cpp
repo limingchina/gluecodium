@@ -18,6 +18,7 @@ using FcStruct = ::gluecodium::smoke::FcStruct;
 void register_FcStruct(py::module_& module) {
     py::class_<FcStruct>(module, "FcStruct")
         .def_readwrite("string_field", &FcStruct::string_field)
+        .def(py::init<>())
         ;
 }
 

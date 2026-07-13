@@ -23,6 +23,8 @@ void register_InternalEnumDefaults(py::module_& module) {
         .def_readwrite("public_list_field", &InternalEnumDefaults::public_list_field)
         .def_readwrite("internal_field", &InternalEnumDefaults::internal_field)
         .def_readwrite("internal_list_field", &InternalEnumDefaults::internal_list_field)
+        .def(py::init<>())
+        .def(py::init<::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >, ::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >>(), py::arg("public_field"), py::arg("public_list_field"), py::arg("internal_field"), py::arg("internal_list_field"))
         ;
 }
 

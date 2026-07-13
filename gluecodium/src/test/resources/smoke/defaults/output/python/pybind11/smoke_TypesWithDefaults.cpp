@@ -25,6 +25,8 @@ using TypesWithDefaults = ::gluecodium::smoke::TypesWithDefaults;
 
 void register_TypesWithDefaults(py::module_& module) {
     py::class_<TypesWithDefaults>(module, "TypesWithDefaults")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

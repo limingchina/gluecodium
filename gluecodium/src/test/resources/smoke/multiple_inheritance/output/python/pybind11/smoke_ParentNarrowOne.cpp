@@ -36,6 +36,7 @@ public:
 
 void register_ParentNarrowOne(py::module_& module) {
     py::class_<ParentNarrowOne, std::shared_ptr<ParentNarrowOne>, ParentNarrowOneTrampoline>(module, "ParentNarrowOne")
+        .def(py::init<>())
         .def("parent_function_one", &ParentNarrowOne::parent_function_one)
         .def_property("parent_property_one", py::overload_cast<>(&ParentNarrowOne::get_parent_property_one, py::const_), py::overload_cast<const ::std::string&>(&ParentNarrowOne::set_parent_property_one))
         ;

@@ -19,7 +19,7 @@ namespace py = pybind11;
 using UseDartExternalTypes = ::gluecodium::smoke::UseDartExternalTypes;
 
 void register_UseDartExternalTypes(py::module_& module) {
-    py::class_<UseDartExternalTypes>(module, "UseDartExternalTypes")
+    py::class_<UseDartExternalTypes, std::shared_ptr<UseDartExternalTypes>>(module, "UseDartExternalTypes")
         .def("rectangle_round_trip", &UseDartExternalTypes::rectangle_round_trip, py::arg("input"))
         .def("compression_state_round_trip", &UseDartExternalTypes::compression_state_round_trip, py::arg("input"))
         .def("color_round_trip", &UseDartExternalTypes::color_round_trip, py::arg("input"))

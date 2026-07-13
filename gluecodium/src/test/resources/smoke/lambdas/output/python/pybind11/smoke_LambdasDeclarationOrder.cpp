@@ -17,7 +17,7 @@ namespace py = pybind11;
 using LambdasDeclarationOrder = ::gluecodium::smoke::LambdasDeclarationOrder;
 
 void register_LambdasDeclarationOrder(py::module_& module) {
-    py::class_<LambdasDeclarationOrder>(module, "LambdasDeclarationOrder")
+    py::class_<LambdasDeclarationOrder, std::shared_ptr<LambdasDeclarationOrder>>(module, "LambdasDeclarationOrder")
         ;
 }
 

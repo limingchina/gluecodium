@@ -17,7 +17,7 @@ namespace py = pybind11;
 using ChildConstructors = ::gluecodium::smoke::ChildConstructors;
 
 void register_ChildConstructors(py::module_& module) {
-    py::class_<ChildConstructors>(module, "ChildConstructors")
+    py::class_<ChildConstructors, std::shared_ptr<ChildConstructors>>(module, "ChildConstructors")
         .def("create", &ChildConstructors::create)
         .def("create", &ChildConstructors::create, py::arg("other"))
         ;

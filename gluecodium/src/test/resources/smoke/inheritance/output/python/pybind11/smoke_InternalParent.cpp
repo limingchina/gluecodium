@@ -15,7 +15,7 @@ namespace py = pybind11;
 using InternalParent = ::gluecodium::smoke::InternalParent;
 
 void register_InternalParent(py::module_& module) {
-    py::class_<InternalParent>(module, "InternalParent")
+    py::class_<InternalParent, std::shared_ptr<InternalParent>>(module, "InternalParent")
         ;
 }
 

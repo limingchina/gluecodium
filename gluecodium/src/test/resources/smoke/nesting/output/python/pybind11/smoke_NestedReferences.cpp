@@ -17,7 +17,7 @@ namespace py = pybind11;
 using NestedReferences = ::gluecodium::smoke::NestedReferences;
 
 void register_NestedReferences(py::module_& module) {
-    py::class_<NestedReferences>(module, "NestedReferences")
+    py::class_<NestedReferences, std::shared_ptr<NestedReferences>>(module, "NestedReferences")
         .def("inside_out", &NestedReferences::inside_out, py::arg("struct1"), py::arg("struct2"))
         ;
 }

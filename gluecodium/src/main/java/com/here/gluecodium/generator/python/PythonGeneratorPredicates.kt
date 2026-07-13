@@ -85,5 +85,23 @@ internal class PythonGeneratorPredicates(
             "isException" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeException
             },
+            // Whether a struct needs a `py::init<>()` with no arguments. True when every field has
+            // a default value (or there are no fields), so the C++ struct is default-constructible.
+            "hasDefaultConstructor" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeStruct &&
+                    limeElement.uninitializedFields.isEmpty()
+            },
+            // Whether a struct needs a `py::init<...>()` taking every field. True when the struct
+            // has no explicit field constructors (so the implicit all-fields constructor is the
+            // only one) or, for immutable structs, when no all-fields field constructor is declared.
+            "needsAllFieldsConstructor" to { limeElement: Any ->
+                when {
+                    limeElement !is com.here.gluecodium.model.lime.LimeStruct -> false
+                    limeElement.fieldConstructors.isEmpty() -> true
+                    com.here.gluecodium.generator.common.CommonGeneratorPredicates
+                        .hasImmutableFields(limeElement) -> limeElement.allFieldsConstructor == null
+                    else -> false
+                }
+            },
         )
 }

@@ -22,6 +22,7 @@ public:
 
 void register_InheritFromSkipped(py::module_& module) {
     py::class_<InheritFromSkipped, std::shared_ptr<InheritFromSkipped>, InheritFromSkippedTrampoline>(module, "InheritFromSkipped")
+        .def(py::init<>())
         ;
 }
 

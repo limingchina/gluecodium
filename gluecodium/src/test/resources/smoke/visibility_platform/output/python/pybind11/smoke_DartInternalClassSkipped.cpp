@@ -15,7 +15,7 @@ namespace py = pybind11;
 using DartInternalClassSkipped = ::gluecodium::smoke::DartInternalClassSkipped;
 
 void register_DartInternalClassSkipped(py::module_& module) {
-    py::class_<DartInternalClassSkipped>(module, "DartInternalClassSkipped")
+    py::class_<DartInternalClassSkipped, std::shared_ptr<DartInternalClassSkipped>>(module, "DartInternalClassSkipped")
         ;
 }
 

@@ -17,7 +17,7 @@ namespace py = pybind11;
 using Annotations = ::smoke::Annotations;
 
 void register_Annotations(py::module_& module) {
-    py::class_<Annotations>(module, "Annotations")
+    py::class_<Annotations, std::shared_ptr<Annotations>>(module, "Annotations")
         .def("test_optional", &Annotations::test_optional, py::arg("self"))
         ;
 }

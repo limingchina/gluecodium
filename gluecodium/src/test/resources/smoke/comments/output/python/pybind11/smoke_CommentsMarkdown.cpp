@@ -15,7 +15,7 @@ namespace py = pybind11;
 using CommentsMarkdown = ::gluecodium::smoke::CommentsMarkdown;
 
 void register_CommentsMarkdown(py::module_& module) {
-    py::class_<CommentsMarkdown>(module, "CommentsMarkdown")
+    py::class_<CommentsMarkdown, std::shared_ptr<CommentsMarkdown>>(module, "CommentsMarkdown")
         ;
 }
 

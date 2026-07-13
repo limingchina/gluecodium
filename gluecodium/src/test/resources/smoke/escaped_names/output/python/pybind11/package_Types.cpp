@@ -16,6 +16,8 @@ using Types = ::gluecodium::package::types;
 
 void register_Types(py::module_& module) {
     py::class_<Types>(module, "Types")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

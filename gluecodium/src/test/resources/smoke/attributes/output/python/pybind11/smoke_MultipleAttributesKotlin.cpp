@@ -15,7 +15,7 @@ namespace py = pybind11;
 using MultipleAttributesKotlin = ::gluecodium::smoke::MultipleAttributesKotlin;
 
 void register_MultipleAttributesKotlin(py::module_& module) {
-    py::class_<MultipleAttributesKotlin>(module, "MultipleAttributesKotlin")
+    py::class_<MultipleAttributesKotlin, std::shared_ptr<MultipleAttributesKotlin>>(module, "MultipleAttributesKotlin")
         .def("no_lists2", &MultipleAttributesKotlin::no_lists2)
         .def("no_lists3", &MultipleAttributesKotlin::no_lists3)
         .def("list_first", &MultipleAttributesKotlin::list_first)

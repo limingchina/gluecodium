@@ -18,6 +18,7 @@ using UseJavaExternalConst = ::gluecodium::smoke::UseJavaExternalConst;
 void register_UseJavaExternalConst(py::module_& module) {
     py::class_<UseJavaExternalConst>(module, "UseJavaExternalConst")
         .def_readwrite("string_field", &UseJavaExternalConst::string_field)
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

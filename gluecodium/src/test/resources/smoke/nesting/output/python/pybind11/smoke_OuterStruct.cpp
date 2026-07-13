@@ -30,6 +30,7 @@ using OuterStruct = ::gluecodium::smoke::OuterStruct;
 void register_OuterStruct(py::module_& module) {
     py::class_<OuterStruct>(module, "OuterStruct")
         .def_readwrite("field", &OuterStruct::field)
+        .def(py::init<::std::string>(), py::arg("field"))
         .def("do_nothing", &OuterStruct::do_nothing)
         ;
 }

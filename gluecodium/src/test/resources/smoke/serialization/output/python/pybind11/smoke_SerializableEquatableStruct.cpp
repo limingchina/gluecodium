@@ -18,6 +18,7 @@ using SerializableEquatableStruct = ::gluecodium::smoke::SerializableEquatableSt
 void register_SerializableEquatableStruct(py::module_& module) {
     py::class_<SerializableEquatableStruct>(module, "SerializableEquatableStruct")
         .def_readwrite("foo_field", &SerializableEquatableStruct::foo_field)
+        .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 }
 

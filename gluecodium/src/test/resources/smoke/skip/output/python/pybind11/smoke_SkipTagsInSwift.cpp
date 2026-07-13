@@ -37,6 +37,7 @@ public:
 
 void register_SkipTagsInSwift(py::module_& module) {
     py::class_<SkipTagsInSwift, std::shared_ptr<SkipTagsInSwift>, SkipTagsInSwiftTrampoline>(module, "SkipTagsInSwift")
+        .def(py::init<>())
         .def("skip_tagged", &SkipTagsInSwift::skip_tagged)
         .def("dont_skip_tagged", &SkipTagsInSwift::dont_skip_tagged)
         .def("skip_tagged_list", &SkipTagsInSwift::skip_tagged_list)

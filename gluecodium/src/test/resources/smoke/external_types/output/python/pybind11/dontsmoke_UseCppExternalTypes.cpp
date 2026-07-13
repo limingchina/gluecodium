@@ -20,7 +20,7 @@ namespace py = pybind11;
 using UseCppExternalTypes = ::gluecodium::dontsmoke::UseCppExternalTypes;
 
 void register_UseCppExternalTypes(py::module_& module) {
-    py::class_<UseCppExternalTypes>(module, "UseCppExternalTypes")
+    py::class_<UseCppExternalTypes, std::shared_ptr<UseCppExternalTypes>>(module, "UseCppExternalTypes")
         .def("use_struct", &UseCppExternalTypes::use_struct, py::arg("input"))
         .def("use_enum", &UseCppExternalTypes::use_enum, py::arg("input"))
         .def("use_class", &UseCppExternalTypes::use_class, py::arg("input"))

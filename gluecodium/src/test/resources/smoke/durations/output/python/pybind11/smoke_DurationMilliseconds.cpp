@@ -18,7 +18,7 @@ namespace py = pybind11;
 using DurationMilliseconds = ::gluecodium::smoke::DurationMilliseconds;
 
 void register_DurationMilliseconds(py::module_& module) {
-    py::class_<DurationMilliseconds>(module, "DurationMilliseconds")
+    py::class_<DurationMilliseconds, std::shared_ptr<DurationMilliseconds>>(module, "DurationMilliseconds")
         .def("duration_function", &DurationMilliseconds::duration_function, py::arg("input"))
         .def("nullable_duration_function", &DurationMilliseconds::nullable_duration_function, py::arg("input"))
         .def_property("duration_property", py::overload_cast<>(&DurationMilliseconds::get_duration_property, py::const_), py::overload_cast<const std::chrono::milliseconds>(&DurationMilliseconds::set_duration_property))

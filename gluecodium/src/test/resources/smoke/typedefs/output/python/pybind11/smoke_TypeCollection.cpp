@@ -16,6 +16,8 @@ using TypeCollection = ::gluecodium::smoke::TypeCollection;
 
 void register_TypeCollection(py::module_& module) {
     py::class_<TypeCollection>(module, "TypeCollection")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

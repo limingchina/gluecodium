@@ -16,7 +16,7 @@ namespace py = pybind11;
 using EnumsInTypeCollectionInterface = ::gluecodium::smoke::EnumsInTypeCollectionInterface;
 
 void register_EnumsInTypeCollectionInterface(py::module_& module) {
-    py::class_<EnumsInTypeCollectionInterface>(module, "EnumsInTypeCollectionInterface")
+    py::class_<EnumsInTypeCollectionInterface, std::shared_ptr<EnumsInTypeCollectionInterface>>(module, "EnumsInTypeCollectionInterface")
         .def("flip_enum_value", &EnumsInTypeCollectionInterface::flip_enum_value, py::arg("input"))
         ;
 }

@@ -16,7 +16,7 @@ namespace py = pybind11;
 using InnerClassForwardDeclarations = ::gluecodium::smoke::forward::InnerClassForwardDeclarations;
 
 void register_InnerClassForwardDeclarations(py::module_& module) {
-    py::class_<InnerClassForwardDeclarations>(module, "InnerClassForwardDeclarations")
+    py::class_<InnerClassForwardDeclarations, std::shared_ptr<InnerClassForwardDeclarations>>(module, "InnerClassForwardDeclarations")
         ;
 }
 

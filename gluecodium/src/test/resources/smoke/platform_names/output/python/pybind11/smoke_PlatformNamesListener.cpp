@@ -28,6 +28,7 @@ public:
 
 void register_PlatformNamesListener(py::module_& module) {
     py::class_<fooListener, std::shared_ptr<fooListener>, PlatformNamesListenerTrampoline>(module, "PlatformNamesListener")
+        .def(py::init<>())
         .def("basic_method", &fooListener::FooMethod, py::arg("basic_parameter"))
         ;
 }

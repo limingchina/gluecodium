@@ -21,6 +21,7 @@ void register_FieldConstructorsAllDefaults(py::module_& module) {
         .def_readwrite("string_field", &FieldConstructorsAllDefaults::string_field)
         .def_readwrite("int_field", &FieldConstructorsAllDefaults::int_field)
         .def_readwrite("bool_field", &FieldConstructorsAllDefaults::bool_field)
+        .def(py::init<>())
         ;
 }
 

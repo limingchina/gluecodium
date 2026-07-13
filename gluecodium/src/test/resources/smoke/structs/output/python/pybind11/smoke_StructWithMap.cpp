@@ -20,6 +20,7 @@ using StructWithMap = ::gluecodium::smoke::StructWithMap;
 void register_StructWithMap(py::module_& module) {
     py::class_<StructWithMap>(module, "StructWithMap")
         .def_readwrite("field", &StructWithMap::field)
+        .def(py::init<::std::unordered_map< ::std::string, ::smoke::StructWithMap >>(), py::arg("field"))
         ;
 }
 

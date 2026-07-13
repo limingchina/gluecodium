@@ -16,6 +16,8 @@ using CrossFileConstants = ::gluecodium::smoke::CrossFileConstants;
 
 void register_CrossFileConstants(py::module_& module) {
     py::class_<CrossFileConstants>(module, "CrossFileConstants")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

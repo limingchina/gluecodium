@@ -15,7 +15,7 @@ namespace py = pybind11;
 using InternalClass = ::gluecodium::smoke::InternalClass;
 
 void register_InternalClass(py::module_& module) {
-    py::class_<InternalClass>(module, "InternalClass")
+    py::class_<InternalClass, std::shared_ptr<InternalClass>>(module, "InternalClass")
         .def("foo_bar", &InternalClass::foo_bar)
         ;
 }

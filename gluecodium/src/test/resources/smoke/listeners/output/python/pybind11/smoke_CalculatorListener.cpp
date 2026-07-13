@@ -56,6 +56,7 @@ public:
 
 void register_CalculatorListener(py::module_& module) {
     py::class_<CalculatorListener, std::shared_ptr<CalculatorListener>, CalculatorListenerTrampoline>(module, "CalculatorListener")
+        .def(py::init<>())
         .def("on_calculation_result", &CalculatorListener::on_calculation_result, py::arg("calculation_result"))
         .def("on_calculation_result_const", &CalculatorListener::on_calculation_result_const, py::arg("calculation_result"))
         .def("on_calculation_result_struct", &CalculatorListener::on_calculation_result_struct, py::arg("calculation_result"))

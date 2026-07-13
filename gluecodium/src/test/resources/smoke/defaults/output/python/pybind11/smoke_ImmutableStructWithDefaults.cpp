@@ -18,6 +18,8 @@ using ImmutableStructWithDefaults = ::gluecodium::smoke::ImmutableStructWithDefa
 void register_ImmutableStructWithDefaults(py::module_& module) {
     py::class_<ImmutableStructWithDefaults>(module, "ImmutableStructWithDefaults")
         .def_readwrite("int_field", &ImmutableStructWithDefaults::int_field)
+        .def(py::init<>())
+        .def(py::init<int32_t>(), py::arg("int_field"))
         ;
 }
 

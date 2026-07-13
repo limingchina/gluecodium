@@ -33,6 +33,7 @@ public:
 
 void register_ExternalInterface(py::module_& module) {
     py::class_<ExternalInterface, std::shared_ptr<ExternalInterface>, ExternalInterfaceTrampoline>(module, "ExternalInterface")
+        .def(py::init<>())
         .def("some_method", &ExternalInterface::some_Method, py::arg("some_parameter"))
         .def_property_readonly("some_property", py::overload_cast<>(&ExternalInterface::get_Me, py::const_))
         ;

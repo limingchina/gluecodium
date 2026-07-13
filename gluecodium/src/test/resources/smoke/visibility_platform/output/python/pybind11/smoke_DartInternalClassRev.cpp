@@ -15,7 +15,7 @@ namespace py = pybind11;
 using DartInternalClassRev = ::gluecodium::smoke::DartInternalClassRev;
 
 void register_DartInternalClassRev(py::module_& module) {
-    py::class_<DartInternalClassRev>(module, "DartInternalClassRev")
+    py::class_<DartInternalClassRev, std::shared_ptr<DartInternalClassRev>>(module, "DartInternalClassRev")
         ;
 }
 

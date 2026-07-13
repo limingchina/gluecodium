@@ -24,6 +24,7 @@ public:
 
 void register_InterfaceInInterface(py::module_& module) {
     py::class_<InterfaceInInterface, std::shared_ptr<InterfaceInInterface>, InterfaceInInterfaceTrampoline>(module, "InterfaceInInterface")
+        .def(py::init<>())
         ;
 }
 

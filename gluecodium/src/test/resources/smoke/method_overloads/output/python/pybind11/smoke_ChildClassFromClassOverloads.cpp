@@ -16,7 +16,7 @@ namespace py = pybind11;
 using ChildClassFromClassOverloads = ::gluecodium::smoke::ChildClassFromClassOverloads;
 
 void register_ChildClassFromClassOverloads(py::module_& module) {
-    py::class_<ChildClassFromClassOverloads>(module, "ChildClassFromClassOverloads")
+    py::class_<ChildClassFromClassOverloads, std::shared_ptr<ChildClassFromClassOverloads>>(module, "ChildClassFromClassOverloads")
         .def("foo", &ChildClassFromClassOverloads::foo, py::arg("input"))
         .def("foo", &ChildClassFromClassOverloads::foo, py::arg("input"))
         .def("bar", &ChildClassFromClassOverloads::bar, py::arg("input"))

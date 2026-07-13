@@ -19,7 +19,7 @@ namespace py = pybind11;
 using Comments = ::gluecodium::smoke::comments;
 
 void register_Comments(py::module_& module) {
-    py::class_<Comments>(module, "Comments")
+    py::class_<Comments, std::shared_ptr<Comments>>(module, "Comments")
         .def("some_method_with_all_comments", &Comments::some_method_with_all_comments, py::arg("input_parameter"))
         .def("some_method_with_input_comments", &Comments::some_method_with_input_comments, py::arg("input"))
         .def("some_method_with_output_comments", &Comments::some_method_with_output_comments, py::arg("input"))

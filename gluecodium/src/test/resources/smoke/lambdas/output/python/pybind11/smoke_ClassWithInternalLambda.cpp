@@ -17,7 +17,7 @@ namespace py = pybind11;
 using ClassWithInternalLambda = ::gluecodium::smoke::ClassWithInternalLambda;
 
 void register_ClassWithInternalLambda(py::module_& module) {
-    py::class_<ClassWithInternalLambda>(module, "ClassWithInternalLambda")
+    py::class_<ClassWithInternalLambda, std::shared_ptr<ClassWithInternalLambda>>(module, "ClassWithInternalLambda")
         .def("invoke_internal_lambda", &ClassWithInternalLambda::invoke_internal_lambda, py::arg("lambda"), py::arg("value"))
         ;
 }

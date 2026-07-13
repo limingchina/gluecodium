@@ -19,6 +19,8 @@ void register_ConstantDefaults(py::module_& module) {
     py::class_<ConstantDefaults>(module, "ConstantDefaults")
         .def_readwrite("field1", &ConstantDefaults::field1)
         .def_readwrite("field2", &ConstantDefaults::field2)
+        .def(py::init<>())
+        .def(py::init<::fire::SomeStruct, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;
 }
 

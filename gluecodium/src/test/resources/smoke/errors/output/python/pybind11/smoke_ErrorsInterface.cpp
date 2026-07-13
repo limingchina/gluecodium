@@ -39,6 +39,7 @@ public:
 
 void register_ErrorsInterface(py::module_& module) {
     py::class_<ErrorsInterface, std::shared_ptr<ErrorsInterface>, ErrorsInterfaceTrampoline>(module, "ErrorsInterface")
+        .def(py::init<>())
         .def("method_with_errors", &ErrorsInterface::method_with_errors)
         .def("method_with_external_errors", &ErrorsInterface::method_with_external_errors)
         .def("method_with_errors_and_return_value", &ErrorsInterface::method_with_errors_and_return_value)

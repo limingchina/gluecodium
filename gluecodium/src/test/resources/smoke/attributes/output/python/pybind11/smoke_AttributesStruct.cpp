@@ -18,6 +18,7 @@ using AttributesStruct = ::gluecodium::smoke::AttributesStruct;
 void register_AttributesStruct(py::module_& module) {
     py::class_<AttributesStruct>(module, "AttributesStruct")
         .def_readwrite("field", &AttributesStruct::field)
+        .def(py::init<::std::string>(), py::arg("field"))
         .def("very_fun", &AttributesStruct::very_fun, py::arg("param"))
         ;
 }

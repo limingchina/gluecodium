@@ -19,7 +19,7 @@ namespace py = pybind11;
 using LevelOne = ::gluecodium::smoke::LevelOne;
 
 void register_LevelOne(py::module_& module) {
-    py::class_<LevelOne>(module, "LevelOne")
+    py::class_<LevelOne, std::shared_ptr<LevelOne>>(module, "LevelOne")
         ;
 }
 

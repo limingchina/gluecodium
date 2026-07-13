@@ -18,6 +18,7 @@ using ShouldNotInclude = ::gluecodium::smoke::ShouldNotInclude;
 void register_ShouldNotInclude(py::module_& module) {
     py::class_<ShouldNotInclude>(module, "ShouldNotInclude")
         .def_readwrite("field", &ShouldNotInclude::field)
+        .def(py::init<::std::string>(), py::arg("field"))
         ;
 }
 

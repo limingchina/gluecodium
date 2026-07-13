@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ConstantsInterface = ::gluecodium::smoke::ConstantsInterface;
 
 void register_ConstantsInterface(py::module_& module) {
-    py::class_<ConstantsInterface>(module, "ConstantsInterface")
+    py::class_<ConstantsInterface, std::shared_ptr<ConstantsInterface>>(module, "ConstantsInterface")
         ;
 }
 

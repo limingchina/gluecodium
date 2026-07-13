@@ -16,6 +16,8 @@ using PublicTypeCollection = ::gluecodium::smoke::PublicTypeCollection;
 
 void register_PublicTypeCollection(py::module_& module) {
     py::class_<PublicTypeCollection>(module, "PublicTypeCollection")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

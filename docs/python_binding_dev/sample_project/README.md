@@ -6,9 +6,10 @@ Python generator. It shows the full workflow:
 1. Write an API in **LimeIDL** (`lime/Greeter.lime`).
 2. Run **Gluecodium** to generate **C++ headers/impls + runtime** and
    **Python (pybind11) bindings** (`cpp/` + `python/`).
-3. Provide the **C++ implementation** of the generated abstract classes and a
-   **module entry point** (`cpp/GreeterImpl.cpp`, `cpp/module.cpp`).
-4. Build a **CPython extension module** with **CMake**.
+3. Provide the **C++ implementation** of the generated abstract classes
+   (`cpp/GreeterImpl.cpp`).
+4. Build a **CPython extension module** with **CMake** (the `PYBIND11_MODULE`
+   entry point is generated for you — no hand-written `module.cpp` needed).
 5. Use the API from **Python** (`python/client.py`).
 
 The example models a small `Greeter` service with a `struct`, an `interface`
@@ -46,8 +47,7 @@ sample_project/
 ├── lime/
 │   └── Greeter.lime        # The API definition (LimeIDL)
 ├── cpp/
-│   ├── GreeterImpl.cpp     # C++ implementation of the generated abstract classes
-│   └── module.cpp          # PYBIND11_MODULE entry point (Phase 6 glue)
+│   └── GreeterImpl.cpp     # C++ implementation of the generated abstract classes
 ├── python/
 │   └── client.py           # End-to-end Python client
 └── build/                  # CMake build dir (generated)
@@ -129,7 +129,8 @@ This produces, under `build/generated/`:
   (`Return.h`, `ExportGluecodiumCpp.h`, `TypeRepository.h`, hash headers, …).
 - `cpp/src/...` — generated C++ impl skeletons + runtime sources.
 - `python/pybind11/*.cpp` — one `register_<Name>(py::module_&)` function per
-  LIME type, plus the shared `_return_caster.h` / `_wrapper_cache.h` helpers.
+  LIME type, plus the shared `_return_caster.h` / `_wrapper_cache.h` helpers and
+  the `PYBIND11_MODULE` entry point (`_module_init.cpp`).
 - `python/__init__.py` and `python/com/example/greeter/*.py` — thin Python
   wrapper classes (see the limitation note below).
 
@@ -144,15 +145,7 @@ application must implement them. `GreeterImpl.cpp` provides:
   (the generated `GreetingListener` has no body, so this gives the trampoline's
   vtable a home; the Python-side override is what actually runs).
 
-### 4. Module entry point (`cpp/module.cpp`)
-
-Gluecodium's `python` generator (currently at **Phase 5**) emits per-type
-`register_*` functions but **not** the `PYBIND11_MODULE` aggregator. This file
-supplies it, calling the generated `register_Greeting` / `register_GreeterErrorError`
-and providing corrected bindings for `Greeter` (with a `std::shared_ptr` holder)
-and `GreetingListener` (with `py::init<>()`) so the module is actually runnable.
-
-### 5. Python client (`python/client.py`)
+### 4. Python client (`python/client.py`)
 
 The client imports the native extension module `greeter` and:
 
@@ -166,18 +159,17 @@ The client imports the native extension module `greeter` and:
 
 ---
 
-## Known limitations (Phase 5 of the Python generator)
+## Known limitations (Phase 6 of the Python generator)
 
-This sample works around three gaps that are scheduled to be closed in
-**Phase 6**:
+The sample now runs **without any hand-written pybind11 glue** — the generator
+emits the `PYBIND11_MODULE` entry point, the `std::shared_ptr` holder for
+`class` types, and `py::init<>()` for `struct`/`interface` types. The remaining
+limitations are:
 
-1. **No `PYBIND11_MODULE` entry point** is generated — `cpp/module.cpp` provides it.
-2. **`class` types lack a `std::shared_ptr` holder** in the generated binding,
-   so `create()` (which returns `shared_ptr`) cannot convert to Python. The
-   sample re-binds `Greeter` with the correct holder.
-3. **`interface` types have no `py::init<>()`**, so Python subclasses cannot be
-   instantiated as trampolines. The sample re-binds `GreetingListener` with
-   `py::init<>()`.
+1. **`@Async`** functions are not yet bound (Phase 5.5, deferred).
+2. The **wrapper cache** is generated but not yet wired into `return_value_policy`
+   at call sites, so referential equality is not yet enforced.
+3. The **`Locale`** caster is still missing.
 
 Additionally, the generated **Python wrapper classes** (`python/com/example/
 greeter/*.py`) currently have a circular self-import and no factory, so they are

@@ -15,7 +15,7 @@ namespace py = pybind11;
 using CollectionConstants = ::gluecodium::smoke::CollectionConstants;
 
 void register_CollectionConstants(py::module_& module) {
-    py::class_<CollectionConstants>(module, "CollectionConstants")
+    py::class_<CollectionConstants, std::shared_ptr<CollectionConstants>>(module, "CollectionConstants")
         ;
 }
 

@@ -19,7 +19,7 @@ namespace py = pybind11;
 using TypeDefs = ::gluecodium::smoke::TypeDefs;
 
 void register_TypeDefs(py::module_& module) {
-    py::class_<TypeDefs>(module, "TypeDefs")
+    py::class_<TypeDefs, std::shared_ptr<TypeDefs>>(module, "TypeDefs")
         .def("method_with_primitive_type_def", &TypeDefs::method_with_primitive_type_def, py::arg("input"))
         .def("method_with_complex_type_def", &TypeDefs::method_with_complex_type_def, py::arg("input"))
         .def("return_nested_int_type_def", &TypeDefs::return_nested_int_type_def, py::arg("input"))

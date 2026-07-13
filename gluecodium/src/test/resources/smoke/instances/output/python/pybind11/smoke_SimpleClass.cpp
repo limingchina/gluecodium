@@ -17,7 +17,7 @@ namespace py = pybind11;
 using SimpleClass = ::gluecodium::smoke::SimpleClass;
 
 void register_SimpleClass(py::module_& module) {
-    py::class_<SimpleClass>(module, "SimpleClass")
+    py::class_<SimpleClass, std::shared_ptr<SimpleClass>>(module, "SimpleClass")
         .def("get_string_value", &SimpleClass::get_string_value)
         .def("use_simple_class", &SimpleClass::use_simple_class, py::arg("input"))
         ;

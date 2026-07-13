@@ -21,6 +21,7 @@ void register_EnableIfField(py::module_& module) {
         .def_readwrite("int_field", &EnableIfField::int_field)
         .def_readwrite("string_field", &EnableIfField::string_field)
         .def_readwrite("bool_field", &EnableIfField::bool_field)
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;
 }
 

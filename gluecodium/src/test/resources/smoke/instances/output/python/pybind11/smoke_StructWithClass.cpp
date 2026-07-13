@@ -19,6 +19,7 @@ using StructWithClass = ::gluecodium::smoke::StructWithClass;
 void register_StructWithClass(py::module_& module) {
     py::class_<StructWithClass>(module, "StructWithClass")
         .def_readwrite("class_instance", &StructWithClass::class_instance)
+        .def(py::init<::std::shared_ptr< ::smoke::SimpleClass >>(), py::arg("class_instance"))
         ;
 }
 

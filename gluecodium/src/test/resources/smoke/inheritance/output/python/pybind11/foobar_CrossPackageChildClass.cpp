@@ -16,7 +16,7 @@ namespace py = pybind11;
 using CrossPackageChildClass = ::gluecodium::foobar::CrossPackageChildClass;
 
 void register_CrossPackageChildClass(py::module_& module) {
-    py::class_<CrossPackageChildClass>(module, "CrossPackageChildClass")
+    py::class_<CrossPackageChildClass, std::shared_ptr<CrossPackageChildClass>>(module, "CrossPackageChildClass")
         ;
 }
 

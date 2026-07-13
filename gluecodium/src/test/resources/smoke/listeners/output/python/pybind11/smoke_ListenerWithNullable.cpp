@@ -79,6 +79,7 @@ public:
 
 void register_ListenerWithNullable(py::module_& module) {
     py::class_<ListenerWithNullable, std::shared_ptr<ListenerWithNullable>, ListenerWithNullableTrampoline>(module, "ListenerWithNullable")
+        .def(py::init<>())
         .def("method_with_byte", &ListenerWithNullable::method_with_byte, py::arg("input"))
         .def("method_with_u_byte", &ListenerWithNullable::method_with_u_byte, py::arg("input"))
         .def("method_with_short", &ListenerWithNullable::method_with_short, py::arg("input"))

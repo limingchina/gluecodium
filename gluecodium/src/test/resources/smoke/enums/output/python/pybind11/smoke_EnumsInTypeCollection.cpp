@@ -16,6 +16,8 @@ using EnumsInTypeCollection = ::gluecodium::smoke::EnumsInTypeCollection;
 
 void register_EnumsInTypeCollection(py::module_& module) {
     py::class_<EnumsInTypeCollection>(module, "EnumsInTypeCollection")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

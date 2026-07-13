@@ -16,7 +16,7 @@ namespace py = pybind11;
 using OrderInClass = ::gluecodium::smoke::OrderInClass;
 
 void register_OrderInClass(py::module_& module) {
-    py::class_<OrderInClass>(module, "OrderInClass")
+    py::class_<OrderInClass, std::shared_ptr<OrderInClass>>(module, "OrderInClass")
         ;
 }
 

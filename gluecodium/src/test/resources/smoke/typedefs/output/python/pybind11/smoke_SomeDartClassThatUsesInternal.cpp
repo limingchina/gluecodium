@@ -15,7 +15,7 @@ namespace py = pybind11;
 using SomeDartClassThatUsesInternal = ::gluecodium::smoke::SomeDartClassThatUsesInternal;
 
 void register_SomeDartClassThatUsesInternal(py::module_& module) {
-    py::class_<SomeDartClassThatUsesInternal>(module, "SomeDartClassThatUsesInternal")
+    py::class_<SomeDartClassThatUsesInternal, std::shared_ptr<SomeDartClassThatUsesInternal>>(module, "SomeDartClassThatUsesInternal")
         .def("add_entity", &SomeDartClassThatUsesInternal::add_entity, py::arg("entity"))
         ;
 }

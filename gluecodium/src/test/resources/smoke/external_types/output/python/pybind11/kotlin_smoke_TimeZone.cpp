@@ -18,6 +18,7 @@ using TimeZone = ::gluecodium::kotlin_smoke::TimeZone;
 void register_TimeZone(py::module_& module) {
     py::class_<TimeZone>(module, "TimeZone")
         .def_readwrite("raw_offset", &TimeZone::raw_offset)
+        .def(py::init<int32_t>(), py::arg("raw_offset"))
         ;
 }
 

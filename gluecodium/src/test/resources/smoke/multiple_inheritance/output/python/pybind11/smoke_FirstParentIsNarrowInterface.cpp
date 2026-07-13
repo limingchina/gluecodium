@@ -36,6 +36,7 @@ public:
 
 void register_FirstParentIsNarrowInterface(py::module_& module) {
     py::class_<FirstParentIsNarrowInterface, std::shared_ptr<FirstParentIsNarrowInterface>, FirstParentIsNarrowInterfaceTrampoline>(module, "FirstParentIsNarrowInterface")
+        .def(py::init<>())
         .def("child_function", &FirstParentIsNarrowInterface::child_function)
         .def_property("child_property", py::overload_cast<>(&FirstParentIsNarrowInterface::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsNarrowInterface::set_child_property))
         ;

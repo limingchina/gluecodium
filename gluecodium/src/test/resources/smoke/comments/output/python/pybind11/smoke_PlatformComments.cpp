@@ -16,7 +16,7 @@ namespace py = pybind11;
 using PlatformComments = ::gluecodium::smoke::PlatformComments;
 
 void register_PlatformComments(py::module_& module) {
-    py::class_<PlatformComments>(module, "PlatformComments")
+    py::class_<PlatformComments, std::shared_ptr<PlatformComments>>(module, "PlatformComments")
         .def("do_nothing", &PlatformComments::do_nothing)
         .def("do_magic", &PlatformComments::do_magic)
         .def("some_method_with_all_comments", &PlatformComments::some_method_with_all_comments, py::arg("input"))

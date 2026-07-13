@@ -15,7 +15,7 @@ namespace py = pybind11;
 using SwiftPublicClass = ::gluecodium::smoke::SwiftPublicClass;
 
 void register_SwiftPublicClass(py::module_& module) {
-    py::class_<SwiftPublicClass>(module, "SwiftPublicClass")
+    py::class_<SwiftPublicClass, std::shared_ptr<SwiftPublicClass>>(module, "SwiftPublicClass")
         ;
 }
 

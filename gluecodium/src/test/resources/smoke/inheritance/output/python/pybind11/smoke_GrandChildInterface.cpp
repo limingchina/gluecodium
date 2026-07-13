@@ -27,6 +27,7 @@ public:
 
 void register_GrandChildInterface(py::module_& module) {
     py::class_<GrandChildInterface, std::shared_ptr<GrandChildInterface>, GrandChildInterfaceTrampoline>(module, "GrandChildInterface")
+        .def(py::init<>())
         .def("grand_child_method", &GrandChildInterface::grand_child_method)
         ;
 }

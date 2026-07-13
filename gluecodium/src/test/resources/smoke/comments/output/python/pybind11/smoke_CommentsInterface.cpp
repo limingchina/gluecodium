@@ -81,6 +81,7 @@ public:
 
 void register_CommentsInterface(py::module_& module) {
     py::class_<CommentsInterface, std::shared_ptr<CommentsInterface>, CommentsInterfaceTrampoline>(module, "CommentsInterface")
+        .def(py::init<>())
         .def("some_method_with_all_comments", &CommentsInterface::some_method_with_all_comments, py::arg("input"))
         .def("some_method_with_input_comments", &CommentsInterface::some_method_with_input_comments, py::arg("input"))
         .def("some_method_with_output_comments", &CommentsInterface::some_method_with_output_comments, py::arg("input"))

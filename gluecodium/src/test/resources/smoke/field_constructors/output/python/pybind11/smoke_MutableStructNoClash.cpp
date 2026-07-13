@@ -21,6 +21,7 @@ void register_MutableStructNoClash(py::module_& module) {
         .def_readwrite("string_field", &MutableStructNoClash::string_field)
         .def_readwrite("int_field", &MutableStructNoClash::int_field)
         .def_readwrite("bool_field", &MutableStructNoClash::bool_field)
+        .def(py::init<>())
         ;
 }
 

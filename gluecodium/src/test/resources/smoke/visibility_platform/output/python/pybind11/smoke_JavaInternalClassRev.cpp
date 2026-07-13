@@ -15,7 +15,7 @@ namespace py = pybind11;
 using JavaInternalClassRev = ::gluecodium::smoke::JavaInternalClassRev;
 
 void register_JavaInternalClassRev(py::module_& module) {
-    py::class_<JavaInternalClassRev>(module, "JavaInternalClassRev")
+    py::class_<JavaInternalClassRev, std::shared_ptr<JavaInternalClassRev>>(module, "JavaInternalClassRev")
         ;
 }
 

@@ -146,6 +146,22 @@ Alternatively, the built-in dump mechanism regenerates *all* generators at once:
 `DUMP_ACTUAL_DIR=$(pwd)/gluecodium/src/test/resources/smoke ./gradlew test`
 (then review the diff before committing — note this also rewrites non-python output).
 
+### ⚠️ `name_clash_overloads` must stay skipped
+
+The bulk loop above will create `name_clash_overloads/output/python/` because two LIME types
+in that feature resolve to the same Python file name `AssetsManager.py` and the generator
+throws a filename-collision error. Committing that output makes the `python` `SmokeTest` case
+**fail** on the next run (`executeGenerator` returns false). This is a known, expected skip —
+**delete the directory after regenerating** and do not commit it:
+
+```bash
+rm -rf gluecodium/src/test/resources/smoke/name_clash_overloads/output/python
+```
+
+(The other skipped features — `comments`, `generic_types`, `strict_fail_immutable`,
+`strict_fail_internal` — are skipped for non-python reasons and also have no `output/python/`.)
+See `docs/python_binding_dev/phase6_implementation.md` §4.1 for details.
+
 ## Verification
 
 ```

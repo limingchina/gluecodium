@@ -18,7 +18,7 @@ namespace py = pybind11;
 using KotlinMethodOverloads = ::gluecodium::smoke::KotlinMethodOverloads;
 
 void register_KotlinMethodOverloads(py::module_& module) {
-    py::class_<KotlinMethodOverloads>(module, "KotlinMethodOverloads")
+    py::class_<KotlinMethodOverloads, std::shared_ptr<KotlinMethodOverloads>>(module, "KotlinMethodOverloads")
         .def("one", &KotlinMethodOverloads::one, py::arg("input"))
         .def("two", &KotlinMethodOverloads::two, py::arg("input"))
         ;

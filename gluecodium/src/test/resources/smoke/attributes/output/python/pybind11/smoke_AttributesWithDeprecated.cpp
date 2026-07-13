@@ -16,7 +16,7 @@ namespace py = pybind11;
 using AttributesWithDeprecated = ::gluecodium::smoke::AttributesWithDeprecated;
 
 void register_AttributesWithDeprecated(py::module_& module) {
-    py::class_<AttributesWithDeprecated>(module, "AttributesWithDeprecated")
+    py::class_<AttributesWithDeprecated, std::shared_ptr<AttributesWithDeprecated>>(module, "AttributesWithDeprecated")
         .def("very_fun", &AttributesWithDeprecated::very_fun)
         .def_property("prop", py::overload_cast<>(&AttributesWithDeprecated::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithDeprecated::set_prop))
         ;

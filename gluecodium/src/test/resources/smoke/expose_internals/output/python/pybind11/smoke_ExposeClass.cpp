@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ExposeClass = ::gluecodium::smoke::ExposeClass;
 
 void register_ExposeClass(py::module_& module) {
-    py::class_<ExposeClass>(module, "ExposeClass")
+    py::class_<ExposeClass, std::shared_ptr<ExposeClass>>(module, "ExposeClass")
         ;
 }
 

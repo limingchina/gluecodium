@@ -20,6 +20,7 @@ void register_DeprecatedFields(py::module_& module) {
         .def_readwrite("normal_field1", &DeprecatedFields::normal_field1)
         .def_readwrite("deprecated_field", &DeprecatedFields::deprecated_field)
         .def_readwrite("normal_field2", &DeprecatedFields::normal_field2)
+        .def(py::init<::std::string, ::std::string, ::std::string>(), py::arg("normal_field1"), py::arg("deprecated_field"), py::arg("normal_field2"))
         ;
 }
 

@@ -21,6 +21,8 @@ using Equatable = ::gluecodium::smoke::Equatable;
 
 void register_Equatable(py::module_& module) {
     py::class_<Equatable>(module, "Equatable")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

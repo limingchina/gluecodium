@@ -17,6 +17,8 @@ using PlatformNames = ::gluecodium::smoke::PlatformNames;
 
 void register_PlatformNames(py::module_& module) {
     py::class_<fooTypes>(module, "PlatformNames")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

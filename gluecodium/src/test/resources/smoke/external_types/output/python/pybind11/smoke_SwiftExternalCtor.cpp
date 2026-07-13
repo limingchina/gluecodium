@@ -18,6 +18,7 @@ using SwiftExternalCtor = ::gluecodium::smoke::SwiftExternalCtor;
 void register_SwiftExternalCtor(py::module_& module) {
     py::class_<SwiftExternalCtor>(module, "SwiftExternalCtor")
         .def_readwrite("field", &SwiftExternalCtor::field)
+        .def(py::init<::std::string>(), py::arg("field"))
         .def("make", &SwiftExternalCtor::make, py::arg("field"))
         ;
 }

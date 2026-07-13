@@ -18,6 +18,7 @@ using UnusedTopLevelPoint = ::gluecodium::smoke::UnusedTopLevelPoint;
 void register_UnusedTopLevelPoint(py::module_& module) {
     py::class_<UnusedTopLevelPoint>(module, "UnusedTopLevelPoint")
         .def_readwrite("foo", &UnusedTopLevelPoint::foo)
+        .def(py::init<::std::string>(), py::arg("foo"))
         ;
 }
 

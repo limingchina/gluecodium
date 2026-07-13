@@ -27,6 +27,7 @@ public:
 
 void register_NoCacheInterface(py::module_& module) {
     py::class_<NoCacheInterface, std::shared_ptr<NoCacheInterface>, NoCacheInterfaceTrampoline>(module, "NoCacheInterface")
+        .def(py::init<>())
         .def("foo", &NoCacheInterface::foo)
         ;
 }

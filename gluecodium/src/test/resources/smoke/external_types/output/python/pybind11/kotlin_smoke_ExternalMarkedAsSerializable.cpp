@@ -18,6 +18,7 @@ using ExternalMarkedAsSerializable = ::gluecodium::kotlin_smoke::ExternalMarkedA
 void register_ExternalMarkedAsSerializable(py::module_& module) {
     py::class_<ExternalMarkedAsSerializable>(module, "ExternalMarkedAsSerializable")
         .def_readwrite("field", &ExternalMarkedAsSerializable::field)
+        .def(py::init<int32_t>(), py::arg("field"))
         ;
 }
 

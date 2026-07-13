@@ -17,7 +17,7 @@ namespace py = pybind11;
 using LambdaComments = ::gluecodium::smoke::LambdaComments;
 
 void register_LambdaComments(py::module_& module) {
-    py::class_<LambdaComments>(module, "LambdaComments")
+    py::class_<LambdaComments, std::shared_ptr<LambdaComments>>(module, "LambdaComments")
         ;
 }
 

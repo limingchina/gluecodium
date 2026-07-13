@@ -18,6 +18,7 @@ using EquatableStructWithAccessors = ::gluecodium::smoke::EquatableStructWithAcc
 void register_EquatableStructWithAccessors(py::module_& module) {
     py::class_<EquatableStructWithAccessors>(module, "EquatableStructWithAccessors")
         .def_readwrite("foo_field", &EquatableStructWithAccessors::foo_field)
+        .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 }
 

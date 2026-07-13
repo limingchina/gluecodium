@@ -15,7 +15,7 @@ namespace py = pybind11;
 using SomeInterface = ::gluecodium::smoke::SomeInterface;
 
 void register_SomeInterface(py::module_& module) {
-    py::class_<SomeInterface>(module, "SomeInterface")
+    py::class_<SomeInterface, std::shared_ptr<SomeInterface>>(module, "SomeInterface")
         ;
 }
 

@@ -15,7 +15,7 @@ namespace py = pybind11;
 using IncludableClass = ::gluecodium::smoke::IncludableClass;
 
 void register_IncludableClass(py::module_& module) {
-    py::class_<IncludableClass>(module, "IncludableClass")
+    py::class_<IncludableClass, std::shared_ptr<IncludableClass>>(module, "IncludableClass")
         ;
 }
 

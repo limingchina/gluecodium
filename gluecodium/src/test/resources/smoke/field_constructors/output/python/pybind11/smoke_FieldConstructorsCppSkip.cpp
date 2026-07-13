@@ -20,6 +20,7 @@ void register_FieldConstructorsCppSkip(py::module_& module) {
     py::class_<FieldConstructorsCppSkip>(module, "FieldConstructorsCppSkip")
         .def_readwrite("string_field", &FieldConstructorsCppSkip::string_field)
         .def_readwrite("int_field", &FieldConstructorsCppSkip::int_field)
+        .def(py::init<>())
         ;
 }
 

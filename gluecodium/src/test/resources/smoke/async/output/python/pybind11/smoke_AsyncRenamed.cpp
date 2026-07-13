@@ -15,7 +15,7 @@ namespace py = pybind11;
 using AsyncRenamed = ::gluecodium::smoke::AsyncRenamed;
 
 void register_AsyncRenamed(py::module_& module) {
-    py::class_<AsyncRenamed>(module, "AsyncRenamed")
+    py::class_<AsyncRenamed, std::shared_ptr<AsyncRenamed>>(module, "AsyncRenamed")
         .def("dispose", &AsyncRenamed::callDispose)
         ;
 }

@@ -32,6 +32,7 @@ public:
 
 void register_UseForward(py::module_& module) {
     py::class_<UseForward, std::shared_ptr<UseForward>, UseForwardTrampoline>(module, "UseForward")
+        .def(py::init<>())
         .def("use_it", &UseForward::use_it, py::arg("param1"), py::arg("param2"), py::arg("simple_class"), py::arg("simple_interface"))
         ;
 }

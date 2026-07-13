@@ -21,6 +21,7 @@ void register_ImmutableStructWithClash(py::module_& module) {
         .def_readwrite("string_field", &ImmutableStructWithClash::string_field)
         .def_readwrite("int_field", &ImmutableStructWithClash::int_field)
         .def_readwrite("bool_field", &ImmutableStructWithClash::bool_field)
+        .def(py::init<>())
         ;
 }
 

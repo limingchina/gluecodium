@@ -19,6 +19,7 @@ using StructWithList = ::gluecodium::smoke::StructWithList;
 void register_StructWithList(py::module_& module) {
     py::class_<StructWithList>(module, "StructWithList")
         .def_readwrite("field", &StructWithList::field)
+        .def(py::init<::std::vector< ::smoke::StructWithList >>(), py::arg("field"))
         ;
 }
 

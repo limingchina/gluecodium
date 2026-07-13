@@ -19,7 +19,7 @@ namespace py = pybind11;
 using EnumDefaultsExternal = ::gluecodium::smoke::EnumDefaultsExternal;
 
 void register_EnumDefaultsExternal(py::module_& module) {
-    py::class_<EnumDefaultsExternal>(module, "EnumDefaultsExternal")
+    py::class_<EnumDefaultsExternal, std::shared_ptr<EnumDefaultsExternal>>(module, "EnumDefaultsExternal")
         ;
 }
 

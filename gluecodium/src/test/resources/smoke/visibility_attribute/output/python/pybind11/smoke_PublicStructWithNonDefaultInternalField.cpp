@@ -20,6 +20,7 @@ void register_PublicStructWithNonDefaultInternalField(py::module_& module) {
         .def_readwrite("defaulted_field", &PublicStructWithNonDefaultInternalField::defaulted_field)
         .def_readwrite("internal_field", &PublicStructWithNonDefaultInternalField::internal_field)
         .def_readwrite("public_field", &PublicStructWithNonDefaultInternalField::public_field)
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
         ;
 }
 

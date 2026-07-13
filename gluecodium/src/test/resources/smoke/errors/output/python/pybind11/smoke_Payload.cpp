@@ -20,6 +20,7 @@ void register_Payload(py::module_& module) {
     py::class_<Payload>(module, "Payload")
         .def_readwrite("error_code", &Payload::error_code)
         .def_readwrite("message", &Payload::message)
+        .def(py::init<int32_t, ::std::string>(), py::arg("error_code"), py::arg("message"))
         ;
 }
 

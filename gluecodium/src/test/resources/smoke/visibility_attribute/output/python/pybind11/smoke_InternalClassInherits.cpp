@@ -16,7 +16,7 @@ namespace py = pybind11;
 using InternalClassInherits = ::gluecodium::smoke::InternalClassInherits;
 
 void register_InternalClassInherits(py::module_& module) {
-    py::class_<InternalClassInherits>(module, "InternalClassInherits")
+    py::class_<InternalClassInherits, std::shared_ptr<InternalClassInherits>>(module, "InternalClassInherits")
         ;
 }
 

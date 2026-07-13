@@ -19,6 +19,7 @@ using StructWithOverloads = ::gluecodium::smoke::StructWithOverloads;
 void register_StructWithOverloads(py::module_& module) {
     py::class_<external::ClassWithOverloads::StructWithOverloads>(module, "StructWithOverloads")
         .def_readwrite("overloaded_accessors", &external::ClassWithOverloads::StructWithOverloads::overloadedAccessors)
+        .def(py::init<int32_t>(), py::arg("overloaded_accessors"))
         .def("overloaded_method", &external::ClassWithOverloads::StructWithOverloads::overloadedMethod)
         .def("overloaded_method", &external::ClassWithOverloads::StructWithOverloads::overloadedMethod, py::arg("input"))
         .def("overloaded_method", &external::ClassWithOverloads::StructWithOverloads::overloadedMethod, py::arg("input_string"), py::arg("input_bool"))

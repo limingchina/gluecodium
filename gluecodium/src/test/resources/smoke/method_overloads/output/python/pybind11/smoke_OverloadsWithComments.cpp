@@ -16,7 +16,7 @@ namespace py = pybind11;
 using OverloadsWithComments = ::gluecodium::smoke::OverloadsWithComments;
 
 void register_OverloadsWithComments(py::module_& module) {
-    py::class_<OverloadsWithComments>(module, "OverloadsWithComments")
+    py::class_<OverloadsWithComments, std::shared_ptr<OverloadsWithComments>>(module, "OverloadsWithComments")
         .def("do_stuff", &OverloadsWithComments::do_stuff)
         .def("do_stuff", &OverloadsWithComments::do_stuff, py::arg("stuff"))
         ;

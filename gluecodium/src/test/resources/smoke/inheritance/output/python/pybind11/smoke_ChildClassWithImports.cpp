@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ChildClassWithImports = ::gluecodium::smoke::ChildClassWithImports;
 
 void register_ChildClassWithImports(py::module_& module) {
-    py::class_<ChildClassWithImports>(module, "ChildClassWithImports")
+    py::class_<ChildClassWithImports, std::shared_ptr<ChildClassWithImports>>(module, "ChildClassWithImports")
         ;
 }
 

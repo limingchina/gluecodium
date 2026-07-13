@@ -32,6 +32,7 @@ public:
 
 void register_LambdasInterface(py::module_& module) {
     py::class_<LambdasInterface, std::shared_ptr<LambdasInterface>, LambdasInterfaceTrampoline>(module, "LambdasInterface")
+        .def(py::init<>())
         .def("take_screenshot", &LambdasInterface::take_screenshot, py::arg("callback"))
         ;
 }

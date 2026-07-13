@@ -15,7 +15,7 @@ namespace py = pybind11;
 using Class1 = ::gluecodium::smoke::forward::Class1;
 
 void register_Class1(py::module_& module) {
-    py::class_<Class1>(module, "Class1")
+    py::class_<Class1, std::shared_ptr<Class1>>(module, "Class1")
         ;
 }
 

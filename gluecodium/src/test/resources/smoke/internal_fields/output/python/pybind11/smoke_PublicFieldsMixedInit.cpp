@@ -20,6 +20,7 @@ void register_PublicFieldsMixedInit(py::module_& module) {
         .def_readwrite("public_field1", &PublicFieldsMixedInit::public_field1)
         .def_readwrite("public_field2", &PublicFieldsMixedInit::public_field2)
         .def_readwrite("internal_field", &PublicFieldsMixedInit::internal_field)
+        .def(py::init<::std::string, ::std::string, ::std::string>(), py::arg("public_field1"), py::arg("public_field2"), py::arg("internal_field"))
         ;
 }
 

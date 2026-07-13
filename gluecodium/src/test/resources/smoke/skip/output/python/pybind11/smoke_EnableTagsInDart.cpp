@@ -37,6 +37,7 @@ public:
 
 void register_EnableTagsInDart(py::module_& module) {
     py::class_<EnableTagsInDart, std::shared_ptr<EnableTagsInDart>, EnableTagsInDartTrampoline>(module, "EnableTagsInDart")
+        .def(py::init<>())
         .def("enable_tagged", &EnableTagsInDart::enable_tagged)
         .def("dont_enable_tagged", &EnableTagsInDart::dont_enable_tagged)
         .def("enable_tagged_list", &EnableTagsInDart::enable_tagged_list)

@@ -17,7 +17,7 @@ namespace py = pybind11;
 using ExternalClass = ::gluecodium::smoke::ExternalClass;
 
 void register_ExternalClass(py::module_& module) {
-    py::class_<ExternalClass>(module, "ExternalClass")
+    py::class_<ExternalClass, std::shared_ptr<ExternalClass>>(module, "ExternalClass")
         .def("create", &ExternalClass::create)
         ;
 }

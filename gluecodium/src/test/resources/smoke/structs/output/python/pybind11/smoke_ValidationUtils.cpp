@@ -16,6 +16,8 @@ using ValidationUtils = ::gluecodium::smoke::ValidationUtils;
 
 void register_ValidationUtils(py::module_& module) {
     py::class_<ValidationUtils>(module, "ValidationUtils")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

@@ -55,6 +55,7 @@ public:
 
 void register_ParentInterfaceWithIncludes(py::module_& module) {
     py::class_<ParentInterfaceWithIncludes, std::shared_ptr<ParentInterfaceWithIncludes>, ParentInterfaceWithIncludesTrampoline>(module, "ParentInterfaceWithIncludes")
+        .def(py::init<>())
         .def("root_method", &ParentInterfaceWithIncludes::root_method, py::arg("input1"), py::arg("input2"))
         .def("not_in_java", &ParentInterfaceWithIncludes::not_in_java)
         .def_property("root_property", py::overload_cast<>(&ParentInterfaceWithIncludes::get_root_property, py::const_), py::overload_cast<const ::smoke::IncludableLambda&>(&ParentInterfaceWithIncludes::set_root_property))

@@ -84,6 +84,7 @@ public:
 
 void register_ListenerWithProperties(py::module_& module) {
     py::class_<ListenerWithProperties, std::shared_ptr<ListenerWithProperties>, ListenerWithPropertiesTrampoline>(module, "ListenerWithProperties")
+        .def(py::init<>())
         .def_property("message", py::overload_cast<>(&ListenerWithProperties::get_message, py::const_), py::overload_cast<const ::std::string&>(&ListenerWithProperties::set_message))
         .def_property("packed_message", py::overload_cast<>(&ListenerWithProperties::get_packed_message, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::CalculationResult >&>(&ListenerWithProperties::set_packed_message))
         .def_property("structured_message", py::overload_cast<>(&ListenerWithProperties::get_structured_message, py::const_), py::overload_cast<const ::smoke::ListenerWithProperties::ResultStruct&>(&ListenerWithProperties::set_structured_message))

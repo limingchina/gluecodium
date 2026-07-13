@@ -22,6 +22,7 @@ public:
 
 void register_NonEquatableInterface(py::module_& module) {
     py::class_<NonEquatableInterface, std::shared_ptr<NonEquatableInterface>, NonEquatableInterfaceTrampoline>(module, "NonEquatableInterface")
+        .def(py::init<>())
         ;
 }
 

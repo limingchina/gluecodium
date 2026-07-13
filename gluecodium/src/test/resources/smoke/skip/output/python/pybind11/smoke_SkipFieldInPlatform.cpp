@@ -21,6 +21,7 @@ void register_SkipFieldInPlatform(py::module_& module) {
         .def_readwrite("int_field", &SkipFieldInPlatform::int_field)
         .def_readwrite("string_field", &SkipFieldInPlatform::string_field)
         .def_readwrite("bool_field", &SkipFieldInPlatform::bool_field)
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;
 }
 

@@ -18,6 +18,8 @@ using StructsWithConstants = ::gluecodium::smoke::StructsWithConstants;
 
 void register_StructsWithConstants(py::module_& module) {
     py::class_<StructsWithConstants>(module, "StructsWithConstants")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

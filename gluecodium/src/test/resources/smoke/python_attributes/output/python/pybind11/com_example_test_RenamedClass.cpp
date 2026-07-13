@@ -17,7 +17,7 @@ namespace py = pybind11;
 using RenamedClass = ::gluecodium::com::example::test::MyClass;
 
 void register_RenamedClass(py::module_& module) {
-    py::class_<MyClass>(module, "RenamedClass")
+    py::class_<MyClass, std::shared_ptr<MyClass>>(module, "RenamedClass")
         .def("hidden_method", &MyClass::hidden_method)
         .def("internal_method", &MyClass::internal_method)
         .def("visible_method", &MyClass::visible_method, py::arg("param"))

@@ -16,7 +16,7 @@ namespace py = pybind11;
 using SkipEnableParameters = ::gluecodium::smoke::SkipEnableParameters;
 
 void register_SkipEnableParameters(py::module_& module) {
-    py::class_<SkipEnableParameters>(module, "SkipEnableParameters")
+    py::class_<SkipEnableParameters, std::shared_ptr<SkipEnableParameters>>(module, "SkipEnableParameters")
         .def("do_something", &SkipEnableParameters::do_something, py::arg("input"))
         ;
 }

@@ -23,6 +23,7 @@ public:
 
 void register_InterfaceWithLambda(py::module_& module) {
     py::class_<InterfaceWithLambda, std::shared_ptr<InterfaceWithLambda>, InterfaceWithLambdaTrampoline>(module, "InterfaceWithLambda")
+        .def(py::init<>())
         ;
 }
 

@@ -17,7 +17,7 @@ namespace py = pybind11;
 using ClassWithStructWithSkipLambdaInPlatform = ::gluecodium::smoke::ClassWithStructWithSkipLambdaInPlatform;
 
 void register_ClassWithStructWithSkipLambdaInPlatform(py::module_& module) {
-    py::class_<ClassWithStructWithSkipLambdaInPlatform>(module, "ClassWithStructWithSkipLambdaInPlatform")
+    py::class_<ClassWithStructWithSkipLambdaInPlatform, std::shared_ptr<ClassWithStructWithSkipLambdaInPlatform>>(module, "ClassWithStructWithSkipLambdaInPlatform")
         ;
 }
 

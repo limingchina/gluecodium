@@ -19,7 +19,7 @@ namespace py = pybind11;
 using UseSwiftExternalTypes = ::gluecodium::smoke::UseSwiftExternalTypes;
 
 void register_UseSwiftExternalTypes(py::module_& module) {
-    py::class_<UseSwiftExternalTypes>(module, "UseSwiftExternalTypes")
+    py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "UseSwiftExternalTypes")
         .def("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
         .def("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
         .def("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))

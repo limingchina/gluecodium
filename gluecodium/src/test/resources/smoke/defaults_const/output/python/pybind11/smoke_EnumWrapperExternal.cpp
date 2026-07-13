@@ -18,6 +18,7 @@ using EnumWrapperExternal = ::gluecodium::smoke::EnumWrapperExternal;
 void register_EnumWrapperExternal(py::module_& module) {
     py::class_<EnumWrapperExternal>(module, "EnumWrapperExternal")
         .def_readwrite("enum_field", &EnumWrapperExternal::enum_field)
+        .def(py::init<foo::AlienEnum4>(), py::arg("enum_field"))
         ;
 }
 

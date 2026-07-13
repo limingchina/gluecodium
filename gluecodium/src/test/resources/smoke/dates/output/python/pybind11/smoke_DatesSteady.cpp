@@ -16,7 +16,7 @@ namespace py = pybind11;
 using DatesSteady = ::gluecodium::smoke::DatesSteady;
 
 void register_DatesSteady(py::module_& module) {
-    py::class_<DatesSteady>(module, "DatesSteady")
+    py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(module, "DatesSteady")
         .def("date_method", &DatesSteady::date_method, py::arg("input"))
         .def("nullable_date_method", &DatesSteady::nullable_date_method, py::arg("input"))
         .def("date_list_method", &DatesSteady::date_list_method, py::arg("input"))

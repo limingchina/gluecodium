@@ -16,6 +16,8 @@ using ConstantsSkipCpp = ::gluecodium::smoke::ConstantsSkipCpp;
 
 void register_ConstantsSkipCpp(py::module_& module) {
     py::class_<ConstantsSkipCpp>(module, "ConstantsSkipCpp")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

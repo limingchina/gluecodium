@@ -16,6 +16,8 @@ using SkipEnableConstants = ::gluecodium::smoke::SkipEnableConstants;
 
 void register_SkipEnableConstants(py::module_& module) {
     py::class_<SkipEnableConstants>(module, "SkipEnableConstants")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

@@ -93,6 +93,7 @@ public:
 
 void register_SkipProxy(py::module_& module) {
     py::class_<SkipProxy, std::shared_ptr<SkipProxy>, SkipProxyTrampoline>(module, "SkipProxy")
+        .def(py::init<>())
         .def("not_in_java", &SkipProxy::not_in_java, py::arg("input"))
         .def("not_in_swift", &SkipProxy::not_in_swift, py::arg("input"))
         .def("not_in_dart", &SkipProxy::not_in_dart, py::arg("input"))

@@ -17,6 +17,8 @@ using CommentsTypeCollection = ::gluecodium::smoke::CommentsTypeCollection;
 
 void register_CommentsTypeCollection(py::module_& module) {
     py::class_<CommentsTypeCollection>(module, "CommentsTypeCollection")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

@@ -1,6 +1,6 @@
 {{! pybind11 class binding. Registered into the module by the module init (Phase 6). }}
 void register_{{resolveName}}(py::module_& module) {
-    py::class_<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}")
+    py::class_<{{resolveName model "Pybind11"}}, std::shared_ptr<{{resolveName model "Pybind11"}}>>(module, "{{resolveName}}")
 {{#functions}}
 {{>python/Pybind11Function}}{{/functions}}
 {{#properties}}

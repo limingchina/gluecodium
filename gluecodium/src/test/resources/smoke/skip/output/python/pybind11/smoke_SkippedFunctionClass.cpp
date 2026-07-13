@@ -16,7 +16,7 @@ namespace py = pybind11;
 using SkippedFunctionClass = ::gluecodium::smoke::SkippedFunctionClass;
 
 void register_SkippedFunctionClass(py::module_& module) {
-    py::class_<SkippedFunctionClass>(module, "SkippedFunctionClass")
+    py::class_<SkippedFunctionClass, std::shared_ptr<SkippedFunctionClass>>(module, "SkippedFunctionClass")
         .def("do_foo", &SkippedFunctionClass::do_foo, py::arg("input"))
         ;
 }

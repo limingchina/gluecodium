@@ -17,7 +17,7 @@ namespace py = pybind11;
 using FooBar = ::gluecodium::example::FooBar;
 
 void register_FooBar(py::module_& module) {
-    py::class_<FooBar>(module, "FooBar")
+    py::class_<FooBar, std::shared_ptr<FooBar>>(module, "FooBar")
         .def("method_with_internal_error", &FooBar::method_with_internal_error)
         .def("method_with_type_collection_error", &FooBar::method_with_type_collection_error)
         ;

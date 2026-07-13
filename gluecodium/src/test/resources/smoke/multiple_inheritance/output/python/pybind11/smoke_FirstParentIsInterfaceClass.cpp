@@ -18,7 +18,7 @@ namespace py = pybind11;
 using FirstParentIsInterfaceClass = ::gluecodium::smoke::FirstParentIsInterfaceClass;
 
 void register_FirstParentIsInterfaceClass(py::module_& module) {
-    py::class_<FirstParentIsInterfaceClass>(module, "FirstParentIsInterfaceClass")
+    py::class_<FirstParentIsInterfaceClass, std::shared_ptr<FirstParentIsInterfaceClass>>(module, "FirstParentIsInterfaceClass")
         .def("child_function", &FirstParentIsInterfaceClass::child_function)
         .def_property("child_property", py::overload_cast<>(&FirstParentIsInterfaceClass::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsInterfaceClass::set_child_property))
         ;

@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ExposeInternalClass = ::gluecodium::smoke::ExposeInternalClass;
 
 void register_ExposeInternalClass(py::module_& module) {
-    py::class_<ExposeInternalClass>(module, "ExposeInternalClass")
+    py::class_<ExposeInternalClass, std::shared_ptr<ExposeInternalClass>>(module, "ExposeInternalClass")
         ;
 }
 

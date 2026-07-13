@@ -17,7 +17,7 @@ namespace py = pybind11;
 using MethodOverloads = ::gluecodium::smoke::MethodOverloads;
 
 void register_MethodOverloads(py::module_& module) {
-    py::class_<MethodOverloads>(module, "MethodOverloads")
+    py::class_<MethodOverloads, std::shared_ptr<MethodOverloads>>(module, "MethodOverloads")
         .def("is_boolean", &MethodOverloads::is_boolean, py::arg("input"))
         .def("is_boolean", &MethodOverloads::is_boolean, py::arg("input"))
         .def("is_boolean", &MethodOverloads::is_boolean, py::arg("input"))

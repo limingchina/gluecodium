@@ -36,6 +36,7 @@ public:
 
 void register_InternalInterface(py::module_& module) {
     py::class_<InternalInterface, std::shared_ptr<InternalInterface>, InternalInterfaceTrampoline>(module, "InternalInterface")
+        .def(py::init<>())
         .def("foo_bar", &InternalInterface::foo_bar)
         .def_property("some_property_of_internal_interface", py::overload_cast<>(&InternalInterface::get_some_property_of_internal_interface, py::const_), py::overload_cast<const ::std::string&>(&InternalInterface::set_some_property_of_internal_interface))
         ;

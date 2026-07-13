@@ -22,6 +22,7 @@ public:
 
 void register_ExternalWithNoFunctions(py::module_& module) {
     py::class_<::some::path::Bar, std::shared_ptr<::some::path::Bar>, ExternalWithNoFunctionsTrampoline>(module, "ExternalWithNoFunctions")
+        .def(py::init<>())
         ;
 }
 

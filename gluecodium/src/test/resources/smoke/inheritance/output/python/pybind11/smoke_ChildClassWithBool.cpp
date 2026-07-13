@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ChildClassWithBool = ::gluecodium::smoke::ChildClassWithBool;
 
 void register_ChildClassWithBool(py::module_& module) {
-    py::class_<ChildClassWithBool>(module, "ChildClassWithBool")
+    py::class_<ChildClassWithBool, std::shared_ptr<ChildClassWithBool>>(module, "ChildClassWithBool")
         ;
 }
 

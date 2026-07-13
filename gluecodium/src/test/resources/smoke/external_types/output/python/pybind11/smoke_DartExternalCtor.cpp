@@ -18,6 +18,7 @@ using DartExternalCtor = ::gluecodium::smoke::DartExternalCtor;
 void register_DartExternalCtor(py::module_& module) {
     py::class_<DartExternalCtor>(module, "DartExternalCtor")
         .def_readwrite("field", &DartExternalCtor::field)
+        .def(py::init<::std::string>(), py::arg("field"))
         .def("make", &DartExternalCtor::make, py::arg("field"))
         ;
 }

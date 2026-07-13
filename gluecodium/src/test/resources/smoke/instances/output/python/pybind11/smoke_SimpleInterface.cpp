@@ -34,6 +34,7 @@ public:
 
 void register_SimpleInterface(py::module_& module) {
     py::class_<SimpleInterface, std::shared_ptr<SimpleInterface>, SimpleInterfaceTrampoline>(module, "SimpleInterface")
+        .def(py::init<>())
         .def("get_string_value", &SimpleInterface::get_string_value)
         .def("use_simple_interface", &SimpleInterface::use_simple_interface, py::arg("input"))
         ;

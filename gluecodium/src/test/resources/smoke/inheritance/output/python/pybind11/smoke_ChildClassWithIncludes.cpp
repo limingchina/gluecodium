@@ -22,7 +22,7 @@ namespace py = pybind11;
 using ChildClassWithIncludes = ::gluecodium::smoke::ChildClassWithIncludes;
 
 void register_ChildClassWithIncludes(py::module_& module) {
-    py::class_<ChildClassWithIncludes>(module, "ChildClassWithIncludes")
+    py::class_<ChildClassWithIncludes, std::shared_ptr<ChildClassWithIncludes>>(module, "ChildClassWithIncludes")
         ;
 }
 

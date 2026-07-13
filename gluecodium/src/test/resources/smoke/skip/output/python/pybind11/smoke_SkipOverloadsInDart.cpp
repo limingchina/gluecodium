@@ -17,7 +17,7 @@ namespace py = pybind11;
 using SkipOverloadsInDart = ::gluecodium::smoke::SkipOverloadsInDart;
 
 void register_SkipOverloadsInDart(py::module_& module) {
-    py::class_<SkipOverloadsInDart>(module, "SkipOverloadsInDart")
+    py::class_<SkipOverloadsInDart, std::shared_ptr<SkipOverloadsInDart>>(module, "SkipOverloadsInDart")
         .def("make", &SkipOverloadsInDart::make)
         .def("make", &SkipOverloadsInDart::make, py::arg("input"))
         ;

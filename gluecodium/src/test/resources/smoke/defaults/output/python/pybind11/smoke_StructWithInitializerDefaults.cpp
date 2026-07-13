@@ -24,6 +24,8 @@ void register_StructWithInitializerDefaults(py::module_& module) {
         .def_readwrite("floats_field", &StructWithInitializerDefaults::floats_field)
         .def_readwrite("set_type_field", &StructWithInitializerDefaults::set_type_field)
         .def_readwrite("map_field", &StructWithInitializerDefaults::map_field)
+        .def(py::init<>())
+        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
         ;
 }
 

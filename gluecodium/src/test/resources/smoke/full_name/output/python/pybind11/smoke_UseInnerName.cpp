@@ -16,7 +16,7 @@ namespace py = pybind11;
 using UseInnerName = ::gluecodium::smoke::UseInnerName;
 
 void register_UseInnerName(py::module_& module) {
-    py::class_<UseInnerName>(module, "UseInnerName")
+    py::class_<UseInnerName, std::shared_ptr<UseInnerName>>(module, "UseInnerName")
         .def("do_foo", &UseInnerName::do_foo)
         ;
 }

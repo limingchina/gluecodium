@@ -15,7 +15,7 @@ namespace py = pybind11;
 using OuterPublicClazz = ::smoke::OuterPublicClazz;
 
 void register_OuterPublicClazz(py::module_& module) {
-    py::class_<OuterPublicClazz>(module, "OuterPublicClazz")
+    py::class_<OuterPublicClazz, std::shared_ptr<OuterPublicClazz>>(module, "OuterPublicClazz")
         ;
 }
 

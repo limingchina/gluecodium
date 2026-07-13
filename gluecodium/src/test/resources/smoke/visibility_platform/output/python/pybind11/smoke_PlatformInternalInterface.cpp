@@ -22,6 +22,7 @@ public:
 
 void register_PlatformInternalInterface(py::module_& module) {
     py::class_<PlatformInternalInterface, std::shared_ptr<PlatformInternalInterface>, PlatformInternalInterfaceTrampoline>(module, "PlatformInternalInterface")
+        .def(py::init<>())
         ;
 }
 

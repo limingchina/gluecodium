@@ -20,6 +20,8 @@ void register_StructWithPosEnums(py::module_& module) {
         .def_readwrite("first_field", &StructWithPosEnums::first_field)
         .def_readwrite("explicit_field", &StructWithPosEnums::explicit_field)
         .def_readwrite("last_field", &StructWithPosEnums::last_field)
+        .def(py::init<>())
+        .def(py::init<::smoke::SomethingEnum, ::smoke::SomethingEnum, ::smoke::SomethingEnum>(), py::arg("first_field"), py::arg("explicit_field"), py::arg("last_field"))
         ;
 }
 

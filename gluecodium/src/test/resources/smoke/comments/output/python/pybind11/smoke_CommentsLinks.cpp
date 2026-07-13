@@ -17,7 +17,7 @@ namespace py = pybind11;
 using CommentsLinks = ::gluecodium::smoke::CommentsLinks;
 
 void register_CommentsLinks(py::module_& module) {
-    py::class_<CommentsLinks>(module, "CommentsLinks")
+    py::class_<CommentsLinks, std::shared_ptr<CommentsLinks>>(module, "CommentsLinks")
         .def("random_method", &CommentsLinks::random_method, py::arg("input_parameter"))
         .def("random_method", &CommentsLinks::random_method, py::arg("text"), py::arg("flag"))
         ;

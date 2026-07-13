@@ -17,7 +17,7 @@ namespace py = pybind11;
 using NullableOverloads = ::gluecodium::smoke::NullableOverloads;
 
 void register_NullableOverloads(py::module_& module) {
-    py::class_<NullableOverloads>(module, "NullableOverloads")
+    py::class_<NullableOverloads, std::shared_ptr<NullableOverloads>>(module, "NullableOverloads")
         .def("foo", &NullableOverloads::foo, py::arg("input"))
         .def("foo", &NullableOverloads::foo, py::arg("input"))
         ;

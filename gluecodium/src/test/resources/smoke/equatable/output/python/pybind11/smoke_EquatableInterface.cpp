@@ -22,6 +22,7 @@ public:
 
 void register_EquatableInterface(py::module_& module) {
     py::class_<EquatableInterface, std::shared_ptr<EquatableInterface>, EquatableInterfaceTrampoline>(module, "EquatableInterface")
+        .def(py::init<>())
         ;
 }
 

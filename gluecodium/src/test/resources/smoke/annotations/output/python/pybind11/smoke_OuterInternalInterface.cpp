@@ -28,6 +28,7 @@ public:
 
 void register_OuterInternalInterface(py::module_& module) {
     py::class_<OuterInternalInterface, std::shared_ptr<OuterInternalInterface>, OuterInternalInterfaceTrampoline>(module, "OuterInternalInterface")
+        .def(py::init<>())
         .def("some_function", &OuterInternalInterface::some_function)
         ;
 }

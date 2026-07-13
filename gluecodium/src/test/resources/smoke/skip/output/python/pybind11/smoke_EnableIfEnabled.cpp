@@ -15,7 +15,7 @@ namespace py = pybind11;
 using EnableIfEnabled = ::gluecodium::smoke::EnableIfEnabled;
 
 void register_EnableIfEnabled(py::module_& module) {
-    py::class_<EnableIfEnabled>(module, "EnableIfEnabled")
+    py::class_<EnableIfEnabled, std::shared_ptr<EnableIfEnabled>>(module, "EnableIfEnabled")
         .def("enable_if_unquoted", &EnableIfEnabled::enable_if_unquoted)
         .def("enable_if_unquoted_list", &EnableIfEnabled::enable_if_unquoted_list)
         .def("enable_if_quoted", &EnableIfEnabled::enable_if_quoted)

@@ -36,6 +36,7 @@ public:
 
 void register_AttributesInterface(py::module_& module) {
     py::class_<AttributesInterface, std::shared_ptr<AttributesInterface>, AttributesInterfaceTrampoline>(module, "AttributesInterface")
+        .def(py::init<>())
         .def("very_fun", &AttributesInterface::very_fun, py::arg("param"))
         .def_property("prop", py::overload_cast<>(&AttributesInterface::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesInterface::set_prop))
         ;

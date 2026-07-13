@@ -16,7 +16,7 @@ namespace py = pybind11;
 using OuterClass = ::gluecodium::smoke::OuterClass;
 
 void register_OuterClass(py::module_& module) {
-    py::class_<OuterClass>(module, "OuterClass")
+    py::class_<OuterClass, std::shared_ptr<OuterClass>>(module, "OuterClass")
         .def("foo", &OuterClass::foo, py::arg("input"))
         ;
 }

@@ -22,6 +22,7 @@ public:
 
 void register_CrossPackageChildInterface(py::module_& module) {
     py::class_<CrossPackageChildInterface, std::shared_ptr<CrossPackageChildInterface>, CrossPackageChildInterfaceTrampoline>(module, "CrossPackageChildInterface")
+        .def(py::init<>())
         ;
 }
 

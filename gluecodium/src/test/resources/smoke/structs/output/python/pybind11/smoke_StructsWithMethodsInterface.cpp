@@ -17,7 +17,7 @@ namespace py = pybind11;
 using StructsWithMethodsInterface = ::gluecodium::smoke::StructsWithMethodsInterface;
 
 void register_StructsWithMethodsInterface(py::module_& module) {
-    py::class_<StructsWithMethodsInterface>(module, "StructsWithMethodsInterface")
+    py::class_<StructsWithMethodsInterface, std::shared_ptr<StructsWithMethodsInterface>>(module, "StructsWithMethodsInterface")
         ;
 }
 
