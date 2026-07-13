@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ScalarKeyframeTrack = ::gluecodium::smoke::ScalarKeyframeTrack;
+using ScalarKeyframeTrack = ::smoke::ScalarKeyframeTrack;
 
 void register_ScalarKeyframeTrack(py::module_& module) {
     py::class_<ScalarKeyframeTrack>(module, "ScalarKeyframeTrack")

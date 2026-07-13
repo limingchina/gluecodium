@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/AsyncErrorCode.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AsyncErrorCode = ::gluecodium::smoke::AsyncErrorCode;
+using AsyncErrorCode = ::smoke::AsyncErrorCode;
 
 void register_AsyncErrorCode(py::module_& module) {
     py::enum_<AsyncErrorCode>(module, "AsyncErrorCode")

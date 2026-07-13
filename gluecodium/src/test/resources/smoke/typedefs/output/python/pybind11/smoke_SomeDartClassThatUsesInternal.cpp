@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SomeDartClassThatUsesInternal.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SomeDartClassThatUsesInternal = ::gluecodium::smoke::SomeDartClassThatUsesInternal;
+using SomeDartClassThatUsesInternal = ::smoke::SomeDartClassThatUsesInternal;
 
 void register_SomeDartClassThatUsesInternal(py::module_& module) {
     py::class_<SomeDartClassThatUsesInternal, std::shared_ptr<SomeDartClassThatUsesInternal>>(module, "SomeDartClassThatUsesInternal")

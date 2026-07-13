@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ScalarKeyframe = ::gluecodium::smoke::ScalarKeyframe;
+using ScalarKeyframe = ::smoke::ScalarKeyframe;
 
 void register_ScalarKeyframe(py::module_& module) {
     py::class_<ScalarKeyframe>(module, "ScalarKeyframe")

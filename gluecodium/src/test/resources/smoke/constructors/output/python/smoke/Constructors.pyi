@@ -57,3 +57,12 @@ class Constructors(_NativeBase):
         native_result = generated.Constructors.create(input)
         return Constructors(native_result)
 
+from enum import Enum
+
+
+class ErrorEnum(Enum):
+    """"""
+
+    NONE = 0
+    CRASHED = 1
+

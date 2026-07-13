@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "kotlin_smoke/SystemColor.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SystemColor = ::gluecodium::kotlin_smoke::SystemColor;
+using SystemColor = ::kotlin_smoke::SystemColor;
 
 void register_SystemColor(py::module_& module) {
     py::class_<SystemColor>(module, "SystemColor")

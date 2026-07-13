@@ -13,12 +13,11 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using BasicTypes = ::gluecodium::smoke::BasicTypes;
+using BasicTypes = ::root::space::smoke::BasicTypes;
 
 void register_BasicTypes(py::module_& module) {
     py::class_<BasicTypes>(module, "BasicTypes")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

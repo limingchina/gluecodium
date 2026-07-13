@@ -1,6 +1,5 @@
 
 
-from smoke.INVALID_STORAGE_ID import INVALID_STORAGE_ID
 from smoke.Point import Point
 from smoke.int import int
 
@@ -18,4 +17,7 @@ class TypeCollection(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.TypeCollection(*args))
+
+
+INVALID_STORAGE_ID = 0
 

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ParentClass = ::gluecodium::smoke::ParentClass;
+using ParentClass = ::smoke::ParentClass;
 
 void register_ParentClass(py::module_& module) {
     py::class_<ParentClass, std::shared_ptr<ParentClass>>(module, "ParentClass")

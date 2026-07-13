@@ -21,12 +21,11 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using TypesWithDefaults = ::gluecodium::smoke::TypesWithDefaults;
+using TypesWithDefaults = ::smoke::TypesWithDefaults;
 
 void register_TypesWithDefaults(py::module_& module) {
     py::class_<TypesWithDefaults>(module, "TypesWithDefaults")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

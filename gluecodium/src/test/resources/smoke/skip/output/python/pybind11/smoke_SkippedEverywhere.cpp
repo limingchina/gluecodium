@@ -17,7 +17,7 @@ namespace py = pybind11;
 #include "unordered_map"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkippedEverywhere = ::gluecodium::smoke::SkippedEverywhere;
+using SkippedEverywhere = ::smoke::SkippedEverywhere;
 
 void register_SkippedEverywhere(py::module_& module) {
     py::class_<SkippedEverywhere>(module, "SkippedEverywhere")

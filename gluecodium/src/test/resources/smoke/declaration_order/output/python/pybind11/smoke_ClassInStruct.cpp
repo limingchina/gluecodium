@@ -14,12 +14,11 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ClassInStruct = ::gluecodium::smoke::ClassInStruct;
+using ClassInStruct = ::smoke::ClassInStruct;
 
 void register_ClassInStruct(py::module_& module) {
     py::class_<ClassInStruct>(module, "ClassInStruct")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

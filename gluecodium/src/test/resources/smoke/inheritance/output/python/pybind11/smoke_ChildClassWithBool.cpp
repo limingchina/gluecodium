@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/ChildClassWithBool.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ChildClassWithBool = ::gluecodium::smoke::ChildClassWithBool;
+using ChildClassWithBool = ::smoke::ChildClassWithBool;
 
 void register_ChildClassWithBool(py::module_& module) {
     py::class_<ChildClassWithBool, std::shared_ptr<ChildClassWithBool>>(module, "ChildClassWithBool")

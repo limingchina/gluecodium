@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/InternalClassWithStaticProperty.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InternalClassWithStaticProperty = ::gluecodium::smoke::InternalClassWithStaticProperty;
+using InternalClassWithStaticProperty = ::smoke::InternalClassWithStaticProperty;
 
 void register_InternalClassWithStaticProperty(py::module_& module) {
     py::class_<InternalClassWithStaticProperty, std::shared_ptr<InternalClassWithStaticProperty>>(module, "InternalClassWithStaticProperty")

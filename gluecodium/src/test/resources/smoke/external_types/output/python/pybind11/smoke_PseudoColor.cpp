@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/PseudoColor.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PseudoColor = ::gluecodium::smoke::PseudoColor;
+using PseudoColor = ::smoke::PseudoColor;
 
 void register_PseudoColor(py::module_& module) {
     py::class_<PseudoColor>(module, "PseudoColor")

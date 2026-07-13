@@ -112,3 +112,12 @@ class Properties(_NativeBase):
         return self._native.static_readonly_property
 
 
+from enum import Enum
+
+
+class InternalErrorCode(Enum):
+    """"""
+
+    ERROR_NONE = 0
+    ERROR_FATAL = 1
+

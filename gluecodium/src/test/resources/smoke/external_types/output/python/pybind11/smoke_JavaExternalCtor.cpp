@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using JavaExternalCtor = ::gluecodium::smoke::JavaExternalCtor;
+using JavaExternalCtor = ::smoke::JavaExternalCtor;
 
 void register_JavaExternalCtor(py::module_& module) {
     py::class_<JavaExternalCtor>(module, "JavaExternalCtor")

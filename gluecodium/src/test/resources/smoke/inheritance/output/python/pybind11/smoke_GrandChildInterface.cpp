@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/GrandChildInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using GrandChildInterface = ::gluecodium::smoke::GrandChildInterface;
+using GrandChildInterface = ::smoke::GrandChildInterface;
 
 class GrandChildInterfaceTrampoline : public GrandChildInterface {
 public:

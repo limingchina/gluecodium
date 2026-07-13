@@ -13,8 +13,6 @@ namespace py = pybind11;
 #include "functional"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StandaloneProducer = ::gluecodium::smoke::StandaloneProducer;
 
 // StandaloneProducer is a std::function, handled inline where used.
 

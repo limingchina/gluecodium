@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/CalculationResult.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using CalculationResult = ::gluecodium::smoke::CalculationResult;
+using CalculationResult = ::smoke::CalculationResult;
 
 class CalculationResultTrampoline : public CalculationResult {
 public:

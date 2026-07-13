@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "dontsmoke/SerializableStructWithExternalField.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SerializableStructWithExternalField = ::gluecodium::dontsmoke::SerializableStructWithExternalField;
+using SerializableStructWithExternalField = ::dontsmoke::SerializableStructWithExternalField;
 
 void register_SerializableStructWithExternalField(py::module_& module) {
     py::class_<SerializableStructWithExternalField>(module, "SerializableStructWithExternalField")

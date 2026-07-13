@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/DateDefaultsAliased.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DateDefaultsAliased = ::gluecodium::smoke::DateDefaultsAliased;
+using DateDefaultsAliased = ::smoke::DateDefaultsAliased;
 
 void register_DateDefaultsAliased(py::module_& module) {
     py::class_<DateDefaultsAliased>(module, "DateDefaultsAliased")
@@ -22,7 +22,6 @@ void register_DateDefaultsAliased(py::module_& module) {
         .def_readwrite("before_epoch", &DateDefaultsAliased::before_epoch)
         .def_readwrite("exactly_epoch", &DateDefaultsAliased::exactly_epoch)
         .def(py::init<>())
-        .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("date_time"), py::arg("date_time_utc"), py::arg("before_epoch"), py::arg("exactly_epoch"))
         ;
 }
 

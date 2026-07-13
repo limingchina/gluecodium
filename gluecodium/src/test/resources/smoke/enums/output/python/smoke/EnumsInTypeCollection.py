@@ -18,3 +18,12 @@ class EnumsInTypeCollection(_NativeBase):
         else:
             super().__init__(generated.EnumsInTypeCollection(*args))
 
+from enum import Enum
+
+
+class TCEnum(Enum):
+    """"""
+
+    FIRST = 0
+    SECOND = 1
+

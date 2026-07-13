@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithConstMethod = ::gluecodium::smoke::StructWithConstMethod;
+using StructWithConstMethod = ::smoke::StructWithConstMethod;
 
 void register_StructWithConstMethod(py::module_& module) {
     py::class_<StructWithConstMethod>(module, "StructWithConstMethod")

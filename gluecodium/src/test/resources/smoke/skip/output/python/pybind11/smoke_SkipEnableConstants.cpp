@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "smoke/SkipEnableConstants.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipEnableConstants = ::gluecodium::smoke::SkipEnableConstants;
+using SkipEnableConstants = ::smoke::SkipEnableConstants;
 
 void register_SkipEnableConstants(py::module_& module) {
     py::class_<SkipEnableConstants>(module, "SkipEnableConstants")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SkipTagsInSwift.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipTagsInSwift = ::gluecodium::smoke::SkipTagsInSwift;
+using SkipTagsInSwift = ::smoke::SkipTagsInSwift;
 
 class SkipTagsInSwiftTrampoline : public SkipTagsInSwift {
 public:

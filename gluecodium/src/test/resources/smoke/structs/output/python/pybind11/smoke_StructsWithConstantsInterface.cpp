@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructsWithConstantsInterface = ::gluecodium::smoke::StructsWithConstantsInterface;
+using StructsWithConstantsInterface = ::smoke::StructsWithConstantsInterface;
 
 void register_StructsWithConstantsInterface(py::module_& module) {
     py::class_<StructsWithConstantsInterface, std::shared_ptr<StructsWithConstantsInterface>>(module, "StructsWithConstantsInterface")

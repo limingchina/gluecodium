@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using TimeZone = ::gluecodium::kotlin_smoke::TimeZone;
+using TimeZone = ::kotlin_smoke::TimeZone;
 
 void register_TimeZone(py::module_& module) {
     py::class_<TimeZone>(module, "TimeZone")

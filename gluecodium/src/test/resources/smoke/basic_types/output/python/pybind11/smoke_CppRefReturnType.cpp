@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using CppRefReturnType = ::gluecodium::smoke::CppRefReturnType;
+using CppRefReturnType = ::smoke::CppRefReturnType;
 
 void register_CppRefReturnType(py::module_& module) {
     py::class_<CppRefReturnType, std::shared_ptr<CppRefReturnType>>(module, "CppRefReturnType")

@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipTypes = ::gluecodium::smoke::SkipTypes;
+using SkipTypes = ::smoke::SkipTypes;
 
 void register_SkipTypes(py::module_& module) {
     py::class_<SkipTypes, std::shared_ptr<SkipTypes>>(module, "SkipTypes")

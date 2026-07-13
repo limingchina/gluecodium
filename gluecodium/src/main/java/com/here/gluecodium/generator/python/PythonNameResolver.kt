@@ -37,6 +37,7 @@ import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeAlias
 import com.here.gluecodium.model.lime.LimeTypeRef
+import com.here.gluecodium.model.lime.LimeValue
 
 /**
  * Main name resolver for the Python generator. Resolves Python-side names for types, type
@@ -60,6 +61,7 @@ internal class PythonNameResolver(
             is LimeTypeAlias -> resolveName(element.typeRef)
             is LimeType -> nameRules.getName(element)
             is LimeNamedElement -> getPlatformName(element) ?: nameRules.getName(element)
+            is LimeValue -> resolveValue(element)
             else -> throw GluecodiumExecutionException("Unsupported element type ${element.javaClass.name}")
         }
 
@@ -89,6 +91,29 @@ internal class PythonNameResolver(
     private fun resolveTypeRefName(limeTypeRef: LimeTypeRef): String {
         val limeType = limeTypeRef.type
         return if (limeTypeRef.isNullable) "Optional[" + resolveName(limeType) + "]" else resolveName(limeType)
+    }
+
+    private fun resolveValue(limeValue: LimeValue): String {
+        // Special float literals (NaN / Infinity) are not Python builtins; render as float() calls.
+        if (limeValue is LimeValue.Special) {
+            return when (limeValue.value) {
+                LimeValue.Special.ValueId.NAN -> "float('nan')"
+                LimeValue.Special.ValueId.INFINITY -> "float('inf')"
+                LimeValue.Special.ValueId.NEGATIVE_INFINITY -> "float('-inf')"
+            }
+        }
+        if (limeValue !is LimeValue.Literal) return limeValue.toString()
+        val actualType = limeValue.typeRef.type.actualType
+        // Boolean literals must use Python's capitalized True/False (LimeValue.Literal.toString()
+        // returns the lowercase "true"/"false" used by most LIME targets).
+        if (actualType is LimeBasicType && actualType.typeId == LimeBasicType.TypeId.BOOLEAN) {
+            return when (limeValue.value) {
+                "true" -> "True"
+                "false" -> "False"
+                else -> limeValue.value
+            }
+        }
+        return limeValue.toString()
     }
 
     private fun getPlatformName(limeElement: LimeNamedElement): String? = limeElement.attributes.get(PYTHON, NAME)

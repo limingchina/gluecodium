@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/EnableTagsInSwift.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnableTagsInSwift = ::gluecodium::smoke::EnableTagsInSwift;
+using EnableTagsInSwift = ::smoke::EnableTagsInSwift;
 
 class EnableTagsInSwiftTrampoline : public EnableTagsInSwift {
 public:

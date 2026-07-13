@@ -11,8 +11,6 @@
 namespace py = pybind11;
 #include "smoke/ExternalSet.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using set[PseudoColor] = ::gluecodium::smoke::ExternalSet;
 
 // set[PseudoColor] is a type alias, no binding needed.
 

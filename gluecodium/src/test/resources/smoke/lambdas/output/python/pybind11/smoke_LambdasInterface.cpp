@@ -17,7 +17,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using LambdasInterface = ::gluecodium::smoke::LambdasInterface;
+using LambdasInterface = ::smoke::LambdasInterface;
 
 class LambdasInterfaceTrampoline : public LambdasInterface {
 public:

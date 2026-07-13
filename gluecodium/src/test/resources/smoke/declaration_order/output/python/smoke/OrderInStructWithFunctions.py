@@ -36,3 +36,12 @@ class OrderInStructWithFunctions(_NativeBase):
         """"""
         return self._native.do_stuff(struct_foo._native)
 
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

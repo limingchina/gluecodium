@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DurationExternal = ::gluecodium::smoke::DurationExternal;
+using DurationExternal = std::chrono::duration<uint64_t, std::ratio<1,1000>>;
 
 void register_DurationExternal(py::module_& module) {
     py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "DurationExternal")

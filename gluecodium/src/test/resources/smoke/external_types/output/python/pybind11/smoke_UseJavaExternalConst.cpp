@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseJavaExternalConst = ::gluecodium::smoke::UseJavaExternalConst;
+using UseJavaExternalConst = ::smoke::UseJavaExternalConst;
 
 void register_UseJavaExternalConst(py::module_& module) {
     py::class_<UseJavaExternalConst>(module, "UseJavaExternalConst")

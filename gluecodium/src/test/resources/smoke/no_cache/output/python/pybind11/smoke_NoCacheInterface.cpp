@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/NoCacheInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using NoCacheInterface = ::gluecodium::smoke::NoCacheInterface;
+using NoCacheInterface = ::smoke::NoCacheInterface;
 
 class NoCacheInterfaceTrampoline : public NoCacheInterface {
 public:

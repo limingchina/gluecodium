@@ -14,14 +14,13 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithAllDefaults = ::gluecodium::smoke::StructWithAllDefaults;
+using StructWithAllDefaults = ::smoke::StructWithAllDefaults;
 
 void register_StructWithAllDefaults(py::module_& module) {
     py::class_<StructWithAllDefaults>(module, "StructWithAllDefaults")
         .def_readwrite("int_field", &StructWithAllDefaults::int_field)
         .def_readwrite("string_field", &StructWithAllDefaults::string_field)
         .def(py::init<>())
-        .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         ;
 }
 

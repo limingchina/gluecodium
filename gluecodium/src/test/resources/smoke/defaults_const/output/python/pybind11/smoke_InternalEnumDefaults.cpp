@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InternalEnumDefaults = ::gluecodium::smoke::InternalEnumDefaults;
+using InternalEnumDefaults = ::smoke::InternalEnumDefaults;
 
 void register_InternalEnumDefaults(py::module_& module) {
     py::class_<InternalEnumDefaults>(module, "InternalEnumDefaults")
@@ -24,7 +24,6 @@ void register_InternalEnumDefaults(py::module_& module) {
         .def_readwrite("internal_field", &InternalEnumDefaults::internal_field)
         .def_readwrite("internal_list_field", &InternalEnumDefaults::internal_list_field)
         .def(py::init<>())
-        .def(py::init<::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >, ::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >>(), py::arg("public_field"), py::arg("public_list_field"), py::arg("internal_field"), py::arg("internal_list_field"))
         ;
 }
 

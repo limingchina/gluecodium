@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SimpleClass = ::gluecodium::smoke::SimpleClass;
+using SimpleClass = ::smoke::SimpleClass;
 
 void register_SimpleClass(py::module_& module) {
     py::class_<SimpleClass, std::shared_ptr<SimpleClass>>(module, "SimpleClass")

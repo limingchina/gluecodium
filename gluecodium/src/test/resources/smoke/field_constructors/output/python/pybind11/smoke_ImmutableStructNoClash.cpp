@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ImmutableStructNoClash = ::gluecodium::smoke::ImmutableStructNoClash;
+using ImmutableStructNoClash = ::smoke::ImmutableStructNoClash;
 
 void register_ImmutableStructNoClash(py::module_& module) {
     py::class_<ImmutableStructNoClash>(module, "ImmutableStructNoClash")
@@ -22,7 +22,6 @@ void register_ImmutableStructNoClash(py::module_& module) {
         .def_readwrite("int_field", &ImmutableStructNoClash::int_field)
         .def_readwrite("bool_field", &ImmutableStructNoClash::bool_field)
         .def(py::init<>())
-        .def(py::init<::std::string, int32_t, bool>(), py::arg("string_field"), py::arg("int_field"), py::arg("bool_field"))
         ;
 }
 

@@ -19,3 +19,12 @@ class SomeTypeCollection(_NativeBase):
         else:
             super().__init__(generated.SomeTypeCollection(*args))
 
+from enum import Enum
+
+
+class SomeTypeCollectionError(Enum):
+    """"""
+
+    ERROR_A = 0
+    ERROR_B = 1
+

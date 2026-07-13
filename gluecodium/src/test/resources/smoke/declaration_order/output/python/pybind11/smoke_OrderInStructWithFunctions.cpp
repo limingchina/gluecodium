@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using OrderInStructWithFunctions = ::gluecodium::smoke::OrderInStructWithFunctions;
+using OrderInStructWithFunctions = ::smoke::OrderInStructWithFunctions;
 
 void register_OrderInStructWithFunctions(py::module_& module) {
     py::class_<OrderInStructWithFunctions>(module, "OrderInStructWithFunctions")

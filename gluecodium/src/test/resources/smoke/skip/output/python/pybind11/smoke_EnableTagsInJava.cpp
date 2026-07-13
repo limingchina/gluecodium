@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/EnableTagsInJava.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnableTagsInJava = ::gluecodium::smoke::EnableTagsInJava;
+using EnableTagsInJava = ::smoke::EnableTagsInJava;
 
 class EnableTagsInJavaTrampoline : public EnableTagsInJava {
 public:

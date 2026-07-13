@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/StructsInstance.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructsInstance = ::gluecodium::smoke::StructsInstance;
+using StructsInstance = ::smoke::StructsInstance;
 
 void register_StructsInstance(py::module_& module) {
     py::class_<StructsInstance, std::shared_ptr<StructsInstance>>(module, "StructsInstance")

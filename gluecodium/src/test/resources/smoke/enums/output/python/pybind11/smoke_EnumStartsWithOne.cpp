@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/EnumStartsWithOne.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnumStartsWithOne = ::gluecodium::smoke::EnumStartsWithOne;
+using EnumStartsWithOne = ::smoke::EnumStartsWithOne;
 
 void register_EnumStartsWithOne(py::module_& module) {
     py::enum_<EnumStartsWithOne>(module, "EnumStartsWithOne")

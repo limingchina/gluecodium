@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using OuterClass = ::gluecodium::smoke::OuterClass;
+using OuterClass = ::smoke::OuterClass;
 
 void register_OuterClass(py::module_& module) {
     py::class_<OuterClass, std::shared_ptr<OuterClass>>(module, "OuterClass")

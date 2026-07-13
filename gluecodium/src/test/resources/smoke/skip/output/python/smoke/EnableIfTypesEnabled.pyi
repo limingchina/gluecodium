@@ -1,7 +1,6 @@
 
 
 from smoke.EnableMe import EnableMe
-from smoke.PLACE_HOLDER_ENABLED import PLACE_HOLDER_ENABLED
 
 
 from _native_base import _NativeBase
@@ -17,4 +16,15 @@ class EnableIfTypesEnabled(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.EnableIfTypesEnabled(*args))
+
+from enum import Enum
+
+
+class EnableMe(Enum):
+    """"""
+
+    NOPE = 0
+
+
+PLACE_HOLDER_ENABLED = True
 

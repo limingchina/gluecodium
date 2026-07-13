@@ -1,6 +1,5 @@
 
 
-from smoke.PLACE_HOLDER import PLACE_HOLDER
 
 
 from _native_base import _NativeBase
@@ -16,4 +15,7 @@ class SkipTypesTags(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.SkipTypesTags(*args))
+
+
+PLACE_HOLDER = True
 

@@ -14,14 +14,13 @@ namespace py = pybind11;
 #include "smoke/foo/Alphabet.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using LearnToRead = ::gluecodium::smoke::LearnToRead;
+using LearnToRead = ::smoke::LearnToRead;
 
 void register_LearnToRead(py::module_& module) {
     py::class_<LearnToRead>(module, "LearnToRead")
         .def_readwrite("field_a", &LearnToRead::field_a)
         .def_readwrite("field_b", &LearnToRead::field_b)
         .def(py::init<>())
-        .def(py::init<::smoke::Alphabet, ::smoke::foo::Alphabet>(), py::arg("field_a"), py::arg("field_b"))
         ;
 }
 

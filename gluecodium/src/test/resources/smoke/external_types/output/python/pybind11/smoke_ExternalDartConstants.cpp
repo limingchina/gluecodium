@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "smoke/ExternalDartConstants.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExternalDartConstants = ::gluecodium::smoke::ExternalDartConstants;
+using ExternalDartConstants = ::smoke::ExternalDartConstants;
 
 void register_ExternalDartConstants(py::module_& module) {
     py::class_<ExternalDartConstants>(module, "ExternalDartConstants")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

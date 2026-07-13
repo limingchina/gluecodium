@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FcStruct = ::gluecodium::smoke::FcStruct;
+using FcStruct = ::smoke::FcStruct;
 
 void register_FcStruct(py::module_& module) {
     py::class_<FcStruct>(module, "FcStruct")

@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-from fire.DUMMY import DUMMY
-from fire.DUMMY2 import DUMMY2
-from fire.DUMMY3 import DUMMY3
-from fire.DUMMY4 import DUMMY4
 from fire.SomeStruct import SomeStruct
 
 
@@ -19,4 +15,19 @@ class StructConstants(_NativeBase):
 
     def __init__(self, native):
         super().__init__(native)
+
+
+DUMMY = {42}
+
+
+DUMMY2 = {11}
+
+
+DUMMY3 = StructConstants.dummy2
+
+
+DUMMY4 = {-1}
+
+
+DUMMY4 = {-2}
 

@@ -24,3 +24,12 @@ class ExternalClass(_NativeBase):
         native_result = generated.ExternalClass.create()
         return ExternalClass(native_result)
 
+from enum import Enum
+
+
+class ErrorEnum(Enum):
+    """"""
+
+    NONE = 0
+    CRASHED = 1
+

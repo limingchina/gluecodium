@@ -87,3 +87,12 @@ class Thermometer(_NativeBase):
         """"""
         return self._native.get_fahrenheit()
 
+from enum import Enum
+
+
+class SomeThermometerErrorCode(Enum):
+    """Some error code for thermometer."""
+
+    ERROR_NONE = 0
+    ERROR_FATAL = 1
+

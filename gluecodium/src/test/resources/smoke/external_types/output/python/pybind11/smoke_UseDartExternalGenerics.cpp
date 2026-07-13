@@ -21,7 +21,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseDartExternalGenerics = ::gluecodium::smoke::UseDartExternalGenerics;
+using UseDartExternalGenerics = ::smoke::UseDartExternalGenerics;
 
 void register_UseDartExternalGenerics(py::module_& module) {
     py::class_<UseDartExternalGenerics, std::shared_ptr<UseDartExternalGenerics>>(module, "UseDartExternalGenerics")

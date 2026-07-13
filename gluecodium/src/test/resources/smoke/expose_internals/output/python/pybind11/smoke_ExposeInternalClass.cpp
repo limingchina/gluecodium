@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/ExposeInternalClass.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExposeInternalClass = ::gluecodium::smoke::ExposeInternalClass;
+using ExposeInternalClass = ::smoke::ExposeInternalClass;
 
 void register_ExposeInternalClass(py::module_& module) {
     py::class_<ExposeInternalClass, std::shared_ptr<ExposeInternalClass>>(module, "ExposeInternalClass")

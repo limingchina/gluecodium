@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipProxy = ::gluecodium::smoke::SkipProxy;
+using SkipProxy = ::smoke::SkipProxy;
 
 class SkipProxyTrampoline : public SkipProxy {
 public:

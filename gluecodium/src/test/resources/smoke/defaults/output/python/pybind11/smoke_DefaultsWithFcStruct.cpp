@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/FcStruct.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DefaultsWithFcStruct = ::gluecodium::smoke::DefaultsWithFcStruct;
+using DefaultsWithFcStruct = ::smoke::DefaultsWithFcStruct;
 
 void register_DefaultsWithFcStruct(py::module_& module) {
     py::class_<DefaultsWithFcStruct>(module, "DefaultsWithFcStruct")

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PlatformComments = ::gluecodium::smoke::PlatformComments;
+using PlatformComments = ::smoke::PlatformComments;
 
 void register_PlatformComments(py::module_& module) {
     py::class_<PlatformComments, std::shared_ptr<PlatformComments>>(module, "PlatformComments")

@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.LIST_CONSTANT import LIST_CONSTANT
-from smoke.MAP_CONSTANT import MAP_CONSTANT
-from smoke.MIXED_CONSTANT import MIXED_CONSTANT
-from smoke.SET_CONSTANT import SET_CONSTANT
 
 
 from _native_base import _NativeBase
@@ -18,4 +14,16 @@ class CollectionConstants(_NativeBase):
 
     def __init__(self, native):
         super().__init__(native)
+
+
+LIST_CONSTANT = ["foo", "bar"]
+
+
+SET_CONSTANT = ["foo", "bar"]
+
+
+MAP_CONSTANT = ["foo": "bar"]
+
+
+MIXED_CONSTANT = [["foo"]: ["bar"]]
 

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using IncludableStruct = ::gluecodium::smoke::IncludableStruct;
+using IncludableStruct = ::smoke::IncludableStruct;
 
 void register_IncludableStruct(py::module_& module) {
     py::class_<IncludableStruct>(module, "IncludableStruct")

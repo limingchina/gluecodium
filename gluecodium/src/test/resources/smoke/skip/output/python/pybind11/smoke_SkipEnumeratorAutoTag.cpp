@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SkipEnumeratorAutoTag.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipEnumeratorAutoTag = ::gluecodium::smoke::SkipEnumeratorAutoTag;
+using SkipEnumeratorAutoTag = ::smoke::SkipEnumeratorAutoTag;
 
 void register_SkipEnumeratorAutoTag(py::module_& module) {
     py::enum_<SkipEnumeratorAutoTag>(module, "SkipEnumeratorAutoTag")

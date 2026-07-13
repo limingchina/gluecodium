@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SwiftConstructorOverloads = ::gluecodium::smoke::SwiftConstructorOverloads;
+using SwiftConstructorOverloads = ::smoke::SwiftConstructorOverloads;
 
 void register_SwiftConstructorOverloads(py::module_& module) {
     py::class_<SwiftConstructorOverloads, std::shared_ptr<SwiftConstructorOverloads>>(module, "SwiftConstructorOverloads")

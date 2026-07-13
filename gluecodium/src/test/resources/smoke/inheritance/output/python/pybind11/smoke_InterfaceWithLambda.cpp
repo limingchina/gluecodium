@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "functional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InterfaceWithLambda = ::gluecodium::smoke::InterfaceWithLambda;
+using InterfaceWithLambda = ::smoke::InterfaceWithLambda;
 
 class InterfaceWithLambdaTrampoline : public InterfaceWithLambda {
 public:

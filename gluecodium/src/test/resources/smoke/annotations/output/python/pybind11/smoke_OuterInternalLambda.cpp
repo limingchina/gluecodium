@@ -14,8 +14,6 @@ namespace py = pybind11;
 #include "functional"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using OuterInternalLambda = ::smoke::OuterInternalLambda;
 
 // OuterInternalLambda is a std::function, handled inline where used.
 

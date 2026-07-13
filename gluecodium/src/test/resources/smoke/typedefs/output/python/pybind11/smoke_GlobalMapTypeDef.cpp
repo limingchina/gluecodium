@@ -11,8 +11,6 @@
 namespace py = pybind11;
 #include "smoke/GlobalMapTypeDef.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using dict[int, str] = ::gluecodium::smoke::GlobalMapTypeDef;
 
 // dict[int, str] is a type alias, no binding needed.
 

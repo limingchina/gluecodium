@@ -15,14 +15,13 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using BlobDefaults = ::gluecodium::smoke::BlobDefaults;
+using BlobDefaults = ::smoke::BlobDefaults;
 
 void register_BlobDefaults(py::module_& module) {
     py::class_<BlobDefaults>(module, "BlobDefaults")
         .def_readwrite("empty_list", &BlobDefaults::empty_list)
         .def_readwrite("dead_beef", &BlobDefaults::dead_beef)
         .def(py::init<>())
-        .def(py::init<::std::shared_ptr< ::std::vector< uint8_t > >, ::std::shared_ptr< ::std::vector< uint8_t > >>(), py::arg("empty_list"), py::arg("dead_beef"))
         ;
 }
 

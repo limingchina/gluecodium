@@ -47,3 +47,12 @@ class Structs(_NativeBase):
         native_result = generated.Structs.modify_all_types_struct(input)
         return AllTypesStruct(native_result)
 
+from enum import Enum
+
+
+class FooBar(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

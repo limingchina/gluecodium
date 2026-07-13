@@ -41,12 +41,12 @@ struct ReturnErrorToString<std::error_code> {
 };
 
 template <typename Value, typename Error>
-struct type_caster<::Return<Value, Error>> {
-    using ReturnT = ::Return<Value, Error>;
+struct type_caster<Return<Value, Error>> {
+    using ReturnT = Return<Value, Error>;
     PYBIND11_TYPE_CASTER(ReturnT, _("Return[T, Error]"));
 
     // Convert C++ Return -> Python.
-    static handle cast(const ::Return<Value, Error>& src,
+    static handle cast(const Return<Value, Error>& src,
                        return_value_policy policy, handle parent) {
         if (src.has_value()) {
             return type_caster<Value>::cast(src.unsafe_value(), policy, parent);

@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/InheritFromSkipped.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InheritFromSkipped = ::gluecodium::smoke::InheritFromSkipped;
+using InheritFromSkipped = ::smoke::InheritFromSkipped;
 
 class InheritFromSkippedTrampoline : public InheritFromSkipped {
 public:

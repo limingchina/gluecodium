@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "fire/Enum2.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Enum2 = ::gluecodium::fire::Enum2;
+using Enum2 = ::fire::Enum2;
 
 void register_Enum2(py::module_& module) {
     py::enum_<Enum2>(module, "Enum2")

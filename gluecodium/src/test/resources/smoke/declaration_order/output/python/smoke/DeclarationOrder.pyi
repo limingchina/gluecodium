@@ -21,3 +21,12 @@ class DeclarationOrder(_NativeBase):
         else:
             super().__init__(generated.DeclarationOrder(*args))
 
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

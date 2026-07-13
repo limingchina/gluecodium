@@ -12,13 +12,12 @@ namespace py = pybind11;
 #include "smoke/PublicFieldsNone.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PublicFieldsNone = ::gluecodium::smoke::PublicFieldsNone;
+using PublicFieldsNone = ::smoke::PublicFieldsNone;
 
 void register_PublicFieldsNone(py::module_& module) {
     py::class_<PublicFieldsNone>(module, "PublicFieldsNone")
         .def_readwrite("internal_field", &PublicFieldsNone::internal_field)
         .def(py::init<>())
-        .def(py::init<::std::string>(), py::arg("internal_field"))
         ;
 }
 

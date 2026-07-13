@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AttributesWithComments = ::gluecodium::smoke::AttributesWithComments;
+using AttributesWithComments = ::smoke::AttributesWithComments;
 
 void register_AttributesWithComments(py::module_& module) {
     py::class_<AttributesWithComments, std::shared_ptr<AttributesWithComments>>(module, "AttributesWithComments")

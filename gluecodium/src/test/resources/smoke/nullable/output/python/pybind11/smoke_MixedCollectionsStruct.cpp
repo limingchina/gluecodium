@@ -17,7 +17,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using MixedCollectionsStruct = ::gluecodium::smoke::MixedCollectionsStruct;
+using MixedCollectionsStruct = ::smoke::MixedCollectionsStruct;
 
 void register_MixedCollectionsStruct(py::module_& module) {
     py::class_<MixedCollectionsStruct>(module, "MixedCollectionsStruct")

@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/CompressionState.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using CompressionState = ::gluecodium::smoke::CompressionState;
+using CompressionState = ::smoke::CompressionState;
 
 void register_CompressionState(py::module_& module) {
     py::enum_<CompressionState>(module, "CompressionState")

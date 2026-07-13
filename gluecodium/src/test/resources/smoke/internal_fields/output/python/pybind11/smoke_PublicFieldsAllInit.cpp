@@ -13,14 +13,13 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PublicFieldsAllInit = ::gluecodium::smoke::PublicFieldsAllInit;
+using PublicFieldsAllInit = ::smoke::PublicFieldsAllInit;
 
 void register_PublicFieldsAllInit(py::module_& module) {
     py::class_<PublicFieldsAllInit>(module, "PublicFieldsAllInit")
         .def_readwrite("public_field", &PublicFieldsAllInit::public_field)
         .def_readwrite("internal_field", &PublicFieldsAllInit::internal_field)
         .def(py::init<>())
-        .def(py::init<::std::string, ::std::string>(), py::arg("public_field"), py::arg("internal_field"))
         ;
 }
 

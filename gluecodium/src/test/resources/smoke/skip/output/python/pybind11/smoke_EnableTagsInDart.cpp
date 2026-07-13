@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/EnableTagsInDart.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnableTagsInDart = ::gluecodium::smoke::EnableTagsInDart;
+using EnableTagsInDart = ::smoke::EnableTagsInDart;
 
 class EnableTagsInDartTrampoline : public EnableTagsInDart {
 public:

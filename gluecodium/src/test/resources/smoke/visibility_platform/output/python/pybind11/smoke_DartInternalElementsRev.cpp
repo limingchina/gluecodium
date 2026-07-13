@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DartInternalElementsRev = ::gluecodium::smoke::DartInternalElementsRev;
+using DartInternalElementsRev = ::smoke::DartInternalElementsRev;
 
 void register_DartInternalElementsRev(py::module_& module) {
     py::class_<DartInternalElementsRev>(module, "DartInternalElementsRev")

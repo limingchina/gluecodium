@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PublicStructWithInternalConstructors = ::gluecodium::smoke::PublicStructWithInternalConstructors;
+using PublicStructWithInternalConstructors = ::smoke::PublicStructWithInternalConstructors;
 
 void register_PublicStructWithInternalConstructors(py::module_& module) {
     py::class_<PublicStructWithInternalConstructors>(module, "PublicStructWithInternalConstructors")

@@ -58,3 +58,12 @@ class NameRules(_NativeBase):
     def struct_property(self, value: ExampleStruct):
         self._native.struct_property = value
 
+from enum import Enum
+
+
+class ExampleErrorCode(Enum):
+    """"""
+
+    NONE = 0
+    FATAL = 1
+

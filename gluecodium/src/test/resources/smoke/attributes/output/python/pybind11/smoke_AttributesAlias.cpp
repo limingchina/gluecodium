@@ -11,8 +11,6 @@
 namespace py = pybind11;
 #include "smoke/AttributesAlias.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using str = ::gluecodium::smoke::AttributesAlias;
 
 // str is a type alias, no binding needed.
 

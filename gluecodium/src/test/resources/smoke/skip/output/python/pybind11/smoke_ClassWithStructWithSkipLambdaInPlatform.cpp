@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "functional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ClassWithStructWithSkipLambdaInPlatform = ::gluecodium::smoke::ClassWithStructWithSkipLambdaInPlatform;
+using ClassWithStructWithSkipLambdaInPlatform = ::smoke::ClassWithStructWithSkipLambdaInPlatform;
 
 void register_ClassWithStructWithSkipLambdaInPlatform(py::module_& module) {
     py::class_<ClassWithStructWithSkipLambdaInPlatform, std::shared_ptr<ClassWithStructWithSkipLambdaInPlatform>>(module, "ClassWithStructWithSkipLambdaInPlatform")

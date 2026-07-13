@@ -20,7 +20,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithNullableCollectionDefaults = ::gluecodium::smoke::StructWithNullableCollectionDefaults;
+using StructWithNullableCollectionDefaults = ::smoke::StructWithNullableCollectionDefaults;
 
 void register_StructWithNullableCollectionDefaults(py::module_& module) {
     py::class_<StructWithNullableCollectionDefaults>(module, "StructWithNullableCollectionDefaults")
@@ -28,7 +28,6 @@ void register_StructWithNullableCollectionDefaults(py::module_& module) {
         .def_readwrite("nullable_map_field", &StructWithNullableCollectionDefaults::nullable_map_field)
         .def_readwrite("nullable_set_field", &StructWithNullableCollectionDefaults::nullable_set_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
         ;
 }
 

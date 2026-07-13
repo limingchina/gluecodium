@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AsyncWithSkips = ::gluecodium::smoke::AsyncWithSkips;
+using AsyncWithSkips = ::smoke::AsyncWithSkips;
 
 void register_AsyncWithSkips(py::module_& module) {
     py::class_<AsyncWithSkips, std::shared_ptr<AsyncWithSkips>>(module, "AsyncWithSkips")

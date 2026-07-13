@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using LongComments = ::gluecodium::smoke::LongComments;
+using LongComments = ::smoke::LongComments;
 
 void register_LongComments(py::module_& module) {
     py::class_<LongComments, std::shared_ptr<LongComments>>(module, "LongComments")

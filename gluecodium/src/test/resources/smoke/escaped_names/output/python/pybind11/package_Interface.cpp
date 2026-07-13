@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "package/Interface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Interface = ::gluecodium::package::interface;
+using Interface = ::package::Interface;
 
 class InterfaceTrampoline : public Interface {
 public:

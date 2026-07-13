@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.A_BAR import A_BAR
 
 
 from _native_base import _NativeBase
@@ -45,4 +44,7 @@ class FreePoint(_NativeBase):
     def flip(self) -> FreePoint:
         """"""
         return self._native.flip()
+
+
+A_BAR = FreeEnum.BAR
 

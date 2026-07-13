@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/EnableIfEnabled.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnableIfEnabled = ::gluecodium::smoke::EnableIfEnabled;
+using EnableIfEnabled = ::smoke::EnableIfEnabled;
 
 void register_EnableIfEnabled(py::module_& module) {
     py::class_<EnableIfEnabled, std::shared_ptr<EnableIfEnabled>>(module, "EnableIfEnabled")

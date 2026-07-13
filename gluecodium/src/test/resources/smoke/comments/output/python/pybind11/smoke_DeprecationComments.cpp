@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DeprecationComments = ::gluecodium::smoke::DeprecationComments;
+using DeprecationComments = ::smoke::DeprecationComments;
 
 class DeprecationCommentsTrampoline : public DeprecationComments {
 public:

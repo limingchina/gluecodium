@@ -18,14 +18,20 @@
 """Constant mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.constants import (
+from test.Constants import (
     INT_CONSTANT,
     UINT_CONSTANT,
     FLOAT_CONSTANT,
     DOUBLE_CONSTANT,
     STRING_CONSTANT,
-    BOOL_CONSTANT,
+    FLOAT_NAN,
+    FLOAT_INFINITY,
+    FLOAT_NEGATIVE_INFINITY,
+    DOUBLE_NAN,
+    DOUBLE_INFINITY,
+    DOUBLE_NEGATIVE_INFINITY,
 )
+from test.ConstantsSkipCpp import BOOL_CONSTANT
 
 import pytest
 

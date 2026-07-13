@@ -56,3 +56,22 @@ class Errors(_NativeBase):
         native_result = generated.Errors.method_with_payload_error_and_return_value()
         return str(native_result)
 
+from enum import Enum
+
+
+class InternalErrorCode(Enum):
+    """"""
+
+    ERROR_NONE = 0
+    ERROR_FATAL = 1
+
+from enum import Enum
+
+
+class ExternalErrors(Enum):
+    """"""
+
+    NONE = 0
+    BOOM = 1
+    BUST = 2
+

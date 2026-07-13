@@ -170,3 +170,12 @@ class Nullable(_NativeBase):
     def instance_property(self, value):
         self._native.instance_property = value
 
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    ON = 0
+    OFF = 1
+

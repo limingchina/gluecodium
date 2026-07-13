@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithJavaPositionalDefaults = ::gluecodium::smoke::StructWithJavaPositionalDefaults;
+using StructWithJavaPositionalDefaults = ::smoke::StructWithJavaPositionalDefaults;
 
 void register_StructWithJavaPositionalDefaults(py::module_& module) {
     py::class_<StructWithJavaPositionalDefaults>(module, "StructWithJavaPositionalDefaults")

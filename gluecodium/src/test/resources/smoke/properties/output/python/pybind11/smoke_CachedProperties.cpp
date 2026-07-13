@@ -17,7 +17,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using CachedProperties = ::gluecodium::smoke::CachedProperties;
+using CachedProperties = ::smoke::CachedProperties;
 
 void register_CachedProperties(py::module_& module) {
     py::class_<CachedProperties, std::shared_ptr<CachedProperties>>(module, "CachedProperties")

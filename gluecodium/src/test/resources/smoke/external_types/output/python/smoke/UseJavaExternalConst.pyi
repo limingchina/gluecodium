@@ -1,6 +1,5 @@
 
 
-from smoke.DEFAULT_TRUTH import DEFAULT_TRUTH
 from smoke.JavaExternalCtor import JavaExternalCtor
 
 
@@ -28,4 +27,7 @@ class UseJavaExternalConst(_NativeBase):
     def string_field(self, value: str):
         self._native.string_field = value
 
+
+
+DEFAULT_TRUTH = {"foo"}
 

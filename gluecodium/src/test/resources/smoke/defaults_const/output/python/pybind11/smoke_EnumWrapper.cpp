@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/EnumWrapper.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnumWrapper = ::gluecodium::smoke::EnumWrapper;
+using EnumWrapper = ::smoke::EnumWrapper;
 
 void register_EnumWrapper(py::module_& module) {
     py::class_<EnumWrapper>(module, "EnumWrapper")

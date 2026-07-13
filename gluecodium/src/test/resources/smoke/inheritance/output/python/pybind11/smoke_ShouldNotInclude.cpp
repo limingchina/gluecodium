@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ShouldNotInclude = ::gluecodium::smoke::ShouldNotInclude;
+using ShouldNotInclude = ::smoke::ShouldNotInclude;
 
 void register_ShouldNotInclude(py::module_& module) {
     py::class_<ShouldNotInclude>(module, "ShouldNotInclude")

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "functional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SpecialNamesInterface = ::gluecodium::smoke::SpecialNamesInterface;
+using SpecialNamesInterface = ::smoke::SpecialNamesInterface;
 
 class SpecialNamesInterfaceTrampoline : public SpecialNamesInterface {
 public:

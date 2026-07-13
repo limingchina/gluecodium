@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "chrono"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DateInterval = ::gluecodium::smoke::DateInterval;
+using DateInterval = ::smoke::DateInterval;
 
 void register_DateInterval(py::module_& module) {
     py::class_<DateInterval>(module, "DateInterval")

@@ -1,6 +1,5 @@
 
 
-from package.CONST import CONST
 from package.Enum import Enum
 
 
@@ -17,4 +16,15 @@ class Types(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.Types(*args))
+
+from enum import Enum
+
+
+class Enum(Enum):
+    """"""
+
+    NA_N = 0
+
+
+CONST = enum.NaN
 

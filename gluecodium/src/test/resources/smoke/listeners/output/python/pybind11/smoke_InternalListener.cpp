@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/InternalListener.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InternalListener = ::gluecodium::smoke::InternalListener;
+using InternalListener = ::smoke::InternalListener;
 
 class InternalListenerTrampoline : public InternalListener {
 public:

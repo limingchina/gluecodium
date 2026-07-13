@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "foo/AlienEnum3.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExternalEnum3 = ::gluecodium::fire::ExternalEnum3;
+using ExternalEnum3 = foo::AlienEnum3;
 
 void register_ExternalEnum3(py::module_& module) {
     py::enum_<foo::AlienEnum3>(module, "ExternalEnum3")

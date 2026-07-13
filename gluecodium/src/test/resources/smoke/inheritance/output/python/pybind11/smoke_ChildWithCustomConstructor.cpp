@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ChildWithCustomConstructor = ::gluecodium::smoke::ChildWithCustomConstructor;
+using ChildWithCustomConstructor = ::smoke::ChildWithCustomConstructor;
 
 void register_ChildWithCustomConstructor(py::module_& module) {
     py::class_<ChildWithCustomConstructor, std::shared_ptr<ChildWithCustomConstructor>>(module, "ChildWithCustomConstructor")

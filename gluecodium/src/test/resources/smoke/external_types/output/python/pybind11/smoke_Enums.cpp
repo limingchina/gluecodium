@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/Enums.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Enums = ::gluecodium::smoke::Enums;
+using Enums = ::smoke::Enums;
 
 void register_Enums(py::module_& module) {
     py::class_<Enums, std::shared_ptr<Enums>>(module, "Enums")

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.FOO_BAR import FOO_BAR
 
 
 from _native_base import _NativeBase
@@ -18,4 +17,7 @@ class CrossFileConstants(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.CrossFileConstants(*args))
+
+
+FOO_BAR = StateEnum.ON
 

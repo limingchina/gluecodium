@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SpecialAttributes.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SpecialAttributes = ::gluecodium::smoke::SpecialAttributes;
+using SpecialAttributes = ::smoke::SpecialAttributes;
 
 void register_SpecialAttributes(py::module_& module) {
     py::class_<SpecialAttributes, std::shared_ptr<SpecialAttributes>>(module, "SpecialAttributes")

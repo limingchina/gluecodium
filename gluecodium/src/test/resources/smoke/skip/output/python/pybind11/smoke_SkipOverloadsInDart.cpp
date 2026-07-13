@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipOverloadsInDart = ::gluecodium::smoke::SkipOverloadsInDart;
+using SkipOverloadsInDart = ::smoke::SkipOverloadsInDart;
 
 void register_SkipOverloadsInDart(py::module_& module) {
     py::class_<SkipOverloadsInDart, std::shared_ptr<SkipOverloadsInDart>>(module, "SkipOverloadsInDart")

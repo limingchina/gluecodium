@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StringsWithCstring = ::gluecodium::smoke::StringsWithCstring;
+using StringsWithCstring = ::smoke::StringsWithCstring;
 
 void register_StringsWithCstring(py::module_& module) {
     py::class_<StringsWithCstring, std::shared_ptr<StringsWithCstring>>(module, "StringsWithCstring")

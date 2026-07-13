@@ -20,7 +20,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Lambdas = ::gluecodium::smoke::Lambdas;
+using Lambdas = ::smoke::Lambdas;
 
 void register_Lambdas(py::module_& module) {
     py::class_<Lambdas, std::shared_ptr<Lambdas>>(module, "Lambdas")

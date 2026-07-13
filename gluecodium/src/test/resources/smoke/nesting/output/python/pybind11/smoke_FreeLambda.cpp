@@ -15,8 +15,6 @@ namespace py = pybind11;
 #include "chrono"
 #include "functional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FreeLambda = ::gluecodium::smoke::FreeLambda;
 
 // FreeLambda is a std::function, handled inline where used.
 

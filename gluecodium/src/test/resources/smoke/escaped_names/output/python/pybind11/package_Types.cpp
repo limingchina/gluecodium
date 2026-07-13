@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "package/Types.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Types = ::gluecodium::package::types;
+using Types = ::package::Types;
 
 void register_Types(py::module_& module) {
     py::class_<Types>(module, "Types")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

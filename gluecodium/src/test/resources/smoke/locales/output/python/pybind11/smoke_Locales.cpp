@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/Locales.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Locales = ::gluecodium::smoke::Locales;
+using Locales = ::smoke::Locales;
 
 void register_Locales(py::module_& module) {
     py::class_<Locales, std::shared_ptr<Locales>>(module, "Locales")

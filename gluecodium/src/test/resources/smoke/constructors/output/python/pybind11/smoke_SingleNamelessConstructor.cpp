@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SingleNamelessConstructor = ::gluecodium::smoke::SingleNamelessConstructor;
+using SingleNamelessConstructor = ::smoke::SingleNamelessConstructor;
 
 void register_SingleNamelessConstructor(py::module_& module) {
     py::class_<SingleNamelessConstructor, std::shared_ptr<SingleNamelessConstructor>>(module, "SingleNamelessConstructor")

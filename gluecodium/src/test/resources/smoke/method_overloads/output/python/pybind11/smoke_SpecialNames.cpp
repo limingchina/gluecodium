@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SpecialNames = ::gluecodium::smoke::SpecialNames;
+using SpecialNames = ::smoke::SpecialNames;
 
 void register_SpecialNames(py::module_& module) {
     py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(module, "SpecialNames")

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InnerClassForwardDeclarations = ::gluecodium::smoke::forward::InnerClassForwardDeclarations;
+using InnerClassForwardDeclarations = ::smoke::forward::InnerClassForwardDeclarations;
 
 void register_InnerClassForwardDeclarations(py::module_& module) {
     py::class_<InnerClassForwardDeclarations, std::shared_ptr<InnerClassForwardDeclarations>>(module, "InnerClassForwardDeclarations")

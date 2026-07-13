@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SkipMixed.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipMixed = ::gluecodium::smoke::SkipMixed;
+using SkipMixed = ::smoke::SkipMixed;
 
 void register_SkipMixed(py::module_& module) {
     py::class_<SkipMixed, std::shared_ptr<SkipMixed>>(module, "SkipMixed")

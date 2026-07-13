@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DartDeprecatedPosDefaultsCustom = ::gluecodium::smoke::DartDeprecatedPosDefaultsCustom;
+using DartDeprecatedPosDefaultsCustom = ::smoke::DartDeprecatedPosDefaultsCustom;
 
 void register_DartDeprecatedPosDefaultsCustom(py::module_& module) {
     py::class_<DartDeprecatedPosDefaultsCustom>(module, "DartDeprecatedPosDefaultsCustom")

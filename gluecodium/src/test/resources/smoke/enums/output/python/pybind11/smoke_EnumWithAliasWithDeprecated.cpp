@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/EnumWithAliasWithDeprecated.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnumWithAliasWithDeprecated = ::gluecodium::smoke::EnumWithAliasWithDeprecated;
+using EnumWithAliasWithDeprecated = ::smoke::EnumWithAliasWithDeprecated;
 
 void register_EnumWithAliasWithDeprecated(py::module_& module) {
     py::enum_<EnumWithAliasWithDeprecated>(module, "EnumWithAliasWithDeprecated")

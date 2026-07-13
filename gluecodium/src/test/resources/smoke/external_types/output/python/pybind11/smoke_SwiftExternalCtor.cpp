@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SwiftExternalCtor = ::gluecodium::smoke::SwiftExternalCtor;
+using SwiftExternalCtor = ::smoke::SwiftExternalCtor;
 
 void register_SwiftExternalCtor(py::module_& module) {
     py::class_<SwiftExternalCtor>(module, "SwiftExternalCtor")

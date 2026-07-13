@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithInitializerDefaults = ::gluecodium::smoke::StructWithInitializerDefaults;
+using StructWithInitializerDefaults = ::smoke::StructWithInitializerDefaults;
 
 void register_StructWithInitializerDefaults(py::module_& module) {
     py::class_<StructWithInitializerDefaults>(module, "StructWithInitializerDefaults")
@@ -25,7 +25,6 @@ void register_StructWithInitializerDefaults(py::module_& module) {
         .def_readwrite("set_type_field", &StructWithInitializerDefaults::set_type_field)
         .def_readwrite("map_field", &StructWithInitializerDefaults::map_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
         ;
 }
 

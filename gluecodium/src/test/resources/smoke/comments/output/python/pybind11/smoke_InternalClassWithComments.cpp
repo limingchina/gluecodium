@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/InternalClassWithComments.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InternalClassWithComments = ::gluecodium::smoke::InternalClassWithComments;
+using InternalClassWithComments = ::smoke::InternalClassWithComments;
 
 void register_InternalClassWithComments(py::module_& module) {
     py::class_<InternalClassWithComments, std::shared_ptr<InternalClassWithComments>>(module, "InternalClassWithComments")

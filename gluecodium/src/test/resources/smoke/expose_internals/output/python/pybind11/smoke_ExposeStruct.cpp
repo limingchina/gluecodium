@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExposeStruct = ::gluecodium::smoke::ExposeStruct;
+using ExposeStruct = ::smoke::ExposeStruct;
 
 void register_ExposeStruct(py::module_& module) {
     py::class_<ExposeStruct>(module, "ExposeStruct")

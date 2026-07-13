@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AsyncClass = ::gluecodium::smoke::AsyncClass;
+using AsyncClass = ::smoke::AsyncClass;
 
 void register_AsyncClass(py::module_& module) {
     py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "AsyncClass")

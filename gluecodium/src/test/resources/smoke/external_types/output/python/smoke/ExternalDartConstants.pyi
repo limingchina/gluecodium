@@ -1,8 +1,6 @@
 
 
-from smoke.BIG import BIG
 from smoke.Rectangle import Rectangle
-from smoke.SMALL import SMALL
 
 
 from _native_base import _NativeBase
@@ -18,4 +16,10 @@ class ExternalDartConstants(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.ExternalDartConstants(*args))
+
+
+SMALL = {0, 0, 1, 1}
+
+
+BIG = {0, 0, 10, 10}
 

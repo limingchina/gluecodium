@@ -1,6 +1,5 @@
 
 
-from fire.DUMMY import DUMMY
 from fire.SomeStruct import SomeStruct
 
 
@@ -14,4 +13,7 @@ class AmbiguousConstants(_NativeBase):
 
     def __init__(self, native):
         super().__init__(native)
+
+
+DUMMY = {42}
 

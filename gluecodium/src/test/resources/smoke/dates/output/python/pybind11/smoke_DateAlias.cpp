@@ -11,8 +11,6 @@
 namespace py = pybind11;
 #include "smoke/DateAlias.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using datetime.datetime = ::gluecodium::smoke::DateAlias;
 
 // datetime.datetime is a type alias, no binding needed.
 

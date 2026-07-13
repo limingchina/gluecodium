@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EquatableStructWithAccessors = ::gluecodium::smoke::EquatableStructWithAccessors;
+using EquatableStructWithAccessors = ::smoke::EquatableStructWithAccessors;
 
 void register_EquatableStructWithAccessors(py::module_& module) {
     py::class_<EquatableStructWithAccessors>(module, "EquatableStructWithAccessors")

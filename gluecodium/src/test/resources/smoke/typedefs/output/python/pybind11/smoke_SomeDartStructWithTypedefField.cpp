@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/SomeDartStructWithTypedefField.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SomeDartStructWithTypedefField = ::gluecodium::smoke::SomeDartStructWithTypedefField;
+using SomeDartStructWithTypedefField = ::smoke::SomeDartStructWithTypedefField;
 
 void register_SomeDartStructWithTypedefField(py::module_& module) {
     py::class_<SomeDartStructWithTypedefField>(module, "SomeDartStructWithTypedefField")

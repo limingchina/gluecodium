@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/MultipleAttributesJava.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using MultipleAttributesJava = ::gluecodium::smoke::MultipleAttributesJava;
+using MultipleAttributesJava = ::smoke::MultipleAttributesJava;
 
 void register_MultipleAttributesJava(py::module_& module) {
     py::class_<MultipleAttributesJava, std::shared_ptr<MultipleAttributesJava>>(module, "MultipleAttributesJava")

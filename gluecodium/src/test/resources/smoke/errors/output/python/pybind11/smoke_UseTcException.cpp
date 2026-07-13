@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/UseTcException.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseTcException = ::gluecodium::smoke::UseTcException;
+using UseTcException = ::smoke::UseTcException;
 
 void register_UseTcException(py::module_& module) {
     py::class_<UseTcException, std::shared_ptr<UseTcException>>(module, "UseTcException")

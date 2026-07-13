@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/NonEquatableInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using NonEquatableInterface = ::gluecodium::smoke::NonEquatableInterface;
+using NonEquatableInterface = ::smoke::NonEquatableInterface;
 
 class NonEquatableInterfaceTrampoline : public NonEquatableInterface {
 public:

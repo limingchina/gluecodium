@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
 
@@ -79,4 +78,16 @@ class CommentsInterface(_NativeBase):
     @is_some_property.setter
     def is_some_property(self, value: bool):
         self._native.is_some_property = value
+
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """This is some very useful enum."""
+
+    USELESS = 0
+    USEFUL = 1
+
+This is some very useful constant.
+VERY_USEFUL = True
 

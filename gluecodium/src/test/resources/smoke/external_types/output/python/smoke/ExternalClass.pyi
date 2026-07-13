@@ -25,3 +25,11 @@ class ExternalClass(_NativeBase):
         return self._native.some_property
 
 
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    SOME_VALUE = 0
+

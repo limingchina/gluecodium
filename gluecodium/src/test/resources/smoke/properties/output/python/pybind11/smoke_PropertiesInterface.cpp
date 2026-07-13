@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/PropertiesInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PropertiesInterface = ::gluecodium::smoke::PropertiesInterface;
+using PropertiesInterface = ::smoke::PropertiesInterface;
 
 class PropertiesInterfaceTrampoline : public PropertiesInterface {
 public:

@@ -19,7 +19,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Nullable = ::gluecodium::smoke::Nullable;
+using Nullable = ::smoke::Nullable;
 
 void register_Nullable(py::module_& module) {
     py::class_<Nullable, std::shared_ptr<Nullable>>(module, "Nullable")

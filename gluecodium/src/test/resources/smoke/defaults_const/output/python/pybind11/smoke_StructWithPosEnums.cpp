@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/StructWithPosEnums.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithPosEnums = ::gluecodium::smoke::StructWithPosEnums;
+using StructWithPosEnums = ::smoke::StructWithPosEnums;
 
 void register_StructWithPosEnums(py::module_& module) {
     py::class_<StructWithPosEnums>(module, "StructWithPosEnums")
@@ -21,7 +21,6 @@ void register_StructWithPosEnums(py::module_& module) {
         .def_readwrite("explicit_field", &StructWithPosEnums::explicit_field)
         .def_readwrite("last_field", &StructWithPosEnums::last_field)
         .def(py::init<>())
-        .def(py::init<::smoke::SomethingEnum, ::smoke::SomethingEnum, ::smoke::SomethingEnum>(), py::arg("first_field"), py::arg("explicit_field"), py::arg("last_field"))
         ;
 }
 

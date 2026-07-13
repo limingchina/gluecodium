@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/OuterStructWithFieldConstructor.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using OuterStructWithFieldConstructor = ::gluecodium::smoke::OuterStructWithFieldConstructor;
+using OuterStructWithFieldConstructor = ::smoke::OuterStructWithFieldConstructor;
 
 void register_OuterStructWithFieldConstructor(py::module_& module) {
     py::class_<OuterStructWithFieldConstructor>(module, "OuterStructWithFieldConstructor")

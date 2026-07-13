@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.TYPE_COLLECTION_CONSTANT import TYPE_COLLECTION_CONSTANT
 
 
 from _native_base import _NativeBase
@@ -18,4 +17,15 @@ class CommentsTypeCollection(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.CommentsTypeCollection(*args))
+
+from enum import Enum
+
+
+class TypeCollectionEnum(Enum):
+    """"""
+
+    ITEM = 0
+
+
+TYPE_COLLECTION_CONSTANT = True
 

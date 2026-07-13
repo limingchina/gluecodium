@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "functional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using OuterClassWithLambdaAndProperty = ::gluecodium::smoke::OuterClassWithLambdaAndProperty;
+using OuterClassWithLambdaAndProperty = ::smoke::OuterClassWithLambdaAndProperty;
 
 void register_OuterClassWithLambdaAndProperty(py::module_& module) {
     py::class_<OuterClassWithLambdaAndProperty, std::shared_ptr<OuterClassWithLambdaAndProperty>>(module, "OuterClassWithLambdaAndProperty")

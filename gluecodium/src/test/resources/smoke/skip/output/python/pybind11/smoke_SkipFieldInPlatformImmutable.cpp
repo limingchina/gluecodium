@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipFieldInPlatformImmutable = ::gluecodium::smoke::SkipFieldInPlatformImmutable;
+using SkipFieldInPlatformImmutable = ::smoke::SkipFieldInPlatformImmutable;
 
 void register_SkipFieldInPlatformImmutable(py::module_& module) {
     py::class_<SkipFieldInPlatformImmutable>(module, "SkipFieldInPlatformImmutable")
