@@ -1,0 +1,5 @@
+
+
+
+OverloadedLambda = Callable[[int], str]
+

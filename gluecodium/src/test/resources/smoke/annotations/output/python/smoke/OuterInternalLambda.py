@@ -1,0 +1,5 @@
+
+
+
+OuterInternalLambda = Callable[[str], int]
+
