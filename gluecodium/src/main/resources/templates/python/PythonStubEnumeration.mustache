@@ -1,0 +1,8 @@
+{{! Python enumeration type stub. }}
+from enum import Enum
+
+
+class {{resolveName}}(Enum):
+{{#enumerators}}
+
+    {{resolveName}} = {{iter.position}}{{/enumerators}}

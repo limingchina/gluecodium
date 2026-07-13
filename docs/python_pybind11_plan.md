@@ -498,6 +498,12 @@ py::register_exception_translator([](std::exception_ptr p) {
 
 ### Phase 6 — Output File Structure
 
+> **Status**: ✅ Implemented (commit `TBD` — see `docs/python_binding_dev/phase6_implementation.md`).
+> Adds the `PYBIND11_MODULE` entry point (`pybind11/_module_init.cpp`) aggregating all per-type
+> `register_*` functions, `.pyi` type stubs for every top-level element, and the common Python
+> build/helper files (`setup.py`, `pyproject.toml`, `_native_base.py`). The actual `.so`/`.pyd`
+> artifact build is deferred to Phase 7 (CMake) / Phase 8 (functional tests).
+
 #### 6.1 Generated file layout
 
 ```

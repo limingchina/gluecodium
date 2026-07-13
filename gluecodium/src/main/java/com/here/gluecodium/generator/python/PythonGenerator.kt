@@ -132,7 +132,7 @@ internal class PythonGenerator : Generator {
             )
 
         val pythonFiles =
-            pythonFilteredModel.topElements.map {
+            pythonFilteredModel.topElements.flatMap {
                 generatePythonFile(it, nameResolvers, predicates.predicates)
             }
         val pybind11Files =
@@ -144,14 +144,14 @@ internal class PythonGenerator : Generator {
             throw GluecodiumExecutionException("Validation errors found, see log for details.")
         }
 
-        return pythonFiles + pybind11Files + generateCommonFiles(nameResolvers, predicates.predicates)
+        return pythonFiles + pybind11Files + generateCommonFiles(pybind11FilteredModel, nameResolvers, predicates.predicates)
     }
 
     private fun generatePythonFile(
         limeElement: LimeNamedElement,
         nameResolvers: Map<String, NameResolver>,
         predicates: Map<String, (Any) -> Boolean>,
-    ): GeneratedFile {
+    ): List<GeneratedFile> {
         val imports = pythonImportsCollector.collectImports(limeElement)
         val templateData =
             mapOf(
@@ -161,7 +161,11 @@ internal class PythonGenerator : Generator {
                 "contentTemplate" to selectPythonTemplate(limeElement),
             )
         val content = TemplateEngine.render("python/PythonFile", templateData, nameResolvers, predicates)
-        return GeneratedFile(content, nameRules.getPythonFileName(limeElement))
+        val stubContent = TemplateEngine.render("python/PythonStub", templateData, nameResolvers, predicates)
+        return listOf(
+            GeneratedFile(content, nameRules.getPythonFileName(limeElement)),
+            GeneratedFile(stubContent, nameRules.getPythonStubFileName(limeElement)),
+        )
     }
 
     private fun generatePybind11File(
@@ -196,6 +200,7 @@ internal class PythonGenerator : Generator {
     }
 
     private fun generateCommonFiles(
+        pybind11FilteredModel: LimeModel,
         nameResolvers: Map<String, NameResolver>,
         predicates: Map<String, (Any) -> Boolean>,
     ): List<GeneratedFile> {
@@ -214,10 +219,36 @@ internal class PythonGenerator : Generator {
         val wrapperCacheContent =
             TemplateEngine.render("python/Pybind11WrapperCache", emptyMap<String, Any>(), nameResolvers, predicates)
 
+        // Module entry point: aggregates every per-type register_* function into a single
+        // PYBIND11_MODULE. Type aliases and lambdas emit no binding, so they are excluded.
+        val registerFunctions =
+            pybind11FilteredModel.topElements
+                .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
+                .filter { it !is com.here.gluecodium.model.lime.LimeTypeAlias && it !is com.here.gluecodium.model.lime.LimeLambda }
+                .map { pythonNameResolver.resolveName(it) }
+                .sorted()
+        val moduleInitTemplateData =
+            mapOf(
+                "moduleName" to pythonModule,
+                "moduleDoc" to "Generated Python bindings for the '$pythonModule' extension module.",
+                "registerFunctions" to registerFunctions.map { mapOf("name" to it) },
+            )
+        val moduleInitContent =
+            TemplateEngine.render("python/Pybind11ModuleInit", moduleInitTemplateData, nameResolvers, predicates)
+
+        // Common Python build/helper files.
+        val setupPyContent = TemplateEngine.render("python/PythonSetupPy", mapOf("moduleName" to pythonModule), nameResolvers, predicates)
+        val pyprojectContent = TemplateEngine.render("python/PythonPyproject", mapOf("moduleName" to pythonModule), nameResolvers, predicates)
+        val nativeBaseContent = TemplateEngine.render("python/PythonNativeBase", emptyMap<String, Any>(), nameResolvers, predicates)
+
         return listOf(
             GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
             GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
             GeneratedFile(wrapperCacheContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_wrapper_cache.h"),
+            GeneratedFile(moduleInitContent, PythonNameRules.MODULE_INIT_FILE),
+            GeneratedFile(setupPyContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "setup.py"),
+            GeneratedFile(pyprojectContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "pyproject.toml"),
+            GeneratedFile(nativeBaseContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "_native_base.py"),
         )
     }
 

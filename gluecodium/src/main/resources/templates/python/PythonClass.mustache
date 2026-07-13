@@ -1,12 +1,15 @@
 {{! Python class: thin wrapper around the native C++ object exposed via pybind11. }}
+from _native_base import _NativeBase
+
+
 class {{resolveName}}{{#if parents}}(
 {{#parents}}    {{resolveName}}{{#if iter.hasNext}},
 {{/if}}{{/parents}}
-){{/if}}:
+){{/if}}(_NativeBase):
     """{{resolveName comment}}"""
 
     def __init__(self, native):
-        self._native = native
+        super().__init__(native)
 {{#functions}}
 
 {{>python/PythonFunction}}{{/functions}}

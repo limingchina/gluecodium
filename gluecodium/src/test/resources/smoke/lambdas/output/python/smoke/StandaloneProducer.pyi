@@ -1,0 +1,5 @@
+
+
+
+StandaloneProducer = Callable[[], str]
+

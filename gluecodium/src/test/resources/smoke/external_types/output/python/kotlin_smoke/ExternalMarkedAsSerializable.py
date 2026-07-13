@@ -1,11 +1,14 @@
 
 
 
-class ExternalMarkedAsSerializable:
+from _native_base import _NativeBase
+
+
+class ExternalMarkedAsSerializable(_NativeBase):
     """"""
 
     def __init__(self, native):
-        self._native = native
+        super().__init__(native)
 
 
     field: int

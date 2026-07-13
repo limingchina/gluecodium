@@ -51,10 +51,17 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
         return PYBIND11_TARGET_DIRECTORY + packagePath + "_" + getName(limeElement) + ".cpp"
     }
 
+    /** Resolve the output path of a generated Python type-stub (`.pyi`) file for the element. */
+    fun getPythonStubFileName(limeElement: LimeNamedElement): String {
+        val packagePath = limeElement.path.head.joinToString(File.separator)
+        return PYTHON_TARGET_DIRECTORY + packagePath + File.separator + getName(limeElement) + ".pyi"
+    }
+
     private fun getPlatformName(limeElement: LimeNamedElement?) = limeElement?.attributes?.get(PYTHON, NAME)
 
     companion object {
         val PYTHON_TARGET_DIRECTORY = "python" + File.separator
         val PYBIND11_TARGET_DIRECTORY = PYTHON_TARGET_DIRECTORY + "pybind11" + File.separator
+        val MODULE_INIT_FILE = PYBIND11_TARGET_DIRECTORY + "_module_init.cpp"
     }
 }

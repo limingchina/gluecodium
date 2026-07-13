@@ -1,0 +1,11 @@
+{{! Python class type stub. }}
+class {{resolveName}}{{#if parents}}(
+{{#parents}}    {{resolveName}}{{#if iter.hasNext}},
+{{/if}}{{/parents}}
+){{/if}}:
+{{#functions}}
+
+{{>python/PythonStubFunction}}{{/functions}}
+{{#properties}}
+
+{{>python/PythonStubProperty}}{{/properties}}
