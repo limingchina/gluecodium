@@ -1,0 +1,5 @@
+
+
+
+InternalLambda = Callable[[], None]
+

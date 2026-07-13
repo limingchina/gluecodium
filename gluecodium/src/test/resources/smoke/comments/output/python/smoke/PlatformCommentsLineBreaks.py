@@ -1,0 +1,12 @@
+
+
+
+from _native_base import _NativeBase
+
+
+class PlatformCommentsLineBreaks(_NativeBase):
+    """Text"""
+
+    def __init__(self, native):
+        super().__init__(native)
+

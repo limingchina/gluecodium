@@ -1,9 +1,12 @@
 {{! Python interface: base class (protocol) wrapping the native C++ object. }}
-class {{resolveName}}:
+from _native_base import _NativeBase
+
+
+class {{resolveName}}(_NativeBase):
     """{{resolveName comment}}"""
 
     def __init__(self, native):
-        self._native = native
+        super().__init__(native)
 {{#functions}}
 
 {{>python/PythonFunction}}{{/functions}}

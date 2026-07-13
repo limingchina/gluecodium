@@ -1,11 +1,14 @@
 
 
 
-class SystemColor:
+from _native_base import _NativeBase
+
+
+class SystemColor(_NativeBase):
     """"""
 
     def __init__(self, native):
-        self._native = native
+        super().__init__(native)
 
 
     red: float
