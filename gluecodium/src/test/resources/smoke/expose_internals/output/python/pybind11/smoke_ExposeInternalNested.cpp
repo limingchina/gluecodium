@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/ExposeInternalNested.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExposeInternalNested = ::gluecodium::smoke::ExposeInternalNested;
+using ExposeInternalNested = ::smoke::ExposeInternalNested;
 
 void register_ExposeInternalNested(py::module_& module) {
     py::class_<ExposeInternalNested, std::shared_ptr<ExposeInternalNested>>(module, "ExposeInternalNested")

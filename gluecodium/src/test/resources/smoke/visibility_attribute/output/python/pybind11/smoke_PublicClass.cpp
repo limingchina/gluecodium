@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PublicClass = ::gluecodium::smoke::PublicClass;
+using PublicClass = ::smoke::PublicClass;
 
 void register_PublicClass(py::module_& module) {
     py::class_<PublicClass, std::shared_ptr<PublicClass>>(module, "PublicClass")

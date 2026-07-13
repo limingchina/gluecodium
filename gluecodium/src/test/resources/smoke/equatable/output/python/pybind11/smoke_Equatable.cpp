@@ -17,12 +17,11 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Equatable = ::gluecodium::smoke::Equatable;
+using Equatable = ::smoke::Equatable;
 
 void register_Equatable(py::module_& module) {
     py::class_<Equatable>(module, "Equatable")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

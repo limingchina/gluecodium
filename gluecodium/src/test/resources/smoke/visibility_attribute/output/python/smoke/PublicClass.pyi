@@ -29,3 +29,12 @@ class PublicClass(_NativeBase):
     def internal_struct_property(self, value: InternalStruct):
         self._native.internal_struct_property = value
 
+from enum import Enum
+
+
+class InternalEnum(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

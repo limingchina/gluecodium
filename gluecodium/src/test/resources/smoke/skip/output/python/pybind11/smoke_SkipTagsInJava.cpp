@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SkipTagsInJava.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipTagsInJava = ::gluecodium::smoke::SkipTagsInJava;
+using SkipTagsInJava = ::smoke::SkipTagsInJava;
 
 class SkipTagsInJavaTrampoline : public SkipTagsInJava {
 public:

@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FieldConstructorsCppSkip = ::gluecodium::smoke::FieldConstructorsCppSkip;
+using FieldConstructorsCppSkip = ::smoke::FieldConstructorsCppSkip;
 
 void register_FieldConstructorsCppSkip(py::module_& module) {
     py::class_<FieldConstructorsCppSkip>(module, "FieldConstructorsCppSkip")

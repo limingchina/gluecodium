@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/PointerEquatableClass.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PointerEquatableClass = ::gluecodium::smoke::PointerEquatableClass;
+using PointerEquatableClass = ::smoke::PointerEquatableClass;
 
 void register_PointerEquatableClass(py::module_& module) {
     py::class_<PointerEquatableClass, std::shared_ptr<PointerEquatableClass>>(module, "PointerEquatableClass")

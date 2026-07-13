@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/LocaleDefaults.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using LocaleDefaults = ::gluecodium::smoke::LocaleDefaults;
+using LocaleDefaults = ::smoke::LocaleDefaults;
 
 void register_LocaleDefaults(py::module_& module) {
     py::class_<LocaleDefaults>(module, "LocaleDefaults")
@@ -24,7 +24,6 @@ void register_LocaleDefaults(py::module_& module) {
         .def_readwrite("traditional_chinese_taiwan", &LocaleDefaults::traditional_chinese_taiwan)
         .def_readwrite("zuerich_german", &LocaleDefaults::zuerich_german)
         .def(py::init<>())
-        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
         ;
 }
 

@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/JavaInternalClass.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using JavaInternalClass = ::gluecodium::smoke::JavaInternalClass;
+using JavaInternalClass = ::smoke::JavaInternalClass;
 
 void register_JavaInternalClass(py::module_& module) {
     py::class_<JavaInternalClass, std::shared_ptr<JavaInternalClass>>(module, "JavaInternalClass")

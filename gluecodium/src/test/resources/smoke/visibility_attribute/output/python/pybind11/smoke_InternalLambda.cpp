@@ -12,8 +12,6 @@ namespace py = pybind11;
 #include "smoke/InternalLambda.h"
 #include "functional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InternalLambda = ::gluecodium::smoke::InternalLambda;
 
 // InternalLambda is a std::function, handled inline where used.
 

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FieldConstructorWithExcludedOnly = ::gluecodium::smoke::FieldConstructorWithExcludedOnly;
+using FieldConstructorWithExcludedOnly = ::smoke::FieldConstructorWithExcludedOnly;
 
 void register_FieldConstructorWithExcludedOnly(py::module_& module) {
     py::class_<FieldConstructorWithExcludedOnly>(module, "FieldConstructorWithExcludedOnly")

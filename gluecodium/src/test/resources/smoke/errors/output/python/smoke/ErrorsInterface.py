@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.ERROR_MESSAGE import ERROR_MESSAGE
 from smoke.ExternalError import ExternalError
 from smoke.ExternalErrors import ExternalErrors
 from smoke.InternalError import InternalError
@@ -52,4 +51,26 @@ class ErrorsInterface(_NativeBase):
         """"""
         native_result = generated.ErrorsInterface.method_with_payload_error_and_return_value()
         return str(native_result)
+
+from enum import Enum
+
+
+class InternalError(Enum):
+    """"""
+
+    ERROR_NONE = 0
+    ERROR_FATAL = 1
+
+from enum import Enum
+
+
+class ExternalErrors(Enum):
+    """"""
+
+    NONE = 0
+    BOOM = 1
+    BUST = 2
+
+
+ERROR_MESSAGE = "Some error message constant"
 

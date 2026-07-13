@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SwiftInternalClassRev.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SwiftInternalClassRev = ::gluecodium::smoke::SwiftInternalClassRev;
+using SwiftInternalClassRev = ::smoke::SwiftInternalClassRev;
 
 void register_SwiftInternalClassRev(py::module_& module) {
     py::class_<SwiftInternalClassRev, std::shared_ptr<SwiftInternalClassRev>>(module, "SwiftInternalClassRev")

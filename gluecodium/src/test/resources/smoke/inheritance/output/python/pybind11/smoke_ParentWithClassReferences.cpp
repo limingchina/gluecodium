@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ParentWithClassReferences = ::gluecodium::smoke::ParentWithClassReferences;
+using ParentWithClassReferences = ::smoke::ParentWithClassReferences;
 
 class ParentWithClassReferencesTrampoline : public ParentWithClassReferences {
 public:

@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "smoke/RouteUtils.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using RouteUtils = ::gluecodium::smoke::RouteUtils;
+using RouteUtils = ::smoke::RouteUtils;
 
 void register_RouteUtils(py::module_& module) {
     py::class_<RouteUtils>(module, "RouteUtils")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

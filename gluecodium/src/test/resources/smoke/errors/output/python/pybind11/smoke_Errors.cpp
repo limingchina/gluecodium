@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Errors = ::gluecodium::smoke::Errors;
+using Errors = ::smoke::Errors;
 
 void register_Errors(py::module_& module) {
     py::class_<Errors, std::shared_ptr<Errors>>(module, "Errors")

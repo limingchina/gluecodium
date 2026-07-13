@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SimpleEquatableStruct = ::gluecodium::smoke::SimpleEquatableStruct;
+using SimpleEquatableStruct = ::smoke::SimpleEquatableStruct;
 
 void register_SimpleEquatableStruct(py::module_& module) {
     py::class_<SimpleEquatableStruct>(module, "SimpleEquatableStruct")

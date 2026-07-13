@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from smoke.SomeEnum import SomeEnum
 from smoke.SomethingWrongError import SomethingWrongError
-from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
 
@@ -38,4 +37,15 @@ class ExcludedComments(_NativeBase):
     @is_some_property.setter
     def is_some_property(self, value: bool):
         self._native.is_some_property = value
+
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """This is some very useful enum."""
+
+    USELESS = 0
+
+This is some very useful constant.
+VERY_USEFUL = True
 

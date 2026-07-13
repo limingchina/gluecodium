@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DurationOverloads = ::gluecodium::smoke::DurationOverloads;
+using DurationOverloads = ::smoke::DurationOverloads;
 
 void register_DurationOverloads(py::module_& module) {
     py::class_<DurationOverloads, std::shared_ptr<DurationOverloads>>(module, "DurationOverloads")

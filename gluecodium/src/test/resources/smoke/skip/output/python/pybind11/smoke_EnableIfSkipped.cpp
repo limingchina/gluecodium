@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/EnableIfSkipped.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnableIfSkipped = ::gluecodium::smoke::EnableIfSkipped;
+using EnableIfSkipped = ::smoke::EnableIfSkipped;
 
 void register_EnableIfSkipped(py::module_& module) {
     py::class_<EnableIfSkipped, std::shared_ptr<EnableIfSkipped>>(module, "EnableIfSkipped")

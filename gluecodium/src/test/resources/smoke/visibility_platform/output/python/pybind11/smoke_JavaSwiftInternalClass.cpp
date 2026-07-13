@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/JavaSwiftInternalClass.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using JavaSwiftInternalClass = ::gluecodium::smoke::JavaSwiftInternalClass;
+using JavaSwiftInternalClass = ::smoke::JavaSwiftInternalClass;
 
 void register_JavaSwiftInternalClass(py::module_& module) {
     py::class_<JavaSwiftInternalClass, std::shared_ptr<JavaSwiftInternalClass>>(module, "JavaSwiftInternalClass")

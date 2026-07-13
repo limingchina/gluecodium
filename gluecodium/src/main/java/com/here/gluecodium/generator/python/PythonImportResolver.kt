@@ -21,6 +21,7 @@ package com.here.gluecodium.generator.python
 
 import com.here.gluecodium.generator.common.ImportsResolver
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
+import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeExternalDescriptor
 import com.here.gluecodium.model.lime.LimeGenericType
@@ -47,6 +48,8 @@ internal class PythonImportResolver(
             is LimeGenericType -> resolveGenericTypeImports(limeElement)
             is LimeValue -> resolveValueImports(limeElement)
             is LimeType -> resolveTypeImports(limeElement)
+            // Constants are emitted as module-level variables, never imported.
+            is LimeConstant -> emptyList()
             is LimeNamedElement -> listOf(createImport(limeElement))
             else -> emptyList()
         }
@@ -84,6 +87,10 @@ internal class PythonImportResolver(
             is LimeValue.InitializerList -> limeValue.values.flatMap { resolveValueImports(it) }
             is LimeValue.StructInitializer ->
                 resolveTypeImports(limeValue.typeRef.type) + limeValue.values.flatMap { resolveValueImports(it) }
+            // A constant reference is resolved in-place at the use site (e.g. `ENUM_CONSTANT =
+            // StateEnum.ON`), not via a cross-module import. Emitting an import here would produce
+            // a bogus `from test.<NAME> import <NAME>` for a submodule that is never generated.
+            is LimeValue.Constant -> emptyList()
             else -> emptyList()
         }
 

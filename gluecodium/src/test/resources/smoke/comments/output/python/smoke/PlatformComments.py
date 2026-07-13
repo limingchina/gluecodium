@@ -37,3 +37,12 @@ class PlatformComments(_NativeBase):
         """"""
         return self._native.some_deprecated_method()
 
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    USELESS = 0
+    USEFUL = 1
+

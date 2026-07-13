@@ -13,13 +13,12 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DummyStruct = ::gluecodium::smoke::DummyStruct;
+using DummyStruct = ::smoke::DummyStruct;
 
 void register_DummyStruct(py::module_& module) {
     py::class_<DummyStruct>(module, "DummyStruct")
         .def_readwrite("string_field", &DummyStruct::string_field)
         .def(py::init<>())
-        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

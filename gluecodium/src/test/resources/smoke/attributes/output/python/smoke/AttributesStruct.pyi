@@ -1,6 +1,5 @@
 
 
-from smoke.PI import PI
 
 
 from _native_base import _NativeBase
@@ -32,4 +31,7 @@ class AttributesStruct(_NativeBase):
     def very_fun(self, param: str):
         """"""
         return self._native.very_fun(param)
+
+
+PI = False
 

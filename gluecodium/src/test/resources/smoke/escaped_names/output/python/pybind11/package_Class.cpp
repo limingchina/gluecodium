@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Class = ::gluecodium::package::class;
+using Class = ::package::Class;
 
 void register_Class(py::module_& module) {
     py::class_<Class, std::shared_ptr<Class>>(module, "Class")

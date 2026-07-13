@@ -1,6 +1,5 @@
 
 
-from smoke.FIRST_CONSTANT import FIRST_CONSTANT
 from smoke.SomethingEnum import SomethingEnum
 
 
@@ -50,4 +49,7 @@ class StructWithPosEnums(_NativeBase):
     def last_field(self, value: SomethingEnum):
         self._native.last_field = value
 
+
+
+FIRST_CONSTANT = SomethingEnum.REALLY_FIRST
 

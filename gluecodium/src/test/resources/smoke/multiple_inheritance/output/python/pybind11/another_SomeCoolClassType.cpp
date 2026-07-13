@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "another/SomeCoolClassType.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SomeCoolClassType = ::gluecodium::another::SomeCoolClassType;
+using SomeCoolClassType = ::another::SomeCoolClassType;
 
 void register_SomeCoolClassType(py::module_& module) {
     py::class_<SomeCoolClassType, std::shared_ptr<SomeCoolClassType>>(module, "SomeCoolClassType")

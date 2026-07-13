@@ -12,8 +12,6 @@ namespace py = pybind11;
 #include "smoke/AttributesLambda.h"
 #include "functional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AttributesLambda = ::gluecodium::smoke::AttributesLambda;
 
 // AttributesLambda is a std::function, handled inline where used.
 

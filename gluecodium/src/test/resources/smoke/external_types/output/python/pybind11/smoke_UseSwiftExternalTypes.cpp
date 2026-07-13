@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "smoke/UseSwiftExternalTypes.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseSwiftExternalTypes = ::gluecodium::smoke::UseSwiftExternalTypes;
+using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
 
 void register_UseSwiftExternalTypes(py::module_& module) {
     py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "UseSwiftExternalTypes")

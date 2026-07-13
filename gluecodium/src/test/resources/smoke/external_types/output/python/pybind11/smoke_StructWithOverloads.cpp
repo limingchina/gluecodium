@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithOverloads = ::gluecodium::smoke::StructWithOverloads;
+using StructWithOverloads = external::ClassWithOverloads::StructWithOverloads;
 
 void register_StructWithOverloads(py::module_& module) {
     py::class_<external::ClassWithOverloads::StructWithOverloads>(module, "StructWithOverloads")

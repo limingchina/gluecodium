@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Payload = ::gluecodium::smoke::Payload;
+using Payload = ::smoke::Payload;
 
 void register_Payload(py::module_& module) {
     py::class_<Payload>(module, "Payload")

@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "unordered_map"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithMap = ::gluecodium::smoke::StructWithMap;
+using StructWithMap = ::smoke::StructWithMap;
 
 void register_StructWithMap(py::module_& module) {
     py::class_<StructWithMap>(module, "StructWithMap")

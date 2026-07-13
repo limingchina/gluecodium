@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AttributesWithDeprecated = ::gluecodium::smoke::AttributesWithDeprecated;
+using AttributesWithDeprecated = ::smoke::AttributesWithDeprecated;
 
 void register_AttributesWithDeprecated(py::module_& module) {
     py::class_<AttributesWithDeprecated, std::shared_ptr<AttributesWithDeprecated>>(module, "AttributesWithDeprecated")

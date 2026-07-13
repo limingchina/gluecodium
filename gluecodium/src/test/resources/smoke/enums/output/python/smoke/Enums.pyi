@@ -44,3 +44,21 @@ class Enums(_NativeBase):
         native_result = generated.Enums.create_struct_with_enum_inside(type, message)
         return ErrorStruct(native_result)
 
+from enum import Enum
+
+
+class SimpleEnum(Enum):
+    """"""
+
+    FIRST = 0
+    SECOND = 1
+
+from enum import Enum
+
+
+class InternalErrorCode(Enum):
+    """"""
+
+    ERROR_NONE = 0
+    ERROR_FATAL = 1
+

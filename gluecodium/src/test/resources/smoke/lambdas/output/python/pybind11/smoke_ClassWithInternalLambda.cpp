@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ClassWithInternalLambda = ::gluecodium::smoke::ClassWithInternalLambda;
+using ClassWithInternalLambda = ::smoke::ClassWithInternalLambda;
 
 void register_ClassWithInternalLambda(py::module_& module) {
     py::class_<ClassWithInternalLambda, std::shared_ptr<ClassWithInternalLambda>>(module, "ClassWithInternalLambda")

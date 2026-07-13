@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "smoke/ConstantsSkipCpp.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ConstantsSkipCpp = ::gluecodium::smoke::ConstantsSkipCpp;
+using ConstantsSkipCpp = ::smoke::ConstantsSkipCpp;
 
 void register_ConstantsSkipCpp(py::module_& module) {
     py::class_<ConstantsSkipCpp>(module, "ConstantsSkipCpp")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

@@ -1,8 +1,6 @@
 
 
-from smoke.NESTING_STRUCT_CONSTANT import NESTING_STRUCT_CONSTANT
 from smoke.NestingStruct import NestingStruct
-from smoke.STRUCT_CONSTANT import STRUCT_CONSTANT
 from smoke.SomeStruct import SomeStruct
 
 
@@ -16,4 +14,10 @@ class StructConstants(_NativeBase):
 
     def __init__(self, native):
         super().__init__(native)
+
+
+STRUCT_CONSTANT = {"bar Buzz", 1.41}
+
+
+NESTING_STRUCT_CONSTANT = {{"nonsense", -2.82}}
 

@@ -92,3 +92,12 @@ class ListenerWithProperties(_NativeBase):
     def buffered_message(self, value: bytes):
         self._native.buffered_message = value
 
+from enum import Enum
+
+
+class ResultEnum(Enum):
+    """"""
+
+    NONE = 0
+    RESULT = 1
+

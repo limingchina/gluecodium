@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/PlatformInternalInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PlatformInternalInterface = ::gluecodium::smoke::PlatformInternalInterface;
+using PlatformInternalInterface = ::smoke::PlatformInternalInterface;
 
 class PlatformInternalInterfaceTrampoline : public PlatformInternalInterface {
 public:

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using NestedPackages = ::gluecodium::smoke::off::NestedPackages;
+using NestedPackages = ::smoke::off::NestedPackages;
 
 void register_NestedPackages(py::module_& module) {
     py::class_<NestedPackages, std::shared_ptr<NestedPackages>>(module, "NestedPackages")

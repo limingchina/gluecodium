@@ -1,6 +1,5 @@
 
 
-from kotlin_smoke.DEFAULT_TRUTH import DEFAULT_TRUTH
 from kotlin_smoke.VeryBoolean import VeryBoolean
 
 
@@ -28,4 +27,7 @@ class UseKotlinExternalConst(_NativeBase):
     def string_field(self, value: str):
         self._native.string_field = value
 
+
+
+DEFAULT_TRUTH = {true}
 

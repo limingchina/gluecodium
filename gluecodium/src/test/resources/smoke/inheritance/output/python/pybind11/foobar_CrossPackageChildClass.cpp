@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using CrossPackageChildClass = ::gluecodium::foobar::CrossPackageChildClass;
+using CrossPackageChildClass = ::foobar::CrossPackageChildClass;
 
 void register_CrossPackageChildClass(py::module_& module) {
     py::class_<CrossPackageChildClass, std::shared_ptr<CrossPackageChildClass>>(module, "CrossPackageChildClass")

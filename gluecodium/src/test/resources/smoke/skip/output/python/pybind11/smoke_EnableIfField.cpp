@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnableIfField = ::gluecodium::smoke::EnableIfField;
+using EnableIfField = ::smoke::EnableIfField;
 
 void register_EnableIfField(py::module_& module) {
     py::class_<EnableIfField>(module, "EnableIfField")

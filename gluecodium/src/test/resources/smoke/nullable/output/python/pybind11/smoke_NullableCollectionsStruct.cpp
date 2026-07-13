@@ -21,7 +21,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using NullableCollectionsStruct = ::gluecodium::smoke::NullableCollectionsStruct;
+using NullableCollectionsStruct = ::smoke::NullableCollectionsStruct;
 
 void register_NullableCollectionsStruct(py::module_& module) {
     py::class_<NullableCollectionsStruct>(module, "NullableCollectionsStruct")

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ParentNarrowTwo = ::gluecodium::smoke::ParentNarrowTwo;
+using ParentNarrowTwo = ::smoke::ParentNarrowTwo;
 
 class ParentNarrowTwoTrampoline : public ParentNarrowTwo {
 public:

@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/MultipleAttributesKotlin.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using MultipleAttributesKotlin = ::gluecodium::smoke::MultipleAttributesKotlin;
+using MultipleAttributesKotlin = ::smoke::MultipleAttributesKotlin;
 
 void register_MultipleAttributesKotlin(py::module_& module) {
     py::class_<MultipleAttributesKotlin, std::shared_ptr<MultipleAttributesKotlin>>(module, "MultipleAttributesKotlin")

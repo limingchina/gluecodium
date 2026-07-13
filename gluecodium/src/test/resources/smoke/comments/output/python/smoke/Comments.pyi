@@ -2,7 +2,6 @@
 
 from smoke.SomeEnum import SomeEnum
 from smoke.SomethingWrongError import SomethingWrongError
-from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
 
@@ -103,4 +102,16 @@ class Comments(_NativeBase):
     @is_is_visible.setter
     def is_is_visible(self, value: bool):
         self._native.is_is_visible = value
+
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """This is some very useful enum."""
+
+    USELESS = 0
+    USEFUL = 1
+
+This is some very useful constant.
+VERY_USEFUL = True
 

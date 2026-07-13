@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "array"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnumWithAccessibleValues = ::gluecodium::smoke::EnumWithAccessibleValues;
+using EnumWithAccessibleValues = ::smoke::EnumWithAccessibleValues;
 
 void register_EnumWithAccessibleValues(py::module_& module) {
     py::enum_<EnumWithAccessibleValues>(module, "EnumWithAccessibleValues")

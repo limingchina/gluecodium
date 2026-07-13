@@ -31,3 +31,12 @@ class FieldConstructorsNullableTypes(_NativeBase):
         self._native.nullable_field = value
 
 
+from enum import Enum
+
+
+class FoodType(Enum):
+    """"""
+
+    VEGETABLES = 0
+    FRUITS = 1
+

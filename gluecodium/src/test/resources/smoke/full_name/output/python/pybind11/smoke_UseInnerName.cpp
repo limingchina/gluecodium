@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/UseInnerName.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseInnerName = ::gluecodium::smoke::UseInnerName;
+using UseInnerName = ::smoke::UseInnerName;
 
 void register_UseInnerName(py::module_& module) {
     py::class_<UseInnerName, std::shared_ptr<UseInnerName>>(module, "UseInnerName")

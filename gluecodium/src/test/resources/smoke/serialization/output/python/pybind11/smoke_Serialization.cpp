@@ -20,12 +20,11 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Serialization = ::gluecodium::smoke::Serialization;
+using Serialization = ::smoke::Serialization;
 
 void register_Serialization(py::module_& module) {
     py::class_<Serialization>(module, "Serialization")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

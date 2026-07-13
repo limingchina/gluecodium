@@ -20,7 +20,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Thermometer = ::gluecodium::smoke::Thermometer;
+using Thermometer = ::smoke::Thermometer;
 
 void register_Thermometer(py::module_& module) {
     py::class_<Thermometer, std::shared_ptr<Thermometer>>(module, "Thermometer")

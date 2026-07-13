@@ -21,3 +21,21 @@ class Enums(_NativeBase):
         native_result = generated.Enums.method_with_external_enum(input)
         return None(native_result)
 
+from enum import Enum
+
+
+class ExternalEnum(Enum):
+    """"""
+
+    FOO_VALUE = 0
+    BAR_VALUE = 1
+
+from enum import Enum
+
+
+class VeryExternalEnum(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

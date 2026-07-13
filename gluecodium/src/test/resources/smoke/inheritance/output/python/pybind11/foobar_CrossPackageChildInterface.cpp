@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "foobar/CrossPackageChildInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using CrossPackageChildInterface = ::gluecodium::foobar::CrossPackageChildInterface;
+using CrossPackageChildInterface = ::foobar::CrossPackageChildInterface;
 
 class CrossPackageChildInterfaceTrampoline : public CrossPackageChildInterface {
 public:

@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using JavaDeprecatedPosDefaults = ::gluecodium::smoke::JavaDeprecatedPosDefaults;
+using JavaDeprecatedPosDefaults = ::smoke::JavaDeprecatedPosDefaults;
 
 void register_JavaDeprecatedPosDefaults(py::module_& module) {
     py::class_<JavaDeprecatedPosDefaults>(module, "JavaDeprecatedPosDefaults")

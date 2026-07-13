@@ -55,3 +55,12 @@ class ListenersWithReturnValues(_NativeBase):
         """"""
         return self._native.fetch_data_instance()
 
+from enum import Enum
+
+
+class ResultEnum(Enum):
+    """"""
+
+    NONE = 0
+    RESULT = 1
+

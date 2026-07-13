@@ -13,8 +13,6 @@ namespace py = pybind11;
 #include "cstdint"
 #include "functional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using IncludableLambda = ::gluecodium::smoke::IncludableLambda;
 
 // IncludableLambda is a std::function, handled inline where used.
 

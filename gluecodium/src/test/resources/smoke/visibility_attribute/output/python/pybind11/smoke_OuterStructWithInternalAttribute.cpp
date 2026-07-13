@@ -14,13 +14,12 @@ namespace py = pybind11;
 #include "functional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using OuterStructWithInternalAttribute = ::gluecodium::smoke::OuterStructWithInternalAttribute;
+using OuterStructWithInternalAttribute = ::smoke::OuterStructWithInternalAttribute;
 
 void register_OuterStructWithInternalAttribute(py::module_& module) {
     py::class_<OuterStructWithInternalAttribute>(module, "OuterStructWithInternalAttribute")
         .def_readwrite("inner", &OuterStructWithInternalAttribute::inner)
         .def(py::init<>())
-        .def(py::init<::smoke::OuterStructWithInternalAttribute::StructNestedInInternalStruct>(), py::arg("inner"))
         ;
 }
 

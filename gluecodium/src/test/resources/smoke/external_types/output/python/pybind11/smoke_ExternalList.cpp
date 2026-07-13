@@ -11,8 +11,6 @@
 namespace py = pybind11;
 #include "smoke/ExternalList.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using list[PseudoColor] = ::gluecodium::smoke::ExternalList;
 
 // list[PseudoColor] is a type alias, no binding needed.
 

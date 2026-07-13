@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "unordered_set"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseEnumOptionSet = ::gluecodium::smoke::UseEnumOptionSet;
+using UseEnumOptionSet = ::smoke::UseEnumOptionSet;
 
 void register_UseEnumOptionSet(py::module_& module) {
     py::class_<UseEnumOptionSet>(module, "UseEnumOptionSet")

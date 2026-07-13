@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.SOME_CONSTANT import SOME_CONSTANT
 
 
 from _native_base import _NativeBase
@@ -18,4 +17,7 @@ class SkipEnableConstants(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.SkipEnableConstants(*args))
+
+
+SOME_CONSTANT = 2
 

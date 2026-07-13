@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/MyParentInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using MyParentInterface = ::gluecodium::smoke::MyParentInterface;
+using MyParentInterface = ::smoke::MyParentInterface;
 
 class MyParentInterfaceTrampoline : public MyParentInterface {
 public:

@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using TemperatureObserver = ::gluecodium::smoke::TemperatureObserver;
+using TemperatureObserver = ::smoke::TemperatureObserver;
 
 class TemperatureObserverTrampoline : public TemperatureObserver {
 public:

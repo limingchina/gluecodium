@@ -13,14 +13,13 @@ namespace py = pybind11;
 #include "smoke/ConstantDefaults.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ConstantDefaults = ::gluecodium::smoke::ConstantDefaults;
+using ConstantDefaults = ::smoke::ConstantDefaults;
 
 void register_ConstantDefaults(py::module_& module) {
     py::class_<ConstantDefaults>(module, "ConstantDefaults")
         .def_readwrite("field1", &ConstantDefaults::field1)
         .def_readwrite("field2", &ConstantDefaults::field2)
         .def(py::init<>())
-        .def(py::init<::fire::SomeStruct, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;
 }
 

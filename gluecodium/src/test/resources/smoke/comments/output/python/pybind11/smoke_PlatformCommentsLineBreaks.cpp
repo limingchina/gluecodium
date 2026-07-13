@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/PlatformCommentsLineBreaks.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PlatformCommentsLineBreaks = ::gluecodium::smoke::PlatformCommentsLineBreaks;
+using PlatformCommentsLineBreaks = ::smoke::PlatformCommentsLineBreaks;
 
 void register_PlatformCommentsLineBreaks(py::module_& module) {
     py::class_<PlatformCommentsLineBreaks, std::shared_ptr<PlatformCommentsLineBreaks>>(module, "PlatformCommentsLineBreaks")

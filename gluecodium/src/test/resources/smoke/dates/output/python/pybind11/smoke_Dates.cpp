@@ -17,7 +17,7 @@ namespace py = pybind11;
 #include "unordered_set"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Dates = ::gluecodium::smoke::Dates;
+using Dates = ::smoke::Dates;
 
 void register_Dates(py::module_& module) {
     py::class_<Dates, std::shared_ptr<Dates>>(module, "Dates")

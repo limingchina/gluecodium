@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SkipTagsInKotlin.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipTagsInKotlin = ::gluecodium::smoke::SkipTagsInKotlin;
+using SkipTagsInKotlin = ::smoke::SkipTagsInKotlin;
 
 class SkipTagsInKotlinTrampoline : public SkipTagsInKotlin {
 public:

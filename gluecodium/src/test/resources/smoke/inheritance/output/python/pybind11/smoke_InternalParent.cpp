@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/InternalParent.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using InternalParent = ::gluecodium::smoke::InternalParent;
+using InternalParent = ::smoke::InternalParent;
 
 void register_InternalParent(py::module_& module) {
     py::class_<InternalParent, std::shared_ptr<InternalParent>>(module, "InternalParent")

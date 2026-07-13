@@ -17,7 +17,7 @@ namespace py = pybind11;
 #include "smoke/TimeZone.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using JavaExternalTypesStruct = ::gluecodium::smoke::JavaExternalTypesStruct;
+using JavaExternalTypesStruct = ::smoke::JavaExternalTypesStruct;
 
 void register_JavaExternalTypesStruct(py::module_& module) {
     py::class_<JavaExternalTypesStruct>(module, "JavaExternalTypesStruct")

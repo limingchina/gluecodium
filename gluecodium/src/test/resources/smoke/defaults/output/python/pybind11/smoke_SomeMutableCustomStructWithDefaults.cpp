@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SomeMutableCustomStructWithDefaults = ::gluecodium::smoke::SomeMutableCustomStructWithDefaults;
+using SomeMutableCustomStructWithDefaults = ::smoke::SomeMutableCustomStructWithDefaults;
 
 void register_SomeMutableCustomStructWithDefaults(py::module_& module) {
     py::class_<SomeMutableCustomStructWithDefaults>(module, "SomeMutableCustomStructWithDefaults")
@@ -24,7 +24,6 @@ void register_SomeMutableCustomStructWithDefaults(py::module_& module) {
         .def_readwrite("string_field", &SomeMutableCustomStructWithDefaults::string_field)
         .def_readwrite("list_field", &SomeMutableCustomStructWithDefaults::list_field)
         .def(py::init<>())
-        .def(py::init<int32_t, ::std::string, ::std::vector< int32_t >>(), py::arg("int_field"), py::arg("string_field"), py::arg("list_field"))
         ;
 }
 

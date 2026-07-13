@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ClassWithOverloads = ::gluecodium::smoke::ClassWithOverloads;
+using ClassWithOverloads = ::smoke::ClassWithOverloads;
 
 void register_ClassWithOverloads(py::module_& module) {
     py::class_<ClassWithOverloads, std::shared_ptr<ClassWithOverloads>>(module, "ClassWithOverloads")

@@ -20,3 +20,12 @@ class Serialization(_NativeBase):
         else:
             super().__init__(generated.Serialization(*args))
 
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

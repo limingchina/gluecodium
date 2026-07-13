@@ -17,7 +17,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseCppExternalTypes = ::gluecodium::dontsmoke::UseCppExternalTypes;
+using UseCppExternalTypes = ::dontsmoke::UseCppExternalTypes;
 
 void register_UseCppExternalTypes(py::module_& module) {
     py::class_<UseCppExternalTypes, std::shared_ptr<UseCppExternalTypes>>(module, "UseCppExternalTypes")

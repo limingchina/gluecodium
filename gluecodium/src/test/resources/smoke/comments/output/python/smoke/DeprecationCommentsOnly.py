@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
 
@@ -34,4 +33,15 @@ class DeprecationCommentsOnly(_NativeBase):
     @is_some_property.setter
     def is_some_property(self, value: bool):
         self._native.is_some_property = value
+
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    USELESS = 0
+
+
+VERY_USEFUL = True
 

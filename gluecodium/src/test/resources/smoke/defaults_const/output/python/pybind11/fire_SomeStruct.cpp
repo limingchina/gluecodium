@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SomeStruct = ::gluecodium::fire::SomeStruct;
+using SomeStruct = ::fire::SomeStruct;
 
 void register_SomeStruct(py::module_& module) {
     py::class_<SomeStruct>(module, "SomeStruct")

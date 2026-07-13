@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExternalMarkedAsSerializable = ::gluecodium::kotlin_smoke::ExternalMarkedAsSerializable;
+using ExternalMarkedAsSerializable = ::kotlin_smoke::ExternalMarkedAsSerializable;
 
 void register_ExternalMarkedAsSerializable(py::module_& module) {
     py::class_<ExternalMarkedAsSerializable>(module, "ExternalMarkedAsSerializable")

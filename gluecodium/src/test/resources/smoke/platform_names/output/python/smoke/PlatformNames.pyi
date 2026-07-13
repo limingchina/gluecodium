@@ -17,3 +17,11 @@ class PlatformNames(_NativeBase):
         else:
             super().__init__(generated.PlatformNames(*args))
 
+from enum import Enum
+
+
+class BasicEnum(Enum):
+    """"""
+
+    BASIC_ITEM = 0
+

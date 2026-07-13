@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using KotlinMethodOverloads = ::gluecodium::smoke::KotlinMethodOverloads;
+using KotlinMethodOverloads = ::smoke::KotlinMethodOverloads;
 
 void register_KotlinMethodOverloads(py::module_& module) {
     py::class_<KotlinMethodOverloads, std::shared_ptr<KotlinMethodOverloads>>(module, "KotlinMethodOverloads")

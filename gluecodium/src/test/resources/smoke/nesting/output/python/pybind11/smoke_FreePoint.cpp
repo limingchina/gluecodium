@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/FreePoint.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FreePoint = ::gluecodium::smoke::FreePoint;
+using FreePoint = ::smoke::FreePoint;
 
 void register_FreePoint(py::module_& module) {
     py::class_<FreePoint>(module, "FreePoint")

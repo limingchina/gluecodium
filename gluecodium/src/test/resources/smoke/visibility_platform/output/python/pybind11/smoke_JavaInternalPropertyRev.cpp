@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using JavaInternalPropertyRev = ::gluecodium::smoke::JavaInternalPropertyRev;
+using JavaInternalPropertyRev = ::smoke::JavaInternalPropertyRev;
 
 void register_JavaInternalPropertyRev(py::module_& module) {
     py::class_<JavaInternalPropertyRev, std::shared_ptr<JavaInternalPropertyRev>>(module, "JavaInternalPropertyRev")

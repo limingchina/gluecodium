@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/DartColor.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DartColor = ::gluecodium::smoke::DartColor;
+using DartColor = ::smoke::DartColor;
 
 void register_DartColor(py::module_& module) {
     py::class_<DartColor>(module, "DartColor")

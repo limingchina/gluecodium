@@ -37,3 +37,12 @@ class OuterStruct(_NativeBase):
         """"""
         return self._native.do_nothing()
 
+from enum import Enum
+
+
+class InnerEnum(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.PLACE_HOLDER_SKIPPED import PLACE_HOLDER_SKIPPED
 
 
 from _native_base import _NativeBase
@@ -18,4 +17,7 @@ class EnableIfTypesSkipped(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__(generated.EnableIfTypesSkipped(*args))
+
+
+PLACE_HOLDER_SKIPPED = True
 

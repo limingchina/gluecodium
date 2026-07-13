@@ -18,3 +18,14 @@ class RouteUtils(_NativeBase):
         else:
             super().__init__(generated.RouteUtils(*args))
 
+from enum import Enum
+
+
+class RouteType(Enum):
+    """"""
+
+    NONE = 0
+    CAR = 1
+    PEDESTRIAN = 2
+    EQUESTRIAN = 3
+

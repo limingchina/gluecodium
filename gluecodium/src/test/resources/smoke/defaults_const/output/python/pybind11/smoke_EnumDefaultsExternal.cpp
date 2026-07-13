@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "optional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnumDefaultsExternal = ::gluecodium::smoke::EnumDefaultsExternal;
+using EnumDefaultsExternal = ::smoke::EnumDefaultsExternal;
 
 void register_EnumDefaultsExternal(py::module_& module) {
     py::class_<EnumDefaultsExternal, std::shared_ptr<EnumDefaultsExternal>>(module, "EnumDefaultsExternal")

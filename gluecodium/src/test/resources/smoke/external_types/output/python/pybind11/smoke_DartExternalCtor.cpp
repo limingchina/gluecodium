@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DartExternalCtor = ::gluecodium::smoke::DartExternalCtor;
+using DartExternalCtor = ::smoke::DartExternalCtor;
 
 void register_DartExternalCtor(py::module_& module) {
     py::class_<DartExternalCtor>(module, "DartExternalCtor")

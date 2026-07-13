@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/FreeEnum.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FreeEnum = ::gluecodium::smoke::FreeEnum;
+using FreeEnum = ::smoke::FreeEnum;
 
 void register_FreeEnum(py::module_& module) {
     py::enum_<FreeEnum>(module, "FreeEnum")

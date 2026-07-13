@@ -19,7 +19,7 @@ namespace py = pybind11;
 #include "kotlin_smoke/VeryBoolean.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using UseKotlinExternalTypes = ::gluecodium::kotlin_smoke::UseKotlinExternalTypes;
+using UseKotlinExternalTypes = ::kotlin_smoke::UseKotlinExternalTypes;
 
 void register_UseKotlinExternalTypes(py::module_& module) {
     py::class_<UseKotlinExternalTypes, std::shared_ptr<UseKotlinExternalTypes>>(module, "UseKotlinExternalTypes")

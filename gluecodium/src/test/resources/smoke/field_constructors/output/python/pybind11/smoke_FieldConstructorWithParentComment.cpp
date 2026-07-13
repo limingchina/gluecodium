@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FieldConstructorWithParentComment = ::gluecodium::smoke::FieldConstructorWithParentComment;
+using FieldConstructorWithParentComment = ::smoke::FieldConstructorWithParentComment;
 
 void register_FieldConstructorWithParentComment(py::module_& module) {
     py::class_<FieldConstructorWithParentComment>(module, "FieldConstructorWithParentComment")

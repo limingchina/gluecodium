@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithInterface = ::gluecodium::smoke::StructWithInterface;
+using StructWithInterface = ::smoke::StructWithInterface;
 
 void register_StructWithInterface(py::module_& module) {
     py::class_<StructWithInterface>(module, "StructWithInterface")

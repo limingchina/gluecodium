@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/ClassWithDocRef.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ClassWithDocRef = ::gluecodium::smoke::ClassWithDocRef;
+using ClassWithDocRef = ::smoke::ClassWithDocRef;
 
 void register_ClassWithDocRef(py::module_& module) {
     py::class_<ClassWithDocRef, std::shared_ptr<ClassWithDocRef>>(module, "ClassWithDocRef")

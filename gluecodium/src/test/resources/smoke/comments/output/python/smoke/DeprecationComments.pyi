@@ -1,7 +1,6 @@
 
 
 from smoke.SomeEnum import SomeEnum
-from smoke.VERY_USEFUL import VERY_USEFUL
 from smoke.bool import bool
 
 
@@ -43,4 +42,15 @@ class DeprecationComments(_NativeBase):
     @property_but_not_accessors.setter
     def property_but_not_accessors(self, value: str):
         self._native.property_but_not_accessors = value
+
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """This is some very useful enum."""
+
+    USELESS = 0
+
+This is some very useful constant.
+VERY_USEFUL = True
 

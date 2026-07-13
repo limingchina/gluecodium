@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using JavaMethodOverloads = ::gluecodium::smoke::JavaMethodOverloads;
+using JavaMethodOverloads = ::smoke::JavaMethodOverloads;
 
 void register_JavaMethodOverloads(py::module_& module) {
     py::class_<JavaMethodOverloads, std::shared_ptr<JavaMethodOverloads>>(module, "JavaMethodOverloads")

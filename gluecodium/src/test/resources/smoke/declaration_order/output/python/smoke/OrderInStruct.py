@@ -42,3 +42,12 @@ class OrderInStruct(_NativeBase):
         self._native.enum_field = value
 
 
+from enum import Enum
+
+
+class SomeEnum(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

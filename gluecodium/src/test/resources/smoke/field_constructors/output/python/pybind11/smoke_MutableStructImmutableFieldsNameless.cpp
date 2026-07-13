@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using MutableStructImmutableFieldsNameless = ::gluecodium::smoke::MutableStructImmutableFieldsNameless;
+using MutableStructImmutableFieldsNameless = ::smoke::MutableStructImmutableFieldsNameless;
 
 void register_MutableStructImmutableFieldsNameless(py::module_& module) {
     py::class_<MutableStructImmutableFieldsNameless>(module, "MutableStructImmutableFieldsNameless")

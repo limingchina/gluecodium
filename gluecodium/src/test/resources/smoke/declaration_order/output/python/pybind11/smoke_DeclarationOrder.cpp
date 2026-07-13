@@ -13,12 +13,11 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DeclarationOrder = ::gluecodium::smoke::DeclarationOrder;
+using DeclarationOrder = ::smoke::DeclarationOrder;
 
 void register_DeclarationOrder(py::module_& module) {
     py::class_<DeclarationOrder>(module, "DeclarationOrder")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

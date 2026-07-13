@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "kotlin_smoke/VeryBoolean.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using VeryBoolean = ::gluecodium::kotlin_smoke::VeryBoolean;
+using VeryBoolean = ::kotlin_smoke::VeryBoolean;
 
 void register_VeryBoolean(py::module_& module) {
     py::class_<VeryBoolean>(module, "VeryBoolean")

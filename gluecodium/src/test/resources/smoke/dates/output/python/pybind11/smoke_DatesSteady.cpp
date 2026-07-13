@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "optional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DatesSteady = ::gluecodium::smoke::DatesSteady;
+using DatesSteady = ::smoke::DatesSteady;
 
 void register_DatesSteady(py::module_& module) {
     py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(module, "DatesSteady")

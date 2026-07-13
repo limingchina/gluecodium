@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using LambdasWithStructuredTypes = ::gluecodium::smoke::LambdasWithStructuredTypes;
+using LambdasWithStructuredTypes = ::smoke::LambdasWithStructuredTypes;
 
 void register_LambdasWithStructuredTypes(py::module_& module) {
     py::class_<LambdasWithStructuredTypes, std::shared_ptr<LambdasWithStructuredTypes>>(module, "LambdasWithStructuredTypes")

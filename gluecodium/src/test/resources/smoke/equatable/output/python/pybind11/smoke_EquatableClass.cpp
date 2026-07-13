@@ -16,7 +16,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EquatableClass = ::gluecodium::smoke::EquatableClass;
+using EquatableClass = ::smoke::EquatableClass;
 
 void register_EquatableClass(py::module_& module) {
     py::class_<EquatableClass, std::shared_ptr<EquatableClass>>(module, "EquatableClass")

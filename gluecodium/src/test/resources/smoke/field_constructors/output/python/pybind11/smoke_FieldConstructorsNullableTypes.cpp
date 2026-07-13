@@ -13,13 +13,12 @@ namespace py = pybind11;
 #include "optional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using FieldConstructorsNullableTypes = ::gluecodium::smoke::FieldConstructorsNullableTypes;
+using FieldConstructorsNullableTypes = ::smoke::FieldConstructorsNullableTypes;
 
 void register_FieldConstructorsNullableTypes(py::module_& module) {
     py::class_<FieldConstructorsNullableTypes>(module, "FieldConstructorsNullableTypes")
         .def_readwrite("nullable_field", &FieldConstructorsNullableTypes::nullable_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >>(), py::arg("nullable_field"))
         ;
 }
 

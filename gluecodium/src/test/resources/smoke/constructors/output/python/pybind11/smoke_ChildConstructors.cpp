@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "memory"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ChildConstructors = ::gluecodium::smoke::ChildConstructors;
+using ChildConstructors = ::smoke::ChildConstructors;
 
 void register_ChildConstructors(py::module_& module) {
     py::class_<ChildConstructors, std::shared_ptr<ChildConstructors>>(module, "ChildConstructors")

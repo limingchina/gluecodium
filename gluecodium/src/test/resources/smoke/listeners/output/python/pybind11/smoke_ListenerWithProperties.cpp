@@ -18,7 +18,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ListenerWithProperties = ::gluecodium::smoke::ListenerWithProperties;
+using ListenerWithProperties = ::smoke::ListenerWithProperties;
 
 class ListenerWithPropertiesTrampoline : public ListenerWithProperties {
 public:

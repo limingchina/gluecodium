@@ -18,7 +18,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructsQualifiedType = ::gluecodium::fire::StructsQualifiedType;
+using StructsQualifiedType = ::fire::StructsQualifiedType;
 
 void register_StructsQualifiedType(py::module_& module) {
     py::class_<StructsQualifiedType, std::shared_ptr<StructsQualifiedType>>(module, "StructsQualifiedType")

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Rectangle = ::gluecodium::smoke::Rectangle;
+using Rectangle = ::smoke::Rectangle;
 
 void register_Rectangle(py::module_& module) {
     py::class_<Rectangle>(module, "Rectangle")

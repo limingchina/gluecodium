@@ -15,7 +15,7 @@ namespace py = pybind11;
 #include "unordered_set"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithSet = ::gluecodium::smoke::StructWithSet;
+using StructWithSet = ::smoke::StructWithSet;
 
 void register_StructWithSet(py::module_& module) {
     py::class_<StructWithSet>(module, "StructWithSet")

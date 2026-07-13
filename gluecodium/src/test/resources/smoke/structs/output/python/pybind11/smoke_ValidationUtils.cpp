@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "smoke/ValidationUtils.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ValidationUtils = ::gluecodium::smoke::ValidationUtils;
+using ValidationUtils = ::smoke::ValidationUtils;
 
 void register_ValidationUtils(py::module_& module) {
     py::class_<ValidationUtils>(module, "ValidationUtils")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

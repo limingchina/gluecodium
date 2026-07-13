@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AttributesStruct = ::gluecodium::smoke::AttributesStruct;
+using AttributesStruct = ::smoke::AttributesStruct;
 
 void register_AttributesStruct(py::module_& module) {
     py::class_<AttributesStruct>(module, "AttributesStruct")

@@ -1,6 +1,5 @@
 
 
-from smoke.PI import PI
 
 
 from _native_base import _NativeBase
@@ -31,4 +30,7 @@ class AttributesInterface(_NativeBase):
     @prop.setter
     def prop(self, value: str):
         self._native.prop = value
+
+
+PI = False
 

@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "smoke/SkipTypesTags.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkipTypesTags = ::gluecodium::smoke::SkipTypesTags;
+using SkipTypesTags = ::smoke::SkipTypesTags;
 
 void register_SkipTypesTags(py::module_& module) {
     py::class_<SkipTypesTags>(module, "SkipTypesTags")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

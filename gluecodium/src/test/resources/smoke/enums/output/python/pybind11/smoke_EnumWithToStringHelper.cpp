@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string_view"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using EnumWithToStringHelper = ::gluecodium::smoke::EnumWithToStringHelper;
+using EnumWithToStringHelper = ::smoke::EnumWithToStringHelper;
 
 void register_EnumWithToStringHelper(py::module_& module) {
     py::enum_<EnumWithToStringHelper>(module, "EnumWithToStringHelper")

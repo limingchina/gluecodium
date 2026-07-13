@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/ExposeInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExposeInterface = ::gluecodium::smoke::ExposeInterface;
+using ExposeInterface = ::smoke::ExposeInterface;
 
 class ExposeInterfaceTrampoline : public ExposeInterface {
 public:

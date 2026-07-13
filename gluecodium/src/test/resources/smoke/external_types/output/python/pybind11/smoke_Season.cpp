@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/Season.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Season = ::gluecodium::smoke::Season;
+using Season = ::smoke::Season;
 
 void register_Season(py::module_& module) {
     py::enum_<Season>(module, "Season")

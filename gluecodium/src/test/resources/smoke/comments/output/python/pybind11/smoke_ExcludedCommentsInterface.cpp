@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/ExcludedCommentsInterface.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExcludedCommentsInterface = ::gluecodium::smoke::ExcludedCommentsInterface;
+using ExcludedCommentsInterface = ::smoke::ExcludedCommentsInterface;
 
 class ExcludedCommentsInterfaceTrampoline : public ExcludedCommentsInterface {
 public:

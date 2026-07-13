@@ -12,12 +12,11 @@ namespace py = pybind11;
 #include "smoke/Constants.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Constants = ::gluecodium::smoke::Constants;
+using Constants = ::smoke::Constants;
 
 void register_Constants(py::module_& module) {
     py::class_<Constants>(module, "Constants")
         .def(py::init<>())
-        .def(py::init<>(), )
         ;
 }
 

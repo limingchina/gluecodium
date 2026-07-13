@@ -96,3 +96,12 @@ class CppRefReturnType(_NativeBase):
         return self._native.string_property
 
 
+from enum import Enum
+
+
+class InternalError(Enum):
+    """"""
+
+    FOO = 0
+    BAR = 1
+

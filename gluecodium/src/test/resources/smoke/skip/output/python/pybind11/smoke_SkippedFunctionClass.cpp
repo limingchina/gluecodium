@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "smoke/SkippedFunctionClass.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SkippedFunctionClass = ::gluecodium::smoke::SkippedFunctionClass;
+using SkippedFunctionClass = ::smoke::SkippedFunctionClass;
 
 void register_SkippedFunctionClass(py::module_& module) {
     py::class_<SkippedFunctionClass, std::shared_ptr<SkippedFunctionClass>>(module, "SkippedFunctionClass")

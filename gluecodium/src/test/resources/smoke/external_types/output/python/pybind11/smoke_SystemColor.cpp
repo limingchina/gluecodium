@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SystemColor.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SystemColor = ::gluecodium::smoke::SystemColor;
+using SystemColor = ::smoke::SystemColor;
 
 void register_SystemColor(py::module_& module) {
     py::class_<SystemColor>(module, "SystemColor")

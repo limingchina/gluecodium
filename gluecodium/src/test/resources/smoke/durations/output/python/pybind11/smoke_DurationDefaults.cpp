@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "chrono"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DurationDefaults = ::gluecodium::smoke::DurationDefaults;
+using DurationDefaults = ::smoke::DurationDefaults;
 
 void register_DurationDefaults(py::module_& module) {
     py::class_<DurationDefaults>(module, "DurationDefaults")
@@ -26,7 +26,6 @@ void register_DurationDefaults(py::module_& module) {
         .def_readwrite("microz", &DurationDefaults::microz)
         .def_readwrite("nanoz", &DurationDefaults::nanoz)
         .def(py::init<>())
-        .def(py::init<::std::chrono::seconds, ::std::chrono::seconds, ::std::chrono::seconds, std::chrono::seconds, ::std::chrono::milliseconds, ::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("dayz"), py::arg("hourz"), py::arg("minutez"), py::arg("secondz"), py::arg("milliz"), py::arg("microz"), py::arg("nanoz"))
         ;
 }
 

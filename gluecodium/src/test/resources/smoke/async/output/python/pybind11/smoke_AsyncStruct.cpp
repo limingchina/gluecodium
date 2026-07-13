@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AsyncStruct = ::gluecodium::smoke::AsyncStruct;
+using AsyncStruct = ::smoke::AsyncStruct;
 
 void register_AsyncStruct(py::module_& module) {
     py::class_<AsyncStruct>(module, "AsyncStruct")

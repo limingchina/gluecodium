@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using Currency = ::gluecodium::smoke::Currency;
+using Currency = ::smoke::Currency;
 
 void register_Currency(py::module_& module) {
     py::class_<Currency>(module, "Currency")

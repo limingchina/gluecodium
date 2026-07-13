@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/AmbiguousEnum.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using AmbiguousEnum = ::gluecodium::smoke::AmbiguousEnum;
+using AmbiguousEnum = ::smoke::AmbiguousEnum;
 
 void register_AmbiguousEnum(py::module_& module) {
     py::enum_<AmbiguousEnum>(module, "AmbiguousEnum")

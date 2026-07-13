@@ -14,7 +14,7 @@ namespace py = pybind11;
 #include "optional"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ListenerWithNullable = ::gluecodium::smoke::ListenerWithNullable;
+using ListenerWithNullable = ::smoke::ListenerWithNullable;
 
 class ListenerWithNullableTrampoline : public ListenerWithNullable {
 public:

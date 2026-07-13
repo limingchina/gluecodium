@@ -19,7 +19,7 @@ namespace py = pybind11;
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithCollectionDefaults = ::gluecodium::smoke::StructWithCollectionDefaults;
+using StructWithCollectionDefaults = ::smoke::StructWithCollectionDefaults;
 
 void register_StructWithCollectionDefaults(py::module_& module) {
     py::class_<StructWithCollectionDefaults>(module, "StructWithCollectionDefaults")
@@ -30,7 +30,6 @@ void register_StructWithCollectionDefaults(py::module_& module) {
         .def_readwrite("map_field", &StructWithCollectionDefaults::map_field)
         .def_readwrite("set_field", &StructWithCollectionDefaults::set_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
         ;
 }
 

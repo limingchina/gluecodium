@@ -11,8 +11,6 @@
 namespace py = pybind11;
 #include "smoke/ExternalMap.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using dict[Persistence, PseudoColor] = ::gluecodium::smoke::ExternalMap;
 
 // dict[Persistence, PseudoColor] is a type alias, no binding needed.
 
