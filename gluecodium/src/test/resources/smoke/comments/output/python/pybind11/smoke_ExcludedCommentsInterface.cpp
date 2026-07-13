@@ -22,6 +22,7 @@ public:
 
 void register_ExcludedCommentsInterface(py::module_& module) {
     py::class_<ExcludedCommentsInterface, std::shared_ptr<ExcludedCommentsInterface>, ExcludedCommentsInterfaceTrampoline>(module, "ExcludedCommentsInterface")
+        .def(py::init<>())
         ;
 }
 

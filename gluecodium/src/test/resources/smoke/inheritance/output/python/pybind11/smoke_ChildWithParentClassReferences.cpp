@@ -18,7 +18,7 @@ namespace py = pybind11;
 using ChildWithParentClassReferences = ::gluecodium::smoke::ChildWithParentClassReferences;
 
 void register_ChildWithParentClassReferences(py::module_& module) {
-    py::class_<ChildWithParentClassReferences>(module, "ChildWithParentClassReferences")
+    py::class_<ChildWithParentClassReferences, std::shared_ptr<ChildWithParentClassReferences>>(module, "ChildWithParentClassReferences")
         ;
 }
 

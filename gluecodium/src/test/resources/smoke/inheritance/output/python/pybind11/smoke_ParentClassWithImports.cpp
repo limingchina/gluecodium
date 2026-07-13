@@ -21,7 +21,7 @@ namespace py = pybind11;
 using ParentClassWithImports = ::gluecodium::smoke::ParentClassWithImports;
 
 void register_ParentClassWithImports(py::module_& module) {
-    py::class_<ParentClassWithImports>(module, "ParentClassWithImports")
+    py::class_<ParentClassWithImports, std::shared_ptr<ParentClassWithImports>>(module, "ParentClassWithImports")
         .def("root_method", &ParentClassWithImports::root_method, py::arg("input1"), py::arg("input2"))
         .def_property("root_property", py::overload_cast<>(&ParentClassWithImports::get_root_property, py::const_), py::overload_cast<const ::smoke::IncludableLambda&>(&ParentClassWithImports::set_root_property))
         ;

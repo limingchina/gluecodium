@@ -17,6 +17,7 @@ using DartPublicElements = ::gluecodium::smoke::DartPublicElements;
 void register_DartPublicElements(py::module_& module) {
     py::class_<DartPublicElements>(module, "DartPublicElements")
         .def_readwrite("string_field", &DartPublicElements::string_field)
+        .def(py::init<::std::string>(), py::arg("string_field"))
         .def("foo", &DartPublicElements::foo)
         ;
 }

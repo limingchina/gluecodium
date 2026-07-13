@@ -17,7 +17,7 @@ namespace py = pybind11;
 using SpecialNames = ::gluecodium::smoke::SpecialNames;
 
 void register_SpecialNames(py::module_& module) {
-    py::class_<SpecialNames>(module, "SpecialNames")
+    py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(module, "SpecialNames")
         .def("create", &SpecialNames::create)
         .def("release", &SpecialNames::release)
         .def("create_proxy", &SpecialNames::create_proxy)

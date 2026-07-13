@@ -17,6 +17,7 @@ using VeryBoolean = ::gluecodium::kotlin_smoke::VeryBoolean;
 void register_VeryBoolean(py::module_& module) {
     py::class_<VeryBoolean>(module, "VeryBoolean")
         .def_readwrite("value", &VeryBoolean::value)
+        .def(py::init<bool>(), py::arg("value"))
         .def("make", &VeryBoolean::make, py::arg("value"))
         ;
 }

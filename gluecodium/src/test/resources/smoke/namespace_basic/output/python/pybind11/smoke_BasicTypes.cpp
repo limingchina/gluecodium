@@ -17,6 +17,8 @@ using BasicTypes = ::gluecodium::smoke::BasicTypes;
 
 void register_BasicTypes(py::module_& module) {
     py::class_<BasicTypes>(module, "BasicTypes")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

@@ -16,7 +16,7 @@ namespace py = pybind11;
 using NoCacheClass = ::gluecodium::smoke::NoCacheClass;
 
 void register_NoCacheClass(py::module_& module) {
-    py::class_<NoCacheClass>(module, "NoCacheClass")
+    py::class_<NoCacheClass, std::shared_ptr<NoCacheClass>>(module, "NoCacheClass")
         .def("make", &NoCacheClass::make)
         .def("foo", &NoCacheClass::foo)
         ;

@@ -19,6 +19,7 @@ void register_DartInternalElementsSkipped(py::module_& module) {
     py::class_<DartInternalElementsSkipped>(module, "DartInternalElementsSkipped")
         .def_readwrite("bool_field", &DartInternalElementsSkipped::bool_field)
         .def_readwrite("string_field", &DartInternalElementsSkipped::string_field)
+        .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
         .def("foo", &DartInternalElementsSkipped::foo)
         ;
 }

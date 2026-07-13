@@ -18,6 +18,8 @@ using ExternalEquatable = ::gluecodium::smoke::ExternalEquatable;
 
 void register_ExternalEquatable(py::module_& module) {
     py::class_<ExternalEquatable>(module, "ExternalEquatable")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

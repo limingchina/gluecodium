@@ -15,7 +15,7 @@ namespace py = pybind11;
 using PlatformCommentsLineBreaks = ::gluecodium::smoke::PlatformCommentsLineBreaks;
 
 void register_PlatformCommentsLineBreaks(py::module_& module) {
-    py::class_<PlatformCommentsLineBreaks>(module, "PlatformCommentsLineBreaks")
+    py::class_<PlatformCommentsLineBreaks, std::shared_ptr<PlatformCommentsLineBreaks>>(module, "PlatformCommentsLineBreaks")
         ;
 }
 

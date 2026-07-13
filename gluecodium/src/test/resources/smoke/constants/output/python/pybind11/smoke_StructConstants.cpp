@@ -16,7 +16,7 @@ namespace py = pybind11;
 using StructConstants = ::gluecodium::smoke::StructConstants;
 
 void register_StructConstants(py::module_& module) {
-    py::class_<StructConstants>(module, "StructConstants")
+    py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "StructConstants")
         ;
 }
 

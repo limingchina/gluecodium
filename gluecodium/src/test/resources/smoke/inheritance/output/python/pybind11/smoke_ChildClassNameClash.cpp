@@ -16,7 +16,7 @@ namespace py = pybind11;
 using ChildClassNameClash = ::gluecodium::smoke::ChildClassNameClash;
 
 void register_ChildClassNameClash(py::module_& module) {
-    py::class_<ChildClassNameClash>(module, "ChildClassNameClash")
+    py::class_<ChildClassNameClash, std::shared_ptr<ChildClassNameClash>>(module, "ChildClassNameClash")
         ;
 }
 

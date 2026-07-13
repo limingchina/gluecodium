@@ -17,7 +17,7 @@ namespace py = pybind11;
 using ExternalClass = ::gluecodium::smoke::ExternalClass;
 
 void register_ExternalClass(py::module_& module) {
-    py::class_<::fire::Baz>(module, "ExternalClass")
+    py::class_<::fire::Baz, std::shared_ptr<::fire::Baz>>(module, "ExternalClass")
         .def("some_method", &::fire::Baz::some_Method, py::arg("some_parameter"))
         .def_property_readonly("some_property", py::overload_cast<>(&::fire::Baz::get_Me, py::const_))
         ;

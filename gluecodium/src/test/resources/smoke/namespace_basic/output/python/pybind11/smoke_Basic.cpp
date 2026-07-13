@@ -16,7 +16,7 @@ namespace py = pybind11;
 using Basic = ::gluecodium::smoke::Basic;
 
 void register_Basic(py::module_& module) {
-    py::class_<Basic>(module, "Basic")
+    py::class_<Basic, std::shared_ptr<Basic>>(module, "Basic")
         .def("basic_method", &Basic::basic_method, py::arg("input_string"))
         ;
 }

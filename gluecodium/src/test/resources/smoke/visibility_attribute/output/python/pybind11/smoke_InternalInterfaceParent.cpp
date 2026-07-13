@@ -36,6 +36,7 @@ public:
 
 void register_InternalInterfaceParent(py::module_& module) {
     py::class_<InternalInterfaceParent, std::shared_ptr<InternalInterfaceParent>, InternalInterfaceParentTrampoline>(module, "InternalInterfaceParent")
+        .def(py::init<>())
         .def("foo_bar", &InternalInterfaceParent::foo_bar)
         .def_property("prop", py::overload_cast<>(&InternalInterfaceParent::get_prop, py::const_), py::overload_cast<const ::std::string&>(&InternalInterfaceParent::set_prop))
         ;

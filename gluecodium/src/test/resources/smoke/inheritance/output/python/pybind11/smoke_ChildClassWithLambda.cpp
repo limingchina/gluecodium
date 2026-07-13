@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ChildClassWithLambda = ::gluecodium::smoke::ChildClassWithLambda;
 
 void register_ChildClassWithLambda(py::module_& module) {
-    py::class_<ChildClassWithLambda>(module, "ChildClassWithLambda")
+    py::class_<ChildClassWithLambda, std::shared_ptr<ChildClassWithLambda>>(module, "ChildClassWithLambda")
         ;
 }
 

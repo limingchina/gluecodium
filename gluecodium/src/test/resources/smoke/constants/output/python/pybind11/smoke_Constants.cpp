@@ -16,6 +16,8 @@ using Constants = ::gluecodium::smoke::Constants;
 
 void register_Constants(py::module_& module) {
     py::class_<Constants>(module, "Constants")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

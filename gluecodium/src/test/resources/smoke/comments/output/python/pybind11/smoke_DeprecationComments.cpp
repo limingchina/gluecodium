@@ -44,6 +44,7 @@ public:
 
 void register_DeprecationComments(py::module_& module) {
     py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "DeprecationComments")
+        .def(py::init<>())
         .def("some_method_with_all_comments", &DeprecationComments::some_method_with_all_comments, py::arg("input"))
         .def_property("is_some_property", py::overload_cast<>(&DeprecationComments::is_some_property, py::const_), py::overload_cast<const bool>(&DeprecationComments::set_some_property))
         .def_property("property_but_not_accessors", py::overload_cast<>(&DeprecationComments::get_property_but_not_accessors, py::const_), py::overload_cast<const ::std::string&>(&DeprecationComments::set_property_but_not_accessors))

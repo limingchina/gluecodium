@@ -16,7 +16,7 @@ namespace py = pybind11;
 using ChildWithCustomConstructor = ::gluecodium::smoke::ChildWithCustomConstructor;
 
 void register_ChildWithCustomConstructor(py::module_& module) {
-    py::class_<ChildWithCustomConstructor>(module, "ChildWithCustomConstructor")
+    py::class_<ChildWithCustomConstructor, std::shared_ptr<ChildWithCustomConstructor>>(module, "ChildWithCustomConstructor")
         .def("make", &ChildWithCustomConstructor::make)
         ;
 }

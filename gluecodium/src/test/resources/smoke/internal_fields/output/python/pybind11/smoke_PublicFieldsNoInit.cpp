@@ -19,6 +19,7 @@ void register_PublicFieldsNoInit(py::module_& module) {
     py::class_<PublicFieldsNoInit>(module, "PublicFieldsNoInit")
         .def_readwrite("public_field", &PublicFieldsNoInit::public_field)
         .def_readwrite("internal_field", &PublicFieldsNoInit::internal_field)
+        .def(py::init<::std::string, ::std::string>(), py::arg("public_field"), py::arg("internal_field"))
         ;
 }
 

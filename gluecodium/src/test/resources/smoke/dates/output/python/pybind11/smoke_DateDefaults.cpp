@@ -22,6 +22,8 @@ void register_DateDefaults(py::module_& module) {
         .def_readwrite("date_time_utc", &DateDefaults::date_time_utc)
         .def_readwrite("before_epoch", &DateDefaults::before_epoch)
         .def_readwrite("exactly_epoch", &DateDefaults::exactly_epoch)
+        .def(py::init<>())
+        .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("date_time"), py::arg("date_time_utc"), py::arg("before_epoch"), py::arg("exactly_epoch"))
         ;
 }
 

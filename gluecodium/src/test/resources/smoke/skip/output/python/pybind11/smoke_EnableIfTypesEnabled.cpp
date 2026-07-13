@@ -16,6 +16,8 @@ using EnableIfTypesEnabled = ::gluecodium::smoke::EnableIfTypesEnabled;
 
 void register_EnableIfTypesEnabled(py::module_& module) {
     py::class_<EnableIfTypesEnabled>(module, "EnableIfTypesEnabled")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

@@ -15,7 +15,7 @@ namespace py = pybind11;
 using NonEquatableClass = ::gluecodium::smoke::NonEquatableClass;
 
 void register_NonEquatableClass(py::module_& module) {
-    py::class_<NonEquatableClass>(module, "NonEquatableClass")
+    py::class_<NonEquatableClass, std::shared_ptr<NonEquatableClass>>(module, "NonEquatableClass")
         ;
 }
 

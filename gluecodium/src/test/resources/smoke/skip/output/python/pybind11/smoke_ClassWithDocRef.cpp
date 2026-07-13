@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ClassWithDocRef = ::gluecodium::smoke::ClassWithDocRef;
 
 void register_ClassWithDocRef(py::module_& module) {
-    py::class_<ClassWithDocRef>(module, "ClassWithDocRef")
+    py::class_<ClassWithDocRef, std::shared_ptr<ClassWithDocRef>>(module, "ClassWithDocRef")
         ;
 }
 

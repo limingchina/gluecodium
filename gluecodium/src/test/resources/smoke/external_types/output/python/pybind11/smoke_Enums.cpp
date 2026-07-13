@@ -16,7 +16,7 @@ namespace py = pybind11;
 using Enums = ::gluecodium::smoke::Enums;
 
 void register_Enums(py::module_& module) {
-    py::class_<Enums>(module, "Enums")
+    py::class_<Enums, std::shared_ptr<Enums>>(module, "Enums")
         .def("method_with_external_enum", &Enums::method_with_external_enum, py::arg("input"))
         ;
 }

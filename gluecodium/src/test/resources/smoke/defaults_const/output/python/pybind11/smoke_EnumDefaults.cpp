@@ -19,7 +19,7 @@ namespace py = pybind11;
 using EnumDefaults = ::gluecodium::smoke::EnumDefaults;
 
 void register_EnumDefaults(py::module_& module) {
-    py::class_<EnumDefaults>(module, "EnumDefaults")
+    py::class_<EnumDefaults, std::shared_ptr<EnumDefaults>>(module, "EnumDefaults")
         ;
 }
 

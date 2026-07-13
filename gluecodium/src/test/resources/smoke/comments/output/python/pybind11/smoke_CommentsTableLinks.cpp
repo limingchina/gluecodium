@@ -15,7 +15,7 @@ namespace py = pybind11;
 using CommentsTableLinks = ::gluecodium::smoke::CommentsTableLinks;
 
 void register_CommentsTableLinks(py::module_& module) {
-    py::class_<CommentsTableLinks>(module, "CommentsTableLinks")
+    py::class_<CommentsTableLinks, std::shared_ptr<CommentsTableLinks>>(module, "CommentsTableLinks")
         ;
 }
 

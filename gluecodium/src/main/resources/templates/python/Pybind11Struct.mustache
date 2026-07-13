@@ -4,6 +4,7 @@ void register_{{resolveName}}(py::module_& module) {
 {{#fields}}
         .def_readwrite("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
 {{/fields}}
+{{>python/Pybind11StructInit}}
 {{#functions}}
 {{>python/Pybind11Function}}{{/functions}}
 {{#properties}}

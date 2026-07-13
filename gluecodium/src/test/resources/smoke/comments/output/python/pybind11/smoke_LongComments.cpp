@@ -16,7 +16,7 @@ namespace py = pybind11;
 using LongComments = ::gluecodium::smoke::LongComments;
 
 void register_LongComments(py::module_& module) {
-    py::class_<LongComments>(module, "LongComments")
+    py::class_<LongComments, std::shared_ptr<LongComments>>(module, "LongComments")
         .def("some_method_with_long_comment", &LongComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
         ;
 }

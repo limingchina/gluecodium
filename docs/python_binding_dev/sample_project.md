@@ -21,9 +21,10 @@ generated files compile:
 1. Write an API in **LimeIDL** (`lime/Greeter.lime`).
 2. Run **Gluecodium** to generate **C++ headers/impls + runtime** and **Python (pybind11)
    bindings** (`cpp/` + `python/`).
-3. Provide the **C++ implementation** of the generated abstract classes and a **module
-   entry point** (`cpp/GreeterImpl.cpp`, `cpp/module.cpp`).
-4. Build a **CPython extension module** with **CMake**.
+3. Provide the **C++ implementation** of the generated abstract classes
+   (`cpp/GreeterImpl.cpp`).
+4. Build a **CPython extension module** with **CMake** (the `PYBIND11_MODULE` entry
+   point is generated — no hand-written `module.cpp` is needed).
 5. Use the API from **Python** (`python/client.py`).
 
 It deliberately exercises the main LIME features the Python generator supports today:
@@ -41,8 +42,7 @@ sample_project/
 ├── lime/
 │   └── Greeter.lime        # The API definition (LimeIDL)
 ├── cpp/
-│   ├── GreeterImpl.cpp     # C++ implementation of the generated abstract classes
-│   └── module.cpp          # PYBIND11_MODULE entry point (Phase 6 glue)
+│   └── GreeterImpl.cpp     # C++ implementation of the generated abstract classes
 ├── python/
 │   └── client.py           # End-to-end Python client
 └── build/                  # CMake build dir (generated)
@@ -116,7 +116,8 @@ This produces, under `<build>/generated/`:
 - `cpp/src/...` — generated C++ impl skeletons + runtime sources
   (`LocaleImpl.cpp`, `TypeRepositoryImpl.cpp`, `com/example/greeter/*.cpp`).
 - `python/pybind11/*.cpp` — one `register_<Name>(py::module_&)` function per LIME type,
-  plus the shared `_return_caster.h` / `_wrapper_cache.h` helpers.
+  plus the shared `_return_caster.h` / `_wrapper_cache.h` helpers and the generated
+  `PYBIND11_MODULE` entry point (`_module_init.cpp`).
 - `python/__init__.py` and `python/com/example/greeter/*.py` — thin Python wrapper classes
   (see the limitation note in §6).
 
@@ -156,23 +157,19 @@ Forward declarations in this file use `pybind11::module_&` (not `py::module_&`) 
 
 ---
 
-## 6. Known limitations worked around (Phase 5 of the Python generator)
+## 6. Known limitations (Phase 6 of the Python generator)
 
-The sample works around three gaps scheduled to be closed in **Phase 6**:
+The sample now runs **without any hand-written pybind11 glue**. The remaining limitations
+are:
 
-1. **No `PYBIND11_MODULE` entry point** is generated — `cpp/module.cpp` provides it.
-2. **`class` types lack a `std::shared_ptr` holder** in the generated binding, so
-   `create()` (which returns `shared_ptr`) cannot convert to Python. The sample re-binds
-   `Greeter` with `py::class_<Greeter, std::shared_ptr<Greeter>>`.
-3. **`interface` types have no `py::init<>()`**, so Python subclasses cannot be
-   instantiated as trampolines. The sample re-binds `GreetingListener` with `py::init<>()`
-   plus a `GreetingListenerTrampoline` class.
+1. **`@Async`** functions are not yet bound (Phase 5.5, deferred).
+2. The **wrapper cache** is generated but not yet wired into `return_value_policy` at call
+   sites, so referential equality is not yet enforced.
+3. The **`Locale`** caster is still missing.
 
-Additionally, the generated **Python wrapper classes** (`python/com/example/greeter/*.py`)
-currently have a circular self-import and no factory, so they are not directly importable.
-The client therefore drives the **native** pybind11 classes directly. Once Phase 6 lands,
-the same client logic can be written against the generated `com.example.greeter.Greeter`
-Python class instead.
+The generated **Python wrapper classes** (`python/com/example/greeter/*.py`) are now
+importable and the client drives the **native** pybind11 classes directly (the same
+approach works against the generated `com.example.greeter.Greeter` Python class).
 
 The error raised on `greet("")` currently carries the qualified enum name
 (`::com::example::greeter::GreeterErrorCode::EMPTY_NAME`) because the generated

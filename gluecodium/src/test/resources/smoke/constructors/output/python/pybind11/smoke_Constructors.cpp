@@ -20,7 +20,7 @@ namespace py = pybind11;
 using Constructors = ::gluecodium::smoke::Constructors;
 
 void register_Constructors(py::module_& module) {
-    py::class_<Constructors>(module, "Constructors")
+    py::class_<Constructors, std::shared_ptr<Constructors>>(module, "Constructors")
         .def("create", &Constructors::create)
         .def("create", &Constructors::create, py::arg("other"))
         .def("create", &Constructors::create, py::arg("foo"), py::arg("bar"))

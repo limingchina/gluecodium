@@ -16,7 +16,7 @@ namespace py = pybind11;
 using MultiLineComments = ::gluecodium::smoke::MultiLineComments;
 
 void register_MultiLineComments(py::module_& module) {
-    py::class_<MultiLineComments>(module, "MultiLineComments")
+    py::class_<MultiLineComments, std::shared_ptr<MultiLineComments>>(module, "MultiLineComments")
         .def("some_method_with_long_comment", &MultiLineComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
         ;
 }

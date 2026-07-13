@@ -18,6 +18,7 @@ using ImmutableDefaultCtor = ::gluecodium::smoke::ImmutableDefaultCtor;
 void register_ImmutableDefaultCtor(py::module_& module) {
     py::class_<ImmutableDefaultCtor>(module, "ImmutableDefaultCtor")
         .def_readwrite("string_field", &ImmutableDefaultCtor::string_field)
+        .def(py::init<>())
         ;
 }
 

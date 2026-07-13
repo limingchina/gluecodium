@@ -15,7 +15,7 @@ namespace py = pybind11;
 using MultipleAttributesJava = ::gluecodium::smoke::MultipleAttributesJava;
 
 void register_MultipleAttributesJava(py::module_& module) {
-    py::class_<MultipleAttributesJava>(module, "MultipleAttributesJava")
+    py::class_<MultipleAttributesJava, std::shared_ptr<MultipleAttributesJava>>(module, "MultipleAttributesJava")
         .def("no_lists2", &MultipleAttributesJava::no_lists2)
         .def("no_lists3", &MultipleAttributesJava::no_lists3)
         .def("list_first", &MultipleAttributesJava::list_first)

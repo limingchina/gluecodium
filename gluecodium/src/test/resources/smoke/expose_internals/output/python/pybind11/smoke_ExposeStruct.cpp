@@ -18,6 +18,7 @@ using ExposeStruct = ::gluecodium::smoke::ExposeStruct;
 void register_ExposeStruct(py::module_& module) {
     py::class_<ExposeStruct>(module, "ExposeStruct")
         .def_readwrite("field", &ExposeStruct::field)
+        .def(py::init<::std::string>(), py::arg("field"))
         ;
 }
 

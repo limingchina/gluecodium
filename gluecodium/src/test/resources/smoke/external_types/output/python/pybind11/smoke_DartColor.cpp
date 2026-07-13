@@ -20,6 +20,7 @@ void register_DartColor(py::module_& module) {
         .def_readwrite("green", &DartColor::green)
         .def_readwrite("blue", &DartColor::blue)
         .def_readwrite("alpha", &DartColor::alpha)
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;
 }
 

@@ -25,6 +25,8 @@ void register_DurationDefaults(py::module_& module) {
         .def_readwrite("milliz", &DurationDefaults::milliz)
         .def_readwrite("microz", &DurationDefaults::microz)
         .def_readwrite("nanoz", &DurationDefaults::nanoz)
+        .def(py::init<>())
+        .def(py::init<::std::chrono::seconds, ::std::chrono::seconds, ::std::chrono::seconds, std::chrono::seconds, ::std::chrono::milliseconds, ::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("dayz"), py::arg("hourz"), py::arg("minutez"), py::arg("secondz"), py::arg("milliz"), py::arg("microz"), py::arg("nanoz"))
         ;
 }
 

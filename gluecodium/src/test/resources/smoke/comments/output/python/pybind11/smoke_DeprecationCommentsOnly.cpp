@@ -36,6 +36,7 @@ public:
 
 void register_DeprecationCommentsOnly(py::module_& module) {
     py::class_<DeprecationCommentsOnly, std::shared_ptr<DeprecationCommentsOnly>, DeprecationCommentsOnlyTrampoline>(module, "DeprecationCommentsOnly")
+        .def(py::init<>())
         .def("some_method_with_all_comments", &DeprecationCommentsOnly::some_method_with_all_comments, py::arg("input"))
         .def_property("is_some_property", py::overload_cast<>(&DeprecationCommentsOnly::is_some_property, py::const_), py::overload_cast<const bool>(&DeprecationCommentsOnly::set_some_property))
         ;

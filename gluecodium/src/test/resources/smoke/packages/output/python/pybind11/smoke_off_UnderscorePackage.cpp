@@ -16,7 +16,7 @@ namespace py = pybind11;
 using UnderscorePackage = ::gluecodium::smoke_off::UnderscorePackage;
 
 void register_UnderscorePackage(py::module_& module) {
-    py::class_<UnderscorePackage>(module, "UnderscorePackage")
+    py::class_<UnderscorePackage, std::shared_ptr<UnderscorePackage>>(module, "UnderscorePackage")
         .def("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"))
         ;
 }

@@ -1,0 +1,7 @@
+{{! pybind11 struct constructors (py::init). Emitted by the struct binding. }}
+{{#ifPredicate model "hasDefaultConstructor"}}
+        .def(py::init<>())
+{{/ifPredicate}}
+{{#ifPredicate model "needsAllFieldsConstructor"}}
+        .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}>(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
+{{/ifPredicate}}

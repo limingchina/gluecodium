@@ -21,6 +21,7 @@ void register_SkipFieldInPlatformImmutable(py::module_& module) {
         .def_readwrite("int_field", &SkipFieldInPlatformImmutable::int_field)
         .def_readwrite("string_field", &SkipFieldInPlatformImmutable::string_field)
         .def_readwrite("bool_field", &SkipFieldInPlatformImmutable::bool_field)
+        .def(py::init<int32_t, ::smoke::DummyStruct, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;
 }
 

@@ -18,6 +18,8 @@ using ExternalTypeInTypesCollection = ::gluecodium::smoke::ExternalTypeInTypesCo
 
 void register_ExternalTypeInTypesCollection(py::module_& module) {
     py::class_<ExternalTypeInTypesCollection>(module, "ExternalTypeInTypesCollection")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

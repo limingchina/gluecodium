@@ -28,6 +28,7 @@ public:
 
 void register_SpecialNamesInterface(py::module_& module) {
     py::class_<SpecialNamesInterface, std::shared_ptr<SpecialNamesInterface>, SpecialNamesInterfaceTrampoline>(module, "SpecialNamesInterface")
+        .def(py::init<>())
         .def("dispatch", &SpecialNamesInterface::dispatch, py::arg("callback"))
         ;
 }

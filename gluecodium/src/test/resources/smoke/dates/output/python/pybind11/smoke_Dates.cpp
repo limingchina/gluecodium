@@ -20,7 +20,7 @@ namespace py = pybind11;
 using Dates = ::gluecodium::smoke::Dates;
 
 void register_Dates(py::module_& module) {
-    py::class_<Dates>(module, "Dates")
+    py::class_<Dates, std::shared_ptr<Dates>>(module, "Dates")
         .def("date_method", &Dates::date_method, py::arg("input"))
         .def("nullable_date_method", &Dates::nullable_date_method, py::arg("input"))
         .def_property("date_property", py::overload_cast<>(&Dates::get_date_property, py::const_), py::overload_cast<const ::std::chrono::system_clock::time_point&>(&Dates::set_date_property))

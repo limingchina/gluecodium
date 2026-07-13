@@ -31,6 +31,7 @@ public:
 
 void register_SkipSetter(py::module_& module) {
     py::class_<SkipSetter, std::shared_ptr<SkipSetter>, SkipSetterTrampoline>(module, "SkipSetter")
+        .def(py::init<>())
         .def_property("foo", py::overload_cast<>(&SkipSetter::get_foo, py::const_), py::overload_cast<const ::std::string&>(&SkipSetter::set_foo))
         ;
 }

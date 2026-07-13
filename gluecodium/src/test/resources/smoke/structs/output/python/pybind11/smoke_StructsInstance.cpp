@@ -15,7 +15,7 @@ namespace py = pybind11;
 using StructsInstance = ::gluecodium::smoke::StructsInstance;
 
 void register_StructsInstance(py::module_& module) {
-    py::class_<StructsInstance>(module, "StructsInstance")
+    py::class_<StructsInstance, std::shared_ptr<StructsInstance>>(module, "StructsInstance")
         ;
 }
 

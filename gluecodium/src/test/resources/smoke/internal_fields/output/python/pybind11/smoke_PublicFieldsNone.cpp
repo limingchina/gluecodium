@@ -17,6 +17,8 @@ using PublicFieldsNone = ::gluecodium::smoke::PublicFieldsNone;
 void register_PublicFieldsNone(py::module_& module) {
     py::class_<PublicFieldsNone>(module, "PublicFieldsNone")
         .def_readwrite("internal_field", &PublicFieldsNone::internal_field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("internal_field"))
         ;
 }
 

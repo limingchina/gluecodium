@@ -15,7 +15,7 @@ namespace py = pybind11;
 using AmbiguousConstants = ::gluecodium::fire::AmbiguousConstants;
 
 void register_AmbiguousConstants(py::module_& module) {
-    py::class_<AmbiguousConstants>(module, "AmbiguousConstants")
+    py::class_<AmbiguousConstants, std::shared_ptr<AmbiguousConstants>>(module, "AmbiguousConstants")
         ;
 }
 

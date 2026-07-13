@@ -15,7 +15,7 @@ namespace py = pybind11;
 using SwiftInternalClassRev = ::gluecodium::smoke::SwiftInternalClassRev;
 
 void register_SwiftInternalClassRev(py::module_& module) {
-    py::class_<SwiftInternalClassRev>(module, "SwiftInternalClassRev")
+    py::class_<SwiftInternalClassRev, std::shared_ptr<SwiftInternalClassRev>>(module, "SwiftInternalClassRev")
         ;
 }
 

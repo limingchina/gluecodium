@@ -15,7 +15,7 @@ namespace py = pybind11;
 using SomeCoolClassType = ::gluecodium::another::SomeCoolClassType;
 
 void register_SomeCoolClassType(py::module_& module) {
-    py::class_<SomeCoolClassType>(module, "SomeCoolClassType")
+    py::class_<SomeCoolClassType, std::shared_ptr<SomeCoolClassType>>(module, "SomeCoolClassType")
         .def("do_important_stuff", &SomeCoolClassType::do_important_stuff)
         ;
 }

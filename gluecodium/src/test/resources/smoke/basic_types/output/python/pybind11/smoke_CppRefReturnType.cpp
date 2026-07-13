@@ -18,7 +18,7 @@ namespace py = pybind11;
 using CppRefReturnType = ::gluecodium::smoke::CppRefReturnType;
 
 void register_CppRefReturnType(py::module_& module) {
-    py::class_<CppRefReturnType>(module, "CppRefReturnType")
+    py::class_<CppRefReturnType, std::shared_ptr<CppRefReturnType>>(module, "CppRefReturnType")
         .def("void_ref", &CppRefReturnType::void_ref)
         .def("bool_ref", &CppRefReturnType::bool_ref)
         .def("string_ref", &CppRefReturnType::string_ref)

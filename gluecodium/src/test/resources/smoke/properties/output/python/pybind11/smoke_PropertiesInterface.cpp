@@ -30,6 +30,7 @@ public:
 
 void register_PropertiesInterface(py::module_& module) {
     py::class_<PropertiesInterface, std::shared_ptr<PropertiesInterface>, PropertiesInterfaceTrampoline>(module, "PropertiesInterface")
+        .def(py::init<>())
         .def_property("struct_property", py::overload_cast<>(&PropertiesInterface::get_struct_property, py::const_), py::overload_cast<const ::smoke::PropertiesInterface::ExampleStruct&>(&PropertiesInterface::set_struct_property))
         ;
 }

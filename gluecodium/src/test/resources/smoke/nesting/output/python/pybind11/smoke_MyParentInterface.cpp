@@ -22,6 +22,7 @@ public:
 
 void register_MyParentInterface(py::module_& module) {
     py::class_<MyParentInterface, std::shared_ptr<MyParentInterface>, MyParentInterfaceTrampoline>(module, "MyParentInterface")
+        .def(py::init<>())
         ;
 }
 

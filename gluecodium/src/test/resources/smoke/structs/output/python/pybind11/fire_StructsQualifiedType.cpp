@@ -21,7 +21,7 @@ namespace py = pybind11;
 using StructsQualifiedType = ::gluecodium::fire::StructsQualifiedType;
 
 void register_StructsQualifiedType(py::module_& module) {
-    py::class_<StructsQualifiedType>(module, "StructsQualifiedType")
+    py::class_<StructsQualifiedType, std::shared_ptr<StructsQualifiedType>>(module, "StructsQualifiedType")
         ;
 }
 

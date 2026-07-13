@@ -16,7 +16,7 @@ namespace py = pybind11;
 using SomeSkippedClass = ::gluecodium::smoke::SomeSkippedClass;
 
 void register_SomeSkippedClass(py::module_& module) {
-    py::class_<SomeSkippedClass>(module, "SomeSkippedClass")
+    py::class_<SomeSkippedClass, std::shared_ptr<SomeSkippedClass>>(module, "SomeSkippedClass")
         .def("do_foo", &SomeSkippedClass::do_foo)
         ;
 }

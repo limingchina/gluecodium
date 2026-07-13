@@ -36,6 +36,7 @@ public:
 
 void register_FirstParentIsInterfaceInterface(py::module_& module) {
     py::class_<FirstParentIsInterfaceInterface, std::shared_ptr<FirstParentIsInterfaceInterface>, FirstParentIsInterfaceInterfaceTrampoline>(module, "FirstParentIsInterfaceInterface")
+        .def(py::init<>())
         .def("child_function", &FirstParentIsInterfaceInterface::child_function)
         .def_property("child_property", py::overload_cast<>(&FirstParentIsInterfaceInterface::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsInterfaceInterface::set_child_property))
         ;

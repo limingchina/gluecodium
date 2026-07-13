@@ -18,7 +18,7 @@ namespace py = pybind11;
 using SkipTypes = ::gluecodium::smoke::SkipTypes;
 
 void register_SkipTypes(py::module_& module) {
-    py::class_<SkipTypes>(module, "SkipTypes")
+    py::class_<SkipTypes, std::shared_ptr<SkipTypes>>(module, "SkipTypes")
         .def("use_list_in_dart", &SkipTypes::use_list_in_dart)
         ;
 }

@@ -20,7 +20,7 @@ namespace py = pybind11;
 using CachedProperties = ::gluecodium::smoke::CachedProperties;
 
 void register_CachedProperties(py::module_& module) {
-    py::class_<CachedProperties>(module, "CachedProperties")
+    py::class_<CachedProperties, std::shared_ptr<CachedProperties>>(module, "CachedProperties")
         .def_property_readonly("cached_property", py::overload_cast<>(&CachedProperties::get_cached_property, py::const_))
         .def_property_readonly("internal_cached_property", py::overload_cast<>(&CachedProperties::get_internal_cached_property, py::const_))
         .def_property_readonly("static_cached_property", py::overload_cast<>(&CachedProperties::get_static_cached_property, py::const_))

@@ -38,6 +38,7 @@ public:
 
 void register_ParentWithClassReferences(py::module_& module) {
     py::class_<ParentWithClassReferences, std::shared_ptr<ParentWithClassReferences>, ParentWithClassReferencesTrampoline>(module, "ParentWithClassReferences")
+        .def(py::init<>())
         .def("class_function", &ParentWithClassReferences::class_function)
         .def_property("class_property", py::overload_cast<>(&ParentWithClassReferences::get_class_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::ParentClass >&>(&ParentWithClassReferences::set_class_property))
         ;

@@ -16,7 +16,7 @@ namespace py = pybind11;
 using ChildClassFromInterface = ::gluecodium::smoke::ChildClassFromInterface;
 
 void register_ChildClassFromInterface(py::module_& module) {
-    py::class_<ChildClassFromInterface>(module, "ChildClassFromInterface")
+    py::class_<ChildClassFromInterface, std::shared_ptr<ChildClassFromInterface>>(module, "ChildClassFromInterface")
         .def("child_class_method", &ChildClassFromInterface::child_class_method)
         ;
 }

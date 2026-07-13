@@ -15,7 +15,7 @@ namespace py = pybind11;
 using JavaPublicClass = ::gluecodium::smoke::JavaPublicClass;
 
 void register_JavaPublicClass(py::module_& module) {
-    py::class_<JavaPublicClass>(module, "JavaPublicClass")
+    py::class_<JavaPublicClass, std::shared_ptr<JavaPublicClass>>(module, "JavaPublicClass")
         ;
 }
 

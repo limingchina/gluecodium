@@ -22,7 +22,7 @@ namespace py = pybind11;
 using Nullable = ::gluecodium::smoke::Nullable;
 
 void register_Nullable(py::module_& module) {
-    py::class_<Nullable>(module, "Nullable")
+    py::class_<Nullable, std::shared_ptr<Nullable>>(module, "Nullable")
         .def("method_with_string", &Nullable::method_with_string, py::arg("input"))
         .def("method_with_boolean", &Nullable::method_with_boolean, py::arg("input"))
         .def("method_with_double", &Nullable::method_with_double, py::arg("input"))

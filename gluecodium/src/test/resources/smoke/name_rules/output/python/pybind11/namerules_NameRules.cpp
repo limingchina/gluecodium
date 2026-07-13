@@ -19,7 +19,7 @@ namespace py = pybind11;
 using NameRules = ::namerules::NameRules;
 
 void register_NameRules(py::module_& module) {
-    py::class_<NameRules>(module, "NameRules")
+    py::class_<NameRules, std::shared_ptr<NameRules>>(module, "NameRules")
         .def("create", &NameRules::create)
         .def("some_method", &NameRules::someMethod, py::arg("some_argument"))
         .def_property("int_property", py::overload_cast<>(&NameRules::retrieve_int_property, py::const_), py::overload_cast<const uint32_t>(&NameRules::STORE_INT_PROPERTY_NOW))

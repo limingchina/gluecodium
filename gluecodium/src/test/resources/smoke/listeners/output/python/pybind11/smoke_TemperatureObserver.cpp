@@ -29,6 +29,7 @@ public:
 
 void register_TemperatureObserver(py::module_& module) {
     py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "TemperatureObserver")
+        .def(py::init<>())
         .def("on_temperature_update", &TemperatureObserver::on_temperature_update, py::arg("thermometer"))
         ;
 }

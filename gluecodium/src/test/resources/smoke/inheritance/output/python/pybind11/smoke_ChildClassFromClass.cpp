@@ -15,7 +15,7 @@ namespace py = pybind11;
 using ChildClassFromClass = ::gluecodium::smoke::ChildClassFromClass;
 
 void register_ChildClassFromClass(py::module_& module) {
-    py::class_<ChildClassFromClass>(module, "ChildClassFromClass")
+    py::class_<ChildClassFromClass, std::shared_ptr<ChildClassFromClass>>(module, "ChildClassFromClass")
         .def("child_class_method", &ChildClassFromClass::child_class_method)
         ;
 }

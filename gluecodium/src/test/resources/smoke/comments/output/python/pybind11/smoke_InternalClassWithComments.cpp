@@ -15,7 +15,7 @@ namespace py = pybind11;
 using InternalClassWithComments = ::gluecodium::smoke::InternalClassWithComments;
 
 void register_InternalClassWithComments(py::module_& module) {
-    py::class_<InternalClassWithComments>(module, "InternalClassWithComments")
+    py::class_<InternalClassWithComments, std::shared_ptr<InternalClassWithComments>>(module, "InternalClassWithComments")
         .def("do_nothing", &InternalClassWithComments::do_nothing)
         ;
 }

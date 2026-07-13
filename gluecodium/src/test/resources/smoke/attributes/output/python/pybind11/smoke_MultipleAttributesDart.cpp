@@ -15,7 +15,7 @@ namespace py = pybind11;
 using MultipleAttributesDart = ::gluecodium::smoke::MultipleAttributesDart;
 
 void register_MultipleAttributesDart(py::module_& module) {
-    py::class_<MultipleAttributesDart>(module, "MultipleAttributesDart")
+    py::class_<MultipleAttributesDart, std::shared_ptr<MultipleAttributesDart>>(module, "MultipleAttributesDart")
         .def("no_lists2", &MultipleAttributesDart::no_lists2)
         .def("no_lists3", &MultipleAttributesDart::no_lists3)
         .def("list_first", &MultipleAttributesDart::list_first)

@@ -18,6 +18,7 @@ using DartInternalElementsRev = ::gluecodium::smoke::DartInternalElementsRev;
 void register_DartInternalElementsRev(py::module_& module) {
     py::class_<DartInternalElementsRev>(module, "DartInternalElementsRev")
         .def_readwrite("string_field", &DartInternalElementsRev::string_field)
+        .def(py::init<::std::string>(), py::arg("string_field"))
         .def("foo", &DartInternalElementsRev::foo)
         ;
 }

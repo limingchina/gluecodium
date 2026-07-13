@@ -19,7 +19,7 @@ namespace py = pybind11;
 using StructsWithConstantsInterface = ::gluecodium::smoke::StructsWithConstantsInterface;
 
 void register_StructsWithConstantsInterface(py::module_& module) {
-    py::class_<StructsWithConstantsInterface>(module, "StructsWithConstantsInterface")
+    py::class_<StructsWithConstantsInterface, std::shared_ptr<StructsWithConstantsInterface>>(module, "StructsWithConstantsInterface")
         ;
 }
 

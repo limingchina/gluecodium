@@ -22,7 +22,7 @@ namespace py = pybind11;
 using UseKotlinExternalTypes = ::gluecodium::kotlin_smoke::UseKotlinExternalTypes;
 
 void register_UseKotlinExternalTypes(py::module_& module) {
-    py::class_<UseKotlinExternalTypes>(module, "UseKotlinExternalTypes")
+    py::class_<UseKotlinExternalTypes, std::shared_ptr<UseKotlinExternalTypes>>(module, "UseKotlinExternalTypes")
         .def("currency_round_trip", &UseKotlinExternalTypes::currency_round_trip, py::arg("input"))
         .def("time_zone_round_trip", &UseKotlinExternalTypes::time_zone_round_trip, py::arg("input"))
         .def("month_round_trip", &UseKotlinExternalTypes::month_round_trip, py::arg("input"))

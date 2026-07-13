@@ -15,7 +15,7 @@ namespace py = pybind11;
 using MultipleAttributesSwift = ::gluecodium::smoke::MultipleAttributesSwift;
 
 void register_MultipleAttributesSwift(py::module_& module) {
-    py::class_<MultipleAttributesSwift>(module, "MultipleAttributesSwift")
+    py::class_<MultipleAttributesSwift, std::shared_ptr<MultipleAttributesSwift>>(module, "MultipleAttributesSwift")
         .def("no_lists2", &MultipleAttributesSwift::no_lists2)
         .def("no_lists3", &MultipleAttributesSwift::no_lists3)
         .def("list_first", &MultipleAttributesSwift::list_first)

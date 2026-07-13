@@ -43,6 +43,7 @@ public:
 
 void register_ParentInterface(py::module_& module) {
     py::class_<ParentInterface, std::shared_ptr<ParentInterface>, ParentInterfaceTrampoline>(module, "ParentInterface")
+        .def(py::init<>())
         .def("foo", &ParentInterface::foo)
         .def("foo", &ParentInterface::foo, py::arg("input"))
         .def("bar", &ParentInterface::bar)

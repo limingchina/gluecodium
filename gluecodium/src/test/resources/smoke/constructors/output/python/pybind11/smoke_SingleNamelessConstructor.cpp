@@ -16,7 +16,7 @@ namespace py = pybind11;
 using SingleNamelessConstructor = ::gluecodium::smoke::SingleNamelessConstructor;
 
 void register_SingleNamelessConstructor(py::module_& module) {
-    py::class_<SingleNamelessConstructor>(module, "SingleNamelessConstructor")
+    py::class_<SingleNamelessConstructor, std::shared_ptr<SingleNamelessConstructor>>(module, "SingleNamelessConstructor")
         .def("create", &SingleNamelessConstructor::create)
         ;
 }

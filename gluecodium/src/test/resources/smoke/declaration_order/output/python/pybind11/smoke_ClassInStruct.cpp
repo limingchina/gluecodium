@@ -18,6 +18,8 @@ using ClassInStruct = ::gluecodium::smoke::ClassInStruct;
 
 void register_ClassInStruct(py::module_& module) {
     py::class_<ClassInStruct>(module, "ClassInStruct")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

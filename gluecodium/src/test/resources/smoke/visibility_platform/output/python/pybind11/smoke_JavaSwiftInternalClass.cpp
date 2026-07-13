@@ -15,7 +15,7 @@ namespace py = pybind11;
 using JavaSwiftInternalClass = ::gluecodium::smoke::JavaSwiftInternalClass;
 
 void register_JavaSwiftInternalClass(py::module_& module) {
-    py::class_<JavaSwiftInternalClass>(module, "JavaSwiftInternalClass")
+    py::class_<JavaSwiftInternalClass, std::shared_ptr<JavaSwiftInternalClass>>(module, "JavaSwiftInternalClass")
         ;
 }
 

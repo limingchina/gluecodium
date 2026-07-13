@@ -21,7 +21,7 @@ namespace py = pybind11;
 using UseJavaExternalTypes = ::gluecodium::dontsmoke::UseJavaExternalTypes;
 
 void register_UseJavaExternalTypes(py::module_& module) {
-    py::class_<UseJavaExternalTypes>(module, "UseJavaExternalTypes")
+    py::class_<UseJavaExternalTypes, std::shared_ptr<UseJavaExternalTypes>>(module, "UseJavaExternalTypes")
         .def("currency_round_trip", &UseJavaExternalTypes::currency_round_trip, py::arg("input"))
         .def("time_zone_round_trip", &UseJavaExternalTypes::time_zone_round_trip, py::arg("input"))
         .def("month_round_trip", &UseJavaExternalTypes::month_round_trip, py::arg("input"))

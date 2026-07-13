@@ -24,6 +24,8 @@ using Serialization = ::gluecodium::smoke::Serialization;
 
 void register_Serialization(py::module_& module) {
     py::class_<Serialization>(module, "Serialization")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

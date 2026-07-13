@@ -20,6 +20,7 @@ void register_DartDeprecatedPosDefaultsCustom(py::module_& module) {
     py::class_<DartDeprecatedPosDefaultsCustom>(module, "DartDeprecatedPosDefaultsCustom")
         .def_readwrite("int_field", &DartDeprecatedPosDefaultsCustom::int_field)
         .def_readwrite("string_field", &DartDeprecatedPosDefaultsCustom::string_field)
+        .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         .def("custom", &DartDeprecatedPosDefaultsCustom::custom)
         ;
 }

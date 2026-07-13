@@ -15,7 +15,7 @@ namespace py = pybind11;
 using SkipMixed = ::gluecodium::smoke::SkipMixed;
 
 void register_SkipMixed(py::module_& module) {
-    py::class_<SkipMixed>(module, "SkipMixed")
+    py::class_<SkipMixed, std::shared_ptr<SkipMixed>>(module, "SkipMixed")
         ;
 }
 

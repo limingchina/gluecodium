@@ -15,7 +15,7 @@ namespace py = pybind11;
 using PointerEquatableClass = ::gluecodium::smoke::PointerEquatableClass;
 
 void register_PointerEquatableClass(py::module_& module) {
-    py::class_<PointerEquatableClass>(module, "PointerEquatableClass")
+    py::class_<PointerEquatableClass, std::shared_ptr<PointerEquatableClass>>(module, "PointerEquatableClass")
         ;
 }
 

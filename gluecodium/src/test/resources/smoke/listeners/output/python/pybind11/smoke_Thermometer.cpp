@@ -23,7 +23,7 @@ namespace py = pybind11;
 using Thermometer = ::gluecodium::smoke::Thermometer;
 
 void register_Thermometer(py::module_& module) {
-    py::class_<Thermometer>(module, "Thermometer")
+    py::class_<Thermometer, std::shared_ptr<Thermometer>>(module, "Thermometer")
         .def("make_with_duration", &Thermometer::make_with_duration, py::arg("interval"), py::arg("observers"))
         .def("make_without_duration", &Thermometer::make_without_duration, py::arg("observers"))
         .def("throwing_make", &Thermometer::throwing_make, py::arg("id"), py::arg("observers"))

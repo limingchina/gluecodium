@@ -20,6 +20,7 @@ using StructA = ::gluecodium::smoke::StructA;
 void register_StructA(py::module_& module) {
     py::class_<StructA>(module, "StructA")
         .def_readwrite("field", &StructA::field)
+        .def(py::init<::std::vector< ::smoke::StructB >>(), py::arg("field"))
         ;
 }
 

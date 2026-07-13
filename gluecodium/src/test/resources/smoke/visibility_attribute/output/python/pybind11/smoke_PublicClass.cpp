@@ -16,7 +16,7 @@ namespace py = pybind11;
 using PublicClass = ::gluecodium::smoke::PublicClass;
 
 void register_PublicClass(py::module_& module) {
-    py::class_<PublicClass>(module, "PublicClass")
+    py::class_<PublicClass, std::shared_ptr<PublicClass>>(module, "PublicClass")
         .def("internal_method", &PublicClass::internal_method, py::arg("input"))
         .def_property("internal_struct_property", py::overload_cast<>(&PublicClass::get_internal_struct_property, py::const_), py::overload_cast<const ::smoke::PublicClass::InternalStruct&>(&PublicClass::set_internal_struct_property))
         ;

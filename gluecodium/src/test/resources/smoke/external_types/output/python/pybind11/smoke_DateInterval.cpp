@@ -20,6 +20,7 @@ void register_DateInterval(py::module_& module) {
     py::class_<DateInterval>(module, "DateInterval")
         .def_readwrite("start", &DateInterval::start)
         .def_readwrite("end", &DateInterval::end)
+        .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("start"), py::arg("end"))
         ;
 }
 

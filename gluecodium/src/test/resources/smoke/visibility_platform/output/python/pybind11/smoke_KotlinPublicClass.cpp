@@ -15,7 +15,7 @@ namespace py = pybind11;
 using KotlinPublicClass = ::gluecodium::smoke::KotlinPublicClass;
 
 void register_KotlinPublicClass(py::module_& module) {
-    py::class_<KotlinPublicClass>(module, "KotlinPublicClass")
+    py::class_<KotlinPublicClass, std::shared_ptr<KotlinPublicClass>>(module, "KotlinPublicClass")
         ;
 }
 

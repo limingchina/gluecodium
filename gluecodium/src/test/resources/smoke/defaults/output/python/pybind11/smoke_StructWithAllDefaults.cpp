@@ -20,6 +20,8 @@ void register_StructWithAllDefaults(py::module_& module) {
     py::class_<StructWithAllDefaults>(module, "StructWithAllDefaults")
         .def_readwrite("int_field", &StructWithAllDefaults::int_field)
         .def_readwrite("string_field", &StructWithAllDefaults::string_field)
+        .def(py::init<>())
+        .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         ;
 }
 

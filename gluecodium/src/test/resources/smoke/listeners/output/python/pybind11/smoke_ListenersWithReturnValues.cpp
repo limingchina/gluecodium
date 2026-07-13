@@ -62,6 +62,7 @@ public:
 
 void register_ListenersWithReturnValues(py::module_& module) {
     py::class_<ListenersWithReturnValues, std::shared_ptr<ListenersWithReturnValues>, ListenersWithReturnValuesTrampoline>(module, "ListenersWithReturnValues")
+        .def(py::init<>())
         .def("fetch_data_double", &ListenersWithReturnValues::fetch_data_double)
         .def("fetch_data_string", &ListenersWithReturnValues::fetch_data_string)
         .def("fetch_data_struct", &ListenersWithReturnValues::fetch_data_struct)

@@ -32,6 +32,7 @@ public:
 
 void register_Weakling(py::module_& module) {
     py::class_<Weakling, std::shared_ptr<Weakling>, WeaklingTrampoline>(module, "Weakling")
+        .def(py::init<>())
         .def_property("listener", py::overload_cast<>(&Weakling::get_listener, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::ListenerInterface >&>(&Weakling::set_listener))
         ;
 }

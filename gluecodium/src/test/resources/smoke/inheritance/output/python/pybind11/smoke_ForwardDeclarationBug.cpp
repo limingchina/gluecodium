@@ -17,7 +17,7 @@ namespace py = pybind11;
 using ForwardDeclarationBug = ::gluecodium::smoke::ForwardDeclarationBug;
 
 void register_ForwardDeclarationBug(py::module_& module) {
-    py::class_<ForwardDeclarationBug>(module, "ForwardDeclarationBug")
+    py::class_<ForwardDeclarationBug, std::shared_ptr<ForwardDeclarationBug>>(module, "ForwardDeclarationBug")
         .def("foo", &ForwardDeclarationBug::foo, py::arg("bar"))
         ;
 }

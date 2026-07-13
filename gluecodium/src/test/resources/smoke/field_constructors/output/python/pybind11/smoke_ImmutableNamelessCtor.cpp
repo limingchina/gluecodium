@@ -18,6 +18,7 @@ using ImmutableNamelessCtor = ::gluecodium::smoke::ImmutableNamelessCtor;
 void register_ImmutableNamelessCtor(py::module_& module) {
     py::class_<ImmutableNamelessCtor>(module, "ImmutableNamelessCtor")
         .def_readwrite("string_field", &ImmutableNamelessCtor::string_field)
+        .def(py::init<>())
         ;
 }
 

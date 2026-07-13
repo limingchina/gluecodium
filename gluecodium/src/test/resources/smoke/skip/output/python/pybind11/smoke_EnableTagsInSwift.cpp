@@ -37,6 +37,7 @@ public:
 
 void register_EnableTagsInSwift(py::module_& module) {
     py::class_<EnableTagsInSwift, std::shared_ptr<EnableTagsInSwift>, EnableTagsInSwiftTrampoline>(module, "EnableTagsInSwift")
+        .def(py::init<>())
         .def("enable_tagged", &EnableTagsInSwift::enable_tagged)
         .def("dont_enable_tagged", &EnableTagsInSwift::dont_enable_tagged)
         .def("enable_tagged_list", &EnableTagsInSwift::enable_tagged_list)

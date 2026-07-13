@@ -18,6 +18,7 @@ using SkipFieldConstructorsClash = ::gluecodium::smoke::SkipFieldConstructorsCla
 void register_SkipFieldConstructorsClash(py::module_& module) {
     py::class_<SkipFieldConstructorsClash>(module, "SkipFieldConstructorsClash")
         .def_readwrite("param", &SkipFieldConstructorsClash::param)
+        .def(py::init<>())
         ;
 }
 

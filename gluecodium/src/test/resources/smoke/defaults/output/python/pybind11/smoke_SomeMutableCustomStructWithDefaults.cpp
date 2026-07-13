@@ -23,6 +23,8 @@ void register_SomeMutableCustomStructWithDefaults(py::module_& module) {
         .def_readwrite("int_field", &SomeMutableCustomStructWithDefaults::int_field)
         .def_readwrite("string_field", &SomeMutableCustomStructWithDefaults::string_field)
         .def_readwrite("list_field", &SomeMutableCustomStructWithDefaults::list_field)
+        .def(py::init<>())
+        .def(py::init<int32_t, ::std::string, ::std::vector< int32_t >>(), py::arg("int_field"), py::arg("string_field"), py::arg("list_field"))
         ;
 }
 

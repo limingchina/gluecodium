@@ -18,7 +18,7 @@ namespace py = pybind11;
 using Errors = ::gluecodium::smoke::Errors;
 
 void register_Errors(py::module_& module) {
-    py::class_<Errors>(module, "Errors")
+    py::class_<Errors, std::shared_ptr<Errors>>(module, "Errors")
         .def("method_with_errors", &Errors::method_with_errors)
         .def("method_with_external_errors", &Errors::method_with_external_errors)
         .def("method_with_errors_and_return_value", &Errors::method_with_errors_and_return_value)

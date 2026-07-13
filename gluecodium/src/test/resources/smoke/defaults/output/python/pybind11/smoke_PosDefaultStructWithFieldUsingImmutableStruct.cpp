@@ -18,6 +18,8 @@ using PosDefaultStructWithFieldUsingImmutableStruct = ::gluecodium::smoke::PosDe
 void register_PosDefaultStructWithFieldUsingImmutableStruct(py::module_& module) {
     py::class_<PosDefaultStructWithFieldUsingImmutableStruct>(module, "PosDefaultStructWithFieldUsingImmutableStruct")
         .def_readwrite("some_field1", &PosDefaultStructWithFieldUsingImmutableStruct::some_field1)
+        .def(py::init<>())
+        .def(py::init<::smoke::ImmutableStructWithDefaults>(), py::arg("some_field1"))
         ;
 }
 

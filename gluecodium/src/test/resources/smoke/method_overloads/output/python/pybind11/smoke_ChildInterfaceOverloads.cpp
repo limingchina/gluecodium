@@ -33,6 +33,7 @@ public:
 
 void register_ChildInterfaceOverloads(py::module_& module) {
     py::class_<ChildInterfaceOverloads, std::shared_ptr<ChildInterfaceOverloads>, ChildInterfaceOverloadsTrampoline>(module, "ChildInterfaceOverloads")
+        .def(py::init<>())
         .def("foo", &ChildInterfaceOverloads::foo, py::arg("input"))
         .def("bar", &ChildInterfaceOverloads::bar, py::arg("input"))
         ;

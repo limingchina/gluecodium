@@ -95,8 +95,7 @@ implementation and the base-class relationship).
 
 - `./gradlew :gluecodium:installDist` → success.
 - `./gradlew :gluecodium:test` → **all tests pass** (SmokeTest: python 43 run / 5 skipped /
-  0 failed; `name_clash_overloads` remains skipped because two LIME types collide on the
-  Python file name `AssetsManager.py`, so no python output is committed for it).
+  0 failed; `name_clash_overloads` remains skipped — see the note below).
 - Reference output for every python smoke feature was regenerated with the harness options
   (`-intnamespace gluecodium -internalprefix foobar_`, honouring each feature's
   `commandlineoptions.txt`).
@@ -106,6 +105,37 @@ implementation and the base-class relationship).
   - `python_attributes/output/python/com/example/test/RenamedClass.pyi` honours the
     `@Python(Name = "RenamedClass")` rename (stub matches the `.py`).
   - `BasicTypes.py` now `class BasicTypes(_NativeBase)` with `super().__init__(native)`.
+
+### 4.1 Smoke-test regeneration pitfall: `name_clash_overloads`
+
+When regenerating the python smoke references with a bulk script (e.g. the loop in
+`docs/python_binding_dev/phase4_smoke_tests.md`), the `name_clash_overloads` feature will
+**appear** to generate python output, because two of its LIME types resolve to the same
+Python file name `AssetsManager.py` and the generator throws a filename-collision error
+(`checkForFileNameCollisions`). The bulk loop then commits that output, which makes the
+`SmokeTest` case for `python` **fail** (`executeGenerator` returns false → `assertTrue`
+fails) on the next run.
+
+**This is a known, expected skip — do NOT commit python output for `name_clash_overloads`.**
+The harness treats a feature as skipped for a generator when its `output/<generator>/`
+directory has no reference files, so the correct state is:
+
+```
+gluecodium/src/test/resources/smoke/name_clash_overloads/output/
+├── cpp/
+└── (no python/ directory)
+```
+
+If a regeneration pass creates `name_clash_overloads/output/python/`, delete it before
+committing:
+
+```bash
+rm -rf gluecodium/src/test/resources/smoke/name_clash_overloads/output/python
+```
+
+The other four skipped python features (`comments`, `generic_types`, `strict_fail_immutable`,
+`strict_fail_internal`) are skipped for reasons unrelated to the python generator (parse
+failures / intentional validation failures) and also have no `output/python/` directory.
 
 ---
 

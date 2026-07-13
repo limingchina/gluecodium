@@ -27,6 +27,7 @@ public:
 
 void register_ListenerInterface(py::module_& module) {
     py::class_<ListenerInterface, std::shared_ptr<ListenerInterface>, ListenerInterfaceTrampoline>(module, "ListenerInterface")
+        .def(py::init<>())
         .def("notify", &ListenerInterface::notify)
         ;
 }

@@ -15,7 +15,7 @@ namespace py = pybind11;
 using SkipTagsOnly = ::gluecodium::smoke::SkipTagsOnly;
 
 void register_SkipTagsOnly(py::module_& module) {
-    py::class_<SkipTagsOnly>(module, "SkipTagsOnly")
+    py::class_<SkipTagsOnly, std::shared_ptr<SkipTagsOnly>>(module, "SkipTagsOnly")
         ;
 }
 

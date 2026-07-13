@@ -23,6 +23,7 @@ void register_ScalarKeyframeTrack(py::module_& module) {
         .def_readwrite("keyframes", &ScalarKeyframeTrack::keyframes)
         .def_readwrite("easing_function", &ScalarKeyframeTrack::easing_function)
         .def_readwrite("interpolation_mode", &ScalarKeyframeTrack::interpolation_mode)
+        .def(py::init<::std::vector< ::smoke::ScalarKeyframe >, ::std::string, ::std::string>(), py::arg("keyframes"), py::arg("easing_function"), py::arg("interpolation_mode"))
         ;
 }
 

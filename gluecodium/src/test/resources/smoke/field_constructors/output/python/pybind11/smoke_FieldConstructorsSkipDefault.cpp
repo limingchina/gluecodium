@@ -20,6 +20,7 @@ void register_FieldConstructorsSkipDefault(py::module_& module) {
     py::class_<FieldConstructorsSkipDefault>(module, "FieldConstructorsSkipDefault")
         .def_readwrite("string_field", &FieldConstructorsSkipDefault::string_field)
         .def_readwrite("int_field", &FieldConstructorsSkipDefault::int_field)
+        .def(py::init<>())
         ;
 }
 

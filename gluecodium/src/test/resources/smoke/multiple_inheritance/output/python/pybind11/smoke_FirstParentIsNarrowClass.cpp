@@ -16,7 +16,7 @@ namespace py = pybind11;
 using FirstParentIsNarrowClass = ::gluecodium::smoke::FirstParentIsNarrowClass;
 
 void register_FirstParentIsNarrowClass(py::module_& module) {
-    py::class_<FirstParentIsNarrowClass>(module, "FirstParentIsNarrowClass")
+    py::class_<FirstParentIsNarrowClass, std::shared_ptr<FirstParentIsNarrowClass>>(module, "FirstParentIsNarrowClass")
         .def("child_function", &FirstParentIsNarrowClass::child_function)
         .def_property("child_property", py::overload_cast<>(&FirstParentIsNarrowClass::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsNarrowClass::set_child_property))
         ;

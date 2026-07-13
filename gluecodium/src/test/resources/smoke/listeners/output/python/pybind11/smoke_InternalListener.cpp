@@ -27,6 +27,7 @@ public:
 
 void register_InternalListener(py::module_& module) {
     py::class_<InternalListener, std::shared_ptr<InternalListener>, InternalListenerTrampoline>(module, "InternalListener")
+        .def(py::init<>())
         .def("on_event", &InternalListener::on_event)
         ;
 }

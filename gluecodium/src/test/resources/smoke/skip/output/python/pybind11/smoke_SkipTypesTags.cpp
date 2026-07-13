@@ -16,6 +16,8 @@ using SkipTypesTags = ::gluecodium::smoke::SkipTypesTags;
 
 void register_SkipTypesTags(py::module_& module) {
     py::class_<SkipTypesTags>(module, "SkipTypesTags")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

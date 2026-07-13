@@ -18,6 +18,7 @@ using OuterInternalStruct = ::smoke::OuterInternalStruct;
 void register_OuterInternalStruct(py::module_& module) {
     py::class_<OuterInternalStruct>(module, "OuterInternalStruct")
         .def_readwrite("some_field", &OuterInternalStruct::some_field)
+        .def(py::init<int32_t>(), py::arg("some_field"))
         ;
 }
 

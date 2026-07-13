@@ -20,7 +20,7 @@ namespace py = pybind11;
 using DefaultValues = ::gluecodium::smoke::DefaultValues;
 
 void register_DefaultValues(py::module_& module) {
-    py::class_<DefaultValues>(module, "DefaultValues")
+    py::class_<DefaultValues, std::shared_ptr<DefaultValues>>(module, "DefaultValues")
         .def("process_struct_with_defaults", &DefaultValues::process_struct_with_defaults, py::arg("input"))
         ;
 }

@@ -27,6 +27,7 @@ public:
 
 void register_ChildInterface(py::module_& module) {
     py::class_<ChildInterface, std::shared_ptr<ChildInterface>, ChildInterfaceTrampoline>(module, "ChildInterface")
+        .def(py::init<>())
         .def("child_method", &ChildInterface::child_method)
         ;
 }

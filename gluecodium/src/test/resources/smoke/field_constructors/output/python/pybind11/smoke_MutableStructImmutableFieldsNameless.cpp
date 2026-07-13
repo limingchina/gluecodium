@@ -21,6 +21,7 @@ void register_MutableStructImmutableFieldsNameless(py::module_& module) {
         .def_readwrite("struct_field", &MutableStructImmutableFieldsNameless::struct_field)
         .def_readwrite("int_field", &MutableStructImmutableFieldsNameless::int_field)
         .def_readwrite("bool_field", &MutableStructImmutableFieldsNameless::bool_field)
+        .def(py::init<>())
         ;
 }
 

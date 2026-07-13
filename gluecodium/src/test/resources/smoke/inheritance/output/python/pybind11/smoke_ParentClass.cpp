@@ -16,7 +16,7 @@ namespace py = pybind11;
 using ParentClass = ::gluecodium::smoke::ParentClass;
 
 void register_ParentClass(py::module_& module) {
-    py::class_<ParentClass>(module, "ParentClass")
+    py::class_<ParentClass, std::shared_ptr<ParentClass>>(module, "ParentClass")
         .def("root_method", &ParentClass::root_method)
         .def_property("root_property", py::overload_cast<>(&ParentClass::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ParentClass::set_root_property))
         ;

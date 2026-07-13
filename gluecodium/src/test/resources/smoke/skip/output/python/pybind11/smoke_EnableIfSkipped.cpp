@@ -15,7 +15,7 @@ namespace py = pybind11;
 using EnableIfSkipped = ::gluecodium::smoke::EnableIfSkipped;
 
 void register_EnableIfSkipped(py::module_& module) {
-    py::class_<EnableIfSkipped>(module, "EnableIfSkipped")
+    py::class_<EnableIfSkipped, std::shared_ptr<EnableIfSkipped>>(module, "EnableIfSkipped")
         ;
 }
 

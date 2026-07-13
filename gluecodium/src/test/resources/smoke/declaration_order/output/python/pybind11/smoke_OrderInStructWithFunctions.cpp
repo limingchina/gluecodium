@@ -18,6 +18,7 @@ using OrderInStructWithFunctions = ::gluecodium::smoke::OrderInStructWithFunctio
 void register_OrderInStructWithFunctions(py::module_& module) {
     py::class_<OrderInStructWithFunctions>(module, "OrderInStructWithFunctions")
         .def_readwrite("some_field", &OrderInStructWithFunctions::some_field)
+        .def(py::init<::std::string>(), py::arg("some_field"))
         .def("do_stuff", &OrderInStructWithFunctions::do_stuff, py::arg("struct_foo"))
         ;
 }

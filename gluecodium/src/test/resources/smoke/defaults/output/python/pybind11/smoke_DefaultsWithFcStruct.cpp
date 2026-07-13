@@ -18,6 +18,7 @@ using DefaultsWithFcStruct = ::gluecodium::smoke::DefaultsWithFcStruct;
 void register_DefaultsWithFcStruct(py::module_& module) {
     py::class_<DefaultsWithFcStruct>(module, "DefaultsWithFcStruct")
         .def_readwrite("struct_field", &DefaultsWithFcStruct::struct_field)
+        .def(py::init<>())
         ;
 }
 

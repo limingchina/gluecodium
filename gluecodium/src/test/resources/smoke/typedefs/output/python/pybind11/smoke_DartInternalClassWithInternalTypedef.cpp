@@ -15,7 +15,7 @@ namespace py = pybind11;
 using DartInternalClassWithInternalTypedef = ::gluecodium::smoke::DartInternalClassWithInternalTypedef;
 
 void register_DartInternalClassWithInternalTypedef(py::module_& module) {
-    py::class_<DartInternalClassWithInternalTypedef>(module, "DartInternalClassWithInternalTypedef")
+    py::class_<DartInternalClassWithInternalTypedef, std::shared_ptr<DartInternalClassWithInternalTypedef>>(module, "DartInternalClassWithInternalTypedef")
         .def_property("numbers", py::overload_cast<>(&DartInternalClassWithInternalTypedef::get_numbers, py::const_), py::overload_cast<const ::std::unordered_map< ::std::string, int32_t >&>(&DartInternalClassWithInternalTypedef::set_numbers))
         .def_property("labels", py::overload_cast<>(&DartInternalClassWithInternalTypedef::get_labels, py::const_), py::overload_cast<const ::std::vector< ::std::string >&>(&DartInternalClassWithInternalTypedef::set_labels))
         ;

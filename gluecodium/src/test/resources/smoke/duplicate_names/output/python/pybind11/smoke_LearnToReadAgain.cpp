@@ -20,6 +20,8 @@ void register_LearnToReadAgain(py::module_& module) {
     py::class_<LearnToReadAgain>(module, "LearnToReadAgain")
         .def_readwrite("field_b", &LearnToReadAgain::field_b)
         .def_readwrite("field_c", &LearnToReadAgain::field_c)
+        .def(py::init<>())
+        .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet>(), py::arg("field_b"), py::arg("field_c"))
         ;
 }
 

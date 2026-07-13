@@ -17,7 +17,7 @@ namespace py = pybind11;
 using AsyncClass = ::gluecodium::smoke::AsyncClass;
 
 void register_AsyncClass(py::module_& module) {
-    py::class_<AsyncClass>(module, "AsyncClass")
+    py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "AsyncClass")
         .def("async_void", &AsyncClass::async_void, py::arg("input"))
         .def("async_void_throws", &AsyncClass::async_void_throws, py::arg("input"))
         .def("async_int", &AsyncClass::async_int, py::arg("input"))

@@ -18,7 +18,7 @@ namespace py = pybind11;
 using SwiftMethodOverloads = ::gluecodium::smoke::SwiftMethodOverloads;
 
 void register_SwiftMethodOverloads(py::module_& module) {
-    py::class_<SwiftMethodOverloads>(module, "SwiftMethodOverloads")
+    py::class_<SwiftMethodOverloads, std::shared_ptr<SwiftMethodOverloads>>(module, "SwiftMethodOverloads")
         .def("one", &SwiftMethodOverloads::one, py::arg("input"))
         .def("two", &SwiftMethodOverloads::two, py::arg("input"))
         ;

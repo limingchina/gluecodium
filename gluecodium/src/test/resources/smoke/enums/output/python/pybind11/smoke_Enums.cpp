@@ -16,7 +16,7 @@ namespace py = pybind11;
 using Enums = ::gluecodium::smoke::Enums;
 
 void register_Enums(py::module_& module) {
-    py::class_<Enums>(module, "Enums")
+    py::class_<Enums, std::shared_ptr<Enums>>(module, "Enums")
         .def("method_with_enumeration", &Enums::method_with_enumeration, py::arg("input"))
         .def("flip_enum_value", &Enums::flip_enum_value, py::arg("input"))
         .def("extract_enum_from_struct", &Enums::extract_enum_from_struct, py::arg("input"))

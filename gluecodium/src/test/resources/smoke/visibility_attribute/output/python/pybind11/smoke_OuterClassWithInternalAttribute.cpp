@@ -17,7 +17,7 @@ namespace py = pybind11;
 using OuterClassWithInternalAttribute = ::gluecodium::smoke::OuterClassWithInternalAttribute;
 
 void register_OuterClassWithInternalAttribute(py::module_& module) {
-    py::class_<OuterClassWithInternalAttribute>(module, "OuterClassWithInternalAttribute")
+    py::class_<OuterClassWithInternalAttribute, std::shared_ptr<OuterClassWithInternalAttribute>>(module, "OuterClassWithInternalAttribute")
         ;
 }
 

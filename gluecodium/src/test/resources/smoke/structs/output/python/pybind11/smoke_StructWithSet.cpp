@@ -20,6 +20,7 @@ using StructWithSet = ::gluecodium::smoke::StructWithSet;
 void register_StructWithSet(py::module_& module) {
     py::class_<StructWithSet>(module, "StructWithSet")
         .def_readwrite("field", &StructWithSet::field)
+        .def(py::init<::std::unordered_set< ::smoke::StructWithSet, ::gluecodium::hash< ::smoke::StructWithSet > >>(), py::arg("field"))
         ;
 }
 

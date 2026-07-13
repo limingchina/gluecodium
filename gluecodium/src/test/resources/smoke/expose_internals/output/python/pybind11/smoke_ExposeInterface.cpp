@@ -22,6 +22,7 @@ public:
 
 void register_ExposeInterface(py::module_& module) {
     py::class_<ExposeInterface, std::shared_ptr<ExposeInterface>, ExposeInterfaceTrampoline>(module, "ExposeInterface")
+        .def(py::init<>())
         ;
 }
 

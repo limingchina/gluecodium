@@ -18,6 +18,7 @@ using PosDefaultsWithoutDefaults = ::gluecodium::smoke::PosDefaultsWithoutDefaul
 void register_PosDefaultsWithoutDefaults(py::module_& module) {
     py::class_<PosDefaultsWithoutDefaults>(module, "PosDefaultsWithoutDefaults")
         .def_readwrite("string_field", &PosDefaultsWithoutDefaults::string_field)
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

@@ -18,6 +18,8 @@ using FieldConstructorsNullableTypes = ::gluecodium::smoke::FieldConstructorsNul
 void register_FieldConstructorsNullableTypes(py::module_& module) {
     py::class_<FieldConstructorsNullableTypes>(module, "FieldConstructorsNullableTypes")
         .def_readwrite("nullable_field", &FieldConstructorsNullableTypes::nullable_field)
+        .def(py::init<>())
+        .def(py::init<std::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >>(), py::arg("nullable_field"))
         ;
 }
 

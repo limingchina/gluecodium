@@ -17,7 +17,7 @@ namespace py = pybind11;
 using Calculator = ::gluecodium::smoke::Calculator;
 
 void register_Calculator(py::module_& module) {
-    py::class_<Calculator>(module, "Calculator")
+    py::class_<Calculator, std::shared_ptr<Calculator>>(module, "Calculator")
         .def("register_listener", &Calculator::register_listener, py::arg("listener"))
         .def("unregister_listener", &Calculator::unregister_listener, py::arg("listener"))
         ;

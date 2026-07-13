@@ -17,6 +17,8 @@ using DeclarationOrder = ::gluecodium::smoke::DeclarationOrder;
 
 void register_DeclarationOrder(py::module_& module) {
     py::class_<DeclarationOrder>(module, "DeclarationOrder")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 

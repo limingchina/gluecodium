@@ -22,6 +22,7 @@ public:
 
 void register_CalculationResult(py::module_& module) {
     py::class_<CalculationResult, std::shared_ptr<CalculationResult>, CalculationResultTrampoline>(module, "CalculationResult")
+        .def(py::init<>())
         ;
 }
 

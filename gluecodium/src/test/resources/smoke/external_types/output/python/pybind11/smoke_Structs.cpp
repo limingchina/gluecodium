@@ -22,7 +22,7 @@ namespace py = pybind11;
 using Structs = ::gluecodium::smoke::Structs;
 
 void register_Structs(py::module_& module) {
-    py::class_<Structs>(module, "Structs")
+    py::class_<Structs, std::shared_ptr<Structs>>(module, "Structs")
         .def("get_external_struct", &Structs::get_external_struct)
         .def("get_another_external_struct", &Structs::get_another_external_struct)
         ;

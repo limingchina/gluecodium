@@ -15,7 +15,7 @@ namespace py = pybind11;
 using KotlinInternalClassRev = ::gluecodium::smoke::KotlinInternalClassRev;
 
 void register_KotlinInternalClassRev(py::module_& module) {
-    py::class_<KotlinInternalClassRev>(module, "KotlinInternalClassRev")
+    py::class_<KotlinInternalClassRev, std::shared_ptr<KotlinInternalClassRev>>(module, "KotlinInternalClassRev")
         ;
 }
 

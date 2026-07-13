@@ -18,7 +18,7 @@ namespace py = pybind11;
 using JavaMethodOverloads = ::gluecodium::smoke::JavaMethodOverloads;
 
 void register_JavaMethodOverloads(py::module_& module) {
-    py::class_<JavaMethodOverloads>(module, "JavaMethodOverloads")
+    py::class_<JavaMethodOverloads, std::shared_ptr<JavaMethodOverloads>>(module, "JavaMethodOverloads")
         .def("one", &JavaMethodOverloads::one, py::arg("input"))
         .def("two", &JavaMethodOverloads::two, py::arg("input"))
         ;

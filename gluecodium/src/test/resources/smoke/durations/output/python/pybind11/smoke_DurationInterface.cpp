@@ -30,6 +30,7 @@ public:
 
 void register_DurationInterface(py::module_& module) {
     py::class_<DurationInterface, std::shared_ptr<DurationInterface>, DurationInterfaceTrampoline>(module, "DurationInterface")
+        .def(py::init<>())
         .def("duration_function", &DurationInterface::duration_function, py::arg("input"))
         ;
 }

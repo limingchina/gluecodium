@@ -15,7 +15,7 @@ namespace py = pybind11;
 using DartPublicClassSkipped = ::gluecodium::smoke::DartPublicClassSkipped;
 
 void register_DartPublicClassSkipped(py::module_& module) {
-    py::class_<DartPublicClassSkipped>(module, "DartPublicClassSkipped")
+    py::class_<DartPublicClassSkipped, std::shared_ptr<DartPublicClassSkipped>>(module, "DartPublicClassSkipped")
         ;
 }
 

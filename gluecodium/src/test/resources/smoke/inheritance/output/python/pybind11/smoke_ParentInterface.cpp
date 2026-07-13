@@ -36,6 +36,7 @@ public:
 
 void register_ParentInterface(py::module_& module) {
     py::class_<ParentInterface, std::shared_ptr<ParentInterface>, ParentInterfaceTrampoline>(module, "ParentInterface")
+        .def(py::init<>())
         .def("root_method", &ParentInterface::root_method)
         .def_property("root_property", py::overload_cast<>(&ParentInterface::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ParentInterface::set_root_property))
         ;

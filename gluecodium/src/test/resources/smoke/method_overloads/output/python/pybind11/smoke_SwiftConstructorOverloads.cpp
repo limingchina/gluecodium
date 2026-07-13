@@ -17,7 +17,7 @@ namespace py = pybind11;
 using SwiftConstructorOverloads = ::gluecodium::smoke::SwiftConstructorOverloads;
 
 void register_SwiftConstructorOverloads(py::module_& module) {
-    py::class_<SwiftConstructorOverloads>(module, "SwiftConstructorOverloads")
+    py::class_<SwiftConstructorOverloads, std::shared_ptr<SwiftConstructorOverloads>>(module, "SwiftConstructorOverloads")
         .def("make", &SwiftConstructorOverloads::make, py::arg("input"))
         .def("make_do", &SwiftConstructorOverloads::make_do, py::arg("throughput"))
         ;

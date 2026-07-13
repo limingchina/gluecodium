@@ -18,6 +18,8 @@ using DeprecatedWithNoMessage = ::gluecodium::smoke::DeprecatedWithNoMessage;
 void register_DeprecatedWithNoMessage(py::module_& module) {
     py::class_<DeprecatedWithNoMessage>(module, "DeprecatedWithNoMessage")
         .def_readwrite("field", &DeprecatedWithNoMessage::field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("field"))
         ;
 }
 

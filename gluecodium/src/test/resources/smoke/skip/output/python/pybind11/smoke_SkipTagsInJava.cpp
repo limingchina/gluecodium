@@ -37,6 +37,7 @@ public:
 
 void register_SkipTagsInJava(py::module_& module) {
     py::class_<SkipTagsInJava, std::shared_ptr<SkipTagsInJava>, SkipTagsInJavaTrampoline>(module, "SkipTagsInJava")
+        .def(py::init<>())
         .def("skip_tagged", &SkipTagsInJava::skip_tagged)
         .def("dont_skip_tagged", &SkipTagsInJava::dont_skip_tagged)
         .def("skip_tagged_list", &SkipTagsInJava::skip_tagged_list)

@@ -19,6 +19,8 @@ using OuterStructWithInternalAttribute = ::gluecodium::smoke::OuterStructWithInt
 void register_OuterStructWithInternalAttribute(py::module_& module) {
     py::class_<OuterStructWithInternalAttribute>(module, "OuterStructWithInternalAttribute")
         .def_readwrite("inner", &OuterStructWithInternalAttribute::inner)
+        .def(py::init<>())
+        .def(py::init<::smoke::OuterStructWithInternalAttribute::StructNestedInInternalStruct>(), py::arg("inner"))
         ;
 }
 

@@ -18,7 +18,7 @@ namespace py = pybind11;
 using ExcludedCommentsOnly = ::gluecodium::smoke::ExcludedCommentsOnly;
 
 void register_ExcludedCommentsOnly(py::module_& module) {
-    py::class_<ExcludedCommentsOnly>(module, "ExcludedCommentsOnly")
+    py::class_<ExcludedCommentsOnly, std::shared_ptr<ExcludedCommentsOnly>>(module, "ExcludedCommentsOnly")
         .def("some_method_with_all_comments", &ExcludedCommentsOnly::some_method_with_all_comments, py::arg("input_parameter"))
         .def("some_method_without_return_type_or_input_parameters", &ExcludedCommentsOnly::some_method_without_return_type_or_input_parameters)
         .def_property("is_some_property", py::overload_cast<>(&ExcludedCommentsOnly::is_some_property, py::const_), py::overload_cast<const bool>(&ExcludedCommentsOnly::set_some_property))

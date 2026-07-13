@@ -21,6 +21,7 @@ void register_FieldCustomConstructorsMix(py::module_& module) {
         .def_readwrite("string_field", &FieldCustomConstructorsMix::string_field)
         .def_readwrite("int_field", &FieldCustomConstructorsMix::int_field)
         .def_readwrite("bool_field", &FieldCustomConstructorsMix::bool_field)
+        .def(py::init<>())
         .def("create_me", &FieldCustomConstructorsMix::create_me, py::arg("int_value"), py::arg("dummy"))
         ;
 }

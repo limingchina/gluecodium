@@ -15,7 +15,7 @@ namespace py = pybind11;
 using MultipleAttributesCpp = ::gluecodium::smoke::MultipleAttributesCpp;
 
 void register_MultipleAttributesCpp(py::module_& module) {
-    py::class_<MultipleAttributesCpp>(module, "MultipleAttributesCpp")
+    py::class_<MultipleAttributesCpp, std::shared_ptr<MultipleAttributesCpp>>(module, "MultipleAttributesCpp")
         .def("no_lists2", &MultipleAttributesCpp::no_lists2)
         .def("no_lists3", &MultipleAttributesCpp::no_lists3)
         .def("list_first", &MultipleAttributesCpp::list_first)

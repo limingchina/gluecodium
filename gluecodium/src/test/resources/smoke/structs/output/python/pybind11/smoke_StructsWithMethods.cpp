@@ -18,6 +18,8 @@ using StructsWithMethods = ::gluecodium::smoke::StructsWithMethods;
 
 void register_StructsWithMethods(py::module_& module) {
     py::class_<StructsWithMethods>(module, "StructsWithMethods")
+        .def(py::init<>())
+        .def(py::init<>(), )
         ;
 }
 
