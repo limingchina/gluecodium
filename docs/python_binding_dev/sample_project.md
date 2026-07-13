@@ -2,8 +2,10 @@
 
 **Status**: ✅ Runnable (verified from a clean build)
 **Branch**: `python_bind`
-**Prerequisite**: Phases 0–5 of `docs/python_pybind11_plan.md` (the `python` generator
-must be implemented through Phase 5, and a Gluecodium distribution must be built).
+**Prerequisite**: Phases 0–6 of `docs/python_pybind11_plan.md` (the `python` generator
+must be implemented through Phase 6, and a Gluecodium distribution must be built). Phase 7
+(the CMake integration) is also implemented, and this sample uses the
+`gluecodium_target_python_sources()` helper it provides.
 **Location**: `docs/python_binding_dev/sample_project/`
 
 This document describes the **minimal, runnable end-to-end example** of the Gluecodium
@@ -145,31 +147,48 @@ version of `GreeterImpl.cpp` also defined `~Greeter()` / `~GreetingListener()` o
 causing 12 duplicate-symbol link errors. The fix was to remove those duplicate destructor
 definitions and keep only `on_greeting` (which has no body in the generated code).
 
-### 5.2 `cpp/module.cpp` (Phase 6 glue)
+### 5.2 Building the extension module (Phase 7 glue)
 
-Gluecodium's `python` generator (currently at **Phase 5**) emits per-type `register_*`
-functions but **not** the `PYBIND11_MODULE` aggregator. This file supplies it, calling the
-generated `register_Greeting` / `register_GreeterErrorError` and providing corrected
-bindings for the types that Phase 5 does not yet bind correctly (see §6).
+The `python` generator emits the per-type `register_*` functions **and** the
+`PYBIND11_MODULE` aggregator (`_module_init.cpp`), so **no hand-written `module.cpp` is
+needed**. The CMake build drives the extension module through the
+`gluecodium_target_python_sources()` helper (provided by `cmake/modules/gluecodium/Python.cmake`,
+included via `Gluecodium.cmake`):
 
-Forward declarations in this file use `pybind11::module_&` (not `py::module_&`) because the
-`py` alias is not in scope at that point.
+```cmake
+add_library(greeter_cpp STATIC ${CPP_SOURCES} cpp/GreeterImpl.cpp)
+gluecodium_target_python_sources(greeter_cpp
+  MODULE_NAME "${PY_MODULE}"          # "greeter" -> PYBIND11_MODULE(greeter, m)
+  OUTPUT_DIR "${GEN_OUTPUT}"          # dir that contains python/pybind11/*.cpp
+  OUTPUT greeter_python)              # module target name (greeter_cpp_python)
+```
+
+The helper globs `python/pybind11/*.cpp`, creates a `python_add_library(... MODULE
+WITH_SOABI)` target linked to `greeter_cpp`, and sets the module target's `OUTPUT_NAME` to
+the module name so the built `.so`/`.pyd` filename matches the `PYBIND11_MODULE` symbol
+(Python imports by filename). When generation goes through `gluecodium_generate` instead of
+a manual `execute_process`, the `OUTPUT_DIR` argument can be omitted (it is read from the
+target's `GLUECODIUM_OUTPUT_UNITY_DIR` property).
 
 ---
 
 ## 6. Known limitations (Phase 6 of the Python generator)
 
-The sample now runs **without any hand-written pybind11 glue**. The remaining limitations
-are:
+The sample runs **without any hand-written pybind11 glue** — the generator emits the
+`PYBIND11_MODULE` entry point, the `std::shared_ptr` holder for `class` types, and
+`py::init<>()` for `struct`/`interface` types, and Phase 7 builds it through the CMake
+helper. The remaining limitations are:
 
 1. **`@Async`** functions are not yet bound (Phase 5.5, deferred).
 2. The **wrapper cache** is generated but not yet wired into `return_value_policy` at call
    sites, so referential equality is not yet enforced.
 3. The **`Locale`** caster is still missing.
 
-The generated **Python wrapper classes** (`python/com/example/greeter/*.py`) are now
-importable and the client drives the **native** pybind11 classes directly (the same
-approach works against the generated `com.example.greeter.Greeter` Python class).
+The generated **Python wrapper classes** (`python/com/example/greeter/*.py`) currently have
+a circular self-import and no factory, so they are not directly importable. The client
+therefore drives the **native** pybind11 classes directly. Once that is fixed, the same
+client logic can be written against the generated `com.example.greeter.Greeter` Python
+class instead.
 
 The error raised on `greet("")` currently carries the qualified enum name
 (`::com::example::greeter::GreeterErrorCode::EMPTY_NAME`) because the generated
