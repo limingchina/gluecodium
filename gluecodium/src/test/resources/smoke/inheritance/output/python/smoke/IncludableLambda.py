@@ -1,0 +1,5 @@
+
+
+
+IncludableLambda = Callable[[int], None]
+

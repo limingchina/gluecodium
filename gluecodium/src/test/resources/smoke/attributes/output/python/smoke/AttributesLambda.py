@@ -1,0 +1,5 @@
+
+
+
+AttributesLambda = Callable[[], None]
+

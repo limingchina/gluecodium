@@ -1,0 +1,21 @@
+
+
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "gluecodium/UnorderedMapHash.h"
+#include "gluecodium/UnorderedSetHash.h"
+#include "gluecodium/VectorHash.h"
+#include "smoke/TypesWithDefaults.h"
+#include "cstdint"
+#include "optional"
+#include "string"
+#include "unordered_map"
+#include "unordered_set"
+#include "vector"
+
+void register_TypesWithDefaults(py::module_& module) {
+    py::class_<TypesWithDefaults>(module, "TypesWithDefaults")
+        ;
+}
+
