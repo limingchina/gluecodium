@@ -34,6 +34,7 @@ import com.here.gluecodium.model.lime.LimeTypeRef
 internal class PythonGeneratorPredicates(
     private val signatureResolver: LimeSignatureResolver,
     private val limeReferenceMap: Map<String, LimeElement>,
+    private val pybind11NameResolver: Pybind11NameResolver,
 ) {
     val predicates =
         mapOf(
@@ -52,11 +53,27 @@ internal class PythonGeneratorPredicates(
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     signatureResolver.isOverloaded(limeFunction)
             },
+            // Whether the C++ name of this function collides with another function in the same
+            // container (e.g. two Lime methods with different names that both map to the same C++
+            // name via @Cpp). pybind11 requires py::overload_cast for such cases.
+            "isCppOverloaded" to { limeFunction: Any ->
+                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
+                    run {
+                        val container =
+                            limeReferenceMap[limeFunction.path.parent.toString()]
+                                as? com.here.gluecodium.model.lime.LimeContainer ?: return@run false
+                        val cppName = pybind11NameResolver.resolveName(limeFunction)
+                        container.functions.count { pybind11NameResolver.resolveName(it) == cppName } > 1
+                    }
+            },
             // Whether a type reference refers to a user-defined (generated-wrapper) type that must be
             // unwrapped to its native `_native` handle before being passed to a pybind11 call.
             "isWrapperType" to { limeTypeRef: Any ->
                 limeTypeRef is LimeTypeRef &&
-                    limeTypeRef.type.let { it !is com.here.gluecodium.model.lime.LimeBasicType && it !is com.here.gluecodium.model.lime.LimeGenericType }
+                    limeTypeRef.type.let {
+                        it !is com.here.gluecodium.model.lime.LimeBasicType &&
+                            it !is com.here.gluecodium.model.lime.LimeGenericType
+                    }
             },
             "needsAllFieldsConstructor" to { limeStruct: Any ->
                 when {
