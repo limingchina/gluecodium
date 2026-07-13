@@ -36,8 +36,6 @@ import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
-import com.here.gluecodium.model.lime.LimeTypeHelper
-import com.here.gluecodium.validator.LimeOverloadsValidator
 import java.io.File
 import java.util.logging.Logger
 
@@ -125,7 +123,12 @@ internal class PythonGenerator : Generator {
                 "" to pythonNameResolver,
                 "Pybind11" to pybind11NameResolver,
             )
-        val predicates = PythonGeneratorPredicates(LimeOverloadsValidatorSignatureResolver(pybind11FilteredModel), pythonFilteredModel.referenceMap)
+        val predicates =
+            PythonGeneratorPredicates(
+                limeOverloadsValidatorSignatureResolver(pybind11FilteredModel),
+                pythonFilteredModel.referenceMap,
+                pybind11NameResolver,
+            )
 
         val pybind11IncludeResolver = Pybind11IncludeResolver(pybind11FilteredModel.referenceMap, cppNameRules, internalNamespace)
         val pybind11IncludeCollector =
@@ -147,7 +150,8 @@ internal class PythonGenerator : Generator {
             throw GluecodiumExecutionException("Validation errors found, see log for details.")
         }
 
-        return pythonFiles + pybind11Files + generateCommonFiles(pybind11FilteredModel, pythonFilteredModel, nameResolvers, predicates.predicates)
+        return pythonFiles + pybind11Files +
+            generateCommonFiles(pybind11FilteredModel, pythonFilteredModel, nameResolvers, predicates.predicates)
     }
 
     private fun generatePythonFile(
@@ -229,10 +233,11 @@ internal class PythonGenerator : Generator {
         // Custom type caster for Gluecodium's Return<T, Error> adapter. The include path for the
         // generated Return.h follows the C++ internal namespace (e.g. "lorem_ipsum/Return.h").
         val returnInclude = (internalNamespace + "Return.h").joinToString("/")
-        val casterTemplateData = mapOf(
-            "returnInclude" to returnInclude,
-            "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
-        )
+        val casterTemplateData =
+            mapOf(
+                "returnInclude" to returnInclude,
+                "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
+            )
         val casterContent =
             TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
 
@@ -260,7 +265,13 @@ internal class PythonGenerator : Generator {
 
         // Common Python build/helper files.
         val setupPyContent = TemplateEngine.render("python/PythonSetupPy", mapOf("moduleName" to pythonModule), nameResolvers, predicates)
-        val pyprojectContent = TemplateEngine.render("python/PythonPyproject", mapOf("moduleName" to pythonModule), nameResolvers, predicates)
+        val pyprojectContent =
+            TemplateEngine.render(
+                "python/PythonPyproject",
+                mapOf("moduleName" to pythonModule),
+                nameResolvers,
+                predicates,
+            )
         val nativeBaseContent = TemplateEngine.render("python/PythonNativeBase", emptyMap<String, Any>(), nameResolvers, predicates)
 
         // Per-package __init__.py files so the generated wrappers form an importable package
@@ -309,7 +320,7 @@ internal class PythonGenerator : Generator {
             else -> null
         }
 
-    private fun LimeOverloadsValidatorSignatureResolver(model: LimeModel) =
+    private fun limeOverloadsValidatorSignatureResolver(model: LimeModel) =
         com.here.gluecodium.model.lime.LimeSignatureResolver(model.referenceMap)
 
     companion object {

@@ -47,5 +47,11 @@ class PythonCommentsProcessor(werror: Boolean) :
         linkNode.chars = CharSubSequence.of(linkNode.chars.trim('<', '>'))
     }
 
+    override fun postRenderDocument(renderedDocument: String): String {
+        // Docstrings are emitted wrapped in triple quotes (`"""..."""`), so any literal double
+        // quote inside the comment would prematurely terminate the string. Escape them.
+        return renderedDocument.replace("\"", "\\\"")
+    }
+
     override val nullReference = "None"
 }

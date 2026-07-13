@@ -74,7 +74,7 @@ function(feature feature_name)
     set(FUNCTIONAL_LIME_SOURCES "${FUNCTIONAL_LIME_SOURCES};${lime_sources}" PARENT_SCOPE)
 endfunction()
 
-feature(Strings cpp android android-kotlin swift dart SOURCES
+feature(Strings cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StaticStringMethods.cpp
     input/src/cpp/StringsWithCstring.cpp
     input/src/cpp/CppRefReturnType.cpp
@@ -99,7 +99,7 @@ feature(Blob cpp android android-kotlin swift dart SOURCES
     input/lime/StaticByteArrayMethods.lime
 )
 
-feature(BuiltinTypes cpp android android-kotlin swift dart SOURCES
+feature(BuiltinTypes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StaticBooleanMethods.cpp
     input/src/cpp/StaticFloatDoubleMethods.cpp
     input/src/cpp/StaticIntMethods.cpp
@@ -165,7 +165,7 @@ feature(TypeDefs cpp android android-kotlin swift dart SOURCES
     input/lime/StaticTypedef.lime
 )
 
-feature(Enums cpp android android-kotlin swift dart SOURCES
+feature(Enums cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Enums.cpp
     input/src/cpp/EnumsTypeCollection.cpp
 
@@ -376,14 +376,14 @@ feature(CallbacksWithThreads cpp android dart SOURCES
     input/lime/ListenersThreads.lime
 )
 
-feature(Dates cpp android android-kotlin swift dart SOURCES
+feature(Dates cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Dates.cpp
 
     input/lime/Dates.lime
     input/lime/DateDefaults.lime
 )
 
-feature(Durations cpp android android-kotlin swift dart SOURCES
+feature(Durations cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Durations.cpp
 
     input/lime/Durations.lime
