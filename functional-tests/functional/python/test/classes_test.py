@@ -18,16 +18,17 @@
 """Class instantiation and method tests for the Python (pybind11) bindings."""
 
 import functional
-from test.instances import SimpleClass, NestedInstantiableOne
+from test.NestedInstantiableOne import NestedInstantiableOne
+from test.SimpleInstantiableOne import SimpleInstantiableOne
 
 import pytest
 
 
 class TestClasses:
     def test_set_same_type_instances(self):
-        input1 = SimpleClass("one")
-        input2 = SimpleClass("two")
-        nested = NestedInstantiableOne()
+        input1 = SimpleInstantiableOne.create("one")
+        input2 = SimpleInstantiableOne.create("two")
+        nested = NestedInstantiableOne.create()
 
         nested.set_same_type_instances(input1, input2)
         result1 = nested.get_instance_one()
@@ -36,11 +37,9 @@ class TestClasses:
         assert result1.get_string_value() == "one"
         assert result2.get_string_value() == "two"
 
-    def test_use_simple_class(self):
-        instance = SimpleClass("value")
-        other = SimpleClass("other")
+    def test_set_and_get_string_value(self):
+        instance = SimpleInstantiableOne.create("value")
 
-        result = instance.use_simple_class(other)
+        instance.set_string_value("updated")
 
-        assert isinstance(result, SimpleClass)
-        assert result.get_string_value() == "other"
+        assert instance.get_string_value() == "updated"
