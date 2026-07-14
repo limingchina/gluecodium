@@ -22,9 +22,12 @@ package com.here.gluecodium.generator.python
 import com.here.gluecodium.generator.common.CommonGeneratorPredicates
 import com.here.gluecodium.generator.cpp.CppNameResolver
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
+import com.here.gluecodium.model.lime.LimeAttributeType.CPP
+import com.here.gluecodium.model.lime.LimeAttributeValueType.REF
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeField
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeSignatureResolver
 import com.here.gluecodium.model.lime.LimeStruct
 import com.here.gluecodium.model.lime.LimeTypeRef
@@ -110,6 +113,9 @@ internal class PythonGeneratorPredicates(
             },
             "hasFieldAccessors" to { limeElement: Any ->
                 limeElement is LimeField && pybind11NameResolver.resolveGetterName(limeElement) != null
+            },
+            "hasCppRef" to { limeElement: Any ->
+                limeElement is LimeProperty && limeElement.attributes.have(CPP, REF)
             },
             // Whether the element lives inside a non-empty namespace (i.e. its LimePath head is not
             // empty). Used by the pybind11 file template to emit `using` aliases so the generated

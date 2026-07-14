@@ -18,7 +18,7 @@
 """Interface (callback) tests for the Python (pybind11) bindings."""
 
 import functional
-from test.interfaces import InterfacesFactory, NestedInterfaceOne, SimpleInterfaceOne
+from test.InterfacesFactory import InterfacesFactory
 
 import pytest
 
