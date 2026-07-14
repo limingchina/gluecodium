@@ -18,7 +18,11 @@
 """Struct mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.structs import PlainDataStructures, Point, Color, Line, ColoredLine
+from test.PlainDataStructures import PlainDataStructures
+from test.PlainDataStructuresColor import PlainDataStructuresColor as Color
+from test.PlainDataStructuresColoredLine import PlainDataStructuresColoredLine as ColoredLine
+from test.PlainDataStructuresLine import PlainDataStructuresLine as Line
+from test.PlainDataStructuresPoint import PlainDataStructuresPoint as Point
 
 import pytest
 

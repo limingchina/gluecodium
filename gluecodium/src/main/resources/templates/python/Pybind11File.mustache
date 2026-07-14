@@ -34,7 +34,7 @@ namespace py = pybind11;
 {{#unlessPredicate model "isException"}}
 {{#ifPredicate model "hasNamespace"}}
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using {{resolveName model}} = {{fullName}};
+using {{resolveName model "Pybind11"}} = {{fullName}};
 {{/ifPredicate}}
 {{/unlessPredicate}}
 
