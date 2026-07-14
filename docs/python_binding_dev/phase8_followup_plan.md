@@ -2,15 +2,15 @@
 
 > **Date**: 2026-07-13
 > **Branch**: `python_bind`
-> **Status**: Planning
+> **Status**: Active follow-up; Phase A (A1-A7) complete
 > **Related**: [phase8_status.md](./phase8_status.md), [python_pybind11_plan.md](../python_pybind11_plan.md)
-> **Scope**: All narrowed features **except** `Dates` and `Durations` (those are being fixed in a separate ongoing session)
+> **Scope**: Remaining narrowed features; `Dates` and `Durations` are already enabled but remain part of the shared runtime validation work
 
 ---
 
 ## 1. Overview
 
-Phase 8 narrowed ~40 functional features out of the `python` generator list to achieve a clean compile. The first follow-up work has re-enabled `BuiltinTypes`, `Strings`, and `Enums`; `Dates` and `Durations` are tracked separately. This document describes a phased plan to re-enable the remaining features, ordered by their inter-feature and generator-capability dependencies.
+Phase 8 narrowed ~40 functional features out of the `python` generator list to achieve a clean compile. Phase A (A1-A7) is now complete: `BuiltinTypes`, `Strings`, `Enums`, `TypeDefs`, `Structs`, `Classes`, and `Interfaces` are re-enabled and their generated binding translation units compile. The aggregate runtime still has an unrelated unresolved symbol, and the CTest harness selects the wrong Python environment. This document describes the remaining phased plan, ordered by inter-feature and generator-capability dependencies.
 
 ### 1.1 Root-Cause Categories
 
@@ -95,7 +95,15 @@ These features have no cross-feature Lime imports and exercise only the most bas
 
 **A3 implementation status (2026-07-14):** ✅ Generator support is implemented. Nested enum LIME types are flattened into per-type Python and pybind11 files, all nested enum registrations are added to the module initializer, and Python enum members retain their native pybind11 values through `_native`. Enum-valued struct constructors and fields unwrap and wrap those native values correctly. The generated A3 Python wrappers pass `py_compile`, the separate unresolved `DurationInterface::duration_function` symbol is fixed by the Python interface binding, and the focused Durations pytest passes using the native PascalCase `DurationSeconds` class. The broader functional pytest still has legacy lowercase imports in other feature tests and generated facade gaps for nested types.
 
-**Exit criteria**: All 7 features compile, link, and their pytest files pass (after rewriting test imports to match generated PascalCase module names).
+**A4 implementation status:** ✅ Type aliases generate correct Python imports and pybind11 casts for basic, custom, nested-struct, and blob aliases. The focused generated sources compile; committed in `ae8325438`.
+
+**A5 implementation status:** ✅ Struct Python generation is enabled, including nested names, namespace aliases, C++ accessors, overloaded getter casts, and setter formatting. The focused generated sources compile; committed in `eb0899996`.
+
+**A6 implementation status:** ✅ Class generation is enabled and the functional test uses the generated static `create(...)` APIs and PascalCase modules. Five focused class pybind11 units compile; committed in `4b35efec8`.
+
+**A7 implementation status:** ✅ Interface generation is enabled and seven focused interface pybind11 units compile. Interface property trampolines now follow the property’s C++ `Ref` attribute, so value-returning getters do not incorrectly override with a reference return. The interface test uses the generated `InterfacesFactory` module. Runtime execution remains blocked by the unrelated aggregate-extension symbol noted above; committed in `16efce997`.
+
+**Exit criteria**: All 7 features compile and their focused tests pass once the aggregate-extension symbol and Python test-environment issues are resolved. Runtime validation for A6/A7 is currently recorded as blocked by those shared infrastructure issues.
 
 ---
 

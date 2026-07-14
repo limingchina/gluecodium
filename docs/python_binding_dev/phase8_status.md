@@ -13,19 +13,26 @@ Phase 8 covers three sub-parts:
   configures CMake with `GLUECODIUM_GENERATORS_DEFAULT="cpp;python"`, builds the
   pybind11 extension module, copies the generated wrapper package next to the `.so`,
   and runs pytest via ctest.
-- **8.2 Functional tests (pytest)** — 🟡 PARTIAL. The `Constants` feature now
-  generates correct Python and its pytest (`constants_test.py`) passes (6 tests).
-  The other 21 functional test files still fail collection because their features
-  are narrowed out (kept for future fixes).
+- **8.2 Functional tests (pytest)** — 🟡 PARTIAL. Phase A features A1-A7 are now
+  enabled for Python and their generated binding translation units compile. The
+  focused `Constants` pytest passes (6 tests), while the broader CTest run is
+  blocked by the harness selecting Miniconda Python 3.12 and by an unrelated
+  unresolved symbol when importing the aggregate extension.
 
 ## What works
 
-The Python generator now **generates, compiles, and links** a complete pybind11
-extension module (`functional.cpython-314-darwin.so`) for the functional Lime set.
-All pybind11 binding `.cpp` files compile cleanly once the feature set is narrowed
-(see below). The CMake integration (parent `functional/CMakeLists.txt` + the
+The Python generator now generates the Phase A bindings and all A1-A7 pybind11
+translation units compile cleanly. The aggregate extension is produced, but
+importing it currently fails on the unrelated
+`SomeOpenNumberWrapperClass::make(int)` symbol. The CMake integration (parent
+`functional/CMakeLists.txt` + the
 `functional/python/CMakeLists.txt` test driver) is in place and the build script
 drives it end-to-end.
+
+The completed Phase A commits include `ae8325438` (A4), `eb0899996` (A5),
+`4b35efec8` (A6), and `16efce997` (A7), in addition to the earlier A1-A3 work.
+The A7 fix corrected interface property getter trampolines that incorrectly
+returned `std::string&` when the generated C++ interface returned `std::string`.
 
 The `Constants` feature now generates correct Python (module-level constants, nested
 enums, `True`/`False`/`float('nan')` literals) and its pytest passes:
@@ -85,27 +92,27 @@ not yet implemented for Python):
   imports `another.TypeCollectionWithEnums` from `Errors2.lime`.
 - `GenericTypes`, `Lambdas`, `Defaults` — collection/array argument-count mismatches,
   lambda overloads, immutable-struct-with-defaults.
-- `Dates`, `Durations` — date/duration binding gaps.
 - `RefEquality` (in `Equatable`), `Comments`, `ComplexListeners`, `CppConst`,
-  `CppNoexcept`, `Strings`, `Enums`, `FieldConstructors`, `Visibility`, `Interfaces`,
-  `ListenersWithReturnValues`, `Locales`, `Nesting`, `NoCache`, `Structs`,
-  `StructsInTypes`, `StructsImmutable`, `PlatformNames`, `Classes`,
-  `InstanceInStruct`, `BuiltinTypes`, `StructsWithCompanion`, `UnderscorePackage`,
-  `CrossPackageNameClash`, `TypeDefs`, `CallbacksWithThreads` — various
+  `CppNoexcept`, `FieldConstructors`, `Visibility`,
+  `ListenersWithReturnValues`, `Locales`, `Nesting`, `NoCache`,
+  `StructsInTypes`, `StructsImmutable`, `PlatformNames`,
+  `InstanceInStruct`, `StructsWithCompanion`, `UnderscorePackage`,
+  `CrossPackageNameClash`, `CallbacksWithThreads` — various
   constructor/arg-count, listener, enum, name-clash, and threading gaps.
 
-Only **5 features remain enabled for `python`**: `Constants`, `CircularDependencies`,
-`DeclarationOrder`, `EscapedNames`, `FullName`.
+The currently enabled Python features are `Strings`, `BuiltinTypes`, `Classes`,
+`Interfaces`, `Structs`, `TypeDefs`, `Enums`, `CircularDependencies`, `Constants`,
+`Dates`, `Durations`, `DeclarationOrder`, `EscapedNames`, and `FullName`.
 
 ## Remaining blocker (8.2)
 
-The `Constants` feature is now fixed and its pytest passes. The remaining blocker is
-the broader generator gaps (overloads, trampolines, external types, collections,
-dates/durations, lambdas, properties, ref-equality, visibility, name-clashes,
-threading) that keep the other ~40 functional features narrowed out. Those features'
-test files still fail collection because their Lime inputs are not generated for
-`python` yet — they are intentionally kept in `functional/python/test/` for future
-fixes.
+The `Constants` feature is fixed and its pytest passes. A1-A7 are now enabled and
+compile, but focused runtime tests that import the aggregate module remain blocked
+by `SomeOpenNumberWrapperClass::make(int)`. The broader generator gaps (overloads,
+inherited trampolines, external types, collections, lambdas, properties,
+ref-equality, visibility, name clashes, and threading) still keep the remaining
+functional features narrowed out. The CTest harness also uses Miniconda Python
+3.12 instead of the CPython 3.14 runtime used to build the extension.
 
 ## Follow-up work (not in this phase)
 
@@ -114,5 +121,5 @@ fixes.
    types, collections, dates/durations, lambdas, properties, ref-equality,
    visibility, name-clashes, threading) and re-enable the features one by one.
 3. Rewrite the remaining functional pytest files to match the actual generated
-   `PascalCase` module/class names, then run them green as each feature is
-   re-enabled.
+  `PascalCase` module/class names, then run them green as each feature is
+  re-enabled. The A6 and A7 tests now use the generated names.
