@@ -89,7 +89,11 @@ struct type_caster<{{returnTypeFullName}}<Value, Error>> {
     static handle cast(const {{returnTypeFullName}}<Value, Error>& src,
                        return_value_policy policy, handle parent) {
         if (src.has_value()) {
-            return type_caster<Value>::cast(src.unsafe_value(), policy, parent);
+            if constexpr (std::is_void_v<Value>) {
+                return pybind11::none().release();
+            } else {
+                return type_caster<Value>::cast(src.unsafe_value(), policy, parent);
+            }
         }
         // Failure: set a Python exception carrying the error description, then
         // throw error_already_set so pybind11 propagates it (instead of wrapping
