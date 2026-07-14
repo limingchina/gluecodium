@@ -15,17 +15,20 @@ Phase 8 covers three sub-parts:
   and runs pytest via ctest.
 - **8.2 Functional tests (pytest)** — 🟡 PARTIAL. Phase A features A1-A7 are now
   enabled for Python and their generated binding translation units compile. The
-  focused `Constants` pytest passes (6 tests), while the broader CTest run is
-  blocked by the harness selecting Miniconda Python 3.12 and by an unrelated
-  unresolved symbol when importing the aggregate extension.
+  focused `Constants` pytest passes (6 tests) when run with the CPython 3.14
+  interpreter that built the extension. The broader CTest run fails because the
+  harness runs the tests under the machine's default `python3` (Miniconda 3.12),
+  which cannot load the 3.14-specific `.so` — **not** because of any missing C++
+  symbol in the extension (that earlier worry was a red herring; see Known issues).
 
 ## What works
 
 The Python generator now generates the Phase A bindings and all A1-A7 pybind11
-translation units compile cleanly. The aggregate extension is produced, but
-importing it currently fails on the unrelated
-`SomeOpenNumberWrapperClass::make(int)` symbol. The CMake integration (parent
-`functional/CMakeLists.txt` + the
+translation units compile cleanly. The aggregate extension
+(`functional.cpython-314-darwin.so`) links and imports fine under CPython 3.14 —
+the earlier `SomeOpenNumberWrapperClass::make(int)` "unresolved symbol" worry was
+a red herring; the extension actually loads correctly under 3.14. The CMake
+integration (parent `functional/CMakeLists.txt` + the
 `functional/python/CMakeLists.txt` test driver) is in place and the build script
 drives it end-to-end.
 
@@ -107,12 +110,60 @@ The currently enabled Python features are `Strings`, `BuiltinTypes`, `Classes`,
 ## Remaining blocker (8.2)
 
 The `Constants` feature is fixed and its pytest passes. A1-A7 are now enabled and
-compile, but focused runtime tests that import the aggregate module remain blocked
-by `SomeOpenNumberWrapperClass::make(int)`. The broader generator gaps (overloads,
-inherited trampolines, external types, collections, lambdas, properties,
-ref-equality, visibility, name clashes, and threading) still keep the remaining
-functional features narrowed out. The CTest harness also uses Miniconda Python
-3.12 instead of the CPython 3.14 runtime used to build the extension.
+compile, and the aggregate extension imports correctly under CPython 3.14 (the
+`SomeOpenNumberWrapperClass::make(int)` "unresolved symbol" was a red herring — see
+Known issues). The broader generator gaps (overloads, inherited trampolines,
+external types, collections, lambdas, properties, ref-equality, visibility, name
+clashes, and threading) still keep the remaining functional features narrowed out.
+The remaining test-harness issue is **not** a C++ symbol problem: it is the Python
+version mismatch between the interpreter that builds the `.so` (3.14) and the one
+ctest launches (Miniconda 3.12).
+
+## Known issues / test harness
+
+### Root cause: Python version mismatch (the only real blocker for 8.2)
+The pybind11 extension is compiled against Python 3.14 headers — the build script
+hard-codes `/opt/homebrew/Cellar/python@3.14/3.14.5/.../python3.14` — but the
+machine's default `python3` is Miniconda 3.12.3. So:
+
+- Importing the built `functional` module with the **default** interpreter fails:
+  - `ModuleNotFoundError: No module named 'functional'` when `PYTHONPATH` is not
+    set, or
+  - `symbol not found in flat namespace '_PyEval_GetFrameLocals'` when it is (the
+    3.14 `.so` cannot load under 3.12).
+- `ctest` inherits the wrong interpreter and `PYTHONPATH`, so it always fails this
+  way.
+
+**The `.so` is Python-3.14-specific. Never run it with the default `python3` (3.12).**
+The earlier concern that `SomeOpenNumberWrapperClass::make(int)` was an unresolved
+symbol blocking runtime import was a **red herring** — the aggregate extension
+links and imports cleanly under 3.14; the only real blocker was the Python version
+mismatch. Do not chase the wrong bug next session.
+
+### Working invocation (single feature test)
+Run from `functional-tests/functional/python` (the test sources are **not** copied
+into the build dir), pointing at the 3.14 interpreter and the build output:
+
+```bash
+cd /Volumes/APFS/Work/gluecodium/functional-tests/functional/python
+PYTHONPATH="/Volumes/APFS/Work/gluecodium/functional-tests/build-python/functional" \
+  /opt/homebrew/bin/python3.14 -m pytest test/<feature>_test.py -v
+```
+
+Example (Constants, 6 passed):
+
+```bash
+cd /Volumes/APFS/Work/gluecodium/functional-tests/functional/python
+PYTHONPATH="/Volumes/APFS/Work/gluecodium/functional-tests/build-python/functional" \
+  /opt/homebrew/bin/python3.14 -m pytest test/constants_test.py -v
+```
+
+### ctest driver
+`ctest` in `build-python/functional` is unreliable until it is pointed at
+`python3.14` and given the correct `PYTHONPATH`. Until the harness is fixed, always
+validate via the direct `python3.14` command above. To fix the harness: set the
+interpreter in the CMake `add_test` `ENV` (use the same 3.14 path the extension was
+built with) and export `PYTHONPATH` to `build-python/functional` for each test.
 
 ## Follow-up work (not in this phase)
 
