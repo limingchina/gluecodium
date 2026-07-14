@@ -109,7 +109,7 @@ feature(BuiltinTypes cpp android android-kotlin swift dart python SOURCES
     input/lime/StaticIntMethods.lime
 )
 
-feature(Classes cpp android android-kotlin swift dart SOURCES
+feature(Classes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Instances.h
     input/src/cpp/Instances.cpp
     input/src/cpp/InstancesFactory.cpp
