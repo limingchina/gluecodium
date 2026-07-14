@@ -25,8 +25,20 @@
         .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/unlessPredicate}}
 {{/if}}{{#unless isStatic}}{{#ifPredicate "isCppOverloaded"}}
+{{#ifPredicate "needsInterfaceLambdaBinding"}}
+        .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
+            return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
         .def("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unlessPredicate}}
 {{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
+{{#ifPredicate "needsInterfaceLambdaBinding"}}
+        .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
+            return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
         .def("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/unless}}

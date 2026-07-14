@@ -93,7 +93,7 @@ These features have no cross-feature Lime imports and exercise only the most bas
 
 **Verification**: For each feature, re-enable `python` in the `feature(...)` call in `functional/CMakeLists.txt`, rebuild, and run the corresponding pytest file.
 
-**A3 implementation status (2026-07-14):** ✅ Generator support is implemented. Nested enum LIME types are flattened into per-type Python and pybind11 files, all nested enum registrations are added to the module initializer, and Python enum members retain their native pybind11 values through `_native`. Enum-valued struct constructors and fields unwrap and wrap those native values correctly. The generated A3 Python wrappers pass `py_compile`; the full functional pytest remains blocked by the separate unresolved `DurationInterface::duration_function` symbol in the current build.
+**A3 implementation status (2026-07-14):** ✅ Generator support is implemented. Nested enum LIME types are flattened into per-type Python and pybind11 files, all nested enum registrations are added to the module initializer, and Python enum members retain their native pybind11 values through `_native`. Enum-valued struct constructors and fields unwrap and wrap those native values correctly. The generated A3 Python wrappers pass `py_compile`, and the separate unresolved `DurationInterface::duration_function` symbol is fixed by the Python interface binding. The full functional pytest remains blocked by the existing generated-module import mismatch (`test.durations` versus PascalCase modules) and missing nested `DurationStruct` wrapper.
 
 **Exit criteria**: All 7 features compile, link, and their pytest files pass (after rewriting test imports to match generated PascalCase module names).
 
