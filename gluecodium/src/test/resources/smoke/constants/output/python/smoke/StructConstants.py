@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from smoke.NestingStruct import NestingStruct
-from smoke.SomeStruct import SomeStruct
+from smoke.StructConstantsNestingStruct import StructConstantsNestingStruct
+from smoke.StructConstantsSomeStruct import StructConstantsSomeStruct
 
 
 from _native_base import _NativeBase

@@ -16,7 +16,7 @@ class StructWithJavaPositionalDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], StructWithJavaPositionalDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithJavaPositionalDefaults(*args))
+            super().__init__(generated.StructWithJavaPositionalDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
     first init!
     @property
@@ -26,7 +26,7 @@ class StructWithJavaPositionalDefaults(_NativeBase):
 
     @first_init_field.setter
     def first_init_field(self, value: int):
-        self._native.first_init_field = value
+      self._native.first_init_field = getattr(value, "_native", value)
 
 
     first free!
@@ -37,7 +37,7 @@ class StructWithJavaPositionalDefaults(_NativeBase):
 
     @first_free_field.setter
     def first_free_field(self, value: str):
-        self._native.first_free_field = value
+      self._native.first_free_field = getattr(value, "_native", value)
 
 
     second init yeah!
@@ -48,7 +48,7 @@ class StructWithJavaPositionalDefaults(_NativeBase):
 
     @second_init_field.setter
     def second_init_field(self, value: float):
-        self._native.second_init_field = value
+      self._native.second_init_field = getattr(value, "_native", value)
 
 
     second free here!
@@ -59,7 +59,7 @@ class StructWithJavaPositionalDefaults(_NativeBase):
 
     @second_free_field.setter
     def second_free_field(self, value: bool):
-        self._native.second_free_field = value
+      self._native.second_free_field = getattr(value, "_native", value)
 
 
     third should be last!
@@ -70,6 +70,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
 
     @third_init_field.setter
     def third_init_field(self, value: str):
-        self._native.third_init_field = value
+      self._native.third_init_field = getattr(value, "_native", value)
 
 

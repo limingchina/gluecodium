@@ -16,8 +16,7 @@ class Constants(_NativeBase):
         if len(args) == 1 and isinstance(args[0], Constants):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Constants(*args))
-
+            super().__init__(generated.Constants(*[getattr(arg, "_native", arg) for arg in args]))
 from enum import Enum
 
 
@@ -26,6 +25,7 @@ class StateEnum(Enum):
 
     OFF = 0
     ON = 1
+
 
 
 BOOL_CONSTANT = True

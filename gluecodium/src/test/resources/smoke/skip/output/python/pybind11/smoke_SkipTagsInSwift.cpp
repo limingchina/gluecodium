@@ -21,26 +21,32 @@ public:
     void skip_tagged(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, SkipTagsInSwift, skip_tagged);
+        PYBIND11_OVERRIDE_PURE(void, SkipTagsInSwift, skip_tagged);
     }
     void dont_skip_tagged(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, SkipTagsInSwift, dont_skip_tagged);
+        PYBIND11_OVERRIDE_PURE(void, SkipTagsInSwift, dont_skip_tagged);
     }
     void skip_tagged_list(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, SkipTagsInSwift, skip_tagged_list);
+        PYBIND11_OVERRIDE_PURE(void, SkipTagsInSwift, skip_tagged_list);
     }
 };
 
 void register_SkipTagsInSwift(py::module_& module) {
     py::class_<SkipTagsInSwift, std::shared_ptr<SkipTagsInSwift>, SkipTagsInSwiftTrampoline>(module, "SkipTagsInSwift")
         .def(py::init<>())
-        .def("skip_tagged", &SkipTagsInSwift::skip_tagged)
-        .def("dont_skip_tagged", &SkipTagsInSwift::dont_skip_tagged)
-        .def("skip_tagged_list", &SkipTagsInSwift::skip_tagged_list)
+        .def("skip_tagged", [](SkipTagsInSwift& self) {
+            return self.skip_tagged();
+        })
+        .def("dont_skip_tagged", [](SkipTagsInSwift& self) {
+            return self.dont_skip_tagged();
+        })
+        .def("skip_tagged_list", [](SkipTagsInSwift& self) {
+            return self.skip_tagged_list();
+        })
         ;
 }
 

@@ -14,7 +14,7 @@ class MutableStructNoClash(_NativeBase):
         if len(args) == 1 and isinstance(args[0], MutableStructNoClash):
             super().__init__(args[0])
         else:
-            super().__init__(generated.MutableStructNoClash(*args))
+            super().__init__(generated.MutableStructNoClash(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class MutableStructNoClash(_NativeBase):
 
     @string_field.setter
     def string_field(self, value: str):
-        self._native.string_field = value
+      self._native.string_field = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class MutableStructNoClash(_NativeBase):
 
     @int_field.setter
     def int_field(self, value: int):
-        self._native.int_field = value
+      self._native.int_field = getattr(value, "_native", value)
 
 
 
@@ -46,6 +46,6 @@ class MutableStructNoClash(_NativeBase):
 
     @bool_field.setter
     def bool_field(self, value: bool):
-        self._native.bool_field = value
+      self._native.bool_field = getattr(value, "_native", value)
 
 

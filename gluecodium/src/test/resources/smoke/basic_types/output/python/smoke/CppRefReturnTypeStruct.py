@@ -16,12 +16,10 @@ class CppRefReturnTypeStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], CppRefReturnTypeStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.CppRefReturnTypeStruct(*args))
+            super().__init__(generated.CppRefReturnTypeStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
     @staticmethod
-
     def string_ref() -> str:
         """"""
-        native_result = generated.CppRefReturnTypeStruct.string_ref()
-        return str(native_result)
+        return generated.CppRefReturnTypeStruct.string_ref()
 

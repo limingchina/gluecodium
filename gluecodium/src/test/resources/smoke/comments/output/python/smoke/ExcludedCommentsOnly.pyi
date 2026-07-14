@@ -2,7 +2,6 @@
 
 from smoke.SomeEnum import SomeEnum
 from smoke.SomethingWrongError import SomethingWrongError
-from smoke.bool import bool
 
 
 from _native_base import _NativeBase
@@ -16,11 +15,9 @@ class ExcludedCommentsOnly(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
     def some_method_with_all_comments(self, input_parameter: str) -> bool:
         """"""
         return self._native.some_method_with_all_comments(input_parameter)
-
 
     def some_method_without_return_type_or_input_parameters(self):
         """"""
@@ -35,7 +32,6 @@ class ExcludedCommentsOnly(_NativeBase):
     @is_some_property.setter
     def is_some_property(self, value: bool):
         self._native.is_some_property = value
-
 from enum import Enum
 
 
@@ -43,6 +39,7 @@ class SomeEnum(Enum):
     """"""
 
     USELESS = 0
+
 
 
 VERY_USEFUL = True

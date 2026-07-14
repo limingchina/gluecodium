@@ -5,11 +5,17 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class SomethingEnum(Enum):
     """"""
 
-    REALLY_FIRST = 0
-    EXPLICIT = 1
-    LAST = 2
+    REALLY_FIRST = generated.SomethingEnum.REALLY_FIRST
+    EXPLICIT = generated.SomethingEnum.EXPLICIT
+    LAST = generated.SomethingEnum.LAST
+
+    @property
+    def _native(self):
+        return self.value
 

@@ -18,8 +18,8 @@ using Calculator = ::smoke::Calculator;
 
 void register_Calculator(py::module_& module) {
     py::class_<Calculator, std::shared_ptr<Calculator>>(module, "Calculator")
-        .def("register_listener", &Calculator::register_listener, py::arg("listener"))
-        .def("unregister_listener", &Calculator::unregister_listener, py::arg("listener"))
+        .def_static("register_listener", &Calculator::register_listener, py::arg("listener"))
+        .def_static("unregister_listener", &Calculator::unregister_listener, py::arg("listener"))
         ;
 }
 

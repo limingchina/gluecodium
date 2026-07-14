@@ -22,20 +22,24 @@ public:
     void parent_method(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, InterfaceWithOverloads, parent_method);
+        PYBIND11_OVERRIDE_PURE(void, InterfaceWithOverloads, parent_method);
     }
     void parent_method(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, InterfaceWithOverloads, parent_method, input);
+        PYBIND11_OVERRIDE_PURE(void, InterfaceWithOverloads, parent_method, input);
     }
 };
 
 void register_InterfaceWithOverloads(py::module_& module) {
     py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "InterfaceWithOverloads")
         .def(py::init<>())
-        .def("parent_method", &InterfaceWithOverloads::parent_method)
-        .def("parent_method", &InterfaceWithOverloads::parent_method, py::arg("input"))
+        .def("parent_method", [](InterfaceWithOverloads& self) {
+            return self.parent_method();
+        })
+        .def("parent_method", [](InterfaceWithOverloads& self, const ::std::string& input) {
+            return self.parent_method(input);
+        }, py::arg("input"))
         ;
 }
 

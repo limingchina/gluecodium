@@ -14,7 +14,11 @@ void register_DartInternalClassWithInternalTypedef(pybind11::module_& module);
 void register_SomeDartClassThatUsesInternal(pybind11::module_& module);
 void register_SomeDartStructWithTypedefField(pybind11::module_& module);
 void register_TypeCollection(pybind11::module_& module);
+void register_TypeCollectionPoint(pybind11::module_& module);
+void register_TypeCollectionStructHavingAliasFieldDefinedBelow(pybind11::module_& module);
 void register_TypeDefs(pybind11::module_& module);
+void register_TypeDefsStructHavingAliasFieldDefinedBelow(pybind11::module_& module);
+void register_TypeDefsTestStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -26,5 +30,9 @@ PYBIND11_MODULE(generated, m) {
     register_SomeDartClassThatUsesInternal(m);
     register_SomeDartStructWithTypedefField(m);
     register_TypeCollection(m);
+    register_TypeCollectionPoint(m);
+    register_TypeCollectionStructHavingAliasFieldDefinedBelow(m);
     register_TypeDefs(m);
+    register_TypeDefsStructHavingAliasFieldDefinedBelow(m);
+    register_TypeDefsTestStruct(m);
 }

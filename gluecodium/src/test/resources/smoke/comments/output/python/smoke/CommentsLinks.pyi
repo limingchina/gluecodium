@@ -1,8 +1,8 @@
 
 
 from smoke.SomeEnum import SomeEnum
-from smoke.SomeStruct import SomeStruct
 from smoke.SomethingWrongError import SomethingWrongError
+from smoke.commentsSomeStruct import commentsSomeStruct
 
 
 from _native_base import _NativeBase
@@ -22,37 +22,6 @@ Weblinks are not modified like this [example1], [example2](http://www.example.co
     def __init__(self, native):
         super().__init__(native)
 
-    Link types:
-    * constant: [comments.VeryUseful]
-    * struct: [comments.SomeStruct]
-    * struct field: [comments.SomeStruct.someField]
-    * enum: [comments.SomeEnum]
-    * enum item: [comments.SomeEnum.USEFUL]
-    * property: [comments.SomeProperty]
-    * property setter: [comments.SomeProperty.set]
-    * property getter: [comments.SomeProperty.get]
-    * method: [comments.someMethodWithAllComments]
-    * method with signature: [comments.oneParameterCommentOnly(String, String)]
-    * method with signature with no spaces: [comments.oneParameterCommentOnly(String,String)]
-    * parameter: [inputParameter]
-    * top level constant: [CommentsTypeCollection.TypeCollectionConstant]
-    * top level struct: [CommentsTypeCollection.TypeCollectionStruct]
-    * top level struct field: [CommentsTypeCollection.TypeCollectionStruct.field]
-    * top level enum: [CommentsTypeCollection.TypeCollectionEnum]
-    * top level enum item: [CommentsTypeCollection.TypeCollectionEnum.item]
-    * error: [comments.SomethingWrong]
-    * lambda: [comments.SomeLambda]
-    * type from aux sources, same package: [AuxClass]
-    * type from aux sources, different package: [fire.AuxStruct]
-      * we can also have
-      * nested lists
-
-    Not working for Java:
-    * typedef: [comments.Usefulness]
-    * top level typedef: [CommentsTypeCollection.TypeCollectionTypedef]
-
-    Not working for Swift:
-    * named comment: [Alternative name for the link, stripped for Swift][comments.VeryUseful]
     def random_method(self, input_parameter: SomeEnum) -> SomeEnum:
         """Link types:
 * constant: [comments.VeryUseful]
@@ -87,10 +56,6 @@ Not working for Swift:
 * named comment: [Alternative name for the link, stripped for Swift][comments.VeryUseful]"""
         return self._native.random_method(input_parameter._native)
 
-    Links to method overloads:
-    * other one: [random_method(SomeEnum)]
-    * this one: [random_method(String, Boolean)]
-    * ambiguous one: [random_method]
     def random_method(self, text: str, flag: bool):
         """Links to method overloads:
 * other one: [random_method(SomeEnum)]

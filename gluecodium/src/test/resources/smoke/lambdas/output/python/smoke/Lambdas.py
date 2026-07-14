@@ -18,15 +18,12 @@ class Lambdas(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
     def deconfuse(self, value: str, confuser: Confuser) -> Producer:
         """"""
         return self._native.deconfuse(value, confuser._native)
 
     @staticmethod
-
     def fuse(items: list[str], callback: Indexer) -> dict[int, str]:
         """"""
-        native_result = generated.Lambdas.fuse(items, callback)
-        return dict[int, str](native_result)
+        return generated.Lambdas.fuse(items, callback._native)
 

@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
+from smoke.CppRefReturnTypeSomeStruct import CppRefReturnTypeSomeStruct
 from smoke.EnumBasedError import EnumBasedError
 from smoke.InternalError import InternalError
-from smoke.SomeStruct import SomeStruct
 from smoke.StructBasedError import StructBasedError
 
 
@@ -20,88 +20,60 @@ class CppRefReturnType(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def void_ref():
         """"""
-        native_result = generated.CppRefReturnType.void_ref()
-        return None(native_result)
+        generated.CppRefReturnType.void_ref()
 
     @staticmethod
-
     def bool_ref() -> bool:
         """"""
-        native_result = generated.CppRefReturnType.bool_ref()
-        return bool(native_result)
+        return generated.CppRefReturnType.bool_ref()
 
     @staticmethod
-
     def string_ref() -> str:
         """"""
-        native_result = generated.CppRefReturnType.string_ref()
-        return str(native_result)
+        return generated.CppRefReturnType.string_ref()
 
     @staticmethod
-
-    def struct_ref() -> SomeStruct:
+    def struct_ref() -> CppRefReturnTypeSomeStruct:
         """"""
         native_result = generated.CppRefReturnType.struct_ref()
-        return SomeStruct(native_result)
+        return CppRefReturnTypeSomeStruct(native_result)
 
     @staticmethod
-
     def class_ref() -> CppRefReturnType:
         """"""
         native_result = generated.CppRefReturnType.class_ref()
         return CppRefReturnType(native_result)
 
     @staticmethod
-
     def nullable_ref() -> Optional[str]:
         """"""
-        native_result = generated.CppRefReturnType.nullable_ref()
-        return Optional[str](native_result)
+        return generated.CppRefReturnType.nullable_ref()
 
     @staticmethod
-
     def throwing_enum_with_void():
         """"""
-        native_result = generated.CppRefReturnType.throwing_enum_with_void()
-        return None(native_result)
+        generated.CppRefReturnType.throwing_enum_with_void()
 
     @staticmethod
-
     def throwing_enum_with_string() -> str:
         """"""
-        native_result = generated.CppRefReturnType.throwing_enum_with_string()
-        return str(native_result)
+        return generated.CppRefReturnType.throwing_enum_with_string()
 
     @staticmethod
-
     def throwing_struct_with_void():
         """"""
-        native_result = generated.CppRefReturnType.throwing_struct_with_void()
-        return None(native_result)
+        generated.CppRefReturnType.throwing_struct_with_void()
 
     @staticmethod
-
     def throwing_struct_with_string() -> str:
         """"""
-        native_result = generated.CppRefReturnType.throwing_struct_with_string()
-        return str(native_result)
+        return generated.CppRefReturnType.throwing_struct_with_string()
 
 
-    @property
-    def string_property(self) -> str:
+    @staticmethod
+    def string_property() -> str:
         """"""
-        return self._native.string_property
-
-
-from enum import Enum
-
-
-class InternalError(Enum):
-    """"""
-
-    FOO = 0
-    BAR = 1
+        return generated.CppRefReturnType.string_property()
 

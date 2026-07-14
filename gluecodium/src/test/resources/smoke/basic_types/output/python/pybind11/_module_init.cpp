@@ -12,7 +12,9 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_BasicTypes(pybind11::module_& module);
 void register_CppRefReturnType(pybind11::module_& module);
+void register_CppRefReturnTypeSomeStruct(pybind11::module_& module);
 void register_CppRefReturnTypeStruct(pybind11::module_& module);
+void register_InternalError(pybind11::module_& module);
 void register_StringsWithCstring(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
@@ -23,6 +25,8 @@ PYBIND11_MODULE(generated, m) {
 
     register_BasicTypes(m);
     register_CppRefReturnType(m);
+    register_CppRefReturnTypeSomeStruct(m);
     register_CppRefReturnTypeStruct(m);
+    register_InternalError(m);
     register_StringsWithCstring(m);
 }

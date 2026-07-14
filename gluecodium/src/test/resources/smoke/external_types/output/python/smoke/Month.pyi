@@ -3,11 +3,17 @@
 
 from enum import Enum
 
+import generated
+
 
 class Month(Enum):
     """"""
 
-    JANUARY = 0
-    FEBRUARY = 1
-    MARCH = 2
+    JANUARY = generated.Month.JANUARY
+    FEBRUARY = generated.Month.FEBRUARY
+    MARCH = generated.Month.MARCH
+
+    @property
+    def _native(self):
+        return self.value
 

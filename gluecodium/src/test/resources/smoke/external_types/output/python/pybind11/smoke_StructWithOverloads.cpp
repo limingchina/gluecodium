@@ -14,15 +14,15 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using StructWithOverloads = external::ClassWithOverloads::StructWithOverloads;
+using external::ClassWithOverloads::StructWithOverloads = external::ClassWithOverloads::StructWithOverloads;
 
 void register_StructWithOverloads(py::module_& module) {
     py::class_<external::ClassWithOverloads::StructWithOverloads>(module, "StructWithOverloads")
-        .def_readwrite("overloaded_accessors", &external::ClassWithOverloads::StructWithOverloads::overloadedAccessors)
+        .def_property("overloaded_accessors", static_cast<int32_t (external::ClassWithOverloads::StructWithOverloads::*)() const>(&external::ClassWithOverloads::StructWithOverloads::overloadedAccessors), py::overload_cast<const int32_t>(&external::ClassWithOverloads::StructWithOverloads::overloadedAccessors))
         .def(py::init<int32_t>(), py::arg("overloaded_accessors"))
-        .def("overloaded_method", &external::ClassWithOverloads::StructWithOverloads::overloadedMethod)
-        .def("overloaded_method", &external::ClassWithOverloads::StructWithOverloads::overloadedMethod, py::arg("input"))
-        .def("overloaded_method", &external::ClassWithOverloads::StructWithOverloads::overloadedMethod, py::arg("input_string"), py::arg("input_bool"))
+        .def("overloaded_method", py::overload_cast<>(&external::ClassWithOverloads::StructWithOverloads::overloadedMethod))
+        .def("overloaded_method", py::overload_cast<const ::std::string&>(&external::ClassWithOverloads::StructWithOverloads::overloadedMethod), py::arg("input"))
+        .def("overloaded_method", py::overload_cast<const ::std::string&, const bool>(&external::ClassWithOverloads::StructWithOverloads::overloadedMethod), py::arg("input_string"), py::arg("input_bool"))
         ;
 }
 

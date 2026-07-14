@@ -15,16 +15,16 @@ class DefaultsWithFcStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DefaultsWithFcStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DefaultsWithFcStruct(*args))
+            super().__init__(generated.DefaultsWithFcStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
     def struct_field(self) -> FcStruct:
         """"""
-        return self._native.struct_field
+        return FcStruct(self._native.struct_field)
 
     @struct_field.setter
     def struct_field(self, value: FcStruct):
-        self._native.struct_field = value
+      self._native.struct_field = getattr(value, "_native", value)
 
 

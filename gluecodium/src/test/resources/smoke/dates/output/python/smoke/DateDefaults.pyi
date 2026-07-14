@@ -15,7 +15,7 @@ class DateDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DateDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DateDefaults(*args))
+            super().__init__(generated.DateDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -25,7 +25,7 @@ class DateDefaults(_NativeBase):
 
     @date_time.setter
     def date_time(self, value: datetime.datetime):
-        self._native.date_time = value
+      self._native.date_time = getattr(value, "_native", value)
 
 
 
@@ -36,7 +36,7 @@ class DateDefaults(_NativeBase):
 
     @date_time_utc.setter
     def date_time_utc(self, value: datetime.datetime):
-        self._native.date_time_utc = value
+      self._native.date_time_utc = getattr(value, "_native", value)
 
 
 
@@ -47,7 +47,7 @@ class DateDefaults(_NativeBase):
 
     @before_epoch.setter
     def before_epoch(self, value: datetime.datetime):
-        self._native.before_epoch = value
+      self._native.before_epoch = getattr(value, "_native", value)
 
 
 
@@ -58,6 +58,6 @@ class DateDefaults(_NativeBase):
 
     @exactly_epoch.setter
     def exactly_epoch(self, value: datetime.datetime):
-        self._native.exactly_epoch = value
+      self._native.exactly_epoch = getattr(value, "_native", value)
 
 

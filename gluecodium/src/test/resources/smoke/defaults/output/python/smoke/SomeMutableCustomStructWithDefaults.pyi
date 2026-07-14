@@ -14,7 +14,7 @@ class SomeMutableCustomStructWithDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SomeMutableCustomStructWithDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SomeMutableCustomStructWithDefaults(*args))
+            super().__init__(generated.SomeMutableCustomStructWithDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class SomeMutableCustomStructWithDefaults(_NativeBase):
 
     @int_field.setter
     def int_field(self, value: int):
-        self._native.int_field = value
+      self._native.int_field = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class SomeMutableCustomStructWithDefaults(_NativeBase):
 
     @string_field.setter
     def string_field(self, value: str):
-        self._native.string_field = value
+      self._native.string_field = getattr(value, "_native", value)
 
 
 
@@ -46,6 +46,6 @@ class SomeMutableCustomStructWithDefaults(_NativeBase):
 
     @list_field.setter
     def list_field(self, value: list[int]):
-        self._native.list_field = value
+      self._native.list_field = getattr(value, "_native", value)
 
 

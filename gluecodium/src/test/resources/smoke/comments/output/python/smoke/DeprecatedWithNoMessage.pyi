@@ -14,7 +14,7 @@ class DeprecatedWithNoMessage(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DeprecatedWithNoMessage):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DeprecatedWithNoMessage(*args))
+            super().__init__(generated.DeprecatedWithNoMessage(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,6 +24,6 @@ class DeprecatedWithNoMessage(_NativeBase):
 
     @field.setter
     def field(self, value: str):
-        self._native.field = value
+      self._native.field = getattr(value, "_native", value)
 
 

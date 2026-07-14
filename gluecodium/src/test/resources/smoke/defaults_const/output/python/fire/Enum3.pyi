@@ -3,10 +3,16 @@
 
 from enum import Enum
 
+import generated
+
 
 class Enum3(Enum):
     """"""
 
-    ENABLED = 0
-    DISABLED = 1
+    ENABLED = generated.Enum3.ENABLED
+    DISABLED = generated.Enum3.DISABLED
+
+    @property
+    def _native(self):
+        return self.value
 

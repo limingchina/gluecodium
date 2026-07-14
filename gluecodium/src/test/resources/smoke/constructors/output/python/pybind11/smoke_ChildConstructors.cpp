@@ -18,8 +18,8 @@ using ChildConstructors = ::smoke::ChildConstructors;
 
 void register_ChildConstructors(py::module_& module) {
     py::class_<ChildConstructors, std::shared_ptr<ChildConstructors>>(module, "ChildConstructors")
-        .def("create", &ChildConstructors::create)
-        .def("create", &ChildConstructors::create, py::arg("other"))
+        .def_static("create", py::overload_cast<>(&ChildConstructors::create))
+        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(&ChildConstructors::create), py::arg("other"))
         ;
 }
 

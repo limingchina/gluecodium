@@ -22,49 +22,29 @@ class Errors(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def method_with_errors():
         """"""
-        native_result = generated.Errors.method_with_errors()
-        return None(native_result)
+        generated.Errors.method_with_errors()
 
     @staticmethod
-
     def method_with_external_errors():
         """"""
-        native_result = generated.Errors.method_with_external_errors()
-        return None(native_result)
+        generated.Errors.method_with_external_errors()
 
     @staticmethod
-
     def method_with_errors_and_return_value() -> str:
         """"""
-        native_result = generated.Errors.method_with_errors_and_return_value()
-        return str(native_result)
+        return generated.Errors.method_with_errors_and_return_value()
 
     @staticmethod
-
     def method_with_payload_error():
         """"""
-        native_result = generated.Errors.method_with_payload_error()
-        return None(native_result)
+        generated.Errors.method_with_payload_error()
 
     @staticmethod
-
     def method_with_payload_error_and_return_value() -> str:
         """"""
-        native_result = generated.Errors.method_with_payload_error_and_return_value()
-        return str(native_result)
-
-from enum import Enum
-
-
-class InternalErrorCode(Enum):
-    """"""
-
-    ERROR_NONE = 0
-    ERROR_FATAL = 1
-
+        return generated.Errors.method_with_payload_error_and_return_value()
 from enum import Enum
 
 
@@ -74,4 +54,5 @@ class ExternalErrors(Enum):
     NONE = 0
     BOOM = 1
     BUST = 2
+
 

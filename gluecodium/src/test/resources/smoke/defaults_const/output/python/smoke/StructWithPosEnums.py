@@ -17,39 +17,39 @@ class StructWithPosEnums(_NativeBase):
         if len(args) == 1 and isinstance(args[0], StructWithPosEnums):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithPosEnums(*args))
+            super().__init__(generated.StructWithPosEnums(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
     def first_field(self) -> SomethingEnum:
         """"""
-        return self._native.first_field
+        return SomethingEnum(self._native.first_field)
 
     @first_field.setter
     def first_field(self, value: SomethingEnum):
-        self._native.first_field = value
+      self._native.first_field = getattr(value, "_native", value)
 
 
 
     @property
     def explicit_field(self) -> SomethingEnum:
         """"""
-        return self._native.explicit_field
+        return SomethingEnum(self._native.explicit_field)
 
     @explicit_field.setter
     def explicit_field(self, value: SomethingEnum):
-        self._native.explicit_field = value
+      self._native.explicit_field = getattr(value, "_native", value)
 
 
 
     @property
     def last_field(self) -> SomethingEnum:
         """"""
-        return self._native.last_field
+        return SomethingEnum(self._native.last_field)
 
     @last_field.setter
     def last_field(self, value: SomethingEnum):
-        self._native.last_field = value
+      self._native.last_field = getattr(value, "_native", value)
 
 
 

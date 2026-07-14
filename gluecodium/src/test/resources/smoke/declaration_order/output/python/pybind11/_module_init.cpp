@@ -12,11 +12,22 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_ClassInStruct(pybind11::module_& module);
 void register_DeclarationOrder(pybind11::module_& module);
+void register_DeclarationOrderMainStruct(pybind11::module_& module);
+void register_DeclarationOrderNestedStruct(pybind11::module_& module);
 void register_DeclarationOrderWithFunctions(pybind11::module_& module);
+void register_DeclarationOrderWithFunctionsFieldStruct(pybind11::module_& module);
+void register_DeclarationOrderWithFunctionsMainStructWithFunctions(pybind11::module_& module);
+void register_DeclarationOrderWithFunctionsParameterStruct(pybind11::module_& module);
+void register_DeclarationOrderWithFunctionsReturnStruct(pybind11::module_& module);
+void register_DeclarationOrderWithFunctionsThrownStruct(pybind11::module_& module);
 void register_InterfaceInInterface(pybind11::module_& module);
 void register_OrderInClass(pybind11::module_& module);
+void register_OrderInClassMainStruct(pybind11::module_& module);
+void register_OrderInClassNestedStruct(pybind11::module_& module);
 void register_OrderInStruct(pybind11::module_& module);
+void register_OrderInStructNestedStruct(pybind11::module_& module);
 void register_OrderInStructWithFunctions(pybind11::module_& module);
+void register_OrderInStructWithFunctionsNestedStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -26,9 +37,20 @@ PYBIND11_MODULE(generated, m) {
 
     register_ClassInStruct(m);
     register_DeclarationOrder(m);
+    register_DeclarationOrderMainStruct(m);
+    register_DeclarationOrderNestedStruct(m);
     register_DeclarationOrderWithFunctions(m);
+    register_DeclarationOrderWithFunctionsFieldStruct(m);
+    register_DeclarationOrderWithFunctionsMainStructWithFunctions(m);
+    register_DeclarationOrderWithFunctionsParameterStruct(m);
+    register_DeclarationOrderWithFunctionsReturnStruct(m);
+    register_DeclarationOrderWithFunctionsThrownStruct(m);
     register_InterfaceInInterface(m);
     register_OrderInClass(m);
+    register_OrderInClassMainStruct(m);
+    register_OrderInClassNestedStruct(m);
     register_OrderInStruct(m);
+    register_OrderInStructNestedStruct(m);
     register_OrderInStructWithFunctions(m);
+    register_OrderInStructWithFunctionsNestedStruct(m);
 }

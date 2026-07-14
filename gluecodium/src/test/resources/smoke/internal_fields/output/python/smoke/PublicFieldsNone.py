@@ -16,7 +16,7 @@ class PublicFieldsNone(_NativeBase):
         if len(args) == 1 and isinstance(args[0], PublicFieldsNone):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicFieldsNone(*args))
+            super().__init__(generated.PublicFieldsNone(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,6 +26,6 @@ class PublicFieldsNone(_NativeBase):
 
     @internal_field.setter
     def internal_field(self, value: str):
-        self._native.internal_field = value
+      self._native.internal_field = getattr(value, "_native", value)
 
 

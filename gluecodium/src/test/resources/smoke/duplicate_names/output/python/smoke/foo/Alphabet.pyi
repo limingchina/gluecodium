@@ -3,11 +3,17 @@
 
 from enum import Enum
 
+import generated
+
 
 class Alphabet(Enum):
     """"""
 
-    ALPHA = 0
-    BETA = 1
-    GAMMA = 2
+    ALPHA = generated.Alphabet.ALPHA
+    BETA = generated.Alphabet.BETA
+    GAMMA = generated.Alphabet.GAMMA
+
+    @property
+    def _native(self):
+        return self.value
 

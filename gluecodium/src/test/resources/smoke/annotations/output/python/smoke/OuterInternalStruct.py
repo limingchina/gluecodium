@@ -16,7 +16,7 @@ class OuterInternalStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], OuterInternalStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterInternalStruct(*args))
+            super().__init__(generated.OuterInternalStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,6 +26,6 @@ class OuterInternalStruct(_NativeBase):
 
     @some_field.setter
     def some_field(self, value: int):
-        self._native.some_field = value
+      self._native.some_field = getattr(value, "_native", value)
 
 

@@ -12,18 +12,25 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_Comments(pybind11::module_& module);
 void register_CommentsInterface(pybind11::module_& module);
+void register_CommentsInterfaceSomeStruct(pybind11::module_& module);
 void register_CommentsLinks(pybind11::module_& module);
+void register_CommentsLinksRandomStruct(pybind11::module_& module);
 void register_CommentsMarkdown(pybind11::module_& module);
 void register_CommentsTable(pybind11::module_& module);
 void register_CommentsTableLinks(pybind11::module_& module);
 void register_CommentsTypeCollection(pybind11::module_& module);
+void register_CommentsTypeCollectionTypeCollectionStruct(pybind11::module_& module);
 void register_CtorLinks(pybind11::module_& module);
 void register_DeprecatedWithNoMessage(pybind11::module_& module);
 void register_DeprecationComments(pybind11::module_& module);
 void register_DeprecationCommentsOnly(pybind11::module_& module);
+void register_DeprecationCommentsOnlySomeStruct(pybind11::module_& module);
+void register_DeprecationCommentsSomeStruct(pybind11::module_& module);
 void register_ExcludedComments(pybind11::module_& module);
 void register_ExcludedCommentsInterface(pybind11::module_& module);
 void register_ExcludedCommentsOnly(pybind11::module_& module);
+void register_ExcludedCommentsOnlySomeStruct(pybind11::module_& module);
+void register_ExcludedCommentsSomeStruct(pybind11::module_& module);
 void register_InternalClassWithComments(pybind11::module_& module);
 void register_LambdaComments(pybind11::module_& module);
 void register_LongComments(pybind11::module_& module);
@@ -31,7 +38,10 @@ void register_MapScene(pybind11::module_& module);
 void register_MultiLineComments(pybind11::module_& module);
 void register_PlatformComments(pybind11::module_& module);
 void register_PlatformCommentsLineBreaks(pybind11::module_& module);
+void register_PlatformCommentssomething(pybind11::module_& module);
+void register_TypeCollectionEnum(pybind11::module_& module);
 void register_UnicodeComments(pybind11::module_& module);
+void register_commentsSomeStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -41,18 +51,25 @@ PYBIND11_MODULE(generated, m) {
 
     register_Comments(m);
     register_CommentsInterface(m);
+    register_CommentsInterfaceSomeStruct(m);
     register_CommentsLinks(m);
+    register_CommentsLinksRandomStruct(m);
     register_CommentsMarkdown(m);
     register_CommentsTable(m);
     register_CommentsTableLinks(m);
     register_CommentsTypeCollection(m);
+    register_CommentsTypeCollectionTypeCollectionStruct(m);
     register_CtorLinks(m);
     register_DeprecatedWithNoMessage(m);
     register_DeprecationComments(m);
     register_DeprecationCommentsOnly(m);
+    register_DeprecationCommentsOnlySomeStruct(m);
+    register_DeprecationCommentsSomeStruct(m);
     register_ExcludedComments(m);
     register_ExcludedCommentsInterface(m);
     register_ExcludedCommentsOnly(m);
+    register_ExcludedCommentsOnlySomeStruct(m);
+    register_ExcludedCommentsSomeStruct(m);
     register_InternalClassWithComments(m);
     register_LambdaComments(m);
     register_LongComments(m);
@@ -60,5 +77,8 @@ PYBIND11_MODULE(generated, m) {
     register_MultiLineComments(m);
     register_PlatformComments(m);
     register_PlatformCommentsLineBreaks(m);
+    register_PlatformCommentssomething(m);
+    register_TypeCollectionEnum(m);
     register_UnicodeComments(m);
+    register_commentsSomeStruct(m);
 }

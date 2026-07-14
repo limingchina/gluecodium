@@ -16,7 +16,7 @@ class SkipTypesTags(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SkipTypesTags):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkipTypesTags(*args))
+            super().__init__(generated.SkipTypesTags(*[getattr(arg, "_native", arg) for arg in args]))
 
 
 PLACE_HOLDER = True

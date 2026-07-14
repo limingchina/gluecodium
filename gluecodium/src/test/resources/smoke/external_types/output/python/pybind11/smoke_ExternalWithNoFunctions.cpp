@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "some/path/Bar.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using ExternalWithNoFunctions = ::some::path::Bar;
+using ::some::path::Bar = ::some::path::Bar;
 
 class ExternalWithNoFunctionsTrampoline : public ::some::path::Bar {
 public:

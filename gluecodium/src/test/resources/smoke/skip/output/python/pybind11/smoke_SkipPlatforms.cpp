@@ -17,10 +17,10 @@ using SkipPlatforms = ::smoke::SkipPlatforms;
 
 void register_SkipPlatforms(py::module_& module) {
     py::class_<SkipPlatforms, std::shared_ptr<SkipPlatforms>>(module, "SkipPlatforms")
-        .def("not_in_java", &SkipPlatforms::not_in_java, py::arg("input"))
-        .def("not_in_swift", &SkipPlatforms::not_in_swift, py::arg("input"))
-        .def("not_in_dart", &SkipPlatforms::not_in_dart, py::arg("input"))
-        .def("not_in_kotlin", &SkipPlatforms::not_in_kotlin, py::arg("input"))
+        .def_static("not_in_java", &SkipPlatforms::not_in_java, py::arg("input"))
+        .def_static("not_in_swift", &SkipPlatforms::not_in_swift, py::arg("input"))
+        .def_static("not_in_dart", &SkipPlatforms::not_in_dart, py::arg("input"))
+        .def_static("not_in_kotlin", &SkipPlatforms::not_in_kotlin, py::arg("input"))
         ;
 }
 

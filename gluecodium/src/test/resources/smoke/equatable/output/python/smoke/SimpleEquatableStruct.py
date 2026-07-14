@@ -18,49 +18,49 @@ class SimpleEquatableStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SimpleEquatableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SimpleEquatableStruct(*args))
+            super().__init__(generated.SimpleEquatableStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
     def class_field(self) -> NonEquatableClass:
         """"""
-        return self._native.class_field
+        return NonEquatableClass(self._native.class_field)
 
     @class_field.setter
     def class_field(self, value: NonEquatableClass):
-        self._native.class_field = value
+      self._native.class_field = getattr(value, "_native", value)
 
 
 
     @property
     def interface_field(self) -> NonEquatableInterface:
         """"""
-        return self._native.interface_field
+        return NonEquatableInterface(self._native.interface_field)
 
     @interface_field.setter
     def interface_field(self, value: NonEquatableInterface):
-        self._native.interface_field = value
+      self._native.interface_field = getattr(value, "_native", value)
 
 
 
     @property
     def nullable_class_field(self):
         """"""
-        return self._native.nullable_class_field
+        return Optional[NonEquatableClass](self._native.nullable_class_field)
 
     @nullable_class_field.setter
     def nullable_class_field(self, value):
-        self._native.nullable_class_field = value
+      self._native.nullable_class_field = getattr(value, "_native", value)
 
 
 
     @property
     def nullable_interface_field(self):
         """"""
-        return self._native.nullable_interface_field
+        return Optional[NonEquatableInterface](self._native.nullable_interface_field)
 
     @nullable_interface_field.setter
     def nullable_interface_field(self, value):
-        self._native.nullable_interface_field = value
+      self._native.nullable_interface_field = getattr(value, "_native", value)
 
 

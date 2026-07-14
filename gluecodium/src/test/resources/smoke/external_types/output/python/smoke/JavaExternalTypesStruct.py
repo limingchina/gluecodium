@@ -21,60 +21,60 @@ class JavaExternalTypesStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], JavaExternalTypesStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.JavaExternalTypesStruct(*args))
+            super().__init__(generated.JavaExternalTypesStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
     def currency(self) -> Currency:
         """"""
-        return self._native.currency
+        return Currency(self._native.currency)
 
     @currency.setter
     def currency(self, value: Currency):
-        self._native.currency = value
+      self._native.currency = getattr(value, "_native", value)
 
 
 
     @property
     def time_zone(self) -> TimeZone:
         """"""
-        return self._native.time_zone
+        return TimeZone(self._native.time_zone)
 
     @time_zone.setter
     def time_zone(self, value: TimeZone):
-        self._native.time_zone = value
+      self._native.time_zone = getattr(value, "_native", value)
 
 
 
     @property
     def month(self) -> Month:
         """"""
-        return self._native.month
+        return Month(self._native.month)
 
     @month.setter
     def month(self, value: Month):
-        self._native.month = value
+      self._native.month = getattr(value, "_native", value)
 
 
 
     @property
     def color(self) -> SystemColor:
         """"""
-        return self._native.color
+        return SystemColor(self._native.color)
 
     @color.setter
     def color(self, value: SystemColor):
-        self._native.color = value
+      self._native.color = getattr(value, "_native", value)
 
 
 
     @property
     def season(self) -> Season:
         """"""
-        return self._native.season
+        return Season(self._native.season)
 
     @season.setter
     def season(self, value: Season):
-        self._native.season = value
+      self._native.season = getattr(value, "_native", value)
 
 

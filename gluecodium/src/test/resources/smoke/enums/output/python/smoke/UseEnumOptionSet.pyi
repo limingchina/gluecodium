@@ -14,7 +14,7 @@ class UseEnumOptionSet(_NativeBase):
         if len(args) == 1 and isinstance(args[0], UseEnumOptionSet):
             super().__init__(args[0])
         else:
-            super().__init__(generated.UseEnumOptionSet(*args))
+            super().__init__(generated.UseEnumOptionSet(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class UseEnumOptionSet(_NativeBase):
 
     @set_field.setter
     def set_field(self, value: set[EnumOptionSet]):
-        self._native.set_field = value
+      self._native.set_field = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class UseEnumOptionSet(_NativeBase):
 
     @set_field_empty.setter
     def set_field_empty(self, value: set[EnumOptionSet]):
-        self._native.set_field_empty = value
+      self._native.set_field_empty = getattr(value, "_native", value)
 
 
 
@@ -46,13 +46,11 @@ class UseEnumOptionSet(_NativeBase):
 
     @set_field_value.setter
     def set_field_value(self, value: set[EnumOptionSet]):
-        self._native.set_field_value = value
+      self._native.set_field_value = getattr(value, "_native", value)
 
 
     @staticmethod
-
     def round_trip(input: set[EnumOptionSet]) -> set[EnumOptionSet]:
         """"""
-        native_result = generated.UseEnumOptionSet.round_trip(input)
-        return set[EnumOptionSet](native_result)
+        return generated.UseEnumOptionSet.round_trip(input)
 

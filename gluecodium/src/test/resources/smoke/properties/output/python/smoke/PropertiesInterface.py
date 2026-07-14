@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.ExampleStruct import ExampleStruct
+from smoke.PropertiesInterfaceExampleStruct import PropertiesInterfaceExampleStruct
 
 
 from _native_base import _NativeBase
@@ -21,11 +21,11 @@ class PropertiesInterface(_NativeBase):
 
 
     @property
-    def struct_property(self) -> ExampleStruct:
+    def struct_property(self) -> PropertiesInterfaceExampleStruct:
         """"""
         return self._native.struct_property
 
     @struct_property.setter
-    def struct_property(self, value: ExampleStruct):
+    def struct_property(self, value: PropertiesInterfaceExampleStruct):
         self._native.struct_property = value
 

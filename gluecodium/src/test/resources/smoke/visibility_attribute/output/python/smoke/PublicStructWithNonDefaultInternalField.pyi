@@ -14,7 +14,7 @@ class PublicStructWithNonDefaultInternalField(_NativeBase):
         if len(args) == 1 and isinstance(args[0], PublicStructWithNonDefaultInternalField):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicStructWithNonDefaultInternalField(*args))
+            super().__init__(generated.PublicStructWithNonDefaultInternalField(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class PublicStructWithNonDefaultInternalField(_NativeBase):
 
     @defaulted_field.setter
     def defaulted_field(self, value: int):
-        self._native.defaulted_field = value
+      self._native.defaulted_field = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class PublicStructWithNonDefaultInternalField(_NativeBase):
 
     @internal_field.setter
     def internal_field(self, value: str):
-        self._native.internal_field = value
+      self._native.internal_field = getattr(value, "_native", value)
 
 
 
@@ -46,6 +46,6 @@ class PublicStructWithNonDefaultInternalField(_NativeBase):
 
     @public_field.setter
     def public_field(self, value: bool):
-        self._native.public_field = value
+      self._native.public_field = getattr(value, "_native", value)
 
 

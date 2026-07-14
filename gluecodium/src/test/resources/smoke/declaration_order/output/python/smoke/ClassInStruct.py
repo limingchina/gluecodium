@@ -17,5 +17,5 @@ class ClassInStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], ClassInStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ClassInStruct(*args))
+            super().__init__(generated.ClassInStruct(*[getattr(arg, "_native", arg) for arg in args]))
 

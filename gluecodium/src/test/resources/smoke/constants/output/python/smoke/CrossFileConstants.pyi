@@ -14,7 +14,7 @@ class CrossFileConstants(_NativeBase):
         if len(args) == 1 and isinstance(args[0], CrossFileConstants):
             super().__init__(args[0])
         else:
-            super().__init__(generated.CrossFileConstants(*args))
+            super().__init__(generated.CrossFileConstants(*[getattr(arg, "_native", arg) for arg in args]))
 
 
 FOO_BAR = StateEnum.ON

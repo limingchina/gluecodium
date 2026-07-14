@@ -14,7 +14,7 @@ class SkippedEverywhere(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SkippedEverywhere):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkippedEverywhere(*args))
+            super().__init__(generated.SkippedEverywhere(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,11 +24,10 @@ class SkippedEverywhere(_NativeBase):
 
     @nothing_to_see_here.setter
     def nothing_to_see_here(self, value: str):
-        self._native.nothing_to_see_here = value
+      self._native.nothing_to_see_here = getattr(value, "_native", value)
 
 
-
-    def use_map_in_dart(self, foo: dict[int, NotInDart]):
+    def use_map_in_dart(self, foo: dict[int, SkipTypesNotInDart]):
         """"""
         return self._native.use_map_in_dart(foo)
 

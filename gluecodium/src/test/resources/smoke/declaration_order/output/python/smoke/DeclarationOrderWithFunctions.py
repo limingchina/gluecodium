@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from smoke.FieldStruct import FieldStruct
+from smoke.DeclarationOrderWithFunctionsFieldStruct import DeclarationOrderWithFunctionsFieldStruct
+from smoke.DeclarationOrderWithFunctionsParameterStruct import DeclarationOrderWithFunctionsParameterStruct
+from smoke.DeclarationOrderWithFunctionsReturnStruct import DeclarationOrderWithFunctionsReturnStruct
+from smoke.DeclarationOrderWithFunctionsThrownStruct import DeclarationOrderWithFunctionsThrownStruct
 from smoke.FooBarError import FooBarError
-from smoke.ParameterStruct import ParameterStruct
-from smoke.ReturnStruct import ReturnStruct
-from smoke.ThrownStruct import ThrownStruct
 
 
 from _native_base import _NativeBase
@@ -21,5 +21,5 @@ class DeclarationOrderWithFunctions(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DeclarationOrderWithFunctions):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DeclarationOrderWithFunctions(*args))
+            super().__init__(generated.DeclarationOrderWithFunctions(*[getattr(arg, "_native", arg) for arg in args]))
 

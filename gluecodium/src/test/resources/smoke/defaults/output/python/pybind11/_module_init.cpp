@@ -14,6 +14,11 @@ void register_BlobDefaults(pybind11::module_& module);
 void register_DartDeprecatedPosDefaults(pybind11::module_& module);
 void register_DartDeprecatedPosDefaultsCustom(pybind11::module_& module);
 void register_DefaultValues(pybind11::module_& module);
+void register_DefaultValuesNullableStructWithDefaults(pybind11::module_& module);
+void register_DefaultValuesStructWithDefaults(pybind11::module_& module);
+void register_DefaultValuesStructWithEmptyDefaults(pybind11::module_& module);
+void register_DefaultValuesStructWithSpecialDefaults(pybind11::module_& module);
+void register_DefaultValuesStructWithTypedefDefaults(pybind11::module_& module);
 void register_DefaultsWithFcStruct(pybind11::module_& module);
 void register_FcStruct(pybind11::module_& module);
 void register_ImmutableStructWithDefaults(pybind11::module_& module);
@@ -32,6 +37,15 @@ void register_StructWithKotlinPositionalDefaults(pybind11::module_& module);
 void register_StructWithNullableCollectionDefaults(pybind11::module_& module);
 void register_StructWithSomeDefaults(pybind11::module_& module);
 void register_TypesWithDefaults(pybind11::module_& module);
+void register_TypesWithDefaultsImmutableStructWithCollections(pybind11::module_& module);
+void register_TypesWithDefaultsImmutableStructWithDefaults(pybind11::module_& module);
+void register_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections(pybind11::module_& module);
+void register_TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct(pybind11::module_& module);
+void register_TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct(pybind11::module_& module);
+void register_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct(pybind11::module_& module);
+void register_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(pybind11::module_& module);
+void register_TypesWithDefaultsSomeImmutableStructWithDefaults(pybind11::module_& module);
+void register_TypesWithDefaultsStructWithDefaults(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -43,6 +57,11 @@ PYBIND11_MODULE(generated, m) {
     register_DartDeprecatedPosDefaults(m);
     register_DartDeprecatedPosDefaultsCustom(m);
     register_DefaultValues(m);
+    register_DefaultValuesNullableStructWithDefaults(m);
+    register_DefaultValuesStructWithDefaults(m);
+    register_DefaultValuesStructWithEmptyDefaults(m);
+    register_DefaultValuesStructWithSpecialDefaults(m);
+    register_DefaultValuesStructWithTypedefDefaults(m);
     register_DefaultsWithFcStruct(m);
     register_FcStruct(m);
     register_ImmutableStructWithDefaults(m);
@@ -61,4 +80,13 @@ PYBIND11_MODULE(generated, m) {
     register_StructWithNullableCollectionDefaults(m);
     register_StructWithSomeDefaults(m);
     register_TypesWithDefaults(m);
+    register_TypesWithDefaultsImmutableStructWithCollections(m);
+    register_TypesWithDefaultsImmutableStructWithDefaults(m);
+    register_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections(m);
+    register_TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct(m);
+    register_TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct(m);
+    register_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct(m);
+    register_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(m);
+    register_TypesWithDefaultsSomeImmutableStructWithDefaults(m);
+    register_TypesWithDefaultsStructWithDefaults(m);
 }

@@ -15,7 +15,6 @@ class AttributesWithComments(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    Function comment
     def very_fun(self):
         """Function comment"""
         return self._native.very_fun()

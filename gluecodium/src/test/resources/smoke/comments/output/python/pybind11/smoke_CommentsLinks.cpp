@@ -18,8 +18,8 @@ using CommentsLinks = ::smoke::CommentsLinks;
 
 void register_CommentsLinks(py::module_& module) {
     py::class_<CommentsLinks, std::shared_ptr<CommentsLinks>>(module, "CommentsLinks")
-        .def("random_method", &CommentsLinks::random_method, py::arg("input_parameter"))
-        .def("random_method", &CommentsLinks::random_method, py::arg("text"), py::arg("flag"))
+        .def("random_method", py::overload_cast<const ::smoke::Comments::SomeEnum>(&CommentsLinks::random_method), py::arg("input_parameter"))
+        .def("random_method", py::overload_cast<const ::std::string&, const bool>(&CommentsLinks::random_method), py::arg("text"), py::arg("flag"))
         ;
 }
 

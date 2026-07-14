@@ -17,7 +17,7 @@ using UnderscorePackage = ::smoke_off::UnderscorePackage;
 
 void register_UnderscorePackage(py::module_& module) {
     py::class_<UnderscorePackage, std::shared_ptr<UnderscorePackage>>(module, "UnderscorePackage")
-        .def("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"))
+        .def_static("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"))
         ;
 }
 

@@ -17,7 +17,7 @@ using ChildWithCustomConstructor = ::smoke::ChildWithCustomConstructor;
 
 void register_ChildWithCustomConstructor(py::module_& module) {
     py::class_<ChildWithCustomConstructor, std::shared_ptr<ChildWithCustomConstructor>>(module, "ChildWithCustomConstructor")
-        .def("make", &ChildWithCustomConstructor::make)
+        .def_static("make", &ChildWithCustomConstructor::make)
         ;
 }
 

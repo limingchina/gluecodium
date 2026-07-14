@@ -14,7 +14,7 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], StructWithKotlinPositionalDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithKotlinPositionalDefaults(*args))
+            super().__init__(generated.StructWithKotlinPositionalDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
 
     @first_init_field.setter
     def first_init_field(self, value: int):
-        self._native.first_init_field = value
+      self._native.first_init_field = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
 
     @first_free_field.setter
     def first_free_field(self, value: str):
-        self._native.first_free_field = value
+      self._native.first_free_field = getattr(value, "_native", value)
 
 
 
@@ -46,7 +46,7 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
 
     @second_init_field.setter
     def second_init_field(self, value: float):
-        self._native.second_init_field = value
+      self._native.second_init_field = getattr(value, "_native", value)
 
 
 
@@ -57,7 +57,7 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
 
     @second_free_field.setter
     def second_free_field(self, value: bool):
-        self._native.second_free_field = value
+      self._native.second_free_field = getattr(value, "_native", value)
 
 
 
@@ -68,6 +68,6 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
 
     @third_init_field.setter
     def third_init_field(self, value: str):
-        self._native.third_init_field = value
+      self._native.third_init_field = getattr(value, "_native", value)
 
 

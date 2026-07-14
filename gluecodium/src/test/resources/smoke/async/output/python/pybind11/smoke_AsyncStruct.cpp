@@ -24,7 +24,7 @@ void register_AsyncStruct(py::module_& module) {
         .def("async_void_throws", &AsyncStruct::async_void_throws, py::arg("input"))
         .def("async_int", &AsyncStruct::async_int, py::arg("input"))
         .def("async_int_throws", &AsyncStruct::async_int_throws, py::arg("input"))
-        .def("async_static", &AsyncStruct::async_static, py::arg("input"))
+        .def_static("async_static", &AsyncStruct::async_static, py::arg("input"))
         ;
 }
 

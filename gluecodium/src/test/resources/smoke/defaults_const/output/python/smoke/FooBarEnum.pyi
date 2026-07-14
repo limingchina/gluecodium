@@ -3,11 +3,17 @@
 
 from enum import Enum
 
+import generated
+
 
 class FooBarEnum(Enum):
     """"""
 
-    FOO = 0
-    BAR = 1
-    BAZ = 2
+    FOO = generated.FooBarEnum.FOO
+    BAR = generated.FooBarEnum.BAR
+    BAZ = generated.FooBarEnum.BAZ
+
+    @property
+    def _native(self):
+        return self.value
 

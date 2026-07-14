@@ -18,18 +18,18 @@ using BasicTypes = ::smoke::BasicTypes;
 
 void register_BasicTypes(py::module_& module) {
     py::class_<BasicTypes, std::shared_ptr<BasicTypes>>(module, "BasicTypes")
-        .def("string_function", &BasicTypes::string_function, py::arg("input"))
-        .def("bool_function", &BasicTypes::bool_function, py::arg("input"))
-        .def("float_function", &BasicTypes::float_function, py::arg("input"))
-        .def("double_function", &BasicTypes::double_function, py::arg("input"))
-        .def("byte_function", &BasicTypes::byte_function, py::arg("input"))
-        .def("short_function", &BasicTypes::short_function, py::arg("input"))
-        .def("int_function", &BasicTypes::int_function, py::arg("input"))
-        .def("long_function", &BasicTypes::long_function, py::arg("input"))
-        .def("ubyte_function", &BasicTypes::ubyte_function, py::arg("input"))
-        .def("ushort_function", &BasicTypes::ushort_function, py::arg("input"))
-        .def("uint_function", &BasicTypes::uint_function, py::arg("input"))
-        .def("ulong_function", &BasicTypes::ulong_function, py::arg("input"))
+        .def_static("string_function", &BasicTypes::string_function, py::arg("input"))
+        .def_static("bool_function", &BasicTypes::bool_function, py::arg("input"))
+        .def_static("float_function", &BasicTypes::float_function, py::arg("input"))
+        .def_static("double_function", &BasicTypes::double_function, py::arg("input"))
+        .def_static("byte_function", &BasicTypes::byte_function, py::arg("input"))
+        .def_static("short_function", &BasicTypes::short_function, py::arg("input"))
+        .def_static("int_function", &BasicTypes::int_function, py::arg("input"))
+        .def_static("long_function", &BasicTypes::long_function, py::arg("input"))
+        .def_static("ubyte_function", &BasicTypes::ubyte_function, py::arg("input"))
+        .def_static("ushort_function", &BasicTypes::ushort_function, py::arg("input"))
+        .def_static("uint_function", &BasicTypes::uint_function, py::arg("input"))
+        .def_static("ulong_function", &BasicTypes::ulong_function, py::arg("input"))
         ;
 }
 

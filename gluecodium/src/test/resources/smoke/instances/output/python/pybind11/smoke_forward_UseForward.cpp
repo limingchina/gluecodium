@@ -26,14 +26,16 @@ public:
     void use_it(
             const ::std::shared_ptr< ::smoke::forward::Class1 >& param1, const ::std::shared_ptr< ::smoke::forward::Class2 >& param2, const ::std::shared_ptr< ::smoke::SimpleClass >& simple_class, const ::std::shared_ptr< ::smoke::SimpleInterface >& simple_interface ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, UseForward, use_it, param1, param2, simple_class, simple_interface);
+        PYBIND11_OVERRIDE_PURE(void, UseForward, use_it, param1, param2, simple_class, simple_interface);
     }
 };
 
 void register_UseForward(py::module_& module) {
     py::class_<UseForward, std::shared_ptr<UseForward>, UseForwardTrampoline>(module, "UseForward")
         .def(py::init<>())
-        .def("use_it", &UseForward::use_it, py::arg("param1"), py::arg("param2"), py::arg("simple_class"), py::arg("simple_interface"))
+        .def("use_it", [](UseForward& self, const ::std::shared_ptr< ::smoke::forward::Class1 >& param1, const ::std::shared_ptr< ::smoke::forward::Class2 >& param2, const ::std::shared_ptr< ::smoke::SimpleClass >& simple_class, const ::std::shared_ptr< ::smoke::SimpleInterface >& simple_interface) {
+            return self.use_it(param1, param2, simple_class, simple_interface);
+        }, py::arg("param1"), py::arg("param2"), py::arg("simple_class"), py::arg("simple_interface"))
         ;
 }
 

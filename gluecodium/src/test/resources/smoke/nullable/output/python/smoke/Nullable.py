@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
+from smoke.NullableSomeStruct import NullableSomeStruct
 from smoke.SomeEnum import SomeEnum
 from smoke.SomeInterface import SomeInterface
-from smoke.SomeStruct import SomeStruct
-from smoke.dict[int, str] import dict[int, str]
-from smoke.list[str] import list[str]
 
 
 from _native_base import _NativeBase
@@ -20,51 +18,41 @@ class Nullable(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
     def method_with_string(self, input: Optional[str]) -> Optional[str]:
         """"""
         return self._native.method_with_string(input)
-
 
     def method_with_boolean(self, input: Optional[bool]) -> Optional[bool]:
         """"""
         return self._native.method_with_boolean(input)
 
-
     def method_with_double(self, input: Optional[float]) -> Optional[float]:
         """"""
         return self._native.method_with_double(input)
-
 
     def method_with_int(self, input: Optional[int]) -> Optional[int]:
         """"""
         return self._native.method_with_int(input)
 
-
-    def method_with_some_struct(self, input: Optional[SomeStruct]) -> Optional[SomeStruct]:
+    def method_with_some_struct(self, input: Optional[NullableSomeStruct]) -> Optional[NullableSomeStruct]:
         """"""
         return self._native.method_with_some_struct(input._native)
-
 
     def method_with_some_enum(self, input: Optional[SomeEnum]) -> Optional[SomeEnum]:
         """"""
         return self._native.method_with_some_enum(input._native)
 
-
     def method_with_some_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
         """"""
-        return self._native.method_with_some_array(input._native)
-
+        return self._native.method_with_some_array(input)
 
     def method_with_inline_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
         """"""
         return self._native.method_with_inline_array(input)
 
-
     def method_with_some_map(self, input: Optional[dict[int, str]]) -> Optional[dict[int, str]]:
         """"""
-        return self._native.method_with_some_map(input._native)
-
+        return self._native.method_with_some_map(input)
 
     def method_with_instance(self, input: Optional[SomeInterface]) -> Optional[SomeInterface]:
         """"""
@@ -169,13 +157,4 @@ class Nullable(_NativeBase):
     @instance_property.setter
     def instance_property(self, value):
         self._native.instance_property = value
-
-from enum import Enum
-
-
-class SomeEnum(Enum):
-    """"""
-
-    ON = 0
-    OFF = 1
 

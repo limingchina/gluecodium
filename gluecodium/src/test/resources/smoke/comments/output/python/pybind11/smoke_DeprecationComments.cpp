@@ -22,7 +22,7 @@ public:
     bool some_method_with_all_comments(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(bool, DeprecationComments, some_method_with_all_comments, input);
+        PYBIND11_OVERRIDE_PURE(bool, DeprecationComments, some_method_with_all_comments, input);
     }
     bool is_some_property() const override {
         py::gil_scoped_acquire gil;
@@ -45,7 +45,9 @@ public:
 void register_DeprecationComments(py::module_& module) {
     py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "DeprecationComments")
         .def(py::init<>())
-        .def("some_method_with_all_comments", &DeprecationComments::some_method_with_all_comments, py::arg("input"))
+        .def("some_method_with_all_comments", [](DeprecationComments& self, const ::std::string& input) {
+            return self.some_method_with_all_comments(input);
+        }, py::arg("input"))
         .def_property("is_some_property", py::overload_cast<>(&DeprecationComments::is_some_property, py::const_), py::overload_cast<const bool>(&DeprecationComments::set_some_property))
         .def_property("property_but_not_accessors", py::overload_cast<>(&DeprecationComments::get_property_but_not_accessors, py::const_), py::overload_cast<const ::std::string&>(&DeprecationComments::set_property_but_not_accessors))
         ;

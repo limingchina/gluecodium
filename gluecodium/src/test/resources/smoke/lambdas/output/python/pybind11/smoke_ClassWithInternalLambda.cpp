@@ -18,7 +18,7 @@ using ClassWithInternalLambda = ::smoke::ClassWithInternalLambda;
 
 void register_ClassWithInternalLambda(py::module_& module) {
     py::class_<ClassWithInternalLambda, std::shared_ptr<ClassWithInternalLambda>>(module, "ClassWithInternalLambda")
-        .def("invoke_internal_lambda", &ClassWithInternalLambda::invoke_internal_lambda, py::arg("lambda"), py::arg("value"))
+        .def_static("invoke_internal_lambda", &ClassWithInternalLambda::invoke_internal_lambda, py::arg("lambda"), py::arg("value"))
         ;
 }
 

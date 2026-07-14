@@ -11,6 +11,8 @@
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_DeprecatedFields(pybind11::module_& module);
+void register_FooBar(pybind11::module_& module);
+void register_RouteType(pybind11::module_& module);
 void register_RouteUtils(pybind11::module_& module);
 void register_ScalarKeyframe(pybind11::module_& module);
 void register_ScalarKeyframeTrack(pybind11::module_& module);
@@ -21,13 +23,32 @@ void register_StructWithList(pybind11::module_& module);
 void register_StructWithMap(pybind11::module_& module);
 void register_StructWithSet(pybind11::module_& module);
 void register_Structs(pybind11::module_& module);
+void register_StructsAllTypesStruct(pybind11::module_& module);
+void register_StructsDoubleNestingImmutableStruct(pybind11::module_& module);
+void register_StructsImmutableStructWithCppAccessors(pybind11::module_& module);
 void register_StructsInstance(pybind11::module_& module);
+void register_StructsLine(pybind11::module_& module);
+void register_StructsMutableStructWithCppAccessors(pybind11::module_& module);
+void register_StructsNestingImmutableStruct(pybind11::module_& module);
+void register_StructsPoint(pybind11::module_& module);
 void register_StructsQualifiedType(pybind11::module_& module);
+void register_StructsQualifiedTypeQualifiedType(pybind11::module_& module);
+void register_StructsStructWithArrayOfImmutable(pybind11::module_& module);
 void register_StructsWithConstants(pybind11::module_& module);
 void register_StructsWithConstantsInterface(pybind11::module_& module);
+void register_StructsWithConstantsInterfaceMultiRoute(pybind11::module_& module);
+void register_StructsWithConstantsInterfaceStructWithConstantsOnly(pybind11::module_& module);
+void register_StructsWithConstantsRoute(pybind11::module_& module);
 void register_StructsWithMethods(pybind11::module_& module);
 void register_StructsWithMethodsInterface(pybind11::module_& module);
+void register_StructsWithMethodsInterfaceStructWithStaticMethodsOnly(pybind11::module_& module);
+void register_StructsWithMethodsInterfaceVector3(pybind11::module_& module);
+void register_StructsWithMethodsVector(pybind11::module_& module);
 void register_TypeCollection(pybind11::module_& module);
+void register_TypeCollectionAllTypesStruct(pybind11::module_& module);
+void register_TypeCollectionLine(pybind11::module_& module);
+void register_TypeCollectionPoint(pybind11::module_& module);
+void register_ValidationErrorCode(pybind11::module_& module);
 void register_ValidationUtils(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
@@ -37,6 +58,8 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_DeprecatedFields(m);
+    register_FooBar(m);
+    register_RouteType(m);
     register_RouteUtils(m);
     register_ScalarKeyframe(m);
     register_ScalarKeyframeTrack(m);
@@ -47,12 +70,31 @@ PYBIND11_MODULE(generated, m) {
     register_StructWithMap(m);
     register_StructWithSet(m);
     register_Structs(m);
+    register_StructsAllTypesStruct(m);
+    register_StructsDoubleNestingImmutableStruct(m);
+    register_StructsImmutableStructWithCppAccessors(m);
     register_StructsInstance(m);
+    register_StructsLine(m);
+    register_StructsMutableStructWithCppAccessors(m);
+    register_StructsNestingImmutableStruct(m);
+    register_StructsPoint(m);
     register_StructsQualifiedType(m);
+    register_StructsQualifiedTypeQualifiedType(m);
+    register_StructsStructWithArrayOfImmutable(m);
     register_StructsWithConstants(m);
     register_StructsWithConstantsInterface(m);
+    register_StructsWithConstantsInterfaceMultiRoute(m);
+    register_StructsWithConstantsInterfaceStructWithConstantsOnly(m);
+    register_StructsWithConstantsRoute(m);
     register_StructsWithMethods(m);
     register_StructsWithMethodsInterface(m);
+    register_StructsWithMethodsInterfaceStructWithStaticMethodsOnly(m);
+    register_StructsWithMethodsInterfaceVector3(m);
+    register_StructsWithMethodsVector(m);
     register_TypeCollection(m);
+    register_TypeCollectionAllTypesStruct(m);
+    register_TypeCollectionLine(m);
+    register_TypeCollectionPoint(m);
+    register_ValidationErrorCode(m);
     register_ValidationUtils(m);
 }

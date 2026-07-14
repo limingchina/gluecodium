@@ -14,7 +14,7 @@ class FreePoint(_NativeBase):
         if len(args) == 1 and isinstance(args[0], FreePoint):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FreePoint(*args))
+            super().__init__(generated.FreePoint(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class FreePoint(_NativeBase):
 
     @x.setter
     def x(self, value: float):
-        self._native.x = value
+      self._native.x = getattr(value, "_native", value)
 
 
 
@@ -35,8 +35,7 @@ class FreePoint(_NativeBase):
 
     @y.setter
     def y(self, value: float):
-        self._native.y = value
-
+      self._native.y = getattr(value, "_native", value)
 
 
     def flip(self) -> FreePoint:

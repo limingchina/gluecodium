@@ -21,14 +21,16 @@ public:
     void notify(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ListenerInterface, notify);
+        PYBIND11_OVERRIDE_PURE(void, ListenerInterface, notify);
     }
 };
 
 void register_ListenerInterface(py::module_& module) {
     py::class_<ListenerInterface, std::shared_ptr<ListenerInterface>, ListenerInterfaceTrampoline>(module, "ListenerInterface")
         .def(py::init<>())
-        .def("notify", &ListenerInterface::notify)
+        .def("notify", [](ListenerInterface& self) {
+            return self.notify();
+        })
         ;
 }
 

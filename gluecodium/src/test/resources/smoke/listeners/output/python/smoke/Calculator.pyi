@@ -15,16 +15,12 @@ class Calculator(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def register_listener(listener: CalculatorListener):
         """"""
-        native_result = generated.Calculator.register_listener(listener)
-        return None(native_result)
+        generated.Calculator.register_listener(listener._native)
 
     @staticmethod
-
     def unregister_listener(listener: CalculatorListener):
         """"""
-        native_result = generated.Calculator.unregister_listener(listener)
-        return None(native_result)
+        generated.Calculator.unregister_listener(listener._native)
 

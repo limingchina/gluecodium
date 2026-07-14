@@ -26,14 +26,16 @@ public:
     void take_screenshot(
             const ::smoke::LambdasInterface::TakeScreenshotCallback& callback ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, LambdasInterface, take_screenshot, callback);
+        PYBIND11_OVERRIDE_PURE(void, LambdasInterface, take_screenshot, callback);
     }
 };
 
 void register_LambdasInterface(py::module_& module) {
     py::class_<LambdasInterface, std::shared_ptr<LambdasInterface>, LambdasInterfaceTrampoline>(module, "LambdasInterface")
         .def(py::init<>())
-        .def("take_screenshot", &LambdasInterface::take_screenshot, py::arg("callback"))
+        .def("take_screenshot", [](LambdasInterface& self, const ::smoke::LambdasInterface::TakeScreenshotCallback& callback) {
+            return self.take_screenshot(callback);
+        }, py::arg("callback"))
         ;
 }
 

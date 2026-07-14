@@ -21,26 +21,32 @@ public:
     void skip_tagged(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, SkipTagsInJava, skip_tagged);
+        PYBIND11_OVERRIDE_PURE(void, SkipTagsInJava, skip_tagged);
     }
     void dont_skip_tagged(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, SkipTagsInJava, dont_skip_tagged);
+        PYBIND11_OVERRIDE_PURE(void, SkipTagsInJava, dont_skip_tagged);
     }
     void skip_tagged_list(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, SkipTagsInJava, skip_tagged_list);
+        PYBIND11_OVERRIDE_PURE(void, SkipTagsInJava, skip_tagged_list);
     }
 };
 
 void register_SkipTagsInJava(py::module_& module) {
     py::class_<SkipTagsInJava, std::shared_ptr<SkipTagsInJava>, SkipTagsInJavaTrampoline>(module, "SkipTagsInJava")
         .def(py::init<>())
-        .def("skip_tagged", &SkipTagsInJava::skip_tagged)
-        .def("dont_skip_tagged", &SkipTagsInJava::dont_skip_tagged)
-        .def("skip_tagged_list", &SkipTagsInJava::skip_tagged_list)
+        .def("skip_tagged", [](SkipTagsInJava& self) {
+            return self.skip_tagged();
+        })
+        .def("dont_skip_tagged", [](SkipTagsInJava& self) {
+            return self.dont_skip_tagged();
+        })
+        .def("skip_tagged_list", [](SkipTagsInJava& self) {
+            return self.skip_tagged_list();
+        })
         ;
 }
 

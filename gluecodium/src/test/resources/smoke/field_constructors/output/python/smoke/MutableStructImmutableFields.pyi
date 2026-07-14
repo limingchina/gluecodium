@@ -15,17 +15,17 @@ class MutableStructImmutableFields(_NativeBase):
         if len(args) == 1 and isinstance(args[0], MutableStructImmutableFields):
             super().__init__(args[0])
         else:
-            super().__init__(generated.MutableStructImmutableFields(*args))
+            super().__init__(generated.MutableStructImmutableFields(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
     def struct_field(self) -> ImmutableStructNoClash:
         """"""
-        return self._native.struct_field
+        return ImmutableStructNoClash(self._native.struct_field)
 
     @struct_field.setter
     def struct_field(self, value: ImmutableStructNoClash):
-        self._native.struct_field = value
+      self._native.struct_field = getattr(value, "_native", value)
 
 
 
@@ -36,7 +36,7 @@ class MutableStructImmutableFields(_NativeBase):
 
     @int_field.setter
     def int_field(self, value: int):
-        self._native.int_field = value
+      self._native.int_field = getattr(value, "_native", value)
 
 
 
@@ -47,6 +47,6 @@ class MutableStructImmutableFields(_NativeBase):
 
     @bool_field.setter
     def bool_field(self, value: bool):
-        self._native.bool_field = value
+      self._native.bool_field = getattr(value, "_native", value)
 
 

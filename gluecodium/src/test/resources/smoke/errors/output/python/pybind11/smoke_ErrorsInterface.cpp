@@ -23,28 +23,34 @@ public:
     void method_with_errors(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ErrorsInterface, method_with_errors);
+        PYBIND11_OVERRIDE_PURE(void, ErrorsInterface, method_with_errors);
     }
     void method_with_external_errors(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ErrorsInterface, method_with_external_errors);
+        PYBIND11_OVERRIDE_PURE(void, ErrorsInterface, method_with_external_errors);
     }
     ::std::string method_with_errors_and_return_value(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::string, ErrorsInterface, method_with_errors_and_return_value);
+        PYBIND11_OVERRIDE_PURE(::std::string, ErrorsInterface, method_with_errors_and_return_value);
     }
 };
 
 void register_ErrorsInterface(py::module_& module) {
     py::class_<ErrorsInterface, std::shared_ptr<ErrorsInterface>, ErrorsInterfaceTrampoline>(module, "ErrorsInterface")
         .def(py::init<>())
-        .def("method_with_errors", &ErrorsInterface::method_with_errors)
-        .def("method_with_external_errors", &ErrorsInterface::method_with_external_errors)
-        .def("method_with_errors_and_return_value", &ErrorsInterface::method_with_errors_and_return_value)
-        .def("method_with_payload_error", &ErrorsInterface::method_with_payload_error)
-        .def("method_with_payload_error_and_return_value", &ErrorsInterface::method_with_payload_error_and_return_value)
+        .def("method_with_errors", [](ErrorsInterface& self) {
+            return self.method_with_errors();
+        })
+        .def("method_with_external_errors", [](ErrorsInterface& self) {
+            return self.method_with_external_errors();
+        })
+        .def("method_with_errors_and_return_value", [](ErrorsInterface& self) {
+            return self.method_with_errors_and_return_value();
+        })
+        .def_static("method_with_payload_error", &ErrorsInterface::method_with_payload_error)
+        .def_static("method_with_payload_error_and_return_value", &ErrorsInterface::method_with_payload_error_and_return_value)
         ;
 }
 

@@ -17,7 +17,7 @@ class OuterStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], OuterStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterStruct(*args))
+            super().__init__(generated.OuterStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -27,20 +27,10 @@ class OuterStruct(_NativeBase):
 
     @field.setter
     def field(self, value: str):
-        self._native.field = value
-
+      self._native.field = getattr(value, "_native", value)
 
 
     def do_nothing(self):
         """"""
         return self._native.do_nothing()
-
-from enum import Enum
-
-
-class InnerEnum(Enum):
-    """"""
-
-    FOO = 0
-    BAR = 1
 

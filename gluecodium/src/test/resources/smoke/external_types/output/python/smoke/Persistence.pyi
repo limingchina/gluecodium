@@ -3,11 +3,17 @@
 
 from enum import Enum
 
+import generated
+
 
 class Persistence(Enum):
     """"""
 
-    NONE = 0
-    FOR_SESSION = 1
-    PERMANENT = 2
+    NONE = generated.Persistence.NONE
+    FOR_SESSION = generated.Persistence.FOR_SESSION
+    PERMANENT = generated.Persistence.PERMANENT
+
+    @property
+    def _native(self):
+        return self.value
 

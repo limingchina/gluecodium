@@ -23,20 +23,24 @@ public:
     ::std::string get_string_value(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::string, SimpleInterface, get_string_value);
+        PYBIND11_OVERRIDE_PURE(::std::string, SimpleInterface, get_string_value);
     }
     ::std::shared_ptr< ::smoke::SimpleInterface > use_simple_interface(
             const ::std::shared_ptr< ::smoke::SimpleInterface >& input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::shared_ptr< ::smoke::SimpleInterface >, SimpleInterface, use_simple_interface, input);
+        PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::SimpleInterface >, SimpleInterface, use_simple_interface, input);
     }
 };
 
 void register_SimpleInterface(py::module_& module) {
     py::class_<SimpleInterface, std::shared_ptr<SimpleInterface>, SimpleInterfaceTrampoline>(module, "SimpleInterface")
         .def(py::init<>())
-        .def("get_string_value", &SimpleInterface::get_string_value)
-        .def("use_simple_interface", &SimpleInterface::use_simple_interface, py::arg("input"))
+        .def("get_string_value", [](SimpleInterface& self) {
+            return self.get_string_value();
+        })
+        .def("use_simple_interface", [](SimpleInterface& self, const ::std::shared_ptr< ::smoke::SimpleInterface >& input) {
+            return self.use_simple_interface(input);
+        }, py::arg("input"))
         ;
 }
 

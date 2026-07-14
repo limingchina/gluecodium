@@ -22,6 +22,7 @@ void register_FieldConstructorsCppSkip(pybind11::module_& module);
 void register_FieldConstructorsInternal(pybind11::module_& module);
 void register_FieldConstructorsInternalFields(pybind11::module_& module);
 void register_FieldConstructorsNullableTypes(pybind11::module_& module);
+void register_FieldConstructorsNullableTypesStructWithParameters(pybind11::module_& module);
 void register_FieldConstructorsParameterDefaults(pybind11::module_& module);
 void register_FieldConstructorsPartialDefaults(pybind11::module_& module);
 void register_FieldConstructorsSkipAllFields(pybind11::module_& module);
@@ -29,6 +30,7 @@ void register_FieldConstructorsSkipCpp(pybind11::module_& module);
 void register_FieldConstructorsSkipDefault(pybind11::module_& module);
 void register_FieldConstructorsWithLabels(pybind11::module_& module);
 void register_FieldCustomConstructorsMix(pybind11::module_& module);
+void register_FoodType(pybind11::module_& module);
 void register_ImmutableDefaultCtor(pybind11::module_& module);
 void register_ImmutableNamelessCtor(pybind11::module_& module);
 void register_ImmutableStructNoClash(pybind11::module_& module);
@@ -38,6 +40,7 @@ void register_MutableStructImmutableFieldsDefault(pybind11::module_& module);
 void register_MutableStructImmutableFieldsNameless(pybind11::module_& module);
 void register_MutableStructNoClash(pybind11::module_& module);
 void register_OuterStructWithFieldConstructor(pybind11::module_& module);
+void register_OuterStructWithFieldConstructorInnerStructWithDefaults(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -57,6 +60,7 @@ PYBIND11_MODULE(generated, m) {
     register_FieldConstructorsInternal(m);
     register_FieldConstructorsInternalFields(m);
     register_FieldConstructorsNullableTypes(m);
+    register_FieldConstructorsNullableTypesStructWithParameters(m);
     register_FieldConstructorsParameterDefaults(m);
     register_FieldConstructorsPartialDefaults(m);
     register_FieldConstructorsSkipAllFields(m);
@@ -64,6 +68,7 @@ PYBIND11_MODULE(generated, m) {
     register_FieldConstructorsSkipDefault(m);
     register_FieldConstructorsWithLabels(m);
     register_FieldCustomConstructorsMix(m);
+    register_FoodType(m);
     register_ImmutableDefaultCtor(m);
     register_ImmutableNamelessCtor(m);
     register_ImmutableStructNoClash(m);
@@ -73,4 +78,5 @@ PYBIND11_MODULE(generated, m) {
     register_MutableStructImmutableFieldsNameless(m);
     register_MutableStructNoClash(m);
     register_OuterStructWithFieldConstructor(m);
+    register_OuterStructWithFieldConstructorInnerStructWithDefaults(m);
 }

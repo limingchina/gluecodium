@@ -19,8 +19,12 @@ void register_EnumWithAlias(pybind11::module_& module);
 void register_EnumWithAliasWithDeprecated(pybind11::module_& module);
 void register_EnumWithToStringHelper(pybind11::module_& module);
 void register_Enums(pybind11::module_& module);
+void register_EnumsErrorStruct(pybind11::module_& module);
 void register_EnumsInTypeCollection(pybind11::module_& module);
 void register_EnumsInTypeCollectionInterface(pybind11::module_& module);
+void register_InternalErrorCode(pybind11::module_& module);
+void register_SimpleEnum(pybind11::module_& module);
+void register_TCEnum(pybind11::module_& module);
 void register_UseEnumOptionSet(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
@@ -38,7 +42,11 @@ PYBIND11_MODULE(generated, m) {
     register_EnumWithAliasWithDeprecated(m);
     register_EnumWithToStringHelper(m);
     register_Enums(m);
+    register_EnumsErrorStruct(m);
     register_EnumsInTypeCollection(m);
     register_EnumsInTypeCollectionInterface(m);
+    register_InternalErrorCode(m);
+    register_SimpleEnum(m);
+    register_TCEnum(m);
     register_UseEnumOptionSet(m);
 }

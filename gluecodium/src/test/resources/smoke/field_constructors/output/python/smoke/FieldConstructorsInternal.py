@@ -16,7 +16,7 @@ class FieldConstructorsInternal(_NativeBase):
         if len(args) == 1 and isinstance(args[0], FieldConstructorsInternal):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsInternal(*args))
+            super().__init__(generated.FieldConstructorsInternal(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class FieldConstructorsInternal(_NativeBase):
 
     @public_field.setter
     def public_field(self, value: str):
-        self._native.public_field = value
+      self._native.public_field = getattr(value, "_native", value)
 
 
 
@@ -37,6 +37,6 @@ class FieldConstructorsInternal(_NativeBase):
 
     @internal_field.setter
     def internal_field(self, value: float):
-        self._native.internal_field = value
+      self._native.internal_field = getattr(value, "_native", value)
 
 

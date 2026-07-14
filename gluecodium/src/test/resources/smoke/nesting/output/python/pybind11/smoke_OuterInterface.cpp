@@ -22,14 +22,16 @@ public:
     ::std::string foo(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::string, OuterInterface, foo, input);
+        PYBIND11_OVERRIDE_PURE(::std::string, OuterInterface, foo, input);
     }
 };
 
 void register_OuterInterface(py::module_& module) {
     py::class_<OuterInterface, std::shared_ptr<OuterInterface>, OuterInterfaceTrampoline>(module, "OuterInterface")
         .def(py::init<>())
-        .def("foo", &OuterInterface::foo, py::arg("input"))
+        .def("foo", [](OuterInterface& self, const ::std::string& input) {
+            return self.foo(input);
+        }, py::arg("input"))
         ;
 }
 

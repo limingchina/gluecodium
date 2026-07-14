@@ -21,14 +21,16 @@ public:
     void foo(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, NoCacheInterface, foo);
+        PYBIND11_OVERRIDE_PURE(void, NoCacheInterface, foo);
     }
 };
 
 void register_NoCacheInterface(py::module_& module) {
     py::class_<NoCacheInterface, std::shared_ptr<NoCacheInterface>, NoCacheInterfaceTrampoline>(module, "NoCacheInterface")
         .def(py::init<>())
-        .def("foo", &NoCacheInterface::foo)
+        .def("foo", [](NoCacheInterface& self) {
+            return self.foo();
+        })
         ;
 }
 

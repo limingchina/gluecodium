@@ -5,8 +5,7 @@ from __future__ import annotations
 from package.Enum import Enum
 from package.ExceptionError import ExceptionError
 from package.Interface import Interface
-from package.Struct import Struct
-from package.list[Struct] import list[Struct]
+from package.typesstruct import typesstruct
 
 
 from _native_base import _NativeBase
@@ -22,16 +21,14 @@ class Class(
         super().__init__(native)
 
     @staticmethod
-
     def constructor() -> Class:
         """"""
         native_result = generated.Class.constructor()
         return Class(native_result)
 
-
-    def fun(self, double: list[Struct]) -> Struct:
+    def fun(self, double: list[typesstruct]) -> typesstruct:
         """"""
-        return self._native.fun(double._native)
+        return self._native.fun(double)
 
 
     @property

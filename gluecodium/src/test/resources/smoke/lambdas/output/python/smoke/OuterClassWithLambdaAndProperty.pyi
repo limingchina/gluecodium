@@ -24,12 +24,8 @@ class OuterClassWithLambdaAndProperty(_NativeBase):
         self._native.some_integer = value
 
 
-    @property
-    def another_integer(self) -> int:
+    @staticmethod
+    def another_integer() -> int:
         """"""
-        return self._native.another_integer
-
-    @another_integer.setter
-    def another_integer(self, value: int):
-        self._native.another_integer = value
+        return generated.OuterClassWithLambdaAndProperty.another_integer()
 

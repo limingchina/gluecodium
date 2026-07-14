@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.bool import bool
 
 
 from _native_base import _NativeBase
@@ -19,52 +18,42 @@ class CommentsInterface(_NativeBase):
         else:
             super().__init__(generated.CommentsInterface())
 
-    This is some very useful method that measures the usefulness of its input.
     def some_method_with_all_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
         return self._native.some_method_with_all_comments(input)
 
-    This is some very useful method that measures the usefulness of its input.
     def some_method_with_input_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
         return self._native.some_method_with_input_comments(input)
 
-    This is some very useful method that measures the usefulness of its input.
     def some_method_with_output_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
         return self._native.some_method_with_output_comments(input)
 
-    This is some very useful method that measures the usefulness of its input.
     def some_method_with_no_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
         return self._native.some_method_with_no_comments(input)
 
-    This is some very useful method that does not measure the usefulness of its input.
     def some_method_without_return_type_with_all_comments(self, input: str):
         """This is some very useful method that does not measure the usefulness of its input."""
         return self._native.some_method_without_return_type_with_all_comments(input)
 
-    This is some very useful method that does not measure the usefulness of its input.
     def some_method_without_return_type_with_no_comments(self, input: str):
         """This is some very useful method that does not measure the usefulness of its input."""
         return self._native.some_method_without_return_type_with_no_comments(input)
 
-    This is some very useful method that measures the usefulness of something.
     def some_method_without_input_parameters_with_all_comments(self) -> bool:
         """This is some very useful method that measures the usefulness of something."""
         return self._native.some_method_without_input_parameters_with_all_comments()
 
-    This is some very useful method that measures the usefulness of something.
     def some_method_without_input_parameters_with_no_comments(self) -> bool:
         """This is some very useful method that measures the usefulness of something."""
         return self._native.some_method_without_input_parameters_with_no_comments()
-
 
     def some_method_with_nothing(self):
         """"""
         return self._native.some_method_with_nothing()
 
-    This is some very useful method that does nothing.
     def some_method_without_return_type_or_input_parameters(self):
         """This is some very useful method that does nothing."""
         return self._native.some_method_without_return_type_or_input_parameters()
@@ -78,7 +67,6 @@ class CommentsInterface(_NativeBase):
     @is_some_property.setter
     def is_some_property(self, value: bool):
         self._native.is_some_property = value
-
 from enum import Enum
 
 
@@ -87,6 +75,7 @@ class SomeEnum(Enum):
 
     USELESS = 0
     USEFUL = 1
+
 
 This is some very useful constant.
 VERY_USEFUL = True

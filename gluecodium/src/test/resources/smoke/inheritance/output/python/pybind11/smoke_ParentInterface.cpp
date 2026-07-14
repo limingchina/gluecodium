@@ -22,7 +22,7 @@ public:
     void root_method(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterface, root_method);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterface, root_method);
     }
     ::std::string& get_root_property() const override {
         py::gil_scoped_acquire gil;
@@ -37,7 +37,9 @@ public:
 void register_ParentInterface(py::module_& module) {
     py::class_<ParentInterface, std::shared_ptr<ParentInterface>, ParentInterfaceTrampoline>(module, "ParentInterface")
         .def(py::init<>())
-        .def("root_method", &ParentInterface::root_method)
+        .def("root_method", [](ParentInterface& self) {
+            return self.root_method();
+        })
         .def_property("root_property", py::overload_cast<>(&ParentInterface::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ParentInterface::set_root_property))
         ;
 }

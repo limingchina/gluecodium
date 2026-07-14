@@ -17,8 +17,8 @@ using ParentClass = ::smoke::ParentClass;
 
 void register_ParentClass(py::module_& module) {
     py::class_<ParentClass, std::shared_ptr<ParentClass>>(module, "ParentClass")
-        .def("foo", &ParentClass::foo)
-        .def("foo", &ParentClass::foo, py::arg("input"))
+        .def("foo", py::overload_cast<>(&ParentClass::foo))
+        .def("foo", py::overload_cast<const int32_t>(&ParentClass::foo), py::arg("input"))
         .def("bar", &ParentClass::bar)
         .def("baz", &ParentClass::baz)
         ;

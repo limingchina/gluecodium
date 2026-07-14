@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.BasicStruct import BasicStruct
+from smoke.PlatformNamesBasicStruct import PlatformNamesBasicStruct
 
 
 from _native_base import _NativeBase
@@ -17,13 +17,5 @@ class PlatformNames(_NativeBase):
         if len(args) == 1 and isinstance(args[0], PlatformNames):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PlatformNames(*args))
-
-from enum import Enum
-
-
-class BasicEnum(Enum):
-    """"""
-
-    BASIC_ITEM = 0
+            super().__init__(generated.PlatformNames(*[getattr(arg, "_native", arg) for arg in args]))
 

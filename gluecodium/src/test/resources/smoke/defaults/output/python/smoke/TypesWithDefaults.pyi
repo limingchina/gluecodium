@@ -1,7 +1,7 @@
 
 
-from smoke.ImmutableStructWithCollections import ImmutableStructWithCollections
-from smoke.SomeImmutableStructWithDefaults import SomeImmutableStructWithDefaults
+from smoke.TypesWithDefaultsImmutableStructWithCollections import TypesWithDefaultsImmutableStructWithCollections
+from smoke.TypesWithDefaultsSomeImmutableStructWithDefaults import TypesWithDefaultsSomeImmutableStructWithDefaults
 
 
 from _native_base import _NativeBase
@@ -16,5 +16,5 @@ class TypesWithDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], TypesWithDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypesWithDefaults(*args))
+            super().__init__(generated.TypesWithDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 

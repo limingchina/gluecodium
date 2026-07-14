@@ -22,7 +22,7 @@ void register_SpecialNames(py::module_& module) {
         .def("release", &SpecialNames::release)
         .def("create_proxy", &SpecialNames::create_proxy)
         .def("_uppercase", &SpecialNames::_uppercase)
-        .def("make", &SpecialNames::make, py::arg("result"))
+        .def_static("make", &SpecialNames::make, py::arg("result"))
         ;
 }
 

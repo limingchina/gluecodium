@@ -22,14 +22,16 @@ public:
     int32_t some_function(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(int32_t, OuterInternalInterface, some_function);
+        PYBIND11_OVERRIDE_PURE(int32_t, OuterInternalInterface, some_function);
     }
 };
 
 void register_OuterInternalInterface(py::module_& module) {
     py::class_<OuterInternalInterface, std::shared_ptr<OuterInternalInterface>, OuterInternalInterfaceTrampoline>(module, "OuterInternalInterface")
         .def(py::init<>())
-        .def("some_function", &OuterInternalInterface::some_function)
+        .def("some_function", [](OuterInternalInterface& self) {
+            return self.some_function();
+        })
         ;
 }
 

@@ -16,7 +16,7 @@ class BlobDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], BlobDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.BlobDefaults(*args))
+            super().__init__(generated.BlobDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class BlobDefaults(_NativeBase):
 
     @empty_list.setter
     def empty_list(self, value: bytes):
-        self._native.empty_list = value
+      self._native.empty_list = getattr(value, "_native", value)
 
 
 
@@ -37,6 +37,6 @@ class BlobDefaults(_NativeBase):
 
     @dead_beef.setter
     def dead_beef(self, value: bytes):
-        self._native.dead_beef = value
+      self._native.dead_beef = getattr(value, "_native", value)
 
 

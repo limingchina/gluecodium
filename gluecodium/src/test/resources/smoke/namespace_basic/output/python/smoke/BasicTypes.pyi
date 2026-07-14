@@ -14,5 +14,5 @@ class BasicTypes(_NativeBase):
         if len(args) == 1 and isinstance(args[0], BasicTypes):
             super().__init__(args[0])
         else:
-            super().__init__(generated.BasicTypes(*args))
+            super().__init__(generated.BasicTypes(*[getattr(arg, "_native", arg) for arg in args]))
 

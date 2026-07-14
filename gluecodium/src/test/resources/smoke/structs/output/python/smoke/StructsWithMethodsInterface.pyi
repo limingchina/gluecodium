@@ -1,8 +1,8 @@
 
 
+from smoke.StructsWithMethodsInterfaceVector3 import StructsWithMethodsInterfaceVector3
 from smoke.ValidationError import ValidationError
 from smoke.ValidationErrorCode import ValidationErrorCode
-from smoke.Vector3 import Vector3
 
 
 from _native_base import _NativeBase

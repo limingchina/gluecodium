@@ -22,32 +22,40 @@ public:
     void foo(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterface, foo);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterface, foo);
     }
     void foo(
             int32_t input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterface, foo, input);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterface, foo, input);
     }
     void bar(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterface, bar);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterface, bar);
     }
     void baz(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterface, baz);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterface, baz);
     }
 };
 
 void register_ParentInterface(py::module_& module) {
     py::class_<ParentInterface, std::shared_ptr<ParentInterface>, ParentInterfaceTrampoline>(module, "ParentInterface")
         .def(py::init<>())
-        .def("foo", &ParentInterface::foo)
-        .def("foo", &ParentInterface::foo, py::arg("input"))
-        .def("bar", &ParentInterface::bar)
-        .def("baz", &ParentInterface::baz)
+        .def("foo", [](ParentInterface& self) {
+            return self.foo();
+        })
+        .def("foo", [](ParentInterface& self, const int32_t input) {
+            return self.foo(input);
+        }, py::arg("input"))
+        .def("bar", [](ParentInterface& self) {
+            return self.bar();
+        })
+        .def("baz", [](ParentInterface& self) {
+            return self.baz();
+        })
         ;
 }
 

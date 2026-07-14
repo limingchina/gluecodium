@@ -25,7 +25,7 @@ using Lambdas = ::smoke::Lambdas;
 void register_Lambdas(py::module_& module) {
     py::class_<Lambdas, std::shared_ptr<Lambdas>>(module, "Lambdas")
         .def("deconfuse", &Lambdas::deconfuse, py::arg("value"), py::arg("confuser"))
-        .def("fuse", &Lambdas::fuse, py::arg("items"), py::arg("callback"))
+        .def_static("fuse", &Lambdas::fuse, py::arg("items"), py::arg("callback"))
         ;
 }
 

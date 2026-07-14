@@ -22,7 +22,7 @@ public:
     void foo_bar(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, InternalInterface, foo_bar);
+        PYBIND11_OVERRIDE_PURE(void, InternalInterface, foo_bar);
     }
     ::std::string& get_some_property_of_internal_interface() const override {
         py::gil_scoped_acquire gil;
@@ -37,8 +37,11 @@ public:
 void register_InternalInterface(py::module_& module) {
     py::class_<InternalInterface, std::shared_ptr<InternalInterface>, InternalInterfaceTrampoline>(module, "InternalInterface")
         .def(py::init<>())
-        .def("foo_bar", &InternalInterface::foo_bar)
-        .def_property("some_property_of_internal_interface", py::overload_cast<>(&InternalInterface::get_some_property_of_internal_interface, py::const_), py::overload_cast<const ::std::string&>(&InternalInterface::set_some_property_of_internal_interface))
+        .def("foo_bar", [](InternalInterface& self) {
+            return self.foo_bar();
+        })
+        .def_static("some_property_of_internal_interface", &InternalInterface::get_some_property_of_internal_interface)
+        .def_static("some_property_of_internal_interface_set", &InternalInterface::set_some_property_of_internal_interface)
         ;
 }
 

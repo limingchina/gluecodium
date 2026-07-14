@@ -16,16 +16,5 @@ class RouteUtils(_NativeBase):
         if len(args) == 1 and isinstance(args[0], RouteUtils):
             super().__init__(args[0])
         else:
-            super().__init__(generated.RouteUtils(*args))
-
-from enum import Enum
-
-
-class RouteType(Enum):
-    """"""
-
-    NONE = 0
-    CAR = 1
-    PEDESTRIAN = 2
-    EQUESTRIAN = 3
+            super().__init__(generated.RouteUtils(*[getattr(arg, "_native", arg) for arg in args]))
 

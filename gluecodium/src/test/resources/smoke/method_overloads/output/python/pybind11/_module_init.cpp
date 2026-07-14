@@ -16,6 +16,7 @@ void register_ChildInterfaceOverloads(pybind11::module_& module);
 void register_JavaMethodOverloads(pybind11::module_& module);
 void register_KotlinMethodOverloads(pybind11::module_& module);
 void register_MethodOverloads(pybind11::module_& module);
+void register_MethodOverloadsPoint(pybind11::module_& module);
 void register_NullableOverloads(pybind11::module_& module);
 void register_OverloadsWithComments(pybind11::module_& module);
 void register_ParentClass(pybind11::module_& module);
@@ -38,6 +39,7 @@ PYBIND11_MODULE(generated, m) {
     register_JavaMethodOverloads(m);
     register_KotlinMethodOverloads(m);
     register_MethodOverloads(m);
+    register_MethodOverloadsPoint(m);
     register_NullableOverloads(m);
     register_OverloadsWithComments(m);
     register_ParentClass(m);

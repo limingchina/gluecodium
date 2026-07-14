@@ -28,16 +28,14 @@ class CachedProperties(_NativeBase):
 
 
 
-    @property
-    def static_cached_property(self) -> bytes:
+    @staticmethod
+    def static_cached_property() -> bytes:
         """"""
-        return self._native.static_cached_property
+        return generated.CachedProperties.static_cached_property()
 
 
-
-    @property
-    def internal_static_cached_property(self) -> bytes:
+    @staticmethod
+    def internal_static_cached_property() -> bytes:
         """"""
-        return self._native.internal_static_cached_property
-
+        return generated.CachedProperties.internal_static_cached_property()
 

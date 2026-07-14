@@ -16,7 +16,7 @@ class EnumCollectionDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], EnumCollectionDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnumCollectionDefaults(*args))
+            super().__init__(generated.EnumCollectionDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class EnumCollectionDefaults(_NativeBase):
 
     @list_field.setter
     def list_field(self, value: list[Enum1]):
-        self._native.list_field = value
+      self._native.list_field = getattr(value, "_native", value)
 
 
 
@@ -37,7 +37,7 @@ class EnumCollectionDefaults(_NativeBase):
 
     @set_field.setter
     def set_field(self, value: set[Enum2]):
-        self._native.set_field = value
+      self._native.set_field = getattr(value, "_native", value)
 
 
 
@@ -48,6 +48,6 @@ class EnumCollectionDefaults(_NativeBase):
 
     @map_field.setter
     def map_field(self, value: dict[Enum3, Enum4]):
-        self._native.map_field = value
+      self._native.map_field = getattr(value, "_native", value)
 
 

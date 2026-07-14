@@ -14,7 +14,7 @@ class MixedCollectionsStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], MixedCollectionsStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.MixedCollectionsStruct(*args))
+            super().__init__(generated.MixedCollectionsStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class MixedCollectionsStruct(_NativeBase):
 
     @almost_dates.setter
     def almost_dates(self, value: list[Optional[datetime.datetime]]):
-        self._native.almost_dates = value
+      self._native.almost_dates = getattr(value, "_native", value)
 
 
 
@@ -35,6 +35,6 @@ class MixedCollectionsStruct(_NativeBase):
 
     @dates.setter
     def dates(self, value: list[datetime.datetime]):
-        self._native.dates = value
+      self._native.dates = getattr(value, "_native", value)
 
 

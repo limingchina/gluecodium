@@ -22,20 +22,24 @@ public:
     void foo(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ChildInterfaceOverloads, foo, input);
+        PYBIND11_OVERRIDE_PURE(void, ChildInterfaceOverloads, foo, input);
     }
     void bar(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ChildInterfaceOverloads, bar, input);
+        PYBIND11_OVERRIDE_PURE(void, ChildInterfaceOverloads, bar, input);
     }
 };
 
 void register_ChildInterfaceOverloads(py::module_& module) {
     py::class_<ChildInterfaceOverloads, std::shared_ptr<ChildInterfaceOverloads>, ChildInterfaceOverloadsTrampoline>(module, "ChildInterfaceOverloads")
         .def(py::init<>())
-        .def("foo", &ChildInterfaceOverloads::foo, py::arg("input"))
-        .def("bar", &ChildInterfaceOverloads::bar, py::arg("input"))
+        .def("foo", [](ChildInterfaceOverloads& self, const ::std::string& input) {
+            return self.foo(input);
+        }, py::arg("input"))
+        .def("bar", [](ChildInterfaceOverloads& self, const ::std::string& input) {
+            return self.bar(input);
+        }, py::arg("input"))
         ;
 }
 

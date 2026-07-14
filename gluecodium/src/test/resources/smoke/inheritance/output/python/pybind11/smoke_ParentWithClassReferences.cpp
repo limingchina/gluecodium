@@ -24,7 +24,7 @@ public:
     ::std::shared_ptr< ::smoke::ChildClassFromClass > class_function(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::shared_ptr< ::smoke::ChildClassFromClass >, ParentWithClassReferences, class_function);
+        PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ChildClassFromClass >, ParentWithClassReferences, class_function);
     }
     ::std::shared_ptr< ::smoke::ParentClass >& get_class_property() const override {
         py::gil_scoped_acquire gil;
@@ -39,7 +39,9 @@ public:
 void register_ParentWithClassReferences(py::module_& module) {
     py::class_<ParentWithClassReferences, std::shared_ptr<ParentWithClassReferences>, ParentWithClassReferencesTrampoline>(module, "ParentWithClassReferences")
         .def(py::init<>())
-        .def("class_function", &ParentWithClassReferences::class_function)
+        .def("class_function", [](ParentWithClassReferences& self) {
+            return self.class_function();
+        })
         .def_property("class_property", py::overload_cast<>(&ParentWithClassReferences::get_class_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::ParentClass >&>(&ParentWithClassReferences::set_class_property))
         ;
 }

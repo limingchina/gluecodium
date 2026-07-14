@@ -5,12 +5,18 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class EnumWithAccessibleValues(Enum):
     """"""
 
-    FOO = 0
-    BAR = 1
-    BAZ = 2
-    FOO_ALIAS = 3
+    FOO = generated.EnumWithAccessibleValues.FOO
+    BAR = generated.EnumWithAccessibleValues.BAR
+    BAZ = generated.EnumWithAccessibleValues.BAZ
+    FOO_ALIAS = generated.EnumWithAccessibleValues.FOO_ALIAS
+
+    @property
+    def _native(self):
+        return self.value
 

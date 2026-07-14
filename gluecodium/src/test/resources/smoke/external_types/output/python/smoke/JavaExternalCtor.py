@@ -16,7 +16,7 @@ class JavaExternalCtor(_NativeBase):
         if len(args) == 1 and isinstance(args[0], JavaExternalCtor):
             super().__init__(args[0])
         else:
-            super().__init__(generated.JavaExternalCtor(*args))
+            super().__init__(generated.JavaExternalCtor(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,11 +26,10 @@ class JavaExternalCtor(_NativeBase):
 
     @field.setter
     def field(self, value: str):
-        self._native.field = value
+      self._native.field = getattr(value, "_native", value)
 
 
     @staticmethod
-
     def make(field: str) -> JavaExternalCtor:
         """"""
         native_result = generated.JavaExternalCtor.make(field)

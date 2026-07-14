@@ -20,9 +20,9 @@ using ClassWithOverloads = ::smoke::ClassWithOverloads;
 void register_ClassWithOverloads(py::module_& module) {
     py::class_<ClassWithOverloads, std::shared_ptr<ClassWithOverloads>>(module, "ClassWithOverloads")
         .def("one_overload_not_exposed", &ClassWithOverloads::oneOverloadNotExposed)
-        .def("all_overloads_exposed", &ClassWithOverloads::allOverloadsExposed, py::arg("input"))
-        .def("all_overloads_exposed", &ClassWithOverloads::allOverloadsExposed, py::arg("input_list"))
-        .def("all_overloads_exposed", &ClassWithOverloads::allOverloadsExposed, py::arg("input_string"), py::arg("input_bool"))
+        .def("all_overloads_exposed", py::overload_cast<const ::std::string&>(&ClassWithOverloads::allOverloadsExposed), py::arg("input"))
+        .def("all_overloads_exposed", py::overload_cast<const ::std::vector< ::std::string >&>(&ClassWithOverloads::allOverloadsExposed), py::arg("input_list"))
+        .def("all_overloads_exposed", py::overload_cast<const ::std::string&, const bool>(&ClassWithOverloads::allOverloadsExposed), py::arg("input_string"), py::arg("input_bool"))
         ;
 }
 

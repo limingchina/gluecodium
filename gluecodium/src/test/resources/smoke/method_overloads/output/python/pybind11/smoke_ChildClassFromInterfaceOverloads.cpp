@@ -18,10 +18,10 @@ using ChildClassFromInterfaceOverloads = ::smoke::ChildClassFromInterfaceOverloa
 
 void register_ChildClassFromInterfaceOverloads(py::module_& module) {
     py::class_<ChildClassFromInterfaceOverloads, std::shared_ptr<ChildClassFromInterfaceOverloads>>(module, "ChildClassFromInterfaceOverloads")
-        .def("foo", &ChildClassFromInterfaceOverloads::foo, py::arg("input"))
-        .def("foo", &ChildClassFromInterfaceOverloads::foo, py::arg("input"))
-        .def("bar", &ChildClassFromInterfaceOverloads::bar, py::arg("input"))
-        .def("bar", &ChildClassFromInterfaceOverloads::bar, py::arg("input"))
+        .def("foo", py::overload_cast<const ::std::string&>(&ChildClassFromInterfaceOverloads::foo), py::arg("input"))
+        .def("foo", py::overload_cast<const double>(&ChildClassFromInterfaceOverloads::foo), py::arg("input"))
+        .def("bar", py::overload_cast<const ::std::string&>(&ChildClassFromInterfaceOverloads::bar), py::arg("input"))
+        .def("bar", py::overload_cast<const double>(&ChildClassFromInterfaceOverloads::bar), py::arg("input"))
         ;
 }
 

@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PlatformNames = ::smoke::fooTypes;
+using fooTypes = ::smoke::fooTypes;
 
 void register_PlatformNames(py::module_& module) {
     py::class_<fooTypes>(module, "PlatformNames")

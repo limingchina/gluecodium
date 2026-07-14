@@ -18,7 +18,6 @@ This too!"""
     def __init__(self, native):
         super().__init__(native)
 
-    This is very important method. It has very important parameters. It has side effects.
     def some_method_with_long_comment(self, input: str, ratio: float) -> float:
         """This is very important method. It has very important parameters. It has side effects."""
         return self._native.some_method_with_long_comment(input, ratio)

@@ -21,28 +21,28 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
         if len(args) == 1 and isinstance(args[0], PosDefaultStructWithCustomStructsFields):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PosDefaultStructWithCustomStructsFields(*args))
+            super().__init__(generated.PosDefaultStructWithCustomStructsFields(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
     def const_ctor_field0(self) -> ImmutableStructWithDefaults:
         """"""
-        return self._native.const_ctor_field0
+        return ImmutableStructWithDefaults(self._native.const_ctor_field0)
 
     @const_ctor_field0.setter
     def const_ctor_field0(self, value: ImmutableStructWithDefaults):
-        self._native.const_ctor_field0 = value
+      self._native.const_ctor_field0 = getattr(value, "_native", value)
 
 
 
     @property
     def const_ctor_field1(self):
         """"""
-        return self._native.const_ctor_field1
+        return Optional[ImmutableStructWithDefaults](self._native.const_ctor_field1)
 
     @const_ctor_field1.setter
     def const_ctor_field1(self, value):
-        self._native.const_ctor_field1 = value
+      self._native.const_ctor_field1 = getattr(value, "_native", value)
 
 
 
@@ -53,7 +53,7 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
 
     @const_ctor_field2.setter
     def const_ctor_field2(self, value: list[str]):
-        self._native.const_ctor_field2 = value
+      self._native.const_ctor_field2 = getattr(value, "_native", value)
 
 
 
@@ -64,7 +64,7 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
 
     @const_ctor_field3.setter
     def const_ctor_field3(self, value):
-        self._native.const_ctor_field3 = value
+      self._native.const_ctor_field3 = getattr(value, "_native", value)
 
 
 
@@ -75,7 +75,7 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
 
     @const_ctor_field4.setter
     def const_ctor_field4(self, value: int):
-        self._native.const_ctor_field4 = value
+      self._native.const_ctor_field4 = getattr(value, "_native", value)
 
 
 
@@ -86,84 +86,84 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
 
     @const_ctor_field5.setter
     def const_ctor_field5(self, value: float):
-        self._native.const_ctor_field5 = value
+      self._native.const_ctor_field5 = getattr(value, "_native", value)
 
 
 
     @property
     def const_ctor_field6(self):
         """"""
-        return self._native.const_ctor_field6
+        return Optional[ImmutableStructWithDefaults](self._native.const_ctor_field6)
 
     @const_ctor_field6.setter
     def const_ctor_field6(self, value):
-        self._native.const_ctor_field6 = value
+      self._native.const_ctor_field6 = getattr(value, "_native", value)
 
 
 
     @property
     def const_ctor_field7(self):
         """"""
-        return self._native.const_ctor_field7
+        return Optional[ImmutableStructWithDefaults](self._native.const_ctor_field7)
 
     @const_ctor_field7.setter
     def const_ctor_field7(self, value):
-        self._native.const_ctor_field7 = value
+      self._native.const_ctor_field7 = getattr(value, "_native", value)
 
 
 
     @property
     def non_const_ctor_field0(self) -> StructWithAllDefaults:
         """"""
-        return self._native.non_const_ctor_field0
+        return StructWithAllDefaults(self._native.non_const_ctor_field0)
 
     @non_const_ctor_field0.setter
     def non_const_ctor_field0(self, value: StructWithAllDefaults):
-        self._native.non_const_ctor_field0 = value
+      self._native.non_const_ctor_field0 = getattr(value, "_native", value)
 
 
 
     @property
     def non_const_ctor_field1(self) -> PosDefaultStructWithFieldUsingImmutableStruct:
         """"""
-        return self._native.non_const_ctor_field1
+        return PosDefaultStructWithFieldUsingImmutableStruct(self._native.non_const_ctor_field1)
 
     @non_const_ctor_field1.setter
     def non_const_ctor_field1(self, value: PosDefaultStructWithFieldUsingImmutableStruct):
-        self._native.non_const_ctor_field1 = value
+      self._native.non_const_ctor_field1 = getattr(value, "_native", value)
 
 
 
     @property
     def non_const_ctor_field2(self) -> SomeMutableCustomStructWithDefaults:
         """"""
-        return self._native.non_const_ctor_field2
+        return SomeMutableCustomStructWithDefaults(self._native.non_const_ctor_field2)
 
     @non_const_ctor_field2.setter
     def non_const_ctor_field2(self, value: SomeMutableCustomStructWithDefaults):
-        self._native.non_const_ctor_field2 = value
+      self._native.non_const_ctor_field2 = getattr(value, "_native", value)
 
 
 
     @property
     def non_const_ctor_field3(self) -> StructWithNullableCollectionDefaults:
         """"""
-        return self._native.non_const_ctor_field3
+        return StructWithNullableCollectionDefaults(self._native.non_const_ctor_field3)
 
     @non_const_ctor_field3.setter
     def non_const_ctor_field3(self, value: StructWithNullableCollectionDefaults):
-        self._native.non_const_ctor_field3 = value
+      self._native.non_const_ctor_field3 = getattr(value, "_native", value)
 
 
 
     @property
     def non_const_ctor_field4(self):
         """"""
-        return self._native.non_const_ctor_field4
+        return Optional[StructWithAllDefaults](self._native.non_const_ctor_field4)
 
     @non_const_ctor_field4.setter
     def non_const_ctor_field4(self, value):
-        self._native.non_const_ctor_field4 = value
+      self._native.non_const_ctor_field4 = getattr(value, "_native", value)
 
 
 
@@ -174,7 +174,7 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
 
     @non_const_ctor_field5.setter
     def non_const_ctor_field5(self, value: bytes):
-        self._native.non_const_ctor_field5 = value
+      self._native.non_const_ctor_field5 = getattr(value, "_native", value)
 
 
 
@@ -185,7 +185,7 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
 
     @non_const_ctor_field6.setter
     def non_const_ctor_field6(self, value: bytes):
-        self._native.non_const_ctor_field6 = value
+      self._native.non_const_ctor_field6 = getattr(value, "_native", value)
 
 
 
@@ -196,6 +196,6 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
 
     @non_const_ctor_field7.setter
     def non_const_ctor_field7(self, value):
-        self._native.non_const_ctor_field7 = value
+      self._native.non_const_ctor_field7 = getattr(value, "_native", value)
 
 

@@ -16,7 +16,7 @@ class SystemColor(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SystemColor):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SystemColor(*args))
+            super().__init__(generated.SystemColor(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class SystemColor(_NativeBase):
 
     @red.setter
     def red(self, value: float):
-        self._native.red = value
+      self._native.red = getattr(value, "_native", value)
 
 
 
@@ -37,7 +37,7 @@ class SystemColor(_NativeBase):
 
     @green.setter
     def green(self, value: float):
-        self._native.green = value
+      self._native.green = getattr(value, "_native", value)
 
 
 
@@ -48,7 +48,7 @@ class SystemColor(_NativeBase):
 
     @blue.setter
     def blue(self, value: float):
-        self._native.blue = value
+      self._native.blue = getattr(value, "_native", value)
 
 
 
@@ -59,6 +59,6 @@ class SystemColor(_NativeBase):
 
     @alpha.setter
     def alpha(self, value: float):
-        self._native.alpha = value
+      self._native.alpha = getattr(value, "_native", value)
 
 
