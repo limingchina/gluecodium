@@ -30,6 +30,7 @@ import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeSignatureResolver
 import com.here.gluecodium.model.lime.LimeStruct
+import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeRef
 
 /**
@@ -117,6 +118,16 @@ internal class PythonGeneratorPredicates(
             "hasCppRef" to { limeElement: Any ->
                 limeElement is LimeProperty && limeElement.attributes.have(CPP, REF)
             },
+            "isImmutableField" to { limeElement: Any ->
+                limeElement is LimeField && run {
+                    val parentKey = limeElement.path.parent.toString()
+                    val parent = limeReferenceMap[parentKey] as? LimeStruct
+                    val parentIsImmutable = parent?.attributes?.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) == true
+                    val fieldType = limeElement.typeRef.type.actualType
+                    val fieldTypeIsImmutable = fieldTypeHasImmutableFields(fieldType)
+                    parentIsImmutable || fieldTypeIsImmutable
+                }
+            },
             // Whether the element lives inside a non-empty namespace (i.e. its LimePath head is not
             // empty). Used by the pybind11 file template to emit `using` aliases so the generated
             // code can refer to the C++ type by its short name.
@@ -154,4 +165,21 @@ internal class PythonGeneratorPredicates(
                 }
             },
         )
+
+    private fun fieldTypeHasImmutableFields(limeType: LimeType): Boolean {
+        return when (limeType) {
+            is com.here.gluecodium.model.lime.LimeStruct ->
+                com.here.gluecodium.generator.common.CommonGeneratorPredicates.hasImmutableFields(limeType)
+            is com.here.gluecodium.model.lime.LimeTypeAlias ->
+                fieldTypeHasImmutableFields(limeType.typeRef.type)
+            is com.here.gluecodium.model.lime.LimeList ->
+                fieldTypeHasImmutableFields(limeType.elementType.type)
+            is com.here.gluecodium.model.lime.LimeSet ->
+                fieldTypeHasImmutableFields(limeType.elementType.type)
+            is com.here.gluecodium.model.lime.LimeMap ->
+                fieldTypeHasImmutableFields(limeType.keyType.type) ||
+                    fieldTypeHasImmutableFields(limeType.valueType.type)
+            else -> false
+        }
+    }
 }

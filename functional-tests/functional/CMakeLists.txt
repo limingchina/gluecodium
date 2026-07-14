@@ -145,7 +145,7 @@ feature(StructsInTypes cpp android android-kotlin swift dart SOURCES
     input/lime/TypeCollection.lime
 )
 
-feature(StructsImmutable cpp android android-kotlin swift dart SOURCES
+feature(StructsImmutable cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/PlainDataStructuresImmutable.cpp
 
     input/lime/PlainDataStructuresImmutable.lime
