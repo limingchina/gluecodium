@@ -30,6 +30,7 @@ import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeType
+import com.here.gluecodium.model.lime.LimeTypeAlias
 import com.here.gluecodium.model.lime.LimeTypeRef
 import com.here.gluecodium.model.lime.LimeValue
 
@@ -55,6 +56,7 @@ internal class PythonImportResolver(
         }
 
     private fun resolveTypeImports(limeType: LimeType): List<PythonImport> {
+        if (limeType is LimeTypeAlias) return resolveTypeImports(limeType.typeRef.type)
         if (limeType is com.here.gluecodium.model.lime.LimeBasicType) {
             return when (limeType.typeId) {
                 com.here.gluecodium.model.lime.LimeBasicType.TypeId.DATE,

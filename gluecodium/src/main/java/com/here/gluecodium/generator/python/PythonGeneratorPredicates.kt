@@ -81,7 +81,7 @@ internal class PythonGeneratorPredicates(
             // unwrapped to its native `_native` handle before being passed to a pybind11 call.
             "isWrapperType" to { limeTypeRef: Any ->
                 limeTypeRef is LimeTypeRef &&
-                    limeTypeRef.type.let {
+                    limeTypeRef.type.actualType.let {
                         it !is com.here.gluecodium.model.lime.LimeBasicType &&
                             it !is com.here.gluecodium.model.lime.LimeGenericType
                     }
