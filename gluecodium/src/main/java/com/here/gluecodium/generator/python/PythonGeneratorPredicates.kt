@@ -71,6 +71,12 @@ internal class PythonGeneratorPredicates(
                         container.functions.count { pybind11NameResolver.resolveName(it) == cppName } > 1
                     }
             },
+            "needsInterfaceLambdaBinding" to { limeFunction: Any ->
+                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
+                    !limeFunction.isStatic &&
+                    limeReferenceMap[limeFunction.path.parent.toString()] is
+                        com.here.gluecodium.model.lime.LimeInterface
+            },
             // Whether a type reference refers to a user-defined (generated-wrapper) type that must be
             // unwrapped to its native `_native` handle before being passed to a pybind11 call.
             "isWrapperType" to { limeTypeRef: Any ->

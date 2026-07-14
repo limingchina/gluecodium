@@ -24,14 +24,16 @@ public:
     ::std::string duration_function(
             ::std::chrono::seconds input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::string, DurationInterface, duration_function, input);
+        PYBIND11_OVERRIDE_PURE(::std::string, DurationInterface, duration_function, input);
     }
 };
 
 void register_DurationInterface(py::module_& module) {
     py::class_<DurationInterface, std::shared_ptr<DurationInterface>, DurationInterfaceTrampoline>(module, "DurationInterface")
         .def(py::init<>())
-        .def("duration_function", &DurationInterface::duration_function, py::arg("input"))
+        .def("duration_function", [](DurationInterface& self, const ::std::chrono::seconds input) {
+            return self.duration_function(input);
+        }, py::arg("input"))
         ;
 }
 
