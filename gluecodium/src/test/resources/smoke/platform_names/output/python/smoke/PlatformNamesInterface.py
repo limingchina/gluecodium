@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.BasicStruct import BasicStruct
+from smoke.PlatformNamesBasicStruct import PlatformNamesBasicStruct
 
 
 from _native_base import _NativeBase
@@ -16,13 +16,11 @@ class PlatformNamesInterface(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
-    def basic_method(self, basic_parameter: str) -> BasicStruct:
+    def basic_method(self, basic_parameter: str) -> PlatformNamesBasicStruct:
         """"""
         return self._native.basic_method(basic_parameter)
 
     @staticmethod
-
     def create(basic_parameter: str) -> PlatformNamesInterface:
         """"""
         native_result = generated.PlatformNamesInterface.create(basic_parameter)

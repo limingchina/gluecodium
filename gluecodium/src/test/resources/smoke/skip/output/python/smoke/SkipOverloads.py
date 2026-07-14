@@ -16,7 +16,7 @@ class SkipOverloads(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SkipOverloads):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkipOverloads(*args))
+            super().__init__(generated.SkipOverloads(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,8 +26,7 @@ class SkipOverloads(_NativeBase):
 
     @dummy.setter
     def dummy(self, value: float):
-        self._native.dummy = value
-
+      self._native.dummy = getattr(value, "_native", value)
 
 
     def do_foo(self, input: float):

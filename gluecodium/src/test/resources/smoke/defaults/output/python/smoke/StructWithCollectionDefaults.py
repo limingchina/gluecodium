@@ -16,7 +16,7 @@ class StructWithCollectionDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], StructWithCollectionDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithCollectionDefaults(*args))
+            super().__init__(generated.StructWithCollectionDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class StructWithCollectionDefaults(_NativeBase):
 
     @empty_list_field.setter
     def empty_list_field(self, value: list[str]):
-        self._native.empty_list_field = value
+      self._native.empty_list_field = getattr(value, "_native", value)
 
 
 
@@ -37,7 +37,7 @@ class StructWithCollectionDefaults(_NativeBase):
 
     @empty_map_field.setter
     def empty_map_field(self, value: dict[str, str]):
-        self._native.empty_map_field = value
+      self._native.empty_map_field = getattr(value, "_native", value)
 
 
 
@@ -48,7 +48,7 @@ class StructWithCollectionDefaults(_NativeBase):
 
     @empty_set_field.setter
     def empty_set_field(self, value: set[str]):
-        self._native.empty_set_field = value
+      self._native.empty_set_field = getattr(value, "_native", value)
 
 
 
@@ -59,7 +59,7 @@ class StructWithCollectionDefaults(_NativeBase):
 
     @list_field.setter
     def list_field(self, value: list[str]):
-        self._native.list_field = value
+      self._native.list_field = getattr(value, "_native", value)
 
 
 
@@ -70,7 +70,7 @@ class StructWithCollectionDefaults(_NativeBase):
 
     @map_field.setter
     def map_field(self, value: dict[str, str]):
-        self._native.map_field = value
+      self._native.map_field = getattr(value, "_native", value)
 
 
 
@@ -81,6 +81,6 @@ class StructWithCollectionDefaults(_NativeBase):
 
     @set_field.setter
     def set_field(self, value: set[str]):
-        self._native.set_field = value
+      self._native.set_field = getattr(value, "_native", value)
 
 

@@ -16,7 +16,7 @@ class FieldConstructorWithComment(_NativeBase):
         if len(args) == 1 and isinstance(args[0], FieldConstructorWithComment):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorWithComment(*args))
+            super().__init__(generated.FieldConstructorWithComment(*[getattr(arg, "_native", arg) for arg in args]))
 
     Some field
     @property
@@ -26,6 +26,6 @@ class FieldConstructorWithComment(_NativeBase):
 
     @string_field.setter
     def string_field(self, value: str):
-        self._native.string_field = value
+      self._native.string_field = getattr(value, "_native", value)
 
 

@@ -14,7 +14,7 @@ class ScalarKeyframeTrack(_NativeBase):
         if len(args) == 1 and isinstance(args[0], ScalarKeyframeTrack):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ScalarKeyframeTrack(*args))
+            super().__init__(generated.ScalarKeyframeTrack(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class ScalarKeyframeTrack(_NativeBase):
 
     @keyframes.setter
     def keyframes(self, value: list[ScalarKeyframe]):
-        self._native.keyframes = value
+      self._native.keyframes = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class ScalarKeyframeTrack(_NativeBase):
 
     @easing_function.setter
     def easing_function(self, value: str):
-        self._native.easing_function = value
+      self._native.easing_function = getattr(value, "_native", value)
 
 
 
@@ -46,6 +46,6 @@ class ScalarKeyframeTrack(_NativeBase):
 
     @interpolation_mode.setter
     def interpolation_mode(self, value: str):
-        self._native.interpolation_mode = value
+      self._native.interpolation_mode = getattr(value, "_native", value)
 
 

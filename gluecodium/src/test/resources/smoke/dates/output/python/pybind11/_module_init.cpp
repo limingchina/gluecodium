@@ -13,7 +13,9 @@
 void register_DateDefaults(pybind11::module_& module);
 void register_DateDefaultsAliased(pybind11::module_& module);
 void register_Dates(pybind11::module_& module);
+void register_DatesDateStruct(pybind11::module_& module);
 void register_DatesSteady(pybind11::module_& module);
+void register_DatesSteadyDateStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -24,5 +26,7 @@ PYBIND11_MODULE(generated, m) {
     register_DateDefaults(m);
     register_DateDefaultsAliased(m);
     register_Dates(m);
+    register_DatesDateStruct(m);
     register_DatesSteady(m);
+    register_DatesSteadyDateStruct(m);
 }

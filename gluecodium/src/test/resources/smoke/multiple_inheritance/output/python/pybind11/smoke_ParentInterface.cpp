@@ -24,12 +24,12 @@ public:
     void parent_function(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterface, parent_function);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterface, parent_function);
     }
     void some_function_that_uses_type_from_another_package(
             const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterface, some_function_that_uses_type_from_another_package, some_param);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterface, some_function_that_uses_type_from_another_package, some_param);
     }
     ::std::string& get_parent_property() const override {
         py::gil_scoped_acquire gil;
@@ -44,8 +44,12 @@ public:
 void register_ParentInterface(py::module_& module) {
     py::class_<ParentInterface, std::shared_ptr<ParentInterface>, ParentInterfaceTrampoline>(module, "ParentInterface")
         .def(py::init<>())
-        .def("parent_function", &ParentInterface::parent_function)
-        .def("some_function_that_uses_type_from_another_package", &ParentInterface::some_function_that_uses_type_from_another_package, py::arg("some_param"))
+        .def("parent_function", [](ParentInterface& self) {
+            return self.parent_function();
+        })
+        .def("some_function_that_uses_type_from_another_package", [](ParentInterface& self, const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param) {
+            return self.some_function_that_uses_type_from_another_package(some_param);
+        }, py::arg("some_param"))
         .def_property("parent_property", py::overload_cast<>(&ParentInterface::get_parent_property, py::const_), py::overload_cast<const ::std::string&>(&ParentInterface::set_parent_property))
         ;
 }

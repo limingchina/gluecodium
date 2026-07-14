@@ -17,15 +17,7 @@ class EnableIfTypesEnabled(_NativeBase):
         if len(args) == 1 and isinstance(args[0], EnableIfTypesEnabled):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnableIfTypesEnabled(*args))
-
-from enum import Enum
-
-
-class EnableMe(Enum):
-    """"""
-
-    NOPE = 0
+            super().__init__(generated.EnableIfTypesEnabled(*[getattr(arg, "_native", arg) for arg in args]))
 
 
 PLACE_HOLDER_ENABLED = True

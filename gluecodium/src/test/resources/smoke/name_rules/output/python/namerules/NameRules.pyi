@@ -2,7 +2,7 @@
 
 from namerules.ExampleError import ExampleError
 from namerules.ExampleErrorCode import ExampleErrorCode
-from namerules.ExampleStruct import ExampleStruct
+from namerules.NameRulesExampleStruct import NameRulesExampleStruct
 
 
 from _native_base import _NativeBase
@@ -17,14 +17,12 @@ class NameRules(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def create() -> NameRules:
         """"""
         native_result = generated.NameRules.create()
         return NameRules(native_result)
 
-
-    def some_method(self, some_argument: ExampleStruct) -> float:
+    def some_method(self, some_argument: NameRulesExampleStruct) -> float:
         """"""
         return self._native.some_method(some_argument._native)
 
@@ -50,20 +48,11 @@ class NameRules(_NativeBase):
 
 
     @property
-    def struct_property(self) -> ExampleStruct:
+    def struct_property(self) -> NameRulesExampleStruct:
         """"""
         return self._native.struct_property
 
     @struct_property.setter
-    def struct_property(self, value: ExampleStruct):
+    def struct_property(self, value: NameRulesExampleStruct):
         self._native.struct_property = value
-
-from enum import Enum
-
-
-class ExampleErrorCode(Enum):
-    """"""
-
-    NONE = 0
-    FATAL = 1
 

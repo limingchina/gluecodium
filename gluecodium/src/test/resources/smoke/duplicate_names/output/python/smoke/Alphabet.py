@@ -5,11 +5,17 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class Alphabet(Enum):
     """"""
 
-    A = 0
-    B = 1
-    C = 2
+    A = generated.Alphabet.A
+    B = generated.Alphabet.B
+    C = generated.Alphabet.C
+
+    @property
+    def _native(self):
+        return self.value
 

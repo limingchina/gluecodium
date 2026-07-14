@@ -16,7 +16,7 @@ class JavaDeprecatedPosDefaultsCustom(_NativeBase):
         if len(args) == 1 and isinstance(args[0], JavaDeprecatedPosDefaultsCustom):
             super().__init__(args[0])
         else:
-            super().__init__(generated.JavaDeprecatedPosDefaultsCustom(*args))
+            super().__init__(generated.JavaDeprecatedPosDefaultsCustom(*[getattr(arg, "_native", arg) for arg in args]))
 
     first init!
     @property
@@ -26,7 +26,7 @@ class JavaDeprecatedPosDefaultsCustom(_NativeBase):
 
     @first_init_field.setter
     def first_init_field(self, value: int):
-        self._native.first_init_field = value
+      self._native.first_init_field = getattr(value, "_native", value)
 
 
     first free!
@@ -37,11 +37,10 @@ class JavaDeprecatedPosDefaultsCustom(_NativeBase):
 
     @first_free_field.setter
     def first_free_field(self, value: str):
-        self._native.first_free_field = value
+      self._native.first_free_field = getattr(value, "_native", value)
 
 
     @staticmethod
-
     def custom() -> JavaDeprecatedPosDefaultsCustom:
         """"""
         native_result = generated.JavaDeprecatedPosDefaultsCustom.custom()

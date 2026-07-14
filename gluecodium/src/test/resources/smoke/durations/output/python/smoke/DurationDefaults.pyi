@@ -15,7 +15,7 @@ class DurationDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DurationDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DurationDefaults(*args))
+            super().__init__(generated.DurationDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -25,7 +25,7 @@ class DurationDefaults(_NativeBase):
 
     @dayz.setter
     def dayz(self, value: datetime.timedelta):
-        self._native.dayz = value
+      self._native.dayz = getattr(value, "_native", value)
 
 
 
@@ -36,7 +36,7 @@ class DurationDefaults(_NativeBase):
 
     @hourz.setter
     def hourz(self, value: datetime.timedelta):
-        self._native.hourz = value
+      self._native.hourz = getattr(value, "_native", value)
 
 
 
@@ -47,7 +47,7 @@ class DurationDefaults(_NativeBase):
 
     @minutez.setter
     def minutez(self, value: datetime.timedelta):
-        self._native.minutez = value
+      self._native.minutez = getattr(value, "_native", value)
 
 
 
@@ -58,7 +58,7 @@ class DurationDefaults(_NativeBase):
 
     @secondz.setter
     def secondz(self, value: datetime.timedelta):
-        self._native.secondz = value
+      self._native.secondz = getattr(value, "_native", value)
 
 
 
@@ -69,7 +69,7 @@ class DurationDefaults(_NativeBase):
 
     @milliz.setter
     def milliz(self, value: datetime.timedelta):
-        self._native.milliz = value
+      self._native.milliz = getattr(value, "_native", value)
 
 
 
@@ -80,7 +80,7 @@ class DurationDefaults(_NativeBase):
 
     @microz.setter
     def microz(self, value: datetime.timedelta):
-        self._native.microz = value
+      self._native.microz = getattr(value, "_native", value)
 
 
 
@@ -91,6 +91,6 @@ class DurationDefaults(_NativeBase):
 
     @nanoz.setter
     def nanoz(self, value: datetime.timedelta):
-        self._native.nanoz = value
+      self._native.nanoz = getattr(value, "_native", value)
 
 

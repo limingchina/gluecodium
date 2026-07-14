@@ -14,7 +14,7 @@ class SkipEnableConstants(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SkipEnableConstants):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkipEnableConstants(*args))
+            super().__init__(generated.SkipEnableConstants(*[getattr(arg, "_native", arg) for arg in args]))
 
 
 SOME_CONSTANT = 2

@@ -1,6 +1,6 @@
 
 
-from smoke.StructNestedInInternalStruct import StructNestedInInternalStruct
+from smoke.OuterStructWithInternalAttributeStructNestedInInternalStruct import OuterStructWithInternalAttributeStructNestedInInternalStruct
 
 
 from _native_base import _NativeBase
@@ -15,16 +15,16 @@ class OuterStructWithInternalAttribute(_NativeBase):
         if len(args) == 1 and isinstance(args[0], OuterStructWithInternalAttribute):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterStructWithInternalAttribute(*args))
+            super().__init__(generated.OuterStructWithInternalAttribute(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
-    def inner(self) -> StructNestedInInternalStruct:
+    def inner(self) -> OuterStructWithInternalAttributeStructNestedInInternalStruct:
         """"""
-        return self._native.inner
+        return OuterStructWithInternalAttributeStructNestedInInternalStruct(self._native.inner)
 
     @inner.setter
-    def inner(self, value: StructNestedInInternalStruct):
-        self._native.inner = value
+    def inner(self, value: OuterStructWithInternalAttributeStructNestedInInternalStruct):
+      self._native.inner = getattr(value, "_native", value)
 
 

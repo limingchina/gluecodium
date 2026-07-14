@@ -20,10 +20,10 @@ using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
 
 void register_UseSwiftExternalTypes(py::module_& module) {
     py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "UseSwiftExternalTypes")
-        .def("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
-        .def("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
-        .def("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
-        .def("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
+        .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
+        .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
+        .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
+        .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
         ;
 }
 

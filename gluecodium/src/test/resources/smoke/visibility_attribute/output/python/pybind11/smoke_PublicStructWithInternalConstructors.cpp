@@ -18,7 +18,7 @@ using PublicStructWithInternalConstructors = ::smoke::PublicStructWithInternalCo
 void register_PublicStructWithInternalConstructors(py::module_& module) {
     py::class_<PublicStructWithInternalConstructors>(module, "PublicStructWithInternalConstructors")
         .def_readwrite("some_var", &PublicStructWithInternalConstructors::some_var)
-        .def("make", &PublicStructWithInternalConstructors::make)
+        .def_static("make", &PublicStructWithInternalConstructors::make)
         ;
 }
 

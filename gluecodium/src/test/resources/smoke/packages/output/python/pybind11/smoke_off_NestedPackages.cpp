@@ -17,7 +17,7 @@ using NestedPackages = ::smoke::off::NestedPackages;
 
 void register_NestedPackages(py::module_& module) {
     py::class_<NestedPackages, std::shared_ptr<NestedPackages>>(module, "NestedPackages")
-        .def("basic_method", &NestedPackages::basic_method, py::arg("input"))
+        .def_static("basic_method", &NestedPackages::basic_method, py::arg("input"))
         ;
 }
 

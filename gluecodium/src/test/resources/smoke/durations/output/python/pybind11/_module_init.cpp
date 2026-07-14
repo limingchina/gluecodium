@@ -13,8 +13,10 @@
 void register_DurationDefaults(pybind11::module_& module);
 void register_DurationInterface(pybind11::module_& module);
 void register_DurationMilliseconds(pybind11::module_& module);
+void register_DurationMillisecondsDurationStruct(pybind11::module_& module);
 void register_DurationOverloads(pybind11::module_& module);
 void register_DurationSeconds(pybind11::module_& module);
+void register_DurationSecondsDurationStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -25,6 +27,8 @@ PYBIND11_MODULE(generated, m) {
     register_DurationDefaults(m);
     register_DurationInterface(m);
     register_DurationMilliseconds(m);
+    register_DurationMillisecondsDurationStruct(m);
     register_DurationOverloads(m);
     register_DurationSeconds(m);
+    register_DurationSecondsDurationStruct(m);
 }

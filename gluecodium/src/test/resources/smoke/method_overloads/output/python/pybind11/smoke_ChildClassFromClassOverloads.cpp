@@ -17,10 +17,10 @@ using ChildClassFromClassOverloads = ::smoke::ChildClassFromClassOverloads;
 
 void register_ChildClassFromClassOverloads(py::module_& module) {
     py::class_<ChildClassFromClassOverloads, std::shared_ptr<ChildClassFromClassOverloads>>(module, "ChildClassFromClassOverloads")
-        .def("foo", &ChildClassFromClassOverloads::foo, py::arg("input"))
-        .def("foo", &ChildClassFromClassOverloads::foo, py::arg("input"))
-        .def("bar", &ChildClassFromClassOverloads::bar, py::arg("input"))
-        .def("bar", &ChildClassFromClassOverloads::bar, py::arg("input"))
+        .def("foo", py::overload_cast<const ::std::string&>(&ChildClassFromClassOverloads::foo), py::arg("input"))
+        .def("foo", py::overload_cast<const double>(&ChildClassFromClassOverloads::foo), py::arg("input"))
+        .def("bar", py::overload_cast<const ::std::string&>(&ChildClassFromClassOverloads::bar), py::arg("input"))
+        .def("bar", py::overload_cast<const double>(&ChildClassFromClassOverloads::bar), py::arg("input"))
         ;
 }
 

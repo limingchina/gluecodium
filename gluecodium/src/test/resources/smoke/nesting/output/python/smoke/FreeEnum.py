@@ -5,10 +5,16 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class FreeEnum(Enum):
     """"""
 
-    FOO = 0
-    BAR = 1
+    FOO = generated.FreeEnum.FOO
+    BAR = generated.FreeEnum.BAR
+
+    @property
+    def _native(self):
+        return self.value
 

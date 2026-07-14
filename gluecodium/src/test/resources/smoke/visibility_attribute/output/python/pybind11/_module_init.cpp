@@ -14,16 +14,24 @@ void register_InternalClass(pybind11::module_& module);
 void register_InternalClassInherits(pybind11::module_& module);
 void register_InternalClassWithFunctions(pybind11::module_& module);
 void register_InternalClassWithStaticProperty(pybind11::module_& module);
+void register_InternalEnum(pybind11::module_& module);
 void register_InternalInterface(pybind11::module_& module);
 void register_InternalInterfaceParent(pybind11::module_& module);
 void register_InternalPropertyOnly(pybind11::module_& module);
 void register_OuterClassWithInternalAttribute(pybind11::module_& module);
+void register_OuterClassWithInternalAttributeStructNestedInInternalClass(pybind11::module_& module);
 void register_OuterStructWithInternalAttribute(pybind11::module_& module);
+void register_OuterStructWithInternalAttributeStructNestedInInternalStruct(pybind11::module_& module);
 void register_PublicClass(pybind11::module_& module);
+void register_PublicClassInternalStruct(pybind11::module_& module);
+void register_PublicClassPublicStruct(pybind11::module_& module);
+void register_PublicClassPublicStructWithInternalDefaults(pybind11::module_& module);
 void register_PublicInterface(pybind11::module_& module);
+void register_PublicInterfaceInternalStruct(pybind11::module_& module);
 void register_PublicStructWithInternalConstructors(pybind11::module_& module);
 void register_PublicStructWithNonDefaultInternalField(pybind11::module_& module);
 void register_PublicTypeCollection(pybind11::module_& module);
+void register_PublicTypeCollectionInternalStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -35,14 +43,22 @@ PYBIND11_MODULE(generated, m) {
     register_InternalClassInherits(m);
     register_InternalClassWithFunctions(m);
     register_InternalClassWithStaticProperty(m);
+    register_InternalEnum(m);
     register_InternalInterface(m);
     register_InternalInterfaceParent(m);
     register_InternalPropertyOnly(m);
     register_OuterClassWithInternalAttribute(m);
+    register_OuterClassWithInternalAttributeStructNestedInInternalClass(m);
     register_OuterStructWithInternalAttribute(m);
+    register_OuterStructWithInternalAttributeStructNestedInInternalStruct(m);
     register_PublicClass(m);
+    register_PublicClassInternalStruct(m);
+    register_PublicClassPublicStruct(m);
+    register_PublicClassPublicStructWithInternalDefaults(m);
     register_PublicInterface(m);
+    register_PublicInterfaceInternalStruct(m);
     register_PublicStructWithInternalConstructors(m);
     register_PublicStructWithNonDefaultInternalField(m);
     register_PublicTypeCollection(m);
+    register_PublicTypeCollectionInternalStruct(m);
 }

@@ -22,7 +22,7 @@ public:
     void very_fun(
             const ::std::string& param ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, AttributesInterface, very_fun, param);
+        PYBIND11_OVERRIDE_PURE(void, AttributesInterface, very_fun, param);
     }
     ::std::string& get_prop() const override {
         py::gil_scoped_acquire gil;
@@ -37,7 +37,9 @@ public:
 void register_AttributesInterface(py::module_& module) {
     py::class_<AttributesInterface, std::shared_ptr<AttributesInterface>, AttributesInterfaceTrampoline>(module, "AttributesInterface")
         .def(py::init<>())
-        .def("very_fun", &AttributesInterface::very_fun, py::arg("param"))
+        .def("very_fun", [](AttributesInterface& self, const ::std::string& param) {
+            return self.very_fun(param);
+        }, py::arg("param"))
         .def_property("prop", py::overload_cast<>(&AttributesInterface::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesInterface::set_prop))
         ;
 }

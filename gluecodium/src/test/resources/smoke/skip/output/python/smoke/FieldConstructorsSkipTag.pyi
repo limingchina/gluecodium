@@ -14,7 +14,7 @@ class FieldConstructorsSkipTag(_NativeBase):
         if len(args) == 1 and isinstance(args[0], FieldConstructorsSkipTag):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsSkipTag(*args))
+            super().__init__(generated.FieldConstructorsSkipTag(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,6 +24,6 @@ class FieldConstructorsSkipTag(_NativeBase):
 
     @field1.setter
     def field1(self, value: str):
-        self._native.field1 = value
+      self._native.field1 = getattr(value, "_native", value)
 
 

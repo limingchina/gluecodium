@@ -16,51 +16,37 @@ class EnableIfEnabled(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def enable_if_unquoted():
         """"""
-        native_result = generated.EnableIfEnabled.enable_if_unquoted()
-        return None(native_result)
+        generated.EnableIfEnabled.enable_if_unquoted()
 
     @staticmethod
-
     def enable_if_unquoted_list():
         """"""
-        native_result = generated.EnableIfEnabled.enable_if_unquoted_list()
-        return None(native_result)
+        generated.EnableIfEnabled.enable_if_unquoted_list()
 
     @staticmethod
-
     def enable_if_quoted():
         """"""
-        native_result = generated.EnableIfEnabled.enable_if_quoted()
-        return None(native_result)
+        generated.EnableIfEnabled.enable_if_quoted()
 
     @staticmethod
-
     def enable_if_quoted_list():
         """"""
-        native_result = generated.EnableIfEnabled.enable_if_quoted_list()
-        return None(native_result)
+        generated.EnableIfEnabled.enable_if_quoted_list()
 
     @staticmethod
-
     def enable_if_tagged():
         """"""
-        native_result = generated.EnableIfEnabled.enable_if_tagged()
-        return None(native_result)
+        generated.EnableIfEnabled.enable_if_tagged()
 
     @staticmethod
-
     def enable_if_tagged_list():
         """"""
-        native_result = generated.EnableIfEnabled.enable_if_tagged_list()
-        return None(native_result)
+        generated.EnableIfEnabled.enable_if_tagged_list()
 
     @staticmethod
-
     def enable_if_mixed_list():
         """"""
-        native_result = generated.EnableIfEnabled.enable_if_mixed_list()
-        return None(native_result)
+        generated.EnableIfEnabled.enable_if_mixed_list()
 

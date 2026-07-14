@@ -16,7 +16,7 @@ class StructWithMap(_NativeBase):
         if len(args) == 1 and isinstance(args[0], StructWithMap):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithMap(*args))
+            super().__init__(generated.StructWithMap(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,6 +26,6 @@ class StructWithMap(_NativeBase):
 
     @field.setter
     def field(self, value: dict[str, StructWithMap]):
-        self._native.field = value
+      self._native.field = getattr(value, "_native", value)
 
 

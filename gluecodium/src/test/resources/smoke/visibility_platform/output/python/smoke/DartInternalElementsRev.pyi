@@ -14,7 +14,7 @@ class DartInternalElementsRev(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DartInternalElementsRev):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartInternalElementsRev(*args))
+            super().__init__(generated.DartInternalElementsRev(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,8 +24,7 @@ class DartInternalElementsRev(_NativeBase):
 
     @string_field.setter
     def string_field(self, value: str):
-        self._native.string_field = value
-
+      self._native.string_field = getattr(value, "_native", value)
 
 
     def foo(self):

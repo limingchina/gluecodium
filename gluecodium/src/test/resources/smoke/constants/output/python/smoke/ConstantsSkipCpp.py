@@ -16,7 +16,7 @@ class ConstantsSkipCpp(_NativeBase):
         if len(args) == 1 and isinstance(args[0], ConstantsSkipCpp):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ConstantsSkipCpp(*args))
+            super().__init__(generated.ConstantsSkipCpp(*[getattr(arg, "_native", arg) for arg in args]))
 
 
 BOOL_CONSTANT = True

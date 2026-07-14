@@ -22,7 +22,7 @@ void register_AsyncClass(py::module_& module) {
         .def("async_void_throws", &AsyncClass::async_void_throws, py::arg("input"))
         .def("async_int", &AsyncClass::async_int, py::arg("input"))
         .def("async_int_throws", &AsyncClass::async_int_throws, py::arg("input"))
-        .def("async_static", &AsyncClass::async_static, py::arg("input"))
+        .def_static("async_static", &AsyncClass::async_static, py::arg("input"))
         ;
 }
 

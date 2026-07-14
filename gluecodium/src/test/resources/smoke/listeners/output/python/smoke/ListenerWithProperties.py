@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from smoke.CalculationResult import CalculationResult
+from smoke.ListenerWithPropertiesResultStruct import ListenerWithPropertiesResultStruct
 from smoke.ResultEnum import ResultEnum
-from smoke.ResultStruct import ResultStruct
-from smoke.dict[str, float] import dict[str, float]
 
 
 from _native_base import _NativeBase
@@ -44,12 +43,12 @@ class ListenerWithProperties(_NativeBase):
 
 
     @property
-    def structured_message(self) -> ResultStruct:
+    def structured_message(self) -> ListenerWithPropertiesResultStruct:
         """"""
         return self._native.structured_message
 
     @structured_message.setter
-    def structured_message(self, value: ResultStruct):
+    def structured_message(self, value: ListenerWithPropertiesResultStruct):
         self._native.structured_message = value
 
 
@@ -91,7 +90,6 @@ class ListenerWithProperties(_NativeBase):
     @buffered_message.setter
     def buffered_message(self, value: bytes):
         self._native.buffered_message = value
-
 from enum import Enum
 
 
@@ -100,4 +98,5 @@ class ResultEnum(Enum):
 
     NONE = 0
     RESULT = 1
+
 

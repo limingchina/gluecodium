@@ -23,14 +23,16 @@ public:
     void on_temperature_update(
             const ::std::shared_ptr< ::smoke::Thermometer >& thermometer ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, TemperatureObserver, on_temperature_update, thermometer);
+        PYBIND11_OVERRIDE_PURE(void, TemperatureObserver, on_temperature_update, thermometer);
     }
 };
 
 void register_TemperatureObserver(py::module_& module) {
     py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "TemperatureObserver")
         .def(py::init<>())
-        .def("on_temperature_update", &TemperatureObserver::on_temperature_update, py::arg("thermometer"))
+        .def("on_temperature_update", [](TemperatureObserver& self, const ::std::shared_ptr< ::smoke::Thermometer >& thermometer) {
+            return self.on_temperature_update(thermometer);
+        }, py::arg("thermometer"))
         ;
 }
 

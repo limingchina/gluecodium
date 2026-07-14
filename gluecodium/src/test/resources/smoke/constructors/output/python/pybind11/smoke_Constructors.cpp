@@ -21,12 +21,12 @@ using Constructors = ::smoke::Constructors;
 
 void register_Constructors(py::module_& module) {
     py::class_<Constructors, std::shared_ptr<Constructors>>(module, "Constructors")
-        .def("create", &Constructors::create)
-        .def("create", &Constructors::create, py::arg("other"))
-        .def("create", &Constructors::create, py::arg("foo"), py::arg("bar"))
-        .def("create", &Constructors::create, py::arg("input"))
-        .def("create", &Constructors::create, py::arg("input"))
-        .def("create", &Constructors::create, py::arg("input"))
+        .def_static("create", py::overload_cast<>(&Constructors::create))
+        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(&Constructors::create), py::arg("other"))
+        .def_static("create", py::overload_cast<const ::std::string&, const uint64_t>(&Constructors::create), py::arg("foo"), py::arg("bar"))
+        .def_static("create", py::overload_cast<const ::std::string&>(&Constructors::create), py::arg("input"))
+        .def_static("create", py::overload_cast<const ::std::vector< double >&>(&Constructors::create), py::arg("input"))
+        .def_static("create", py::overload_cast<const uint64_t>(&Constructors::create), py::arg("input"))
         ;
 }
 

@@ -14,9 +14,7 @@ class UnderscorePackage(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def basic_method(input_string: str) -> str:
         """"""
-        native_result = generated.UnderscorePackage.basic_method(input_string)
-        return str(native_result)
+        return generated.UnderscorePackage.basic_method(input_string)
 

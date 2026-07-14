@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.ErrorStruct import ErrorStruct
+from smoke.EnumsErrorStruct import EnumsErrorStruct
 from smoke.InternalErrorCode import InternalErrorCode
 from smoke.SimpleEnum import SimpleEnum
 
@@ -19,48 +19,26 @@ class Enums(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def method_with_enumeration(input: SimpleEnum) -> SimpleEnum:
         """"""
-        native_result = generated.Enums.method_with_enumeration(input)
+        native_result = generated.Enums.method_with_enumeration(input._native)
         return SimpleEnum(native_result)
 
     @staticmethod
-
     def flip_enum_value(input: InternalErrorCode) -> InternalErrorCode:
         """"""
-        native_result = generated.Enums.flip_enum_value(input)
+        native_result = generated.Enums.flip_enum_value(input._native)
         return InternalErrorCode(native_result)
 
     @staticmethod
-
-    def extract_enum_from_struct(input: ErrorStruct) -> InternalErrorCode:
+    def extract_enum_from_struct(input: EnumsErrorStruct) -> InternalErrorCode:
         """"""
-        native_result = generated.Enums.extract_enum_from_struct(input)
+        native_result = generated.Enums.extract_enum_from_struct(input._native)
         return InternalErrorCode(native_result)
 
     @staticmethod
-
-    def create_struct_with_enum_inside(type: InternalErrorCode, message: str) -> ErrorStruct:
+    def create_struct_with_enum_inside(type: InternalErrorCode, message: str) -> EnumsErrorStruct:
         """"""
-        native_result = generated.Enums.create_struct_with_enum_inside(type, message)
-        return ErrorStruct(native_result)
-
-from enum import Enum
-
-
-class SimpleEnum(Enum):
-    """"""
-
-    FIRST = 0
-    SECOND = 1
-
-from enum import Enum
-
-
-class InternalErrorCode(Enum):
-    """"""
-
-    ERROR_NONE = 0
-    ERROR_FATAL = 1
+        native_result = generated.Enums.create_struct_with_enum_inside(type._native, message)
+        return EnumsErrorStruct(native_result)
 

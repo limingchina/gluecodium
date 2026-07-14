@@ -1,7 +1,7 @@
 
 
-from smoke.ExampleStruct import ExampleStruct
 from smoke.InternalErrorCode import InternalErrorCode
+from smoke.PropertiesExampleStruct import PropertiesExampleStruct
 from smoke.PropertiesInterface import PropertiesInterface
 
 
@@ -35,12 +35,12 @@ class Properties(_NativeBase):
 
 
     @property
-    def struct_property(self) -> ExampleStruct:
+    def struct_property(self) -> PropertiesExampleStruct:
         """"""
         return self._native.struct_property
 
     @struct_property.setter
-    def struct_property(self, value: ExampleStruct):
+    def struct_property(self, value: PropertiesExampleStruct):
         self._native.struct_property = value
 
 
@@ -94,28 +94,14 @@ class Properties(_NativeBase):
         self._native.is_boolean_property = value
 
 
-    @property
-    def static_property(self) -> str:
+    @staticmethod
+    def static_property() -> str:
         """"""
-        return self._native.static_property
-
-    @static_property.setter
-    def static_property(self, value: str):
-        self._native.static_property = value
+        return generated.Properties.static_property()
 
 
-    @property
-    def static_readonly_property(self) -> ExampleStruct:
+    @staticmethod
+    def static_readonly_property() -> PropertiesExampleStruct:
         """"""
-        return self._native.static_readonly_property
-
-
-from enum import Enum
-
-
-class InternalErrorCode(Enum):
-    """"""
-
-    ERROR_NONE = 0
-    ERROR_FATAL = 1
+        return generated.Properties.static_readonly_property()
 

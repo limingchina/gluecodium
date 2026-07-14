@@ -14,7 +14,7 @@ class Rectangle(_NativeBase):
         if len(args) == 1 and isinstance(args[0], Rectangle):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Rectangle(*args))
+            super().__init__(generated.Rectangle(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class Rectangle(_NativeBase):
 
     @left.setter
     def left(self, value: int):
-        self._native.left = value
+      self._native.left = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class Rectangle(_NativeBase):
 
     @top.setter
     def top(self, value: int):
-        self._native.top = value
+      self._native.top = getattr(value, "_native", value)
 
 
 
@@ -46,7 +46,7 @@ class Rectangle(_NativeBase):
 
     @width.setter
     def width(self, value: int):
-        self._native.width = value
+      self._native.width = getattr(value, "_native", value)
 
 
 
@@ -57,6 +57,6 @@ class Rectangle(_NativeBase):
 
     @height.setter
     def height(self, value: int):
-        self._native.height = value
+      self._native.height = getattr(value, "_native", value)
 
 

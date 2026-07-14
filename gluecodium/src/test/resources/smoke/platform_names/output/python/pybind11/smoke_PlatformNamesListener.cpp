@@ -13,7 +13,7 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PlatformNamesListener = ::smoke::fooListener;
+using fooListener = ::smoke::fooListener;
 
 class PlatformNamesListenerTrampoline : public fooListener {
 public:
@@ -22,14 +22,16 @@ public:
     void FooMethod(
             const ::std::string& basic_parameter ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, fooListener, FooMethod, basic_parameter);
+        PYBIND11_OVERRIDE_PURE(void, fooListener, FooMethod, basic_parameter);
     }
 };
 
 void register_PlatformNamesListener(py::module_& module) {
     py::class_<fooListener, std::shared_ptr<fooListener>, PlatformNamesListenerTrampoline>(module, "PlatformNamesListener")
         .def(py::init<>())
-        .def("basic_method", &fooListener::FooMethod, py::arg("basic_parameter"))
+        .def("basic_method", [](fooListener& self, const ::std::string& basic_parameter) {
+            return self.FooMethod(basic_parameter);
+        }, py::arg("basic_parameter"))
         ;
 }
 

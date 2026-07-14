@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-from smoke.NestedEquatableStruct import NestedEquatableStruct
+from smoke.EquatableNestedEquatableStruct import EquatableNestedEquatableStruct
 from smoke.SomeEnum import SomeEnum
-from smoke.dict[int, str] import dict[int, str]
 
 
 from _native_base import _NativeBase
@@ -19,14 +18,5 @@ class Equatable(_NativeBase):
         if len(args) == 1 and isinstance(args[0], Equatable):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Equatable(*args))
-
-from enum import Enum
-
-
-class SomeEnum(Enum):
-    """"""
-
-    FOO = 0
-    BAR = 1
+            super().__init__(generated.Equatable(*[getattr(arg, "_native", arg) for arg in args]))
 

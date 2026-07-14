@@ -14,7 +14,7 @@ class EquatableStructWithAccessors(_NativeBase):
         if len(args) == 1 and isinstance(args[0], EquatableStructWithAccessors):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EquatableStructWithAccessors(*args))
+            super().__init__(generated.EquatableStructWithAccessors(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,6 +24,6 @@ class EquatableStructWithAccessors(_NativeBase):
 
     @foo_field.setter
     def foo_field(self, value: str):
-        self._native.foo_field = value
+      self._native.foo_field = getattr(value, "_native", value)
 
 

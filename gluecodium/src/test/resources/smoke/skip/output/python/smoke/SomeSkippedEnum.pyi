@@ -3,9 +3,15 @@
 
 from enum import Enum
 
+import generated
+
 
 class SomeSkippedEnum(Enum):
     """"""
 
-    FOO = 0
+    FOO = generated.SomeSkippedEnum.FOO
+
+    @property
+    def _native(self):
+        return self.value
 

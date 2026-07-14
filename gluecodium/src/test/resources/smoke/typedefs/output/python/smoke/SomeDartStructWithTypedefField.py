@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.list[float] import list[float]
 
 
 from _native_base import _NativeBase
@@ -17,7 +16,7 @@ class SomeDartStructWithTypedefField(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SomeDartStructWithTypedefField):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SomeDartStructWithTypedefField(*args))
+            super().__init__(generated.SomeDartStructWithTypedefField(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -27,6 +26,6 @@ class SomeDartStructWithTypedefField(_NativeBase):
 
     @some_field.setter
     def some_field(self, value: list[float]):
-        self._native.some_field = value
+      self._native.some_field = getattr(value, "_native", value)
 
 

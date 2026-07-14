@@ -22,7 +22,7 @@ public:
     void child_function(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, FirstParentIsInterfaceInterface, child_function);
+        PYBIND11_OVERRIDE_PURE(void, FirstParentIsInterfaceInterface, child_function);
     }
     ::std::string& get_child_property() const override {
         py::gil_scoped_acquire gil;
@@ -37,7 +37,9 @@ public:
 void register_FirstParentIsInterfaceInterface(py::module_& module) {
     py::class_<FirstParentIsInterfaceInterface, std::shared_ptr<FirstParentIsInterfaceInterface>, FirstParentIsInterfaceInterfaceTrampoline>(module, "FirstParentIsInterfaceInterface")
         .def(py::init<>())
-        .def("child_function", &FirstParentIsInterfaceInterface::child_function)
+        .def("child_function", [](FirstParentIsInterfaceInterface& self) {
+            return self.child_function();
+        })
         .def_property("child_property", py::overload_cast<>(&FirstParentIsInterfaceInterface::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsInterfaceInterface::set_child_property))
         ;
 }

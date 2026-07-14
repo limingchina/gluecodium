@@ -15,15 +15,7 @@ class Types(_NativeBase):
         if len(args) == 1 and isinstance(args[0], Types):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Types(*args))
-
-from enum import Enum
-
-
-class Enum(Enum):
-    """"""
-
-    NA_N = 0
+            super().__init__(generated.Types(*[getattr(arg, "_native", arg) for arg in args]))
 
 
 CONST = enum.NaN

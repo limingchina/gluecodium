@@ -19,8 +19,8 @@ using InternalClassWithFunctions = ::smoke::InternalClassWithFunctions;
 void register_InternalClassWithFunctions(py::module_& module) {
     py::class_<InternalClassWithFunctions, std::shared_ptr<InternalClassWithFunctions>>(module, "InternalClassWithFunctions")
         .def("foo_bar", &InternalClassWithFunctions::foo_bar)
-        .def("make", &InternalClassWithFunctions::make)
-        .def("make", &InternalClassWithFunctions::make, py::arg("foo"))
+        .def_static("make", py::overload_cast<>(&InternalClassWithFunctions::make))
+        .def_static("make", py::overload_cast<const ::std::string&>(&InternalClassWithFunctions::make), py::arg("foo"))
         ;
 }
 

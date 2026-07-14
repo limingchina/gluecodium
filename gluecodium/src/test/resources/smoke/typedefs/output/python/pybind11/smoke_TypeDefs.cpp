@@ -20,12 +20,12 @@ using TypeDefs = ::smoke::TypeDefs;
 
 void register_TypeDefs(py::module_& module) {
     py::class_<TypeDefs, std::shared_ptr<TypeDefs>>(module, "TypeDefs")
-        .def("method_with_primitive_type_def", &TypeDefs::method_with_primitive_type_def, py::arg("input"))
-        .def("method_with_complex_type_def", &TypeDefs::method_with_complex_type_def, py::arg("input"))
-        .def("return_nested_int_type_def", &TypeDefs::return_nested_int_type_def, py::arg("input"))
-        .def("return_test_struct_type_def", &TypeDefs::return_test_struct_type_def, py::arg("input"))
-        .def("return_nested_struct_type_def", &TypeDefs::return_nested_struct_type_def, py::arg("input"))
-        .def("return_type_def_point_from_type_collection", &TypeDefs::return_type_def_point_from_type_collection, py::arg("input"))
+        .def_static("method_with_primitive_type_def", &TypeDefs::method_with_primitive_type_def, py::arg("input"))
+        .def_static("method_with_complex_type_def", &TypeDefs::method_with_complex_type_def, py::arg("input"))
+        .def_static("return_nested_int_type_def", &TypeDefs::return_nested_int_type_def, py::arg("input"))
+        .def_static("return_test_struct_type_def", &TypeDefs::return_test_struct_type_def, py::arg("input"))
+        .def_static("return_nested_struct_type_def", &TypeDefs::return_nested_struct_type_def, py::arg("input"))
+        .def_static("return_type_def_point_from_type_collection", &TypeDefs::return_type_def_point_from_type_collection, py::arg("input"))
         .def_property("primitive_type_property", py::overload_cast<>(&TypeDefs::get_primitive_type_property, py::const_), py::overload_cast<const ::std::vector< double >&>(&TypeDefs::set_primitive_type_property))
         ;
 }

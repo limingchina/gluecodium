@@ -20,18 +20,8 @@ class ExternalClass(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def create() -> ExternalClass:
         """"""
         native_result = generated.ExternalClass.create()
         return ExternalClass(native_result)
-
-from enum import Enum
-
-
-class ErrorEnum(Enum):
-    """"""
-
-    NONE = 0
-    CRASHED = 1
 

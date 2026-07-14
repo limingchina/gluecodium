@@ -13,6 +13,7 @@
 void register_Basic(pybind11::module_& module);
 void register_BasicForwardDeclarations(pybind11::module_& module);
 void register_BasicTypes(pybind11::module_& module);
+void register_BasicTypesSomeStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -23,4 +24,5 @@ PYBIND11_MODULE(generated, m) {
     register_Basic(m);
     register_BasicForwardDeclarations(m);
     register_BasicTypes(m);
+    register_BasicTypesSomeStruct(m);
 }

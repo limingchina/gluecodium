@@ -16,7 +16,7 @@ class LocaleDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], LocaleDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.LocaleDefaults(*args))
+            super().__init__(generated.LocaleDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class LocaleDefaults(_NativeBase):
 
     @english.setter
     def english(self, value: str):
-        self._native.english = value
+      self._native.english = getattr(value, "_native", value)
 
 
 
@@ -37,7 +37,7 @@ class LocaleDefaults(_NativeBase):
 
     @lat_am_spanish.setter
     def lat_am_spanish(self, value: str):
-        self._native.lat_am_spanish = value
+      self._native.lat_am_spanish = getattr(value, "_native", value)
 
 
 
@@ -48,7 +48,7 @@ class LocaleDefaults(_NativeBase):
 
     @romansh_sursilvan.setter
     def romansh_sursilvan(self, value: str):
-        self._native.romansh_sursilvan = value
+      self._native.romansh_sursilvan = getattr(value, "_native", value)
 
 
 
@@ -59,7 +59,7 @@ class LocaleDefaults(_NativeBase):
 
     @serbian_cyrillic.setter
     def serbian_cyrillic(self, value: str):
-        self._native.serbian_cyrillic = value
+      self._native.serbian_cyrillic = getattr(value, "_native", value)
 
 
 
@@ -70,7 +70,7 @@ class LocaleDefaults(_NativeBase):
 
     @traditional_chinese_taiwan.setter
     def traditional_chinese_taiwan(self, value: str):
-        self._native.traditional_chinese_taiwan = value
+      self._native.traditional_chinese_taiwan = getattr(value, "_native", value)
 
 
 
@@ -81,6 +81,6 @@ class LocaleDefaults(_NativeBase):
 
     @zuerich_german.setter
     def zuerich_german(self, value: str):
-        self._native.zuerich_german = value
+      self._native.zuerich_german = getattr(value, "_native", value)
 
 

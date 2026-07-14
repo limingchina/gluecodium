@@ -14,7 +14,7 @@ class DeprecatedFields(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DeprecatedFields):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DeprecatedFields(*args))
+            super().__init__(generated.DeprecatedFields(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class DeprecatedFields(_NativeBase):
 
     @normal_field1.setter
     def normal_field1(self, value: str):
-        self._native.normal_field1 = value
+      self._native.normal_field1 = getattr(value, "_native", value)
 
 
 
@@ -35,7 +35,7 @@ class DeprecatedFields(_NativeBase):
 
     @deprecated_field.setter
     def deprecated_field(self, value: str):
-        self._native.deprecated_field = value
+      self._native.deprecated_field = getattr(value, "_native", value)
 
 
 
@@ -46,6 +46,6 @@ class DeprecatedFields(_NativeBase):
 
     @normal_field2.setter
     def normal_field2(self, value: str):
-        self._native.normal_field2 = value
+      self._native.normal_field2 = getattr(value, "_native", value)
 
 

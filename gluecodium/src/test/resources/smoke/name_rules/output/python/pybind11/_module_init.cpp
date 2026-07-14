@@ -10,7 +10,9 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
+void register_ExampleErrorCode(pybind11::module_& module);
 void register_NameRules(pybind11::module_& module);
+void register_NameRulesExampleStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -18,5 +20,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
+    register_ExampleErrorCode(m);
     register_NameRules(m);
+    register_NameRulesExampleStruct(m);
 }

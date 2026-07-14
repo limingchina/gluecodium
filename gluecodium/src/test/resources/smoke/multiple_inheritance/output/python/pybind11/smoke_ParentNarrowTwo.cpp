@@ -22,7 +22,7 @@ public:
     void parent_function_two(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentNarrowTwo, parent_function_two);
+        PYBIND11_OVERRIDE_PURE(void, ParentNarrowTwo, parent_function_two);
     }
     ::std::string& get_parent_property_two() const override {
         py::gil_scoped_acquire gil;
@@ -37,7 +37,9 @@ public:
 void register_ParentNarrowTwo(py::module_& module) {
     py::class_<ParentNarrowTwo, std::shared_ptr<ParentNarrowTwo>, ParentNarrowTwoTrampoline>(module, "ParentNarrowTwo")
         .def(py::init<>())
-        .def("parent_function_two", &ParentNarrowTwo::parent_function_two)
+        .def("parent_function_two", [](ParentNarrowTwo& self) {
+            return self.parent_function_two();
+        })
         .def_property("parent_property_two", py::overload_cast<>(&ParentNarrowTwo::get_parent_property_two, py::const_), py::overload_cast<const ::std::string&>(&ParentNarrowTwo::set_parent_property_two))
         ;
 }

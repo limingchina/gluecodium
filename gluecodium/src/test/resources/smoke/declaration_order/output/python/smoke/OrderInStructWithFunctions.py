@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.NestedStruct import NestedStruct
+from smoke.OrderInStructWithFunctionsNestedStruct import OrderInStructWithFunctionsNestedStruct
 from smoke.SomeEnum import SomeEnum
 
 
@@ -18,7 +18,7 @@ class OrderInStructWithFunctions(_NativeBase):
         if len(args) == 1 and isinstance(args[0], OrderInStructWithFunctions):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OrderInStructWithFunctions(*args))
+            super().__init__(generated.OrderInStructWithFunctions(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -28,14 +28,12 @@ class OrderInStructWithFunctions(_NativeBase):
 
     @some_field.setter
     def some_field(self, value: str):
-        self._native.some_field = value
+      self._native.some_field = getattr(value, "_native", value)
 
 
-
-    def do_stuff(self, struct_foo: NestedStruct) -> SomeEnum:
+    def do_stuff(self, struct_foo: OrderInStructWithFunctionsNestedStruct) -> SomeEnum:
         """"""
         return self._native.do_stuff(struct_foo._native)
-
 from enum import Enum
 
 
@@ -44,4 +42,5 @@ class SomeEnum(Enum):
 
     FOO = 0
     BAR = 1
+
 

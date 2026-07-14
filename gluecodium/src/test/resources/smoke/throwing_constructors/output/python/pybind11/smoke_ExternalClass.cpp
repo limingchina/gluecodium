@@ -18,7 +18,7 @@ using ExternalClass = ::smoke::ExternalClass;
 
 void register_ExternalClass(py::module_& module) {
     py::class_<ExternalClass, std::shared_ptr<ExternalClass>>(module, "ExternalClass")
-        .def("create", &ExternalClass::create)
+        .def_static("create", &ExternalClass::create)
         ;
 }
 

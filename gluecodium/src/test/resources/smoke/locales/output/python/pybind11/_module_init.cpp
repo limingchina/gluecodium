@@ -12,6 +12,7 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_LocaleDefaults(pybind11::module_& module);
 void register_Locales(pybind11::module_& module);
+void register_LocalesLocaleStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -21,4 +22,5 @@ PYBIND11_MODULE(generated, m) {
 
     register_LocaleDefaults(m);
     register_Locales(m);
+    register_LocalesLocaleStruct(m);
 }

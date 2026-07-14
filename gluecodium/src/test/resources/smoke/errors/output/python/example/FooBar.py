@@ -20,16 +20,12 @@ class FooBar(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def method_with_internal_error():
         """"""
-        native_result = generated.FooBar.method_with_internal_error()
-        return None(native_result)
+        generated.FooBar.method_with_internal_error()
 
     @staticmethod
-
     def method_with_type_collection_error():
         """"""
-        native_result = generated.FooBar.method_with_type_collection_error()
-        return None(native_result)
+        generated.FooBar.method_with_type_collection_error()
 

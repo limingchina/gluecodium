@@ -13,6 +13,7 @@
 void register_ClassWithInternalLambda(pybind11::module_& module);
 void register_Lambdas(pybind11::module_& module);
 void register_LambdasDeclarationOrder(pybind11::module_& module);
+void register_LambdasDeclarationOrderSomeStruct(pybind11::module_& module);
 void register_LambdasInterface(pybind11::module_& module);
 void register_LambdasWithStructuredTypes(pybind11::module_& module);
 void register_OuterClassWithLambdaAndProperty(pybind11::module_& module);
@@ -26,6 +27,7 @@ PYBIND11_MODULE(generated, m) {
     register_ClassWithInternalLambda(m);
     register_Lambdas(m);
     register_LambdasDeclarationOrder(m);
+    register_LambdasDeclarationOrderSomeStruct(m);
     register_LambdasInterface(m);
     register_LambdasWithStructuredTypes(m);
     register_OuterClassWithLambdaAndProperty(m);

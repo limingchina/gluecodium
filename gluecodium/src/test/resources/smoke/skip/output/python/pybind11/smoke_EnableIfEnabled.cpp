@@ -16,13 +16,13 @@ using EnableIfEnabled = ::smoke::EnableIfEnabled;
 
 void register_EnableIfEnabled(py::module_& module) {
     py::class_<EnableIfEnabled, std::shared_ptr<EnableIfEnabled>>(module, "EnableIfEnabled")
-        .def("enable_if_unquoted", &EnableIfEnabled::enable_if_unquoted)
-        .def("enable_if_unquoted_list", &EnableIfEnabled::enable_if_unquoted_list)
-        .def("enable_if_quoted", &EnableIfEnabled::enable_if_quoted)
-        .def("enable_if_quoted_list", &EnableIfEnabled::enable_if_quoted_list)
-        .def("enable_if_tagged", &EnableIfEnabled::enable_if_tagged)
-        .def("enable_if_tagged_list", &EnableIfEnabled::enable_if_tagged_list)
-        .def("enable_if_mixed_list", &EnableIfEnabled::enable_if_mixed_list)
+        .def_static("enable_if_unquoted", &EnableIfEnabled::enable_if_unquoted)
+        .def_static("enable_if_unquoted_list", &EnableIfEnabled::enable_if_unquoted_list)
+        .def_static("enable_if_quoted", &EnableIfEnabled::enable_if_quoted)
+        .def_static("enable_if_quoted_list", &EnableIfEnabled::enable_if_quoted_list)
+        .def_static("enable_if_tagged", &EnableIfEnabled::enable_if_tagged)
+        .def_static("enable_if_tagged_list", &EnableIfEnabled::enable_if_tagged_list)
+        .def_static("enable_if_mixed_list", &EnableIfEnabled::enable_if_mixed_list)
         ;
 }
 

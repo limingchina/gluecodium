@@ -17,7 +17,7 @@ using SingleNamelessConstructor = ::smoke::SingleNamelessConstructor;
 
 void register_SingleNamelessConstructor(py::module_& module) {
     py::class_<SingleNamelessConstructor, std::shared_ptr<SingleNamelessConstructor>>(module, "SingleNamelessConstructor")
-        .def("create", &SingleNamelessConstructor::create)
+        .def_static("create", &SingleNamelessConstructor::create)
         ;
 }
 

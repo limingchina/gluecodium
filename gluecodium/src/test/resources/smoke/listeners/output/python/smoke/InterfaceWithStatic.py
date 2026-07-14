@@ -18,17 +18,14 @@ class InterfaceWithStatic(_NativeBase):
         else:
             super().__init__(generated.InterfaceWithStatic())
 
-
     def regular_function(self) -> str:
         """"""
         return self._native.regular_function()
 
     @staticmethod
-
     def static_function() -> str:
         """"""
-        native_result = generated.InterfaceWithStatic.static_function()
-        return str(native_result)
+        return generated.InterfaceWithStatic.static_function()
 
 
     @property
@@ -41,12 +38,8 @@ class InterfaceWithStatic(_NativeBase):
         self._native.regular_property = value
 
 
-    @property
-    def static_property(self) -> str:
+    @staticmethod
+    def static_property() -> str:
         """"""
-        return self._native.static_property
-
-    @static_property.setter
-    def static_property(self, value: str):
-        self._native.static_property = value
+        return generated.InterfaceWithStatic.static_property()
 

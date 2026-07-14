@@ -21,14 +21,16 @@ public:
     void root_method(
             bool input1 ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentInterfaceWithBool, root_method, input1);
+        PYBIND11_OVERRIDE_PURE(void, ParentInterfaceWithBool, root_method, input1);
     }
 };
 
 void register_ParentInterfaceWithBool(py::module_& module) {
     py::class_<ParentInterfaceWithBool, std::shared_ptr<ParentInterfaceWithBool>, ParentInterfaceWithBoolTrampoline>(module, "ParentInterfaceWithBool")
         .def(py::init<>())
-        .def("root_method", &ParentInterfaceWithBool::root_method, py::arg("input1"))
+        .def("root_method", [](ParentInterfaceWithBool& self, const bool input1) {
+            return self.root_method(input1);
+        }, py::arg("input1"))
         ;
 }
 

@@ -16,7 +16,7 @@ class FieldCustomConstructorsMix(_NativeBase):
         if len(args) == 1 and isinstance(args[0], FieldCustomConstructorsMix):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldCustomConstructorsMix(*args))
+            super().__init__(generated.FieldCustomConstructorsMix(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class FieldCustomConstructorsMix(_NativeBase):
 
     @string_field.setter
     def string_field(self, value: str):
-        self._native.string_field = value
+      self._native.string_field = getattr(value, "_native", value)
 
 
 
@@ -37,7 +37,7 @@ class FieldCustomConstructorsMix(_NativeBase):
 
     @int_field.setter
     def int_field(self, value: int):
-        self._native.int_field = value
+      self._native.int_field = getattr(value, "_native", value)
 
 
 
@@ -48,11 +48,10 @@ class FieldCustomConstructorsMix(_NativeBase):
 
     @bool_field.setter
     def bool_field(self, value: bool):
-        self._native.bool_field = value
+      self._native.bool_field = getattr(value, "_native", value)
 
 
     @staticmethod
-
     def create_me(int_value: int, dummy: float) -> FieldCustomConstructorsMix:
         """"""
         native_result = generated.FieldCustomConstructorsMix.create_me(int_value, dummy)

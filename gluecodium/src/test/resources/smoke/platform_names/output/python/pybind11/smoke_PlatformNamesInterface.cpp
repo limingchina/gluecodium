@@ -16,12 +16,12 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using PlatformNamesInterface = ::smoke::fooInterface;
+using fooInterface = ::smoke::fooInterface;
 
 void register_PlatformNamesInterface(py::module_& module) {
     py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "PlatformNamesInterface")
         .def("basic_method", &fooInterface::FooMethod, py::arg("basic_parameter"))
-        .def("create", &fooInterface::make, py::arg("basic_parameter"))
+        .def_static("create", &fooInterface::make, py::arg("basic_parameter"))
         .def_property("basic_property", py::overload_cast<>(&fooInterface::GET_FOO_PROPERTY, py::const_), py::overload_cast<const uint32_t>(&fooInterface::SET_FOO_PROPERTY))
         ;
 }

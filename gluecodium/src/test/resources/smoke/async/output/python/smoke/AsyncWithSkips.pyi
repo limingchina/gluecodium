@@ -14,16 +14,12 @@ class AsyncWithSkips(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def make_shared_instance(android_context: str):
         """"""
-        native_result = generated.AsyncWithSkips.make_shared_instance(android_context)
-        return None(native_result)
+        generated.AsyncWithSkips.make_shared_instance(android_context)
 
     @staticmethod
-
     def make_shared_instance():
         """"""
-        native_result = generated.AsyncWithSkips.make_shared_instance()
-        return None(native_result)
+        generated.AsyncWithSkips.make_shared_instance()
 

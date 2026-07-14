@@ -17,9 +17,7 @@ class ClassWithInternalLambda(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def invoke_internal_lambda(lambda: InternalNestedLambda, value: str) -> bool:
         """"""
-        native_result = generated.ClassWithInternalLambda.invoke_internal_lambda(lambda, value)
-        return bool(native_result)
+        return generated.ClassWithInternalLambda.invoke_internal_lambda(lambda._native, value)
 

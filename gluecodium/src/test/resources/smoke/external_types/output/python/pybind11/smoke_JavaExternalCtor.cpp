@@ -19,7 +19,7 @@ void register_JavaExternalCtor(py::module_& module) {
     py::class_<JavaExternalCtor>(module, "JavaExternalCtor")
         .def_readwrite("field", &JavaExternalCtor::field)
         .def(py::init<::std::string>(), py::arg("field"))
-        .def("make", &JavaExternalCtor::make, py::arg("field"))
+        .def_static("make", &JavaExternalCtor::make, py::arg("field"))
         ;
 }
 

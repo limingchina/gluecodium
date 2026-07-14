@@ -16,9 +16,7 @@ class Basic(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def basic_method(input_string: str) -> str:
         """"""
-        native_result = generated.Basic.basic_method(input_string)
-        return str(native_result)
+        return generated.Basic.basic_method(input_string)
 

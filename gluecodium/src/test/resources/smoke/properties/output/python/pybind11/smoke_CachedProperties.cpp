@@ -23,8 +23,8 @@ void register_CachedProperties(py::module_& module) {
     py::class_<CachedProperties, std::shared_ptr<CachedProperties>>(module, "CachedProperties")
         .def_property_readonly("cached_property", py::overload_cast<>(&CachedProperties::get_cached_property, py::const_))
         .def_property_readonly("internal_cached_property", py::overload_cast<>(&CachedProperties::get_internal_cached_property, py::const_))
-        .def_property_readonly("static_cached_property", py::overload_cast<>(&CachedProperties::get_static_cached_property, py::const_))
-        .def_property_readonly("internal_static_cached_property", py::overload_cast<>(&CachedProperties::get_internal_static_cached_property, py::const_))
+        .def_static("static_cached_property", &CachedProperties::get_static_cached_property)
+        .def_static("internal_static_cached_property", &CachedProperties::get_internal_static_cached_property)
         ;
 }
 

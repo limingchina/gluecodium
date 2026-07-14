@@ -16,6 +16,8 @@ void register_ConstantsInterface(pybind11::module_& module);
 void register_ConstantsSkipCpp(pybind11::module_& module);
 void register_CrossFileConstants(pybind11::module_& module);
 void register_StructConstants(pybind11::module_& module);
+void register_StructConstantsNestingStruct(pybind11::module_& module);
+void register_StructConstantsSomeStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -29,4 +31,6 @@ PYBIND11_MODULE(generated, m) {
     register_ConstantsSkipCpp(m);
     register_CrossFileConstants(m);
     register_StructConstants(m);
+    register_StructConstantsNestingStruct(m);
+    register_StructConstantsSomeStruct(m);
 }

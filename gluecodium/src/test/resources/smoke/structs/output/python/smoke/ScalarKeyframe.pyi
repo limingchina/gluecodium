@@ -14,7 +14,7 @@ class ScalarKeyframe(_NativeBase):
         if len(args) == 1 and isinstance(args[0], ScalarKeyframe):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ScalarKeyframe(*args))
+            super().__init__(generated.ScalarKeyframe(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -24,7 +24,7 @@ class ScalarKeyframe(_NativeBase):
 
     @value.setter
     def value(self, value: float):
-        self._native.value = value
+      self._native.value = getattr(value, "_native", value)
 
 
 
@@ -35,6 +35,6 @@ class ScalarKeyframe(_NativeBase):
 
     @offset_in_ms.setter
     def offset_in_ms(self, value: int):
-        self._native.offset_in_ms = value
+      self._native.offset_in_ms = getattr(value, "_native", value)
 
 

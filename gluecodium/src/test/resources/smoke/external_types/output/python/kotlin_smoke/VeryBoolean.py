@@ -16,7 +16,7 @@ class VeryBoolean(_NativeBase):
         if len(args) == 1 and isinstance(args[0], VeryBoolean):
             super().__init__(args[0])
         else:
-            super().__init__(generated.VeryBoolean(*args))
+            super().__init__(generated.VeryBoolean(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,11 +26,10 @@ class VeryBoolean(_NativeBase):
 
     @value.setter
     def value(self, value: bool):
-        self._native.value = value
+      self._native.value = getattr(value, "_native", value)
 
 
     @staticmethod
-
     def make(value: bool) -> VeryBoolean:
         """"""
         native_result = generated.VeryBoolean.make(value)

@@ -22,14 +22,16 @@ public:
     void dispatch(
             const ::smoke::SpecialNamesInterface::Callback& callback ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, SpecialNamesInterface, dispatch, callback);
+        PYBIND11_OVERRIDE_PURE(void, SpecialNamesInterface, dispatch, callback);
     }
 };
 
 void register_SpecialNamesInterface(py::module_& module) {
     py::class_<SpecialNamesInterface, std::shared_ptr<SpecialNamesInterface>, SpecialNamesInterfaceTrampoline>(module, "SpecialNamesInterface")
         .def(py::init<>())
-        .def("dispatch", &SpecialNamesInterface::dispatch, py::arg("callback"))
+        .def("dispatch", [](SpecialNamesInterface& self, const ::smoke::SpecialNamesInterface::Callback& callback) {
+            return self.dispatch(callback);
+        }, py::arg("callback"))
         ;
 }
 

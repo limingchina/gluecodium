@@ -18,7 +18,7 @@ using Class = ::package::Class;
 
 void register_Class(py::module_& module) {
     py::class_<Class, std::shared_ptr<Class>>(module, "Class")
-        .def("constructor", &Class::constructor)
+        .def_static("constructor", &Class::constructor)
         .def("fun", &Class::fun, py::arg("double"))
         .def_property("property", py::overload_cast<>(&Class::get_property, py::const_), py::overload_cast<const ::package::Types::Enum>(&Class::set_property))
         ;

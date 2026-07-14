@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.InternalStruct import InternalStruct
+from smoke.PublicClassInternalStruct import PublicClassInternalStruct
 
 
 from _native_base import _NativeBase

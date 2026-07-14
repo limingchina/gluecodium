@@ -28,12 +28,12 @@ public:
     ::std::shared_ptr< ::smoke::IncludableClass > root_method(
             const ::smoke::IncludableStruct& input1, ::smoke::IncludableEnum input2 ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::shared_ptr< ::smoke::IncludableClass >, ParentInterfaceWithIncludes, root_method, input1, input2);
+        PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::IncludableClass >, ParentInterfaceWithIncludes, root_method, input1, input2);
     }
     ::smoke::ShouldNotInclude not_in_java(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::smoke::ShouldNotInclude, ParentInterfaceWithIncludes, not_in_java);
+        PYBIND11_OVERRIDE_PURE(::smoke::ShouldNotInclude, ParentInterfaceWithIncludes, not_in_java);
     }
     ::smoke::IncludableLambda& get_root_property() const override {
         py::gil_scoped_acquire gil;
@@ -56,8 +56,12 @@ public:
 void register_ParentInterfaceWithIncludes(py::module_& module) {
     py::class_<ParentInterfaceWithIncludes, std::shared_ptr<ParentInterfaceWithIncludes>, ParentInterfaceWithIncludesTrampoline>(module, "ParentInterfaceWithIncludes")
         .def(py::init<>())
-        .def("root_method", &ParentInterfaceWithIncludes::root_method, py::arg("input1"), py::arg("input2"))
-        .def("not_in_java", &ParentInterfaceWithIncludes::not_in_java)
+        .def("root_method", [](ParentInterfaceWithIncludes& self, const ::smoke::IncludableStruct& input1, const ::smoke::IncludableEnum input2) {
+            return self.root_method(input1, input2);
+        }, py::arg("input1"), py::arg("input2"))
+        .def("not_in_java", [](ParentInterfaceWithIncludes& self) {
+            return self.not_in_java();
+        })
         .def_property("root_property", py::overload_cast<>(&ParentInterfaceWithIncludes::get_root_property, py::const_), py::overload_cast<const ::smoke::IncludableLambda&>(&ParentInterfaceWithIncludes::set_root_property))
         .def_property("not_in_java_property", py::overload_cast<>(&ParentInterfaceWithIncludes::get_not_in_java_property, py::const_), py::overload_cast<const ::smoke::ShouldNotInclude&>(&ParentInterfaceWithIncludes::set_not_in_java_property))
         ;

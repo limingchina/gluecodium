@@ -16,7 +16,7 @@ class ExternalMarkedAsSerializable(_NativeBase):
         if len(args) == 1 and isinstance(args[0], ExternalMarkedAsSerializable):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ExternalMarkedAsSerializable(*args))
+            super().__init__(generated.ExternalMarkedAsSerializable(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,6 +26,6 @@ class ExternalMarkedAsSerializable(_NativeBase):
 
     @field.setter
     def field(self, value: int):
-        self._native.field = value
+      self._native.field = getattr(value, "_native", value)
 
 

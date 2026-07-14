@@ -5,9 +5,15 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class StandaloneExternalEnum(Enum):
     """"""
 
-    FOO = 0
+    FOO = generated.StandaloneExternalEnum.foo
+
+    @property
+    def _native(self):
+        return self.value
 

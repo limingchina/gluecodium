@@ -16,7 +16,7 @@ class Currency(_NativeBase):
         if len(args) == 1 and isinstance(args[0], Currency):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Currency(*args))
+            super().__init__(generated.Currency(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,7 +26,7 @@ class Currency(_NativeBase):
 
     @currency_code.setter
     def currency_code(self, value: str):
-        self._native.currency_code = value
+      self._native.currency_code = getattr(value, "_native", value)
 
 
 
@@ -37,6 +37,6 @@ class Currency(_NativeBase):
 
     @numeric_code.setter
     def numeric_code(self, value: int):
-        self._native.numeric_code = value
+      self._native.numeric_code = getattr(value, "_native", value)
 
 

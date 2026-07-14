@@ -5,13 +5,19 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class EnumWithAlias(Enum):
     """"""
 
-    ONE = 0
-    TWO = 1
-    THREE = 2
-    FIRST = 3
-    THE_BEST = 4
+    ONE = generated.EnumWithAlias.ONE
+    TWO = generated.EnumWithAlias.TWO
+    THREE = generated.EnumWithAlias.THREE
+    FIRST = generated.EnumWithAlias.FIRST
+    THE_BEST = generated.EnumWithAlias.THE_BEST
+
+    @property
+    def _native(self):
+        return self.value
 

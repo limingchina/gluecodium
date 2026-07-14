@@ -5,12 +5,18 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class SwiftSeason(Enum):
     """"""
 
-    WINTER = 0
-    SPRING = 1
-    SUMMER = 2
-    AUTUMN = 3
+    WINTER = generated.SwiftSeason.WINTER
+    SPRING = generated.SwiftSeason.SPRING
+    SUMMER = generated.SwiftSeason.SUMMER
+    AUTUMN = generated.SwiftSeason.AUTUMN
+
+    @property
+    def _native(self):
+        return self.value
 

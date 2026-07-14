@@ -17,7 +17,7 @@ class PosDefaultsWithDuration(_NativeBase):
         if len(args) == 1 and isinstance(args[0], PosDefaultsWithDuration):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PosDefaultsWithDuration(*args))
+            super().__init__(generated.PosDefaultsWithDuration(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -27,7 +27,7 @@ class PosDefaultsWithDuration(_NativeBase):
 
     @duration_field.setter
     def duration_field(self, value: datetime.timedelta):
-        self._native.duration_field = value
+      self._native.duration_field = getattr(value, "_native", value)
 
 
 
@@ -38,6 +38,6 @@ class PosDefaultsWithDuration(_NativeBase):
 
     @nanos_field.setter
     def nanos_field(self, value: datetime.timedelta):
-        self._native.nanos_field = value
+      self._native.nanos_field = getattr(value, "_native", value)
 
 

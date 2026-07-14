@@ -21,9 +21,9 @@ using UseCppExternalTypes = ::dontsmoke::UseCppExternalTypes;
 
 void register_UseCppExternalTypes(py::module_& module) {
     py::class_<UseCppExternalTypes, std::shared_ptr<UseCppExternalTypes>>(module, "UseCppExternalTypes")
-        .def("use_struct", &UseCppExternalTypes::use_struct, py::arg("input"))
-        .def("use_enum", &UseCppExternalTypes::use_enum, py::arg("input"))
-        .def("use_class", &UseCppExternalTypes::use_class, py::arg("input"))
+        .def_static("use_struct", &UseCppExternalTypes::use_struct, py::arg("input"))
+        .def_static("use_enum", &UseCppExternalTypes::use_enum, py::arg("input"))
+        .def_static("use_class", &UseCppExternalTypes::use_class, py::arg("input"))
         ;
 }
 

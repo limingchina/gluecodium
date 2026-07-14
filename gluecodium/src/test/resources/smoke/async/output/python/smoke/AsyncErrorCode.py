@@ -5,9 +5,15 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class AsyncErrorCode(Enum):
     """"""
 
-    VALUE1 = 0
+    VALUE1 = generated.AsyncErrorCode.VALUE1
+
+    @property
+    def _native(self):
+        return self.value
 

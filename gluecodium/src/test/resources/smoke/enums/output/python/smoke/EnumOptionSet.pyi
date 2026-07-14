@@ -3,11 +3,17 @@
 
 from enum import Enum
 
+import generated
+
 
 class EnumOptionSet(Enum):
     """"""
 
-    ONE = 0
-    TWO = 1
-    THREE = 2
+    ONE = generated.EnumOptionSet.ONE
+    TWO = generated.EnumOptionSet.TWO
+    THREE = generated.EnumOptionSet.THREE
+
+    @property
+    def _native(self):
+        return self.value
 

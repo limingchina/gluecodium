@@ -15,7 +15,7 @@ class DateInterval(_NativeBase):
         if len(args) == 1 and isinstance(args[0], DateInterval):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DateInterval(*args))
+            super().__init__(generated.DateInterval(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -25,7 +25,7 @@ class DateInterval(_NativeBase):
 
     @start.setter
     def start(self, value: datetime.datetime):
-        self._native.start = value
+      self._native.start = getattr(value, "_native", value)
 
 
 
@@ -36,6 +36,6 @@ class DateInterval(_NativeBase):
 
     @end.setter
     def end(self, value: datetime.datetime):
-        self._native.end = value
+      self._native.end = getattr(value, "_native", value)
 
 

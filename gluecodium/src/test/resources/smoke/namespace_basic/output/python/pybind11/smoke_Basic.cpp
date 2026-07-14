@@ -17,7 +17,7 @@ using Basic = ::root::space::smoke::Basic;
 
 void register_Basic(py::module_& module) {
     py::class_<Basic, std::shared_ptr<Basic>>(module, "Basic")
-        .def("basic_method", &Basic::basic_method, py::arg("input_string"))
+        .def_static("basic_method", &Basic::basic_method, py::arg("input_string"))
         ;
 }
 

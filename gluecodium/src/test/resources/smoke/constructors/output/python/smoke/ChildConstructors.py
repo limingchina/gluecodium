@@ -20,16 +20,14 @@ class ChildConstructors(
         super().__init__(native)
 
     @staticmethod
-
     def create() -> ChildConstructors:
         """"""
         native_result = generated.ChildConstructors.create()
         return ChildConstructors(native_result)
 
     @staticmethod
-
     def create(other: Constructors) -> ChildConstructors:
         """"""
-        native_result = generated.ChildConstructors.create(other)
+        native_result = generated.ChildConstructors.create(other._native)
         return ChildConstructors(native_result)
 

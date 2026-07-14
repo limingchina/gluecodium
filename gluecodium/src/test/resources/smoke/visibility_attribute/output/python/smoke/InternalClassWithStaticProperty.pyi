@@ -14,12 +14,8 @@ class InternalClassWithStaticProperty(_NativeBase):
         super().__init__(native)
 
 
-    @property
-    def foo_bar(self) -> str:
+    @staticmethod
+    def foo_bar() -> str:
         """"""
-        return self._native.foo_bar
-
-    @foo_bar.setter
-    def foo_bar(self, value: str):
-        self._native.foo_bar = value
+        return generated.InternalClassWithStaticProperty.foo_bar()
 

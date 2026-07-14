@@ -16,7 +16,7 @@ class ExposeInternalStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], ExposeInternalStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ExposeInternalStruct(*args))
+            super().__init__(generated.ExposeInternalStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,6 +26,6 @@ class ExposeInternalStruct(_NativeBase):
 
     @field.setter
     def field(self, value: str):
-        self._native.field = value
+      self._native.field = getattr(value, "_native", value)
 
 

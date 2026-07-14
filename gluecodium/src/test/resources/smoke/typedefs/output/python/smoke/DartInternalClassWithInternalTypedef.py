@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from smoke.dict[str, int] import dict[str, int]
-from smoke.list[str] import list[str]
 
 
 from _native_base import _NativeBase

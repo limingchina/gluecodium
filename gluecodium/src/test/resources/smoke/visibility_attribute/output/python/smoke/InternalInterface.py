@@ -18,18 +18,13 @@ class InternalInterface(_NativeBase):
         else:
             super().__init__(generated.InternalInterface())
 
-
     def foo_bar(self):
         """"""
         return self._native.foo_bar()
 
 
-    @property
-    def some_property_of_internal_interface(self) -> str:
+    @staticmethod
+    def some_property_of_internal_interface() -> str:
         """"""
-        return self._native.some_property_of_internal_interface
-
-    @some_property_of_internal_interface.setter
-    def some_property_of_internal_interface(self, value: str):
-        self._native.some_property_of_internal_interface = value
+        return generated.InternalInterface.some_property_of_internal_interface()
 

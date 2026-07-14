@@ -1,6 +1,6 @@
 
 
-from smoke.SomeStruct import SomeStruct
+from smoke.LambdasDeclarationOrderSomeStruct import LambdasDeclarationOrderSomeStruct
 
 
 from _native_base import _NativeBase

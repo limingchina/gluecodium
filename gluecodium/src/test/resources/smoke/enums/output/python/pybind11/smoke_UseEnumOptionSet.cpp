@@ -24,7 +24,7 @@ void register_UseEnumOptionSet(py::module_& module) {
         .def_readwrite("set_field_empty", &UseEnumOptionSet::set_field_empty)
         .def_readwrite("set_field_value", &UseEnumOptionSet::set_field_value)
         .def(py::init<::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >>(), py::arg("set_field"), py::arg("set_field_empty"), py::arg("set_field_value"))
-        .def("round_trip", &UseEnumOptionSet::round_trip, py::arg("input"))
+        .def_static("round_trip", &UseEnumOptionSet::round_trip, py::arg("input"))
         ;
 }
 

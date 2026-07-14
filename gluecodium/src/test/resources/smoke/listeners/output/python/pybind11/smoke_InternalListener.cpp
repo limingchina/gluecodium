@@ -21,14 +21,16 @@ public:
     void on_event(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, InternalListener, on_event);
+        PYBIND11_OVERRIDE_PURE(void, InternalListener, on_event);
     }
 };
 
 void register_InternalListener(py::module_& module) {
     py::class_<InternalListener, std::shared_ptr<InternalListener>, InternalListenerTrampoline>(module, "InternalListener")
         .def(py::init<>())
-        .def("on_event", &InternalListener::on_event)
+        .def("on_event", [](InternalListener& self) {
+            return self.on_event();
+        })
         ;
 }
 

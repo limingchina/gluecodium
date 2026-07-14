@@ -16,16 +16,12 @@ class StringsWithCstring(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    Method that takes a C string as input and returns an std::string it as output.
     def return_input_string_type(input_string: str) -> str:
         """Method that takes a C string as input and returns an std::string it as output."""
-        native_result = generated.StringsWithCstring.return_input_string_type(input_string)
-        return str(native_result)
+        return generated.StringsWithCstring.return_input_string_type(input_string)
 
     @staticmethod
-    Method that takes a C string as input and returns an std::string it as output.
     def return_input_string(input_string: str) -> str:
         """Method that takes a C string as input and returns an std::string it as output."""
-        native_result = generated.StringsWithCstring.return_input_string(input_string)
-        return str(native_result)
+        return generated.StringsWithCstring.return_input_string(input_string)
 

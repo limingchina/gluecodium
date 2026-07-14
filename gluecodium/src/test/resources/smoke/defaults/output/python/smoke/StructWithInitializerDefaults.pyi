@@ -1,8 +1,5 @@
 
 
-from smoke.dict[int, str] import dict[int, str]
-from smoke.list[float] import list[float]
-from smoke.set[str] import set[str]
 
 
 from _native_base import _NativeBase
@@ -17,7 +14,7 @@ class StructWithInitializerDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], StructWithInitializerDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithInitializerDefaults(*args))
+            super().__init__(generated.StructWithInitializerDefaults(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -27,7 +24,7 @@ class StructWithInitializerDefaults(_NativeBase):
 
     @ints_field.setter
     def ints_field(self, value: list[int]):
-        self._native.ints_field = value
+      self._native.ints_field = getattr(value, "_native", value)
 
 
 
@@ -38,7 +35,7 @@ class StructWithInitializerDefaults(_NativeBase):
 
     @floats_field.setter
     def floats_field(self, value: list[float]):
-        self._native.floats_field = value
+      self._native.floats_field = getattr(value, "_native", value)
 
 
 
@@ -49,7 +46,7 @@ class StructWithInitializerDefaults(_NativeBase):
 
     @set_type_field.setter
     def set_type_field(self, value: set[str]):
-        self._native.set_type_field = value
+      self._native.set_type_field = getattr(value, "_native", value)
 
 
 
@@ -60,6 +57,6 @@ class StructWithInitializerDefaults(_NativeBase):
 
     @map_field.setter
     def map_field(self, value: dict[int, str]):
-        self._native.map_field = value
+      self._native.map_field = getattr(value, "_native", value)
 
 

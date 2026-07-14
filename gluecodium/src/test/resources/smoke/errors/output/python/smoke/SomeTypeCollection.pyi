@@ -15,14 +15,5 @@ class SomeTypeCollection(_NativeBase):
         if len(args) == 1 and isinstance(args[0], SomeTypeCollection):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SomeTypeCollection(*args))
-
-from enum import Enum
-
-
-class SomeTypeCollectionError(Enum):
-    """"""
-
-    ERROR_A = 0
-    ERROR_B = 1
+            super().__init__(generated.SomeTypeCollection(*[getattr(arg, "_native", arg) for arg in args]))
 

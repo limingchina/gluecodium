@@ -17,7 +17,7 @@ using NoCacheClass = ::smoke::NoCacheClass;
 
 void register_NoCacheClass(py::module_& module) {
     py::class_<NoCacheClass, std::shared_ptr<NoCacheClass>>(module, "NoCacheClass")
-        .def("make", &NoCacheClass::make)
+        .def_static("make", &NoCacheClass::make)
         .def("foo", &NoCacheClass::foo)
         ;
 }

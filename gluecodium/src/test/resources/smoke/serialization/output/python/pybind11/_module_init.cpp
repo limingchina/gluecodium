@@ -12,6 +12,9 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_SerializableEquatableStruct(pybind11::module_& module);
 void register_Serialization(pybind11::module_& module);
+void register_SerializationNestedSerializableStruct(pybind11::module_& module);
+void register_SerializationSerializableStruct(pybind11::module_& module);
+void register_SomeEnum(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -21,4 +24,7 @@ PYBIND11_MODULE(generated, m) {
 
     register_SerializableEquatableStruct(m);
     register_Serialization(m);
+    register_SerializationNestedSerializableStruct(m);
+    register_SerializationSerializableStruct(m);
+    register_SomeEnum(m);
 }

@@ -16,5 +16,5 @@ class ExternalEquatable(_NativeBase):
         if len(args) == 1 and isinstance(args[0], ExternalEquatable):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ExternalEquatable(*args))
+            super().__init__(generated.ExternalEquatable(*[getattr(arg, "_native", arg) for arg in args]))
 

@@ -30,8 +30,9 @@ void register_Properties(py::module_& module) {
         .def_property("byte_buffer_property", py::overload_cast<>(&Properties::get_byte_buffer_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::std::vector< uint8_t > >&>(&Properties::set_byte_buffer_property))
         .def_property("instance_property", py::overload_cast<>(&Properties::get_instance_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::PropertiesInterface >&>(&Properties::set_instance_property))
         .def_property("is_boolean_property", py::overload_cast<>(&Properties::is_boolean_property, py::const_), py::overload_cast<const bool>(&Properties::set_boolean_property))
-        .def_property("static_property", py::overload_cast<>(&Properties::get_static_property, py::const_), py::overload_cast<const ::std::string&>(&Properties::set_static_property))
-        .def_property_readonly("static_readonly_property", py::overload_cast<>(&Properties::get_static_readonly_property, py::const_))
+        .def_static("static_property", &Properties::get_static_property)
+        .def_static("static_property_set", &Properties::set_static_property)
+        .def_static("static_readonly_property", &Properties::get_static_readonly_property)
         ;
 }
 

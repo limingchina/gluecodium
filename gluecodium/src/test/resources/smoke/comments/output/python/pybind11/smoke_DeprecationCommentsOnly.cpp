@@ -22,7 +22,7 @@ public:
     bool some_method_with_all_comments(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(bool, DeprecationCommentsOnly, some_method_with_all_comments, input);
+        PYBIND11_OVERRIDE_PURE(bool, DeprecationCommentsOnly, some_method_with_all_comments, input);
     }
     bool is_some_property() const override {
         py::gil_scoped_acquire gil;
@@ -37,7 +37,9 @@ public:
 void register_DeprecationCommentsOnly(py::module_& module) {
     py::class_<DeprecationCommentsOnly, std::shared_ptr<DeprecationCommentsOnly>, DeprecationCommentsOnlyTrampoline>(module, "DeprecationCommentsOnly")
         .def(py::init<>())
-        .def("some_method_with_all_comments", &DeprecationCommentsOnly::some_method_with_all_comments, py::arg("input"))
+        .def("some_method_with_all_comments", [](DeprecationCommentsOnly& self, const ::std::string& input) {
+            return self.some_method_with_all_comments(input);
+        }, py::arg("input"))
         .def_property("is_some_property", py::overload_cast<>(&DeprecationCommentsOnly::is_some_property, py::const_), py::overload_cast<const bool>(&DeprecationCommentsOnly::set_some_property))
         ;
 }

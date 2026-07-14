@@ -5,10 +5,16 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class OuterInternalEnum(Enum):
     """"""
 
-    FIRST = 0
-    SECOND = 1
+    FIRST = generated.OuterInternalEnum.FIRST
+    SECOND = generated.OuterInternalEnum.SECOND
+
+    @property
+    def _native(self):
+        return self.value
 

@@ -1,10 +1,7 @@
 
 
-from smoke.NestedStruct import NestedStruct
+from smoke.OrderInClassNestedStruct import OrderInClassNestedStruct
 from smoke.SomeEnum import SomeEnum
-from smoke.dict[int, list[NestedStruct]] import dict[int, list[NestedStruct]]
-from smoke.int import int
-from smoke.list[NestedStruct] import list[NestedStruct]
 
 
 from _native_base import _NativeBase
@@ -17,7 +14,6 @@ class OrderInClass(_NativeBase):
 
     def __init__(self, native):
         super().__init__(native)
-
 from enum import Enum
 
 
@@ -26,4 +22,5 @@ class SomeEnum(Enum):
 
     FOO = 0
     BAR = 1
+
 

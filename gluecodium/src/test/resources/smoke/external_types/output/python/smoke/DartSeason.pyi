@@ -3,12 +3,18 @@
 
 from enum import Enum
 
+import generated
+
 
 class DartSeason(Enum):
     """"""
 
-    WINTER = 0
-    SPRING = 1
-    SUMMER = 2
-    AUTUMN = 3
+    WINTER = generated.DartSeason.WINTER
+    SPRING = generated.DartSeason.SPRING
+    SUMMER = generated.DartSeason.SUMMER
+    AUTUMN = generated.DartSeason.AUTUMN
+
+    @property
+    def _native(self):
+        return self.value
 

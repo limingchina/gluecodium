@@ -15,9 +15,8 @@ class EnumsInTypeCollectionInterface(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def flip_enum_value(input: TCEnum) -> TCEnum:
         """"""
-        native_result = generated.EnumsInTypeCollectionInterface.flip_enum_value(input)
+        native_result = generated.EnumsInTypeCollectionInterface.flip_enum_value(input._native)
         return TCEnum(native_result)
 

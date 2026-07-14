@@ -5,9 +5,15 @@ from __future__ import annotations
 
 from enum import Enum
 
+import generated
+
 
 class AttributesEnum(Enum):
     """"""
 
-    NOPE = 0
+    NOPE = generated.AttributesEnum.NOPE
+
+    @property
+    def _native(self):
+        return self.value
 

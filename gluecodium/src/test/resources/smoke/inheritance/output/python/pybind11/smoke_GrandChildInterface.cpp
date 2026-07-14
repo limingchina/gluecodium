@@ -21,14 +21,16 @@ public:
     void grand_child_method(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, GrandChildInterface, grand_child_method);
+        PYBIND11_OVERRIDE_PURE(void, GrandChildInterface, grand_child_method);
     }
 };
 
 void register_GrandChildInterface(py::module_& module) {
     py::class_<GrandChildInterface, std::shared_ptr<GrandChildInterface>, GrandChildInterfaceTrampoline>(module, "GrandChildInterface")
         .def(py::init<>())
-        .def("grand_child_method", &GrandChildInterface::grand_child_method)
+        .def("grand_child_method", [](GrandChildInterface& self) {
+            return self.grand_child_method();
+        })
         ;
 }
 

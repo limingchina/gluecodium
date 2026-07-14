@@ -13,11 +13,11 @@ namespace py = pybind11;
 #include "cstdint"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using DurationExternal = std::chrono::duration<uint64_t, std::ratio<1,1000>>;
+using std::chrono::duration<uint64_t, std::ratio<1,1000>> = std::chrono::duration<uint64_t, std::ratio<1,1000>>;
 
 void register_DurationExternal(py::module_& module) {
     py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "DurationExternal")
-        .def_readwrite("value", &std::chrono::duration<uint64_t, std::ratio<1,1000>>::value)
+        .def_property("value", static_cast<uint64_t (std::chrono::duration<uint64_t, std::ratio<1,1000>>::*)() const>(&std::chrono::duration<uint64_t, std::ratio<1,1000>>::count), py::overload_cast<const uint64_t>(&std::chrono::duration<uint64_t, std::ratio<1,1000>>::))
         .def(py::init<uint64_t>(), py::arg("value"))
         ;
 }

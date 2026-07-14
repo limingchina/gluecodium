@@ -12,13 +12,16 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_ClassWithDocRef(pybind11::module_& module);
 void register_ClassWithStructWithSkipLambdaInPlatform(pybind11::module_& module);
+void register_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(pybind11::module_& module);
 void register_DontSmokeEnum(pybind11::module_& module);
 void register_DummyStruct(pybind11::module_& module);
 void register_EnableIfEnabled(pybind11::module_& module);
 void register_EnableIfField(pybind11::module_& module);
 void register_EnableIfSkipped(pybind11::module_& module);
 void register_EnableIfTypesEnabled(pybind11::module_& module);
+void register_EnableIfTypesEnabledEnableMeToo(pybind11::module_& module);
 void register_EnableIfTypesSkipped(pybind11::module_& module);
+void register_EnableMe(pybind11::module_& module);
 void register_EnableTagsInDart(pybind11::module_& module);
 void register_EnableTagsInJava(pybind11::module_& module);
 void register_EnableTagsInKotlin(pybind11::module_& module);
@@ -46,6 +49,10 @@ void register_SkipTagsInKotlin(pybind11::module_& module);
 void register_SkipTagsInSwift(pybind11::module_& module);
 void register_SkipTagsOnly(pybind11::module_& module);
 void register_SkipTypes(pybind11::module_& module);
+void register_SkipTypesNotInDart(pybind11::module_& module);
+void register_SkipTypesNotInJava(pybind11::module_& module);
+void register_SkipTypesNotInKotlin(pybind11::module_& module);
+void register_SkipTypesNotInSwift(pybind11::module_& module);
 void register_SkipTypesTags(pybind11::module_& module);
 void register_SkippedEverywhere(pybind11::module_& module);
 void register_SkippedEverywhereEnum(pybind11::module_& module);
@@ -62,13 +69,16 @@ PYBIND11_MODULE(generated, m) {
 
     register_ClassWithDocRef(m);
     register_ClassWithStructWithSkipLambdaInPlatform(m);
+    register_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(m);
     register_DontSmokeEnum(m);
     register_DummyStruct(m);
     register_EnableIfEnabled(m);
     register_EnableIfField(m);
     register_EnableIfSkipped(m);
     register_EnableIfTypesEnabled(m);
+    register_EnableIfTypesEnabledEnableMeToo(m);
     register_EnableIfTypesSkipped(m);
+    register_EnableMe(m);
     register_EnableTagsInDart(m);
     register_EnableTagsInJava(m);
     register_EnableTagsInKotlin(m);
@@ -96,6 +106,10 @@ PYBIND11_MODULE(generated, m) {
     register_SkipTagsInSwift(m);
     register_SkipTagsOnly(m);
     register_SkipTypes(m);
+    register_SkipTypesNotInDart(m);
+    register_SkipTypesNotInJava(m);
+    register_SkipTypesNotInKotlin(m);
+    register_SkipTypesNotInSwift(m);
     register_SkipTypesTags(m);
     register_SkippedEverywhere(m);
     register_SkippedEverywhereEnum(m);

@@ -23,7 +23,7 @@ public:
     void some_Method(
             int8_t some_parameter ) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ExternalInterface, some_Method, some_parameter);
+        PYBIND11_OVERRIDE_PURE(void, ExternalInterface, some_Method, some_parameter);
     }
     ::std::string& get_Me() const override {
         py::gil_scoped_acquire gil;
@@ -34,7 +34,9 @@ public:
 void register_ExternalInterface(py::module_& module) {
     py::class_<ExternalInterface, std::shared_ptr<ExternalInterface>, ExternalInterfaceTrampoline>(module, "ExternalInterface")
         .def(py::init<>())
-        .def("some_method", &ExternalInterface::some_Method, py::arg("some_parameter"))
+        .def("some_method", [](ExternalInterface& self, const int8_t some_parameter) {
+            return self.some_Method(some_parameter);
+        }, py::arg("some_parameter"))
         .def_property_readonly("some_property", py::overload_cast<>(&ExternalInterface::get_Me, py::const_))
         ;
 }

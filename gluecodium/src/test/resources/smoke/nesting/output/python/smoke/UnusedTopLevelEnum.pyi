@@ -3,10 +3,16 @@
 
 from enum import Enum
 
+import generated
+
 
 class UnusedTopLevelEnum(Enum):
     """"""
 
-    DOESNT_WORK = 0
-    CRASHED_ANYWAY = 1
+    DOESNT_WORK = generated.UnusedTopLevelEnum.DOESNT_WORK
+    CRASHED_ANYWAY = generated.UnusedTopLevelEnum.CRASHED_ANYWAY
+
+    @property
+    def _native(self):
+        return self.value
 

@@ -16,7 +16,7 @@ class NullableCollectionsStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], NullableCollectionsStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.NullableCollectionsStruct(*args))
+            super().__init__(generated.NullableCollectionsStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
 
     @property
@@ -26,17 +26,17 @@ class NullableCollectionsStruct(_NativeBase):
 
     @dates.setter
     def dates(self, value: list[Optional[datetime.datetime]]):
-        self._native.dates = value
+      self._native.dates = getattr(value, "_native", value)
 
 
 
     @property
-    def structs(self) -> dict[int, Optional[SomeStruct]]:
+    def structs(self) -> dict[int, Optional[NullableSomeStruct]]:
         """"""
         return self._native.structs
 
     @structs.setter
-    def structs(self, value: dict[int, Optional[SomeStruct]]):
-        self._native.structs = value
+    def structs(self, value: dict[int, Optional[NullableSomeStruct]]):
+      self._native.structs = getattr(value, "_native", value)
 
 
