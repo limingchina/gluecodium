@@ -12,7 +12,7 @@ class {{resolveName}}(_NativeBase):
         if len(args) == 1 and isinstance(args[0], {{typeName}}):
             super().__init__(args[0])
         else:
-            super().__init__({{nativeModule}}.{{resolveName}}(*args))
+            super().__init__({{nativeModule}}.{{resolveName}}(*[getattr(arg, "_native", arg) for arg in args]))
 {{#fields}}
 
 {{>python/PythonField}}{{/fields}}
@@ -23,8 +23,8 @@ class {{resolveName}}(_NativeBase):
 
 {{>python/PythonProperty}}{{/properties}}
 {{#enumerations}}
-
-{{>python/PythonEnumeration}}{{/enumerations}}
+{{#unlessPredicate "isStandaloneEnum"}}
+{{>python/PythonEnumeration}}{{/unlessPredicate}}{{/enumerations}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}

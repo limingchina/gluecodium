@@ -18,20 +18,27 @@
 """Enum mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.enums import Enums, InternalError
+from test.Enums import Enums
+from test.EnumsTypeCollectionMethods import EnumsTypeCollectionMethods
+from test.InternalError import InternalError
+from test.InternalErrorTypeCollection import InternalErrorTypeCollection
 
 import pytest
 
 
 class TestEnums:
     def test_flip_enum_to_zero(self):
-        result = Enums.flip_enum_value(InternalError.error_fatal)
-        assert result == InternalError.error_none
+        result = Enums.flip_enum_value(InternalError.ERROR_FATAL)
+        assert result == InternalError.ERROR_NONE
 
     def test_flip_enum_from_zero(self):
-        result = Enums.flip_enum_value(InternalError.error_none)
-        assert result == InternalError.error_fatal
+        result = Enums.flip_enum_value(InternalError.ERROR_NONE)
+        assert result == InternalError.ERROR_FATAL
 
     def test_enum_members_exist(self):
-        assert InternalError.error_none is not None
-        assert InternalError.error_fatal is not None
+        assert InternalError.ERROR_NONE is not None
+        assert InternalError.ERROR_FATAL is not None
+
+    def test_type_collection_enum_round_trip(self):
+        result = EnumsTypeCollectionMethods.flip_enum_value(InternalErrorTypeCollection.ERROR_FATAL)
+        assert result == InternalErrorTypeCollection.ERROR_NONE
