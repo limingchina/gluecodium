@@ -19,8 +19,7 @@
 
 import datetime
 
-import functional
-from test.durations import DurationSeconds
+from functional import DurationSeconds
 
 import pytest
 
