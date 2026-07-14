@@ -35,6 +35,7 @@ internal class PythonGeneratorPredicates(
     private val signatureResolver: LimeSignatureResolver,
     private val limeReferenceMap: Map<String, LimeElement>,
     private val pybind11NameResolver: Pybind11NameResolver,
+    private val standaloneEnums: Set<String>,
 ) {
     val predicates =
         mapOf(
@@ -49,6 +50,10 @@ internal class PythonGeneratorPredicates(
                         limeReferenceMap[it.path.parent.toString()] as? LimeNamedElement
                     }.any { CommonGeneratorPredicates.isInternal(it, PYTHON) }
             },
+                    "isStandaloneEnum" to { limeElement: Any ->
+                    limeElement is com.here.gluecodium.model.lime.LimeEnumeration &&
+                        limeElement.fullName in standaloneEnums
+                    },
             "isOverloaded" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     signatureResolver.isOverloaded(limeFunction)

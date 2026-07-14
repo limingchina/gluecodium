@@ -34,8 +34,11 @@ import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.generator.cpp.CppNameCache
 import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
+import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeType
+import com.here.gluecodium.model.lime.LimeTypeHelper
 import java.io.File
 import java.util.logging.Logger
 
@@ -123,11 +126,14 @@ internal class PythonGenerator : Generator {
                 "" to pythonNameResolver,
                 "Pybind11" to pybind11NameResolver,
             )
+        val pythonTypes = getPythonTypes(pythonFilteredModel.topElements)
+        val pybind11Types = getPythonTypes(pybind11FilteredModel.topElements)
         val predicates =
             PythonGeneratorPredicates(
                 limeOverloadsValidatorSignatureResolver(pybind11FilteredModel),
                 pythonFilteredModel.referenceMap,
                 pybind11NameResolver,
+                pythonTypes.filterIsInstance<LimeEnumeration>().map { it.fullName }.toSet(),
             )
 
         val pybind11IncludeResolver = Pybind11IncludeResolver(pybind11FilteredModel.referenceMap, cppNameRules, internalNamespace)
@@ -138,11 +144,11 @@ internal class PythonGenerator : Generator {
             )
 
         val pythonFiles =
-            pythonFilteredModel.topElements.flatMap {
+            pythonTypes.flatMap {
                 generatePythonFile(it, nameResolvers, predicates.predicates)
             }
         val pybind11Files =
-            pybind11FilteredModel.topElements.flatMap {
+            pybind11Types.flatMap {
                 generatePybind11File(it, nameResolvers, pybind11IncludeCollector, predicates.predicates)
             }
 
@@ -175,6 +181,7 @@ internal class PythonGenerator : Generator {
                 "moduleName" to pythonModule,
                 "nativeModule" to pythonModule,
                 "typeName" to pythonNameResolver.resolveName(limeElement),
+                "nativeTypeName" to pybind11NameResolver.resolveName(limeElement),
                 "contentTemplate" to selectPythonTemplate(limeElement),
             )
         val content = TemplateEngine.render("python/PythonFile", templateData, nameResolvers, predicates)
@@ -249,8 +256,7 @@ internal class PythonGenerator : Generator {
         // Module entry point: aggregates every per-type register_* function into a single
         // PYBIND11_MODULE. Type aliases and lambdas emit no binding, so they are excluded.
         val registerFunctions =
-            pybind11FilteredModel.topElements
-                .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
+            getPythonTypes(pybind11FilteredModel.topElements)
                 .filter { it !is com.here.gluecodium.model.lime.LimeTypeAlias && it !is com.here.gluecodium.model.lime.LimeLambda }
                 .map { pythonNameResolver.resolveName(it) }
                 .sorted()
@@ -295,6 +301,25 @@ internal class PythonGenerator : Generator {
             GeneratedFile(nativeBaseContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "_native_base.py"),
         ) + packageInitFiles
     }
+
+    private fun getPythonTypes(elements: List<LimeNamedElement>): List<LimeType> =
+        elements.flatMap { element ->
+            val topType = element as? LimeType ?: return@flatMap emptyList()
+            listOf(topType) +
+                LimeTypeHelper.getAllTypes(topType)
+                    .filterIsInstance<LimeEnumeration>()
+                    .filter { it != topType }
+        }.distinctBy { it.fullName }
+            .let { types ->
+                val duplicateFileNames =
+                    types.groupingBy { nameRules.getPythonFileName(it) }
+                        .eachCount()
+                        .filterValues { it > 1 }
+                        .keys
+                types.filter {
+                    it !is LimeEnumeration || nameRules.getPythonFileName(it) !in duplicateFileNames
+                }
+            }
 
     private fun selectPythonTemplate(limeElement: LimeNamedElement) =
         when (limeElement) {

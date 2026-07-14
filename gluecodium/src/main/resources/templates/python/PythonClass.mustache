@@ -20,8 +20,8 @@ class {{resolveName}}{{#if parents}}(
 
 {{>python/PythonProperty}}{{/properties}}
 {{#enumerations}}
-
-{{>python/PythonEnumeration}}{{/enumerations}}
+{{#unlessPredicate "isStandaloneEnum"}}
+{{>python/PythonEnumeration}}{{/unlessPredicate}}{{/enumerations}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}

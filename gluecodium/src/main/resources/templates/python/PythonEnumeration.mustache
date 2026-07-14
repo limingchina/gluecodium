@@ -1,9 +1,25 @@
 {{! Python enumeration. }}
-from enum import Enum
+{{#ifPredicate "isStandaloneEnum"}}from enum import Enum
+
+import {{nativeModule}}
+{{/ifPredicate}}{{#unlessPredicate "isStandaloneEnum"}}from enum import Enum
+{{/unlessPredicate}}
 
 
 class {{resolveName}}(Enum):
     """{{resolveName comment}}"""
+{{#ifPredicate "isStandaloneEnum"}}
+{{#enumerators}}
+
+    {{resolveName}} = {{nativeModule}}.{{nativeTypeName}}.{{resolveName this "Pybind11"}}{{/enumerators}}
+{{/ifPredicate}}{{#unlessPredicate "isStandaloneEnum"}}
 {{#enumerators}}
 
     {{resolveName}} = {{iter.position}}{{/enumerators}}
+{{/unlessPredicate}}
+
+{{#ifPredicate "isStandaloneEnum"}}
+    @property
+    def _native(self):
+        return self.value
+{{/ifPredicate}}
