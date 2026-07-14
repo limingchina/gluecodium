@@ -307,7 +307,7 @@ internal class PythonGenerator : Generator {
             val topType = element as? LimeType ?: return@flatMap emptyList()
             listOf(topType) +
                 LimeTypeHelper.getAllTypes(topType)
-                    .filterIsInstance<LimeEnumeration>()
+                    .filter { it is LimeEnumeration || it is com.here.gluecodium.model.lime.LimeStruct }
                     .filter { it != topType }
         }.distinctBy { it.fullName }
             .let { types ->
@@ -317,7 +317,8 @@ internal class PythonGenerator : Generator {
                         .filterValues { it > 1 }
                         .keys
                 types.filter {
-                    it !is LimeEnumeration || nameRules.getPythonFileName(it) !in duplicateFileNames
+                    (it !is LimeEnumeration && it !is com.here.gluecodium.model.lime.LimeStruct) ||
+                        nameRules.getPythonFileName(it) !in duplicateFileNames
                 }
             }
 

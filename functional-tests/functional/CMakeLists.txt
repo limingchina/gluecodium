@@ -159,10 +159,11 @@ feature(FieldConstructors cpp android android-kotlin swift dart SOURCES
     input/lime/FieldConstructorsNesting.lime
 )
 
-feature(TypeDefs cpp android android-kotlin swift dart SOURCES
+feature(TypeDefs cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StaticTypedef.cpp
 
     input/lime/StaticTypedef.lime
+    input/lime/TypeCollection.lime
 )
 
 feature(Enums cpp android android-kotlin swift dart python SOURCES
