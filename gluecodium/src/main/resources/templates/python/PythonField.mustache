@@ -26,8 +26,9 @@
 {{/if}}{{#ifPredicate typeRef "isWrapperType"}}        return {{resolveName typeRef}}(self._native.{{resolveName}})
 {{/ifPredicate}}{{#unlessPredicate typeRef "isWrapperType"}}        return self._native.{{resolveName}}
 {{/unlessPredicate}}
-
+{{#unlessPredicate "isImmutableField"}}
     @{{resolveName}}.setter
     def {{resolveName}}(self, value{{#unless typeRef.isNullable}}: {{resolveName typeRef}}{{/unless}}):
       self._native.{{resolveName}} = getattr(value, "_native", value)
+{{/unlessPredicate}}
 

@@ -3,10 +3,17 @@ void register_{{resolveName}}(py::module_& module) {
     py::class_<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}")
 {{#fields}}
 {{#ifPredicate "hasFieldAccessors"}}
+{{#ifPredicate "isImmutableField"}}
+        .def_property_readonly("{{resolveName}}", {{#ifPredicate typeRef "needsRefSuffix"}}static_cast<const {{resolveName typeRef "Pybind11"}}& ({{resolveName model "Pybind11"}}::*)() const &>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/ifPredicate}}{{#unlessPredicate typeRef "needsRefSuffix"}}static_cast<{{resolveName typeRef "Pybind11"}} ({{resolveName model "Pybind11"}}::*)() const>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/unlessPredicate}})
+{{/ifPredicate}}{{#unlessPredicate "isImmutableField"}}
         .def_property("{{resolveName}}", {{#ifPredicate typeRef "needsRefSuffix"}}static_cast<const {{resolveName typeRef "Pybind11"}}& ({{resolveName model "Pybind11"}}::*)() const &>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/ifPredicate}}{{#unlessPredicate typeRef "needsRefSuffix"}}static_cast<{{resolveName typeRef "Pybind11"}} ({{resolveName model "Pybind11"}}::*)() const>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/unlessPredicate}}, py::overload_cast<const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}))
-{{/ifPredicate}}
-{{#unlessPredicate "hasFieldAccessors"}}
+{{/unlessPredicate}}
+{{/ifPredicate}}{{#unlessPredicate "hasFieldAccessors"}}
+{{#ifPredicate "isImmutableField"}}
+        .def_readonly("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
+{{/ifPredicate}}{{#unlessPredicate "isImmutableField"}}
         .def_readwrite("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
+{{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/fields}}
 {{>python/Pybind11StructInit}}
