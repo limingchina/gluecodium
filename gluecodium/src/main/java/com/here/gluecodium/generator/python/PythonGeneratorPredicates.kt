@@ -145,9 +145,12 @@ internal class PythonGeneratorPredicates(
             },
             // Whether a struct needs a `py::init<>()` with no arguments. True when every field has
             // a default value (or there are no fields), so the C++ struct is default-constructible.
+            // An explicit no-arg field constructor already yields the same `py::init<>()`, so it is
+            // suppressed here to avoid registering a duplicate constructor in pybind11.
             "hasDefaultConstructor" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeStruct &&
-                    limeElement.uninitializedFields.isEmpty()
+                    limeElement.uninitializedFields.isEmpty() &&
+                    limeElement.fieldConstructors.none { it.fieldRefs.isEmpty() }
             },
             // Whether a struct needs a `py::init<...>()` taking every field. True when the struct
             // has no explicit field constructors (so the implicit all-fields constructor is the
@@ -163,6 +166,13 @@ internal class PythonGeneratorPredicates(
                         .hasImmutableFields(limeElement) -> limeElement.allFieldsConstructor == null
                     else -> false
                 }
+            },
+            // Whether a field constructor takes no arguments (i.e. its fieldRefs list is empty).
+            // Such a constructor must be bound as a plain `py::init<>()` rather than one carrying a
+            // dangling empty `py::arg(...)`.
+            "isEmptyFieldConstructor" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeFieldConstructor &&
+                    limeElement.fieldRefs.isEmpty()
             },
         )
 
