@@ -5,3 +5,11 @@
 {{#ifPredicate model "needsAllFieldsConstructor"}}
         .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}>(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
 {{/ifPredicate}}
+{{#fieldConstructors}}
+{{#ifPredicate "isEmptyFieldConstructor"}}
+        .def(py::init<>())
+{{/ifPredicate}}
+{{#unlessPredicate "isEmptyFieldConstructor"}}
+        .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}>(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
+{{/unlessPredicate}}
+{{/fieldConstructors}}
