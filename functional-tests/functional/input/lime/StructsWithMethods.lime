@@ -45,6 +45,10 @@ struct Vector {
 
         y: Double
     )
+    @Dart("createCopy")
+    constructor create(
+        other: Vector
+    ) throws ValidationUtils.Validation
 }
 
 class StructsWithMethodsInterface {
@@ -71,6 +75,10 @@ class StructsWithMethodsInterface {
             y: Double,
             z: Double
         )
+        @Dart("createCopy")
+        constructor create(
+            other: Vector3
+        ) throws ValidationUtils.Validation
     }
 
     struct StructWithStaticMethodsOnly {
