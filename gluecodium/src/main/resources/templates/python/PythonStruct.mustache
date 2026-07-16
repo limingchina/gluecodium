@@ -9,8 +9,8 @@ class {{resolveName}}(_NativeBase):
     """{{resolveName comment}}"""
 
     def __init__(self, *args):
-        if len(args) == 1 and not hasattr(args[0], "_native"):
-            super().__init__(args[0])
+        if len(args) == 1 and hasattr(args[0], "_native"):
+            super().__init__(args[0]._native)
         else:
             super().__init__({{nativeModule}}.{{resolveName}}(*[getattr(arg, "_native", arg) for arg in args]))
 {{#fields}}

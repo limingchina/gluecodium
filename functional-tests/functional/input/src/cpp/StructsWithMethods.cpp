@@ -53,16 +53,6 @@ Vector::create( const double x, const double y )
     return {x, y};
 }
 
-lorem_ipsum::test::Return< Vector, std::error_code >
-Vector::create( const Vector& other )
-{
-    return validate( other.x, other.y ) ?
-        lorem_ipsum::test::Return< Vector, std::error_code >( Vector( other.x, other.y ) ) :
-        lorem_ipsum::test::Return< Vector, std::error_code >(
-            ValidationUtils::ValidationErrorCode::VALIDATION_FAILED
-        );
-}
-
 double
 StructsWithMethodsInterface::Vector3::distance_to(
     const StructsWithMethodsInterface::Vector3& other ) const
@@ -89,31 +79,6 @@ StructsWithMethodsInterface::Vector3
 StructsWithMethodsInterface::Vector3::create( const double x, const double y, const double z )
 {
     return {x, y, z};
-}
-
-lorem_ipsum::test::Return< StructsWithMethodsInterface::Vector3, std::error_code >
-StructsWithMethodsInterface::Vector3::create( const StructsWithMethodsInterface::Vector3& other )
-{
-    return validate( other.x, other.y, other.z ) ?
-        lorem_ipsum::test::Return< StructsWithMethodsInterface::Vector3, std::error_code >(
-            StructsWithMethodsInterface::Vector3( other.x, other.y, other.z ) ) :
-        lorem_ipsum::test::Return< StructsWithMethodsInterface::Vector3, std::error_code >(
-            ValidationUtils::ValidationErrorCode::VALIDATION_FAILED
-         );
-}
-
-lorem_ipsum::test::Return< StructsWithMethodsInterface::Vector4, std::error_code >
-StructsWithMethodsInterface::Vector4::create( )
-{
-    return lorem_ipsum::test::Return< StructsWithMethodsInterface::Vector4, std::error_code >(
-        StructsWithMethodsInterface::Vector4( ) );
-}
-
-lorem_ipsum::test::Return< StructsWithMethodsInterface::Vector5, std::error_code >
-StructsWithMethodsInterface::Vector5::create( )
-{
-    return lorem_ipsum::test::Return< StructsWithMethodsInterface::Vector5, std::error_code >(
-        StructsWithMethodsInterface::Vector5( ) );
 }
 
 void
