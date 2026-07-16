@@ -143,6 +143,15 @@ internal class PythonGeneratorPredicates(
             "isException" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeException
             },
+            // Whether a function/constructor throws (has a non-null exception type). Python exception
+            // translation for `Return<T, Error>` is not wired yet (see Phase E/G7 of the Python
+            // follow-up plan), so throwing functions are skipped in the pybind11 binding to avoid
+            // emitting ambiguous overloads (e.g. a `create` static method colliding with the
+            // all-fields `create`). The C++ and Dart generators still emit them.
+            "isThrowing" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeFunction &&
+                    limeElement.exception != null
+            },
             // Whether a struct needs a `py::init<>()` with no arguments. True when every field has
             // a default value (or there are no fields), so the C++ struct is default-constructible.
             // An explicit no-arg field constructor already yields the same `py::init<>()`, so it is

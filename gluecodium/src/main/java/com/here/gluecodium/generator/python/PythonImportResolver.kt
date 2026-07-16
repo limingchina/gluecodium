@@ -24,6 +24,7 @@ import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeExternalDescriptor
+import com.here.gluecodium.model.lime.LimeFunction
 import com.here.gluecodium.model.lime.LimeGenericType
 import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
@@ -51,6 +52,11 @@ internal class PythonImportResolver(
             is LimeType -> resolveTypeImports(limeElement)
             // Constants are emitted as module-level variables, never imported.
             is LimeConstant -> emptyList()
+            // Throwing functions are not bound in the pybind11 layer yet (Python exception
+            // translation for `Return<T, Error>` is deferred to Phase E/G7 of the Python
+            // follow-up plan), so their exception type must not be imported either — the
+            // corresponding exception module is never generated.
+            is LimeFunction -> if (limeElement.exception != null) emptyList() else listOf(createImport(limeElement))
             is LimeNamedElement -> listOf(createImport(limeElement))
             else -> emptyList()
         }
@@ -68,6 +74,11 @@ internal class PythonImportResolver(
         // Generic (container) types are builtins in Python; their element types are resolved
         // separately by resolveGenericTypeImports, so no import is needed here.
         if (limeType is com.here.gluecodium.model.lime.LimeGenericType) return emptyList()
+        // Exceptions are represented as `std::error_code` in C++ and are never generated as a
+        // Python module, so importing them would reference a non-existent module. Throwing
+        // functions (whose return type carries the exception) are not bound for Python yet
+        // (see Phase E/G7 of the Python follow-up plan).
+        if (limeType is com.here.gluecodium.model.lime.LimeException) return emptyList()
         val externalImport = resolveExternalImport(limeType)
         if (externalImport != null) return listOf(externalImport)
         return listOf(createImport(limeType))
