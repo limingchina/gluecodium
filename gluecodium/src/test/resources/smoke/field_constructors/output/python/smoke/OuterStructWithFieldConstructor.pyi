@@ -12,8 +12,8 @@ class OuterStructWithFieldConstructor(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and hasattr(args[0], "_native"):
-            super().__init__(args[0]._native)
+        if len(args) == 1 and isinstance(args[0], generated.OuterStructWithFieldConstructor):
+            super().__init__(args[0])
         else:
             super().__init__(generated.OuterStructWithFieldConstructor(*[getattr(arg, "_native", arg) for arg in args]))
 

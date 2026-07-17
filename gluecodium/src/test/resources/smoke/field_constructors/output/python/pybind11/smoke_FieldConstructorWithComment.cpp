@@ -18,6 +18,7 @@ using FieldConstructorWithComment = ::smoke::FieldConstructorWithComment;
 void register_FieldConstructorWithComment(py::module_& module) {
     py::class_<FieldConstructorWithComment>(module, "FieldConstructorWithComment")
         .def_readwrite("string_field", &FieldConstructorWithComment::string_field)
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }

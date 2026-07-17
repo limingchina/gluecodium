@@ -18,6 +18,7 @@ using FieldConstructorWithBothComments = ::smoke::FieldConstructorWithBothCommen
 void register_FieldConstructorWithBothComments(py::module_& module) {
     py::class_<FieldConstructorWithBothComments>(module, "FieldConstructorWithBothComments")
         .def_readwrite("string_field", &FieldConstructorWithBothComments::string_field)
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }

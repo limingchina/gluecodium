@@ -11,8 +11,8 @@ class FieldConstructorWithComment(_NativeBase):
     """SomeStruct"""
 
     def __init__(self, *args):
-        if len(args) == 1 and hasattr(args[0], "_native"):
-            super().__init__(args[0]._native)
+        if len(args) == 1 and isinstance(args[0], generated.FieldConstructorWithComment):
+            super().__init__(args[0])
         else:
             super().__init__(generated.FieldConstructorWithComment(*[getattr(arg, "_native", arg) for arg in args]))
 
