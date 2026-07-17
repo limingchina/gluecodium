@@ -122,6 +122,13 @@ These features have no cross-feature Lime imports and exercise only the most bas
 
 **Note**: `Nesting` includes `NestedInheritance.lime` which exercises inheritance (G3). If G3 is not yet fixed, temporarily `@Skip(Python)` that specific Lime file and re-enable it in Phase D.
 
+**B4 implementation status (2026-07-17):** ✅ `FieldConstructors` is enabled and its pytest passes 29/29. Two generator bugs were fixed:
+
+1. **`hasDefaultConstructor` predicate too strict.** `PythonGeneratorPredicates.kt` required every field to have a Lime default value before emitting `py::init<>()`, but C++ (`CppGeneratorPredicates.kt`) allows a default constructor whenever there's no empty field constructor and no uninitialized field is immutable, even if some uninitialized fields lack a Lime default (they're just default-initialized, e.g. `""`/`0`). Rewrote the Python predicate to mirror C++ exactly (reusing `CommonGeneratorPredicates.getAllFieldTypes`, promoted from `private` to `internal`). This also uncovered a bug in the hand-written functional test, which wrongly expected the *other* struct's Lime-default values (`"nonsense"`/`42`) instead of the C++ default-ctor values (`""`/`0`).
+2. **`PythonStruct.mustache` `__init__` couldn't accept native pybind11 objects.** It only recognized *wrapper* objects via `hasattr(args[0], "_native")`. Static factories (e.g. `create_me`) and property getters for nested structs return **native** pybind11 objects directly, which don't have `_native`, so construction fell through to the "unwrap and re-invoke the native ctor" branch and failed. Fixed by checking `isinstance(args[0], <nativeModule>.<Type>)` first, and removed the `hasattr(... "_native")` branch entirely — it was also actively harmful: passing a wrapper of a *different* struct type would grab that wrapper's `_native` and hand it straight to `_NativeBase.__init__`, bypassing the native constructor's field copying (breaking `OuterStructWithFieldConstructor(inner_wrapper)`).
+
+Verified by rebuilding via `functional-tests/scripts/build-python-functional --publish` and running `field_constructors_test.py` (29 passed) plus the Gluecodium smoke test for `field_constructors` (goldens regenerated, BUILD SUCCESSFUL). Spot-checked other Python functional tests for regressions: `classes_test.py`/`enums_test.py` pass; `structs_test.py::test_colored_line` fails, but that's a **pre-existing, unrelated bug** — a second `needsAllFieldsConstructor` definition in `PythonGeneratorPredicates.kt` shadows the first (Kotlin `mapOf` keeps the later entry) and incorrectly suppresses the all-fields constructor whenever `uninitializedFields.isEmpty()`, unlike C++. Left as a follow-up, not part of B4.
+
 **Exit criteria**: All 6 features compile and pass pytest.
 
 ---

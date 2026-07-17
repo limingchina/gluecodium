@@ -18,6 +18,7 @@ using FieldConstructorWithExcludedOnly = ::smoke::FieldConstructorWithExcludedOn
 void register_FieldConstructorWithExcludedOnly(py::module_& module) {
     py::class_<FieldConstructorWithExcludedOnly>(module, "FieldConstructorWithExcludedOnly")
         .def_readwrite("string_field", &FieldConstructorWithExcludedOnly::string_field)
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

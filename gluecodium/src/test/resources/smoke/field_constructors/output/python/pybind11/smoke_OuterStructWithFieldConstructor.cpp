@@ -17,6 +17,7 @@ using OuterStructWithFieldConstructor = ::smoke::OuterStructWithFieldConstructor
 void register_OuterStructWithFieldConstructor(py::module_& module) {
     py::class_<OuterStructWithFieldConstructor>(module, "OuterStructWithFieldConstructor")
         .def_readwrite("outer_struct_field", &OuterStructWithFieldConstructor::outer_struct_field)
+        .def(py::init<::smoke::OuterStructWithFieldConstructor::InnerStructWithDefaults>(), py::arg("outer_struct_field"))
         ;
 }
 

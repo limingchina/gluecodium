@@ -18,10 +18,11 @@ using ImmutableStructWithClash = ::smoke::ImmutableStructWithClash;
 
 void register_ImmutableStructWithClash(py::module_& module) {
     py::class_<ImmutableStructWithClash>(module, "ImmutableStructWithClash")
-        .def_readwrite("string_field", &ImmutableStructWithClash::string_field)
-        .def_readwrite("int_field", &ImmutableStructWithClash::int_field)
-        .def_readwrite("bool_field", &ImmutableStructWithClash::bool_field)
+        .def_readonly("string_field", &ImmutableStructWithClash::string_field)
+        .def_readonly("int_field", &ImmutableStructWithClash::int_field)
+        .def_readonly("bool_field", &ImmutableStructWithClash::bool_field)
         .def(py::init<>())
+        .def(py::init<bool, int32_t, ::std::string>(), py::arg("bool_field"), py::arg("int_field"), py::arg("string_field"))
         ;
 }
 

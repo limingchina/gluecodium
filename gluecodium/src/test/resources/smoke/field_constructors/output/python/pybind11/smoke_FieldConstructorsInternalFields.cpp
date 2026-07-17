@@ -22,6 +22,8 @@ void register_FieldConstructorsInternalFields(py::module_& module) {
         .def_readwrite("int_field", &FieldConstructorsInternalFields::int_field)
         .def_readwrite("bool_field", &FieldConstructorsInternalFields::bool_field)
         .def(py::init<>())
+        .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
+        .def(py::init<bool, int32_t, ::std::string>(), py::arg("bool_field"), py::arg("int_field"), py::arg("string_field"))
         ;
 }
 

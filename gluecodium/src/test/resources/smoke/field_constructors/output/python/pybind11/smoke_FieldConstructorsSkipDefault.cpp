@@ -21,6 +21,7 @@ void register_FieldConstructorsSkipDefault(py::module_& module) {
         .def_readwrite("string_field", &FieldConstructorsSkipDefault::string_field)
         .def_readwrite("int_field", &FieldConstructorsSkipDefault::int_field)
         .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

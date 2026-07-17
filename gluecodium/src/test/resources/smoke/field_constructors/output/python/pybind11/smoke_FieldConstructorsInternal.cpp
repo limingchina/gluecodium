@@ -20,6 +20,9 @@ void register_FieldConstructorsInternal(py::module_& module) {
         .def_readwrite("public_field", &FieldConstructorsInternal::public_field)
         .def_readwrite("internal_field", &FieldConstructorsInternal::internal_field)
         .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("public_field"))
+        .def(py::init<double>(), py::arg("internal_field"))
+        .def(py::init<double, ::std::string>(), py::arg("internal_field"), py::arg("public_field"))
         ;
 }
 

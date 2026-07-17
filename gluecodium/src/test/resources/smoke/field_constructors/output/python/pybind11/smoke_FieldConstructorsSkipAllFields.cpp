@@ -18,8 +18,9 @@ using FieldConstructorsSkipAllFields = ::smoke::FieldConstructorsSkipAllFields;
 
 void register_FieldConstructorsSkipAllFields(py::module_& module) {
     py::class_<FieldConstructorsSkipAllFields>(module, "FieldConstructorsSkipAllFields")
-        .def_readwrite("string_field", &FieldConstructorsSkipAllFields::string_field)
-        .def_readwrite("int_field", &FieldConstructorsSkipAllFields::int_field)
+        .def_readonly("string_field", &FieldConstructorsSkipAllFields::string_field)
+        .def_readonly("int_field", &FieldConstructorsSkipAllFields::int_field)
+        .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
         ;
 }
 

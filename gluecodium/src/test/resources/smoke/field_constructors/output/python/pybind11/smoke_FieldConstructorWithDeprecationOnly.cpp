@@ -18,6 +18,7 @@ using FieldConstructorWithDeprecationOnly = ::smoke::FieldConstructorWithDepreca
 void register_FieldConstructorWithDeprecationOnly(py::module_& module) {
     py::class_<FieldConstructorWithDeprecationOnly>(module, "FieldConstructorWithDeprecationOnly")
         .def_readwrite("string_field", &FieldConstructorWithDeprecationOnly::string_field)
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

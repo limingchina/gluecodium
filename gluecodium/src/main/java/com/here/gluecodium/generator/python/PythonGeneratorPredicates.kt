@@ -152,14 +152,23 @@ internal class PythonGeneratorPredicates(
                 limeElement is com.here.gluecodium.model.lime.LimeFunction &&
                     limeElement.exception != null
             },
-            // Whether a struct needs a `py::init<>()` with no arguments. True when every field has
-            // a default value (or there are no fields), so the C++ struct is default-constructible.
-            // An explicit no-arg field constructor already yields the same `py::init<>()`, so it is
-            // suppressed here to avoid registering a duplicate constructor in pybind11.
+            // Whether a struct needs a `py::init<>()` with no arguments. Mirrors the C++ generator's
+            // `hasDefaultConstructor` predicate: the C++ struct is default-constructible unless it is
+            // immutable, has an explicit no-arg field constructor, or has an uninitialized field
+            // whose (recursively expanded) type is immutable. An explicit no-arg field constructor
+            // already yields the same `py::init<>()`, so it is suppressed here to avoid registering a
+            // duplicate constructor in pybind11.
             "hasDefaultConstructor" to { limeElement: Any ->
-                limeElement is com.here.gluecodium.model.lime.LimeStruct &&
-                    limeElement.uninitializedFields.isEmpty() &&
-                    limeElement.fieldConstructors.none { it.fieldRefs.isEmpty() }
+                when {
+                    limeElement !is com.here.gluecodium.model.lime.LimeStruct -> false
+                    limeElement.fieldConstructors.any { it.fieldRefs.isEmpty() } -> false
+                    limeElement.uninitializedFields.isEmpty() -> true
+                    limeElement.uninitializedFields
+                        .flatMap { com.here.gluecodium.generator.common.CommonGeneratorPredicates.getAllFieldTypes(it.typeRef.type) }
+                        .any { it.attributes.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) } -> false
+                    !limeElement.attributes.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) -> true
+                    else -> false
+                }
             },
             // Whether a struct needs a `py::init<...>()` taking every field. True when the struct
             // has no explicit field constructors (so the implicit all-fields constructor is the
