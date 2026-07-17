@@ -21,6 +21,7 @@ void register_FieldConstructorsPartialDefaults(py::module_& module) {
         .def_readwrite("string_field", &FieldConstructorsPartialDefaults::string_field)
         .def_readwrite("int_field", &FieldConstructorsPartialDefaults::int_field)
         .def_readwrite("bool_field", &FieldConstructorsPartialDefaults::bool_field)
+        .def(py::init<>())
         .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         .def(py::init<bool, int32_t, ::std::string>(), py::arg("bool_field"), py::arg("int_field"), py::arg("string_field"))
         ;
