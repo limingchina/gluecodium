@@ -22,6 +22,8 @@ void register_FieldConstructorsWithLabels(py::module_& module) {
         .def_readwrite("int_field", &FieldConstructorsWithLabels::int_field)
         .def_readwrite("bool_field", &FieldConstructorsWithLabels::bool_field)
         .def(py::init<>())
+        .def(py::init<int32_t, bool>(), py::arg("int_field"), py::arg("bool_field"))
+        .def(py::init<::std::string, int32_t, bool>(), py::arg("string_field"), py::arg("int_field"), py::arg("bool_field"))
         ;
 }
 

@@ -18,9 +18,9 @@ using ImmutableStructNoClash = ::smoke::ImmutableStructNoClash;
 
 void register_ImmutableStructNoClash(py::module_& module) {
     py::class_<ImmutableStructNoClash>(module, "ImmutableStructNoClash")
-        .def_readwrite("string_field", &ImmutableStructNoClash::string_field)
-        .def_readwrite("int_field", &ImmutableStructNoClash::int_field)
-        .def_readwrite("bool_field", &ImmutableStructNoClash::bool_field)
+        .def_readonly("string_field", &ImmutableStructNoClash::string_field)
+        .def_readonly("int_field", &ImmutableStructNoClash::int_field)
+        .def_readonly("bool_field", &ImmutableStructNoClash::bool_field)
         .def(py::init<>())
         ;
 }

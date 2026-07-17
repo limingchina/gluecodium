@@ -33,8 +33,12 @@ import com.here.gluecodium.generator.common.nameRuleSetFromConfig
 import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.generator.cpp.CppNameCache
 import com.here.gluecodium.generator.cpp.CppNameRules
+import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
+import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
+import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeEnumeration
+import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeType
@@ -96,7 +100,8 @@ internal class PythonGenerator : Generator {
         // actual Python output.
         val pybind11FilteredModel =
             LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = true)
+                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = true) &&
+                    !isCppSkipped(it)
             }
         val pythonFilteredModel =
             LimeModelFilter.filter(limeModel) {
@@ -348,6 +353,17 @@ internal class PythonGenerator : Generator {
 
     private fun limeOverloadsValidatorSignatureResolver(model: LimeModel) =
         com.here.gluecodium.model.lime.LimeSignatureResolver(model.referenceMap)
+
+    /**
+     * `@Cpp(Skip)` may only be used on field constructors and constants (see
+     * [com.here.gluecodium.generator.cpp.CppSkipAttributesValidator]). Such elements are omitted from
+     * the generated C++ API, so the pybind11 binding — which wraps that C++ API — must omit them too.
+     * Without this, pybind11 would emit `py::init<...>()` for a constructor that does not exist in C++,
+     * which fails to compile.
+     */
+    private fun isCppSkipped(element: LimeNamedElement) =
+        (element is LimeFieldConstructor || element is LimeConstant) &&
+            element.attributes.have(LimeAttributeType.CPP, SKIP)
 
     companion object {
         private val logger = Logger.getLogger(PythonGenerator::class.java.name)

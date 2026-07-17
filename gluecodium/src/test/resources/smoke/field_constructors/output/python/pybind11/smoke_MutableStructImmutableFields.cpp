@@ -18,7 +18,7 @@ using MutableStructImmutableFields = ::smoke::MutableStructImmutableFields;
 
 void register_MutableStructImmutableFields(py::module_& module) {
     py::class_<MutableStructImmutableFields>(module, "MutableStructImmutableFields")
-        .def_readwrite("struct_field", &MutableStructImmutableFields::struct_field)
+        .def_readonly("struct_field", &MutableStructImmutableFields::struct_field)
         .def_readwrite("int_field", &MutableStructImmutableFields::int_field)
         .def_readwrite("bool_field", &MutableStructImmutableFields::bool_field)
         .def(py::init<>())
