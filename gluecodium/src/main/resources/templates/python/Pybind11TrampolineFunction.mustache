@@ -1,6 +1,14 @@
 {{! Trampoline override for a single interface method. }}
+{{#ifPredicate returnType.typeRef "returnTypeHasComma"}}
+    using {{resolveName this "Pybind11"}}_return_type = {{resolveName returnType.typeRef "Pybind11"}};
+{{/ifPredicate}}
     {{resolveName returnType.typeRef "Pybind11"}} {{resolveName this "Pybind11"}}(
             {{#parameters}}{{#ifPredicate typeRef "needsRefSuffix"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ) override {
         py::gil_scoped_acquire gil;
+{{#ifPredicate returnType.typeRef "returnTypeHasComma"}}
+        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
+{{/ifPredicate}}
+{{#unlessPredicate returnType.typeRef "returnTypeHasComma"}}
         PYBIND11_OVERRIDE_PURE({{resolveName returnType.typeRef "Pybind11"}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
+{{/unlessPredicate}}
     }

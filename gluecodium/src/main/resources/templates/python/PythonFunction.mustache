@@ -24,7 +24,8 @@
 {{#if comment}}        """{{resolveName comment}}"""
 {{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
-        return {{resolveName returnType}}(native_result)
+{{#ifPredicate returnType.typeRef "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}
+{{/ifPredicate}}        return {{resolveName returnType}}(native_result)
 {{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isWrapperType"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/unless}}

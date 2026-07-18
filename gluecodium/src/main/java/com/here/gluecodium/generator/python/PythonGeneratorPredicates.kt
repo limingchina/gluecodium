@@ -137,6 +137,18 @@ internal class PythonGeneratorPredicates(
             // its factory return types - an unresolvable circular import. `PythonField` uses
             // this predicate to emit a local (deferred) import instead of a module-level one.
             "isAncestorField" to { limeElement: Any -> limeElement is LimeField && isFieldTypeAncestor(limeElement) },
+            // Whether a function's return type is one of the *ancestors* of its own container
+            // (e.g. a nested class `Builder.build()` returning its enclosing struct `OuterStruct`).
+            // Mirrors `isAncestorField` but for method/function return types, which produce the
+            // same circular-import problem once nested types are flattened into top-level modules.
+            "isAncestorReturnType" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeFunction && isTypeAncestor(limeElement.returnType.typeRef)
+            },
+            // Whether a property's type is one of the *ancestors* of its own container. Mirrors
+            // `isAncestorField` / `isAncestorReturnType` but for property types.
+            "isAncestorProperty" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeProperty && isTypeAncestor(limeElement.typeRef)
+            },
             // Whether the element lives inside a non-empty namespace (i.e. its LimePath head is not
             // empty). Used by the pybind11 file template to emit `using` aliases so the generated
             // code can refer to the C++ type by its short name.
@@ -160,6 +172,21 @@ internal class PythonGeneratorPredicates(
             "isThrowing" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeFunction &&
                     limeElement.exception != null
+            },
+            // Whether the C++ return type of a function contains a comma (e.g. a `std::map<K, V>` or
+            // `std::pair<A, B>` instantiation). The `PYBIND11_OVERRIDE_PURE` / `PYBIND11_OVERRIDE`
+            // macros are not variadic in their type argument, so a comma-bearing return type must be
+            // aliased through a `using` declaration before being passed to the macro. Accepts either
+            // the function itself or its return type reference as the predicate context.
+            "returnTypeHasComma" to { limeElement: Any ->
+                val typeRef =
+                    when (limeElement) {
+                        is com.here.gluecodium.model.lime.LimeFunction -> limeElement.returnType.typeRef
+                        is com.here.gluecodium.model.lime.LimeTypeRef -> limeElement
+                        is com.here.gluecodium.model.lime.LimeProperty -> limeElement.typeRef
+                        else -> null
+                    }
+                typeRef != null && pybind11NameResolver.resolveName(typeRef).contains(',')
             },
             // Whether a struct needs a `py::init<>()` with no arguments. Mirrors the C++ generator's
             // `hasDefaultConstructor` predicate: the C++ struct is default-constructible unless it is
@@ -206,6 +233,18 @@ internal class PythonGeneratorPredicates(
     private fun isFieldTypeAncestor(limeField: LimeField): Boolean {
         val fieldTypeName = (limeField.typeRef.type.actualType as? LimeNamedElement)?.fullName ?: return false
         return limeField.path.parent.allParents.any { limeReferenceMap[it.toString()]?.let { e -> (e as? LimeNamedElement)?.fullName } == fieldTypeName }
+    }
+
+    private fun isTypeAncestor(limeTypeRef: LimeTypeRef): Boolean {
+        val typeName = (limeTypeRef.type.actualType as? LimeNamedElement)?.fullName ?: return false
+        // Walk up from the type reference's container to find any ancestor matching the referenced
+        // type. Use `tailParents` (which terminates once the tail is exhausted) instead of a manual
+        // `parent` walk: `LimePath.parent` is idempotent for an empty tail, so a hand-rolled
+        // `while (currentKey != null)` loop would never terminate when no ancestor matches, causing
+        // the generator to spin indefinitely on deeply nested types.
+        return limeTypeRef.type.path.parent.tailParents.any {
+            (limeReferenceMap[it.toString()] as? LimeNamedElement)?.fullName == typeName
+        }
     }
 
     private fun fieldTypeHasImmutableFields(limeType: LimeType): Boolean {

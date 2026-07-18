@@ -7,8 +7,8 @@ import {{nativeModule}}
 
 class {{resolveName}}{{#if parents}}(
 {{#parents}}    {{resolveName}}{{#if iter.hasNext}},
-{{/if}}{{/parents}}
-){{/if}}(_NativeBase):
+{{/if}}{{/parents}},
+    _NativeBase):{{/if}}{{^parents}}(_NativeBase):{{/parents}}
     """{{resolveName comment}}"""
 
     def __init__(self, native):
