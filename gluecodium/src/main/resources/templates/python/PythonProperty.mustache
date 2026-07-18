@@ -28,7 +28,8 @@
 {{/if}}    @property
     def {{resolveName}}(self){{#unless typeRef.isNullable}} -> {{resolveName typeRef}}{{/unless}}:
 {{#if comment}}        """{{resolveName comment}}"""
-{{/if}}        return self._native.{{resolveName}}
+{{/if}}{{#ifPredicate "isAncestorProperty"}}        from {{resolveName typeRef "" "ref"}} import {{resolveName typeRef}}
+{{/ifPredicate}}        return self._native.{{resolveName}}
 
 {{#ifPredicate "hasSetter"}}
 {{#if setterComment}}{{prefix setterComment "    "}}

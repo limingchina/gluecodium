@@ -27,6 +27,7 @@ import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeStruct
+import com.here.gluecodium.model.lime.LimeType
 import java.io.File
 
 /**
@@ -36,7 +37,7 @@ import java.io.File
 class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
     override fun getName(limeElement: LimeElement) =
         getPlatformName(limeElement as? LimeNamedElement)
-            ?: if (limeElement is LimeStruct && limeElement.path.hasParent) {
+            ?: if (limeElement is LimeType && limeElement.path.hasParent) {
                 limeElement.path.tail.joinToString("")
             } else {
                 super.getName(limeElement)

@@ -78,6 +78,56 @@ PYTHONPATH=".../build-python/functional" python3.14 -m pytest tests/constants_te
      (`test.Constants`, `test.ConstantsSkipCpp`) and asserts the NaN/Infinity
      constants.
 
+## Nesting feature fixes (2026-07-18)
+
+The `Nesting` functional feature exercises nested structs/classes/interfaces/enums/lambdas
+and their flattening to top-level Python modules. The following generator fixes make the
+generated wrappers importable (import sweep: **31 → 10 failures**; all Nesting-specific
+failures resolved):
+
+1. **Nested type name flattening** (`PythonNameRules.kt`) — `getName` now flattens any
+   `LimeType` with a parent (not just `LimeStruct`) to its concatenated tail
+   (`OuterStructInnerEnum`, `OuterClassInnerClass`, `OuterStructInnerLambda`, …). This is the
+   module/file name the pybind11 layer registers the type under, so the Python wrapper must
+   reference the flattened name.
+2. **Native enum name resolution** (`PythonGenerator.kt`) — `nativeTypeName` in the Python
+   template data now uses `pythonNameResolver.resolveName` (flattened Python name) instead of
+   `pybind11NameResolver.resolveName` (C++ short name). The pybind11 module attribute for a
+   nested enum is `OuterStructInnerEnum`, so the Python enum wrapper must reference
+   `functional.OuterStructInnerEnum.FOO`, not `functional.InnerEnum`.
+3. **Class declaration with parents** (`PythonClass.mustache`) — the Trimou `{{else}}` inside
+   `{{#if parents}}` rendered both branches, producing a duplicate `_NativeBase):(_NativeBase):`.
+   Replaced with an inverted `{{^parents}}` section so a class with parents emits
+   `class X(\n    Parent,\n    _NativeBase):` and a class without emits `class X(_NativeBase):`.
+4. **Lambda `Callable` import** (`PythonLambda.mustache`, `PythonStubLambda.mustache`) — added
+   `from typing import Callable` before the `typing.Callable` alias so lambdas/callbacks
+   reference `Callable` without `NameError`.
+5. **Ancestor/child import filtering** (`PythonGenerator.kt`) — extended the ancestor-module
+   filter from struct fields only to also cover class/interface function return types and
+   properties, and added a child-module filter that excludes every nested descendant of the
+   current element (derived from `LimeTypeHelper.getAllTypes`) to avoid circular imports
+   between a parent and its flattened nested children (e.g. `OuterStruct` ↔ `Builder`).
+6. **Nested type generation coverage** (`PythonGenerator.kt`) — `getPythonTypes` now also
+   flattens nested `LimeClass`, `LimeInterface`, and `LimeLambda` (not just enums/structs), and
+   the duplicate-filename exclusion applies to all of them.
+
+### Remaining failures (not Nesting-specific, out of scope here)
+
+After the above, 10 modules still fail to import. These are separate bugs:
+
+- `TopLevelPoint` / `UseTopLevelTypes` — `name 'TopLevelEnum' is not defined`
+- `Constants` / `ConstantsInterface` — `name 'StateEnum' is not defined`
+- `SimpleRoute` / `StructsWithConstantsInterfaceMultiRoute` — `name 'RouteType' is not defined`
+- `Alice` / `Bob` — circular import between two modules
+- `CollectionConstants` — invalid syntax (line 42)
+- `StructConstants` — `unhashable type: 'set'`
+
+Root cause for the enum-constant failures: `PythonNameResolver.resolveValue` renders
+`LimeValue.Constant` via `limeValue.toString()` (bare `Parent.NAME`), and
+`PythonImportResolver.resolveValueImports` line 106 deliberately returns `emptyList()` for
+`LimeValue.Constant`, so the enum module is never imported and the bare name is wrong for
+nested enums (should be `functional.FlattenedName.NAME`). Left for a follow-up.
+
 ## Feature set narrowed (Option A)
 
 To get a clean compile, `python` was removed from the `feature(...)` lists of the

@@ -174,23 +174,48 @@ internal class PythonGenerator : Generator {
         // `Greeter`) would otherwise emit `from ...Greeter import Greeter` inside Greeter.py,
         // which is a circular import and breaks direct importability of the wrapper.
         val selfModulePath = (limeElement.path.head + pythonNameResolver.resolveName(limeElement)).joinToString(".")
-        // Fields whose type is an ancestor of their own container (e.g. a nested struct field
-        // pointing back to its enclosing class) are imported locally inside the property getter
-        // instead (see PythonField.mustache), to avoid an unresolvable circular import between
-        // the two flattened top-level modules.
-        val ancestorFieldModulePaths =
-            if (limeElement is com.here.gluecodium.model.lime.LimeStruct) {
-                limeElement.fields
-                    .filter { predicates["isAncestorField"]?.invoke(it) == true }
-                    .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
-                    .toSet()
-            } else {
-                emptySet()
-            }
+        // Types that are an ancestor of the current element's own container (e.g. a nested struct
+        // field pointing back to its enclosing class, or a nested class `build()` returning its
+        // enclosing struct) are imported locally inside the property getter / function body instead
+        // (see PythonField.mustache / PythonFunction.mustache), to avoid an unresolvable circular
+        // import between the two flattened top-level modules.
+        val ancestorModulePaths =
+            when (limeElement) {
+                is com.here.gluecodium.model.lime.LimeStruct ->
+                    limeElement.fields
+                        .filter { predicates["isAncestorField"]?.invoke(it) == true }
+                        .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
+                is com.here.gluecodium.model.lime.LimeClass ->
+                    (limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
+                        .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
+                        limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
+                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) })
+                is com.here.gluecodium.model.lime.LimeInterface ->
+                    (limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
+                        .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
+                        limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
+                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) })
+                else -> emptyList()
+            }.toSet()
+        // A parent type must not import its own nested children at module level. The imports
+        // collector walks the whole nested subtree, so a child's self-reference (e.g.
+        // `Builder.field(): Builder`) or a child referenced by a nested exception (`exception
+        // Instantiation(InnerEnum)`) would otherwise pull the child module into the parent and
+        // create a circular import (`OuterStruct` <-> `Builder`). Children are referenced only
+        // through their flattened top-level names, which are always available without an import.
+        // We derive the child module paths from the LIME model's own descendants (not the
+        // flattened `pythonTypes` list, which may drop some children due to filename collisions)
+        // so every nested child is reliably excluded.
+        val childModulePaths =
+            LimeTypeHelper.getAllTypes(limeElement)
+                .filter { it != limeElement && it.path.allParents.contains(limeElement.path) }
+                .mapNotNull { pythonNameResolver.resolveReferenceName(it) }
+                .toSet()
         val imports =
             pythonImportsCollector.collectImports(limeElement)
                 .filterNot { it.modulePath == selfModulePath }
-                .filterNot { it.modulePath in ancestorFieldModulePaths }
+                .filterNot { it.modulePath in ancestorModulePaths }
+                .filterNot { it.modulePath in childModulePaths }
                 .distinct()
                 .sorted()
         val templateData =
@@ -200,7 +225,7 @@ internal class PythonGenerator : Generator {
                 "moduleName" to pythonModule,
                 "nativeModule" to pythonModule,
                 "typeName" to pythonNameResolver.resolveName(limeElement),
-                "nativeTypeName" to pybind11NameResolver.resolveName(limeElement),
+                "nativeTypeName" to pythonNameResolver.resolveName(limeElement),
                 "contentTemplate" to selectPythonTemplate(limeElement),
             )
         val content = TemplateEngine.render("python/PythonFile", templateData, nameResolvers, predicates)
@@ -326,8 +351,13 @@ internal class PythonGenerator : Generator {
             val topType = element as? LimeType ?: return@flatMap emptyList()
             listOf(topType) +
                 LimeTypeHelper.getAllTypes(topType)
-                    .filter { it is LimeEnumeration || it is com.here.gluecodium.model.lime.LimeStruct }
-                    .filter { it != topType }
+                    .filter {
+                        it is LimeEnumeration ||
+                            it is com.here.gluecodium.model.lime.LimeStruct ||
+                            it is com.here.gluecodium.model.lime.LimeClass ||
+                            it is com.here.gluecodium.model.lime.LimeInterface ||
+                            it is com.here.gluecodium.model.lime.LimeLambda
+                    }.filter { it != topType }
         }.distinctBy { it.fullName }
             .let { types ->
                 val duplicateFileNames =
@@ -336,7 +366,13 @@ internal class PythonGenerator : Generator {
                         .filterValues { it > 1 }
                         .keys
                 types.filter {
-                    (it !is LimeEnumeration && it !is com.here.gluecodium.model.lime.LimeStruct) ||
+                    (
+                        it !is LimeEnumeration &&
+                            it !is com.here.gluecodium.model.lime.LimeStruct &&
+                            it !is com.here.gluecodium.model.lime.LimeClass &&
+                            it !is com.here.gluecodium.model.lime.LimeInterface &&
+                            it !is com.here.gluecodium.model.lime.LimeLambda
+                    ) ||
                         nameRules.getPythonFileName(it) !in duplicateFileNames
                 }
             }
