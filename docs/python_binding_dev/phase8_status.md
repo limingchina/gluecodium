@@ -171,13 +171,12 @@ compile, and the aggregate extension imports correctly under CPython 3.14 (the
 Known issues). The broader generator gaps (overloads, inherited trampolines,
 external types, collections, lambdas, properties, ref-equality, visibility, name
 clashes, and threading) still keep the remaining functional features narrowed out.
-The remaining test-harness issue is **not** a C++ symbol problem: it is the Python
-version mismatch between the interpreter that builds the `.so` (3.14) and the one
-ctest launches (Miniconda 3.12).
+The Python version mismatch that previously broke `ctest` is now **fixed** (see
+Known issues): the test driver uses the same interpreter that built the `.so`.
 
 ## Known issues / test harness
 
-### Root cause: Python version mismatch (the only real blocker for 8.2)
+### Root cause: Python version mismatch (the only real blocker for 8.2) — FIXED
 The pybind11 extension is compiled against Python 3.14 headers — the build script
 hard-codes `/opt/homebrew/Cellar/python@3.14/3.14.5/.../python3.14` — but the
 machine's default `python3` is Miniconda 3.12.3. So:
@@ -187,23 +186,33 @@ machine's default `python3` is Miniconda 3.12.3. So:
     set, or
   - `symbol not found in flat namespace '_PyEval_GetFrameLocals'` when it is (the
     3.14 `.so` cannot load under 3.12).
-- `ctest` inherits the wrong interpreter and `PYTHONPATH`, so it always fails this
-  way.
+
+**Fix applied:** `functional/python/CMakeLists.txt` now runs pytest via the
+`Python::Interpreter` imported target (created by `find_package(Python ...)` in
+`gluecodium_target_python_sources`), so `ctest` launches the exact interpreter that
+built the extension and exports the correct `PYTHONPATH`. The direct
+`python3.14 -m pytest` command (see "Working invocation") remains the way to run a
+single feature's tests by hand.
 
 **The `.so` is Python-3.14-specific. Never run it with the default `python3` (3.12).**
 The earlier concern that `SomeOpenNumberWrapperClass::make(int)` was an unresolved
 symbol blocking runtime import was a **red herring** — the aggregate extension
-links and imports cleanly under 3.14; the only real blocker was the Python version
-mismatch. Do not chase the wrong bug next session.
+links and imports cleanly under 3.14 (verified: `import functional` succeeds); the
+only real blocker was the Python version mismatch, now fixed in the harness. With
+`ctest` the correct interpreter is selected automatically, so the only remaining
+risk is a *manual* invocation under the wrong `python3` — always use `python3.14`
+(see "Working invocation"). Do not chase the wrong bug next session.
 
 ### Working invocation (single feature test)
 Run from `functional-tests/functional/python` (the test sources are **not** copied
-into the build dir), pointing at the 3.14 interpreter and the build output:
+into the build dir), pointing at the 3.14 interpreter and the build output. `python3.14`
+is on PATH (`/opt/homebrew/bin/python3.14`); use it directly (do **not** use the
+default `python3`, which is Miniconda 3.12 and cannot load the 3.14-specific `.so`):
 
 ```bash
 cd /Volumes/APFS/Work/gluecodium/functional-tests/functional/python
 PYTHONPATH="/Volumes/APFS/Work/gluecodium/functional-tests/build-python/functional" \
-  /opt/homebrew/bin/python3.14 -m pytest test/<feature>_test.py -v
+  python3.14 -m pytest test/<feature>_test.py -v
 ```
 
 Example (Constants, 6 passed):
@@ -211,15 +220,16 @@ Example (Constants, 6 passed):
 ```bash
 cd /Volumes/APFS/Work/gluecodium/functional-tests/functional/python
 PYTHONPATH="/Volumes/APFS/Work/gluecodium/functional-tests/build-python/functional" \
-  /opt/homebrew/bin/python3.14 -m pytest test/constants_test.py -v
+  python3.14 -m pytest test/constants_test.py -v
 ```
 
 ### ctest driver
-`ctest` in `build-python/functional` is unreliable until it is pointed at
-`python3.14` and given the correct `PYTHONPATH`. Until the harness is fixed, always
-validate via the direct `python3.14` command above. To fix the harness: set the
-interpreter in the CMake `add_test` `ENV` (use the same 3.14 path the extension was
-built with) and export `PYTHONPATH` to `build-python/functional` for each test.
+The harness is now fixed: `functional/python/CMakeLists.txt` runs pytest via the
+`Python::Interpreter` imported target created by `find_package(Python ...)` in
+`gluecodium_target_python_sources` — i.e. the **same** interpreter that built the
+extension — and exports `PYTHONPATH` to the build output. So `ctest` now launches
+the correct interpreter automatically. The direct `python3.14` command above remains
+useful for running a single feature's tests without a full rebuild.
 
 ## Follow-up work (not in this phase)
 

@@ -22,9 +22,21 @@ if(NOT FUNCTIONAL_BUILD_PYTHON_TESTS)
   return()
 endif()
 
-find_program(PYTHON_EXE python3)
-if(NOT PYTHON_EXE)
-    message(FATAL_ERROR "Python 3 interpreter was not found")
+# Use the *same* Python interpreter that built the extension module. The extension
+# is compiled against the headers/libraries located by `find_package(Python ...)` in
+# gluecodium_target_python_sources, which creates the global imported target
+# `Python::Interpreter`. Running the tests under a different interpreter (e.g. a
+# Miniconda python3 on PATH) fails to load the version-specific .so
+# ("symbol not found in flat namespace"). Fall back to a PATH lookup only if the
+# imported target is somehow unavailable.
+if(TARGET Python::Interpreter)
+    set(PYTHON_TEST_INTERP Python::Interpreter)
+else()
+    find_program(PYTHON_EXE python3)
+    if(NOT PYTHON_EXE)
+        message(FATAL_ERROR "Python 3 interpreter was not found")
+    endif()
+    set(PYTHON_TEST_INTERP ${PYTHON_EXE})
 endif()
 
 # The extension module (functional_python) and the generated `test` wrapper package are built
@@ -41,7 +53,7 @@ endforeach()
 # the import path. The test files are copied into a `tests` subdirectory (not `test`) so that
 # `import test` resolves to the generated wrapper package rather than the local test directory.
 add_test(NAME unit_tests_python
-    COMMAND ${PYTHON_EXE} -m pytest tests/ -v
+    COMMAND ${PYTHON_TEST_INTERP} -m pytest tests/ -v
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set_tests_properties(unit_tests_python PROPERTIES
     ENVIRONMENT "PYTHONPATH=$<TARGET_FILE_DIR:functional_bindings_python>:${CMAKE_CURRENT_BINARY_DIR}")
