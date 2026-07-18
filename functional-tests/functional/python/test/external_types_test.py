@@ -18,7 +18,7 @@
 """External type mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.external_types import ClassWithOverloads, StandaloneExternalType
+from test.ExternalTypes import ClassWithOverloads, StandaloneExternalType
 
 import pytest
 

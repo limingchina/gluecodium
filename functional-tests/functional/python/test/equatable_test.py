@@ -18,7 +18,7 @@
 """Equatable mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.equatable import EquatableClass, Equatable
+from test.Equatable import EquatableClass, Equatable
 
 import pytest
 

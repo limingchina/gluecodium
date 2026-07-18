@@ -18,7 +18,7 @@
 """Nullability mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.nullable_collections import NullableCollections, UseNullableCollections
+from test.NullableCollections import NullableCollections, UseNullableCollections
 
 import pytest
 

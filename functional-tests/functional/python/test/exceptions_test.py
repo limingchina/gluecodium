@@ -18,8 +18,8 @@
 """Exception mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.errors import Errors, WithPayloadError
-from test.errors import Payload
+from test.Errors import Errors, WithPayloadError
+from test.Errors import Payload
 
 import pytest
 

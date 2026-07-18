@@ -20,7 +20,7 @@
 import datetime
 
 import functional
-from test.dates import Dates
+from test.Dates import Dates
 
 import pytest
 

@@ -18,7 +18,7 @@
 """Inheritance mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.inheritance import InheritanceTestHelper, RootInterface
+from test.Inheritance import InheritanceTestHelper, RootInterface
 
 import pytest
 
