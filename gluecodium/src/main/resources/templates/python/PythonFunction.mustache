@@ -27,5 +27,6 @@
 {{#ifPredicate returnType.typeRef "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}
 {{/ifPredicate}}        return {{resolveName returnType}}(native_result)
 {{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isWrapperType"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
-{{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
-{{/unless}}
+{{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}{{#ifPredicate model "isInterface"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}(self{{#if parameters}}, {{/if}}{{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate model "isInterface"}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
+{{/unlessPredicate}}{{/unless}}

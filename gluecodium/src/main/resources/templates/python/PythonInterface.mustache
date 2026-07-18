@@ -1,18 +1,21 @@
-{{! Python interface: base class (protocol) wrapping the native C++ object. }}
-
-from _native_base import _NativeBase
+{{! Python interface: subclass of the native pybind11 type so the trampoline binds to the Python instance. }}
 
 import {{nativeModule}}
 
 
-class {{resolveName}}(_NativeBase):
+class {{resolveName}}({{nativeModule}}.{{resolveName}}):
     """{{resolveName comment}}"""
 
     def __init__(self, native=None):
-        if isinstance(native, {{typeName}}):
-            super().__init__(native)
-        else:
-            super().__init__({{nativeModule}}.{{resolveName}}())
+        # Subclass the native pybind11 type so that a Python override of an interface
+        # method is dispatched through the generated trampoline. The trampoline is bound
+        # to *this* Python object only when pybind11 constructs the native base, so we
+        # always call super().__init__() with no arguments (adoption of an existing native
+        # instance is not supported by the generated py::init<>()). `self._native` aliases
+        # the wrapper itself so the rest of the generated code can reach the native object
+        # uniformly (e.g. when passing this interface back into a C++ call site).
+        super().__init__()
+        self._native = self
 {{#functions}}
 
 {{>python/PythonFunction}}{{/functions}}

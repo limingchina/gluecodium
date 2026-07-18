@@ -47,6 +47,7 @@ internal class PythonGeneratorPredicates(
             "hasAnyComment" to { limeElement: Any ->
                 CommonGeneratorPredicates.hasAnyComment(limeElement, "Python")
             },
+            "isInterface" to { it is com.here.gluecodium.model.lime.LimeInterface },
             "isInternal" to { it is LimeNamedElement && CommonGeneratorPredicates.isInternal(it, PYTHON) },
             "isPublic" to { it is LimeNamedElement && !CommonGeneratorPredicates.isInternal(it, PYTHON) },
             "isNestedInternal" to { limeElement: Any ->
