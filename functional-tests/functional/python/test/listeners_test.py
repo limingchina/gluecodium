@@ -18,7 +18,7 @@
 """Listener (callback) tests for the Python (pybind11) bindings."""
 
 import functional
-from test.multi_listener import MultiSender, Receiver_A, Receiver_B
+from test.MultiListener import MultiSender, Receiver_A, Receiver_B
 
 import pytest
 

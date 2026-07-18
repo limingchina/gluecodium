@@ -18,7 +18,7 @@
 """Lambda (callback) tests for the Python (pybind11) bindings."""
 
 import functional
-from test.lambdas import Lambdas, Concatenator
+from test.Lambdas import Lambdas, Concatenator
 
 import pytest
 

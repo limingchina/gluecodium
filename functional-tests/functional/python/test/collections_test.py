@@ -18,9 +18,9 @@
 """Collection (List/Set/Map) mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.arrays import Arrays
-from test.maps import Maps
-from test.set_type import SetType
+from test.Arrays import Arrays
+from test.Maps import Maps
+from test.SetType import SetType
 
 import pytest
 

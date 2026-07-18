@@ -23,7 +23,7 @@ bindings (Python is never skipped there).
 """
 
 import functional
-from test.skip import SkipFunctions
+from test.Skip import SkipFunctions
 
 import pytest
 

@@ -185,10 +185,34 @@ Verified by rebuilding via `functional-tests/scripts/build-python-functional --p
 - ✅ **C4 (NoCache)**: `@Cached` property handling works (no-op for Python; cached properties exposed as plain `def_property`).
 - All 4 features re-enabled in `functional-tests/functional/CMakeLists.txt` and verified to generate, compile into `functional.so`,
   and run end-to-end (smoke-tested via the CPython 3.14 interpreter that built the extension).
-- **Known pre-existing test-suite gap (unrelated to Phase C)**: the committed `*_test.py` files import wrapper modules with
-  lower-case names (e.g. `from test.attributes import Attributes`) while the generator emits `UpperCamelCase` module files
-  (`Attributes.py`). This causes `ModuleNotFoundError` for every feature test. The focused per-feature smoke tests pass; the broad
-  `unit_tests_python` ctest still fails on import until the test files are regenerated/renamed to match the generator's module naming.
+
+#### Test-suite module-naming fix (2026-07-18, follow-up to the note above)
+
+The earlier "remaining test failures" note claimed the committed `*_test.py` files uniformly used lower-case module imports
+(`from test.attributes import Attributes`) while the generator emits `UpperCamelCase` files (`Attributes.py`), causing a blanket
+`ModuleNotFoundError`. **That description was inaccurate.** The actual state is:
+
+- The generator emits `UpperCamelCase` module files (per `namerules/python.properties` → `type=UpperCamelCase`), and **~80 of the
+  test imports already use the correct PascalCase form** (`from test.Attributes import Attributes`, etc.) and resolve fine.
+- Only **16** test files used lower-case module names. Those were corrected to PascalCase in
+  `functional-tests/functional/python/test/*.py` (e.g. `properties_test.py`, `dates_test.py`, `collections_test.py`,
+  `defaults_test.py`, `equatable_test.py`, `exceptions_test.py`, `external_types_test.py`, `inheritance_test.py`, `lambdas_test.py`,
+  `method_overloads_test.py`, `listeners_test.py`, `nullable_test.py`, `ref_equality_test.py`, `skip_element_test.py`).
+- Of those 16, **only 2 reference features currently enabled for `python`**: `attributes` → `Properties` and `dates` → `Dates`.
+  After the case fix, `dates_test.py` passes 3/3. `properties_test.py` now imports correctly but has 2 remaining failures from a
+  **separate** issue (`Attributes.__init__() missing 1 required positional argument: 'native'` — a test/API drift, not naming).
+- The other **14 lower-case imports point at features that are NOT enabled for `python`** in `functional/CMakeLists.txt`, so their
+  modules are never generated regardless of case. They fail with `ModuleNotFoundError` for a legitimate "feature not enabled" reason:
+  `Arrays`/`Maps`/`SetType` → `GenericTypes`; `Defaults` → `Defaults`; `Equatable` → `Equatable`; `Errors` → `Errors`;
+  `ExternalTypes` → `ExternalTypes`; `Inheritance` → `Inheritance`; `Lambdas` → `Lambdas`; `MethodOverloads` → `MethodOverloading`;
+  `MultiListener` → `Listeners`; `NullableCollections` → `Nullable`; `RefEquality` → `RefEquality`; `Skip` → `SkipAttribute`.
+  (`InternalError`/`RouteType` are sub-types of already-enabled `Enums`/`StructsWithCompanion` and are generated under different
+  module names, so those specific imports are simply stale.)
+
+**Conclusion**: the broad `unit_tests_python` ctest still fails, but **not** because of a generator-vs-test naming mismatch. The
+remaining collection errors are almost entirely because the corresponding features are not yet enabled for `python` (Phases D–H
+work). The naming mismatch that did exist has been fixed; the 2 genuinely-enabled affected tests (`dates`, `properties`) are now
+unblocked at the import level, with `properties` carrying one additional pre-existing test/API drift to be addressed separately.
 
 ---
 

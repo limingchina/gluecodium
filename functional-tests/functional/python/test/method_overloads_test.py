@@ -18,7 +18,7 @@
 """Method overload mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.method_overloads import MethodOverloads, Point
+from test.MethodOverloads import MethodOverloads, Point
 
 import pytest
 

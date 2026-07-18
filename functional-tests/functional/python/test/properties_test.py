@@ -18,7 +18,7 @@
 """Property mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.attributes import Attributes
+from test.Attributes import Attributes
 
 import pytest
 
