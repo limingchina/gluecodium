@@ -1,0 +1,204 @@
+#!/bin/bash -e
+#
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+. "${SCRIPT_DIR}/inc.functions"
+
+USAGE=$(cat <<EOF
+$0 [options]
+    --publish             Build and publish Gluecodium locally and use it for code generation
+    --buildGluecodium         Build and use local Gluecodium version
+    --gluecodiumPath [PATH]   Implies --buildGluecodium, path to local gluecodium (default: ${GLUECODIUM_PATH})
+    --debug               Build with debug symbols
+    --verbose             Print Gluecodium/Gradle code-generation output (recommended for debugging hangs)
+    --quiet               Suppress the verbose Gluecodium/Gradle code-generation output
+    --help                Print this message
+EOF
+)
+
+# --- progress / diagnostics helpers -----------------------------------------
+BUILD_START=$(date +%s)
+_DIAG_PRINTED=0
+
+step() {
+    echo ""
+    echo "==================================================================="
+    echo "[$(date '+%H:%M:%S')] >>> $1"
+    echo "==================================================================="
+}
+
+elapsed() {
+    local now
+    now=$(date +%s)
+    local sec=$(( now - BUILD_START ))
+    printf '%dm%02ds' $((sec / 60)) $((sec % 60))
+}
+
+# Print a snapshot of the processes most likely to be responsible for a hang:
+# stuck Gradle daemons, the Gluecodium generation JVM, and the lock file that
+# serializes Gradle invocations (file(LOCK ...) waits up to 600s for it).
+dump_diagnostics() {
+    echo ""
+    echo "-------------------------------------------------------------------"
+    echo "[$(date '+%H:%M:%S')] BUILD DIAGNOSTICS (elapsed $(elapsed))"
+    echo "-------------------------------------------------------------------"
+    echo ">> Gradle daemons still running:"
+    pgrep -fl GradleDaemon 2>/dev/null || echo "   (none)"
+    echo ">> Gluecodium generation JVM processes:"
+    pgrep -fl "gluecodium/details/build/classes" 2>/dev/null || echo "   (none)"
+    echo ">> ninja processes:"
+    pgrep -fl "ninja" 2>/dev/null || echo "   (none)"
+    echo ">> Gradle lock file (a stuck process can hold it for up to 600s):"
+    if [[ -e "${BUILD_DIR}/gluecodium-gradle-lock.cmake" ]]; then
+        ls -la "${BUILD_DIR}/gluecodium-gradle-lock.cmake"
+        echo "   If none of the Gradle/Gluecodium processes above are active, this"
+        echo "   lock is stale. Remove it to avoid a long wait:"
+        echo "   rm -f ${BUILD_DIR}/gluecodium-gradle-lock.cmake"
+    else
+        echo "   (not present)"
+    fi
+}
+
+dump_diagnostics_once() {
+    [[ $_DIAG_PRINTED -eq 1 ]] && return
+    _DIAG_PRINTED=1
+    dump_diagnostics
+}
+
+# Run a command with a periodic heartbeat so a hang is visible. Once it runs
+# longer than WATCHDOG_THRESHOLD seconds, diagnostics are printed repeatedly.
+run_with_watchdog() {
+    local interval=30
+    local threshold=${WATCHDOG_THRESHOLD:-300}
+    "$@" &
+    local pid=$!
+    local sec=0
+    while kill -0 "$pid" 2>/dev/null; do
+        sleep "$interval"
+        sec=$((sec + interval))
+        echo "[$(date '+%H:%M:%S')] (heartbeat) still running for ${sec}s: $*"
+        if [[ $sec -ge $threshold ]]; then
+            echo "[$(date '+%H:%M:%S')] (watchdog) build is taking unusually long; diagnostics:"
+            dump_diagnostics
+        fi
+    done
+    wait "$pid"
+    return $?
+}
+
+BUILD_LOCAL_GLUECODIUM=false
+CMAKE_EXTRA_PARAMETERS=
+VERBOSE_BUILD=ON   # default ON: the Gradle code-generation step is the usual hang point
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --publish)
+            publish_local
+            shift
+            ;;
+        --buildGluecodium)
+            BUILD_LOCAL_GLUECODIUM=true
+            shift
+            ;;
+        --gluecodiumPath)
+            BUILD_LOCAL_GLUECODIUM=true
+            GLUECODIUM_PATH="$2"
+            shift 2
+            ;;
+        --debug)
+            CMAKE_EXTRA_PARAMETERS="-DCMAKE_BUILD_TYPE=RelWithDebInfo"
+            shift
+            ;;
+        --verbose)
+            VERBOSE_BUILD=ON
+            shift
+            ;;
+        --quiet)
+            VERBOSE_BUILD=OFF
+            shift
+            ;;
+        --help|*)
+            echo "$USAGE"
+            exit 0
+            ;;
+    esac
+done
+
+if [[ "$BUILD_LOCAL_GLUECODIUM" = "true" ]]; then
+    export GLUECODIUM_PATH
+fi
+
+# GLUECODIUM_VERBOSE makes the code-generation step (which shells out to Gradle)
+# print its output instead of swallowing it. This is the single most useful
+# signal when the build appears stuck at "Run Build Command(s): ninja -v".
+if [[ "$VERBOSE_BUILD" = "ON" ]]; then
+    export GLUECODIUM_VERBOSE=ON
+fi
+
+GLUECODIUM_VERSION="${GLUECODIUM_VERSION:-+}"
+# Derive the project root from the script location so the build works regardless
+# of the caller's current working directory (the CMake invocation below uses ".."
+# relative to BUILD_DIR, which must resolve to the functional-tests source tree).
+PROJECT_ROOT="${SCRIPT_DIR}/.."
+BUILD_DIR=${PROJECT_ROOT}/build-python
+INSTALL_DIR=${PROJECT_ROOT}/dist/python
+
+[ -d "${BUILD_DIR}" ] || mkdir -p "${BUILD_DIR}"
+[ -d "${INSTALL_DIR}" ] || mkdir -p "${INSTALL_DIR}"
+
+# Warn early about a leftover lock from an interrupted previous run. A stale
+# lock makes the next Gradle invocation block for up to 600s inside file(LOCK).
+if [[ -e "${BUILD_DIR}/gluecodium-gradle-lock.cmake" ]]; then
+    echo "WARNING: leftover Gradle lock file found: ${BUILD_DIR}/gluecodium-gradle-lock.cmake"
+    echo "         A previous build may have been interrupted. If no Gradle/Gluecodium"
+    echo "         process is currently running, remove it to avoid a 600s lock wait:"
+    echo "         rm -f ${BUILD_DIR}/gluecodium-gradle-lock.cmake"
+fi
+
+set -x
+CWD=${PWD}
+pushd "${BUILD_DIR}"
+
+tmppipe=$(mktemp -u)
+mkfifo -m 600 "$tmppipe"
+trap 'ec=$?; rm -rf "$tmppipe" 2>/dev/null; [[ $ec -ne 0 ]] && dump_diagnostics_once' EXIT
+trap 'rm -rf "$tmppipe" 2>/dev/null; dump_diagnostics_once; exit 1' HUP INT TERM
+step "CMake configure (generators: cpp;python)"
+tee cmake_output.log < "$tmppipe" &
+safe cmake \
+    -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_C_COMPILER="$(which clang)" \
+    -DCMAKE_CXX_COMPILER="$(which clang++)" \
+    -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
+    -DCMAKE_VERBOSE_MAKEFILE=ON \
+    -DGLUECODIUM_GENERATORS_DEFAULT="cpp;python" \
+    -DGLUECODIUM_VERSION_DEFAULT="${GLUECODIUM_VERSION}" \
+    -DFUNCTIONAL_BUILD_PYTHON_TESTS=ON \
+    -DPython_EXECUTABLE="$(which python3.14 || echo /opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14)" \
+    -G Ninja \
+    ${CMAKE_EXTRA_PARAMETERS} \
+    .. > "$tmppipe"
+popd
+
+step "CMake build (pass 1: generates pybind11 sources via Gradle)"
+safe run_with_watchdog cmake --build "${BUILD_DIR}"
+
+# The pybind11 binding sources are generated as part of the build above, but the
+# extension module target globs them at *configure* time. Re-run CMake so the
+# glob picks up the now-generated sources, then build again to compile the
+# extension module and copy the wrapper package next to it.
+step "CMake re-configure (glob the now-generated pybind11 sources)"
+pushd "${BUILD_DIR}"
+safe cmake .
+popd
+
+step "CMake build (pass 2: compiles the Python extension module)"
+safe run_with_watchdog cmake --build "${BUILD_DIR}"
+
+step "Running CTest"
+pushd "${BUILD_DIR}"
+safe ctest --verbose
+popd
+
+step "BUILD FINISHED (elapsed $(elapsed))"
+
