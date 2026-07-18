@@ -222,6 +222,29 @@ old output).
 Always verify the regenerated file actually reflects your change (check its timestamp and
 content) before concluding a fix failed.
 
+#### ⚠️ Python version must match between build and test (pybind11 / `.so` SOABI)
+
+The Python (pybind11) functional build compiles a CPython extension module
+(`functional.cpython-<SOABI>.so`) whose SOABI suffix is derived from the Python
+headers/libs that `find_package(Python ...)` resolves at CMake configure time
+(see `cmake/modules/gluecodium/Python.cmake`). The compiled `.so` can **only** be
+imported by the *same* Python version that built it — a 3.9 interpreter cannot load a
+`cpython-314` module, and vice versa.
+
+`build-python-functional` pins the interpreter explicitly so build and test always agree:
+
+```bash
+-DPython_EXECUTABLE="$(which python3.14 || echo /opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14)"
+```
+
+The pytest `add_test` in `functional-tests/functional/python/CMakeLists.txt` already runs
+under `Python::Interpreter` — the same imported target created by the build's
+`find_package(Python)` — so pinning the build interpreter automatically pins the test
+runner. **Do not create a local `.venv` and expect it to work**: unless it is the exact
+Python version used to build the extension, the editable install will fail to import the
+`.so`. If you change the pinned version, do a clean rebuild (`rm -rf functional-tests/build-python`)
+so the cache re-detects Python and the `.so` is recompiled with the matching SOABI.
+
 ### Using CMake Toolchain
 
 Gluecodium can be integrated into CMake-based projects:
