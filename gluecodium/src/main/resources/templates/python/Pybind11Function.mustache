@@ -19,7 +19,10 @@
   !
   !}}
 {{! pybind11 method binding. }}
-{{#unlessPredicate "isThrowing"}}{{#if isStatic}}{{#ifPredicate "isCppOverloaded"}}
+{{! pybind11 method binding. Throwing functions (Return<T, Error>) are bound
+    directly; the generated _return_caster translates the error into a Python
+    exception, so they are not skipped. }}
+{{#if isStatic}}{{#ifPredicate "isCppOverloaded"}}
         .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
         .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
@@ -42,4 +45,4 @@
 {{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/unless}}
-{{/unlessPredicate}}
+

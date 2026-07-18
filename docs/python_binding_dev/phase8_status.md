@@ -111,6 +111,57 @@ failures resolved):
    flattens nested `LimeClass`, `LimeInterface`, and `LimeLambda` (not just enums/structs), and
    the duplicate-filename exclusion applies to all of them.
 
+### Interface trampoline + throwing-function fixes (2026-07-19)
+
+The `sample_project` (the end-to-end Python generator demo under
+`docs/python_binding_dev/sample_project/`) exposed two generator bugs that also
+affect the functional `Interfaces` feature:
+
+1. **Interface trampoline broken (callback never fired).** The generated Python
+   interface wrapper used `_NativeBase` *composition* — `super().__init__(
+   {{nativeModule}}.{{resolveName}}())` always constructed a **separate** native
+   object, so a Python subclass overriding a virtual method was never reached. A
+   clean rebuild crashed with `RuntimeError: Tried to call pure virtual function
+   "GreetingListener::on_greeting"`; a stale build silently dropped the callback.
+   - **Fix** (`PythonInterface.mustache`): the wrapper now *subclasses* the native
+     pybind11 type — `class {{resolveName}}({{nativeModule}}.{{resolveName}}):` with
+     `def __init__(self, native=None): super().__init__(); self._native = self`.
+     With `self._native = self`, the generated delegating methods would otherwise
+     recurse infinitely, so interface wrappers now call the native class directly:
+     - `PythonFunction.mustache`: `return {{nativeModule}}.{{typeName}}.{{resolveName}}(self, ...)`
+     - `PythonProperty.mustache`: `{{nativeModule}}.{{typeName}}.{{resolveName}}.fget(self)` /
+       `.fset(self, value)`
+   - Added an `isInterface` predicate to `PythonGeneratorPredicates.kt` and gated the
+     two templates with `{{#ifPredicate model "isInterface"}}` /
+     `{{#unlessPredicate model "isInterface"}}`.
+   - **Validated** in `sample_project`: subclassing native + `self._native = self`
+     makes the trampoline fire (`[listener] greeted: Ada` now prints).
+
+2. **Throwing functions not bound.** `Pybind11Function.mustache` wrapped every
+   function binding in `{{#unlessPredicate "isThrowing"}}`, so a `throws`-annotated
+   method (e.g. `Greeter.greet(name) throws GreeterError`) was never bound in
+   pybind11. The Python wrapper still delegated to `self._native.greet`, raising
+   `AttributeError: 'greeter.Greeter' object has no attribute 'greet'`.
+   - **Fix** (`Pybind11Function.mustache`): removed the `isThrowing` skip. The
+     `Return<T, Error>` caster (`Pybind11ReturnCaster.mustache`) already translates
+     `Return<T, Error>` into a Python exception (raises `RuntimeError` with the
+     qualified error enum name), so throwing functions bind and propagate correctly.
+   - **Validated** in `sample_project`: `greet("")` now raises
+     `RuntimeError - ::com::example::greeter::GreeterErrorCode::EMPTY_NAME`.
+
+**Regression check:** the broader functional test run (`build-python-functional
+--publish`) exits 8 with 15 pytest *collection* errors, all `ModuleNotFoundError`/
+`ImportError` for modules that are **not generated for Python** (`MultiListener`,
+`MethodOverloads`, `NullableCollections`, `RefEquality`, `Skip`,
+`StructsWithMethodsInterfaceVector3`, …). These are pre-existing harness gaps: the
+features `MethodOverloading`, `ComplexListeners`, `ListenersWithReturnValues`,
+`Nullable`, and `SkipAttribute` are enabled for `cpp android android-kotlin swift
+dart` but **not** `python` in `functional-tests/functional/CMakeLists.txt`. The
+`Errors` feature (which has throwing functions) is also not python-enabled, so the
+`isThrowing` removal has **no effect on the currently-enabled Python features** and
+introduces zero regression risk. The aggregate `.so` builds and the enabled
+features' wrappers import correctly.
+
 ### Remaining failures (not Nesting-specific, out of scope here)
 
 After the above, 10 modules still fail to import. These are separate bugs:
