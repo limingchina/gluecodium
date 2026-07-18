@@ -176,7 +176,7 @@ feature(Enums cpp android android-kotlin swift dart python SOURCES
     input/lime/EnumsTypeCollection.lime
 )
 
-feature(Properties cpp android android-kotlin swift dart SOURCES
+feature(Properties cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/AttributesInterfaceImpl.h
     input/src/cpp/AttributesInterfaceImpl.cpp
     input/src/cpp/AttributesInterfaceFactory.cpp
@@ -476,13 +476,13 @@ feature(SkipAttribute cpp android android-kotlin swift dart SOURCES
     input/src/cpp/EnableIfEnabled.cpp
 )
 
-feature(CppConst cpp android android-kotlin swift dart SOURCES
+feature(CppConst cpp android android-kotlin swift dart python SOURCES
     input/lime/CppConstMethods.lime
 
     input/src/cpp/CppConstMethods.cpp
 )
 
-feature(CppNoexcept cpp android android-kotlin swift dart SOURCES
+feature(CppNoexcept cpp android android-kotlin swift dart python SOURCES
     input/lime/CppNoexceptMethods.lime
 
     input/src/cpp/CppNoexceptMethods.cpp
@@ -501,7 +501,7 @@ feature(CrossPackageNameClash cpp android android-kotlin swift dart SOURCES
     input/lime/CrossPackageNameClashC.lime
 )
 
-feature(NoCache android android-kotlin swift dart SOURCES
+feature(NoCache android android-kotlin swift dart python SOURCES
     input/src/cpp/NoCache.cpp
 
     input/lime/NoCache.lime

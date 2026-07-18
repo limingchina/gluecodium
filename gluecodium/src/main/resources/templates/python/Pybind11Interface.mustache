@@ -11,8 +11,22 @@ public:
 {{/unless}}
 {{/functions}}
 {{#properties}}
+{{#unless isStatic}}
 {{>python/Pybind11TrampolineProperty}}
+{{/unless}}
 {{/properties}}
+{{#inheritedFunctions}}
+{{#unless isStatic}}
+{{#unless isConstructor}}
+{{>python/Pybind11TrampolineFunction}}
+{{/unless}}
+{{/unless}}
+{{/inheritedFunctions}}
+{{#inheritedProperties}}
+{{#unless isStatic}}
+{{>python/Pybind11TrampolineProperty}}
+{{/unless}}
+{{/inheritedProperties}}
 };
 
 void register_{{resolveName}}(py::module_& module) {

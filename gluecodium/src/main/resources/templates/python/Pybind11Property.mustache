@@ -31,9 +31,23 @@
         .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}})
 {{/unlessPredicate}}
 {{/if}}{{#unless isStatic}}{{#ifPredicate "hasSetter"}}
+{{#ifPredicate "needsInterfaceLambdaBinding"}}
+        .def_property("{{resolveName}}", [](const {{resolveName model "Pybind11"}}& self) {
+            return self.{{resolveName this "Pybind11" "getter"}}();
+        }, []({{resolveName model "Pybind11"}}& self, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value) {
+            self.{{resolveName this "Pybind11" "setter"}}(value);
+        })
+{{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
         .def_property("{{resolveName}}", py::overload_cast<>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}, py::const_), py::overload_cast<const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}))
+{{/unlessPredicate}}
 {{/ifPredicate}}
 {{#unlessPredicate "hasSetter"}}
+{{#ifPredicate "needsInterfaceLambdaBinding"}}
+        .def_property_readonly("{{resolveName}}", [](const {{resolveName model "Pybind11"}}& self) {
+            return self.{{resolveName this "Pybind11" "getter"}}();
+        })
+{{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
         .def_property_readonly("{{resolveName}}", py::overload_cast<>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}, py::const_))
+{{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/unless}}

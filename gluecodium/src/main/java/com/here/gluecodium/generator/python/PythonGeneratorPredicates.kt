@@ -76,11 +76,21 @@ internal class PythonGeneratorPredicates(
                         container.functions.count { pybind11NameResolver.resolveName(it) == cppName } > 1
                     }
             },
-            "needsInterfaceLambdaBinding" to { limeFunction: Any ->
-                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
-                    !limeFunction.isStatic &&
-                    limeReferenceMap[limeFunction.path.parent.toString()] is
-                        com.here.gluecodium.model.lime.LimeInterface
+            "needsInterfaceLambdaBinding" to { limeElement: Any ->
+                val isStatic =
+                    when (limeElement) {
+                        is com.here.gluecodium.model.lime.LimeFunction -> limeElement.isStatic
+                        is com.here.gluecodium.model.lime.LimeProperty -> limeElement.isStatic
+                        else -> true
+                    }
+                !isStatic &&
+                    when (limeElement) {
+                        is com.here.gluecodium.model.lime.LimeFunction ->
+                            limeReferenceMap[limeElement.path.parent.toString()]
+                        is com.here.gluecodium.model.lime.LimeProperty ->
+                            limeReferenceMap[limeElement.path.parent.toString()]
+                        else -> null
+                    } is com.here.gluecodium.model.lime.LimeInterface
             },
             // Whether a type reference refers to a user-defined (generated-wrapper) type that must be
             // unwrapped to its native `_native` handle before being passed to a pybind11 call.
@@ -117,6 +127,27 @@ internal class PythonGeneratorPredicates(
             },
             "hasCppRef" to { limeElement: Any ->
                 limeElement is LimeProperty && limeElement.attributes.have(CPP, REF)
+            },
+            // Whether a function/property carries `@Cpp(Const)`. The generated C++ declares such
+            // methods as `const`, so the pybind11 trampoline override must also be `const` to
+            // match the virtual signature (otherwise it "hides" the base method and the trampoline
+            // class stays abstract, failing to instantiate).
+            "isCppConst" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeFunction &&
+                    limeElement.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.CONST)
+            },
+            // Whether a function/property carries `@Cpp(Noexcept)`. The generated C++ declares such
+            // methods as `noexcept`, so the pybind11 trampoline override must also be `noexcept`
+            // to match the virtual signature (otherwise "exception specification ... more lax than base
+            // version" and the trampoline class stays abstract).
+            "isCppNoexcept" to { limeElement: Any ->
+                val limeNamed =
+                    limeElement as? com.here.gluecodium.model.lime.LimeFunction
+                        ?: limeElement as? com.here.gluecodium.model.lime.LimeProperty
+                limeNamed?.attributes?.have(
+                    CPP,
+                    com.here.gluecodium.model.lime.LimeAttributeValueType.NOEXCEPT,
+                ) == true
             },
             "isImmutableField" to { limeElement: Any ->
                 limeElement is LimeField && run {
