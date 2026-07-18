@@ -93,6 +93,22 @@ internal class PythonNameResolver(
         return if (limeTypeRef.isNullable) "Optional[" + resolveName(limeType) + "]" else resolveName(limeType)
     }
 
+    /**
+     * Resolves the dotted module path (e.g. `test.InstanceInStruct`) that declares the given type
+     * reference. Used to emit a local, deferred `from <module> import <name>` statement (as
+     * opposed to a module-level one) for types that would otherwise form a circular import, such
+     * as a nested struct field referencing its own enclosing type.
+     */
+    override fun resolveReferenceName(element: Any): String? {
+        val limeType = when (element) {
+            is LimeTypeRef -> element.type.actualType
+            is LimeType -> element.actualType
+            else -> return null
+        }
+        val namedType = limeType as? LimeNamedElement ?: return null
+        return (namedType.path.head + resolveName(namedType)).joinToString(".")
+    }
+
     private fun resolveValue(limeValue: LimeValue): String {
         // Special float literals (NaN / Infinity) are not Python builtins; render as float() calls.
         if (limeValue is LimeValue.Special) {
