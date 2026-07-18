@@ -174,9 +174,23 @@ internal class PythonGenerator : Generator {
         // `Greeter`) would otherwise emit `from ...Greeter import Greeter` inside Greeter.py,
         // which is a circular import and breaks direct importability of the wrapper.
         val selfModulePath = (limeElement.path.head + pythonNameResolver.resolveName(limeElement)).joinToString(".")
+        // Fields whose type is an ancestor of their own container (e.g. a nested struct field
+        // pointing back to its enclosing class) are imported locally inside the property getter
+        // instead (see PythonField.mustache), to avoid an unresolvable circular import between
+        // the two flattened top-level modules.
+        val ancestorFieldModulePaths =
+            if (limeElement is com.here.gluecodium.model.lime.LimeStruct) {
+                limeElement.fields
+                    .filter { predicates["isAncestorField"]?.invoke(it) == true }
+                    .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
+                    .toSet()
+            } else {
+                emptySet()
+            }
         val imports =
             pythonImportsCollector.collectImports(limeElement)
                 .filterNot { it.modulePath == selfModulePath }
+                .filterNot { it.modulePath in ancestorFieldModulePaths }
                 .distinct()
                 .sorted()
         val templateData =

@@ -128,6 +128,15 @@ internal class PythonGeneratorPredicates(
                     parentIsImmutable || fieldTypeIsImmutable
                 }
             },
+            // Whether a field's type is one of the *ancestors* of its own container (e.g. a
+            // nested struct with a field pointing back to its enclosing class, as in
+            // `InstanceInStruct.SelfHolder.mySelf: InstanceInStruct`). Nested types are
+            // flattened into separate top-level Python modules, so such a field would otherwise
+            // require a module-level `from ...InstanceInStruct import InstanceInStruct` while
+            // `InstanceInStruct`'s own module needs `from ...SelfHolder import SelfHolder` for
+            // its factory return types - an unresolvable circular import. `PythonField` uses
+            // this predicate to emit a local (deferred) import instead of a module-level one.
+            "isAncestorField" to { limeElement: Any -> limeElement is LimeField && isFieldTypeAncestor(limeElement) },
             // Whether the element lives inside a non-empty namespace (i.e. its LimePath head is not
             // empty). Used by the pybind11 file template to emit `using` aliases so the generated
             // code can refer to the C++ type by its short name.
@@ -193,6 +202,11 @@ internal class PythonGeneratorPredicates(
                     limeElement.fieldRefs.isEmpty()
             },
         )
+
+    private fun isFieldTypeAncestor(limeField: LimeField): Boolean {
+        val fieldTypeName = (limeField.typeRef.type.actualType as? LimeNamedElement)?.fullName ?: return false
+        return limeField.path.parent.allParents.any { limeReferenceMap[it.toString()]?.let { e -> (e as? LimeNamedElement)?.fullName } == fieldTypeName }
+    }
 
     private fun fieldTypeHasImmutableFields(limeType: LimeType): Boolean {
         return when (limeType) {
