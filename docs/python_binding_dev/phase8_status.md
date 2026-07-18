@@ -147,15 +147,21 @@ not yet implemented for Python):
   lambda overloads, immutable-struct-with-defaults.
 - `RefEquality` (in `Equatable`), `Comments`, `ComplexListeners`, `CppConst`,
   `CppNoexcept`, `FieldConstructors`, `Visibility`,
-  `ListenersWithReturnValues`, `Locales`, `Nesting`, `NoCache`,
+  `ListenersWithReturnValues`, `Locales`, `NoCache`,
   `StructsInTypes`, `StructsImmutable`, `PlatformNames`,
   `InstanceInStruct`, `StructsWithCompanion`, `UnderscorePackage`,
   `CrossPackageNameClash`, `CallbacksWithThreads` — various
   constructor/arg-count, listener, enum, name-clash, and threading gaps.
 
+`Nesting` is now enabled for Python in the functional test configuration. Its
+non-inheritance fixtures are covered by the B6 changes above; `NestedInheritance.lime`
+remains deferred to Phase D because it exercises the inherited trampoline gap. The
+focused `nesting_test.py` passes 2/2 under CPython 3.14 after rebuilding the
+functional bindings.
+
 The currently enabled Python features are `Strings`, `BuiltinTypes`, `Classes`,
 `Interfaces`, `Structs`, `TypeDefs`, `Enums`, `CircularDependencies`, `Constants`,
-`Dates`, `Durations`, `DeclarationOrder`, `EscapedNames`, and `FullName`.
+`Dates`, `Durations`, `DeclarationOrder`, `EscapedNames`, `FullName`, and `Nesting`.
 
 ## Remaining blocker (8.2)
 

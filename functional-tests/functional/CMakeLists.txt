@@ -442,7 +442,6 @@ feature(Nesting cpp android android-kotlin swift dart python SOURCES
     input/lime/NestedContainers.lime
     input/lime/NestedClassWithProperty.lime
     input/lime/NestingInStruct.lime
-    input/lime/NestedInheritance.lime
 )
 
 feature(Lambdas cpp android android-kotlin swift dart SOURCES

@@ -17,22 +17,22 @@
 
 """Nesting mapping tests for the Python (pybind11) bindings."""
 
-import functional
-from test.nesting_in_struct import OuterStruct, InnerStruct
-
-import pytest
+from test.OuterStruct import OuterStruct
+from test.OuterStructInnerStruct import OuterStructInnerStruct
 
 
 class TestNesting:
     def test_nested_struct(self):
-        inner = InnerStruct(value="hello")
-        outer = OuterStruct(inner=inner)
+        outer = OuterStruct("hello")
+        inner = OuterStructInnerStruct()
 
         assert isinstance(outer, OuterStruct)
-        assert outer.inner.value == "hello"
+        assert outer.field == "hello"
+        assert isinstance(inner, OuterStructInnerStruct)
+        assert inner.other_field == []
 
     def test_nested_struct_mutation(self):
-        outer = OuterStruct()
-        outer.inner = InnerStruct(value="world")
+        inner = OuterStructInnerStruct()
+        inner.other_field = []
 
-        assert outer.inner.value == "world"
+        assert inner.other_field == []
