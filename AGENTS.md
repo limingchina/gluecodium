@@ -195,6 +195,33 @@ functional-tests/scripts/build-cpp-functional --publish
 functional-tests/scripts/build-dart-functional --publish
 ```
 
+#### ⚠️ Stale generated code after editing generator templates/sources
+
+The functional-test build scripts (e.g. `build-python-functional --publish`) run
+`publishToMavenLocal` first, then drive CMake, which shells out to Gradle to run
+Gluecodium and emit the generated `.cpp`/`.py` files. **The CMake custom command that
+invokes Gradle depends only on the LimeIDL inputs and the generated options/config file —
+it does NOT depend on the published Gluecodium jar.**
+
+Consequence: if you change a generator template (`gluecodium/src/main/resources/templates/**`)
+or generator Kotlin source, re-run `publishToMavenLocal`, and then rebuild **without any
+change to the `.lime` inputs**, CMake considers code generation "up-to-date" and skips the
+Gradle step. The previously generated (now stale) `.cpp`/`.py` files are left in place and
+compiled, so your template fix appears to have no effect (or you get confusing errors from
+old output).
+
+**How to force regeneration after a generator change:**
+- Touch/modify a relevant `.lime` input (e.g. re-save it), OR
+- Delete the generated output directory before rebuilding, e.g.
+  `rm -rf functional-tests/build-python/functional/gluecodium`, OR
+- Use `--buildGluecodium` (which sets `GLUECODIUM_PATH` to the local source tree) so the
+  build uses the working copy directly instead of the published jar — but note the same
+  up-to-date check still applies to the LimeIDL inputs, so a clean of the generated dir is
+  still required when only templates changed.
+
+Always verify the regenerated file actually reflects your change (check its timestamp and
+content) before concluding a fix failed.
+
 ### Using CMake Toolchain
 
 Gluecodium can be integrated into CMake-based projects:

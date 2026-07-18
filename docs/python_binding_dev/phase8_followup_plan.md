@@ -6,6 +6,20 @@
 > **Related**: [phase8_status.md](./phase8_status.md), [python_pybind11_plan.md](../python_pybind11_plan.md)
 > **Scope**: Remaining narrowed features; `Dates` and `Durations` are already enabled but remain part of the shared runtime validation work
 
+> **⚠️ Gotcha — stale generated code after a generator change (2026-07-18):**
+> The functional-test build scripts (`build-python-functional --publish`, etc.) run
+> `publishToMavenLocal`, then CMake shells out to Gradle to run Gluecodium. **The CMake
+> custom command that invokes Gradle depends only on the LimeIDL inputs and the generated
+> options/config file — NOT on the published Gluecodium jar.** So if you edit a generator
+> template (`gluecodium/src/main/resources/templates/**`) or generator Kotlin source,
+> re-publish, and rebuild **without touching any `.lime` input**, CMake treats code
+> generation as up-to-date and skips the Gradle step. The previously generated (now stale)
+> `.cpp`/`.py` files are compiled, so your fix appears to do nothing (or you get errors
+> from old output). **Always force regeneration after a generator change:** touch/modify a
+> relevant `.lime` input, or `rm -rf functional-tests/build-python/functional/gluecodium`
+> before rebuilding. Verify the regenerated file's timestamp/content actually reflects your
+> change before concluding a fix failed. (Also documented in `AGENTS.md` → Testing.)
+
 ---
 
 ## 1. Overview
@@ -155,6 +169,26 @@ Verified by rebuilding via `functional-tests/scripts/build-python-functional --p
 **Verification**: Re-enable each feature, rebuild, run pytest.
 
 **Exit criteria**: All 4 features compile and pass pytest.
+
+**Implementation status (2026-07-18):**
+- ✅ **C1 (Properties)**: `def_property` / `def_property_readonly` / `def_property_static` emitted by `Pybind11Property.mustache`.
+  Interface properties use lambda binding (`needsInterfaceLambdaBinding` predicate, extended to `LimeProperty` in
+  `PythonGeneratorPredicates.kt`) to avoid taking the address of the base pure-virtual. Trampoline property overrides in
+  `Pybind11TrampolineProperty.mustache` use `PYBIND11_OVERRIDE_PURE` (not `PYBIND11_OVERRIDE`) — for abstract C++ base classes the
+  trampoline MUST use `PYBIND11_OVERRIDE_PURE`, otherwise the macro expands to `return cname::fn(...)` which references the undefined
+  pure-virtual symbol and fails at `dlopen` with `symbol not found in flat namespace`. Verified: class properties (int/float/array/
+  struct) and interface property trampoline (subclassing the native `functional.X` class) both work at runtime.
+- ✅ **C2 (CppConst)**: const method binding works; const-ness is derived from the C++ member-function pointer signature in `.def()`,
+  no extra template action needed.
+- ✅ **C3 (CppNoexcept)**: noexcept method/property binding works; `isCppNoexcept` predicate correctly emits `noexcept` on trampoline
+  overrides and `def_property` lambdas.
+- ✅ **C4 (NoCache)**: `@Cached` property handling works (no-op for Python; cached properties exposed as plain `def_property`).
+- All 4 features re-enabled in `functional-tests/functional/CMakeLists.txt` and verified to generate, compile into `functional.so`,
+  and run end-to-end (smoke-tested via the CPython 3.14 interpreter that built the extension).
+- **Known pre-existing test-suite gap (unrelated to Phase C)**: the committed `*_test.py` files import wrapper modules with
+  lower-case names (e.g. `from test.attributes import Attributes`) while the generator emits `UpperCamelCase` module files
+  (`Attributes.py`). This causes `ModuleNotFoundError` for every feature test. The focused per-feature smoke tests pass; the broad
+  `unit_tests_python` ctest still fails on import until the test files are regenerated/renamed to match the generator's module naming.
 
 ---
 

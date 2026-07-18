@@ -2,18 +2,18 @@
 {{#ifPredicate typeRef "returnTypeHasComma"}}
     using {{resolveName this "Pybind11" "getter"}}_return_type = {{resolveName typeRef "Pybind11"}};
 {{/ifPredicate}}
-    {{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}} {{resolveName this "Pybind11" "getter"}}() const override {
+    {{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}} {{resolveName this "Pybind11" "getter"}}() const{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
 {{#ifPredicate typeRef "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE({{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
+        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
 {{/ifPredicate}}
 {{#unlessPredicate typeRef "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE({{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
+        PYBIND11_OVERRIDE_PURE({{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
 {{/unlessPredicate}}
     }
 {{#ifPredicate "hasSetter"}}
-    void {{resolveName this "Pybind11" "setter"}}(const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value) override {
+    void {{resolveName this "Pybind11" "setter"}}(const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value){{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "setter"}}, value);
+        PYBIND11_OVERRIDE_PURE(void, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "setter"}}, value);
     }
 {{/ifPredicate}}
