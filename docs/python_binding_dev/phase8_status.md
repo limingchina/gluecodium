@@ -162,6 +162,42 @@ dart` but **not** `python` in `functional-tests/functional/CMakeLists.txt`. The
 introduces zero regression risk. The aggregate `.so` builds and the enabled
 features' wrappers import correctly.
 
+### Inheritance forwarding-trampoline fix (2026-07-19)
+
+The `Inheritance` functional feature is now enabled for Python and its pytest passes
+3/3. Two generator bugs blocked it:
+
+1. **Adopted native instance was ignored (pure virtual).** A factory returns a
+   *foreign* (non-trampoline) C++ implementation (e.g. `RootInterfaceImpl`). The
+   Python wrapper's `super().__init__(native)` must adopt that instance into the
+   trampoline subclass, but the trampoline had no way to hold it — `init_alias`
+   cannot adopt a foreign instance, and a `py::init([](shared_ptr<X>){...})` factory
+   that built a fresh trampoline never stored the impl.
+   - **Fix** (`Pybind11Interface.mustache` / `Pybind11Class.mustache`): the trampoline
+     class carries a `std::shared_ptr<X> m_impl` member, and a `py::init` factory
+     adopts the returned instance and stores it in `m_impl`.
+   - **Fix** (`Pybind11TrampolineFunction.mustache` / `Pybind11TrampolineProperty.mustache`):
+     the virtual overrides now **forward** to `m_impl` when it is held, and only fall
+     back to `PYBIND11_OVERRIDE_PURE` when `m_impl` is null (a Python subclass). The
+     **void** override previously called `m_impl->method(...)` but did *not* `return`,
+     so control fell through to `PYBIND11_OVERRIDE_PURE` and raised
+     `RuntimeError: Tried to call pure virtual function`. The `isVoid` predicate
+     (`PythonGeneratorPredicates.kt`) now emits `return;` after forwarding a void call.
+   - **Validated:** `InheritanceTestHelper.create_root()` returns an object whose
+     `root_method` dispatches to the adopted `RootInterfaceImpl`; `call_root_method`
+     no longer raises pure virtual.
+
+2. **Test-logic bug.** `callRootMethod` is `void` in Lime (it only invokes
+   `root_method` on the passed object from C++), so the test's
+   `assert isinstance(result, RootInterface)` failed on `None`. The assertion now
+   checks the passed object (`assert isinstance(root, RootInterface)`), matching the
+   Swift/Android tests which do not assert on a return value for this void method.
+
+**Regression check:** `Inheritance` is enabled for `python` in
+`functional-tests/functional/CMakeLists.txt`; `MultipleInheritance` remains narrowed
+out (its diamond-shaped C++ hierarchy still exercises an unimplemented path). The
+`nesting_test.py` and `constants_test.py` still pass.
+
 ### Remaining failures (not Nesting-specific, out of scope here)
 
 After the above, 10 modules still fail to import. These are separate bugs:
@@ -187,8 +223,10 @@ not yet implemented for Python):
 
 - `ExternalTypes`, `DartExternalTypes` — external-type binding gaps (cpp-name
   qualification, external member getters, type-collection `using` alias).
-- `Inheritance`, `MultipleInheritance` — interface-inheritance trampoline does not
-  override inherited pure-virtual methods (abstract-class instantiation failure).
+- `MultipleInheritance` — diamond-shaped C++ hierarchy still exercises an
+  unimplemented path (interface-inheritance trampoline does not override inherited
+  pure-virtual methods across the diamond). `Inheritance` (single-rooted) is now
+  **enabled** for Python (see forwarding-trampoline fix above).
 - `Properties`, `MethodOverloading` — overload `def` resolution and trampoline
   virtual-override gaps.
 - `Errors`, `Blob` — `Errors.lime` imports an external error enum from
@@ -212,7 +250,8 @@ functional bindings.
 
 The currently enabled Python features are `Strings`, `BuiltinTypes`, `Classes`,
 `Interfaces`, `Structs`, `TypeDefs`, `Enums`, `CircularDependencies`, `Constants`,
-`Dates`, `Durations`, `DeclarationOrder`, `EscapedNames`, `FullName`, and `Nesting`.
+`Dates`, `Durations`, `DeclarationOrder`, `EscapedNames`, `FullName`, `Nesting`,
+and `Inheritance`.
 
 ## Remaining blocker (8.2)
 
@@ -288,6 +327,9 @@ useful for running a single feature's tests without a full rebuild.
 2. Fix the broader generator gaps listed above (overloads, trampolines, external
    types, collections, dates/durations, lambdas, properties, ref-equality,
    visibility, name-clashes, threading) and re-enable the features one by one.
+   - ~~Interface-inheritance trampoline (single-rooted `Inheritance`).~~ ✅ DONE —
+     forwarding trampoline adopts the native impl (see above); `Inheritance` pytest
+     passes 3/3. `MultipleInheritance` (diamond) remains.
 3. Rewrite the remaining functional pytest files to match the actual generated
   `PascalCase` module/class names, then run them green as each feature is
   re-enabled. The A6 and A7 tests now use the generated names.
