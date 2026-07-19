@@ -1,9 +1,16 @@
-{{! Trampoline override for a single interface property (getter + optional setter). }}
+{{! Forwarding trampoline override for a single interface property (getter + optional setter). }}
+{{! When a native implementation is adopted (via the `init_alias` adoption constructor), `m_impl`
+    is non-null and we forward the access straight to it. Only when no impl is held (a Python
+    subclass is being instantiated) do we fall back to `PYBIND11_OVERRIDE_PURE` so a Python
+    override can be dispatched. }}
 {{#ifPredicate typeRef "returnTypeHasComma"}}
     using {{resolveName this "Pybind11" "getter"}}_return_type = {{resolveName typeRef "Pybind11"}};
 {{/ifPredicate}}
     {{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}} {{resolveName this "Pybind11" "getter"}}() const{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            return m_impl->{{resolveName this "Pybind11" "getter"}}();
+        }
 {{#ifPredicate typeRef "returnTypeHasComma"}}
         PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
 {{/ifPredicate}}
@@ -14,6 +21,10 @@
 {{#ifPredicate "hasSetter"}}
     void {{resolveName this "Pybind11" "setter"}}(const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value){{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            m_impl->{{resolveName this "Pybind11" "setter"}}(value);
+            return;
+        }
         PYBIND11_OVERRIDE_PURE(void, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "setter"}}, value);
     }
 {{/ifPredicate}}

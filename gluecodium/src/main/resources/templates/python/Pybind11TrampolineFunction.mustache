@@ -1,14 +1,28 @@
-{{! Trampoline override for a single interface method. }}
+{{! Forwarding trampoline override for a single interface method. }}
 {{! The trampoline is C++ code that must match the generated C++ base signature exactly, including
     the `Return<T, Error>` wrapper for throwing functions. `cpp/CppReturnType.mustache` already
     emits that wrapper (it is the same partial the C++ generator uses for the base class), so we
-    reuse it here instead of the unwrapped Pybind11 return type. }}
+    reuse it here instead of the unwrapped Pybind11 return type.
+    When a native implementation is adopted (via the `init_alias` adoption constructor), `m_impl`
+    is non-null and we forward the call straight to it. Only when no impl is held (i.e. a Python
+    subclass is being instantiated) do we fall back to `PYBIND11_OVERRIDE_PURE` so a Python
+    override can be dispatched. This is what makes `RootInterface(native_result)` actually call the
+    returned C++ implementation instead of the pure-virtual stub. }}
 {{#ifPredicate this "returnTypeHasComma"}}
     using {{resolveName this "Pybind11"}}_return_type = {{>cpp/CppReturnType}};
 {{/ifPredicate}}
     {{>cpp/CppReturnType}} {{resolveName this "Pybind11"}}(
             {{#parameters}}{{#ifPredicate typeRef "needsRefSuffix"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ){{#ifPredicate "isCppConst"}} const{{/ifPredicate}}{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+{{#ifPredicate this "isVoid"}}
+            m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+            return;
+{{/ifPredicate}}
+{{#unlessPredicate this "isVoid"}}
+            return m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+{{/unlessPredicate}}
+        }
 {{#ifPredicate this "returnTypeHasComma"}}
         PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
 {{/ifPredicate}}

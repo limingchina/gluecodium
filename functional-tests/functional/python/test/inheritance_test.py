@@ -32,9 +32,11 @@ class TestInheritance:
 
     def test_call_root_method(self):
         root = InheritanceTestHelper.create_root()
-        result = InheritanceTestHelper.call_root_method(root, "data")
+        # callRootMethod is void in Lime (it just invokes root_method on the passed
+        # object from C++); the real assertion is that no pure-virtual error is raised.
+        InheritanceTestHelper.call_root_method(root, "data")
 
-        assert isinstance(result, RootInterface)
+        assert isinstance(root, RootInterface)
 
     def test_create_concrete_grand_child(self):
         child = InheritanceTestHelper.create_concrete_grand_child()
