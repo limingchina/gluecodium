@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.ValidationErrorCode import ValidationErrorCode
+from smoke.ValidationUtilsValidationErrorCode import ValidationUtilsValidationErrorCode
 
 
 from _native_base import _NativeBase
@@ -14,7 +14,7 @@ class ValidationUtils(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], ValidationUtils):
+        if len(args) == 1 and isinstance(args[0], generated.ValidationUtils):
             super().__init__(args[0])
         else:
             super().__init__(generated.ValidationUtils(*[getattr(arg, "_native", arg) for arg in args]))

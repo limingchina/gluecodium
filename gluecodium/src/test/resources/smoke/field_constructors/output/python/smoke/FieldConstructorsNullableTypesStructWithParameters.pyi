@@ -1,6 +1,6 @@
 
 
-from smoke.FoodType import FoodType
+from smoke.FieldConstructorsNullableTypesFoodType import FieldConstructorsNullableTypesFoodType
 
 
 from _native_base import _NativeBase
@@ -19,11 +19,11 @@ class FieldConstructorsNullableTypesStructWithParameters(_NativeBase):
 
 
     @property
-    def food_type(self) -> FoodType:
+    def food_type(self) -> FieldConstructorsNullableTypesFoodType:
         """"""
-        return FoodType(self._native.food_type)
+        return FieldConstructorsNullableTypesFoodType(self._native.food_type)
     @food_type.setter
-    def food_type(self, value: FoodType):
+    def food_type(self, value: FieldConstructorsNullableTypesFoodType):
       self._native.food_type = getattr(value, "_native", value)
 
 

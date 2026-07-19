@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.ExternalEnum import ExternalEnum
-
+from smoke.EnumsExternal_Enum import EnumsExternal_Enum
 
 from _native_base import _NativeBase
 
@@ -17,7 +16,7 @@ class Enums(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def method_with_external_enum(input: ExternalEnum):
+    def method_with_external_enum(input: EnumsExternal_Enum):
         """"""
         generated.Enums.method_with_external_enum(input._native)
 

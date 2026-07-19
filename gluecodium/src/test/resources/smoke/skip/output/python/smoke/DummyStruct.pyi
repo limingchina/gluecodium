@@ -11,7 +11,7 @@ class DummyStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], DummyStruct):
+        if len(args) == 1 and isinstance(args[0], generated.DummyStruct):
             super().__init__(args[0])
         else:
             super().__init__(generated.DummyStruct(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +21,6 @@ class DummyStruct(_NativeBase):
     def string_field(self) -> str:
         """"""
         return self._native.string_field
-
     @string_field.setter
     def string_field(self, value: str):
       self._native.string_field = getattr(value, "_native", value)

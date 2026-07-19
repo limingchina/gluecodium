@@ -18,8 +18,10 @@ void register_DartPublicElementsSkipped(py::module_& module) {
     py::class_<DartPublicElementsSkipped>(module, "DartPublicElementsSkipped")
         .def_readwrite("bool_field", &DartPublicElementsSkipped::bool_field)
         .def_readwrite("string_field", &DartPublicElementsSkipped::string_field)
+        .def(py::init<>())
         .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
         .def("foo", &DartPublicElementsSkipped::foo)
+
         ;
 }
 

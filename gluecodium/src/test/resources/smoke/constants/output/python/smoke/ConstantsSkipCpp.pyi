@@ -11,14 +11,14 @@ class ConstantsSkipCpp(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], ConstantsSkipCpp):
+        if len(args) == 1 and isinstance(args[0], generated.ConstantsSkipCpp):
             super().__init__(args[0])
         else:
             super().__init__(generated.ConstantsSkipCpp(*[getattr(arg, "_native", arg) for arg in args]))
 
 
-BOOL_CONSTANT = True
+    BOOL_CONSTANT = True
 
 
-INT_CONSTANT = -11
+    INT_CONSTANT = -11
 

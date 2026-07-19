@@ -1,9 +1,8 @@
 
 
+from smoke.NullableSomeEnum import NullableSomeEnum
 from smoke.NullableSomeStruct import NullableSomeStruct
-from smoke.SomeEnum import SomeEnum
 from smoke.SomeInterface import SomeInterface
-
 
 from _native_base import _NativeBase
 
@@ -36,7 +35,7 @@ class Nullable(_NativeBase):
         """"""
         return self._native.method_with_some_struct(input._native)
 
-    def method_with_some_enum(self, input: Optional[SomeEnum]) -> Optional[SomeEnum]:
+    def method_with_some_enum(self, input: Optional[NullableSomeEnum]) -> Optional[NullableSomeEnum]:
         """"""
         return self._native.method_with_some_enum(input._native)
 
@@ -56,7 +55,6 @@ class Nullable(_NativeBase):
         """"""
         return self._native.method_with_instance(input._native)
 
-
     @property
     def string_property(self):
         """"""
@@ -65,7 +63,6 @@ class Nullable(_NativeBase):
     @string_property.setter
     def string_property(self, value):
         self._native.string_property = value
-
 
     @property
     def is_bool_property(self):
@@ -76,7 +73,6 @@ class Nullable(_NativeBase):
     def is_bool_property(self, value):
         self._native.is_bool_property = value
 
-
     @property
     def double_property(self):
         """"""
@@ -85,7 +81,6 @@ class Nullable(_NativeBase):
     @double_property.setter
     def double_property(self, value):
         self._native.double_property = value
-
 
     @property
     def int_property(self):
@@ -96,7 +91,6 @@ class Nullable(_NativeBase):
     def int_property(self, value):
         self._native.int_property = value
 
-
     @property
     def struct_property(self):
         """"""
@@ -105,7 +99,6 @@ class Nullable(_NativeBase):
     @struct_property.setter
     def struct_property(self, value):
         self._native.struct_property = value
-
 
     @property
     def enum_property(self):
@@ -116,7 +109,6 @@ class Nullable(_NativeBase):
     def enum_property(self, value):
         self._native.enum_property = value
 
-
     @property
     def array_property(self):
         """"""
@@ -125,7 +117,6 @@ class Nullable(_NativeBase):
     @array_property.setter
     def array_property(self, value):
         self._native.array_property = value
-
 
     @property
     def inline_array_property(self):
@@ -136,7 +127,6 @@ class Nullable(_NativeBase):
     def inline_array_property(self, value):
         self._native.inline_array_property = value
 
-
     @property
     def map_property(self):
         """"""
@@ -145,7 +135,6 @@ class Nullable(_NativeBase):
     @map_property.setter
     def map_property(self, value):
         self._native.map_property = value
-
 
     @property
     def instance_property(self):

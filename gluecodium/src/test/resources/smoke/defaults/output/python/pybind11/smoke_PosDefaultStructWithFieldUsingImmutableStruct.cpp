@@ -17,7 +17,7 @@ using PosDefaultStructWithFieldUsingImmutableStruct = ::smoke::PosDefaultStructW
 
 void register_PosDefaultStructWithFieldUsingImmutableStruct(py::module_& module) {
     py::class_<PosDefaultStructWithFieldUsingImmutableStruct>(module, "PosDefaultStructWithFieldUsingImmutableStruct")
-        .def_readwrite("some_field1", &PosDefaultStructWithFieldUsingImmutableStruct::some_field1)
+        .def_readonly("some_field1", &PosDefaultStructWithFieldUsingImmutableStruct::some_field1)
         .def(py::init<>())
         ;
 }

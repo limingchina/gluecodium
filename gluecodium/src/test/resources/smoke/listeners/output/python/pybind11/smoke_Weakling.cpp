@@ -20,20 +20,49 @@ class WeaklingTrampoline : public Weakling {
 public:
     using Weakling::Weakling;
 
-    ::std::shared_ptr< ::smoke::ListenerInterface >& get_listener() const override {
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<Weakling> m_impl;
+
+    ::std::shared_ptr< ::smoke::ListenerInterface > get_listener() const override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::shared_ptr< ::smoke::ListenerInterface >&, Weakling, get_listener);
+        if (m_impl) {
+            return m_impl->get_listener();
+        }
+        PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ListenerInterface >, Weakling, get_listener);
     }
     void set_listener(const ::std::shared_ptr< ::smoke::ListenerInterface >& value) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, Weakling, set_listener, value);
+        if (m_impl) {
+            m_impl->set_listener(value);
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, Weakling, set_listener, value);
     }
 };
 
 void register_Weakling(py::module_& module) {
     py::class_<Weakling, std::shared_ptr<Weakling>, WeaklingTrampoline>(module, "Weakling")
         .def(py::init<>())
-        .def_property("listener", py::overload_cast<>(&Weakling::get_listener, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::ListenerInterface >&>(&Weakling::set_listener))
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<Weakling> native) {
+            auto self = std::make_shared<WeaklingTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
+        .def_property("listener", [](const Weakling& self) {
+            return self.get_listener();
+        }, [](Weakling& self, const ::std::shared_ptr< ::smoke::ListenerInterface >& value) {
+            self.set_listener(value);
+        })
         ;
 }
 

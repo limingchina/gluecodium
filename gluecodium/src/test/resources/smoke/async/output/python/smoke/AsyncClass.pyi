@@ -1,8 +1,6 @@
 
 
-from smoke.AsyncError import AsyncError
 from smoke.AsyncErrorCode import AsyncErrorCode
-
 
 from _native_base import _NativeBase
 

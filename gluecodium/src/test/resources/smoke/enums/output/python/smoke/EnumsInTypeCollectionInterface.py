@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.TCEnum import TCEnum
-
+from smoke.EnumsInTypeCollectionTCEnum import EnumsInTypeCollectionTCEnum
 
 from _native_base import _NativeBase
 
@@ -17,8 +16,8 @@ class EnumsInTypeCollectionInterface(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def flip_enum_value(input: TCEnum) -> TCEnum:
+    def flip_enum_value(input: EnumsInTypeCollectionTCEnum) -> EnumsInTypeCollectionTCEnum:
         """"""
         native_result = generated.EnumsInTypeCollectionInterface.flip_enum_value(input._native)
-        return TCEnum(native_result)
+        return EnumsInTypeCollectionTCEnum(native_result)
 

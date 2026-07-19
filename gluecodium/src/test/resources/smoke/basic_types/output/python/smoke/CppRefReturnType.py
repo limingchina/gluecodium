@@ -2,11 +2,8 @@
 
 from __future__ import annotations
 
+from smoke.CppRefReturnTypeInternalError import CppRefReturnTypeInternalError
 from smoke.CppRefReturnTypeSomeStruct import CppRefReturnTypeSomeStruct
-from smoke.EnumBasedError import EnumBasedError
-from smoke.InternalError import InternalError
-from smoke.StructBasedError import StructBasedError
-
 
 from _native_base import _NativeBase
 

@@ -14,8 +14,39 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildClassWithBool = ::smoke::ChildClassWithBool;
 
+class ChildClassWithBoolTrampoline : public ChildClassWithBool {
+public:
+    using ChildClassWithBool::ChildClassWithBool;
+
+    // Holds an adopted native implementation returned by a factory. When non-null, the
+    // trampoline forwards virtual calls to it instead of the pure-virtual stub. A Python
+    // subclass is instantiated with no impl held, in which case the overrides fall back to
+    // PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<ChildClassWithBool> m_impl;
+
+    void root_method(
+            bool input1 ) override {
+        py::gil_scoped_acquire gil;
+        if (m_impl) {
+            m_impl->root_method(input1);
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassWithBool, root_method, input1);
+    }
+};
+
 void register_ChildClassWithBool(py::module_& module) {
-    py::class_<ChildClassWithBool, std::shared_ptr<ChildClassWithBool>>(module, "ChildClassWithBool")
+    py::class_<ChildClassWithBool, std::shared_ptr<ChildClassWithBool>, ChildClassWithBoolTrampoline>(module, "ChildClassWithBool")
+        // Adoption constructor: adopt an existing native instance returned by a factory into
+        // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
+        // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
+        // here because the returned instance is a foreign (non-trampoline) implementation;
+        // instead we build a fresh trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<ChildClassWithBool> native) {
+            auto self = std::make_shared<ChildClassWithBoolTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         ;
 }
 

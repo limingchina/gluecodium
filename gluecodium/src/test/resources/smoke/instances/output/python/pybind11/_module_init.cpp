@@ -13,6 +13,13 @@
 void register_Class1(pybind11::module_& module);
 void register_Class2(pybind11::module_& module);
 void register_InnerClassForwardDeclarations(pybind11::module_& module);
+void register_InnerClassForwardDeclarationsInnerClass1(pybind11::module_& module);
+void register_InnerClassForwardDeclarationsInnerClass2(pybind11::module_& module);
+void register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(pybind11::module_& module);
+void register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(pybind11::module_& module);
+void register_InnerClassForwardDeclarationsInnerInterface1(pybind11::module_& module);
+void register_InnerClassForwardDeclarationsInnerInterface2(pybind11::module_& module);
+void register_InnerClassForwardDeclarationsInnerInterface3(pybind11::module_& module);
 void register_SimpleClass(pybind11::module_& module);
 void register_SimpleInterface(pybind11::module_& module);
 void register_StructWithClass(pybind11::module_& module);
@@ -28,6 +35,13 @@ PYBIND11_MODULE(generated, m) {
     register_Class1(m);
     register_Class2(m);
     register_InnerClassForwardDeclarations(m);
+    register_InnerClassForwardDeclarationsInnerClass1(m);
+    register_InnerClassForwardDeclarationsInnerClass2(m);
+    register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(m);
+    register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(m);
+    register_InnerClassForwardDeclarationsInnerInterface1(m);
+    register_InnerClassForwardDeclarationsInnerInterface2(m);
+    register_InnerClassForwardDeclarationsInnerInterface3(m);
     register_SimpleClass(m);
     register_SimpleInterface(m);
     register_StructWithClass(m);

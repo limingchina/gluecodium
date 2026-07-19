@@ -20,6 +20,7 @@ void register_DartDeprecatedPosDefaults(py::module_& module) {
     py::class_<DartDeprecatedPosDefaults>(module, "DartDeprecatedPosDefaults")
         .def_readwrite("int_field", &DartDeprecatedPosDefaults::int_field)
         .def_readwrite("string_field", &DartDeprecatedPosDefaults::string_field)
+        .def(py::init<>())
         .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         ;
 }

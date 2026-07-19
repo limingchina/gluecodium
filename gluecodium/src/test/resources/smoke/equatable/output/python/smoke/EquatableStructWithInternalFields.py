@@ -13,7 +13,7 @@ class EquatableStructWithInternalFields(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], EquatableStructWithInternalFields):
+        if len(args) == 1 and isinstance(args[0], generated.EquatableStructWithInternalFields):
             super().__init__(args[0])
         else:
             super().__init__(generated.EquatableStructWithInternalFields(*[getattr(arg, "_native", arg) for arg in args]))
@@ -23,7 +23,6 @@ class EquatableStructWithInternalFields(_NativeBase):
     def public_field(self) -> str:
         """"""
         return self._native.public_field
-
     @public_field.setter
     def public_field(self, value: str):
       self._native.public_field = getattr(value, "_native", value)
@@ -34,7 +33,6 @@ class EquatableStructWithInternalFields(_NativeBase):
     def internal_field(self) -> str:
         """"""
         return self._native.internal_field
-
     @internal_field.setter
     def internal_field(self, value: str):
       self._native.internal_field = getattr(value, "_native", value)
@@ -45,7 +43,6 @@ class EquatableStructWithInternalFields(_NativeBase):
     def internal_list_field(self) -> list[str]:
         """"""
         return self._native.internal_list_field
-
     @internal_list_field.setter
     def internal_list_field(self, value: list[str]):
       self._native.internal_list_field = getattr(value, "_native", value)
@@ -56,7 +53,6 @@ class EquatableStructWithInternalFields(_NativeBase):
     def internal_map_field(self) -> dict[str, str]:
         """"""
         return self._native.internal_map_field
-
     @internal_map_field.setter
     def internal_map_field(self, value: dict[str, str]):
       self._native.internal_map_field = getattr(value, "_native", value)
@@ -67,7 +63,6 @@ class EquatableStructWithInternalFields(_NativeBase):
     def internal_set_field(self) -> set[str]:
         """"""
         return self._native.internal_set_field
-
     @internal_set_field.setter
     def internal_set_field(self, value: set[str]):
       self._native.internal_set_field = getattr(value, "_native", value)

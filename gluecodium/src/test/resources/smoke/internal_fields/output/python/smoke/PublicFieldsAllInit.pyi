@@ -11,7 +11,7 @@ class PublicFieldsAllInit(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], PublicFieldsAllInit):
+        if len(args) == 1 and isinstance(args[0], generated.PublicFieldsAllInit):
             super().__init__(args[0])
         else:
             super().__init__(generated.PublicFieldsAllInit(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +21,6 @@ class PublicFieldsAllInit(_NativeBase):
     def public_field(self) -> str:
         """"""
         return self._native.public_field
-
     @public_field.setter
     def public_field(self, value: str):
       self._native.public_field = getattr(value, "_native", value)
@@ -32,7 +31,6 @@ class PublicFieldsAllInit(_NativeBase):
     def internal_field(self) -> str:
         """"""
         return self._native.internal_field
-
     @internal_field.setter
     def internal_field(self, value: str):
       self._native.internal_field = getattr(value, "_native", value)

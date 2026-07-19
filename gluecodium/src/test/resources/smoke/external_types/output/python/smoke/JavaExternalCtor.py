@@ -13,7 +13,7 @@ class JavaExternalCtor(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], JavaExternalCtor):
+        if len(args) == 1 and isinstance(args[0], generated.JavaExternalCtor):
             super().__init__(args[0])
         else:
             super().__init__(generated.JavaExternalCtor(*[getattr(arg, "_native", arg) for arg in args]))
@@ -23,7 +23,6 @@ class JavaExternalCtor(_NativeBase):
     def field(self) -> str:
         """"""
         return self._native.field
-
     @field.setter
     def field(self, value: str):
       self._native.field = getattr(value, "_native", value)

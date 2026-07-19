@@ -18,6 +18,7 @@ using SomeStruct = ::fire::SomeStruct;
 void register_SomeStruct(py::module_& module) {
     py::class_<SomeStruct>(module, "SomeStruct")
         .def_readwrite("int_field", &SomeStruct::int_field)
+        .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("int_field"))
         ;
 }

@@ -12,13 +12,14 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_Errors(pybind11::module_& module);
 void register_ErrorsInterface(pybind11::module_& module);
+void register_ErrorsInterfaceExternalErrors(pybind11::module_& module);
+void register_ErrorsInterfaceInternalError(pybind11::module_& module);
+void register_ErrorsInternalErrorCode(pybind11::module_& module);
 void register_FooBar(pybind11::module_& module);
-void register_InternalError(pybind11::module_& module);
-void register_InternalErrorCode(pybind11::module_& module);
 void register_Payload(pybind11::module_& module);
 void register_SomeInternalEnum(pybind11::module_& module);
 void register_SomeTypeCollection(pybind11::module_& module);
-void register_SomeTypeCollectionError(pybind11::module_& module);
+void register_SomeTypeCollectionSomeTypeCollectionError(pybind11::module_& module);
 void register_SomethingBadHappenedError(pybind11::module_& module);
 void register_UseTcException(pybind11::module_& module);
 void register_WithPayloadError(pybind11::module_& module);
@@ -32,13 +33,14 @@ PYBIND11_MODULE(generated, m) {
 
     register_Errors(m);
     register_ErrorsInterface(m);
+    register_ErrorsInterfaceExternalErrors(m);
+    register_ErrorsInterfaceInternalError(m);
+    register_ErrorsInternalErrorCode(m);
     register_FooBar(m);
-    register_InternalError(m);
-    register_InternalErrorCode(m);
     register_Payload(m);
     register_SomeInternalEnum(m);
     register_SomeTypeCollection(m);
-    register_SomeTypeCollectionError(m);
+    register_SomeTypeCollectionSomeTypeCollectionError(m);
     register_SomethingBadHappenedError(m);
     register_UseTcException(m);
     register_WithPayloadError(m);

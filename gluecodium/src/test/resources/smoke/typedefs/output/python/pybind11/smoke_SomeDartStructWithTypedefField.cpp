@@ -18,6 +18,7 @@ using SomeDartStructWithTypedefField = ::smoke::SomeDartStructWithTypedefField;
 void register_SomeDartStructWithTypedefField(py::module_& module) {
     py::class_<SomeDartStructWithTypedefField>(module, "SomeDartStructWithTypedefField")
         .def_readwrite("some_field", &SomeDartStructWithTypedefField::some_field)
+        .def(py::init<>())
         .def(py::init<::std::vector< float >>(), py::arg("some_field"))
         ;
 }

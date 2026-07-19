@@ -19,28 +19,61 @@ class DeprecationCommentsOnlyTrampoline : public DeprecationCommentsOnly {
 public:
     using DeprecationCommentsOnly::DeprecationCommentsOnly;
 
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<DeprecationCommentsOnly> m_impl;
+
     bool some_method_with_all_comments(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            return m_impl->some_method_with_all_comments(input);
+        }
         PYBIND11_OVERRIDE_PURE(bool, DeprecationCommentsOnly, some_method_with_all_comments, input);
     }
     bool is_some_property() const override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(bool, DeprecationCommentsOnly, is_some_property);
+        if (m_impl) {
+            return m_impl->is_some_property();
+        }
+        PYBIND11_OVERRIDE_PURE(bool, DeprecationCommentsOnly, is_some_property);
     }
     void set_some_property(const bool value) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, DeprecationCommentsOnly, set_some_property, value);
+        if (m_impl) {
+            m_impl->set_some_property(value);
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, DeprecationCommentsOnly, set_some_property, value);
     }
 };
 
 void register_DeprecationCommentsOnly(py::module_& module) {
     py::class_<DeprecationCommentsOnly, std::shared_ptr<DeprecationCommentsOnly>, DeprecationCommentsOnlyTrampoline>(module, "DeprecationCommentsOnly")
         .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<DeprecationCommentsOnly> native) {
+            auto self = std::make_shared<DeprecationCommentsOnlyTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         .def("some_method_with_all_comments", [](DeprecationCommentsOnly& self, const ::std::string& input) {
             return self.some_method_with_all_comments(input);
         }, py::arg("input"))
-        .def_property("is_some_property", py::overload_cast<>(&DeprecationCommentsOnly::is_some_property, py::const_), py::overload_cast<const bool>(&DeprecationCommentsOnly::set_some_property))
+
+        .def_property("is_some_property", [](const DeprecationCommentsOnly& self) {
+            return self.is_some_property();
+        }, [](DeprecationCommentsOnly& self, const bool value) {
+            self.set_some_property(value);
+        })
         ;
 }
 

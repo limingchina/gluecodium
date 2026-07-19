@@ -18,8 +18,10 @@ using StructWithConstMethod = ::smoke::StructWithConstMethod;
 void register_StructWithConstMethod(py::module_& module) {
     py::class_<StructWithConstMethod>(module, "StructWithConstMethod")
         .def_readwrite("string_field", &StructWithConstMethod::string_field)
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         .def("double_const", &StructWithConstMethod::double_const)
+
         ;
 }
 

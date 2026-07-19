@@ -20,6 +20,7 @@ using StructB = ::smoke::StructB;
 void register_StructB(py::module_& module) {
     py::class_<StructB>(module, "StructB")
         .def_readwrite("field", &StructB::field)
+        .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::StructA >>(), py::arg("field"))
         ;
 }

@@ -9,9 +9,7 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
-#include "foo/Bar.h"
 #include "smoke/ExternalEquatable.h"
-#include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExternalEquatable = ::smoke::ExternalEquatable;

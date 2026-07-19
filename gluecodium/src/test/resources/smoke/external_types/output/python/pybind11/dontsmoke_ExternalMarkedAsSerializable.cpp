@@ -18,6 +18,7 @@ using ExternalMarkedAsSerializable = ::dontsmoke::ExternalMarkedAsSerializable;
 void register_ExternalMarkedAsSerializable(py::module_& module) {
     py::class_<ExternalMarkedAsSerializable>(module, "ExternalMarkedAsSerializable")
         .def_readwrite("field", &ExternalMarkedAsSerializable::field)
+        .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("field"))
         ;
 }

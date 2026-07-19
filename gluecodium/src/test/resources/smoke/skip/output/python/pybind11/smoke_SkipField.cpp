@@ -18,6 +18,7 @@ using SkipField = ::smoke::SkipField;
 void register_SkipField(py::module_& module) {
     py::class_<SkipField>(module, "SkipField")
         .def_readwrite("field", &SkipField::field)
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;
 }

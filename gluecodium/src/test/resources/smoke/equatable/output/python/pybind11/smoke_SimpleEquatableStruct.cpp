@@ -23,6 +23,7 @@ void register_SimpleEquatableStruct(py::module_& module) {
         .def_readwrite("interface_field", &SimpleEquatableStruct::interface_field)
         .def_readwrite("nullable_class_field", &SimpleEquatableStruct::nullable_class_field)
         .def_readwrite("nullable_interface_field", &SimpleEquatableStruct::nullable_interface_field)
+        .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >, ::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >>(), py::arg("class_field"), py::arg("interface_field"), py::arg("nullable_class_field"), py::arg("nullable_interface_field"))
         ;
 }

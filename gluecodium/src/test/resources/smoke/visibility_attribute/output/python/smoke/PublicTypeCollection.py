@@ -13,7 +13,7 @@ class PublicTypeCollection(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], PublicTypeCollection):
+        if len(args) == 1 and isinstance(args[0], generated.PublicTypeCollection):
             super().__init__(args[0])
         else:
             super().__init__(generated.PublicTypeCollection(*[getattr(arg, "_native", arg) for arg in args]))

@@ -12,7 +12,7 @@
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_ChildConstructors(pybind11::module_& module);
 void register_Constructors(pybind11::module_& module);
-void register_ErrorEnum(pybind11::module_& module);
+void register_ConstructorsErrorEnum(pybind11::module_& module);
 void register_SingleNamedConstructor(pybind11::module_& module);
 void register_SingleNamelessConstructor(pybind11::module_& module);
 
@@ -24,7 +24,7 @@ PYBIND11_MODULE(generated, m) {
 
     register_ChildConstructors(m);
     register_Constructors(m);
-    register_ErrorEnum(m);
+    register_ConstructorsErrorEnum(m);
     register_SingleNamedConstructor(m);
     register_SingleNamelessConstructor(m);
 }

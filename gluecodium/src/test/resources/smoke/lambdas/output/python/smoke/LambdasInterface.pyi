@@ -1,24 +1,29 @@
 
 
-from smoke.TakeScreenshotCallback import TakeScreenshotCallback
+from smoke.LambdasInterfaceTakeScreenshotCallback import LambdasInterfaceTakeScreenshotCallback
 
-
-from _native_base import _NativeBase
 
 import generated
 
 
-class LambdasInterface(_NativeBase):
+class LambdasInterface(generated.LambdasInterface):
     """"""
 
     def __init__(self, native=None):
-        if isinstance(native, LambdasInterface):
+        # Subclass the native pybind11 type so that a Python override of an interface
+        # method is dispatched through the generated trampoline. When `native` is an
+        # existing native instance (returned by a factory), adopt it via the generated
+        # adoption constructor; otherwise construct a fresh trampoline. `self._native`
+        # aliases the wrapper itself so the rest of the generated code can reach the
+        # native object uniformly (e.g. when passing this interface back into a C++
+        # call site).
+        if native is not None and isinstance(native, generated.LambdasInterface):
             super().__init__(native)
         else:
-            super().__init__(generated.LambdasInterface())
+            super().__init__()
+        self._native = self
 
-
-    def take_screenshot(self, callback: TakeScreenshotCallback):
+    def take_screenshot(self, callback: LambdasInterfaceTakeScreenshotCallback):
         """"""
-        return self._native.take_screenshot(callback._native)
+        return generated.LambdasInterface.take_screenshot(self, callback._native)
 

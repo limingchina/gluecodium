@@ -2,9 +2,7 @@
 
 import datetime
 from smoke.FreeEnum import FreeEnum
-from smoke.FreeError import FreeError
 from smoke.FreePoint import FreePoint
-
 
 from _native_base import _NativeBase
 

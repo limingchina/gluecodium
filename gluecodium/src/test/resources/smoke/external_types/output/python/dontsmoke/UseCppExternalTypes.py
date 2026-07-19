@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 from smoke.ClassWithOverloads import ClassWithOverloads
-from smoke.ExternalEnum import ExternalEnum
+from smoke.EnumsExternal_Enum import EnumsExternal_Enum
 from smoke.StructsAnotherExternalStruct import StructsAnotherExternalStruct
-
 
 from _native_base import _NativeBase
 
@@ -24,7 +23,7 @@ class UseCppExternalTypes(_NativeBase):
         generated.UseCppExternalTypes.use_struct(input._native)
 
     @staticmethod
-    def use_enum(input: ExternalEnum):
+    def use_enum(input: EnumsExternal_Enum):
         """"""
         generated.UseCppExternalTypes.use_enum(input._native)
 

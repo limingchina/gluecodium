@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-from namerules.ExampleError import ExampleError
-from namerules.ExampleErrorCode import ExampleErrorCode
+from namerules.NameRulesExampleErrorCode import NameRulesExampleErrorCode
 from namerules.NameRulesExampleStruct import NameRulesExampleStruct
-
 
 from _native_base import _NativeBase
 
@@ -28,7 +26,6 @@ class NameRules(_NativeBase):
         """"""
         return self._native.some_method(some_argument._native)
 
-
     @property
     def int_property(self) -> int:
         """"""
@@ -38,7 +35,6 @@ class NameRules(_NativeBase):
     def int_property(self, value: int):
         self._native.int_property = value
 
-
     @property
     def is_boolean_property(self) -> bool:
         """"""
@@ -47,7 +43,6 @@ class NameRules(_NativeBase):
     @is_boolean_property.setter
     def is_boolean_property(self, value: bool):
         self._native.is_boolean_property = value
-
 
     @property
     def struct_property(self) -> NameRulesExampleStruct:

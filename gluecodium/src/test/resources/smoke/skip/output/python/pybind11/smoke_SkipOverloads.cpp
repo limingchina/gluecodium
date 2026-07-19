@@ -17,8 +17,10 @@ using SkipOverloads = ::smoke::SkipOverloads;
 void register_SkipOverloads(py::module_& module) {
     py::class_<SkipOverloads>(module, "SkipOverloads")
         .def_readwrite("dummy", &SkipOverloads::dummy)
+        .def(py::init<>())
         .def(py::init<double>(), py::arg("dummy"))
         .def("do_foo", &SkipOverloads::do_foo, py::arg("input"))
+
         ;
 }
 

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.FooChecker import FooChecker
+from smoke.ClassInStructFooChecker import ClassInStructFooChecker
 
 
 from _native_base import _NativeBase
@@ -14,7 +14,7 @@ class ClassInStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], ClassInStruct):
+        if len(args) == 1 and isinstance(args[0], generated.ClassInStruct):
             super().__init__(args[0])
         else:
             super().__init__(generated.ClassInStruct(*[getattr(arg, "_native", arg) for arg in args]))

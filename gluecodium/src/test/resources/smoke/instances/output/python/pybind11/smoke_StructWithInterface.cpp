@@ -19,6 +19,7 @@ using StructWithInterface = ::smoke::StructWithInterface;
 void register_StructWithInterface(py::module_& module) {
     py::class_<StructWithInterface>(module, "StructWithInterface")
         .def_readwrite("interface_instance", &StructWithInterface::interface_instance)
+        .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::SimpleInterface >>(), py::arg("interface_instance"))
         ;
 }

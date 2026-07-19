@@ -19,28 +19,62 @@ class AttributesInterfaceTrampoline : public AttributesInterface {
 public:
     using AttributesInterface::AttributesInterface;
 
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<AttributesInterface> m_impl;
+
     void very_fun(
             const ::std::string& param ) override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            m_impl->very_fun(param);
+            return;
+        }
         PYBIND11_OVERRIDE_PURE(void, AttributesInterface, very_fun, param);
     }
-    ::std::string& get_prop() const override {
+    ::std::string get_prop() const override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::string&, AttributesInterface, get_prop);
+        if (m_impl) {
+            return m_impl->get_prop();
+        }
+        PYBIND11_OVERRIDE_PURE(::std::string, AttributesInterface, get_prop);
     }
     void set_prop(const ::std::string& value) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, AttributesInterface, set_prop, value);
+        if (m_impl) {
+            m_impl->set_prop(value);
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, AttributesInterface, set_prop, value);
     }
 };
 
 void register_AttributesInterface(py::module_& module) {
     py::class_<AttributesInterface, std::shared_ptr<AttributesInterface>, AttributesInterfaceTrampoline>(module, "AttributesInterface")
         .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<AttributesInterface> native) {
+            auto self = std::make_shared<AttributesInterfaceTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         .def("very_fun", [](AttributesInterface& self, const ::std::string& param) {
             return self.very_fun(param);
         }, py::arg("param"))
-        .def_property("prop", py::overload_cast<>(&AttributesInterface::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesInterface::set_prop))
+
+        .def_property("prop", [](const AttributesInterface& self) {
+            return self.get_prop();
+        }, [](AttributesInterface& self, const ::std::string& value) {
+            self.set_prop(value);
+        })
         ;
 }
 

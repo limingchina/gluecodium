@@ -13,7 +13,7 @@ class DartInternalElementsEnabled(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], DartInternalElementsEnabled):
+        if len(args) == 1 and isinstance(args[0], generated.DartInternalElementsEnabled):
             super().__init__(args[0])
         else:
             super().__init__(generated.DartInternalElementsEnabled(*[getattr(arg, "_native", arg) for arg in args]))
@@ -23,7 +23,6 @@ class DartInternalElementsEnabled(_NativeBase):
     def bool_field(self) -> bool:
         """"""
         return self._native.bool_field
-
     @bool_field.setter
     def bool_field(self, value: bool):
       self._native.bool_field = getattr(value, "_native", value)
@@ -34,7 +33,6 @@ class DartInternalElementsEnabled(_NativeBase):
     def string_field(self) -> str:
         """"""
         return self._native.string_field
-
     @string_field.setter
     def string_field(self, value: str):
       self._native.string_field = getattr(value, "_native", value)

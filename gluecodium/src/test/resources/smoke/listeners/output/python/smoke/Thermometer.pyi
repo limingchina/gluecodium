@@ -1,10 +1,7 @@
 
 
 import datetime
-from smoke.AnotherNotificationError import AnotherNotificationError
-from smoke.NotificationError import NotificationError
-from smoke.SomeThermometerErrorCode import SomeThermometerErrorCode
-
+from smoke.ThermometerSomeThermometerErrorCode import ThermometerSomeThermometerErrorCode
 
 from _native_base import _NativeBase
 

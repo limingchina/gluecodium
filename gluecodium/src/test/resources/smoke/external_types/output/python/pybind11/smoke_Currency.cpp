@@ -18,8 +18,8 @@ using Currency = ::smoke::Currency;
 
 void register_Currency(py::module_& module) {
     py::class_<Currency>(module, "Currency")
-        .def_readwrite("currency_code", &Currency::currency_code)
-        .def_readwrite("numeric_code", &Currency::numeric_code)
+        .def_readonly("currency_code", &Currency::currency_code)
+        .def_readonly("numeric_code", &Currency::numeric_code)
         .def(py::init<::std::string, int32_t>(), py::arg("currency_code"), py::arg("numeric_code"))
         ;
 }

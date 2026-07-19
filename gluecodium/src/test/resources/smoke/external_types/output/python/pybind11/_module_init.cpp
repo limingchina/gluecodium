@@ -10,7 +10,6 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_ClassWithOverloads(pybind11::module_& module);
 void register_CompressionState(pybind11::module_& module);
 void register_Currency(pybind11::module_& module);
 void register_Currency(pybind11::module_& module);
@@ -18,19 +17,11 @@ void register_DartColor(pybind11::module_& module);
 void register_DartExternalCtor(pybind11::module_& module);
 void register_DartSeason(pybind11::module_& module);
 void register_DateInterval(pybind11::module_& module);
-void register_DurationExternal(pybind11::module_& module);
 void register_Enums(pybind11::module_& module);
-void register_ExternalClass(pybind11::module_& module);
-void register_ExternalClasssome_Struct(pybind11::module_& module);
 void register_ExternalDartConstants(pybind11::module_& module);
-void register_ExternalEnum(pybind11::module_& module);
-void register_ExternalInterface(pybind11::module_& module);
-void register_ExternalInterfacesome_Struct(pybind11::module_& module);
 void register_ExternalMarkedAsSerializable(pybind11::module_& module);
 void register_ExternalMarkedAsSerializable(pybind11::module_& module);
 void register_ExternalTypeInTypesCollection(pybind11::module_& module);
-void register_ExternalTypeInTypesCollectionIntStruct(pybind11::module_& module);
-void register_ExternalWithNoFunctions(pybind11::module_& module);
 void register_JavaExternalCtor(pybind11::module_& module);
 void register_JavaExternalTypesStruct(pybind11::module_& module);
 void register_KotlinExternalTypesStruct(pybind11::module_& module);
@@ -43,11 +34,7 @@ void register_Season(pybind11::module_& module);
 void register_Season(pybind11::module_& module);
 void register_SerializableStructWithExternalField(pybind11::module_& module);
 void register_SerializableStructWithExternalField(pybind11::module_& module);
-void register_StandaloneExternalEnum(pybind11::module_& module);
-void register_StructWithOverloads(pybind11::module_& module);
 void register_Structs(pybind11::module_& module);
-void register_StructsAnotherExternalStruct(pybind11::module_& module);
-void register_StructsExternalStruct(pybind11::module_& module);
 void register_SwiftExternalCtor(pybind11::module_& module);
 void register_SwiftSeason(pybind11::module_& module);
 void register_SystemColor(pybind11::module_& module);
@@ -63,7 +50,6 @@ void register_UseKotlinExternalConst(pybind11::module_& module);
 void register_UseKotlinExternalTypes(pybind11::module_& module);
 void register_UseSwiftExternalTypes(pybind11::module_& module);
 void register_VeryBoolean(pybind11::module_& module);
-void register_VeryExternalEnum(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -71,7 +57,6 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_ClassWithOverloads(m);
     register_CompressionState(m);
     register_Currency(m);
     register_Currency(m);
@@ -79,19 +64,11 @@ PYBIND11_MODULE(generated, m) {
     register_DartExternalCtor(m);
     register_DartSeason(m);
     register_DateInterval(m);
-    register_DurationExternal(m);
     register_Enums(m);
-    register_ExternalClass(m);
-    register_ExternalClasssome_Struct(m);
     register_ExternalDartConstants(m);
-    register_ExternalEnum(m);
-    register_ExternalInterface(m);
-    register_ExternalInterfacesome_Struct(m);
     register_ExternalMarkedAsSerializable(m);
     register_ExternalMarkedAsSerializable(m);
     register_ExternalTypeInTypesCollection(m);
-    register_ExternalTypeInTypesCollectionIntStruct(m);
-    register_ExternalWithNoFunctions(m);
     register_JavaExternalCtor(m);
     register_JavaExternalTypesStruct(m);
     register_KotlinExternalTypesStruct(m);
@@ -104,11 +81,7 @@ PYBIND11_MODULE(generated, m) {
     register_Season(m);
     register_SerializableStructWithExternalField(m);
     register_SerializableStructWithExternalField(m);
-    register_StandaloneExternalEnum(m);
-    register_StructWithOverloads(m);
     register_Structs(m);
-    register_StructsAnotherExternalStruct(m);
-    register_StructsExternalStruct(m);
     register_SwiftExternalCtor(m);
     register_SwiftSeason(m);
     register_SystemColor(m);
@@ -124,5 +97,4 @@ PYBIND11_MODULE(generated, m) {
     register_UseKotlinExternalTypes(m);
     register_UseSwiftExternalTypes(m);
     register_VeryBoolean(m);
-    register_VeryExternalEnum(m);
 }

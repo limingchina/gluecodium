@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from smoke.OverloadedCtors import OverloadedCtors
-from smoke.SingleCtor import SingleCtor
-from smoke.SingleCtorWithOneArgument import SingleCtorWithOneArgument
-from smoke.SingleCtorWithTwoArgument import SingleCtorWithTwoArgument
-
+from smoke.CtorLinksOverloadedCtors import CtorLinksOverloadedCtors
+from smoke.CtorLinksSingleCtor import CtorLinksSingleCtor
+from smoke.CtorLinksSingleCtorWithOneArgument import CtorLinksSingleCtorWithOneArgument
+from smoke.CtorLinksSingleCtorWithTwoArgument import CtorLinksSingleCtorWithTwoArgument
 
 from _native_base import _NativeBase
 

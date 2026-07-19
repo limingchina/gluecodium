@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.SomeEnum import SomeEnum
-from smoke.SomethingWrongError import SomethingWrongError
-
+from smoke.PlatformCommentsSomeEnum import PlatformCommentsSomeEnum
 
 from _native_base import _NativeBase
 
@@ -32,13 +30,4 @@ class PlatformComments(_NativeBase):
     def some_deprecated_method(self):
         """"""
         return self._native.some_deprecated_method()
-from enum import Enum
-
-
-class SomeEnum(Enum):
-    """"""
-
-    USELESS = 0
-    USEFUL = 1
-
 

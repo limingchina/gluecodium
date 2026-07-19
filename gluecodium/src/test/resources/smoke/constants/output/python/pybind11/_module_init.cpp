@@ -13,7 +13,9 @@
 void register_CollectionConstants(pybind11::module_& module);
 void register_Constants(pybind11::module_& module);
 void register_ConstantsInterface(pybind11::module_& module);
+void register_ConstantsInterfaceStateEnum(pybind11::module_& module);
 void register_ConstantsSkipCpp(pybind11::module_& module);
+void register_ConstantsStateEnum(pybind11::module_& module);
 void register_CrossFileConstants(pybind11::module_& module);
 void register_StructConstants(pybind11::module_& module);
 void register_StructConstantsNestingStruct(pybind11::module_& module);
@@ -28,7 +30,9 @@ PYBIND11_MODULE(generated, m) {
     register_CollectionConstants(m);
     register_Constants(m);
     register_ConstantsInterface(m);
+    register_ConstantsInterfaceStateEnum(m);
     register_ConstantsSkipCpp(m);
+    register_ConstantsStateEnum(m);
     register_CrossFileConstants(m);
     register_StructConstants(m);
     register_StructConstantsNestingStruct(m);

@@ -21,7 +21,7 @@ using JavaExternalTypesStruct = ::smoke::JavaExternalTypesStruct;
 
 void register_JavaExternalTypesStruct(py::module_& module) {
     py::class_<JavaExternalTypesStruct>(module, "JavaExternalTypesStruct")
-        .def_readwrite("currency", &JavaExternalTypesStruct::currency)
+        .def_readonly("currency", &JavaExternalTypesStruct::currency)
         .def_readwrite("time_zone", &JavaExternalTypesStruct::time_zone)
         .def_readwrite("month", &JavaExternalTypesStruct::month)
         .def_readwrite("color", &JavaExternalTypesStruct::color)

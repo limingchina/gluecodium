@@ -6,41 +6,47 @@ from smoke.CalculationResult import CalculationResult
 from smoke.CalculatorListenerResultStruct import CalculatorListenerResultStruct
 
 
-from _native_base import _NativeBase
-
 import generated
 
 
-class CalculatorListener(_NativeBase):
+class CalculatorListener(generated.CalculatorListener):
     """"""
 
     def __init__(self, native=None):
-        if isinstance(native, CalculatorListener):
+        # Subclass the native pybind11 type so that a Python override of an interface
+        # method is dispatched through the generated trampoline. When `native` is an
+        # existing native instance (returned by a factory), adopt it via the generated
+        # adoption constructor; otherwise construct a fresh trampoline. `self._native`
+        # aliases the wrapper itself so the rest of the generated code can reach the
+        # native object uniformly (e.g. when passing this interface back into a C++
+        # call site).
+        if native is not None and isinstance(native, generated.CalculatorListener):
             super().__init__(native)
         else:
-            super().__init__(generated.CalculatorListener())
+            super().__init__()
+        self._native = self
 
     def on_calculation_result(self, calculation_result: float):
         """"""
-        return self._native.on_calculation_result(calculation_result)
+        return generated.CalculatorListener.on_calculation_result(self, calculation_result)
 
     def on_calculation_result_const(self, calculation_result: float):
         """"""
-        return self._native.on_calculation_result_const(calculation_result)
+        return generated.CalculatorListener.on_calculation_result_const(self, calculation_result)
 
     def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct):
         """"""
-        return self._native.on_calculation_result_struct(calculation_result._native)
+        return generated.CalculatorListener.on_calculation_result_struct(self, calculation_result._native)
 
     def on_calculation_result_array(self, calculation_result: list[float]):
         """"""
-        return self._native.on_calculation_result_array(calculation_result)
+        return generated.CalculatorListener.on_calculation_result_array(self, calculation_result)
 
     def on_calculation_result_map(self, calculation_results: dict[str, float]):
         """"""
-        return self._native.on_calculation_result_map(calculation_results)
+        return generated.CalculatorListener.on_calculation_result_map(self, calculation_results)
 
     def on_calculation_result_instance(self, calculation_result: CalculationResult):
         """"""
-        return self._native.on_calculation_result_instance(calculation_result._native)
+        return generated.CalculatorListener.on_calculation_result_instance(self, calculation_result._native)
 

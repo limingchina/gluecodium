@@ -17,15 +17,14 @@ void register_EquatableEquatableNullableStruct(pybind11::module_& module);
 void register_EquatableEquatableStruct(pybind11::module_& module);
 void register_EquatableInterface(pybind11::module_& module);
 void register_EquatableNestedEquatableStruct(pybind11::module_& module);
+void register_EquatableSomeEnum(pybind11::module_& module);
 void register_EquatableStructWithAccessors(pybind11::module_& module);
 void register_EquatableStructWithInternalFields(pybind11::module_& module);
 void register_ExternalEquatable(pybind11::module_& module);
-void register_ExternalEquatableExternalEquatableStruct(pybind11::module_& module);
 void register_NonEquatableClass(pybind11::module_& module);
 void register_NonEquatableInterface(pybind11::module_& module);
 void register_PointerEquatableClass(pybind11::module_& module);
 void register_SimpleEquatableStruct(pybind11::module_& module);
-void register_SomeEnum(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -40,13 +39,12 @@ PYBIND11_MODULE(generated, m) {
     register_EquatableEquatableStruct(m);
     register_EquatableInterface(m);
     register_EquatableNestedEquatableStruct(m);
+    register_EquatableSomeEnum(m);
     register_EquatableStructWithAccessors(m);
     register_EquatableStructWithInternalFields(m);
     register_ExternalEquatable(m);
-    register_ExternalEquatableExternalEquatableStruct(m);
     register_NonEquatableClass(m);
     register_NonEquatableInterface(m);
     register_PointerEquatableClass(m);
     register_SimpleEquatableStruct(m);
-    register_SomeEnum(m);
 }

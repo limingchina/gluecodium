@@ -22,8 +22,10 @@ using SkippedEverywhere = ::smoke::SkippedEverywhere;
 void register_SkippedEverywhere(py::module_& module) {
     py::class_<SkippedEverywhere>(module, "SkippedEverywhere")
         .def_readwrite("nothing_to_see_here", &SkippedEverywhere::nothing_to_see_here)
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("nothing_to_see_here"))
         .def("use_map_in_dart", &SkippedEverywhere::use_map_in_dart, py::arg("foo"))
+
         ;
 }
 

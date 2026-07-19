@@ -18,6 +18,7 @@ using UseKotlinExternalConst = ::kotlin_smoke::UseKotlinExternalConst;
 void register_UseKotlinExternalConst(py::module_& module) {
     py::class_<UseKotlinExternalConst>(module, "UseKotlinExternalConst")
         .def_readwrite("string_field", &UseKotlinExternalConst::string_field)
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }

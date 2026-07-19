@@ -23,6 +23,7 @@ void register_MixedCollectionsStruct(py::module_& module) {
     py::class_<MixedCollectionsStruct>(module, "MixedCollectionsStruct")
         .def_readwrite("almost_dates", &MixedCollectionsStruct::almost_dates)
         .def_readwrite("dates", &MixedCollectionsStruct::dates)
+        .def(py::init<>())
         .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("almost_dates"), py::arg("dates"))
         ;
 }

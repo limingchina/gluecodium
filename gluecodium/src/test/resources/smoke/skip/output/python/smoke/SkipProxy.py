@@ -6,97 +6,93 @@ from smoke.SkippedEverywhere import SkippedEverywhere
 from smoke.SkippedEverywhereEnum import SkippedEverywhereEnum
 
 
-from _native_base import _NativeBase
-
 import generated
 
 
-class SkipProxy(_NativeBase):
+class SkipProxy(generated.SkipProxy):
     """"""
 
     def __init__(self, native=None):
-        if isinstance(native, SkipProxy):
+        # Subclass the native pybind11 type so that a Python override of an interface
+        # method is dispatched through the generated trampoline. When `native` is an
+        # existing native instance (returned by a factory), adopt it via the generated
+        # adoption constructor; otherwise construct a fresh trampoline. `self._native`
+        # aliases the wrapper itself so the rest of the generated code can reach the
+        # native object uniformly (e.g. when passing this interface back into a C++
+        # call site).
+        if native is not None and isinstance(native, generated.SkipProxy):
             super().__init__(native)
         else:
-            super().__init__(generated.SkipProxy())
-
+            super().__init__()
+        self._native = self
 
     def not_in_java(self, input: str) -> str:
         """"""
-        return self._native.not_in_java(input)
-
+        return generated.SkipProxy.not_in_java(self, input)
 
     def not_in_swift(self, input: bool) -> bool:
         """"""
-        return self._native.not_in_swift(input)
-
+        return generated.SkipProxy.not_in_swift(self, input)
 
     def not_in_dart(self, input: float) -> float:
         """"""
-        return self._native.not_in_dart(input)
-
+        return generated.SkipProxy.not_in_dart(self, input)
 
     def not_in_kotlin(self, input: float) -> float:
         """"""
-        return self._native.not_in_kotlin(input)
-
+        return generated.SkipProxy.not_in_kotlin(self, input)
 
     @property
     def skipped_in_java(self) -> str:
         """"""
-        return self._native.skipped_in_java
+        return generated.SkipProxy.skipped_in_java.fget(self)
 
     @skipped_in_java.setter
     def skipped_in_java(self, value: str):
-        self._native.skipped_in_java = value
-
+        generated.SkipProxy.skipped_in_java.fset(self, value)
 
     @property
     def is_skipped_in_swift(self) -> bool:
         """"""
-        return self._native.is_skipped_in_swift
+        return generated.SkipProxy.is_skipped_in_swift.fget(self)
 
     @is_skipped_in_swift.setter
     def is_skipped_in_swift(self, value: bool):
-        self._native.is_skipped_in_swift = value
-
+        generated.SkipProxy.is_skipped_in_swift.fset(self, value)
 
     @property
     def skipped_in_dart(self) -> float:
         """"""
-        return self._native.skipped_in_dart
+        return generated.SkipProxy.skipped_in_dart.fget(self)
 
     @skipped_in_dart.setter
     def skipped_in_dart(self, value: float):
-        self._native.skipped_in_dart = value
-
+        generated.SkipProxy.skipped_in_dart.fset(self, value)
 
     @property
     def skipped_in_kotlin(self) -> float:
         """"""
-        return self._native.skipped_in_kotlin
+        return generated.SkipProxy.skipped_in_kotlin.fget(self)
 
     @skipped_in_kotlin.setter
     def skipped_in_kotlin(self, value: float):
-        self._native.skipped_in_kotlin = value
-
+        generated.SkipProxy.skipped_in_kotlin.fset(self, value)
 
     @property
     def skipped_everywhere(self) -> SkippedEverywhere:
         """"""
-        return self._native.skipped_everywhere
+        return generated.SkipProxy.skipped_everywhere.fget(self)
 
     @skipped_everywhere.setter
     def skipped_everywhere(self, value: SkippedEverywhere):
-        self._native.skipped_everywhere = value
-
+        generated.SkipProxy.skipped_everywhere.fset(self, value)
 
     @property
     def skipped_everywhere_too(self) -> SkippedEverywhereEnum:
         """"""
-        return self._native.skipped_everywhere_too
+        return generated.SkipProxy.skipped_everywhere_too.fget(self)
 
     @skipped_everywhere_too.setter
     def skipped_everywhere_too(self, value: SkippedEverywhereEnum):
-        self._native.skipped_everywhere_too = value
+        generated.SkipProxy.skipped_everywhere_too.fset(self, value)
 

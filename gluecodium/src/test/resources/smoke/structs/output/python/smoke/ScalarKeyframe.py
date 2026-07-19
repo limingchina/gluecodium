@@ -13,7 +13,7 @@ class ScalarKeyframe(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], ScalarKeyframe):
+        if len(args) == 1 and isinstance(args[0], generated.ScalarKeyframe):
             super().__init__(args[0])
         else:
             super().__init__(generated.ScalarKeyframe(*[getattr(arg, "_native", arg) for arg in args]))
@@ -24,19 +24,11 @@ class ScalarKeyframe(_NativeBase):
         """"""
         return self._native.value
 
-    @value.setter
-    def value(self, value: float):
-      self._native.value = getattr(value, "_native", value)
-
 
 
     @property
     def offset_in_ms(self) -> int:
         """"""
         return self._native.offset_in_ms
-
-    @offset_in_ms.setter
-    def offset_in_ms(self, value: int):
-      self._native.offset_in_ms = getattr(value, "_native", value)
 
 
