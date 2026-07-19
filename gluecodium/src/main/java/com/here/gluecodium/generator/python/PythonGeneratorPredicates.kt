@@ -235,6 +235,19 @@ internal class PythonGeneratorPredicates(
             },
             // Whether the C++ return type of a function contains a comma (e.g. a `std::map<K, V>` or
             // `std::pair<A, B>` instantiation). The `PYBIND11_OVERRIDE_PURE` / `PYBIND11_OVERRIDE`
+            // Whether a function/property's (unwrapped) return type is `void`. Used by the
+            // forwarding trampoline to decide whether an override forwards a value or not.
+            "isVoid" to { limeElement: Any ->
+                val typeRef =
+                    when (limeElement) {
+                        is com.here.gluecodium.model.lime.LimeFunction -> limeElement.returnType.typeRef
+                        is com.here.gluecodium.model.lime.LimeProperty -> limeElement.typeRef
+                        else -> null
+                    }
+                typeRef?.type?.actualType is com.here.gluecodium.model.lime.LimeBasicType &&
+                    (typeRef.type.actualType as com.here.gluecodium.model.lime.LimeBasicType)
+                        .typeId == com.here.gluecodium.model.lime.LimeBasicType.TypeId.VOID
+            },
             // macros are not variadic in their type argument, so a comma-bearing return type must be
             // aliased through a `using` declaration before being passed to the macro. Accepts either
             // the function itself or its return type reference as the predicate context.
