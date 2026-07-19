@@ -75,6 +75,18 @@ internal class PythonGeneratorPredicates(
                     else -> false
                 }
             },
+            // Whether the container has more than one base class (true multiple inheritance). When
+            // set, the pybind11 `py::class_` must be constructed with `py::multiple_inheritance()`
+            // so pybind11 uses dynamic_cast-based safe casting instead of assuming a zero pointer
+            // offset for the second and later base classes. Without it, direct member access
+            // (property getters/setters) on a non-first base silently reads/writes the wrong memory
+            // offset, while virtual dispatch via the vtable still happens to work.
+            "needsMultipleInheritanceTag" to { limeElement: Any ->
+                (limeElement as? com.here.gluecodium.model.lime.LimeContainerWithInheritance)
+                    ?.parents
+                    ?.size
+                    ?.let { it > 1 } == true
+            },
             "isInternal" to { it is LimeNamedElement && CommonGeneratorPredicates.isInternal(it, PYTHON) },
             "isPublic" to { it is LimeNamedElement && !CommonGeneratorPredicates.isInternal(it, PYTHON) },
             "isNestedInternal" to { limeElement: Any ->
@@ -245,6 +257,24 @@ internal class PythonGeneratorPredicates(
                         else -> null
                     }
                 typeRef?.type?.actualType is com.here.gluecodium.model.lime.LimeBasicType &&
+                    (typeRef.type.actualType as com.here.gluecodium.model.lime.LimeBasicType)
+                        .typeId == com.here.gluecodium.model.lime.LimeBasicType.TypeId.VOID
+            },
+            // Whether the C++ signature of a function/property is `void`. Unlike `isVoid` (which
+            // only looks at the unwrapped LIME return type), this also accounts for a thrown error
+            // type: an error-returning function whose LIME return type is `void` still maps to a
+            // non-void C++ signature (`std::error_code`), so the forwarding trampoline must return
+            // the result of `m_impl->...` rather than discarding it.
+            "isCppVoid" to { limeElement: Any ->
+                val (typeRef, thrownType) =
+                    when (limeElement) {
+                        is com.here.gluecodium.model.lime.LimeFunction ->
+                            limeElement.returnType.typeRef to limeElement.thrownType
+                        is com.here.gluecodium.model.lime.LimeProperty -> limeElement.typeRef to null
+                        else -> null to null
+                    }
+                thrownType == null &&
+                    typeRef?.type?.actualType is com.here.gluecodium.model.lime.LimeBasicType &&
                     (typeRef.type.actualType as com.here.gluecodium.model.lime.LimeBasicType)
                         .typeId == com.here.gluecodium.model.lime.LimeBasicType.TypeId.VOID
             },

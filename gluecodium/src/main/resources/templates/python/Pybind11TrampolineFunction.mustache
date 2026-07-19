@@ -15,11 +15,11 @@
             {{#parameters}}{{#ifPredicate typeRef "needsRefSuffix"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ){{#ifPredicate "isCppConst"}} const{{/ifPredicate}}{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
-{{#ifPredicate this "isVoid"}}
+{{#ifPredicate this "isCppVoid"}}
             m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
             return;
 {{/ifPredicate}}
-{{#unlessPredicate this "isVoid"}}
+{{#unlessPredicate this "isCppVoid"}}
             return m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
 {{/unlessPredicate}}
         }

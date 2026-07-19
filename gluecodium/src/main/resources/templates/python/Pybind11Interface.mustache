@@ -37,7 +37,7 @@ public:
 };
 
 void register_{{resolveName}}(py::module_& module) {
-    py::class_<{{resolveName model "Pybind11"}}, std::shared_ptr<{{resolveName model "Pybind11"}}>, {{resolveName}}Trampoline>(module, "{{resolveName}}")
+    py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>, {{resolveName}}Trampoline>(module, "{{resolveName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -54,5 +54,15 @@ void register_{{resolveName}}(py::module_& module) {
 {{>python/Pybind11Function}}{{/functions}}
 {{#properties}}
 {{>python/Pybind11Property}}{{/properties}}
+{{#inheritedFunctions}}
+{{#unless isStatic}}
+{{#unless isConstructor}}
+{{>python/Pybind11Function}}{{/unless}}
+{{/unless}}
+{{/inheritedFunctions}}
+{{#inheritedProperties}}
+{{#unless isStatic}}
+{{>python/Pybind11Property}}{{/unless}}
+{{/inheritedProperties}}
         ;
 }
