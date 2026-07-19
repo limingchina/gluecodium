@@ -1,6 +1,38 @@
 {{! pybind11 class binding. Registered into the module by the module init (Phase 6). }}
+{{#ifPredicate model "needsTrampoline"}}
+class {{resolveName}}Trampoline : public {{resolveName model "Pybind11"}} {
+public:
+    using {{resolveName model "Pybind11"}}::{{resolveName model "Pybind11"}};
+
+{{#functions}}
+{{#unless isStatic}}
+{{#unless isConstructor}}
+{{>python/Pybind11TrampolineFunction}}
+{{/unless}}
+{{/unless}}
+{{/functions}}
+{{#properties}}
+{{#unless isStatic}}
+{{>python/Pybind11TrampolineProperty}}
+{{/unless}}
+{{/properties}}
+{{#inheritedFunctions}}
+{{#unless isStatic}}
+{{#unless isConstructor}}
+{{>python/Pybind11TrampolineFunction}}
+{{/unless}}
+{{/unless}}
+{{/inheritedFunctions}}
+{{#inheritedProperties}}
+{{#unless isStatic}}
+{{>python/Pybind11TrampolineProperty}}
+{{/unless}}
+{{/inheritedProperties}}
+};
+{{/ifPredicate}}
+
 void register_{{resolveName}}(py::module_& module) {
-    py::class_<{{resolveName model "Pybind11"}}, std::shared_ptr<{{resolveName model "Pybind11"}}>>(module, "{{resolveName}}")
+    py::class_<{{resolveName model "Pybind11"}}, std::shared_ptr<{{resolveName model "Pybind11"}}>{{#ifPredicate model "needsTrampoline"}}, {{resolveName}}Trampoline{{/ifPredicate}}>(module, "{{resolveName}}")
 {{#functions}}
 {{>python/Pybind11Function}}{{/functions}}
 {{#properties}}

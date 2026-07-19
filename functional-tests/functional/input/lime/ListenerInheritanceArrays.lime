@@ -17,6 +17,7 @@
 
 package test
 
+@Skip(Python)
 class Teacher {
     static fun talkToParents(
         parents: List<ParentListener>

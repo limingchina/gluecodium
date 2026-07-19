@@ -103,8 +103,33 @@ struct type_caster<{{returnTypeFullName}}<Value, Error>> {
         throw pybind11::error_already_set();
     }
 
-    // Python -> C++ is not supported (Return is an output-only adapter).
-    bool load(handle, bool) { return false; }
+    // Python -> C++: a Python override of a throwing method returns the bare
+    // value T (errors are signalled by raising a Python exception, which the
+    // C++ -> Python `cast` direction turns into a failed Return). Wrap that
+    // value into a successful Return<T, Error> so the trampoline override can
+    // return it to the C++ base class, whose signature is
+    // `Return<T, Error> method(...)`.
+    bool load(handle src, bool convert) {
+        if constexpr (std::is_void_v<Value>) {
+            // Void-returning throwing functions still use `Return<void, Error>`
+            // as their C++ return type (the base signature), and a Python
+            // override returns None. Construct a successful Return.
+            if (!src.is_none() && !convert) return false;
+            // `Return` has no copy/move assignment operator, so construct the
+            // caster's `value` member in place.
+            value.~ReturnT();
+            new (&value) ReturnT(true);
+            return true;
+        } else {
+            type_caster<Value> value_caster;
+            if (!value_caster.load(src, convert)) return false;
+            // `Return` has no copy/move assignment operator, so construct the
+            // caster's `value` member in place from the loaded value.
+            value.~ReturnT();
+            new (&value) ReturnT(static_cast<Value&&>(static_cast<Value&>(value_caster)));
+            return true;
+        }
+    }
 };
 
 }  // namespace pybind11::detail
