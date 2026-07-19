@@ -19,12 +19,14 @@ void register_InternalListener(pybind11::module_& module);
 void register_ListenerInterface(pybind11::module_& module);
 void register_ListenerWithNullable(pybind11::module_& module);
 void register_ListenerWithProperties(pybind11::module_& module);
+void register_ListenerWithPropertiesResultEnum(pybind11::module_& module);
 void register_ListenerWithPropertiesResultStruct(pybind11::module_& module);
 void register_ListenersWithReturnValues(pybind11::module_& module);
+void register_ListenersWithReturnValuesResultEnum(pybind11::module_& module);
 void register_ListenersWithReturnValuesResultStruct(pybind11::module_& module);
-void register_SomeThermometerErrorCode(pybind11::module_& module);
 void register_TemperatureObserver(pybind11::module_& module);
 void register_Thermometer(pybind11::module_& module);
+void register_ThermometerSomeThermometerErrorCode(pybind11::module_& module);
 void register_Weakling(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
@@ -42,11 +44,13 @@ PYBIND11_MODULE(generated, m) {
     register_ListenerInterface(m);
     register_ListenerWithNullable(m);
     register_ListenerWithProperties(m);
+    register_ListenerWithPropertiesResultEnum(m);
     register_ListenerWithPropertiesResultStruct(m);
     register_ListenersWithReturnValues(m);
+    register_ListenersWithReturnValuesResultEnum(m);
     register_ListenersWithReturnValuesResultStruct(m);
-    register_SomeThermometerErrorCode(m);
     register_TemperatureObserver(m);
     register_Thermometer(m);
+    register_ThermometerSomeThermometerErrorCode(m);
     register_Weakling(m);
 }

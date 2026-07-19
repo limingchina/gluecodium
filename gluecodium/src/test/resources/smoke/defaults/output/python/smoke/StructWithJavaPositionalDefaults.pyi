@@ -11,7 +11,7 @@ class StructWithJavaPositionalDefaults(_NativeBase):
     """Foo Bar this is a comment"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], StructWithJavaPositionalDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.StructWithJavaPositionalDefaults):
             super().__init__(args[0])
         else:
             super().__init__(generated.StructWithJavaPositionalDefaults(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +21,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
     def first_init_field(self) -> int:
         """first init!"""
         return self._native.first_init_field
-
     @first_init_field.setter
     def first_init_field(self, value: int):
       self._native.first_init_field = getattr(value, "_native", value)
@@ -32,7 +31,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
     def first_free_field(self) -> str:
         """first free!"""
         return self._native.first_free_field
-
     @first_free_field.setter
     def first_free_field(self, value: str):
       self._native.first_free_field = getattr(value, "_native", value)
@@ -43,7 +41,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
     def second_init_field(self) -> float:
         """second init yeah!"""
         return self._native.second_init_field
-
     @second_init_field.setter
     def second_init_field(self, value: float):
       self._native.second_init_field = getattr(value, "_native", value)
@@ -54,7 +51,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
     def second_free_field(self) -> bool:
         """second free here!"""
         return self._native.second_free_field
-
     @second_free_field.setter
     def second_free_field(self, value: bool):
       self._native.second_free_field = getattr(value, "_native", value)
@@ -65,7 +61,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
     def third_init_field(self) -> str:
         """third should be last!"""
         return self._native.third_init_field
-
     @third_init_field.setter
     def third_init_field(self, value: str):
       self._native.third_init_field = getattr(value, "_native", value)

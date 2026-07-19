@@ -20,8 +20,10 @@ void register_JavaDeprecatedPosDefaultsCustom(py::module_& module) {
     py::class_<JavaDeprecatedPosDefaultsCustom>(module, "JavaDeprecatedPosDefaultsCustom")
         .def_readwrite("first_init_field", &JavaDeprecatedPosDefaultsCustom::first_init_field)
         .def_readwrite("first_free_field", &JavaDeprecatedPosDefaultsCustom::first_free_field)
+        .def(py::init<>())
         .def(py::init<int32_t, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"))
         .def_static("custom", &JavaDeprecatedPosDefaultsCustom::custom)
+
         ;
 }
 

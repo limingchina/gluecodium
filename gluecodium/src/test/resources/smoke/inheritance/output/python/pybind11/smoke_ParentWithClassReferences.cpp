@@ -21,28 +21,61 @@ class ParentWithClassReferencesTrampoline : public ParentWithClassReferences {
 public:
     using ParentWithClassReferences::ParentWithClassReferences;
 
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<ParentWithClassReferences> m_impl;
+
     ::std::shared_ptr< ::smoke::ChildClassFromClass > class_function(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            return m_impl->class_function();
+        }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ChildClassFromClass >, ParentWithClassReferences, class_function);
     }
-    ::std::shared_ptr< ::smoke::ParentClass >& get_class_property() const override {
+    ::std::shared_ptr< ::smoke::ParentClass > get_class_property() const override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::shared_ptr< ::smoke::ParentClass >&, ParentWithClassReferences, get_class_property);
+        if (m_impl) {
+            return m_impl->get_class_property();
+        }
+        PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ParentClass >, ParentWithClassReferences, get_class_property);
     }
     void set_class_property(const ::std::shared_ptr< ::smoke::ParentClass >& value) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, ParentWithClassReferences, set_class_property, value);
+        if (m_impl) {
+            m_impl->set_class_property(value);
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, ParentWithClassReferences, set_class_property, value);
     }
 };
 
 void register_ParentWithClassReferences(py::module_& module) {
     py::class_<ParentWithClassReferences, std::shared_ptr<ParentWithClassReferences>, ParentWithClassReferencesTrampoline>(module, "ParentWithClassReferences")
         .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<ParentWithClassReferences> native) {
+            auto self = std::make_shared<ParentWithClassReferencesTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         .def("class_function", [](ParentWithClassReferences& self) {
             return self.class_function();
         })
-        .def_property("class_property", py::overload_cast<>(&ParentWithClassReferences::get_class_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::ParentClass >&>(&ParentWithClassReferences::set_class_property))
+
+        .def_property("class_property", [](const ParentWithClassReferences& self) {
+            return self.get_class_property();
+        }, [](ParentWithClassReferences& self, const ::std::shared_ptr< ::smoke::ParentClass >& value) {
+            self.set_class_property(value);
+        })
         ;
 }
 

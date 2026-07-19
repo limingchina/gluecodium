@@ -18,20 +18,49 @@ class PropertiesInterfaceTrampoline : public PropertiesInterface {
 public:
     using PropertiesInterface::PropertiesInterface;
 
-    ::smoke::PropertiesInterface::ExampleStruct& get_struct_property() const override {
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<PropertiesInterface> m_impl;
+
+    ::smoke::PropertiesInterface::ExampleStruct get_struct_property() const override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::smoke::PropertiesInterface::ExampleStruct&, PropertiesInterface, get_struct_property);
+        if (m_impl) {
+            return m_impl->get_struct_property();
+        }
+        PYBIND11_OVERRIDE_PURE(::smoke::PropertiesInterface::ExampleStruct, PropertiesInterface, get_struct_property);
     }
     void set_struct_property(const ::smoke::PropertiesInterface::ExampleStruct& value) override {
         py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, PropertiesInterface, set_struct_property, value);
+        if (m_impl) {
+            m_impl->set_struct_property(value);
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, PropertiesInterface, set_struct_property, value);
     }
 };
 
 void register_PropertiesInterface(py::module_& module) {
     py::class_<PropertiesInterface, std::shared_ptr<PropertiesInterface>, PropertiesInterfaceTrampoline>(module, "PropertiesInterface")
         .def(py::init<>())
-        .def_property("struct_property", py::overload_cast<>(&PropertiesInterface::get_struct_property, py::const_), py::overload_cast<const ::smoke::PropertiesInterface::ExampleStruct&>(&PropertiesInterface::set_struct_property))
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<PropertiesInterface> native) {
+            auto self = std::make_shared<PropertiesInterfaceTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
+        .def_property("struct_property", [](const PropertiesInterface& self) {
+            return self.get_struct_property();
+        }, [](PropertiesInterface& self, const ::smoke::PropertiesInterface::ExampleStruct& value) {
+            self.set_struct_property(value);
+        })
         ;
 }
 

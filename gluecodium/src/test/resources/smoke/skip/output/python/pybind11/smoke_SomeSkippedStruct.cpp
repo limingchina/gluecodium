@@ -20,6 +20,7 @@ using SomeSkippedStruct = ::smoke::SomeSkippedStruct;
 void register_SomeSkippedStruct(py::module_& module) {
     py::class_<SomeSkippedStruct>(module, "SomeSkippedStruct")
         .def_readwrite("field", &SomeSkippedStruct::field)
+        .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::SomeSkippedEnum >>(), py::arg("field"))
         ;
 }

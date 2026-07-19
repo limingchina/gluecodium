@@ -18,6 +18,7 @@ using SerializableStructWithExternalField = ::kotlin_smoke::SerializableStructWi
 void register_SerializableStructWithExternalField(py::module_& module) {
     py::class_<SerializableStructWithExternalField>(module, "SerializableStructWithExternalField")
         .def_readwrite("some_struct", &SerializableStructWithExternalField::some_struct)
+        .def(py::init<>())
         .def(py::init<::kotlin_smoke::ExternalMarkedAsSerializable>(), py::arg("some_struct"))
         ;
 }

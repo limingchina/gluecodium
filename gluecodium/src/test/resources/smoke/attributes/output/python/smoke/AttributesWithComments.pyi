@@ -1,7 +1,6 @@
 
 
 
-
 from _native_base import _NativeBase
 
 import generated
@@ -17,7 +16,6 @@ class AttributesWithComments(_NativeBase):
         """Function comment"""
         return self._native.very_fun()
 
-    Property comment
     @property
     def prop(self) -> str:
         """Property comment"""
@@ -27,6 +25,6 @@ class AttributesWithComments(_NativeBase):
     def prop(self, value: str):
         self._native.prop = value
 
-Const comment
-PI = False
+    Const comment
+    PI = False
 

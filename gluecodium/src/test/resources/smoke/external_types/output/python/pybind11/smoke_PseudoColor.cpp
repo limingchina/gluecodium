@@ -20,6 +20,7 @@ void register_PseudoColor(py::module_& module) {
         .def_readwrite("green", &PseudoColor::green)
         .def_readwrite("blue", &PseudoColor::blue)
         .def_readwrite("alpha", &PseudoColor::alpha)
+        .def(py::init<>())
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;
 }

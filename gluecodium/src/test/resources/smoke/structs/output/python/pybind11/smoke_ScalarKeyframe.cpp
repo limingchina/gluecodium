@@ -17,8 +17,8 @@ using ScalarKeyframe = ::smoke::ScalarKeyframe;
 
 void register_ScalarKeyframe(py::module_& module) {
     py::class_<ScalarKeyframe>(module, "ScalarKeyframe")
-        .def_readwrite("value", &ScalarKeyframe::value)
-        .def_readwrite("offset_in_ms", &ScalarKeyframe::offset_in_ms)
+        .def_readonly("value", &ScalarKeyframe::value)
+        .def_readonly("offset_in_ms", &ScalarKeyframe::offset_in_ms)
         .def(py::init<double, int32_t>(), py::arg("value"), py::arg("offset_in_ms"))
         ;
 }

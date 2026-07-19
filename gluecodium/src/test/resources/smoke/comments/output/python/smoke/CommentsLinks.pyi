@@ -1,9 +1,7 @@
 
 
-from smoke.SomeEnum import SomeEnum
-from smoke.SomethingWrongError import SomethingWrongError
+from smoke.commentsSomeEnum import commentsSomeEnum
 from smoke.commentsSomeStruct import commentsSomeStruct
-
 
 from _native_base import _NativeBase
 
@@ -22,7 +20,7 @@ Weblinks are not modified like this [example1], [example2](http://www.example.co
     def __init__(self, native):
         super().__init__(native)
 
-    def random_method(self, input_parameter: SomeEnum) -> SomeEnum:
+    def random_method(self, input_parameter: commentsSomeEnum) -> commentsSomeEnum:
         """Link types:
 * constant: [comments.VeryUseful]
 * struct: [comments.SomeStruct]

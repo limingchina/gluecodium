@@ -13,7 +13,7 @@ class PosDefaultsWithoutDefaults(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], PosDefaultsWithoutDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.PosDefaultsWithoutDefaults):
             super().__init__(args[0])
         else:
             super().__init__(generated.PosDefaultsWithoutDefaults(*[getattr(arg, "_native", arg) for arg in args]))
@@ -23,7 +23,6 @@ class PosDefaultsWithoutDefaults(_NativeBase):
     def string_field(self) -> str:
         """"""
         return self._native.string_field
-
     @string_field.setter
     def string_field(self, value: str):
       self._native.string_field = getattr(value, "_native", value)

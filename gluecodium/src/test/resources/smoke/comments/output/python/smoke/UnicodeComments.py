@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.SomeEnum import SomeEnum
-from smoke.SomethingWrongError import SomethingWrongError
-
+from smoke.commentsSomeEnum import commentsSomeEnum
 
 from _native_base import _NativeBase
 

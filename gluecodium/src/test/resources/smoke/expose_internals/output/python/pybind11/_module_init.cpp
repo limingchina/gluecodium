@@ -17,6 +17,7 @@ void register_ExposeInternalClass(pybind11::module_& module);
 void register_ExposeInternalEnum(pybind11::module_& module);
 void register_ExposeInternalInterface(pybind11::module_& module);
 void register_ExposeInternalNested(pybind11::module_& module);
+void register_ExposeInternalNestedInternalInterface(pybind11::module_& module);
 void register_ExposeInternalStruct(pybind11::module_& module);
 void register_ExposeStruct(pybind11::module_& module);
 
@@ -33,6 +34,7 @@ PYBIND11_MODULE(generated, m) {
     register_ExposeInternalEnum(m);
     register_ExposeInternalInterface(m);
     register_ExposeInternalNested(m);
+    register_ExposeInternalNestedInternalInterface(m);
     register_ExposeInternalStruct(m);
     register_ExposeStruct(m);
 }

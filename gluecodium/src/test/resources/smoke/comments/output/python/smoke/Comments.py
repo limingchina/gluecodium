@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-from smoke.SomeEnum import SomeEnum
-from smoke.SomethingWrongError import SomethingWrongError
-
+from smoke.commentsSomeEnum import commentsSomeEnum
 
 from _native_base import _NativeBase
 
@@ -65,7 +63,6 @@ class Comments(_NativeBase):
         """"""
         return self._native.return_comment_only(undocumented)
 
-    Some very useful property.
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
@@ -75,14 +72,12 @@ class Comments(_NativeBase):
     def is_some_property(self, value: bool):
         self._native.is_some_property = value
 
-    OnlyGetterProperty, which does not have a setter.
     @property
     def only_getter_property(self) -> int:
         """OnlyGetterProperty, which does not have a setter."""
         return self._native.only_getter_property
 
 
-    A flag that determines if [OnlyGetterProperty] is visible on the screen.
     @property
     def is_is_visible(self) -> bool:
         """A flag that determines if [OnlyGetterProperty] is visible on the screen."""
@@ -91,16 +86,7 @@ class Comments(_NativeBase):
     @is_is_visible.setter
     def is_is_visible(self, value: bool):
         self._native.is_is_visible = value
-from enum import Enum
 
-
-class SomeEnum(Enum):
-    """This is some very useful enum."""
-
-    USELESS = 0
-    USEFUL = 1
-
-
-This is some very useful constant.
-VERY_USEFUL = True
+    This is some very useful constant.
+    VERY_USEFUL = True
 

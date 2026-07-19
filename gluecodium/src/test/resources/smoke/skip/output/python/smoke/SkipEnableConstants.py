@@ -13,11 +13,11 @@ class SkipEnableConstants(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], SkipEnableConstants):
+        if len(args) == 1 and isinstance(args[0], generated.SkipEnableConstants):
             super().__init__(args[0])
         else:
             super().__init__(generated.SkipEnableConstants(*[getattr(arg, "_native", arg) for arg in args]))
 
 
-SOME_CONSTANT = 2
+    SOME_CONSTANT = 2
 

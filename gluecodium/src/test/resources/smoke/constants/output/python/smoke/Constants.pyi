@@ -11,38 +11,29 @@ class Constants(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], Constants):
+        if len(args) == 1 and isinstance(args[0], generated.Constants):
             super().__init__(args[0])
         else:
             super().__init__(generated.Constants(*[getattr(arg, "_native", arg) for arg in args]))
-from enum import Enum
 
 
-class StateEnum(Enum):
-    """"""
-
-    OFF = 0
-    ON = 1
+    BOOL_CONSTANT = True
 
 
-
-BOOL_CONSTANT = True
-
-
-INT_CONSTANT = -11
+    INT_CONSTANT = -11
 
 
-UINT_CONSTANT = 4294967295
+    UINT_CONSTANT = 4294967295
 
 
-FLOAT_CONSTANT = 2.71
+    FLOAT_CONSTANT = 2.71
 
 
-DOUBLE_CONSTANT = -3.14
+    DOUBLE_CONSTANT = -3.14
 
 
-STRING_CONSTANT = "Foo bar"
+    STRING_CONSTANT = "Foo bar"
 
 
-ENUM_CONSTANT = StateEnum.ON
+    ENUM_CONSTANT = StateEnum.ON
 

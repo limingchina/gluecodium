@@ -13,7 +13,7 @@ class JavaDeprecatedPosDefaults(_NativeBase):
     """Foo Bar this is a comment"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], JavaDeprecatedPosDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.JavaDeprecatedPosDefaults):
             super().__init__(args[0])
         else:
             super().__init__(generated.JavaDeprecatedPosDefaults(*[getattr(arg, "_native", arg) for arg in args]))
@@ -23,7 +23,6 @@ class JavaDeprecatedPosDefaults(_NativeBase):
     def first_init_field(self) -> int:
         """first init!"""
         return self._native.first_init_field
-
     @first_init_field.setter
     def first_init_field(self, value: int):
       self._native.first_init_field = getattr(value, "_native", value)
@@ -34,7 +33,6 @@ class JavaDeprecatedPosDefaults(_NativeBase):
     def first_free_field(self) -> str:
         """first free!"""
         return self._native.first_free_field
-
     @first_free_field.setter
     def first_free_field(self, value: str):
       self._native.first_free_field = getattr(value, "_native", value)

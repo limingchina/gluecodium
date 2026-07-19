@@ -1,9 +1,8 @@
 
 
-from smoke.InternalErrorCode import InternalErrorCode
 from smoke.PropertiesExampleStruct import PropertiesExampleStruct
 from smoke.PropertiesInterface import PropertiesInterface
-
+from smoke.PropertiesInternalErrorCode import PropertiesInternalErrorCode
 
 from _native_base import _NativeBase
 
@@ -16,7 +15,6 @@ class Properties(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
     @property
     def built_in_type_property(self) -> int:
         """"""
@@ -26,12 +24,10 @@ class Properties(_NativeBase):
     def built_in_type_property(self, value: int):
         self._native.built_in_type_property = value
 
-
     @property
     def readonly_property(self) -> float:
         """"""
         return self._native.readonly_property
-
 
 
     @property
@@ -43,7 +39,6 @@ class Properties(_NativeBase):
     def struct_property(self, value: PropertiesExampleStruct):
         self._native.struct_property = value
 
-
     @property
     def array_property(self) -> list[str]:
         """"""
@@ -53,16 +48,14 @@ class Properties(_NativeBase):
     def array_property(self, value: list[str]):
         self._native.array_property = value
 
-
     @property
-    def complex_type_property(self) -> InternalErrorCode:
+    def complex_type_property(self) -> PropertiesInternalErrorCode:
         """"""
         return self._native.complex_type_property
 
     @complex_type_property.setter
-    def complex_type_property(self, value: InternalErrorCode):
+    def complex_type_property(self, value: PropertiesInternalErrorCode):
         self._native.complex_type_property = value
-
 
     @property
     def byte_buffer_property(self) -> bytes:
@@ -73,7 +66,6 @@ class Properties(_NativeBase):
     def byte_buffer_property(self, value: bytes):
         self._native.byte_buffer_property = value
 
-
     @property
     def instance_property(self) -> PropertiesInterface:
         """"""
@@ -82,7 +74,6 @@ class Properties(_NativeBase):
     @instance_property.setter
     def instance_property(self, value: PropertiesInterface):
         self._native.instance_property = value
-
 
     @property
     def is_boolean_property(self) -> bool:

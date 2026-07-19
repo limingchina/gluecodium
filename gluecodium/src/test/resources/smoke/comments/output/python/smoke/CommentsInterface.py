@@ -4,79 +4,75 @@ from __future__ import annotations
 
 
 
-from _native_base import _NativeBase
-
 import generated
 
 
-class CommentsInterface(_NativeBase):
+class CommentsInterface(generated.CommentsInterface):
     """This is some very useful interface."""
 
     def __init__(self, native=None):
-        if isinstance(native, CommentsInterface):
+        # Subclass the native pybind11 type so that a Python override of an interface
+        # method is dispatched through the generated trampoline. When `native` is an
+        # existing native instance (returned by a factory), adopt it via the generated
+        # adoption constructor; otherwise construct a fresh trampoline. `self._native`
+        # aliases the wrapper itself so the rest of the generated code can reach the
+        # native object uniformly (e.g. when passing this interface back into a C++
+        # call site).
+        if native is not None and isinstance(native, generated.CommentsInterface):
             super().__init__(native)
         else:
-            super().__init__(generated.CommentsInterface())
+            super().__init__()
+        self._native = self
 
     def some_method_with_all_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_all_comments(input)
+        return generated.CommentsInterface.some_method_with_all_comments(self, input)
 
     def some_method_with_input_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_input_comments(input)
+        return generated.CommentsInterface.some_method_with_input_comments(self, input)
 
     def some_method_with_output_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_output_comments(input)
+        return generated.CommentsInterface.some_method_with_output_comments(self, input)
 
     def some_method_with_no_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_no_comments(input)
+        return generated.CommentsInterface.some_method_with_no_comments(self, input)
 
     def some_method_without_return_type_with_all_comments(self, input: str):
         """This is some very useful method that does not measure the usefulness of its input."""
-        return self._native.some_method_without_return_type_with_all_comments(input)
+        return generated.CommentsInterface.some_method_without_return_type_with_all_comments(self, input)
 
     def some_method_without_return_type_with_no_comments(self, input: str):
         """This is some very useful method that does not measure the usefulness of its input."""
-        return self._native.some_method_without_return_type_with_no_comments(input)
+        return generated.CommentsInterface.some_method_without_return_type_with_no_comments(self, input)
 
     def some_method_without_input_parameters_with_all_comments(self) -> bool:
         """This is some very useful method that measures the usefulness of something."""
-        return self._native.some_method_without_input_parameters_with_all_comments()
+        return generated.CommentsInterface.some_method_without_input_parameters_with_all_comments(self)
 
     def some_method_without_input_parameters_with_no_comments(self) -> bool:
         """This is some very useful method that measures the usefulness of something."""
-        return self._native.some_method_without_input_parameters_with_no_comments()
+        return generated.CommentsInterface.some_method_without_input_parameters_with_no_comments(self)
 
     def some_method_with_nothing(self):
         """"""
-        return self._native.some_method_with_nothing()
+        return generated.CommentsInterface.some_method_with_nothing(self)
 
     def some_method_without_return_type_or_input_parameters(self):
         """This is some very useful method that does nothing."""
-        return self._native.some_method_without_return_type_or_input_parameters()
+        return generated.CommentsInterface.some_method_without_return_type_or_input_parameters(self)
 
-    Some very useful property.
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
-        return self._native.is_some_property
+        return generated.CommentsInterface.is_some_property.fget(self)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        self._native.is_some_property = value
-from enum import Enum
+        generated.CommentsInterface.is_some_property.fset(self, value)
 
-
-class SomeEnum(Enum):
-    """This is some very useful enum."""
-
-    USELESS = 0
-    USEFUL = 1
-
-
-This is some very useful constant.
-VERY_USEFUL = True
+    This is some very useful constant.
+    VERY_USEFUL = True
 

@@ -18,8 +18,10 @@ void register_FreePoint(py::module_& module) {
     py::class_<FreePoint>(module, "FreePoint")
         .def_readwrite("x", &FreePoint::x)
         .def_readwrite("y", &FreePoint::y)
+        .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
         .def("flip", &FreePoint::flip)
+
         ;
 }
 

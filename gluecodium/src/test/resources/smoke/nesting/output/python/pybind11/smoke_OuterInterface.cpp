@@ -19,9 +19,19 @@ class OuterInterfaceTrampoline : public OuterInterface {
 public:
     using OuterInterface::OuterInterface;
 
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<OuterInterface> m_impl;
+
     ::std::string foo(
             const ::std::string& input ) override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            return m_impl->foo(input);
+        }
         PYBIND11_OVERRIDE_PURE(::std::string, OuterInterface, foo, input);
     }
 };
@@ -29,9 +39,21 @@ public:
 void register_OuterInterface(py::module_& module) {
     py::class_<OuterInterface, std::shared_ptr<OuterInterface>, OuterInterfaceTrampoline>(module, "OuterInterface")
         .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<OuterInterface> native) {
+            auto self = std::make_shared<OuterInterfaceTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         .def("foo", [](OuterInterface& self, const ::std::string& input) {
             return self.foo(input);
         }, py::arg("input"))
+
         ;
 }
 

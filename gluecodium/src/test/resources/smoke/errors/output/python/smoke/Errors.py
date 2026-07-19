@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from smoke.ExternalError import ExternalError
-from smoke.ExternalErrors import ExternalErrors
-from smoke.InternalError import InternalError
-from smoke.InternalErrorCode import InternalErrorCode
+from smoke.ErrorsExternalErrors import ErrorsExternalErrors
+from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
 from smoke.Payload import Payload
-from smoke.WithPayloadError import WithPayloadError
-
 
 from _native_base import _NativeBase
 
@@ -45,14 +41,4 @@ class Errors(_NativeBase):
     def method_with_payload_error_and_return_value() -> str:
         """"""
         return generated.Errors.method_with_payload_error_and_return_value()
-from enum import Enum
-
-
-class ExternalErrors(Enum):
-    """"""
-
-    NONE = 0
-    BOOM = 1
-    BUST = 2
-
 

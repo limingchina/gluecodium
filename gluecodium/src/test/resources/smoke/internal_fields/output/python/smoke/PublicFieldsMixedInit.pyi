@@ -11,7 +11,7 @@ class PublicFieldsMixedInit(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], PublicFieldsMixedInit):
+        if len(args) == 1 and isinstance(args[0], generated.PublicFieldsMixedInit):
             super().__init__(args[0])
         else:
             super().__init__(generated.PublicFieldsMixedInit(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +21,6 @@ class PublicFieldsMixedInit(_NativeBase):
     def public_field1(self) -> str:
         """"""
         return self._native.public_field1
-
     @public_field1.setter
     def public_field1(self, value: str):
       self._native.public_field1 = getattr(value, "_native", value)
@@ -32,7 +31,6 @@ class PublicFieldsMixedInit(_NativeBase):
     def public_field2(self) -> str:
         """"""
         return self._native.public_field2
-
     @public_field2.setter
     def public_field2(self, value: str):
       self._native.public_field2 = getattr(value, "_native", value)
@@ -43,7 +41,6 @@ class PublicFieldsMixedInit(_NativeBase):
     def internal_field(self) -> str:
         """"""
         return self._native.internal_field
-
     @internal_field.setter
     def internal_field(self, value: str):
       self._native.internal_field = getattr(value, "_native", value)

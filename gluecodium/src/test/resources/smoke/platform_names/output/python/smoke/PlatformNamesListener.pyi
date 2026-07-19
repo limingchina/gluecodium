@@ -2,22 +2,27 @@
 
 
 
-from _native_base import _NativeBase
-
 import generated
 
 
-class PlatformNamesListener(_NativeBase):
+class PlatformNamesListener(generated.PlatformNamesListener):
     """"""
 
     def __init__(self, native=None):
-        if isinstance(native, PlatformNamesListener):
+        # Subclass the native pybind11 type so that a Python override of an interface
+        # method is dispatched through the generated trampoline. When `native` is an
+        # existing native instance (returned by a factory), adopt it via the generated
+        # adoption constructor; otherwise construct a fresh trampoline. `self._native`
+        # aliases the wrapper itself so the rest of the generated code can reach the
+        # native object uniformly (e.g. when passing this interface back into a C++
+        # call site).
+        if native is not None and isinstance(native, generated.PlatformNamesListener):
             super().__init__(native)
         else:
-            super().__init__(generated.PlatformNamesListener())
-
+            super().__init__()
+        self._native = self
 
     def basic_method(self, basic_parameter: str):
         """"""
-        return self._native.basic_method(basic_parameter)
+        return generated.PlatformNamesListener.basic_method(self, basic_parameter)
 

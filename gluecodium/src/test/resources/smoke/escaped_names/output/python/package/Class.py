@@ -2,23 +2,28 @@
 
 from __future__ import annotations
 
-from package.Enum import Enum
-from package.ExceptionError import ExceptionError
 from package.Interface import Interface
+from package.typesenum import typesenum
 from package.typesstruct import typesstruct
-
-
-from _native_base import _NativeBase
 
 import generated
 
 
-class Class(
-    Interface)(_NativeBase):
+class Class(generated.Class):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
+    def __init__(self, native=None):
+        # Subclass the native pybind11 type so a Python override of an inherited virtual
+        # method (from a parent interface or open base class) is dispatched through the
+        # generated trampoline. When `native` is an existing native instance (returned by
+        # a factory), adopt it via the generated adoption constructor; otherwise construct a
+        # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
+        # generated code can reach the native object uniformly.
+        if native is not None and isinstance(native, generated.Class):
+            super().__init__(native)
+        else:
+            super().__init__()
+        self._native = self
 
     @staticmethod
     def constructor() -> Class:
@@ -28,15 +33,14 @@ class Class(
 
     def fun(self, double: list[typesstruct]) -> typesstruct:
         """"""
-        return self._native.fun(double)
-
+        return generated.Class.fun(self, double)
 
     @property
-    def property(self) -> Enum:
+    def property(self) -> typesenum:
         """"""
-        return self._native.property
+        return generated.Class.property.fget(self)
 
     @property.setter
-    def property(self, value: Enum):
-        self._native.property = value
+    def property(self, value: typesenum):
+        generated.Class.property.fset(self, value)
 

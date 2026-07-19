@@ -20,6 +20,7 @@ void register_SystemColor(py::module_& module) {
         .def_readwrite("green", &SystemColor::green)
         .def_readwrite("blue", &SystemColor::blue)
         .def_readwrite("alpha", &SystemColor::alpha)
+        .def(py::init<>())
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;
 }

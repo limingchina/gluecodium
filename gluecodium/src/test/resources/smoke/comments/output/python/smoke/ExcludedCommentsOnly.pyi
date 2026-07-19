@@ -1,8 +1,6 @@
 
 
-from smoke.SomeEnum import SomeEnum
-from smoke.SomethingWrongError import SomethingWrongError
-
+from smoke.ExcludedCommentsOnlySomeEnum import ExcludedCommentsOnlySomeEnum
 
 from _native_base import _NativeBase
 
@@ -23,7 +21,6 @@ class ExcludedCommentsOnly(_NativeBase):
         """"""
         return self._native.some_method_without_return_type_or_input_parameters()
 
-
     @property
     def is_some_property(self) -> bool:
         """"""
@@ -32,15 +29,7 @@ class ExcludedCommentsOnly(_NativeBase):
     @is_some_property.setter
     def is_some_property(self, value: bool):
         self._native.is_some_property = value
-from enum import Enum
 
 
-class SomeEnum(Enum):
-    """"""
-
-    USELESS = 0
-
-
-
-VERY_USEFUL = True
+    VERY_USEFUL = True
 

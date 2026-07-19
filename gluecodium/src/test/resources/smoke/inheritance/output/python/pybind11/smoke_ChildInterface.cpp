@@ -18,19 +18,66 @@ class ChildInterfaceTrampoline : public ChildInterface {
 public:
     using ChildInterface::ChildInterface;
 
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<ChildInterface> m_impl;
+
     void child_method(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            m_impl->child_method();
+            return;
+        }
         PYBIND11_OVERRIDE_PURE(void, ChildInterface, child_method);
+    }
+    void root_method(
+            /* no args */ ) override {
+        py::gil_scoped_acquire gil;
+        if (m_impl) {
+            m_impl->root_method();
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildInterface, root_method);
+    }
+    ::std::string get_root_property() const override {
+        py::gil_scoped_acquire gil;
+        if (m_impl) {
+            return m_impl->get_root_property();
+        }
+        PYBIND11_OVERRIDE_PURE(::std::string, ChildInterface, get_root_property);
+    }
+    void set_root_property(const ::std::string& value) override {
+        py::gil_scoped_acquire gil;
+        if (m_impl) {
+            m_impl->set_root_property(value);
+            return;
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildInterface, set_root_property, value);
     }
 };
 
 void register_ChildInterface(py::module_& module) {
     py::class_<ChildInterface, std::shared_ptr<ChildInterface>, ChildInterfaceTrampoline>(module, "ChildInterface")
         .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<ChildInterface> native) {
+            auto self = std::make_shared<ChildInterfaceTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         .def("child_method", [](ChildInterface& self) {
             return self.child_method();
         })
+
         ;
 }
 

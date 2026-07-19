@@ -11,20 +11,19 @@
 namespace py = pybind11;
 #include "foo/Bar.h"
 #include "foo/Bazz.h"
-#include "gluecodium/VectorHash.h"
 #include "non/Sense.h"
 #include "smoke/Structs.h"
-#include "cstdint"
-#include "string"
-#include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Structs = ::smoke::Structs;
 
+
 void register_Structs(py::module_& module) {
     py::class_<Structs, std::shared_ptr<Structs>>(module, "Structs")
         .def_static("get_external_struct", &Structs::get_external_struct)
+
         .def_static("get_another_external_struct", &Structs::get_another_external_struct)
+
         ;
 }
 

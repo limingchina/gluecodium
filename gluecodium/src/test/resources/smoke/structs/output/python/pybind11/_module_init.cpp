@@ -11,9 +11,8 @@
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_DeprecatedFields(pybind11::module_& module);
-void register_FooBar(pybind11::module_& module);
-void register_RouteType(pybind11::module_& module);
 void register_RouteUtils(pybind11::module_& module);
+void register_RouteUtilsRouteType(pybind11::module_& module);
 void register_ScalarKeyframe(pybind11::module_& module);
 void register_ScalarKeyframeTrack(pybind11::module_& module);
 void register_StructA(pybind11::module_& module);
@@ -25,6 +24,7 @@ void register_StructWithSet(pybind11::module_& module);
 void register_Structs(pybind11::module_& module);
 void register_StructsAllTypesStruct(pybind11::module_& module);
 void register_StructsDoubleNestingImmutableStruct(pybind11::module_& module);
+void register_StructsFooBar(pybind11::module_& module);
 void register_StructsImmutableStructWithCppAccessors(pybind11::module_& module);
 void register_StructsInstance(pybind11::module_& module);
 void register_StructsLine(pybind11::module_& module);
@@ -48,8 +48,8 @@ void register_TypeCollection(pybind11::module_& module);
 void register_TypeCollectionAllTypesStruct(pybind11::module_& module);
 void register_TypeCollectionLine(pybind11::module_& module);
 void register_TypeCollectionPoint(pybind11::module_& module);
-void register_ValidationErrorCode(pybind11::module_& module);
 void register_ValidationUtils(pybind11::module_& module);
+void register_ValidationUtilsValidationErrorCode(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -58,9 +58,8 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_DeprecatedFields(m);
-    register_FooBar(m);
-    register_RouteType(m);
     register_RouteUtils(m);
+    register_RouteUtilsRouteType(m);
     register_ScalarKeyframe(m);
     register_ScalarKeyframeTrack(m);
     register_StructA(m);
@@ -72,6 +71,7 @@ PYBIND11_MODULE(generated, m) {
     register_Structs(m);
     register_StructsAllTypesStruct(m);
     register_StructsDoubleNestingImmutableStruct(m);
+    register_StructsFooBar(m);
     register_StructsImmutableStructWithCppAccessors(m);
     register_StructsInstance(m);
     register_StructsLine(m);
@@ -95,6 +95,6 @@ PYBIND11_MODULE(generated, m) {
     register_TypeCollectionAllTypesStruct(m);
     register_TypeCollectionLine(m);
     register_TypeCollectionPoint(m);
-    register_ValidationErrorCode(m);
     register_ValidationUtils(m);
+    register_ValidationUtilsValidationErrorCode(m);
 }

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 
-
 from _native_base import _NativeBase
 
 import generated
@@ -15,33 +14,24 @@ class ConstantsInterface(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-from enum import Enum
+
+    BOOL_CONSTANT = True
 
 
-class StateEnum(Enum):
-    """"""
-
-    OFF = 0
-    ON = 1
+    INT_CONSTANT = -11
 
 
-BOOL_CONSTANT = True
+    UINT_CONSTANT = 4294967295
 
 
-INT_CONSTANT = -11
+    FLOAT_CONSTANT = 2.71
 
 
-UINT_CONSTANT = 4294967295
+    DOUBLE_CONSTANT = -3.14
 
 
-FLOAT_CONSTANT = 2.71
+    STRING_CONSTANT = "Foo bar"
 
 
-DOUBLE_CONSTANT = -3.14
-
-
-STRING_CONSTANT = "Foo bar"
-
-
-ENUM_CONSTANT = StateEnum.ON
+    ENUM_CONSTANT = StateEnum.ON
 

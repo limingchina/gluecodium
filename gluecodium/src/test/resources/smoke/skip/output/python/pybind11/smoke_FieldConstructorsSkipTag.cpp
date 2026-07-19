@@ -18,6 +18,8 @@ using FieldConstructorsSkipTag = ::smoke::FieldConstructorsSkipTag;
 void register_FieldConstructorsSkipTag(py::module_& module) {
     py::class_<FieldConstructorsSkipTag>(module, "FieldConstructorsSkipTag")
         .def_readwrite("field1", &FieldConstructorsSkipTag::field1)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("field1"))
         ;
 }
 

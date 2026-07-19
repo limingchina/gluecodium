@@ -11,7 +11,7 @@ class DartDeprecatedPosDefaultsCustom(_NativeBase):
     """Foo Bar this is a comment"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], DartDeprecatedPosDefaultsCustom):
+        if len(args) == 1 and isinstance(args[0], generated.DartDeprecatedPosDefaultsCustom):
             super().__init__(args[0])
         else:
             super().__init__(generated.DartDeprecatedPosDefaultsCustom(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +21,6 @@ class DartDeprecatedPosDefaultsCustom(_NativeBase):
     def int_field(self) -> int:
         """"""
         return self._native.int_field
-
     @int_field.setter
     def int_field(self, value: int):
       self._native.int_field = getattr(value, "_native", value)
@@ -32,7 +31,6 @@ class DartDeprecatedPosDefaultsCustom(_NativeBase):
     def string_field(self) -> str:
         """"""
         return self._native.string_field
-
     @string_field.setter
     def string_field(self, value: str):
       self._native.string_field = getattr(value, "_native", value)

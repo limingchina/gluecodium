@@ -17,7 +17,7 @@ using ImmutableStructWithDefaults = ::smoke::ImmutableStructWithDefaults;
 
 void register_ImmutableStructWithDefaults(py::module_& module) {
     py::class_<ImmutableStructWithDefaults>(module, "ImmutableStructWithDefaults")
-        .def_readwrite("int_field", &ImmutableStructWithDefaults::int_field)
+        .def_readonly("int_field", &ImmutableStructWithDefaults::int_field)
         .def(py::init<>())
         ;
 }

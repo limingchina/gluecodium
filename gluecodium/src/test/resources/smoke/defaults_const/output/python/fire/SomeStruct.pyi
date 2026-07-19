@@ -11,7 +11,7 @@ class SomeStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], SomeStruct):
+        if len(args) == 1 and isinstance(args[0], generated.SomeStruct):
             super().__init__(args[0])
         else:
             super().__init__(generated.SomeStruct(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +21,6 @@ class SomeStruct(_NativeBase):
     def int_field(self) -> int:
         """"""
         return self._native.int_field
-
     @int_field.setter
     def int_field(self, value: int):
       self._native.int_field = getattr(value, "_native", value)

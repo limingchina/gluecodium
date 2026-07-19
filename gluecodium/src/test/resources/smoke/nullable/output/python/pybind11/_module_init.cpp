@@ -15,8 +15,8 @@ void register_Nullable(pybind11::module_& module);
 void register_NullableCollectionsStruct(pybind11::module_& module);
 void register_NullableNullableIntsStruct(pybind11::module_& module);
 void register_NullableNullableStruct(pybind11::module_& module);
+void register_NullableSomeEnum(pybind11::module_& module);
 void register_NullableSomeStruct(pybind11::module_& module);
-void register_SomeEnum(pybind11::module_& module);
 void register_SomeInterface(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
@@ -30,7 +30,7 @@ PYBIND11_MODULE(generated, m) {
     register_NullableCollectionsStruct(m);
     register_NullableNullableIntsStruct(m);
     register_NullableNullableStruct(m);
+    register_NullableSomeEnum(m);
     register_NullableSomeStruct(m);
-    register_SomeEnum(m);
     register_SomeInterface(m);
 }

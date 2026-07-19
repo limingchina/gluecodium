@@ -5,32 +5,35 @@ from __future__ import annotations
 from smoke.ParentClass import ParentClass
 from smoke.ParentNarrowOne import ParentNarrowOne
 
-
-from _native_base import _NativeBase
-
 import generated
 
 
-class FirstParentIsClassClass(
-    ParentClass,
-    ParentNarrowOne)(_NativeBase):
+class FirstParentIsClassClass(generated.FirstParentIsClassClass):
     """"""
 
-    def __init__(self, native):
-        super().__init__(native)
-
+    def __init__(self, native=None):
+        # Subclass the native pybind11 type so a Python override of an inherited virtual
+        # method (from a parent interface or open base class) is dispatched through the
+        # generated trampoline. When `native` is an existing native instance (returned by
+        # a factory), adopt it via the generated adoption constructor; otherwise construct a
+        # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
+        # generated code can reach the native object uniformly.
+        if native is not None and isinstance(native, generated.FirstParentIsClassClass):
+            super().__init__(native)
+        else:
+            super().__init__()
+        self._native = self
 
     def child_function(self):
         """"""
-        return self._native.child_function()
-
+        return generated.FirstParentIsClassClass.child_function(self)
 
     @property
     def child_property(self) -> str:
         """"""
-        return self._native.child_property
+        return generated.FirstParentIsClassClass.child_property.fget(self)
 
     @child_property.setter
     def child_property(self, value: str):
-        self._native.child_property = value
+        generated.FirstParentIsClassClass.child_property.fset(self, value)
 

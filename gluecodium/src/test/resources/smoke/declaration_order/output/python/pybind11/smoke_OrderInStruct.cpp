@@ -19,6 +19,7 @@ void register_OrderInStruct(py::module_& module) {
     py::class_<OrderInStruct>(module, "OrderInStruct")
         .def_readwrite("struct_field", &OrderInStruct::struct_field)
         .def_readwrite("enum_field", &OrderInStruct::enum_field)
+        .def(py::init<>())
         .def(py::init<::smoke::OrderInStruct::NestedStruct, ::smoke::OrderInStruct::SomeEnum>(), py::arg("struct_field"), py::arg("enum_field"))
         ;
 }

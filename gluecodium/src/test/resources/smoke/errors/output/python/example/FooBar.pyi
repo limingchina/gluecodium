@@ -1,10 +1,7 @@
 
 
-from smoke.InternalError import InternalError
-from smoke.InternalErrorCode import InternalErrorCode
-from smoke.SomeError import SomeError
-from smoke.SomeTypeCollectionError import SomeTypeCollectionError
-
+from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
+from smoke.SomeTypeCollectionSomeTypeCollectionError import SomeTypeCollectionSomeTypeCollectionError
 
 from _native_base import _NativeBase
 

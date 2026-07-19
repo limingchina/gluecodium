@@ -19,14 +19,42 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Constructors = ::smoke::Constructors;
 
+class ConstructorsTrampoline : public Constructors {
+public:
+    using Constructors::Constructors;
+
+    // Holds an adopted native implementation returned by a factory. When non-null, the
+    // trampoline forwards virtual calls to it instead of the pure-virtual stub. A Python
+    // subclass is instantiated with no impl held, in which case the overrides fall back to
+    // PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<Constructors> m_impl;
+
+};
+
 void register_Constructors(py::module_& module) {
-    py::class_<Constructors, std::shared_ptr<Constructors>>(module, "Constructors")
+    py::class_<Constructors, std::shared_ptr<Constructors>, ConstructorsTrampoline>(module, "Constructors")
+        // Adoption constructor: adopt an existing native instance returned by a factory into
+        // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
+        // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
+        // here because the returned instance is a foreign (non-trampoline) implementation;
+        // instead we build a fresh trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<Constructors> native) {
+            auto self = std::make_shared<ConstructorsTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         .def_static("create", py::overload_cast<>(&Constructors::create))
+
         .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(&Constructors::create), py::arg("other"))
+
         .def_static("create", py::overload_cast<const ::std::string&, const uint64_t>(&Constructors::create), py::arg("foo"), py::arg("bar"))
+
         .def_static("create", py::overload_cast<const ::std::string&>(&Constructors::create), py::arg("input"))
+
         .def_static("create", py::overload_cast<const ::std::vector< double >&>(&Constructors::create), py::arg("input"))
+
         .def_static("create", py::overload_cast<const uint64_t>(&Constructors::create), py::arg("input"))
+
         ;
 }
 

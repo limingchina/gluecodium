@@ -16,6 +16,7 @@ void register_OuterInternalError(pybind11::module_& module);
 void register_OuterInternalInterface(pybind11::module_& module);
 void register_OuterInternalStruct(pybind11::module_& module);
 void register_OuterPublicClazz(pybind11::module_& module);
+void register_OuterPublicClazzInnerInternalClazz(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -29,4 +30,5 @@ PYBIND11_MODULE(generated, m) {
     register_OuterInternalInterface(m);
     register_OuterInternalStruct(m);
     register_OuterPublicClazz(m);
+    register_OuterPublicClazzInnerInternalClazz(m);
 }

@@ -11,7 +11,7 @@ class UnusedTopLevelPoint(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], UnusedTopLevelPoint):
+        if len(args) == 1 and isinstance(args[0], generated.UnusedTopLevelPoint):
             super().__init__(args[0])
         else:
             super().__init__(generated.UnusedTopLevelPoint(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +21,6 @@ class UnusedTopLevelPoint(_NativeBase):
     def foo(self) -> str:
         """"""
         return self._native.foo
-
     @foo.setter
     def foo(self, value: str):
       self._native.foo = getattr(value, "_native", value)

@@ -19,27 +19,42 @@ class InternalInterfaceTrampoline : public InternalInterface {
 public:
     using InternalInterface::InternalInterface;
 
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<InternalInterface> m_impl;
+
     void foo_bar(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
+        if (m_impl) {
+            m_impl->foo_bar();
+            return;
+        }
         PYBIND11_OVERRIDE_PURE(void, InternalInterface, foo_bar);
-    }
-    ::std::string& get_some_property_of_internal_interface() const override {
-        py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(::std::string&, InternalInterface, get_some_property_of_internal_interface);
-    }
-    void set_some_property_of_internal_interface(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
-        PYBIND11_OVERRIDE(void, InternalInterface, set_some_property_of_internal_interface, value);
     }
 };
 
 void register_InternalInterface(py::module_& module) {
     py::class_<InternalInterface, std::shared_ptr<InternalInterface>, InternalInterfaceTrampoline>(module, "InternalInterface")
         .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<InternalInterface> native) {
+            auto self = std::make_shared<InternalInterfaceTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         .def("foo_bar", [](InternalInterface& self) {
             return self.foo_bar();
         })
+
         .def_static("some_property_of_internal_interface", &InternalInterface::get_some_property_of_internal_interface)
         .def_static("some_property_of_internal_interface_set", &InternalInterface::set_some_property_of_internal_interface)
         ;

@@ -1,7 +1,6 @@
 
 
-from smoke.LoadSceneCallback import LoadSceneCallback
-
+from smoke.MapSceneLoadSceneCallback import MapSceneLoadSceneCallback
 
 from _native_base import _NativeBase
 
@@ -14,13 +13,11 @@ class MapScene(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
-    def load_scene(self, map_scheme: int, callback: Optional[LoadSceneCallback]):
+    def load_scene(self, map_scheme: int, callback: Optional[MapSceneLoadSceneCallback]):
         """"""
         return self._native.load_scene(map_scheme, callback._native)
 
-
-    def load_scene(self, configuration_file: str, callback: Optional[LoadSceneCallback]):
+    def load_scene(self, configuration_file: str, callback: Optional[MapSceneLoadSceneCallback]):
         """"""
         return self._native.load_scene(configuration_file, callback._native)
 

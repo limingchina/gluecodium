@@ -18,6 +18,7 @@ using ExposeInternalStruct = ::smoke::ExposeInternalStruct;
 void register_ExposeInternalStruct(py::module_& module) {
     py::class_<ExposeInternalStruct>(module, "ExposeInternalStruct")
         .def_readwrite("field", &ExposeInternalStruct::field)
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;
 }

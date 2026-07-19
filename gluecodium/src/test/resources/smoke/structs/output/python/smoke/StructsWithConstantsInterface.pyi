@@ -1,7 +1,6 @@
 
 
-from smoke.RouteType import RouteType
-
+from smoke.RouteUtilsRouteType import RouteUtilsRouteType
 
 from _native_base import _NativeBase
 

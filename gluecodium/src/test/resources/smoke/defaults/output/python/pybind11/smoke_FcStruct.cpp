@@ -19,6 +19,7 @@ void register_FcStruct(py::module_& module) {
     py::class_<FcStruct>(module, "FcStruct")
         .def_readwrite("string_field", &FcStruct::string_field)
         .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

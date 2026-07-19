@@ -13,7 +13,7 @@ class Currency(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], Currency):
+        if len(args) == 1 and isinstance(args[0], generated.Currency):
             super().__init__(args[0])
         else:
             super().__init__(generated.Currency(*[getattr(arg, "_native", arg) for arg in args]))
@@ -24,19 +24,11 @@ class Currency(_NativeBase):
         """"""
         return self._native.currency_code
 
-    @currency_code.setter
-    def currency_code(self, value: str):
-      self._native.currency_code = getattr(value, "_native", value)
-
 
 
     @property
     def numeric_code(self) -> int:
         """"""
         return self._native.numeric_code
-
-    @numeric_code.setter
-    def numeric_code(self, value: int):
-      self._native.numeric_code = getattr(value, "_native", value)
 
 

@@ -18,6 +18,7 @@ using EquatableStructWithAccessors = ::smoke::EquatableStructWithAccessors;
 void register_EquatableStructWithAccessors(py::module_& module) {
     py::class_<EquatableStructWithAccessors>(module, "EquatableStructWithAccessors")
         .def_property("foo_field", static_cast<const ::std::string& (EquatableStructWithAccessors::*)() const &>(&EquatableStructWithAccessors::get_foo_field), py::overload_cast<const ::std::string&>(&EquatableStructWithAccessors::set_foo_field))
+        .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 }

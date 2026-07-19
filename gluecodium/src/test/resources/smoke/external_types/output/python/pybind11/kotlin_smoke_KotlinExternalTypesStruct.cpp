@@ -21,7 +21,7 @@ using KotlinExternalTypesStruct = ::kotlin_smoke::KotlinExternalTypesStruct;
 
 void register_KotlinExternalTypesStruct(py::module_& module) {
     py::class_<KotlinExternalTypesStruct>(module, "KotlinExternalTypesStruct")
-        .def_readwrite("currency", &KotlinExternalTypesStruct::currency)
+        .def_readonly("currency", &KotlinExternalTypesStruct::currency)
         .def_readwrite("time_zone", &KotlinExternalTypesStruct::time_zone)
         .def_readwrite("month", &KotlinExternalTypesStruct::month)
         .def_readwrite("color", &KotlinExternalTypesStruct::color)
