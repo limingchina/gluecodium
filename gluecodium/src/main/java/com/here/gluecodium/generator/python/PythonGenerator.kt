@@ -209,19 +209,26 @@ internal class PythonGenerator : Generator {
                             .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) })
                 else -> emptyList()
             }.toSet()
-        // A parent type must not import its own nested children at module level. The imports
-        // collector walks the whole nested subtree, so a child's self-reference (e.g.
-        // `Builder.field(): Builder`) or a child referenced by a nested exception (`exception
-        // Instantiation(InnerEnum)`) would otherwise pull the child module into the parent and
-        // create a circular import (`OuterStruct` <-> `Builder`). Children are referenced only
-        // through their flattened top-level names, which are always available without an import.
-        // We derive the child module paths from the LIME model's own descendants (not the
-        // flattened `pythonTypes` list, which may drop some children due to filename collisions)
-        // so every nested child is reliably excluded.
+        // A parent type must not import a nested child at module level if doing so would create
+        // a circular import. Each nested type is generated as its own module, so a parent that
+        // references a child (e.g. `Enums.flipEnumValue` returns the nested `EnumsInternalError`)
+        // legitimately needs a cross-module import — that is *not* circular, because the child
+        // does not import the parent. A cycle only arises when the child also imports the parent
+        // (e.g. `OuterStructBuilder.build()` returns `OuterStruct`, so `OuterStructBuilder`
+        // imports `OuterStruct`; if `OuterStruct` then imported `OuterStructBuilder` we would get
+        // `OuterStruct` <-> `OuterStructBuilder`). We therefore exclude from the parent's imports
+        // only those child module paths that themselves import the parent.
         val childModulePaths =
             LimeTypeHelper.getAllTypes(limeElement)
                 .filter { it != limeElement && it.path.allParents.contains(limeElement.path) }
-                .mapNotNull { pythonNameResolver.resolveReferenceName(it) }
+                .mapNotNull { child ->
+                    pythonNameResolver.resolveReferenceName(child)?.let { childModulePath ->
+                        childModulePath to pythonImportsCollector.collectImports(child)
+                            .any { it.modulePath == selfModulePath }
+                    }
+                }
+                .filter { it.second }
+                .map { it.first }
                 .toSet()
         val imports =
             pythonImportsCollector.collectImports(limeElement)
