@@ -37,6 +37,7 @@ import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
 import com.here.gluecodium.model.lime.LimeConstant
+import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeModel
@@ -166,7 +167,7 @@ internal class PythonGenerator : Generator {
             }
         val pybind11Files =
             pybind11Types.flatMap {
-                generatePybind11File(it, nameResolvers, pybind11IncludeCollector, predicates.predicates)
+                generatePybind11File(it, nameResolvers, pybind11IncludeCollector, predicates.predicates, pybind11FilteredModel)
             }
 
         if (commentsProcessor.hasError) {
@@ -260,6 +261,7 @@ internal class PythonGenerator : Generator {
         nameResolvers: Map<String, NameResolver>,
         includeCollector: GenericIncludesCollector,
         predicates: Map<String, (Any) -> Boolean>,
+        pybind11FilteredModel: LimeModel,
     ): List<GeneratedFile> {
         val limeType = limeElement as? com.here.gluecodium.model.lime.LimeType ?: return emptyList()
         // Exceptions are represented as std::error_code in C++ (no dedicated header is generated),
@@ -285,6 +287,17 @@ internal class PythonGenerator : Generator {
                     },
                 "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
                 "trampolineName" to (pythonNameResolver.resolveName(limeElement) + "Trampoline"),
+                // Base classes (parents) that are actually bound, as fully-qualified C++ names.
+                // pybind11 requires every base class to be listed as a template argument of
+                // `py::class_` for (multiple) inheritance to be visible and for `std::shared_ptr`
+                // up/down-casting between the derived type and its bases to work.
+                "baseClasses" to
+                    (limeType as? LimeContainerWithInheritance)
+                        ?.parents
+                        ?.mapNotNull { it.type.actualType as? LimeNamedElement }
+                        ?.filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
+                        ?.map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
+                        .orEmpty(),
                 "contentTemplate" to selectPybind11Template(limeElement),
             )
         val content = TemplateEngine.render("python/Pybind11File", templateData, nameResolvers, predicates)
@@ -308,26 +321,40 @@ internal class PythonGenerator : Generator {
                 "returnInclude" to returnInclude,
                 "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
             )
-        val casterContent =
-            TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
-
         // Wrapper cache: preserves referential equality across the C++ <-> Python boundary by
         // mapping a C++ instance pointer to a single Python wrapper object.
         val wrapperCacheContent =
             TemplateEngine.render("python/Pybind11WrapperCache", emptyMap<String, Any>(), nameResolvers, predicates)
 
+        // Custom type caster for Gluecodium's Return<T, Error> adapter.
+        val casterContent =
+            TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
+
         // Module entry point: aggregates every per-type register_* function into a single
         // PYBIND11_MODULE. Type aliases and lambdas emit no binding, so they are excluded.
-        val registerFunctions =
+        // The register_* functions must be emitted in dependency order: a base class must be
+        // registered before any derived class that lists it as a py::class_ base (pybind11 looks
+        // up the base type info at construction time and throws if it is not yet registered).
+        val allBoundTypes =
             getPythonTypes(pybind11FilteredModel.topElements)
                 .filter { it !is com.here.gluecodium.model.lime.LimeTypeAlias && it !is com.here.gluecodium.model.lime.LimeLambda }
-                .map { pythonNameResolver.resolveName(it) }
-                .sorted()
+        val typeNameToParents =
+            allBoundTypes.associate { type ->
+                val parents =
+                    (type as? LimeContainerWithInheritance)
+                        ?.parents
+                        ?.mapNotNull { it.type.actualType as? LimeNamedElement }
+                        ?.map { pythonNameResolver.resolveName(it) }
+                        .orEmpty()
+                pythonNameResolver.resolveName(type) to parents
+            }
+        val registerFunctions =
+            topologicalSort(typeNameToParents).map { mapOf("name" to it) }
         val moduleInitTemplateData =
             mapOf(
                 "moduleName" to pythonModule,
                 "moduleDoc" to "Generated Python bindings for the '$pythonModule' extension module.",
-                "registerFunctions" to registerFunctions.map { mapOf("name" to it) },
+                "registerFunctions" to registerFunctions,
             )
         val moduleInitContent =
             TemplateEngine.render("python/Pybind11ModuleInit", moduleInitTemplateData, nameResolvers, predicates)
@@ -363,6 +390,24 @@ internal class PythonGenerator : Generator {
             GeneratedFile(pyprojectContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "pyproject.toml"),
             GeneratedFile(nativeBaseContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "_native_base.py"),
         ) + packageInitFiles
+    }
+
+    // Topologically sorts type names so that every base class appears before its derived
+    // classes. `parents` maps each type name to the names of its (bound) base classes. A stable
+    // sort is used for ties so the output stays deterministic. Cycles are not expected (LIME
+    // forbids them), but if one occurs the remaining nodes are appended in input order rather
+    // than looping forever.
+    private fun topologicalSort(parents: Map<String, List<String>>): List<String> {
+        val visited = mutableSetOf<String>()
+        val result = mutableListOf<String>()
+        fun visit(name: String) {
+            if (name in visited) return
+            visited.add(name)
+            parents[name].orEmpty().forEach { visit(it) }
+            result.add(name)
+        }
+        parents.keys.sorted().forEach { visit(it) }
+        return result
     }
 
     private fun getPythonTypes(elements: List<LimeNamedElement>): List<LimeType> =

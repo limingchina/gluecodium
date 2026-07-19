@@ -293,7 +293,7 @@ feature(Inheritance cpp android android-kotlin swift dart python SOURCES
     input/lime/ConstructorOverride.lime
 )
 
-feature(MultipleInheritance cpp android android-kotlin swift dart SOURCES
+feature(MultipleInheritance cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/MultipleInheritance.cpp
     input/lime/MultipleInheritance.lime
 )
