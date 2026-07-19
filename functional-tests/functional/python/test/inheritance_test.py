@@ -18,7 +18,8 @@
 """Inheritance mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.Inheritance import InheritanceTestHelper, RootInterface
+from test.InheritanceTestHelper import InheritanceTestHelper
+from test.RootInterface import RootInterface
 
 import pytest
 
@@ -31,7 +32,7 @@ class TestInheritance:
 
     def test_call_root_method(self):
         root = InheritanceTestHelper.create_root()
-        result = InheritanceTestHelper.call_root_method(root)
+        result = InheritanceTestHelper.call_root_method(root, "data")
 
         assert isinstance(result, RootInterface)
 
