@@ -41,13 +41,40 @@ internal class PythonGeneratorPredicates(
     private val limeReferenceMap: Map<String, LimeElement>,
     private val pybind11NameResolver: Pybind11NameResolver,
     private val standaloneEnums: Set<String>,
+    private val internalNamespace: List<String>,
 ) {
+    // Collects all functions visible on a container, including those inherited from parent
+    // containers (interfaces/classes). In C++ a child class exposes every inherited overload, so
+    // this is what determines whether a method pointer is ambiguous for pybind11's .def().
+    private fun allContainerFunctions(container: com.here.gluecodium.model.lime.LimeContainer): List<com.here.gluecodium.model.lime.LimeFunction> {
+        val own = container.functions
+        val inherited =
+            (container as? com.here.gluecodium.model.lime.LimeContainerWithInheritance)
+                ?.parents
+                .orEmpty()
+                .mapNotNull { it.type.actualType as? com.here.gluecodium.model.lime.LimeContainer }
+                .flatMap { allContainerFunctions(it) }
+        return own + inherited
+    }
+
     val predicates =
         mapOf(
             "hasAnyComment" to { limeElement: Any ->
                 CommonGeneratorPredicates.hasAnyComment(limeElement, "Python")
             },
             "isInterface" to { it is com.here.gluecodium.model.lime.LimeInterface },
+            // Whether the container needs a pybind11 trampoline class so it can be subclassed from
+            // Python. Mirrors Pybind11Helpers.needsTrampoline: interfaces always need one, and a
+            // class needs one when it is open or inherits from another container (so inherited
+            // pure-virtual methods are overridden and the trampoline is instantiable).
+            "needsTrampoline" to { limeElement: Any ->
+                when (limeElement) {
+                    is com.here.gluecodium.model.lime.LimeInterface -> true
+                    is com.here.gluecodium.model.lime.LimeClass ->
+                        limeElement.isOpen || limeElement.parents.isNotEmpty()
+                    else -> false
+                }
+            },
             "isInternal" to { it is LimeNamedElement && CommonGeneratorPredicates.isInternal(it, PYTHON) },
             "isPublic" to { it is LimeNamedElement && !CommonGeneratorPredicates.isInternal(it, PYTHON) },
             "isNestedInternal" to { limeElement: Any ->
@@ -65,8 +92,9 @@ internal class PythonGeneratorPredicates(
                     signatureResolver.isOverloaded(limeFunction)
             },
             // Whether the C++ name of this function collides with another function in the same
-            // container (e.g. two Lime methods with different names that both map to the same C++
-            // name via @Cpp). pybind11 requires py::overload_cast for such cases.
+            // container OR an inherited one. In C++ a child class exposes all inherited overloads,
+            // so pybind11 needs py::overload_cast whenever the resolved C++ name appears more than
+            // once across the full inheritance hierarchy (e.g. foo() inherited + foo(String) own).
             "isCppOverloaded" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     run {
@@ -74,7 +102,7 @@ internal class PythonGeneratorPredicates(
                             limeReferenceMap[limeFunction.path.parent.toString()]
                                 as? com.here.gluecodium.model.lime.LimeContainer ?: return@run false
                         val cppName = pybind11NameResolver.resolveName(limeFunction)
-                        container.functions.count { pybind11NameResolver.resolveName(it) == cppName } > 1
+                        allContainerFunctions(container).count { pybind11NameResolver.resolveName(it) == cppName } > 1
                     }
             },
             "needsInterfaceLambdaBinding" to { limeElement: Any ->
@@ -211,14 +239,22 @@ internal class PythonGeneratorPredicates(
             // aliased through a `using` declaration before being passed to the macro. Accepts either
             // the function itself or its return type reference as the predicate context.
             "returnTypeHasComma" to { limeElement: Any ->
-                val typeRef =
+                val (typeRef, thrownType) =
                     when (limeElement) {
-                        is com.here.gluecodium.model.lime.LimeFunction -> limeElement.returnType.typeRef
-                        is com.here.gluecodium.model.lime.LimeTypeRef -> limeElement
-                        is com.here.gluecodium.model.lime.LimeProperty -> limeElement.typeRef
-                        else -> null
+                        is com.here.gluecodium.model.lime.LimeFunction ->
+                            limeElement.returnType.typeRef to limeElement.thrownType
+                        is com.here.gluecodium.model.lime.LimeTypeRef -> limeElement to null
+                        is com.here.gluecodium.model.lime.LimeProperty ->
+                            limeElement.typeRef to null
+                        else -> null to null
                     }
-                typeRef != null && pybind11NameResolver.resolveName(typeRef).contains(',')
+                // A throwing function's C++ return type is wrapped as
+                // `Return<T, Error>` (or `Return<void, Error>` when T is void), which always contains
+                // a comma, so the trampoline must alias it through a `using` declaration before the
+                // PYBIND11_OVERRIDE_PURE macro. The unwrapped type is also checked for completeness.
+                val wrappedHasComma = thrownType != null
+                typeRef != null &&
+                    (wrappedHasComma || pybind11NameResolver.resolveName(typeRef).contains(','))
             },
             // Whether a struct needs a `py::init<>()` with no arguments. Mirrors the C++ generator's
             // `hasDefaultConstructor` predicate: the C++ struct is default-constructible unless it is

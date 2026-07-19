@@ -84,7 +84,7 @@ feature(Strings cpp android android-kotlin swift dart python SOURCES
     input/lime/CppRefReturnType.lime
 )
 
-feature(MethodOverloading cpp android android-kotlin swift dart SOURCES
+feature(MethodOverloading cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/MethodOverloads.cpp
 
     input/lime/MethodOverloads.lime
@@ -250,7 +250,7 @@ feature(GenericTypes cpp android android-kotlin swift dart SOURCES
     input/lime/OptimizedList.lime
 )
 
-feature(Errors cpp android android-kotlin swift dart SOURCES
+feature(Errors cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Errors.cpp
     input/src/cpp/ErrorsInInterface.cpp
     input/src/cpp/ErrorsInInterface.h
@@ -274,7 +274,7 @@ feature(Defaults cpp android android-kotlin swift dart SOURCES
     input/lime/ConstantDefaults.lime
 )
 
-feature(Inheritance cpp android android-kotlin swift dart SOURCES
+feature(Inheritance cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/ChildClassImpl.cpp
     input/src/cpp/ChildClassImpl.h
     input/src/cpp/GrandchildClassImpl.cpp
@@ -306,7 +306,7 @@ feature(CircularDependencies cpp android android-kotlin swift dart python SOURCE
     input/lime/Circular.lime
 )
 
-feature(ExternalTypes cpp android android-kotlin swift dart SOURCES
+feature(ExternalTypes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/include/ExternalTypes.h
     input/src/cpp/include/MyClass.h
     input/src/cpp/src/ExternalTypes.cpp

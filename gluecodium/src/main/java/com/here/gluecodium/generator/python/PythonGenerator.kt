@@ -98,14 +98,20 @@ internal class PythonGenerator : Generator {
         // Filter the model: keep elements that are not skipped for Python. The first pass retains
         // functions/fields (needed for container bodies); the second pass drops them for the
         // actual Python output.
+        // External types are pre-existing C++ types that are only *referenced* (never generated), so
+        // the Python generator must skip them just like the C++ generator does (it checks
+        // `external?.cpp == null`). Binding them would emit broken pybind11 code referencing types
+        // the generator does not own.
         val pybind11FilteredModel =
             LimeModelFilter.filter(limeModel) {
                 LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = true) &&
-                    !isCppSkipped(it)
+                    !isCppSkipped(it) &&
+                    (it as? LimeNamedElement)?.external?.cpp == null
             }
         val pythonFilteredModel =
             LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false)
+                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false) &&
+                    (it as? LimeNamedElement)?.external?.cpp == null
             }
 
         pythonNameResolver =
@@ -130,6 +136,11 @@ internal class PythonGenerator : Generator {
             mapOf(
                 "" to pythonNameResolver,
                 "Pybind11" to pybind11NameResolver,
+                // The pybind11 trampoline is C++ code that must match the generated C++ base
+                // signature exactly (including the `Return<T, Error>` wrapper for throwing
+                // functions). Reusing the C++ name resolver lets the trampoline templates pull
+                // in `cpp/CppReturnType.mustache`, which already emits that wrapper.
+                "C++" to pybind11NameResolver,
             )
         val pythonTypes = getPythonTypes(pythonFilteredModel.topElements)
         val pybind11Types = getPythonTypes(pybind11FilteredModel.topElements)
@@ -139,6 +150,7 @@ internal class PythonGenerator : Generator {
                 pythonFilteredModel.referenceMap,
                 pybind11NameResolver,
                 pythonTypes.filterIsInstance<LimeEnumeration>().map { it.fullName }.toSet(),
+                internalNamespace,
             )
 
         val pybind11IncludeResolver = Pybind11IncludeResolver(pybind11FilteredModel.referenceMap, cppNameRules, internalNamespace)

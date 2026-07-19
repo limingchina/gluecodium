@@ -1,5 +1,32 @@
 {{! Python class: thin wrapper around the native C++ object exposed via pybind11. }}
+{{#ifPredicate model "needsTrampoline"}}
+import {{nativeModule}}
 
+
+class {{resolveName}}({{nativeModule}}.{{resolveName}}):
+    """{{resolveName comment}}"""
+
+    def __init__(self, native=None):
+        # Subclass the native pybind11 type so a Python override of an inherited virtual
+        # method (from a parent interface or open base class) is dispatched through the
+        # generated trampoline. `self._native` aliases the wrapper itself so the rest of the
+        # generated code can reach the native object uniformly.
+        super().__init__()
+        self._native = self
+{{#functions}}
+
+{{>python/PythonFunction}}{{/functions}}
+{{#properties}}
+
+{{>python/PythonProperty}}{{/properties}}
+{{#enumerations}}
+{{#unlessPredicate "isStandaloneEnum"}}
+{{>python/PythonEnumeration}}{{/unlessPredicate}}{{/enumerations}}
+{{#constants}}
+
+{{>python/PythonConstant}}{{/constants}}
+{{/ifPredicate}}
+{{#unlessPredicate model "needsTrampoline"}}
 from _native_base import _NativeBase
 
 import {{nativeModule}}
@@ -25,3 +52,4 @@ class {{resolveName}}{{#if parents}}(
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
+{{/unlessPredicate}}

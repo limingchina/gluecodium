@@ -1,14 +1,18 @@
 {{! Trampoline override for a single interface method. }}
-{{#ifPredicate returnType.typeRef "returnTypeHasComma"}}
-    using {{resolveName this "Pybind11"}}_return_type = {{resolveName returnType.typeRef "Pybind11"}};
+{{! The trampoline is C++ code that must match the generated C++ base signature exactly, including
+    the `Return<T, Error>` wrapper for throwing functions. `cpp/CppReturnType.mustache` already
+    emits that wrapper (it is the same partial the C++ generator uses for the base class), so we
+    reuse it here instead of the unwrapped Pybind11 return type. }}
+{{#ifPredicate this "returnTypeHasComma"}}
+    using {{resolveName this "Pybind11"}}_return_type = {{>cpp/CppReturnType}};
 {{/ifPredicate}}
-    {{resolveName returnType.typeRef "Pybind11"}} {{resolveName this "Pybind11"}}(
+    {{>cpp/CppReturnType}} {{resolveName this "Pybind11"}}(
             {{#parameters}}{{#ifPredicate typeRef "needsRefSuffix"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ){{#ifPredicate "isCppConst"}} const{{/ifPredicate}}{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
-{{#ifPredicate returnType.typeRef "returnTypeHasComma"}}
+{{#ifPredicate this "returnTypeHasComma"}}
         PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
 {{/ifPredicate}}
-{{#unlessPredicate returnType.typeRef "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE({{resolveName returnType.typeRef "Pybind11"}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
+{{#unlessPredicate this "returnTypeHasComma"}}
+        PYBIND11_OVERRIDE_PURE({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
 {{/unlessPredicate}}
     }
