@@ -15,9 +15,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesWithDeprecated = ::smoke::AttributesWithDeprecated;
 
+
 void register_AttributesWithDeprecated(py::module_& module) {
     py::class_<AttributesWithDeprecated, std::shared_ptr<AttributesWithDeprecated>>(module, "AttributesWithDeprecated")
         .def("very_fun", &AttributesWithDeprecated::very_fun)
+
         .def_property("prop", py::overload_cast<>(&AttributesWithDeprecated::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithDeprecated::set_prop))
         ;
 }

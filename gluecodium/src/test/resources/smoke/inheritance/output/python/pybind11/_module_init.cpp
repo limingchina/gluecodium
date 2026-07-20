@@ -10,15 +10,24 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
+void register_ParentClass(pybind11::module_& module);
 void register_ChildClassFromClass(pybind11::module_& module);
+void register_ParentInterface(pybind11::module_& module);
 void register_ChildClassFromInterface(pybind11::module_& module);
+void register_InterfaceWithOverloads(pybind11::module_& module);
 void register_ChildClassNameClash(pybind11::module_& module);
+void register_ParentInterfaceWithBool(pybind11::module_& module);
 void register_ChildClassWithBool(pybind11::module_& module);
+void register_ParentClassWithImports(pybind11::module_& module);
 void register_ChildClassWithImports(pybind11::module_& module);
+void register_ParentInterfaceWithIncludes(pybind11::module_& module);
 void register_ChildClassWithIncludes(pybind11::module_& module);
+void register_InterfaceWithLambda(pybind11::module_& module);
 void register_ChildClassWithLambda(pybind11::module_& module);
 void register_ChildInterface(pybind11::module_& module);
+void register_ParentWithCustomConstructor(pybind11::module_& module);
 void register_ChildWithCustomConstructor(pybind11::module_& module);
+void register_ParentWithClassReferences(pybind11::module_& module);
 void register_ChildWithParentClassReferences(pybind11::module_& module);
 void register_CrossPackageChildClass(pybind11::module_& module);
 void register_CrossPackageChildInterface(pybind11::module_& module);
@@ -27,17 +36,8 @@ void register_GrandChildInterface(pybind11::module_& module);
 void register_IncludableClass(pybind11::module_& module);
 void register_IncludableEnum(pybind11::module_& module);
 void register_IncludableStruct(pybind11::module_& module);
-void register_InterfaceWithLambda(pybind11::module_& module);
-void register_InterfaceWithOverloads(pybind11::module_& module);
-void register_InternalChild(pybind11::module_& module);
 void register_InternalParent(pybind11::module_& module);
-void register_ParentClass(pybind11::module_& module);
-void register_ParentClassWithImports(pybind11::module_& module);
-void register_ParentInterface(pybind11::module_& module);
-void register_ParentInterfaceWithBool(pybind11::module_& module);
-void register_ParentInterfaceWithIncludes(pybind11::module_& module);
-void register_ParentWithClassReferences(pybind11::module_& module);
-void register_ParentWithCustomConstructor(pybind11::module_& module);
+void register_InternalChild(pybind11::module_& module);
 void register_ShouldNotInclude(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
@@ -46,15 +46,24 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
+    register_ParentClass(m);
     register_ChildClassFromClass(m);
+    register_ParentInterface(m);
     register_ChildClassFromInterface(m);
+    register_InterfaceWithOverloads(m);
     register_ChildClassNameClash(m);
+    register_ParentInterfaceWithBool(m);
     register_ChildClassWithBool(m);
+    register_ParentClassWithImports(m);
     register_ChildClassWithImports(m);
+    register_ParentInterfaceWithIncludes(m);
     register_ChildClassWithIncludes(m);
+    register_InterfaceWithLambda(m);
     register_ChildClassWithLambda(m);
     register_ChildInterface(m);
+    register_ParentWithCustomConstructor(m);
     register_ChildWithCustomConstructor(m);
+    register_ParentWithClassReferences(m);
     register_ChildWithParentClassReferences(m);
     register_CrossPackageChildClass(m);
     register_CrossPackageChildInterface(m);
@@ -63,16 +72,7 @@ PYBIND11_MODULE(generated, m) {
     register_IncludableClass(m);
     register_IncludableEnum(m);
     register_IncludableStruct(m);
-    register_InterfaceWithLambda(m);
-    register_InterfaceWithOverloads(m);
-    register_InternalChild(m);
     register_InternalParent(m);
-    register_ParentClass(m);
-    register_ParentClassWithImports(m);
-    register_ParentInterface(m);
-    register_ParentInterfaceWithBool(m);
-    register_ParentInterfaceWithIncludes(m);
-    register_ParentWithClassReferences(m);
-    register_ParentWithCustomConstructor(m);
+    register_InternalChild(m);
     register_ShouldNotInclude(m);
 }

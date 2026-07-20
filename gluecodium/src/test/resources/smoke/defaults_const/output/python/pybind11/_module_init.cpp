@@ -11,9 +11,7 @@
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_AmbiguousConstants(pybind11::module_& module);
-void register_AmbiguousConstants(pybind11::module_& module);
 void register_AmbiguousDefaults(pybind11::module_& module);
-void register_AmbiguousEnum(pybind11::module_& module);
 void register_AmbiguousEnum(pybind11::module_& module);
 void register_ConstantDefaults(pybind11::module_& module);
 void register_Enum1(pybind11::module_& module);
@@ -48,9 +46,7 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_AmbiguousConstants(m);
-    register_AmbiguousConstants(m);
     register_AmbiguousDefaults(m);
-    register_AmbiguousEnum(m);
     register_AmbiguousEnum(m);
     register_ConstantDefaults(m);
     register_Enum1(m);

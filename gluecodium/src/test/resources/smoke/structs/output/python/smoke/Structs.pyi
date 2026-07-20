@@ -5,7 +5,7 @@ from smoke.StructsNestingImmutableStruct import StructsNestingImmutableStruct
 from smoke.StructsPoint import StructsPoint
 from smoke.TypeCollectionAllTypesStruct import TypeCollectionAllTypesStruct
 from smoke.TypeCollectionPoint import TypeCollectionPoint
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -19,26 +19,14 @@ class Structs(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def swap_point_coordinates(input: StructsPoint) -> StructsPoint:
-        """"""
-        native_result = generated.Structs.swap_point_coordinates(input._native)
-        return StructsPoint(native_result)
+    def swap_point_coordinates(input: StructsPoint) -> StructsPoint: ...
 
     @staticmethod
-    def return_all_types_struct(input: StructsAllTypesStruct) -> StructsAllTypesStruct:
-        """"""
-        native_result = generated.Structs.return_all_types_struct(input._native)
-        return StructsAllTypesStruct(native_result)
+    def return_all_types_struct(input: StructsAllTypesStruct) -> StructsAllTypesStruct: ...
 
     @staticmethod
-    def create_point(x: float, y: float) -> TypeCollectionPoint:
-        """"""
-        native_result = generated.Structs.create_point(x, y)
-        return TypeCollectionPoint(native_result)
+    def create_point(x: float, y: float) -> TypeCollectionPoint: ...
 
     @staticmethod
-    def modify_all_types_struct(input: TypeCollectionAllTypesStruct) -> TypeCollectionAllTypesStruct:
-        """"""
-        native_result = generated.Structs.modify_all_types_struct(input._native)
-        return TypeCollectionAllTypesStruct(native_result)
+    def modify_all_types_struct(input: TypeCollectionAllTypesStruct) -> TypeCollectionAllTypesStruct: ...
 

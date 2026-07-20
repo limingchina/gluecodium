@@ -60,7 +60,7 @@ public:
 };
 
 void register_OuterClassWithInheritance(py::module_& module) {
-    py::class_<OuterClassWithInheritance, std::shared_ptr<OuterClassWithInheritance>, OuterClassWithInheritanceTrampoline>(module, "OuterClassWithInheritance")
+    py::class_<OuterClassWithInheritance, ::smoke::ParentClass, std::shared_ptr<OuterClassWithInheritance>, OuterClassWithInheritanceTrampoline>(module, "OuterClassWithInheritance")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -73,6 +73,9 @@ void register_OuterClassWithInheritance(py::module_& module) {
         }))
         .def("foo", &OuterClassWithInheritance::foo, py::arg("input"))
 
+        .def("parent_fun", &OuterClassWithInheritance::parent_fun)
+
+        .def_property("parent_property", py::overload_cast<>(&OuterClassWithInheritance::get_parent_property, py::const_), py::overload_cast<const ::std::string&>(&OuterClassWithInheritance::set_parent_property))
         ;
 }
 

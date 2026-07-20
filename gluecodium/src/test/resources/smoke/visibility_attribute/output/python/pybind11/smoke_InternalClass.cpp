@@ -14,9 +14,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InternalClass = ::smoke::InternalClass;
 
+
 void register_InternalClass(py::module_& module) {
     py::class_<InternalClass, std::shared_ptr<InternalClass>>(module, "InternalClass")
         .def("foo_bar", &InternalClass::foo_bar)
+
         ;
 }
 

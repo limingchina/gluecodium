@@ -3,6 +3,7 @@
 from smoke.ErrorsInterfaceExternalErrors import ErrorsInterfaceExternalErrors
 from smoke.ErrorsInterfaceInternalError import ErrorsInterfaceInternalError
 from smoke.Payload import Payload
+import typing
 
 
 import generated
@@ -25,27 +26,17 @@ class ErrorsInterface(generated.ErrorsInterface):
             super().__init__()
         self._native = self
 
-    def method_with_errors(self):
-        """"""
-        return generated.ErrorsInterface.method_with_errors(self)
+    def method_with_errors(self): ...
 
-    def method_with_external_errors(self):
-        """"""
-        return generated.ErrorsInterface.method_with_external_errors(self)
+    def method_with_external_errors(self): ...
 
-    def method_with_errors_and_return_value(self) -> str:
-        """"""
-        return generated.ErrorsInterface.method_with_errors_and_return_value(self)
+    def method_with_errors_and_return_value(self) -> str: ...
 
     @staticmethod
-    def method_with_payload_error():
-        """"""
-        generated.ErrorsInterface.method_with_payload_error()
+    def method_with_payload_error(): ...
 
     @staticmethod
-    def method_with_payload_error_and_return_value() -> str:
-        """"""
-        return generated.ErrorsInterface.method_with_payload_error_and_return_value()
+    def method_with_payload_error_and_return_value() -> str: ...
 
 
     ERROR_MESSAGE = "Some error message constant"

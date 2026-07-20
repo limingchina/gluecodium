@@ -5,6 +5,7 @@ from kotlin_smoke.Month import Month
 from kotlin_smoke.Season import Season
 from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
+import typing
 
 
 from _native_base import _NativeBase

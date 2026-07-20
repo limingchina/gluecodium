@@ -1,6 +1,7 @@
 
 
 from another.SomeCoolClassType import SomeCoolClassType
+import typing
 
 
 import generated
@@ -23,13 +24,9 @@ class ParentInterface(generated.ParentInterface):
             super().__init__()
         self._native = self
 
-    def parent_function(self):
-        """"""
-        return generated.ParentInterface.parent_function(self)
+    def parent_function(self): ...
 
-    def some_function_that_uses_type_from_another_package(self, some_param: SomeCoolClassType):
-        """"""
-        return generated.ParentInterface.some_function_that_uses_type_from_another_package(self, some_param._native)
+    def some_function_that_uses_type_from_another_package(self, some_param: SomeCoolClassType): ...
 
     @property
     def parent_property(self) -> str:

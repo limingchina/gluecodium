@@ -16,9 +16,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using NestedReferences = ::smoke::NestedReferences;
 
+
 void register_NestedReferences(py::module_& module) {
     py::class_<NestedReferences, std::shared_ptr<NestedReferences>>(module, "NestedReferences")
         .def("inside_out", &NestedReferences::inside_out, py::arg("struct1"), py::arg("struct2"))
+
         ;
 }
 

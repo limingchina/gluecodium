@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,16 +14,8 @@ class SwiftConstructorOverloads(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
-    def make(input: str) -> SwiftConstructorOverloads:
-        """"""
-        native_result = generated.SwiftConstructorOverloads.make(input)
-        return SwiftConstructorOverloads(native_result)
+    def make(input: str) -> SwiftConstructorOverloads: ...
 
     @staticmethod
-
-    def make_do(throughput: str) -> SwiftConstructorOverloads:
-        """"""
-        native_result = generated.SwiftConstructorOverloads.make_do(throughput)
-        return SwiftConstructorOverloads(native_result)
+    def make_do(throughput: str) -> SwiftConstructorOverloads: ...
 

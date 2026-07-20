@@ -27,7 +27,7 @@ public:
 };
 
 void register_InternalChild(py::module_& module) {
-    py::class_<InternalChild, std::shared_ptr<InternalChild>, InternalChildTrampoline>(module, "InternalChild")
+    py::class_<InternalChild, ::smoke::InternalParent, std::shared_ptr<InternalChild>, InternalChildTrampoline>(module, "InternalChild")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

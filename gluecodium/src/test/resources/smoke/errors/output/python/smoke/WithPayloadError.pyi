@@ -1,6 +1,7 @@
 
 
 from smoke.Payload import Payload
+import typing
 
 class WithPayloadError(Exception):
     """"""

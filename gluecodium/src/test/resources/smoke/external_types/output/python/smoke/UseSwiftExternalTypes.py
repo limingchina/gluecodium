@@ -7,7 +7,6 @@ from smoke.Persistence import Persistence
 from smoke.PseudoColor import PseudoColor
 from smoke.SwiftSeason import SwiftSeason
 
-
 from _native_base import _NativeBase
 
 import generated

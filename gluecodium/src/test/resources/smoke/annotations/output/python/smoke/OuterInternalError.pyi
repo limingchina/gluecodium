@@ -1,6 +1,7 @@
 
 
 from smoke.OuterInternalEnum import OuterInternalEnum
+import typing
 
 class OuterInternalError(Exception):
     """"""

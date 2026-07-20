@@ -100,7 +100,7 @@ public:
 };
 
 void register_FirstParentIsNarrowClass(py::module_& module) {
-    py::class_<FirstParentIsNarrowClass, std::shared_ptr<FirstParentIsNarrowClass>, FirstParentIsNarrowClassTrampoline>(module, "FirstParentIsNarrowClass")
+    py::class_<FirstParentIsNarrowClass, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowClass>, FirstParentIsNarrowClassTrampoline>(module, "FirstParentIsNarrowClass", py::multiple_inheritance())
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -114,6 +114,24 @@ void register_FirstParentIsNarrowClass(py::module_& module) {
         .def("child_function", &FirstParentIsNarrowClass::child_function)
 
         .def_property("child_property", py::overload_cast<>(&FirstParentIsNarrowClass::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsNarrowClass::set_child_property))
+        .def("parent_function_one", [](FirstParentIsNarrowClass& self) {
+            return self.parent_function_one();
+        })
+
+        .def("parent_function_two", [](FirstParentIsNarrowClass& self) {
+            return self.parent_function_two();
+        })
+
+        .def_property("parent_property_one", [](const FirstParentIsNarrowClass& self) {
+            return self.get_parent_property_one();
+        }, [](FirstParentIsNarrowClass& self, const ::std::string& value) {
+            self.set_parent_property_one(value);
+        })
+        .def_property("parent_property_two", [](const FirstParentIsNarrowClass& self) {
+            return self.get_parent_property_two();
+        }, [](FirstParentIsNarrowClass& self, const ::std::string& value) {
+            self.set_parent_property_two(value);
+        })
         ;
 }
 

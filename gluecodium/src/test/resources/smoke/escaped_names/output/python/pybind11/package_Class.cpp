@@ -53,7 +53,7 @@ public:
 };
 
 void register_Class(py::module_& module) {
-    py::class_<Class, std::shared_ptr<Class>, ClassTrampoline>(module, "Class")
+    py::class_<Class, ::package::Interface, std::shared_ptr<Class>, ClassTrampoline>(module, "Class")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

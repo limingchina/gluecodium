@@ -61,7 +61,7 @@ public:
 };
 
 void register_ChildClassFromInterface(py::module_& module) {
-    py::class_<ChildClassFromInterface, std::shared_ptr<ChildClassFromInterface>, ChildClassFromInterfaceTrampoline>(module, "ChildClassFromInterface")
+    py::class_<ChildClassFromInterface, ::smoke::ParentInterface, std::shared_ptr<ChildClassFromInterface>, ChildClassFromInterfaceTrampoline>(module, "ChildClassFromInterface")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -74,6 +74,15 @@ void register_ChildClassFromInterface(py::module_& module) {
         }))
         .def("child_class_method", &ChildClassFromInterface::child_class_method)
 
+        .def("root_method", [](ChildClassFromInterface& self) {
+            return self.root_method();
+        })
+
+        .def_property("root_property", [](const ChildClassFromInterface& self) {
+            return self.get_root_property();
+        }, [](ChildClassFromInterface& self, const ::std::string& value) {
+            self.set_root_property(value);
+        })
         ;
 }
 

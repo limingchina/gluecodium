@@ -1,0 +1,30 @@
+
+
+from fire.Enum3 import Enum3
+import typing
+
+
+from _native_base import _NativeBase
+
+import generated
+
+
+class EnumDefaultsAliasEnum(_NativeBase):
+    """"""
+
+    def __init__(self, *args):
+        if len(args) == 1 and isinstance(args[0], generated.EnumDefaultsAliasEnum):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.EnumDefaultsAliasEnum(*[getattr(arg, "_native", arg) for arg in args]))
+
+
+    @property
+    def enum_field(self) -> Enum3:
+        """"""
+        return Enum3(self._native.enum_field)
+    @enum_field.setter
+    def enum_field(self, value: Enum3):
+      self._native.enum_field = getattr(value, "_native", value)
+
+

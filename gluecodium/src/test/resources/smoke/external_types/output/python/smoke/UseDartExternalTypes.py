@@ -7,7 +7,6 @@ from smoke.DartColor import DartColor
 from smoke.DartSeason import DartSeason
 from smoke.Rectangle import Rectangle
 
-
 from _native_base import _NativeBase
 
 import generated

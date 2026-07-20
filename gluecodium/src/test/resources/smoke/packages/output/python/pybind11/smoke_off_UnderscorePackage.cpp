@@ -15,9 +15,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UnderscorePackage = ::smoke_off::UnderscorePackage;
 
+
 void register_UnderscorePackage(py::module_& module) {
     py::class_<UnderscorePackage, std::shared_ptr<UnderscorePackage>>(module, "UnderscorePackage")
         .def_static("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"))
+
         ;
 }
 

@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,19 +23,13 @@ class ParentInterface(generated.ParentInterface):
             super().__init__()
         self._native = self
 
-    def foo(self):
-        """"""
-        return generated.ParentInterface.foo(self)
+    @typing.overload
+    def foo(self): ...
 
-    def foo(self, input: int):
-        """"""
-        return generated.ParentInterface.foo(self, input)
+    @typing.overload
+    def foo(self, input: int): ...
 
-    def bar(self):
-        """"""
-        return generated.ParentInterface.bar(self)
+    def bar(self): ...
 
-    def baz(self):
-        """"""
-        return generated.ParentInterface.baz(self)
+    def baz(self): ...
 

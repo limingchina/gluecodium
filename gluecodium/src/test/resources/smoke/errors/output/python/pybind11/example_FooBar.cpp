@@ -16,10 +16,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FooBar = ::example::FooBar;
 
+
 void register_FooBar(py::module_& module) {
     py::class_<FooBar, std::shared_ptr<FooBar>>(module, "FooBar")
         .def_static("method_with_internal_error", &FooBar::method_with_internal_error)
+
         .def_static("method_with_type_collection_error", &FooBar::method_with_type_collection_error)
+
         ;
 }
 

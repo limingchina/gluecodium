@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,15 +23,9 @@ class SkipTagsInJava(generated.SkipTagsInJava):
             super().__init__()
         self._native = self
 
-    def skip_tagged(self):
-        """"""
-        return generated.SkipTagsInJava.skip_tagged(self)
+    def skip_tagged(self): ...
 
-    def dont_skip_tagged(self):
-        """"""
-        return generated.SkipTagsInJava.dont_skip_tagged(self)
+    def dont_skip_tagged(self): ...
 
-    def skip_tagged_list(self):
-        """"""
-        return generated.SkipTagsInJava.skip_tagged_list(self)
+    def skip_tagged_list(self): ...
 

@@ -1,6 +1,7 @@
 
 
 from smoke.InterfaceWithOverloads import InterfaceWithOverloads
+import typing
 
 import generated
 

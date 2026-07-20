@@ -3,6 +3,7 @@
 from package.Interface import Interface
 from package.typesenum import typesenum
 from package.typesstruct import typesstruct
+import typing
 
 import generated
 
@@ -24,14 +25,9 @@ class Class(generated.Class):
         self._native = self
 
     @staticmethod
-    def constructor() -> Class:
-        """"""
-        native_result = generated.Class.constructor()
-        return Class(native_result)
+    def constructor() -> Class: ...
 
-    def fun(self, double: list[typesstruct]) -> typesstruct:
-        """"""
-        return generated.Class.fun(self, double)
+    def fun(self, double: list[typesstruct]) -> typesstruct: ...
 
     @property
     def property(self) -> typesenum:

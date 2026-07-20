@@ -5,6 +5,7 @@ from smoke.PosDefaultStructWithFieldUsingImmutableStruct import PosDefaultStruct
 from smoke.SomeMutableCustomStructWithDefaults import SomeMutableCustomStructWithDefaults
 from smoke.StructWithAllDefaults import StructWithAllDefaults
 from smoke.StructWithNullableCollectionDefaults import StructWithNullableCollectionDefaults
+import typing
 
 
 from _native_base import _NativeBase

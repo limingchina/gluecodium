@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,37 +14,23 @@ class EnableIfEnabled(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def enable_if_unquoted():
-        """"""
-        generated.EnableIfEnabled.enable_if_unquoted()
+    def enable_if_unquoted(): ...
 
     @staticmethod
-    def enable_if_unquoted_list():
-        """"""
-        generated.EnableIfEnabled.enable_if_unquoted_list()
+    def enable_if_unquoted_list(): ...
 
     @staticmethod
-    def enable_if_quoted():
-        """"""
-        generated.EnableIfEnabled.enable_if_quoted()
+    def enable_if_quoted(): ...
 
     @staticmethod
-    def enable_if_quoted_list():
-        """"""
-        generated.EnableIfEnabled.enable_if_quoted_list()
+    def enable_if_quoted_list(): ...
 
     @staticmethod
-    def enable_if_tagged():
-        """"""
-        generated.EnableIfEnabled.enable_if_tagged()
+    def enable_if_tagged(): ...
 
     @staticmethod
-    def enable_if_tagged_list():
-        """"""
-        generated.EnableIfEnabled.enable_if_tagged_list()
+    def enable_if_tagged_list(): ...
 
     @staticmethod
-    def enable_if_mixed_list():
-        """"""
-        generated.EnableIfEnabled.enable_if_mixed_list()
+    def enable_if_mixed_list(): ...
 

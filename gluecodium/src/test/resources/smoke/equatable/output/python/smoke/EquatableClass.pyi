@@ -1,7 +1,7 @@
 
 
 from smoke.PointerEquatableClass import PointerEquatableClass
-
+import typing
 
 from _native_base import _NativeBase
 

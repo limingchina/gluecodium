@@ -24,11 +24,8 @@ class InterfaceWithOverloads(generated.InterfaceWithOverloads):
             super().__init__()
         self._native = self
 
-    def parent_method(self):
+    def parent_method(*args, **kwargs):
         """"""
-        return generated.InterfaceWithOverloads.parent_method(self)
+        return generated.InterfaceWithOverloads.parent_method(self, *[getattr(a, "_native", a) for a in args])
 
-    def parent_method(self, input: str):
-        """"""
-        return generated.InterfaceWithOverloads.parent_method(self, input)
 

@@ -15,12 +15,17 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PlatformComments = ::smoke::PlatformComments;
 
+
 void register_PlatformComments(py::module_& module) {
     py::class_<PlatformComments, std::shared_ptr<PlatformComments>>(module, "PlatformComments")
         .def("do_nothing", &PlatformComments::do_nothing)
+
         .def("do_magic", &PlatformComments::do_magic)
+
         .def("some_method_with_all_comments", &PlatformComments::some_method_with_all_comments, py::arg("input"))
+
         .def("some_deprecated_method", &PlatformComments::some_deprecated_method)
+
         ;
 }
 

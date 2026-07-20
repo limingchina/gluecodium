@@ -1,6 +1,7 @@
 
 
 from fire.Enum4 import Enum4
+import typing
 
 
 from _native_base import _NativeBase

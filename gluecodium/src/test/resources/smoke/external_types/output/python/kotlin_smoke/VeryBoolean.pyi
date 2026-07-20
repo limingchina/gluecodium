@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -27,8 +28,5 @@ class VeryBoolean(_NativeBase):
 
 
     @staticmethod
-    def make(value: bool) -> VeryBoolean:
-        """"""
-        native_result = generated.VeryBoolean.make(value)
-        return VeryBoolean(native_result)
+    def make(value: bool) -> VeryBoolean: ...
 

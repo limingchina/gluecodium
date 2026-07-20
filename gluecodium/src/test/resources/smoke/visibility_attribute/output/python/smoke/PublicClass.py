@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from smoke.PublicClassInternalStruct import PublicClassInternalStruct
 
-
 from _native_base import _NativeBase
 
 import generated
@@ -19,7 +18,6 @@ class PublicClass(_NativeBase):
     def internal_method(self, input: PublicClassInternalStruct) -> PublicClassInternalStruct:
         """"""
         return self._native.internal_method(input._native)
-
 
     @property
     def internal_struct_property(self) -> PublicClassInternalStruct:

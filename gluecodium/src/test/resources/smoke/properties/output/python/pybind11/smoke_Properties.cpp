@@ -20,6 +20,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Properties = ::smoke::Properties;
 
+
 void register_Properties(py::module_& module) {
     py::class_<Properties, std::shared_ptr<Properties>>(module, "Properties")
         .def_property("built_in_type_property", py::overload_cast<>(&Properties::get_built_in_type_property, py::const_), py::overload_cast<const uint32_t>(&Properties::set_built_in_type_property))

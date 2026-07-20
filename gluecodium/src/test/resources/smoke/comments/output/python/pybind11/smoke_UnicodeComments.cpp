@@ -16,9 +16,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UnicodeComments = ::smoke::UnicodeComments;
 
+
 void register_UnicodeComments(py::module_& module) {
     py::class_<UnicodeComments, std::shared_ptr<UnicodeComments>>(module, "UnicodeComments")
         .def("some_method_with_all_comments", &UnicodeComments::some_method_with_all_comments, py::arg("input"))
+
         ;
 }
 

@@ -1,6 +1,7 @@
 
 
 from kotlin_smoke.ExternalMarkedAsSerializable import ExternalMarkedAsSerializable
+import typing
 
 
 from _native_base import _NativeBase

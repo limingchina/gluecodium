@@ -1,6 +1,7 @@
 
 
 from smoke.SomeInternalEnum import SomeInternalEnum
+import typing
 
 class SomethingBadHappenedError(Exception):
     """"""

@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,9 +23,7 @@ class ParentInterface(generated.ParentInterface):
             super().__init__()
         self._native = self
 
-    def root_method(self):
-        """"""
-        return generated.ParentInterface.root_method(self)
+    def root_method(self): ...
 
     @property
     def root_property(self) -> str:

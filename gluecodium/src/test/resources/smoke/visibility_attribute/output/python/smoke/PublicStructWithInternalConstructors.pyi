@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -27,8 +28,5 @@ class PublicStructWithInternalConstructors(_NativeBase):
 
 
     @staticmethod
-    def make() -> PublicStructWithInternalConstructors:
-        """"""
-        native_result = generated.PublicStructWithInternalConstructors.make()
-        return PublicStructWithInternalConstructors(native_result)
+    def make() -> PublicStructWithInternalConstructors: ...
 

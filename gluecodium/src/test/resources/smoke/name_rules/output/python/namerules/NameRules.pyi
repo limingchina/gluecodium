@@ -2,6 +2,7 @@
 
 from namerules.NameRulesExampleErrorCode import NameRulesExampleErrorCode
 from namerules.NameRulesExampleStruct import NameRulesExampleStruct
+import typing
 
 from _native_base import _NativeBase
 
@@ -15,14 +16,9 @@ class NameRules(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def create() -> NameRules:
-        """"""
-        native_result = generated.NameRules.create()
-        return NameRules(native_result)
+    def create() -> NameRules: ...
 
-    def some_method(self, some_argument: NameRulesExampleStruct) -> float:
-        """"""
-        return self._native.some_method(some_argument._native)
+    def some_method(self, some_argument: NameRulesExampleStruct) -> float: ...
 
     @property
     def int_property(self) -> int:

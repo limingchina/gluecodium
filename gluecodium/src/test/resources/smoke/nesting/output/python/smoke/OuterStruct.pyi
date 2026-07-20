@@ -1,6 +1,7 @@
 
 
 from smoke.OuterStructInnerEnum import OuterStructInnerEnum
+import typing
 
 
 from _native_base import _NativeBase
@@ -27,7 +28,5 @@ class OuterStruct(_NativeBase):
       self._native.field = getattr(value, "_native", value)
 
 
-    def do_nothing(self):
-        """"""
-        return self._native.do_nothing()
+    def do_nothing(self): ...
 

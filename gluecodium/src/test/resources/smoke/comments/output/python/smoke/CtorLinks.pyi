@@ -4,6 +4,7 @@ from smoke.CtorLinksOverloadedCtors import CtorLinksOverloadedCtors
 from smoke.CtorLinksSingleCtor import CtorLinksSingleCtor
 from smoke.CtorLinksSingleCtorWithOneArgument import CtorLinksSingleCtorWithOneArgument
 from smoke.CtorLinksSingleCtorWithTwoArgument import CtorLinksSingleCtorWithTwoArgument
+import typing
 
 from _native_base import _NativeBase
 

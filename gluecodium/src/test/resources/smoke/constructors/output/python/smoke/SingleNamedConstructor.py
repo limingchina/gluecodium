@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 
-
 from _native_base import _NativeBase
 
 import generated
@@ -16,7 +15,6 @@ class SingleNamedConstructor(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
     def create() -> SingleNamedConstructor:
         """"""
         native_result = generated.SingleNamedConstructor.create()

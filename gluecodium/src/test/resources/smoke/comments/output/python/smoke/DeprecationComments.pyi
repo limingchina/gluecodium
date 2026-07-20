@@ -1,6 +1,7 @@
 
 
 from smoke.DeprecationCommentsSomeEnum import DeprecationCommentsSomeEnum
+import typing
 
 
 import generated
@@ -23,9 +24,7 @@ class DeprecationComments(generated.DeprecationComments):
             super().__init__()
         self._native = self
 
-    def some_method_with_all_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return generated.DeprecationComments.some_method_with_all_comments(self, input)
+    def some_method_with_all_comments(self, input: str) -> bool: ...
 
     @property
     def is_some_property(self) -> bool:

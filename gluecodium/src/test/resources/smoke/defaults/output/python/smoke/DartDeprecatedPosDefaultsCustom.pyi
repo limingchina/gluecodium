@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -37,8 +38,5 @@ class DartDeprecatedPosDefaultsCustom(_NativeBase):
 
 
     @staticmethod
-    def custom() -> DartDeprecatedPosDefaultsCustom:
-        """"""
-        native_result = generated.DartDeprecatedPosDefaultsCustom.custom()
-        return DartDeprecatedPosDefaultsCustom(native_result)
+    def custom() -> DartDeprecatedPosDefaultsCustom: ...
 

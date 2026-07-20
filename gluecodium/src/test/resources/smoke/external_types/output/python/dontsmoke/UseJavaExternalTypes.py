@@ -9,7 +9,6 @@ from smoke.Season import Season
 from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
 
-
 from _native_base import _NativeBase
 
 import generated

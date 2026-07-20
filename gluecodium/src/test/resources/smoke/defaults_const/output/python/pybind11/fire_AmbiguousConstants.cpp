@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AmbiguousConstants = ::fire::AmbiguousConstants;
 
+
 void register_AmbiguousConstants(py::module_& module) {
     py::class_<AmbiguousConstants, std::shared_ptr<AmbiguousConstants>>(module, "AmbiguousConstants")
         ;

@@ -1,6 +1,7 @@
 
 
 from smoke.ConstructorsErrorEnum import ConstructorsErrorEnum
+import typing
 
 import generated
 
@@ -21,39 +22,27 @@ class Constructors(generated.Constructors):
             super().__init__()
         self._native = self
 
+    @typing.overload
     @staticmethod
-    def create() -> Constructors:
-        """"""
-        native_result = generated.Constructors.create()
-        return Constructors(native_result)
+    def create() -> Constructors: ...
 
+    @typing.overload
     @staticmethod
-    def create(other: Constructors) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(other._native)
-        return Constructors(native_result)
+    def create(other: Constructors) -> Constructors: ...
 
+    @typing.overload
     @staticmethod
-    def create(foo: str, bar: int) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(foo, bar)
-        return Constructors(native_result)
+    def create(foo: str, bar: int) -> Constructors: ...
 
+    @typing.overload
     @staticmethod
-    def create(input: str) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(input)
-        return Constructors(native_result)
+    def create(input: str) -> Constructors: ...
 
+    @typing.overload
     @staticmethod
-    def create(input: list[float]) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(input)
-        return Constructors(native_result)
+    def create(input: list[float]) -> Constructors: ...
 
+    @typing.overload
     @staticmethod
-    def create(input: int) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(input)
-        return Constructors(native_result)
+    def create(input: int) -> Constructors: ...
 

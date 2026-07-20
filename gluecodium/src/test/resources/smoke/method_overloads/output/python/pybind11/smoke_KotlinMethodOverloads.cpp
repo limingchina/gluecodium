@@ -17,10 +17,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using KotlinMethodOverloads = ::smoke::KotlinMethodOverloads;
 
+
 void register_KotlinMethodOverloads(py::module_& module) {
     py::class_<KotlinMethodOverloads, std::shared_ptr<KotlinMethodOverloads>>(module, "KotlinMethodOverloads")
         .def("one", &KotlinMethodOverloads::one, py::arg("input"))
+
         .def("two", &KotlinMethodOverloads::two, py::arg("input"))
+
         ;
 }
 

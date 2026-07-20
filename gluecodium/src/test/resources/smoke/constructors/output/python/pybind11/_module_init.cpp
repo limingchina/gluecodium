@@ -10,8 +10,8 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_ChildConstructors(pybind11::module_& module);
 void register_Constructors(pybind11::module_& module);
+void register_ChildConstructors(pybind11::module_& module);
 void register_ConstructorsErrorEnum(pybind11::module_& module);
 void register_SingleNamedConstructor(pybind11::module_& module);
 void register_SingleNamelessConstructor(pybind11::module_& module);
@@ -22,8 +22,8 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_ChildConstructors(m);
     register_Constructors(m);
+    register_ChildConstructors(m);
     register_ConstructorsErrorEnum(m);
     register_SingleNamedConstructor(m);
     register_SingleNamelessConstructor(m);

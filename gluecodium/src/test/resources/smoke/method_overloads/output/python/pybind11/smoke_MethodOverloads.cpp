@@ -16,18 +16,29 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MethodOverloads = ::smoke::MethodOverloads;
 
+
 void register_MethodOverloads(py::module_& module) {
     py::class_<MethodOverloads, std::shared_ptr<MethodOverloads>>(module, "MethodOverloads")
         .def("is_boolean", py::overload_cast<const bool>(&MethodOverloads::is_boolean), py::arg("input"))
+
         .def("is_boolean", py::overload_cast<const int8_t>(&MethodOverloads::is_boolean), py::arg("input"))
+
         .def("is_boolean", py::overload_cast<const ::std::string&>(&MethodOverloads::is_boolean), py::arg("input"))
+
         .def("is_boolean", py::overload_cast<const ::smoke::MethodOverloads::Point&>(&MethodOverloads::is_boolean), py::arg("input"))
+
         .def("is_boolean", py::overload_cast<const bool, const int8_t, const ::std::string&, const ::smoke::MethodOverloads::Point&>(&MethodOverloads::is_boolean), py::arg("input1"), py::arg("input2"), py::arg("input3"), py::arg("input4"))
+
         .def("is_boolean", py::overload_cast<const ::std::vector< ::std::string >&>(&MethodOverloads::is_boolean), py::arg("input"))
+
         .def("is_boolean", py::overload_cast<const ::std::vector< int8_t >&>(&MethodOverloads::is_boolean), py::arg("input"))
+
         .def("is_boolean", py::overload_cast<>(&MethodOverloads::is_boolean))
+
         .def("is_float", py::overload_cast<const ::std::string&>(&MethodOverloads::is_float), py::arg("input"))
+
         .def("is_float", py::overload_cast<const ::std::vector< int8_t >&>(&MethodOverloads::is_float), py::arg("input"))
+
         ;
 }
 

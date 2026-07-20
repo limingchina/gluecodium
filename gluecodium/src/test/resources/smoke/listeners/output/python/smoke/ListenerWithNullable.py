@@ -56,15 +56,12 @@ class ListenerWithNullable(generated.ListenerWithNullable):
         """"""
         return generated.ListenerWithNullable.method_with_u_long(self, input)
 
-    def method_with_double(self, input: Optional[bool]) -> Optional[bool]:
+    def method_with_double(*args, **kwargs) -> Optional[bool]:
         """"""
-        return generated.ListenerWithNullable.method_with_double(self, input)
+        return generated.ListenerWithNullable.method_with_double(self, *[getattr(a, "_native", a) for a in args])
 
     def method_with_float(self, input: Optional[float]) -> Optional[float]:
         """"""
         return generated.ListenerWithNullable.method_with_float(self, input)
 
-    def method_with_double(self, input: Optional[float]) -> Optional[float]:
-        """"""
-        return generated.ListenerWithNullable.method_with_double(self, input)
 

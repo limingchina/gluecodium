@@ -50,7 +50,7 @@ public:
 };
 
 void register_ChildClassWithImports(py::module_& module) {
-    py::class_<ChildClassWithImports, std::shared_ptr<ChildClassWithImports>, ChildClassWithImportsTrampoline>(module, "ChildClassWithImports")
+    py::class_<ChildClassWithImports, ::smoke::ParentClassWithImports, std::shared_ptr<ChildClassWithImports>, ChildClassWithImportsTrampoline>(module, "ChildClassWithImports")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -61,6 +61,9 @@ void register_ChildClassWithImports(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("root_method", &ChildClassWithImports::root_method, py::arg("input1"), py::arg("input2"))
+
+        .def_property("root_property", py::overload_cast<>(&ChildClassWithImports::get_root_property, py::const_), py::overload_cast<const ::smoke::IncludableLambda&>(&ChildClassWithImports::set_root_property))
         ;
 }
 

@@ -5,7 +5,6 @@ from __future__ import annotations
 from smoke.StructsAnotherExternalStruct import StructsAnotherExternalStruct
 from smoke.StructsExternalStruct import StructsExternalStruct
 
-
 from _native_base import _NativeBase
 
 import generated

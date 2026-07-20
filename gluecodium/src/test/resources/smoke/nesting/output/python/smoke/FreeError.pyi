@@ -1,6 +1,7 @@
 
 
 from smoke.FreeEnum import FreeEnum
+import typing
 
 class FreeError(Exception):
     """"""

@@ -11,11 +11,11 @@
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_InternalClass(pybind11::module_& module);
+void register_InternalInterfaceParent(pybind11::module_& module);
 void register_InternalClassInherits(pybind11::module_& module);
 void register_InternalClassWithFunctions(pybind11::module_& module);
 void register_InternalClassWithStaticProperty(pybind11::module_& module);
 void register_InternalInterface(pybind11::module_& module);
-void register_InternalInterfaceParent(pybind11::module_& module);
 void register_InternalPropertyOnly(pybind11::module_& module);
 void register_OuterClassWithInternalAttribute(pybind11::module_& module);
 void register_OuterClassWithInternalAttributeClassNestedInInternalClass(pybind11::module_& module);
@@ -42,11 +42,11 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_InternalClass(m);
+    register_InternalInterfaceParent(m);
     register_InternalClassInherits(m);
     register_InternalClassWithFunctions(m);
     register_InternalClassWithStaticProperty(m);
     register_InternalInterface(m);
-    register_InternalInterfaceParent(m);
     register_InternalPropertyOnly(m);
     register_OuterClassWithInternalAttribute(m);
     register_OuterClassWithInternalAttributeClassNestedInInternalClass(m);

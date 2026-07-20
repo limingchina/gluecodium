@@ -6,7 +6,6 @@ from smoke.StructsInstance import StructsInstance
 from smoke.StructsPoint import StructsPoint
 from smoke.TypeCollectionPoint import TypeCollectionPoint
 
-
 from _native_base import _NativeBase
 
 import generated

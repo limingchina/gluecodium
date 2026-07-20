@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,11 +13,9 @@ class OverloadsWithComments(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def do_stuff(self):
-        """"""
-        return self._native.do_stuff()
+    @typing.overload
+    def do_stuff(self): ...
 
-    def do_stuff(self, stuff: str):
-        """[stuff]"""
-        return self._native.do_stuff(stuff)
+    @typing.overload
+    def do_stuff(self, stuff: str): ...
 

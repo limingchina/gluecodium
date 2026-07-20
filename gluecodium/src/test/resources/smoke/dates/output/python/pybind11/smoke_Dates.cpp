@@ -19,10 +19,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Dates = ::smoke::Dates;
 
+
 void register_Dates(py::module_& module) {
     py::class_<Dates, std::shared_ptr<Dates>>(module, "Dates")
         .def("date_method", &Dates::date_method, py::arg("input"))
+
         .def("nullable_date_method", &Dates::nullable_date_method, py::arg("input"))
+
         .def_property("date_property", py::overload_cast<>(&Dates::get_date_property, py::const_), py::overload_cast<const ::std::chrono::system_clock::time_point&>(&Dates::set_date_property))
         .def_property("date_set", py::overload_cast<>(&Dates::get_date_set, py::const_), py::overload_cast<const ::std::unordered_set< ::std::chrono::system_clock::time_point, ::gluecodium::hash< ::std::chrono::system_clock::time_point > >&>(&Dates::set_date_set))
         ;

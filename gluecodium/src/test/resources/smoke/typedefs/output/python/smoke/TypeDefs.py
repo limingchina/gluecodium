@@ -5,7 +5,6 @@ from __future__ import annotations
 from smoke.TypeCollectionPoint import TypeCollectionPoint
 from smoke.TypeDefsTestStruct import TypeDefsTestStruct
 
-
 from _native_base import _NativeBase
 
 import generated
@@ -49,7 +48,6 @@ class TypeDefs(_NativeBase):
         """"""
         native_result = generated.TypeDefs.return_type_def_point_from_type_collection(input._native)
         return TypeCollectionPoint(native_result)
-
 
     @property
     def primitive_type_property(self) -> list[float]:

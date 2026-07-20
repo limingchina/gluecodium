@@ -17,6 +17,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CtorLinks = ::smoke::CtorLinks;
 
+
 void register_CtorLinks(py::module_& module) {
     py::class_<CtorLinks, std::shared_ptr<CtorLinks>>(module, "CtorLinks")
         ;

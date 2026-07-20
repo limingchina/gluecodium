@@ -27,7 +27,7 @@ public:
 };
 
 void register_ChildClassWithLambda(py::module_& module) {
-    py::class_<ChildClassWithLambda, std::shared_ptr<ChildClassWithLambda>, ChildClassWithLambdaTrampoline>(module, "ChildClassWithLambda")
+    py::class_<ChildClassWithLambda, ::smoke::InterfaceWithLambda, std::shared_ptr<ChildClassWithLambda>, ChildClassWithLambdaTrampoline>(module, "ChildClassWithLambda")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

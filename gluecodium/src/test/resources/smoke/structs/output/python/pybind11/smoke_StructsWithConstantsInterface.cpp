@@ -18,6 +18,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructsWithConstantsInterface = ::smoke::StructsWithConstantsInterface;
 
+
 void register_StructsWithConstantsInterface(py::module_& module) {
     py::class_<StructsWithConstantsInterface, std::shared_ptr<StructsWithConstantsInterface>>(module, "StructsWithConstantsInterface")
         ;

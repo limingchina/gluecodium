@@ -1,0 +1,25 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/forward/InnerClassForwardDeclarations.h"
+#include "memory"
+
+// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
+using InnerInnerClass2 = ::smoke::forward::InnerClassForwardDeclarations::InnerClass2::InnerInnerClass2;
+
+
+void register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(py::module_& module) {
+    py::class_<InnerInnerClass2, std::shared_ptr<InnerInnerClass2>>(module, "InnerClassForwardDeclarationsInnerClass2InnerInnerClass2")
+        .def("bar", &InnerInnerClass2::bar, py::arg("arg"))
+
+        ;
+}
+

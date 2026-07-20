@@ -3,6 +3,7 @@
 from smoke.forward.InnerClassForwardDeclarationsInnerClass2InnerInnerClass2 import InnerClassForwardDeclarationsInnerClass2InnerInnerClass2
 from smoke.forward.InnerClassForwardDeclarationsInnerInterface1 import InnerClassForwardDeclarationsInnerInterface1
 from smoke.forward.InnerClassForwardDeclarationsInnerInterface2 import InnerClassForwardDeclarationsInnerInterface2
+import typing
 
 from _native_base import _NativeBase
 

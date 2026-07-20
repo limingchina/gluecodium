@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -47,8 +48,5 @@ class FieldCustomConstructorsMix(_NativeBase):
 
 
     @staticmethod
-    def create_me(int_value: int, dummy: float) -> FieldCustomConstructorsMix:
-        """"""
-        native_result = generated.FieldCustomConstructorsMix.create_me(int_value, dummy)
-        return FieldCustomConstructorsMix(native_result)
+    def create_me(int_value: int, dummy: float) -> FieldCustomConstructorsMix: ...
 

@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,7 +23,5 @@ class NoCacheInterface(generated.NoCacheInterface):
             super().__init__()
         self._native = self
 
-    def foo(self):
-        """"""
-        return generated.NoCacheInterface.foo(self)
+    def foo(self): ...
 

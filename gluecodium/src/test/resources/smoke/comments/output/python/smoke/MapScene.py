@@ -15,11 +15,8 @@ class MapScene(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def load_scene(self, map_scheme: int, callback: Optional[MapSceneLoadSceneCallback]):
+    def load_scene(*args, **kwargs):
         """"""
-        return self._native.load_scene(map_scheme, callback._native)
+        return self._native.load_scene(*[getattr(a, "_native", a) for a in args])
 
-    def load_scene(self, configuration_file: str, callback: Optional[MapSceneLoadSceneCallback]):
-        """"""
-        return self._native.load_scene(configuration_file, callback._native)
 

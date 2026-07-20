@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -17,7 +18,5 @@ class CppRefReturnTypeStruct(_NativeBase):
             super().__init__(generated.CppRefReturnTypeStruct(*[getattr(arg, "_native", arg) for arg in args]))
 
     @staticmethod
-    def string_ref() -> str:
-        """"""
-        return generated.CppRefReturnTypeStruct.string_ref()
+    def string_ref() -> str: ...
 

@@ -1,0 +1,25 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/MethodOverloads.h"
+
+// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
+using Point = ::smoke::MethodOverloads::Point;
+
+void register_MethodOverloadsPoint(py::module_& module) {
+    py::class_<Point>(module, "MethodOverloadsPoint")
+        .def_readwrite("x", &Point::x)
+        .def_readwrite("y", &Point::y)
+        .def(py::init<>())
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        ;
+}
+

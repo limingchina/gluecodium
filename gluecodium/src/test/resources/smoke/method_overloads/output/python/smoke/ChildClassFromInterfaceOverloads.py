@@ -23,19 +23,13 @@ class ChildClassFromInterfaceOverloads(generated.ChildClassFromInterfaceOverload
             super().__init__()
         self._native = self
 
-    def foo(self, input: str):
+    def foo(*args, **kwargs):
         """"""
-        return generated.ChildClassFromInterfaceOverloads.foo(self, input)
+        return generated.ChildClassFromInterfaceOverloads.foo(self, *[getattr(a, "_native", a) for a in args])
 
-    def foo(self, input: float):
-        """"""
-        return generated.ChildClassFromInterfaceOverloads.foo(self, input)
 
-    def bar(self, input: str):
+    def bar(*args, **kwargs):
         """"""
-        return generated.ChildClassFromInterfaceOverloads.bar(self, input)
+        return generated.ChildClassFromInterfaceOverloads.bar(self, *[getattr(a, "_native", a) for a in args])
 
-    def bar(self, input: float):
-        """"""
-        return generated.ChildClassFromInterfaceOverloads.bar(self, input)
 

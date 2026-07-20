@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using JavaPublicClass = ::smoke::JavaPublicClass;
 
+
 void register_JavaPublicClass(py::module_& module) {
     py::class_<JavaPublicClass, std::shared_ptr<JavaPublicClass>>(module, "JavaPublicClass")
         ;

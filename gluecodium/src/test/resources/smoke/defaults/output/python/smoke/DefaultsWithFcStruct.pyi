@@ -1,6 +1,7 @@
 
 
 from smoke.FcStruct import FcStruct
+import typing
 
 
 from _native_base import _NativeBase

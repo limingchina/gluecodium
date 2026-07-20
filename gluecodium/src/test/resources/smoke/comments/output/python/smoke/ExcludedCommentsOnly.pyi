@@ -1,6 +1,7 @@
 
 
 from smoke.ExcludedCommentsOnlySomeEnum import ExcludedCommentsOnlySomeEnum
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,13 +14,9 @@ class ExcludedCommentsOnly(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def some_method_with_all_comments(self, input_parameter: str) -> bool:
-        """"""
-        return self._native.some_method_with_all_comments(input_parameter)
+    def some_method_with_all_comments(self, input_parameter: str) -> bool: ...
 
-    def some_method_without_return_type_or_input_parameters(self):
-        """"""
-        return self._native.some_method_without_return_type_or_input_parameters()
+    def some_method_without_return_type_or_input_parameters(self): ...
 
     @property
     def is_some_property(self) -> bool:

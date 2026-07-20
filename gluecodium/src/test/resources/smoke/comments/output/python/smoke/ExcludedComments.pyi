@@ -1,6 +1,7 @@
 
 
 from smoke.ExcludedCommentsSomeEnum import ExcludedCommentsSomeEnum
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,13 +14,9 @@ class ExcludedComments(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def some_method_with_all_comments(self, input_parameter: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_all_comments(input_parameter)
+    def some_method_with_all_comments(self, input_parameter: str) -> bool: ...
 
-    def some_method_without_return_type_or_input_parameters(self):
-        """This is some very useful method that does nothing."""
-        return self._native.some_method_without_return_type_or_input_parameters()
+    def some_method_without_return_type_or_input_parameters(self): ...
 
     @property
     def is_some_property(self) -> bool:

@@ -16,6 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructsWithMethodsInterface = ::smoke::StructsWithMethodsInterface;
 
+
 void register_StructsWithMethodsInterface(py::module_& module) {
     py::class_<StructsWithMethodsInterface, std::shared_ptr<StructsWithMethodsInterface>>(module, "StructsWithMethodsInterface")
         ;

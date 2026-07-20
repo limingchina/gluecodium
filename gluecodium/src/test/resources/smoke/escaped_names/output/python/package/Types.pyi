@@ -1,6 +1,7 @@
 
 
 from package.typesenum import typesenum
+import typing
 
 
 from _native_base import _NativeBase

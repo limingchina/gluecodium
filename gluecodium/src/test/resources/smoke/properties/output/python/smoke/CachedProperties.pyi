@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,12 +13,10 @@ class CachedProperties(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
     @property
     def cached_property(self) -> list[str]:
         """"""
         return self._native.cached_property
-
 
 
     @property

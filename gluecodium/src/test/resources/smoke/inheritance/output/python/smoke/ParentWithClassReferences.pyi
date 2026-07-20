@@ -2,6 +2,7 @@
 
 from smoke.ChildClassFromClass import ChildClassFromClass
 from smoke.ParentClass import ParentClass
+import typing
 
 
 import generated
@@ -24,9 +25,7 @@ class ParentWithClassReferences(generated.ParentWithClassReferences):
             super().__init__()
         self._native = self
 
-    def class_function(self) -> ChildClassFromClass:
-        """"""
-        return generated.ParentWithClassReferences.class_function(self)
+    def class_function(self) -> ChildClassFromClass: ...
 
     @property
     def class_property(self) -> ParentClass:

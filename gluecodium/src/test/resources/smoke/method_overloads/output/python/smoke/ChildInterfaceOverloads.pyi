@@ -1,6 +1,7 @@
 
 
 from smoke.ParentInterface import ParentInterface
+import typing
 
 
 import generated
@@ -23,11 +24,7 @@ class ChildInterfaceOverloads(generated.ChildInterfaceOverloads):
             super().__init__()
         self._native = self
 
-    def foo(self, input: str):
-        """"""
-        return generated.ChildInterfaceOverloads.foo(self, input)
+    def foo(self, input: str): ...
 
-    def bar(self, input: str):
-        """"""
-        return generated.ChildInterfaceOverloads.bar(self, input)
+    def bar(self, input: str): ...
 

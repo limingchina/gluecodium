@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,7 +23,5 @@ class InternalListener(generated.InternalListener):
             super().__init__()
         self._native = self
 
-    def on_event(self):
-        """"""
-        return generated.InternalListener.on_event(self)
+    def on_event(self): ...
 

@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -36,9 +37,7 @@ class FreePoint(_NativeBase):
       self._native.y = getattr(value, "_native", value)
 
 
-    def flip(self) -> FreePoint:
-        """"""
-        return self._native.flip()
+    def flip(self) -> FreePoint: ...
 
 
     A_BAR = FreeEnum.BAR

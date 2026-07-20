@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -37,8 +38,5 @@ class JavaDeprecatedPosDefaultsCustom(_NativeBase):
 
 
     @staticmethod
-    def custom() -> JavaDeprecatedPosDefaultsCustom:
-        """"""
-        native_result = generated.JavaDeprecatedPosDefaultsCustom.custom()
-        return JavaDeprecatedPosDefaultsCustom(native_result)
+    def custom() -> JavaDeprecatedPosDefaultsCustom: ...
 

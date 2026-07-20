@@ -2,6 +2,7 @@
 
 from smoke.StructConstantsNestingStruct import StructConstantsNestingStruct
 from smoke.StructConstantsSomeStruct import StructConstantsSomeStruct
+import typing
 
 from _native_base import _NativeBase
 

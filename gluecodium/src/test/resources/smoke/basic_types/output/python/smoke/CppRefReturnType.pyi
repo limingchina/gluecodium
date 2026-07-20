@@ -2,6 +2,7 @@
 
 from smoke.CppRefReturnTypeInternalError import CppRefReturnTypeInternalError
 from smoke.CppRefReturnTypeSomeStruct import CppRefReturnTypeSomeStruct
+import typing
 
 from _native_base import _NativeBase
 
@@ -15,56 +16,34 @@ class CppRefReturnType(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def void_ref():
-        """"""
-        generated.CppRefReturnType.void_ref()
+    def void_ref(): ...
 
     @staticmethod
-    def bool_ref() -> bool:
-        """"""
-        return generated.CppRefReturnType.bool_ref()
+    def bool_ref() -> bool: ...
 
     @staticmethod
-    def string_ref() -> str:
-        """"""
-        return generated.CppRefReturnType.string_ref()
+    def string_ref() -> str: ...
 
     @staticmethod
-    def struct_ref() -> CppRefReturnTypeSomeStruct:
-        """"""
-        native_result = generated.CppRefReturnType.struct_ref()
-        return CppRefReturnTypeSomeStruct(native_result)
+    def struct_ref() -> CppRefReturnTypeSomeStruct: ...
 
     @staticmethod
-    def class_ref() -> CppRefReturnType:
-        """"""
-        native_result = generated.CppRefReturnType.class_ref()
-        return CppRefReturnType(native_result)
+    def class_ref() -> CppRefReturnType: ...
 
     @staticmethod
-    def nullable_ref() -> Optional[str]:
-        """"""
-        return generated.CppRefReturnType.nullable_ref()
+    def nullable_ref() -> Optional[str]: ...
 
     @staticmethod
-    def throwing_enum_with_void():
-        """"""
-        generated.CppRefReturnType.throwing_enum_with_void()
+    def throwing_enum_with_void(): ...
 
     @staticmethod
-    def throwing_enum_with_string() -> str:
-        """"""
-        return generated.CppRefReturnType.throwing_enum_with_string()
+    def throwing_enum_with_string() -> str: ...
 
     @staticmethod
-    def throwing_struct_with_void():
-        """"""
-        generated.CppRefReturnType.throwing_struct_with_void()
+    def throwing_struct_with_void(): ...
 
     @staticmethod
-    def throwing_struct_with_string() -> str:
-        """"""
-        return generated.CppRefReturnType.throwing_struct_with_string()
+    def throwing_struct_with_string() -> str: ...
 
 
     @staticmethod

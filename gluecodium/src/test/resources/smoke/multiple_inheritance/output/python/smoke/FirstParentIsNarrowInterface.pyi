@@ -2,6 +2,7 @@
 
 from smoke.ParentNarrowOne import ParentNarrowOne
 from smoke.ParentNarrowTwo import ParentNarrowTwo
+import typing
 
 
 import generated
@@ -24,9 +25,7 @@ class FirstParentIsNarrowInterface(generated.FirstParentIsNarrowInterface):
             super().__init__()
         self._native = self
 
-    def child_function(self):
-        """"""
-        return generated.FirstParentIsNarrowInterface.child_function(self)
+    def child_function(self): ...
 
     @property
     def child_property(self) -> str:

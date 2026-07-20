@@ -1,6 +1,7 @@
 
 
 from smoke.OuterStructWithInternalAttributeStructNestedInInternalStruct import OuterStructWithInternalAttributeStructNestedInInternalStruct
+import typing
 
 
 from _native_base import _NativeBase

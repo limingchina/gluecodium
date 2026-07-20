@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,9 +14,5 @@ class SingleNamedConstructor(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-
-    def create() -> SingleNamedConstructor:
-        """"""
-        native_result = generated.SingleNamedConstructor.create()
-        return SingleNamedConstructor(native_result)
+    def create() -> SingleNamedConstructor: ...
 

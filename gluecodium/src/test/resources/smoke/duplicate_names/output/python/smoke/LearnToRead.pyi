@@ -2,6 +2,7 @@
 
 from smoke.Alphabet import Alphabet
 from smoke.foo.Alphabet import Alphabet
+import typing
 
 
 from _native_base import _NativeBase

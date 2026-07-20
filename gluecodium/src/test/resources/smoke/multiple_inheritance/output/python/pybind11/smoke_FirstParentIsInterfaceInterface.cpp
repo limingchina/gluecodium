@@ -110,7 +110,7 @@ public:
 };
 
 void register_FirstParentIsInterfaceInterface(py::module_& module) {
-    py::class_<FirstParentIsInterfaceInterface, std::shared_ptr<FirstParentIsInterfaceInterface>, FirstParentIsInterfaceInterfaceTrampoline>(module, "FirstParentIsInterfaceInterface")
+    py::class_<FirstParentIsInterfaceInterface, ::smoke::ParentInterface, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsInterfaceInterface>, FirstParentIsInterfaceInterfaceTrampoline>(module, "FirstParentIsInterfaceInterface", py::multiple_inheritance())
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -131,6 +131,28 @@ void register_FirstParentIsInterfaceInterface(py::module_& module) {
             return self.get_child_property();
         }, [](FirstParentIsInterfaceInterface& self, const ::std::string& value) {
             self.set_child_property(value);
+        })
+        .def("parent_function", [](FirstParentIsInterfaceInterface& self) {
+            return self.parent_function();
+        })
+
+        .def("some_function_that_uses_type_from_another_package", [](FirstParentIsInterfaceInterface& self, const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param) {
+            return self.some_function_that_uses_type_from_another_package(some_param);
+        }, py::arg("some_param"))
+
+        .def("parent_function_one", [](FirstParentIsInterfaceInterface& self) {
+            return self.parent_function_one();
+        })
+
+        .def_property("parent_property", [](const FirstParentIsInterfaceInterface& self) {
+            return self.get_parent_property();
+        }, [](FirstParentIsInterfaceInterface& self, const ::std::string& value) {
+            self.set_parent_property(value);
+        })
+        .def_property("parent_property_one", [](const FirstParentIsInterfaceInterface& self) {
+            return self.get_parent_property_one();
+        }, [](FirstParentIsInterfaceInterface& self, const ::std::string& value) {
+            self.set_parent_property_one(value);
         })
         ;
 }

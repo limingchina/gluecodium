@@ -6,7 +6,7 @@ from smoke.Month import Month
 from smoke.Season import Season
 from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -20,38 +20,20 @@ class UseJavaExternalTypes(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def currency_round_trip(input: Currency) -> Currency:
-        """"""
-        native_result = generated.UseJavaExternalTypes.currency_round_trip(input._native)
-        return Currency(native_result)
+    def currency_round_trip(input: Currency) -> Currency: ...
 
     @staticmethod
-    def time_zone_round_trip(input: TimeZone) -> TimeZone:
-        """"""
-        native_result = generated.UseJavaExternalTypes.time_zone_round_trip(input._native)
-        return TimeZone(native_result)
+    def time_zone_round_trip(input: TimeZone) -> TimeZone: ...
 
     @staticmethod
-    def month_round_trip(input: Month) -> Month:
-        """"""
-        native_result = generated.UseJavaExternalTypes.month_round_trip(input._native)
-        return Month(native_result)
+    def month_round_trip(input: Month) -> Month: ...
 
     @staticmethod
-    def color_round_trip(input: SystemColor) -> SystemColor:
-        """"""
-        native_result = generated.UseJavaExternalTypes.color_round_trip(input._native)
-        return SystemColor(native_result)
+    def color_round_trip(input: SystemColor) -> SystemColor: ...
 
     @staticmethod
-    def season_round_trip(input: Season) -> Season:
-        """"""
-        native_result = generated.UseJavaExternalTypes.season_round_trip(input._native)
-        return Season(native_result)
+    def season_round_trip(input: Season) -> Season: ...
 
     @staticmethod
-    def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
-        """"""
-        native_result = generated.UseJavaExternalTypes.struct_round_trip(input._native)
-        return JavaExternalTypesStruct(native_result)
+    def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct: ...
 

@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,22 +13,13 @@ class InternalClassWithFunctions(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    def foo_bar(self): ...
 
-    def foo_bar(self):
-        """"""
-        return self._native.foo_bar()
-
+    @typing.overload
     @staticmethod
+    def make() -> InternalClassWithFunctions: ...
 
-    def make() -> InternalClassWithFunctions:
-        """"""
-        native_result = generated.InternalClassWithFunctions.make()
-        return InternalClassWithFunctions(native_result)
-
+    @typing.overload
     @staticmethod
-
-    def make(foo: str) -> InternalClassWithFunctions:
-        """"""
-        native_result = generated.InternalClassWithFunctions.make(foo)
-        return InternalClassWithFunctions(native_result)
+    def make(foo: str) -> InternalClassWithFunctions: ...
 

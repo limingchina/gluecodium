@@ -2,6 +2,7 @@
 
 from smoke.SkippedEverywhere import SkippedEverywhere
 from smoke.SkippedEverywhereEnum import SkippedEverywhereEnum
+import typing
 
 
 import generated
@@ -24,21 +25,13 @@ class SkipProxy(generated.SkipProxy):
             super().__init__()
         self._native = self
 
-    def not_in_java(self, input: str) -> str:
-        """"""
-        return generated.SkipProxy.not_in_java(self, input)
+    def not_in_java(self, input: str) -> str: ...
 
-    def not_in_swift(self, input: bool) -> bool:
-        """"""
-        return generated.SkipProxy.not_in_swift(self, input)
+    def not_in_swift(self, input: bool) -> bool: ...
 
-    def not_in_dart(self, input: float) -> float:
-        """"""
-        return generated.SkipProxy.not_in_dart(self, input)
+    def not_in_dart(self, input: float) -> float: ...
 
-    def not_in_kotlin(self, input: float) -> float:
-        """"""
-        return generated.SkipProxy.not_in_kotlin(self, input)
+    def not_in_kotlin(self, input: float) -> float: ...
 
     @property
     def skipped_in_java(self) -> str:

@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MyOuterClass = ::smoke::MyOuterClass;
 
+
 void register_MyOuterClass(py::module_& module) {
     py::class_<MyOuterClass, std::shared_ptr<MyOuterClass>>(module, "MyOuterClass")
         ;

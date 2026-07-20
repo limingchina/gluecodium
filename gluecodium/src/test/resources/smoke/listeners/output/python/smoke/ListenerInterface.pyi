@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,7 +23,5 @@ class ListenerInterface(generated.ListenerInterface):
             super().__init__()
         self._native = self
 
-    def notify(self):
-        """"""
-        return generated.ListenerInterface.notify(self)
+    def notify(self): ...
 

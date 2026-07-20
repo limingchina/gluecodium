@@ -1,6 +1,7 @@
 
 
 from smoke.ImmutableStructNoClash import ImmutableStructNoClash
+import typing
 
 
 from _native_base import _NativeBase

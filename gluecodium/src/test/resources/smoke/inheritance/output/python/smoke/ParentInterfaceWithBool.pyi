@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,7 +23,5 @@ class ParentInterfaceWithBool(generated.ParentInterfaceWithBool):
             super().__init__()
         self._native = self
 
-    def root_method(self, input1: bool):
-        """"""
-        return generated.ParentInterfaceWithBool.root_method(self, input1)
+    def root_method(self, input1: bool): ...
 

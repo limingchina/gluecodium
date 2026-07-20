@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CommentsTable = ::smoke::CommentsTable;
 
+
 void register_CommentsTable(py::module_& module) {
     py::class_<CommentsTable, std::shared_ptr<CommentsTable>>(module, "CommentsTable")
         ;

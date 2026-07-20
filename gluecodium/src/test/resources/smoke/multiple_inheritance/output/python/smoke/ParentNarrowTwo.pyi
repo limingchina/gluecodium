@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,9 +23,7 @@ class ParentNarrowTwo(generated.ParentNarrowTwo):
             super().__init__()
         self._native = self
 
-    def parent_function_two(self):
-        """"""
-        return generated.ParentNarrowTwo.parent_function_two(self)
+    def parent_function_two(self): ...
 
     @property
     def parent_property_two(self) -> str:

@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using KotlinInternalClass = ::smoke::KotlinInternalClass;
 
+
 void register_KotlinInternalClass(py::module_& module) {
     py::class_<KotlinInternalClass, std::shared_ptr<KotlinInternalClass>>(module, "KotlinInternalClass")
         ;

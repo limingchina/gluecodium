@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InternalPropertyOnly = ::smoke::InternalPropertyOnly;
 
+
 void register_InternalPropertyOnly(py::module_& module) {
     py::class_<InternalPropertyOnly, std::shared_ptr<InternalPropertyOnly>>(module, "InternalPropertyOnly")
         .def_property("foo", py::overload_cast<>(&InternalPropertyOnly::get_foo, py::const_), py::overload_cast<const ::std::string&>(&InternalPropertyOnly::set_foo))

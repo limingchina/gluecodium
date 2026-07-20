@@ -16,6 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using JavaInternalProperty = ::smoke::JavaInternalProperty;
 
+
 void register_JavaInternalProperty(py::module_& module) {
     py::class_<JavaInternalProperty, std::shared_ptr<JavaInternalProperty>>(module, "JavaInternalProperty")
         .def_property("app_context", py::overload_cast<>(&JavaInternalProperty::get_app_context, py::const_), py::overload_cast<const std::optional< ::std::string >&>(&JavaInternalProperty::set_app_context))

@@ -14,10 +14,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SpecialAttributes = ::smoke::SpecialAttributes;
 
+
 void register_SpecialAttributes(py::module_& module) {
     py::class_<SpecialAttributes, std::shared_ptr<SpecialAttributes>>(module, "SpecialAttributes")
         .def("with_escaping", &SpecialAttributes::with_escaping)
+
         .def("with_line_break", &SpecialAttributes::with_line_break)
+
         ;
 }
 

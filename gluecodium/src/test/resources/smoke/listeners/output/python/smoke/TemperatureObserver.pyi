@@ -1,6 +1,7 @@
 
 
 from smoke.Thermometer import Thermometer
+import typing
 
 
 import generated
@@ -23,7 +24,5 @@ class TemperatureObserver(generated.TemperatureObserver):
             super().__init__()
         self._native = self
 
-    def on_temperature_update(self, thermometer: Thermometer):
-        """"""
-        return generated.TemperatureObserver.on_temperature_update(self, thermometer._native)
+    def on_temperature_update(self, thermometer: Thermometer): ...
 

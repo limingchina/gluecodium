@@ -15,9 +15,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipEnableParameters = ::smoke::SkipEnableParameters;
 
+
 void register_SkipEnableParameters(py::module_& module) {
     py::class_<SkipEnableParameters, std::shared_ptr<SkipEnableParameters>>(module, "SkipEnableParameters")
         .def("do_something", &SkipEnableParameters::do_something, py::arg("input"))
+
         ;
 }
 

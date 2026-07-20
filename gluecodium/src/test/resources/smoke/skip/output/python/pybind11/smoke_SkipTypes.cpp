@@ -17,9 +17,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipTypes = ::smoke::SkipTypes;
 
+
 void register_SkipTypes(py::module_& module) {
     py::class_<SkipTypes, std::shared_ptr<SkipTypes>>(module, "SkipTypes")
         .def("use_list_in_dart", &SkipTypes::use_list_in_dart)
+
         ;
 }
 

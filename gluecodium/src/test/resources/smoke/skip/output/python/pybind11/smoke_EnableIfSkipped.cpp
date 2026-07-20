@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnableIfSkipped = ::smoke::EnableIfSkipped;
 
+
 void register_EnableIfSkipped(py::module_& module) {
     py::class_<EnableIfSkipped, std::shared_ptr<EnableIfSkipped>>(module, "EnableIfSkipped")
         ;

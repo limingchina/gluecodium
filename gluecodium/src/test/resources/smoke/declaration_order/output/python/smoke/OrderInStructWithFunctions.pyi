@@ -2,6 +2,7 @@
 
 from smoke.OrderInStructWithFunctionsNestedStruct import OrderInStructWithFunctionsNestedStruct
 from smoke.OrderInStructWithFunctionsSomeEnum import OrderInStructWithFunctionsSomeEnum
+import typing
 
 
 from _native_base import _NativeBase
@@ -28,7 +29,5 @@ class OrderInStructWithFunctions(_NativeBase):
       self._native.some_field = getattr(value, "_native", value)
 
 
-    def do_stuff(self, struct_foo: OrderInStructWithFunctionsNestedStruct) -> OrderInStructWithFunctionsSomeEnum:
-        """"""
-        return self._native.do_stuff(struct_foo._native)
+    def do_stuff(self, struct_foo: OrderInStructWithFunctionsNestedStruct) -> OrderInStructWithFunctionsSomeEnum: ...
 

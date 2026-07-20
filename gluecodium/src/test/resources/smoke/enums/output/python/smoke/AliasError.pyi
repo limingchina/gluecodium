@@ -1,6 +1,7 @@
 
 
 from smoke.EnumWithAlias import EnumWithAlias
+import typing
 
 class AliasError(Exception):
     """"""

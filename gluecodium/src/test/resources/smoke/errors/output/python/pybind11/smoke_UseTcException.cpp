@@ -15,9 +15,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseTcException = ::smoke::UseTcException;
 
+
 void register_UseTcException(py::module_& module) {
     py::class_<UseTcException, std::shared_ptr<UseTcException>>(module, "UseTcException")
         .def("do_nothing", &UseTcException::do_nothing)
+
         ;
 }
 

@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,15 +23,9 @@ class SkipTagsInSwift(generated.SkipTagsInSwift):
             super().__init__()
         self._native = self
 
-    def skip_tagged(self):
-        """"""
-        return generated.SkipTagsInSwift.skip_tagged(self)
+    def skip_tagged(self): ...
 
-    def dont_skip_tagged(self):
-        """"""
-        return generated.SkipTagsInSwift.dont_skip_tagged(self)
+    def dont_skip_tagged(self): ...
 
-    def skip_tagged_list(self):
-        """"""
-        return generated.SkipTagsInSwift.skip_tagged_list(self)
+    def skip_tagged_list(self): ...
 

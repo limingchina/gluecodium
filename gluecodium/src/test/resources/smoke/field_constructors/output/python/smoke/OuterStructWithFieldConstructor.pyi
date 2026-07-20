@@ -1,6 +1,7 @@
 
 
 from smoke.OuterStructWithFieldConstructorInnerStructWithDefaults import OuterStructWithFieldConstructorInnerStructWithDefaults
+import typing
 
 
 from _native_base import _NativeBase

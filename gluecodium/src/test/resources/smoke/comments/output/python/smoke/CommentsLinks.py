@@ -22,7 +22,7 @@ Weblinks are not modified like this [example1], [example2](http://www.example.co
     def __init__(self, native):
         super().__init__(native)
 
-    def random_method(self, input_parameter: commentsSomeEnum) -> commentsSomeEnum:
+    def random_method(*args, **kwargs) -> commentsSomeEnum:
         """Link types:
 * constant: [comments.VeryUseful]
 * struct: [comments.SomeStruct]
@@ -54,12 +54,6 @@ Not working for Java:
 
 Not working for Swift:
 * named comment: [Alternative name for the link, stripped for Swift][comments.VeryUseful]"""
-        return self._native.random_method(input_parameter._native)
+        return self._native.random_method(*[getattr(a, "_native", a) for a in args])
 
-    def random_method(self, text: str, flag: bool):
-        """Links to method overloads:
-* other one: [random_method(SomeEnum)]
-* this one: [random_method(String, Boolean)]
-* ambiguous one: [random_method]"""
-        return self._native.random_method(text, flag)
 

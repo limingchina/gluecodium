@@ -1,6 +1,7 @@
 
 
 from smoke.SomeTypeCollectionSomeTypeCollectionError import SomeTypeCollectionSomeTypeCollectionError
+import typing
 
 
 from _native_base import _NativeBase

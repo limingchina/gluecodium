@@ -16,13 +16,19 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SpecialNames = ::smoke::SpecialNames;
 
+
 void register_SpecialNames(py::module_& module) {
     py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(module, "SpecialNames")
         .def("create", &SpecialNames::create)
+
         .def("release", &SpecialNames::release)
+
         .def("create_proxy", &SpecialNames::create_proxy)
+
         .def("_uppercase", &SpecialNames::_uppercase)
+
         .def_static("make", &SpecialNames::make, py::arg("result"))
+
         ;
 }
 
