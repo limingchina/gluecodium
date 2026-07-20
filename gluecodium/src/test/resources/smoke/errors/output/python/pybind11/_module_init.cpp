@@ -11,6 +11,7 @@
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_Errors(pybind11::module_& module);
+void register_ErrorsExternalErrors(pybind11::module_& module);
 void register_ErrorsInterface(pybind11::module_& module);
 void register_ErrorsInterfaceExternalErrors(pybind11::module_& module);
 void register_ErrorsInterfaceInternalError(pybind11::module_& module);
@@ -32,6 +33,7 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_Errors(m);
+    register_ErrorsExternalErrors(m);
     register_ErrorsInterface(m);
     register_ErrorsInterfaceExternalErrors(m);
     register_ErrorsInterfaceInternalError(m);

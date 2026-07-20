@@ -11,8 +11,12 @@
 namespace py = pybind11;
 #include "foo/Bar.h"
 #include "foo/Bazz.h"
+#include "gluecodium/VectorHash.h"
 #include "non/Sense.h"
 #include "smoke/Structs.h"
+#include "cstdint"
+#include "string"
+#include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Structs = ::smoke::Structs;

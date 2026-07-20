@@ -123,7 +123,7 @@ void register_ChildClassFromClassOverloads(py::module_& module) {
 
         .def("foo", py::overload_cast<const int32_t>(&ChildClassFromClassOverloads::foo), py::arg("input"))
 
-        .def("bar", &ChildClassFromClassOverloads::bar)
+        .def("bar", py::overload_cast<>(&ChildClassFromClassOverloads::bar))
 
         .def("baz", &ChildClassFromClassOverloads::baz)
 

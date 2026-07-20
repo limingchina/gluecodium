@@ -21,6 +21,7 @@ void register_EquatableSomeEnum(pybind11::module_& module);
 void register_EquatableStructWithAccessors(pybind11::module_& module);
 void register_EquatableStructWithInternalFields(pybind11::module_& module);
 void register_ExternalEquatable(pybind11::module_& module);
+void register_ExternalEquatableExternalEquatableStruct(pybind11::module_& module);
 void register_NonEquatableClass(pybind11::module_& module);
 void register_NonEquatableInterface(pybind11::module_& module);
 void register_PointerEquatableClass(pybind11::module_& module);
@@ -43,6 +44,7 @@ PYBIND11_MODULE(generated, m) {
     register_EquatableStructWithAccessors(m);
     register_EquatableStructWithInternalFields(m);
     register_ExternalEquatable(m);
+    register_ExternalEquatableExternalEquatableStruct(m);
     register_NonEquatableClass(m);
     register_NonEquatableInterface(m);
     register_PointerEquatableClass(m);
