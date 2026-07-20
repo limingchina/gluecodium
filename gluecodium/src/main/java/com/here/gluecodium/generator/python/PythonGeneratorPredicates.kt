@@ -40,6 +40,7 @@ internal class PythonGeneratorPredicates(
     private val signatureResolver: LimeSignatureResolver,
     private val limeReferenceMap: Map<String, LimeElement>,
     private val pybind11NameResolver: Pybind11NameResolver,
+    private val pythonNameResolver: PythonNameResolver,
     private val standaloneEnums: Set<String>,
     private val internalNamespace: List<String>,
 ) {
@@ -102,6 +103,23 @@ internal class PythonGeneratorPredicates(
             "isOverloaded" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     signatureResolver.isOverloaded(limeFunction)
+            },
+            // Whether this function is the FIRST one (in declaration order) among the container's
+            // own functions that resolves to the same Python name. The Python wrapper layer can only
+            // hold a single method per name, so exactly one representative is emitted (a generic
+            // *args/**kwargs dispatcher) and the rest are skipped. This predicate is evaluated with
+            // the function as context, but it needs the enclosing container to find siblings, so it
+            // walks up via the function's path parent.
+            "isFirstOverload" to { limeFunction: Any ->
+                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
+                    run {
+                        val container =
+                            limeReferenceMap[limeFunction.path.parent.toString()]
+                                as? com.here.gluecodium.model.lime.LimeContainer ?: return@run false
+                        val pythonName = pythonNameResolver.resolveName(limeFunction)
+                        container.functions.indexOfFirst { pythonNameResolver.resolveName(it) == pythonName } ==
+                            container.functions.indexOf(limeFunction)
+                    }
             },
             // Whether the C++ name of this function collides with another function in the same
             // container OR an inherited one. In C++ a child class exposes all inherited overloads,

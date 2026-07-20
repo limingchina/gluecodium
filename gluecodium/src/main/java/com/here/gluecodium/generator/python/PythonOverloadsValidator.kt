@@ -23,14 +23,23 @@ import com.here.gluecodium.common.LimeLogger
 import com.here.gluecodium.model.lime.LimeContainer
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeElement
+import com.here.gluecodium.model.lime.LimeFunction
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeSignatureResolver
 
 /**
- * Validate functions and constructors against overloading. Python does not support overloaded
- * method names, so each resolved name must be unique within a container.
+ * Validate functions and constructors against overloading.
+ *
+ * The Python wrapper layer now supports overloaded method names: it emits a single generic
+ * `*args, **kwargs` dispatcher per resolved name and forwards to the native pybind11 binding, which
+ * uses `py::overload_cast<...>()` to pick the right C++ overload. The only case that genuinely
+ * cannot be bound is when two overloads resolve to the *same C++ signature* (same parameter types),
+ * because pybind11 then has no way to disambiguate them. For those we still warn and point users at
+ * `@Python(Name = ...)` as the escape hatch.
  */
 internal class PythonOverloadsValidator(
     private val nameResolver: PythonNameResolver,
+    private val signatureResolver: LimeSignatureResolver,
     private val logger: LimeLogger,
     private val werror: Boolean,
 ) {
@@ -48,19 +57,27 @@ internal class PythonOverloadsValidator(
                 ((limeContainer as? LimeContainerWithInheritance)?.inheritedFunctions ?: emptyList())
         val constructors = allFunctions.filter { it.isConstructor }
 
+        // Group by the *Python* name: these are the overloads the wrapper collapses into one
+        // dispatcher. They are fine as long as the C++ layer can still tell them apart by signature.
         val overloadedFunctions =
             (allFunctions - constructors.toSet())
                 .groupBy { nameResolver.resolveName(it) }
                 .filter { it.value.size > 1 }
-        overloadedFunctions.forEach { entry ->
-            val pathsString = entry.value.map { it.path.toString() }.sorted().joinToString()
+
+        // Only groups that contain a genuine C++ signature clash are unbindable.
+        val ambiguousFunctions =
+            overloadedFunctions.filter { (_, functions) ->
+                functions.any { signatureResolver.hasSignatureClash(it, functions) }
+            }
+        ambiguousFunctions.forEach { (pythonName, functions) ->
+            val pathsString = functions.map { it.path.toString() }.sorted().joinToString()
             logger.logFunction(
-                entry.value.first(),
-                "Python does not support overloaded methods, but method '${entry.key}' " +
-                    "is overloaded in $pathsString",
+                functions.first(),
+                "Python method '$pythonName' resolves to ambiguous C++ overloads in $pathsString; " +
+                    "use @Python(Name = ...) to give the overloads distinct Python names",
             )
         }
 
-        return overloadedFunctions.isEmpty()
+        return ambiguousFunctions.isEmpty()
     }
 }

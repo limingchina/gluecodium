@@ -19,7 +19,20 @@
   !
   !}}
 {{! Python method/function body (delegates to native C++ object via pybind11). }}
-{{#if isStatic}}    @staticmethod
+{{#if isStub}}{{#ifPredicate this "isOverloaded"}}    @typing.overload
+{{/ifPredicate}}{{#if isStatic}}    @staticmethod
+{{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}: ...
+{{/if}}{{#unless isStub}}{{#ifPredicate this "isOverloaded"}}{{#ifPredicate this "isFirstOverload"}}{{#if isStatic}}    @staticmethod
+{{/if}}    def {{resolveName}}(*args, **kwargs){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
+{{#if comment}}        """{{resolveName comment}}"""
+{{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}(*[getattr(a, "_native", a) for a in args])
+{{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}(*[getattr(a, "_native", a) for a in args])
+{{#ifPredicate returnType.typeRef "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}
+{{/ifPredicate}}        return {{resolveName returnType}}(native_result)
+{{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isWrapperType"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}(*[getattr(a, "_native", a) for a in args])
+{{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}{{#ifPredicate model "needsTrampoline"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}(self, *[getattr(a, "_native", a) for a in args])
+{{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        return self._native.{{resolveName}}(*[getattr(a, "_native", a) for a in args])
+{{/unlessPredicate}}{{/unless}}{{/ifPredicate}}{{/ifPredicate}}{{#unlessPredicate this "isOverloaded"}}{{#if isStatic}}    @staticmethod
 {{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
 {{#if comment}}        """{{resolveName comment}}"""
 {{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
@@ -31,4 +44,4 @@
 {{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/unlessPredicate}}{{/ifPredicate}}{{#unlessPredicate model "isInterface"}}{{#ifPredicate model "needsTrampoline"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}(self{{#if parameters}}, {{/if}}{{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        return self._native.{{resolveName}}({{#parameters}}{{resolveName}}{{#ifPredicate typeRef "isWrapperType"}}._native{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}})
-{{/unlessPredicate}}{{/unlessPredicate}}{{/unless}}
+{{/unlessPredicate}}{{/unlessPredicate}}{{/unless}}{{/unlessPredicate}}{{/unless}}
