@@ -39,6 +39,7 @@ import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
 import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeEnumeration
+import com.here.gluecodium.model.lime.LimeExternalDescriptor
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
@@ -100,20 +101,21 @@ internal class PythonGenerator : Generator {
         // Filter the model: keep elements that are not skipped for Python. The first pass retains
         // functions/fields (needed for container bodies); the second pass drops them for the
         // actual Python output.
-        // External types are pre-existing C++ types that are only *referenced* (never generated), so
-        // the Python generator must skip them just like the C++ generator does (it checks
-        // `external?.cpp == null`). Binding them would emit broken pybind11 code referencing types
-        // the generator does not own.
+        // External types (those with `external { cpp include ...; cpp name ... }`) are pre-existing
+        // C++ types. Unlike the C++ generator, the Python (pybind11) generator does NOT skip them:
+        // it binds them by emitting a pybind11 `py::class_` that references the external C++ type
+        // directly (via the external `cpp name`) and `#include`s the external header (via `cpp
+        // include`). The existing C++ name/include resolvers already resolve these descriptors, so
+        // the binding is correct. Skipping them would leave referencing types (e.g. a function
+        // returning an external struct) with an unimportable Python module.
         val pybind11FilteredModel =
             LimeModelFilter.filter(limeModel) {
                 LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = true) &&
-                    !isCppSkipped(it) &&
-                    (it as? LimeNamedElement)?.external?.cpp == null
+                    !isCppSkipped(it)
             }
         val pythonFilteredModel =
             LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false) &&
-                    (it as? LimeNamedElement)?.external?.cpp == null
+                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false)
             }
 
         pythonNameResolver =
@@ -282,6 +284,20 @@ internal class PythonGenerator : Generator {
                 "moduleName" to pythonModule,
                 "includes" to includes,
                 "internalNamespace" to internalNamespace,
+                // Whether a `using <alias> = <fullName>;` alias is needed. The alias brings the C++
+                // type into the global namespace so `py::class_<alias>`/`py::enum_<alias>` can use the
+                // short name. It is only needed when the short name differs from `fullName`; for
+                // external types whose `cpp name` is already fully-qualified (and thus equals
+                // `fullName`), emitting `using ::ns::Type = ::ns::Type;` would be malformed, so we skip it.
+                // Exceptions have no dedicated C++ header (they map to std::error_code) and no
+                // `fullName`, so they never need an alias.
+                "needsAlias" to
+                    if (limeType is com.here.gluecodium.model.lime.LimeException) {
+                        false
+                    } else {
+                        pybind11NameResolver.resolveName(limeType) !=
+                            cppNameCache.getFullyQualifiedName(limeElement)
+                    },
                 "fullName" to
                     if (limeType is com.here.gluecodium.model.lime.LimeException) {
                         ""

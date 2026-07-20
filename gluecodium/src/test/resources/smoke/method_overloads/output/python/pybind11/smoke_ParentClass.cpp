@@ -79,7 +79,7 @@ void register_ParentClass(py::module_& module) {
 
         .def("foo", py::overload_cast<const int32_t>(&ParentClass::foo), py::arg("input"))
 
-        .def("bar", &ParentClass::bar)
+        .def("bar", py::overload_cast<>(&ParentClass::bar))
 
         .def("baz", &ParentClass::baz)
 

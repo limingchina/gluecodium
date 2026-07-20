@@ -1,6 +1,7 @@
 {{! pybind11 struct binding. }}
 void register_{{resolveName}}(py::module_& module) {
     py::class_<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}")
+{{#unless external.cpp}}
 {{#fields}}
 {{#ifPredicate "hasFieldAccessors"}}
 {{#ifPredicate "isImmutableField"}}
@@ -21,5 +22,6 @@ void register_{{resolveName}}(py::module_& module) {
 {{>python/Pybind11Function}}{{/functions}}
 {{#properties}}
 {{>python/Pybind11Property}}{{/properties}}
+{{/unless}}
         ;
 }

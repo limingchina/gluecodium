@@ -1,5 +1,6 @@
 {{! pybind11 class binding. Registered into the module by the module init (Phase 6). }}
 {{#ifPredicate model "needsTrampoline"}}
+{{#unless external.cpp}}
 class {{resolveName}}Trampoline : public {{resolveName model "Pybind11"}} {
 public:
     using {{resolveName model "Pybind11"}}::{{resolveName model "Pybind11"}};
@@ -35,6 +36,7 @@ public:
 {{/unless}}
 {{/inheritedProperties}}
 };
+{{/unless}}
 {{/ifPredicate}}
 
 void register_{{resolveName}}(py::module_& module) {
@@ -50,6 +52,7 @@ void register_{{resolveName}}(py::module_& module) {
             return self;
         }))
 {{/ifPredicate}}
+{{#unless external.cpp}}
 {{#functions}}
 {{>python/Pybind11Function}}{{/functions}}
 {{#properties}}
@@ -64,5 +67,6 @@ void register_{{resolveName}}(py::module_& module) {
 {{#unless isStatic}}
 {{>python/Pybind11Property}}{{/unless}}
 {{/inheritedProperties}}
+{{/unless}}
         ;
 }
