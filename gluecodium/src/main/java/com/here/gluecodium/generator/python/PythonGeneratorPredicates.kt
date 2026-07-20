@@ -58,6 +58,24 @@ internal class PythonGeneratorPredicates(
         return own + inherited
     }
 
+    // Returns true if `descendant` inherits (directly or transitively) from `ancestor`.
+    private fun isDescendantOf(
+        descendant: com.here.gluecodium.model.lime.LimeContainerWithInheritance,
+        ancestor: com.here.gluecodium.model.lime.LimeContainer,
+    ): Boolean {
+        val visited = mutableSetOf<String>()
+        val queue = ArrayDeque<com.here.gluecodium.model.lime.LimeContainerWithInheritance>().apply { add(descendant) }
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            if (current.path.toString() == ancestor.path.toString()) return true
+            if (!visited.add(current.path.toString())) continue
+            current.parents
+                .mapNotNull { it.type.actualType as? com.here.gluecodium.model.lime.LimeContainerWithInheritance }
+                .forEach { queue.add(it) }
+        }
+        return false
+    }
+
     val predicates =
         mapOf(
             "hasAnyComment" to { limeElement: Any ->
@@ -128,11 +146,23 @@ internal class PythonGeneratorPredicates(
             "isCppOverloaded" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     run {
-                        val container =
+                        val declaringContainer =
                             limeReferenceMap[limeFunction.path.parent.toString()]
                                 as? com.here.gluecodium.model.lime.LimeContainer ?: return@run false
                         val cppName = pybind11NameResolver.resolveName(limeFunction)
-                        allContainerFunctions(container).count { pybind11NameResolver.resolveName(it) == cppName } > 1
+                        // Containers where this function is visible: the declaring container itself
+                        // plus every descendant that inherits from it (directly or transitively).
+                        val visibleContainers =
+                            sequence {
+                                yield(declaringContainer)
+                                limeReferenceMap.values
+                                    .filterIsInstance<com.here.gluecodium.model.lime.LimeContainerWithInheritance>()
+                                    .filter { it != declaringContainer && isDescendantOf(it, declaringContainer) }
+                                    .forEach { yield(it) }
+                            }
+                        visibleContainers.any { container ->
+                            allContainerFunctions(container).count { pybind11NameResolver.resolveName(it) == cppName } > 1
+                        }
                     }
             },
             "needsInterfaceLambdaBinding" to { limeElement: Any ->
