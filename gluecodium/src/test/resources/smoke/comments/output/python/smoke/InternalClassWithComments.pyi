@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,7 +13,5 @@ class InternalClassWithComments(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def do_nothing(self):
-        """This is definitely internal"""
-        return self._native.do_nothing()
+    def do_nothing(self): ...
 

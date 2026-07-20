@@ -22,13 +22,10 @@ class ParentClass(generated.ParentClass):
             super().__init__()
         self._native = self
 
-    def foo(self):
+    def foo(*args, **kwargs):
         """"""
-        return generated.ParentClass.foo(self)
+        return generated.ParentClass.foo(self, *[getattr(a, "_native", a) for a in args])
 
-    def foo(self, input: int):
-        """"""
-        return generated.ParentClass.foo(self, input)
 
     def bar(self):
         """"""

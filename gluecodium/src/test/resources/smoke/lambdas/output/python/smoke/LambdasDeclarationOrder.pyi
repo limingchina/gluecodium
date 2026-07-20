@@ -1,7 +1,7 @@
 
 
 from smoke.LambdasDeclarationOrderSomeStruct import LambdasDeclarationOrderSomeStruct
-
+import typing
 
 from _native_base import _NativeBase
 

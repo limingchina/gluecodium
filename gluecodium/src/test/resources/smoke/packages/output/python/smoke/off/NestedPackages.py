@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from smoke.off.NestedPackagesSomeStruct import NestedPackagesSomeStruct
 
-
 from _native_base import _NativeBase
 
 import generated

@@ -1,6 +1,7 @@
 
 
 from smoke.LambdasInterfaceTakeScreenshotCallback import LambdasInterfaceTakeScreenshotCallback
+import typing
 
 
 import generated
@@ -23,7 +24,5 @@ class LambdasInterface(generated.LambdasInterface):
             super().__init__()
         self._native = self
 
-    def take_screenshot(self, callback: LambdasInterfaceTakeScreenshotCallback):
-        """"""
-        return generated.LambdasInterface.take_screenshot(self, callback._native)
+    def take_screenshot(self, callback: LambdasInterfaceTakeScreenshotCallback): ...
 

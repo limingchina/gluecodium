@@ -1,5 +1,6 @@
 
 
+import typing
 
 import generated
 
@@ -20,9 +21,7 @@ class ParentClass(generated.ParentClass):
             super().__init__()
         self._native = self
 
-    def parent_fun(self):
-        """"""
-        return generated.ParentClass.parent_fun(self)
+    def parent_fun(self): ...
 
     @property
     def parent_property(self) -> str:

@@ -16,13 +16,19 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AsyncClass = ::smoke::AsyncClass;
 
+
 void register_AsyncClass(py::module_& module) {
     py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "AsyncClass")
         .def("async_void", &AsyncClass::async_void, py::arg("input"))
+
         .def("async_void_throws", &AsyncClass::async_void_throws, py::arg("input"))
+
         .def("async_int", &AsyncClass::async_int, py::arg("input"))
+
         .def("async_int_throws", &AsyncClass::async_int_throws, py::arg("input"))
+
         .def_static("async_static", &AsyncClass::async_static, py::arg("input"))
+
         ;
 }
 

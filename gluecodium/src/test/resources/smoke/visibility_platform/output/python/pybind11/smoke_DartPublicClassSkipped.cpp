@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartPublicClassSkipped = ::smoke::DartPublicClassSkipped;
 
+
 void register_DartPublicClassSkipped(py::module_& module) {
     py::class_<DartPublicClassSkipped, std::shared_ptr<DartPublicClassSkipped>>(module, "DartPublicClassSkipped")
         ;

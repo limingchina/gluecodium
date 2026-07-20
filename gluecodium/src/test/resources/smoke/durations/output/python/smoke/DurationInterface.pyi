@@ -1,6 +1,7 @@
 
 
 import datetime
+import typing
 
 
 import generated
@@ -23,7 +24,5 @@ class DurationInterface(generated.DurationInterface):
             super().__init__()
         self._native = self
 
-    def duration_function(self, input: datetime.timedelta) -> str:
-        """"""
-        return generated.DurationInterface.duration_function(self, input)
+    def duration_function(self, input: datetime.timedelta) -> str: ...
 

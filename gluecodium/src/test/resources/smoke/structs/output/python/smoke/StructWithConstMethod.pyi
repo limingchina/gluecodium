@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -26,7 +27,5 @@ class StructWithConstMethod(_NativeBase):
       self._native.string_field = getattr(value, "_native", value)
 
 
-    def double_const(self) -> float:
-        """"""
-        return self._native.double_const()
+    def double_const(self) -> float: ...
 

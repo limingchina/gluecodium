@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,9 +23,7 @@ class InternalInterface(generated.InternalInterface):
             super().__init__()
         self._native = self
 
-    def foo_bar(self):
-        """"""
-        return generated.InternalInterface.foo_bar(self)
+    def foo_bar(self): ...
 
 
     @staticmethod

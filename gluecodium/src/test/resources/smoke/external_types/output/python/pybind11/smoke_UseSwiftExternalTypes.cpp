@@ -18,12 +18,17 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
 
+
 void register_UseSwiftExternalTypes(py::module_& module) {
     py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "UseSwiftExternalTypes")
         .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
+
         .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
+
         .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
+
         .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
+
         ;
 }
 

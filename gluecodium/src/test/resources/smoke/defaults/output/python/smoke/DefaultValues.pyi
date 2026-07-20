@@ -1,7 +1,7 @@
 
 
 from smoke.DefaultValuesStructWithDefaults import DefaultValuesStructWithDefaults
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -15,8 +15,5 @@ class DefaultValues(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def process_struct_with_defaults(input: DefaultValuesStructWithDefaults) -> DefaultValuesStructWithDefaults:
-        """"""
-        native_result = generated.DefaultValues.process_struct_with_defaults(input._native)
-        return DefaultValuesStructWithDefaults(native_result)
+    def process_struct_with_defaults(input: DefaultValuesStructWithDefaults) -> DefaultValuesStructWithDefaults: ...
 

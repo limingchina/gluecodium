@@ -17,10 +17,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DurationOverloads = ::smoke::DurationOverloads;
 
+
 void register_DurationOverloads(py::module_& module) {
     py::class_<DurationOverloads, std::shared_ptr<DurationOverloads>>(module, "DurationOverloads")
         .def("duration_function", py::overload_cast<const ::std::chrono::seconds>(&DurationOverloads::duration_function), py::arg("input"))
+
         .def("duration_function", py::overload_cast<const ::std::string&>(&DurationOverloads::duration_function), py::arg("input"))
+
         ;
 }
 

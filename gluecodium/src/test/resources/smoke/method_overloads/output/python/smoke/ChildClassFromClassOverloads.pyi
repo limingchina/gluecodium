@@ -1,6 +1,7 @@
 
 
 from smoke.ParentClass import ParentClass
+import typing
 
 import generated
 
@@ -21,19 +22,15 @@ class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
             super().__init__()
         self._native = self
 
-    def foo(self, input: str):
-        """"""
-        return generated.ChildClassFromClassOverloads.foo(self, input)
+    @typing.overload
+    def foo(self, input: str): ...
 
-    def foo(self, input: float):
-        """"""
-        return generated.ChildClassFromClassOverloads.foo(self, input)
+    @typing.overload
+    def foo(self, input: float): ...
 
-    def bar(self, input: str):
-        """"""
-        return generated.ChildClassFromClassOverloads.bar(self, input)
+    @typing.overload
+    def bar(self, input: str): ...
 
-    def bar(self, input: float):
-        """"""
-        return generated.ChildClassFromClassOverloads.bar(self, input)
+    @typing.overload
+    def bar(self, input: float): ...
 

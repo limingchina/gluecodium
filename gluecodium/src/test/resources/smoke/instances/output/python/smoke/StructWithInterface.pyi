@@ -1,6 +1,7 @@
 
 
 from smoke.SimpleInterface import SimpleInterface
+import typing
 
 
 from _native_base import _NativeBase

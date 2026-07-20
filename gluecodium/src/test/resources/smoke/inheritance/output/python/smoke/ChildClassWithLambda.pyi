@@ -1,6 +1,7 @@
 
 
 from smoke.InterfaceWithLambda import InterfaceWithLambda
+import typing
 
 import generated
 

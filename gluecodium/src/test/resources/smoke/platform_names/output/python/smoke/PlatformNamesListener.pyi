@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,7 +23,5 @@ class PlatformNamesListener(generated.PlatformNamesListener):
             super().__init__()
         self._native = self
 
-    def basic_method(self, basic_parameter: str):
-        """"""
-        return generated.PlatformNamesListener.basic_method(self, basic_parameter)
+    def basic_method(self, basic_parameter: str): ...
 

@@ -1,6 +1,7 @@
 
 
 from smoke.DummyStruct import DummyStruct
+import typing
 
 
 from _native_base import _NativeBase

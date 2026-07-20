@@ -14,13 +14,19 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MultipleAttributesCpp = ::smoke::MultipleAttributesCpp;
 
+
 void register_MultipleAttributesCpp(py::module_& module) {
     py::class_<MultipleAttributesCpp, std::shared_ptr<MultipleAttributesCpp>>(module, "MultipleAttributesCpp")
         .def("no_lists2", &MultipleAttributesCpp::no_lists2)
+
         .def("no_lists3", &MultipleAttributesCpp::no_lists3)
+
         .def("list_first", &MultipleAttributesCpp::list_first)
+
         .def("list_second", &MultipleAttributesCpp::list_second)
+
         .def("two_lists", &MultipleAttributesCpp::two_lists)
+
         ;
 }
 

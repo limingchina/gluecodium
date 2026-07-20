@@ -2,6 +2,7 @@
 
 from smoke.StructsWithMethodsInterfaceVector3 import StructsWithMethodsInterfaceVector3
 from smoke.ValidationUtilsValidationErrorCode import ValidationUtilsValidationErrorCode
+import typing
 
 from _native_base import _NativeBase
 

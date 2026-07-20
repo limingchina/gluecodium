@@ -1,6 +1,7 @@
 
 
 from smoke.ParentWithCustomConstructor import ParentWithCustomConstructor
+import typing
 
 import generated
 
@@ -22,8 +23,5 @@ class ChildWithCustomConstructor(generated.ChildWithCustomConstructor):
         self._native = self
 
     @staticmethod
-    def make() -> ChildWithCustomConstructor:
-        """"""
-        native_result = generated.ChildWithCustomConstructor.make()
-        return ChildWithCustomConstructor(native_result)
+    def make() -> ChildWithCustomConstructor: ...
 

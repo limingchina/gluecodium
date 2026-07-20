@@ -20,12 +20,17 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Structs = ::smoke::Structs;
 
+
 void register_Structs(py::module_& module) {
     py::class_<Structs, std::shared_ptr<Structs>>(module, "Structs")
         .def_static("swap_point_coordinates", &Structs::swap_point_coordinates, py::arg("input"))
+
         .def_static("return_all_types_struct", &Structs::return_all_types_struct, py::arg("input"))
+
         .def_static("create_point", &Structs::create_point, py::arg("x"), py::arg("y"))
+
         .def_static("modify_all_types_struct", &Structs::modify_all_types_struct, py::arg("input"))
+
         ;
 }
 

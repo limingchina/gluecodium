@@ -25,14 +25,9 @@ class ChildConstructors(generated.ChildConstructors):
         self._native = self
 
     @staticmethod
-    def create() -> ChildConstructors:
+    def create(*args, **kwargs) -> ChildConstructors:
         """"""
-        native_result = generated.ChildConstructors.create()
+        native_result = generated.ChildConstructors.create(*[getattr(a, "_native", a) for a in args])
         return ChildConstructors(native_result)
 
-    @staticmethod
-    def create(other: Constructors) -> ChildConstructors:
-        """"""
-        native_result = generated.ChildConstructors.create(other._native)
-        return ChildConstructors(native_result)
 

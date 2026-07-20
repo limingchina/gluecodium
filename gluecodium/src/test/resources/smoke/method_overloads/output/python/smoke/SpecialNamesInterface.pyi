@@ -1,6 +1,7 @@
 
 
 from smoke.SpecialNamesInterfaceCallback import SpecialNamesInterfaceCallback
+import typing
 
 
 import generated
@@ -23,7 +24,5 @@ class SpecialNamesInterface(generated.SpecialNamesInterface):
             super().__init__()
         self._native = self
 
-    def dispatch(self, callback: SpecialNamesInterfaceCallback):
-        """"""
-        return generated.SpecialNamesInterface.dispatch(self, callback._native)
+    def dispatch(self, callback: SpecialNamesInterfaceCallback): ...
 

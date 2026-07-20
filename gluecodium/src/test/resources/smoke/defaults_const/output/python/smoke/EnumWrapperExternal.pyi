@@ -1,6 +1,7 @@
 
 
 from fire.ExternalEnum4 import ExternalEnum4
+import typing
 
 
 from _native_base import _NativeBase

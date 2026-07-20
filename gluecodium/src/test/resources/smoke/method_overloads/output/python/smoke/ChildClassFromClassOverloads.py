@@ -23,19 +23,13 @@ class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
             super().__init__()
         self._native = self
 
-    def foo(self, input: str):
+    def foo(*args, **kwargs):
         """"""
-        return generated.ChildClassFromClassOverloads.foo(self, input)
+        return generated.ChildClassFromClassOverloads.foo(self, *[getattr(a, "_native", a) for a in args])
 
-    def foo(self, input: float):
-        """"""
-        return generated.ChildClassFromClassOverloads.foo(self, input)
 
-    def bar(self, input: str):
+    def bar(*args, **kwargs):
         """"""
-        return generated.ChildClassFromClassOverloads.bar(self, input)
+        return generated.ChildClassFromClassOverloads.bar(self, *[getattr(a, "_native", a) for a in args])
 
-    def bar(self, input: float):
-        """"""
-        return generated.ChildClassFromClassOverloads.bar(self, input)
 

@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,45 +23,25 @@ class CommentsInterface(generated.CommentsInterface):
             super().__init__()
         self._native = self
 
-    def some_method_with_all_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return generated.CommentsInterface.some_method_with_all_comments(self, input)
+    def some_method_with_all_comments(self, input: str) -> bool: ...
 
-    def some_method_with_input_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return generated.CommentsInterface.some_method_with_input_comments(self, input)
+    def some_method_with_input_comments(self, input: str) -> bool: ...
 
-    def some_method_with_output_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return generated.CommentsInterface.some_method_with_output_comments(self, input)
+    def some_method_with_output_comments(self, input: str) -> bool: ...
 
-    def some_method_with_no_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return generated.CommentsInterface.some_method_with_no_comments(self, input)
+    def some_method_with_no_comments(self, input: str) -> bool: ...
 
-    def some_method_without_return_type_with_all_comments(self, input: str):
-        """This is some very useful method that does not measure the usefulness of its input."""
-        return generated.CommentsInterface.some_method_without_return_type_with_all_comments(self, input)
+    def some_method_without_return_type_with_all_comments(self, input: str): ...
 
-    def some_method_without_return_type_with_no_comments(self, input: str):
-        """This is some very useful method that does not measure the usefulness of its input."""
-        return generated.CommentsInterface.some_method_without_return_type_with_no_comments(self, input)
+    def some_method_without_return_type_with_no_comments(self, input: str): ...
 
-    def some_method_without_input_parameters_with_all_comments(self) -> bool:
-        """This is some very useful method that measures the usefulness of something."""
-        return generated.CommentsInterface.some_method_without_input_parameters_with_all_comments(self)
+    def some_method_without_input_parameters_with_all_comments(self) -> bool: ...
 
-    def some_method_without_input_parameters_with_no_comments(self) -> bool:
-        """This is some very useful method that measures the usefulness of something."""
-        return generated.CommentsInterface.some_method_without_input_parameters_with_no_comments(self)
+    def some_method_without_input_parameters_with_no_comments(self) -> bool: ...
 
-    def some_method_with_nothing(self):
-        """"""
-        return generated.CommentsInterface.some_method_with_nothing(self)
+    def some_method_with_nothing(self): ...
 
-    def some_method_without_return_type_or_input_parameters(self):
-        """This is some very useful method that does nothing."""
-        return generated.CommentsInterface.some_method_without_return_type_or_input_parameters(self)
+    def some_method_without_return_type_or_input_parameters(self): ...
 
     @property
     def is_some_property(self) -> bool:

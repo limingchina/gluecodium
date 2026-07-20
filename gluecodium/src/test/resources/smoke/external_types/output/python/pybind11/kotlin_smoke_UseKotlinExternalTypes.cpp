@@ -21,15 +21,23 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseKotlinExternalTypes = ::kotlin_smoke::UseKotlinExternalTypes;
 
+
 void register_UseKotlinExternalTypes(py::module_& module) {
     py::class_<UseKotlinExternalTypes, std::shared_ptr<UseKotlinExternalTypes>>(module, "UseKotlinExternalTypes")
         .def_static("currency_round_trip", &UseKotlinExternalTypes::currency_round_trip, py::arg("input"))
+
         .def_static("time_zone_round_trip", &UseKotlinExternalTypes::time_zone_round_trip, py::arg("input"))
+
         .def_static("month_round_trip", &UseKotlinExternalTypes::month_round_trip, py::arg("input"))
+
         .def_static("color_round_trip", &UseKotlinExternalTypes::color_round_trip, py::arg("input"))
+
         .def_static("season_round_trip", &UseKotlinExternalTypes::season_round_trip, py::arg("input"))
+
         .def_static("struct_round_trip", &UseKotlinExternalTypes::struct_round_trip, py::arg("input"))
+
         .def_static("very_boolean_unbox", &UseKotlinExternalTypes::very_boolean_unbox, py::arg("input"))
+
         ;
 }
 

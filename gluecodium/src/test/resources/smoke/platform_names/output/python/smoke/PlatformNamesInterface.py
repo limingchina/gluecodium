@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from smoke.PlatformNamesBasicStruct import PlatformNamesBasicStruct
 
-
 from _native_base import _NativeBase
 
 import generated
@@ -25,7 +24,6 @@ class PlatformNamesInterface(_NativeBase):
         """"""
         native_result = generated.PlatformNamesInterface.create(basic_parameter)
         return PlatformNamesInterface(native_result)
-
 
     @property
     def basic_property(self) -> int:

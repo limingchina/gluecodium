@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,15 +23,9 @@ class EnableTagsInJava(generated.EnableTagsInJava):
             super().__init__()
         self._native = self
 
-    def enable_tagged(self):
-        """"""
-        return generated.EnableTagsInJava.enable_tagged(self)
+    def enable_tagged(self): ...
 
-    def dont_enable_tagged(self):
-        """"""
-        return generated.EnableTagsInJava.dont_enable_tagged(self)
+    def dont_enable_tagged(self): ...
 
-    def enable_tagged_list(self):
-        """"""
-        return generated.EnableTagsInJava.enable_tagged_list(self)
+    def enable_tagged_list(self): ...
 

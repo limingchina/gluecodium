@@ -17,9 +17,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseFreeTypes = ::smoke::UseFreeTypes;
 
+
 void register_UseFreeTypes(py::module_& module) {
     py::class_<UseFreeTypes, std::shared_ptr<UseFreeTypes>>(module, "UseFreeTypes")
         .def("do_stuff", &UseFreeTypes::do_stuff, py::arg("point"), py::arg("mode"))
+
         ;
 }
 

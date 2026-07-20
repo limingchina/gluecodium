@@ -1,6 +1,7 @@
 
 
 from smoke.PublicClassInternalStruct import PublicClassInternalStruct
+import typing
 
 
 import generated

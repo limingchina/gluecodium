@@ -1,6 +1,7 @@
 
 
 from smoke.ClassInStructFooChecker import ClassInStructFooChecker
+import typing
 
 
 from _native_base import _NativeBase

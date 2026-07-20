@@ -1,7 +1,7 @@
 
 
 from smoke.PlatformNamesBasicStruct import PlatformNamesBasicStruct
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,16 +14,10 @@ class PlatformNamesInterface(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def basic_method(self, basic_parameter: str) -> PlatformNamesBasicStruct:
-        """"""
-        return self._native.basic_method(basic_parameter)
+    def basic_method(self, basic_parameter: str) -> PlatformNamesBasicStruct: ...
 
     @staticmethod
-    def create(basic_parameter: str) -> PlatformNamesInterface:
-        """"""
-        native_result = generated.PlatformNamesInterface.create(basic_parameter)
-        return PlatformNamesInterface(native_result)
-
+    def create(basic_parameter: str) -> PlatformNamesInterface: ...
 
     @property
     def basic_property(self) -> int:

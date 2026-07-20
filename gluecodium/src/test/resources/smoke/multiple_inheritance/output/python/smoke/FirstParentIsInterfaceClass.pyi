@@ -3,6 +3,7 @@
 from another.SomeCoolClassType import SomeCoolClassType
 from smoke.ParentInterface import ParentInterface
 from smoke.ParentNarrowOne import ParentNarrowOne
+import typing
 
 import generated
 
@@ -23,9 +24,7 @@ class FirstParentIsInterfaceClass(generated.FirstParentIsInterfaceClass):
             super().__init__()
         self._native = self
 
-    def child_function(self):
-        """"""
-        return generated.FirstParentIsInterfaceClass.child_function(self)
+    def child_function(self): ...
 
     @property
     def child_property(self) -> str:

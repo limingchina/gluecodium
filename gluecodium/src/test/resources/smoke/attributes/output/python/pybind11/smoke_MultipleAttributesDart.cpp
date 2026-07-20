@@ -14,13 +14,19 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MultipleAttributesDart = ::smoke::MultipleAttributesDart;
 
+
 void register_MultipleAttributesDart(py::module_& module) {
     py::class_<MultipleAttributesDart, std::shared_ptr<MultipleAttributesDart>>(module, "MultipleAttributesDart")
         .def("no_lists2", &MultipleAttributesDart::no_lists2)
+
         .def("no_lists3", &MultipleAttributesDart::no_lists3)
+
         .def("list_first", &MultipleAttributesDart::list_first)
+
         .def("list_second", &MultipleAttributesDart::list_second)
+
         .def("two_lists", &MultipleAttributesDart::two_lists)
+
         ;
 }
 

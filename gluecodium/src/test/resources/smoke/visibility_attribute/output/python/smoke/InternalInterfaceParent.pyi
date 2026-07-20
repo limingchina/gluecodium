@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,9 +23,7 @@ class InternalInterfaceParent(generated.InternalInterfaceParent):
             super().__init__()
         self._native = self
 
-    def foo_bar(self):
-        """"""
-        return generated.InternalInterfaceParent.foo_bar(self)
+    def foo_bar(self): ...
 
     @property
     def prop(self) -> str:

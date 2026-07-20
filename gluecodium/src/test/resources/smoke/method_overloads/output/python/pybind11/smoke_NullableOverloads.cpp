@@ -16,10 +16,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using NullableOverloads = ::smoke::NullableOverloads;
 
+
 void register_NullableOverloads(py::module_& module) {
     py::class_<NullableOverloads, std::shared_ptr<NullableOverloads>>(module, "NullableOverloads")
         .def("foo", py::overload_cast<const ::std::string&>(&NullableOverloads::foo), py::arg("input"))
+
         .def("foo", py::overload_cast<const std::optional< ::std::string >&>(&NullableOverloads::foo), py::arg("input"))
+
         ;
 }
 

@@ -15,12 +15,17 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipFunctions = ::smoke::SkipFunctions;
 
+
 void register_SkipFunctions(py::module_& module) {
     py::class_<SkipFunctions, std::shared_ptr<SkipFunctions>>(module, "SkipFunctions")
         .def_static("not_in_java", &SkipFunctions::not_in_java, py::arg("input"))
+
         .def_static("not_in_swift", &SkipFunctions::not_in_swift, py::arg("input"))
+
         .def_static("not_in_dart", &SkipFunctions::not_in_dart, py::arg("input"))
+
         .def_static("not_in_kotlin", &SkipFunctions::not_in_kotlin, py::arg("input"))
+
         ;
 }
 

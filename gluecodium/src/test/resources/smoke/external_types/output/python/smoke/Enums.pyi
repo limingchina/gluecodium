@@ -1,6 +1,7 @@
 
 
 from smoke.EnumsExternal_Enum import EnumsExternal_Enum
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,7 +15,5 @@ class Enums(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def method_with_external_enum(input: EnumsExternal_Enum):
-        """"""
-        generated.Enums.method_with_external_enum(input._native)
+    def method_with_external_enum(input: EnumsExternal_Enum): ...
 

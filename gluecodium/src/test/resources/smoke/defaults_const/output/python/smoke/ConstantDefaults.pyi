@@ -1,6 +1,7 @@
 
 
 from fire.SomeStruct import SomeStruct
+import typing
 
 
 from _native_base import _NativeBase

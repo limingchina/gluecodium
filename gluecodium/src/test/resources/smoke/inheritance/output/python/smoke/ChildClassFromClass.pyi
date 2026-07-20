@@ -1,6 +1,7 @@
 
 
 from smoke.ParentClass import ParentClass
+import typing
 
 import generated
 
@@ -21,7 +22,5 @@ class ChildClassFromClass(generated.ChildClassFromClass):
             super().__init__()
         self._native = self
 
-    def child_class_method(self):
-        """"""
-        return generated.ChildClassFromClass.child_class_method(self)
+    def child_class_method(self): ...
 

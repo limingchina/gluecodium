@@ -32,8 +32,7 @@ public:
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
-            m_impl->method_with_errors();
-            return;
+            return m_impl->method_with_errors();
         }
         PYBIND11_OVERRIDE_PURE(method_with_errors_return_type, ErrorsInterface, method_with_errors);
     }
@@ -42,8 +41,7 @@ public:
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
-            m_impl->method_with_external_errors();
-            return;
+            return m_impl->method_with_external_errors();
         }
         PYBIND11_OVERRIDE_PURE(method_with_external_errors_return_type, ErrorsInterface, method_with_external_errors);
     }

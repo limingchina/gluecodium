@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,9 +23,7 @@ class AttributesInterface(generated.AttributesInterface):
             super().__init__()
         self._native = self
 
-    def very_fun(self, param: str):
-        """"""
-        return generated.AttributesInterface.very_fun(self, param)
+    def very_fun(self, param: str): ...
 
     @property
     def prop(self) -> str:

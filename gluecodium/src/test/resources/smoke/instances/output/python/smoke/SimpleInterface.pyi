@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,11 +23,7 @@ class SimpleInterface(generated.SimpleInterface):
             super().__init__()
         self._native = self
 
-    def get_string_value(self) -> str:
-        """"""
-        return generated.SimpleInterface.get_string_value(self)
+    def get_string_value(self) -> str: ...
 
-    def use_simple_interface(self, input: SimpleInterface) -> SimpleInterface:
-        """"""
-        return generated.SimpleInterface.use_simple_interface(self, input._native)
+    def use_simple_interface(self, input: SimpleInterface) -> SimpleInterface: ...
 

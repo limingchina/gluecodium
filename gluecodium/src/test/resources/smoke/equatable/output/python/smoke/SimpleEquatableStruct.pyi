@@ -2,6 +2,7 @@
 
 from smoke.NonEquatableClass import NonEquatableClass
 from smoke.NonEquatableInterface import NonEquatableInterface
+import typing
 
 
 from _native_base import _NativeBase

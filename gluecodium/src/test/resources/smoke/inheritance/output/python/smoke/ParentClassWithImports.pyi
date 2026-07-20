@@ -4,6 +4,7 @@ from smoke.IncludableClass import IncludableClass
 from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
 from smoke.IncludableStruct import IncludableStruct
+import typing
 
 import generated
 
@@ -24,9 +25,7 @@ class ParentClassWithImports(generated.ParentClassWithImports):
             super().__init__()
         self._native = self
 
-    def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
-        """"""
-        return generated.ParentClassWithImports.root_method(self, input1._native, input2._native)
+    def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass: ...
 
     @property
     def root_property(self) -> IncludableLambda:

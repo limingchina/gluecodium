@@ -3,6 +3,7 @@
 from smoke.NullableSomeEnum import NullableSomeEnum
 from smoke.NullableSomeStruct import NullableSomeStruct
 from smoke.SomeInterface import SomeInterface
+import typing
 
 from _native_base import _NativeBase
 
@@ -15,45 +16,25 @@ class Nullable(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def method_with_string(self, input: Optional[str]) -> Optional[str]:
-        """"""
-        return self._native.method_with_string(input)
+    def method_with_string(self, input: Optional[str]) -> Optional[str]: ...
 
-    def method_with_boolean(self, input: Optional[bool]) -> Optional[bool]:
-        """"""
-        return self._native.method_with_boolean(input)
+    def method_with_boolean(self, input: Optional[bool]) -> Optional[bool]: ...
 
-    def method_with_double(self, input: Optional[float]) -> Optional[float]:
-        """"""
-        return self._native.method_with_double(input)
+    def method_with_double(self, input: Optional[float]) -> Optional[float]: ...
 
-    def method_with_int(self, input: Optional[int]) -> Optional[int]:
-        """"""
-        return self._native.method_with_int(input)
+    def method_with_int(self, input: Optional[int]) -> Optional[int]: ...
 
-    def method_with_some_struct(self, input: Optional[NullableSomeStruct]) -> Optional[NullableSomeStruct]:
-        """"""
-        return self._native.method_with_some_struct(input._native)
+    def method_with_some_struct(self, input: Optional[NullableSomeStruct]) -> Optional[NullableSomeStruct]: ...
 
-    def method_with_some_enum(self, input: Optional[NullableSomeEnum]) -> Optional[NullableSomeEnum]:
-        """"""
-        return self._native.method_with_some_enum(input._native)
+    def method_with_some_enum(self, input: Optional[NullableSomeEnum]) -> Optional[NullableSomeEnum]: ...
 
-    def method_with_some_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
-        """"""
-        return self._native.method_with_some_array(input)
+    def method_with_some_array(self, input: Optional[list[str]]) -> Optional[list[str]]: ...
 
-    def method_with_inline_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
-        """"""
-        return self._native.method_with_inline_array(input)
+    def method_with_inline_array(self, input: Optional[list[str]]) -> Optional[list[str]]: ...
 
-    def method_with_some_map(self, input: Optional[dict[int, str]]) -> Optional[dict[int, str]]:
-        """"""
-        return self._native.method_with_some_map(input)
+    def method_with_some_map(self, input: Optional[dict[int, str]]) -> Optional[dict[int, str]]: ...
 
-    def method_with_instance(self, input: Optional[SomeInterface]) -> Optional[SomeInterface]:
-        """"""
-        return self._native.method_with_instance(input._native)
+    def method_with_instance(self, input: Optional[SomeInterface]) -> Optional[SomeInterface]: ...
 
     @property
     def string_property(self):

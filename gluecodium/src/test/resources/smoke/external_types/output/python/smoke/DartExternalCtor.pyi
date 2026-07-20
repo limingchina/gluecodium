@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -27,8 +28,5 @@ class DartExternalCtor(_NativeBase):
 
 
     @staticmethod
-    def make(field: str) -> DartExternalCtor:
-        """"""
-        native_result = generated.DartExternalCtor.make(field)
-        return DartExternalCtor(native_result)
+    def make(field: str) -> DartExternalCtor: ...
 

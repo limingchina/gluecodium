@@ -1,6 +1,7 @@
 
 
 from smoke.PropertiesInterfaceExampleStruct import PropertiesInterfaceExampleStruct
+import typing
 
 
 import generated

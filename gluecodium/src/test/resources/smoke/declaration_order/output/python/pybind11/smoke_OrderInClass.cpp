@@ -15,6 +15,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using OrderInClass = ::smoke::OrderInClass;
 
+
 void register_OrderInClass(py::module_& module) {
     py::class_<OrderInClass, std::shared_ptr<OrderInClass>>(module, "OrderInClass")
         ;

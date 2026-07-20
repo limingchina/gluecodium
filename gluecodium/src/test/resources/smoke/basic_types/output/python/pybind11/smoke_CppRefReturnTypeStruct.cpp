@@ -19,6 +19,7 @@ void register_CppRefReturnTypeStruct(py::module_& module) {
     py::class_<CppRefReturnTypeStruct>(module, "CppRefReturnTypeStruct")
         .def(py::init<>())
         .def_static("string_ref", &CppRefReturnTypeStruct::string_ref)
+
         ;
 }
 

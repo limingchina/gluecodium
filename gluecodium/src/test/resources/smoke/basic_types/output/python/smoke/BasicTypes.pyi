@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,62 +14,38 @@ class BasicTypes(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def string_function(input: str) -> str:
-        """"""
-        return generated.BasicTypes.string_function(input)
+    def string_function(input: str) -> str: ...
 
     @staticmethod
-    def bool_function(input: bool) -> bool:
-        """"""
-        return generated.BasicTypes.bool_function(input)
+    def bool_function(input: bool) -> bool: ...
 
     @staticmethod
-    def float_function(input: float) -> float:
-        """"""
-        return generated.BasicTypes.float_function(input)
+    def float_function(input: float) -> float: ...
 
     @staticmethod
-    def double_function(input: float) -> float:
-        """"""
-        return generated.BasicTypes.double_function(input)
+    def double_function(input: float) -> float: ...
 
     @staticmethod
-    def byte_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.byte_function(input)
+    def byte_function(input: int) -> int: ...
 
     @staticmethod
-    def short_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.short_function(input)
+    def short_function(input: int) -> int: ...
 
     @staticmethod
-    def int_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.int_function(input)
+    def int_function(input: int) -> int: ...
 
     @staticmethod
-    def long_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.long_function(input)
+    def long_function(input: int) -> int: ...
 
     @staticmethod
-    def ubyte_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.ubyte_function(input)
+    def ubyte_function(input: int) -> int: ...
 
     @staticmethod
-    def ushort_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.ushort_function(input)
+    def ushort_function(input: int) -> int: ...
 
     @staticmethod
-    def uint_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.uint_function(input)
+    def uint_function(input: int) -> int: ...
 
     @staticmethod
-    def ulong_function(input: int) -> int:
-        """"""
-        return generated.BasicTypes.ulong_function(input)
+    def ulong_function(input: int) -> int: ...
 

@@ -15,10 +15,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using NoCacheClass = ::smoke::NoCacheClass;
 
+
 void register_NoCacheClass(py::module_& module) {
     py::class_<NoCacheClass, std::shared_ptr<NoCacheClass>>(module, "NoCacheClass")
         .def_static("make", &NoCacheClass::make)
+
         .def("foo", &NoCacheClass::foo)
+
         ;
 }
 

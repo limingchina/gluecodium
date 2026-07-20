@@ -1,5 +1,6 @@
 
 
+import typing
 
 import generated
 
@@ -20,19 +21,13 @@ class ParentClass(generated.ParentClass):
             super().__init__()
         self._native = self
 
-    def foo(self):
-        """"""
-        return generated.ParentClass.foo(self)
+    @typing.overload
+    def foo(self): ...
 
-    def foo(self, input: int):
-        """"""
-        return generated.ParentClass.foo(self, input)
+    @typing.overload
+    def foo(self, input: int): ...
 
-    def bar(self):
-        """"""
-        return generated.ParentClass.bar(self)
+    def bar(self): ...
 
-    def baz(self):
-        """"""
-        return generated.ParentClass.baz(self)
+    def baz(self): ...
 

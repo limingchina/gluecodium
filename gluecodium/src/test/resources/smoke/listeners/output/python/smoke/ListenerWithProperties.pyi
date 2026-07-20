@@ -3,6 +3,7 @@
 from smoke.CalculationResult import CalculationResult
 from smoke.ListenerWithPropertiesResultEnum import ListenerWithPropertiesResultEnum
 from smoke.ListenerWithPropertiesResultStruct import ListenerWithPropertiesResultStruct
+import typing
 
 
 import generated

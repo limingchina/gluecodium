@@ -1,6 +1,7 @@
 
 
 from smoke.ChildInterface import ChildInterface
+import typing
 
 
 import generated
@@ -23,7 +24,5 @@ class GrandChildInterface(generated.GrandChildInterface):
             super().__init__()
         self._native = self
 
-    def grand_child_method(self):
-        """"""
-        return generated.GrandChildInterface.grand_child_method(self)
+    def grand_child_method(self): ...
 

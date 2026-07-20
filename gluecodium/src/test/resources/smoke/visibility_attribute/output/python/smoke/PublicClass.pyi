@@ -1,7 +1,7 @@
 
 
 from smoke.PublicClassInternalStruct import PublicClassInternalStruct
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,10 +14,7 @@ class PublicClass(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def internal_method(self, input: PublicClassInternalStruct) -> PublicClassInternalStruct:
-        """"""
-        return self._native.internal_method(input._native)
-
+    def internal_method(self, input: PublicClassInternalStruct) -> PublicClassInternalStruct: ...
 
     @property
     def internal_struct_property(self) -> PublicClassInternalStruct:

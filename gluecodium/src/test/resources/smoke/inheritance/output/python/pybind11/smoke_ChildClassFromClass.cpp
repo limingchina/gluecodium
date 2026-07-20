@@ -60,7 +60,7 @@ public:
 };
 
 void register_ChildClassFromClass(py::module_& module) {
-    py::class_<ChildClassFromClass, std::shared_ptr<ChildClassFromClass>, ChildClassFromClassTrampoline>(module, "ChildClassFromClass")
+    py::class_<ChildClassFromClass, ::smoke::ParentClass, std::shared_ptr<ChildClassFromClass>, ChildClassFromClassTrampoline>(module, "ChildClassFromClass")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -73,6 +73,9 @@ void register_ChildClassFromClass(py::module_& module) {
         }))
         .def("child_class_method", &ChildClassFromClass::child_class_method)
 
+        .def("root_method", &ChildClassFromClass::root_method)
+
+        .def_property("root_property", py::overload_cast<>(&ChildClassFromClass::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ChildClassFromClass::set_root_property))
         ;
 }
 

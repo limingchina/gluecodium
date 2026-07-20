@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -26,7 +27,5 @@ class DartPublicElements(_NativeBase):
       self._native.string_field = getattr(value, "_native", value)
 
 
-    def foo(self):
-        """"""
-        return self._native.foo()
+    def foo(self): ...
 

@@ -80,7 +80,7 @@ public:
 };
 
 void register_ChildClassWithIncludes(py::module_& module) {
-    py::class_<ChildClassWithIncludes, std::shared_ptr<ChildClassWithIncludes>, ChildClassWithIncludesTrampoline>(module, "ChildClassWithIncludes")
+    py::class_<ChildClassWithIncludes, ::smoke::ParentInterfaceWithIncludes, std::shared_ptr<ChildClassWithIncludes>, ChildClassWithIncludesTrampoline>(module, "ChildClassWithIncludes")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -91,6 +91,24 @@ void register_ChildClassWithIncludes(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("root_method", [](ChildClassWithIncludes& self, const ::smoke::IncludableStruct& input1, const ::smoke::IncludableEnum input2) {
+            return self.root_method(input1, input2);
+        }, py::arg("input1"), py::arg("input2"))
+
+        .def("not_in_java", [](ChildClassWithIncludes& self) {
+            return self.not_in_java();
+        })
+
+        .def_property("root_property", [](const ChildClassWithIncludes& self) {
+            return self.get_root_property();
+        }, [](ChildClassWithIncludes& self, const ::smoke::IncludableLambda& value) {
+            self.set_root_property(value);
+        })
+        .def_property("not_in_java_property", [](const ChildClassWithIncludes& self) {
+            return self.get_not_in_java_property();
+        }, [](ChildClassWithIncludes& self, const ::smoke::ShouldNotInclude& value) {
+            self.set_not_in_java_property(value);
+        })
         ;
 }
 

@@ -1,6 +1,7 @@
 
 
 from smoke.ListenerInterface import ListenerInterface
+import typing
 
 
 import generated

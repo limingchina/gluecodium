@@ -16,9 +16,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using BasicForwardDeclarations = ::root::space::smoke::BasicForwardDeclarations;
 
+
 void register_BasicForwardDeclarations(py::module_& module) {
     py::class_<BasicForwardDeclarations, std::shared_ptr<BasicForwardDeclarations>>(module, "BasicForwardDeclarations")
         .def("use_basic", &BasicForwardDeclarations::use_basic)
+
         ;
 }
 

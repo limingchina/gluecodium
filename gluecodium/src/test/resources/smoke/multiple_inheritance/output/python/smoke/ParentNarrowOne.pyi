@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,9 +23,7 @@ class ParentNarrowOne(generated.ParentNarrowOne):
             super().__init__()
         self._native = self
 
-    def parent_function_one(self):
-        """"""
-        return generated.ParentNarrowOne.parent_function_one(self)
+    def parent_function_one(self): ...
 
     @property
     def parent_property_one(self) -> str:

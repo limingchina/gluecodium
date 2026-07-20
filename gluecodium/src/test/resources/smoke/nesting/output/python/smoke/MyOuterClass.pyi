@@ -1,7 +1,7 @@
 
 
 from smoke.MyParentInterface import MyParentInterface
-
+import typing
 
 from _native_base import _NativeBase
 

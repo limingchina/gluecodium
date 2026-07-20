@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ClassWithDocRef = ::smoke::ClassWithDocRef;
 
+
 void register_ClassWithDocRef(py::module_& module) {
     py::class_<ClassWithDocRef, std::shared_ptr<ClassWithDocRef>>(module, "ClassWithDocRef")
         ;

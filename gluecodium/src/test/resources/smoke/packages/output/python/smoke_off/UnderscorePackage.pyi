@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,7 +14,5 @@ class UnderscorePackage(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def basic_method(input_string: str) -> str:
-        """"""
-        return generated.UnderscorePackage.basic_method(input_string)
+    def basic_method(input_string: str) -> str: ...
 

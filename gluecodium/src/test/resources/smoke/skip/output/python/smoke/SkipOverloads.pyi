@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -26,7 +27,5 @@ class SkipOverloads(_NativeBase):
       self._native.dummy = getattr(value, "_native", value)
 
 
-    def do_foo(self, input: float):
-        """"""
-        return self._native.do_foo(input)
+    def do_foo(self, input: float): ...
 

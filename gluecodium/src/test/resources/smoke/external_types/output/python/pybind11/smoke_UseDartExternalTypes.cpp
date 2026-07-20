@@ -18,12 +18,17 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseDartExternalTypes = ::smoke::UseDartExternalTypes;
 
+
 void register_UseDartExternalTypes(py::module_& module) {
     py::class_<UseDartExternalTypes, std::shared_ptr<UseDartExternalTypes>>(module, "UseDartExternalTypes")
         .def_static("rectangle_round_trip", &UseDartExternalTypes::rectangle_round_trip, py::arg("input"))
+
         .def_static("compression_state_round_trip", &UseDartExternalTypes::compression_state_round_trip, py::arg("input"))
+
         .def_static("color_round_trip", &UseDartExternalTypes::color_round_trip, py::arg("input"))
+
         .def_static("season_round_trip", &UseDartExternalTypes::season_round_trip, py::arg("input"))
+
         ;
 }
 

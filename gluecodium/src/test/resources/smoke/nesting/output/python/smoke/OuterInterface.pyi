@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,7 +23,5 @@ class OuterInterface(generated.OuterInterface):
             super().__init__()
         self._native = self
 
-    def foo(self, input: str) -> str:
-        """"""
-        return generated.OuterInterface.foo(self, input)
+    def foo(self, input: str) -> str: ...
 

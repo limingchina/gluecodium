@@ -16,9 +16,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Annotations = ::smoke::Annotations;
 
+
 void register_Annotations(py::module_& module) {
     py::class_<Annotations, std::shared_ptr<Annotations>>(module, "Annotations")
         .def("test_optional", &Annotations::test_optional, py::arg("self"))
+
         ;
 }
 

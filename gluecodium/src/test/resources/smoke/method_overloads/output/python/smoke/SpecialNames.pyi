@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,30 +13,14 @@ class SpecialNames(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    def create(self): ...
 
-    def create(self):
-        """"""
-        return self._native.create()
+    def release(self): ...
 
+    def create_proxy(self): ...
 
-    def release(self):
-        """"""
-        return self._native.release()
-
-
-    def create_proxy(self):
-        """"""
-        return self._native.create_proxy()
-
-
-    def _uppercase(self):
-        """"""
-        return self._native._uppercase()
+    def _uppercase(self): ...
 
     @staticmethod
-
-    def make(result: str) -> SpecialNames:
-        """"""
-        native_result = generated.SpecialNames.make(result)
-        return SpecialNames(native_result)
+    def make(result: str) -> SpecialNames: ...
 

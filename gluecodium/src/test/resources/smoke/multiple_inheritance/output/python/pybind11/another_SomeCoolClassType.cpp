@@ -14,9 +14,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SomeCoolClassType = ::another::SomeCoolClassType;
 
+
 void register_SomeCoolClassType(py::module_& module) {
     py::class_<SomeCoolClassType, std::shared_ptr<SomeCoolClassType>>(module, "SomeCoolClassType")
         .def("do_important_stuff", &SomeCoolClassType::do_important_stuff)
+
         ;
 }
 

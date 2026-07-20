@@ -1,6 +1,7 @@
 
 
 from smoke.InternalParent import InternalParent
+import typing
 
 import generated
 

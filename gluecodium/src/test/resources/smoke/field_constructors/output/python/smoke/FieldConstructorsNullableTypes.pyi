@@ -2,6 +2,7 @@
 
 from smoke.FieldConstructorsNullableTypesFoodType import FieldConstructorsNullableTypesFoodType
 from smoke.FieldConstructorsNullableTypesStructWithParameters import FieldConstructorsNullableTypesStructWithParameters
+import typing
 
 
 from _native_base import _NativeBase

@@ -15,12 +15,17 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Enums = ::smoke::Enums;
 
+
 void register_Enums(py::module_& module) {
     py::class_<Enums, std::shared_ptr<Enums>>(module, "Enums")
         .def_static("method_with_enumeration", &Enums::method_with_enumeration, py::arg("input"))
+
         .def_static("flip_enum_value", &Enums::flip_enum_value, py::arg("input"))
+
         .def_static("extract_enum_from_struct", &Enums::extract_enum_from_struct, py::arg("input"))
+
         .def_static("create_struct_with_enum_inside", &Enums::create_struct_with_enum_inside, py::arg("type"), py::arg("message"))
+
         ;
 }
 

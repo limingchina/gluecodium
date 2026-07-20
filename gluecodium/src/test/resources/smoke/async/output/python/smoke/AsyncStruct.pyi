@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -26,24 +27,14 @@ class AsyncStruct(_NativeBase):
       self._native.string_field = getattr(value, "_native", value)
 
 
-    def async_void(self, input: bool):
-        """"""
-        return self._native.async_void(input)
+    def async_void(self, input: bool): ...
 
-    def async_void_throws(self, input: bool):
-        """"""
-        return self._native.async_void_throws(input)
+    def async_void_throws(self, input: bool): ...
 
-    def async_int(self, input: bool) -> int:
-        """"""
-        return self._native.async_int(input)
+    def async_int(self, input: bool) -> int: ...
 
-    def async_int_throws(self, input: bool) -> int:
-        """"""
-        return self._native.async_int_throws(input)
+    def async_int_throws(self, input: bool) -> int: ...
 
     @staticmethod
-    def async_static(input: bool):
-        """"""
-        generated.AsyncStruct.async_static(input)
+    def async_static(input: bool): ...
 

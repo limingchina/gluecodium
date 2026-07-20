@@ -15,10 +15,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AsyncWithSkips = ::smoke::AsyncWithSkips;
 
+
 void register_AsyncWithSkips(py::module_& module) {
     py::class_<AsyncWithSkips, std::shared_ptr<AsyncWithSkips>>(module, "AsyncWithSkips")
         .def_static("make_shared_instance", py::overload_cast<const ::std::string&>(&AsyncWithSkips::make_shared_instance), py::arg("android_context"))
+
         .def_static("make_shared_instance", py::overload_cast<>(&AsyncWithSkips::make_shared_instance))
+
         ;
 }
 

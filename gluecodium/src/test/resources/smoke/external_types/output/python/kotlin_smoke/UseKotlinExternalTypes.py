@@ -10,7 +10,6 @@ from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
 from kotlin_smoke.VeryBoolean import VeryBoolean
 
-
 from _native_base import _NativeBase
 
 import generated

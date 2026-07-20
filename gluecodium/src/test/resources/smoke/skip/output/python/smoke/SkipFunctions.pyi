@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -14,22 +14,14 @@ class SkipFunctions(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def not_in_java(input: str) -> str:
-        """"""
-        return generated.SkipFunctions.not_in_java(input)
+    def not_in_java(input: str) -> str: ...
 
     @staticmethod
-    def not_in_swift(input: bool) -> bool:
-        """"""
-        return generated.SkipFunctions.not_in_swift(input)
+    def not_in_swift(input: bool) -> bool: ...
 
     @staticmethod
-    def not_in_dart(input: float) -> float:
-        """"""
-        return generated.SkipFunctions.not_in_dart(input)
+    def not_in_dart(input: float) -> float: ...
 
     @staticmethod
-    def not_in_kotlin(input: str) -> str:
-        """"""
-        return generated.SkipFunctions.not_in_kotlin(input)
+    def not_in_kotlin(input: str) -> str: ...
 

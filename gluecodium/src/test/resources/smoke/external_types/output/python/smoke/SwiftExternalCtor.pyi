@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -27,8 +28,5 @@ class SwiftExternalCtor(_NativeBase):
 
 
     @staticmethod
-    def make(field: str) -> SwiftExternalCtor:
-        """"""
-        native_result = generated.SwiftExternalCtor.make(field)
-        return SwiftExternalCtor(native_result)
+    def make(field: str) -> SwiftExternalCtor: ...
 

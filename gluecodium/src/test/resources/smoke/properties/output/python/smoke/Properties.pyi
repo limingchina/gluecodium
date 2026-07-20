@@ -3,6 +3,7 @@
 from smoke.PropertiesExampleStruct import PropertiesExampleStruct
 from smoke.PropertiesInterface import PropertiesInterface
 from smoke.PropertiesInternalErrorCode import PropertiesInternalErrorCode
+import typing
 
 from _native_base import _NativeBase
 

@@ -61,7 +61,7 @@ public:
 };
 
 void register_ChildInterface(py::module_& module) {
-    py::class_<ChildInterface, std::shared_ptr<ChildInterface>, ChildInterfaceTrampoline>(module, "ChildInterface")
+    py::class_<ChildInterface, ::smoke::ParentInterface, std::shared_ptr<ChildInterface>, ChildInterfaceTrampoline>(module, "ChildInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -78,6 +78,15 @@ void register_ChildInterface(py::module_& module) {
             return self.child_method();
         })
 
+        .def("root_method", [](ChildInterface& self) {
+            return self.root_method();
+        })
+
+        .def_property("root_property", [](const ChildInterface& self) {
+            return self.get_root_property();
+        }, [](ChildInterface& self, const ::std::string& value) {
+            self.set_root_property(value);
+        })
         ;
 }
 

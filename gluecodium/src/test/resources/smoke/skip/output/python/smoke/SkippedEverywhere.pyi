@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -26,7 +27,5 @@ class SkippedEverywhere(_NativeBase):
       self._native.nothing_to_see_here = getattr(value, "_native", value)
 
 
-    def use_map_in_dart(self, foo: dict[int, SkipTypesNotInDart]):
-        """"""
-        return self._native.use_map_in_dart(foo)
+    def use_map_in_dart(self, foo: dict[int, SkipTypesNotInDart]): ...
 

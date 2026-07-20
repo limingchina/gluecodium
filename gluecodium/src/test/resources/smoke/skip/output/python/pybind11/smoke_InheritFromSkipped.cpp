@@ -150,7 +150,7 @@ public:
 };
 
 void register_InheritFromSkipped(py::module_& module) {
-    py::class_<InheritFromSkipped, std::shared_ptr<InheritFromSkipped>, InheritFromSkippedTrampoline>(module, "InheritFromSkipped")
+    py::class_<InheritFromSkipped, ::smoke::SkipProxy, std::shared_ptr<InheritFromSkipped>, InheritFromSkippedTrampoline>(module, "InheritFromSkipped")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -163,6 +163,52 @@ void register_InheritFromSkipped(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("not_in_java", [](InheritFromSkipped& self, const ::std::string& input) {
+            return self.not_in_java(input);
+        }, py::arg("input"))
+
+        .def("not_in_swift", [](InheritFromSkipped& self, const bool input) {
+            return self.not_in_swift(input);
+        }, py::arg("input"))
+
+        .def("not_in_dart", [](InheritFromSkipped& self, const float input) {
+            return self.not_in_dart(input);
+        }, py::arg("input"))
+
+        .def("not_in_kotlin", [](InheritFromSkipped& self, const float input) {
+            return self.not_in_kotlin(input);
+        }, py::arg("input"))
+
+        .def_property("skipped_in_java", [](const InheritFromSkipped& self) {
+            return self.get_skipped_in_java();
+        }, [](InheritFromSkipped& self, const ::std::string& value) {
+            self.set_skipped_in_java(value);
+        })
+        .def_property("is_skipped_in_swift", [](const InheritFromSkipped& self) {
+            return self.is_skipped_in_swift();
+        }, [](InheritFromSkipped& self, const bool value) {
+            self.set_skipped_in_swift(value);
+        })
+        .def_property("skipped_in_dart", [](const InheritFromSkipped& self) {
+            return self.get_skipped_in_dart();
+        }, [](InheritFromSkipped& self, const float value) {
+            self.set_skipped_in_dart(value);
+        })
+        .def_property("skipped_in_kotlin", [](const InheritFromSkipped& self) {
+            return self.get_skipped_in_kotlin();
+        }, [](InheritFromSkipped& self, const float value) {
+            self.set_skipped_in_kotlin(value);
+        })
+        .def_property("skipped_everywhere", [](const InheritFromSkipped& self) {
+            return self.get_skipped_everywhere();
+        }, [](InheritFromSkipped& self, const ::smoke::SkippedEverywhere& value) {
+            self.set_skipped_everywhere(value);
+        })
+        .def_property("skipped_everywhere_too", [](const InheritFromSkipped& self) {
+            return self.get_skipped_everywhere_too();
+        }, [](InheritFromSkipped& self, const ::smoke::SkippedEverywhereEnum value) {
+            self.set_skipped_everywhere_too(value);
+        })
         ;
 }
 

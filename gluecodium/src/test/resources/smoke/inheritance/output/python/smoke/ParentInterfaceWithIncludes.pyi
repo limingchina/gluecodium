@@ -5,6 +5,7 @@ from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
 from smoke.IncludableStruct import IncludableStruct
 from smoke.ShouldNotInclude import ShouldNotInclude
+import typing
 
 
 import generated
@@ -27,13 +28,9 @@ class ParentInterfaceWithIncludes(generated.ParentInterfaceWithIncludes):
             super().__init__()
         self._native = self
 
-    def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
-        """"""
-        return generated.ParentInterfaceWithIncludes.root_method(self, input1._native, input2._native)
+    def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass: ...
 
-    def not_in_java(self) -> ShouldNotInclude:
-        """"""
-        return generated.ParentInterfaceWithIncludes.not_in_java(self)
+    def not_in_java(self) -> ShouldNotInclude: ...
 
     @property
     def root_property(self) -> IncludableLambda:

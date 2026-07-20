@@ -36,7 +36,7 @@ public:
 };
 
 void register_ChildClassWithBool(py::module_& module) {
-    py::class_<ChildClassWithBool, std::shared_ptr<ChildClassWithBool>, ChildClassWithBoolTrampoline>(module, "ChildClassWithBool")
+    py::class_<ChildClassWithBool, ::smoke::ParentInterfaceWithBool, std::shared_ptr<ChildClassWithBool>, ChildClassWithBoolTrampoline>(module, "ChildClassWithBool")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -47,6 +47,10 @@ void register_ChildClassWithBool(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("root_method", [](ChildClassWithBool& self, const bool input1) {
+            return self.root_method(input1);
+        }, py::arg("input1"))
+
         ;
 }
 

@@ -16,11 +16,15 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MyClass = ::com::example::test::MyClass;
 
+
 void register_RenamedClass(py::module_& module) {
     py::class_<MyClass, std::shared_ptr<MyClass>>(module, "RenamedClass")
         .def("hidden_method", &MyClass::hidden_method)
+
         .def("internal_method", &MyClass::internal_method)
+
         .def("visible_method", &MyClass::visible_method, py::arg("param"))
+
         ;
 }
 

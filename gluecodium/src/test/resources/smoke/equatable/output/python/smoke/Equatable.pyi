@@ -2,6 +2,7 @@
 
 from smoke.EquatableNestedEquatableStruct import EquatableNestedEquatableStruct
 from smoke.EquatableSomeEnum import EquatableSomeEnum
+import typing
 
 
 from _native_base import _NativeBase

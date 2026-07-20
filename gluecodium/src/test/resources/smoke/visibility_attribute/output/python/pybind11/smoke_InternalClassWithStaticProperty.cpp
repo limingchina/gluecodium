@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InternalClassWithStaticProperty = ::smoke::InternalClassWithStaticProperty;
 
+
 void register_InternalClassWithStaticProperty(py::module_& module) {
     py::class_<InternalClassWithStaticProperty, std::shared_ptr<InternalClassWithStaticProperty>>(module, "InternalClassWithStaticProperty")
         .def_static("foo_bar", &InternalClassWithStaticProperty::get_foo_bar)

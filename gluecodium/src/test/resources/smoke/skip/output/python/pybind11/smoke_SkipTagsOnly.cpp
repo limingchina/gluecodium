@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipTagsOnly = ::smoke::SkipTagsOnly;
 
+
 void register_SkipTagsOnly(py::module_& module) {
     py::class_<SkipTagsOnly, std::shared_ptr<SkipTagsOnly>>(module, "SkipTagsOnly")
         ;

@@ -2,6 +2,7 @@
 
 from smoke.SerializationNestedSerializableStruct import SerializationNestedSerializableStruct
 from smoke.SerializationSomeEnum import SerializationSomeEnum
+import typing
 
 
 from _native_base import _NativeBase

@@ -1,5 +1,6 @@
 
 
+import typing
 
 from _native_base import _NativeBase
 
@@ -12,9 +13,7 @@ class AttributesWithDeprecated(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def very_fun(self):
-        """"""
-        return self._native.very_fun()
+    def very_fun(self): ...
 
     @property
     def prop(self) -> str:

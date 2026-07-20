@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,9 +23,7 @@ class DeprecationCommentsOnly(generated.DeprecationCommentsOnly):
             super().__init__()
         self._native = self
 
-    def some_method_with_all_comments(self, input: str) -> bool:
-        """"""
-        return generated.DeprecationCommentsOnly.some_method_with_all_comments(self, input)
+    def some_method_with_all_comments(self, input: str) -> bool: ...
 
     @property
     def is_some_property(self) -> bool:

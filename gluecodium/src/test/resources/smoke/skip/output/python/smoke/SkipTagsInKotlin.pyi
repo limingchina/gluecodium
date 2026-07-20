@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,15 +23,9 @@ class SkipTagsInKotlin(generated.SkipTagsInKotlin):
             super().__init__()
         self._native = self
 
-    def skip_tagged(self):
-        """"""
-        return generated.SkipTagsInKotlin.skip_tagged(self)
+    def skip_tagged(self): ...
 
-    def dont_skip_tagged(self):
-        """"""
-        return generated.SkipTagsInKotlin.dont_skip_tagged(self)
+    def dont_skip_tagged(self): ...
 
-    def skip_tagged_list(self):
-        """"""
-        return generated.SkipTagsInKotlin.skip_tagged_list(self)
+    def skip_tagged_list(self): ...
 

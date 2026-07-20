@@ -1,6 +1,7 @@
 
 
 from smoke.ParentClass import ParentClass
+import typing
 
 import generated
 
@@ -21,7 +22,5 @@ class OuterClassWithInheritance(generated.OuterClassWithInheritance):
             super().__init__()
         self._native = self
 
-    def foo(self, input: str) -> str:
-        """"""
-        return generated.OuterClassWithInheritance.foo(self, input)
+    def foo(self, input: str) -> str: ...
 

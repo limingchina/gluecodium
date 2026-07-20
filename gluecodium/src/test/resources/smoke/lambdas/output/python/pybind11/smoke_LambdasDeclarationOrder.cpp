@@ -16,6 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using LambdasDeclarationOrder = ::smoke::LambdasDeclarationOrder;
 
+
 void register_LambdasDeclarationOrder(py::module_& module) {
     py::class_<LambdasDeclarationOrder, std::shared_ptr<LambdasDeclarationOrder>>(module, "LambdasDeclarationOrder")
         ;

@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -27,8 +28,5 @@ class JavaExternalCtor(_NativeBase):
 
 
     @staticmethod
-    def make(field: str) -> JavaExternalCtor:
-        """"""
-        native_result = generated.JavaExternalCtor.make(field)
-        return JavaExternalCtor(native_result)
+    def make(field: str) -> JavaExternalCtor: ...
 

@@ -3,6 +3,7 @@
 from smoke.CalculationResult import CalculationResult
 from smoke.ListenersWithReturnValuesResultEnum import ListenersWithReturnValuesResultEnum
 from smoke.ListenersWithReturnValuesResultStruct import ListenersWithReturnValuesResultStruct
+import typing
 
 
 import generated
@@ -25,31 +26,17 @@ class ListenersWithReturnValues(generated.ListenersWithReturnValues):
             super().__init__()
         self._native = self
 
-    def fetch_data_double(self) -> float:
-        """"""
-        return generated.ListenersWithReturnValues.fetch_data_double(self)
+    def fetch_data_double(self) -> float: ...
 
-    def fetch_data_string(self) -> str:
-        """"""
-        return generated.ListenersWithReturnValues.fetch_data_string(self)
+    def fetch_data_string(self) -> str: ...
 
-    def fetch_data_struct(self) -> ListenersWithReturnValuesResultStruct:
-        """"""
-        return generated.ListenersWithReturnValues.fetch_data_struct(self)
+    def fetch_data_struct(self) -> ListenersWithReturnValuesResultStruct: ...
 
-    def fetch_data_enum(self) -> ListenersWithReturnValuesResultEnum:
-        """"""
-        return generated.ListenersWithReturnValues.fetch_data_enum(self)
+    def fetch_data_enum(self) -> ListenersWithReturnValuesResultEnum: ...
 
-    def fetch_data_array(self) -> list[float]:
-        """"""
-        return generated.ListenersWithReturnValues.fetch_data_array(self)
+    def fetch_data_array(self) -> list[float]: ...
 
-    def fetch_data_map(self) -> dict[str, float]:
-        """"""
-        return generated.ListenersWithReturnValues.fetch_data_map(self)
+    def fetch_data_map(self) -> dict[str, float]: ...
 
-    def fetch_data_instance(self) -> CalculationResult:
-        """"""
-        return generated.ListenersWithReturnValues.fetch_data_instance(self)
+    def fetch_data_instance(self) -> CalculationResult: ...
 

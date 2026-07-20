@@ -15,9 +15,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesClass = ::smoke::AttributesClass;
 
+
 void register_AttributesClass(py::module_& module) {
     py::class_<AttributesClass, std::shared_ptr<AttributesClass>>(module, "AttributesClass")
         .def("very_fun", &AttributesClass::very_fun, py::arg("param"))
+
         .def_property("prop", py::overload_cast<>(&AttributesClass::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesClass::set_prop))
         ;
 }

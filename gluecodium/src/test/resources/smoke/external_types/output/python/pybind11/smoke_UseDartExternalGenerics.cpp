@@ -23,9 +23,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseDartExternalGenerics = ::smoke::UseDartExternalGenerics;
 
+
 void register_UseDartExternalGenerics(py::module_& module) {
     py::class_<UseDartExternalGenerics, std::shared_ptr<UseDartExternalGenerics>>(module, "UseDartExternalGenerics")
         .def("use_generics", &UseDartExternalGenerics::use_generics, py::arg("list"), py::arg("set"))
+
         ;
 }
 

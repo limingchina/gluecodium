@@ -52,7 +52,7 @@ public:
 };
 
 void register_CrossPackageChildInterface(py::module_& module) {
-    py::class_<CrossPackageChildInterface, std::shared_ptr<CrossPackageChildInterface>, CrossPackageChildInterfaceTrampoline>(module, "CrossPackageChildInterface")
+    py::class_<CrossPackageChildInterface, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildInterface>, CrossPackageChildInterfaceTrampoline>(module, "CrossPackageChildInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -65,6 +65,15 @@ void register_CrossPackageChildInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("root_method", [](CrossPackageChildInterface& self) {
+            return self.root_method();
+        })
+
+        .def_property("root_property", [](const CrossPackageChildInterface& self) {
+            return self.get_root_property();
+        }, [](CrossPackageChildInterface& self, const ::std::string& value) {
+            self.set_root_property(value);
+        })
         ;
 }
 

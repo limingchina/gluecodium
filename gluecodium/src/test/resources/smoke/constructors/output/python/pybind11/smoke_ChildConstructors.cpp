@@ -29,7 +29,7 @@ public:
 };
 
 void register_ChildConstructors(py::module_& module) {
-    py::class_<ChildConstructors, std::shared_ptr<ChildConstructors>, ChildConstructorsTrampoline>(module, "ChildConstructors")
+    py::class_<ChildConstructors, ::smoke::Constructors, std::shared_ptr<ChildConstructors>, ChildConstructorsTrampoline>(module, "ChildConstructors")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

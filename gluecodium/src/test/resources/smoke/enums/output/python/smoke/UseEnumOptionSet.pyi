@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -47,7 +48,5 @@ class UseEnumOptionSet(_NativeBase):
 
 
     @staticmethod
-    def round_trip(input: set[EnumOptionSet]) -> set[EnumOptionSet]:
-        """"""
-        return generated.UseEnumOptionSet.round_trip(input)
+    def round_trip(input: set[EnumOptionSet]) -> set[EnumOptionSet]: ...
 

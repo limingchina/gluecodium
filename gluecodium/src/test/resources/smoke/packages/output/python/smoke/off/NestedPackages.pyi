@@ -1,7 +1,7 @@
 
 
 from smoke.off.NestedPackagesSomeStruct import NestedPackagesSomeStruct
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -15,8 +15,5 @@ class NestedPackages(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def basic_method(input: NestedPackagesSomeStruct) -> NestedPackagesSomeStruct:
-        """"""
-        native_result = generated.NestedPackages.basic_method(input._native)
-        return NestedPackagesSomeStruct(native_result)
+    def basic_method(input: NestedPackagesSomeStruct) -> NestedPackagesSomeStruct: ...
 

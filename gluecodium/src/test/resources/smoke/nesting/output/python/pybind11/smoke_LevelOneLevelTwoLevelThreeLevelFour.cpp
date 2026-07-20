@@ -1,0 +1,27 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/LevelOne.h"
+#include "string"
+
+// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
+using LevelFour = ::smoke::LevelOne::LevelTwo::LevelThree::LevelFour;
+
+void register_LevelOneLevelTwoLevelThreeLevelFour(py::module_& module) {
+    py::class_<LevelFour>(module, "LevelOneLevelTwoLevelThreeLevelFour")
+        .def_readwrite("string_field", &LevelFour::string_field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("string_field"))
+        .def_static("foo_factory", &LevelFour::foo_factory)
+
+        ;
+}
+

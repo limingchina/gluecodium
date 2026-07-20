@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructConstants = ::fire::StructConstants;
 
+
 void register_StructConstants(py::module_& module) {
     py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "StructConstants")
         ;

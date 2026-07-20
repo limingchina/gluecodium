@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from smoke.LambdasDeclarationOrderSomeStruct import LambdasDeclarationOrderSomeStruct
 
-
 from _native_base import _NativeBase
 
 import generated

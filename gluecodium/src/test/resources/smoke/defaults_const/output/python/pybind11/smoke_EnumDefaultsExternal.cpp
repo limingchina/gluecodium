@@ -18,6 +18,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumDefaultsExternal = ::smoke::EnumDefaultsExternal;
 
+
 void register_EnumDefaultsExternal(py::module_& module) {
     py::class_<EnumDefaultsExternal, std::shared_ptr<EnumDefaultsExternal>>(module, "EnumDefaultsExternal")
         ;

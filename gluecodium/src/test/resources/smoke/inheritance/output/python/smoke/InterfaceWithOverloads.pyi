@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,11 +23,9 @@ class InterfaceWithOverloads(generated.InterfaceWithOverloads):
             super().__init__()
         self._native = self
 
-    def parent_method(self):
-        """"""
-        return generated.InterfaceWithOverloads.parent_method(self)
+    @typing.overload
+    def parent_method(self): ...
 
-    def parent_method(self, input: str):
-        """"""
-        return generated.InterfaceWithOverloads.parent_method(self, input)
+    @typing.overload
+    def parent_method(self, input: str): ...
 

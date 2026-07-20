@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,7 +13,6 @@ class DartInternalClassWithInternalTypedef(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-
     @property
     def numbers(self) -> dict[str, int]:
         """"""
@@ -22,7 +21,6 @@ class DartInternalClassWithInternalTypedef(_NativeBase):
     @numbers.setter
     def numbers(self, value: dict[str, int]):
         self._native.numbers = value
-
 
     @property
     def labels(self) -> list[str]:

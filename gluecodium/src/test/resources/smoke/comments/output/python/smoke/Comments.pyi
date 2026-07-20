@@ -1,6 +1,7 @@
 
 
 from smoke.commentsSomeEnum import commentsSomeEnum
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,53 +14,29 @@ class Comments(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def some_method_with_all_comments(self, input_parameter: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_all_comments(input_parameter)
+    def some_method_with_all_comments(self, input_parameter: str) -> bool: ...
 
-    def some_method_with_input_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_input_comments(input)
+    def some_method_with_input_comments(self, input: str) -> bool: ...
 
-    def some_method_with_output_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_output_comments(input)
+    def some_method_with_output_comments(self, input: str) -> bool: ...
 
-    def some_method_with_no_comments(self, input: str) -> bool:
-        """This is some very useful method that measures the usefulness of its input."""
-        return self._native.some_method_with_no_comments(input)
+    def some_method_with_no_comments(self, input: str) -> bool: ...
 
-    def some_method_without_return_type_with_all_comments(self, input: str):
-        """This is some very useful method that does not measure the usefulness of its input."""
-        return self._native.some_method_without_return_type_with_all_comments(input)
+    def some_method_without_return_type_with_all_comments(self, input: str): ...
 
-    def some_method_without_return_type_with_no_comments(self, input: str):
-        """This is some very useful method that does not measure the usefulness of its input."""
-        return self._native.some_method_without_return_type_with_no_comments(input)
+    def some_method_without_return_type_with_no_comments(self, input: str): ...
 
-    def some_method_without_input_parameters_with_all_comments(self) -> bool:
-        """This is some very useful method that measures the usefulness of something."""
-        return self._native.some_method_without_input_parameters_with_all_comments()
+    def some_method_without_input_parameters_with_all_comments(self) -> bool: ...
 
-    def some_method_without_input_parameters_with_no_comments(self) -> bool:
-        """This is some very useful method that measures the usefulness of something."""
-        return self._native.some_method_without_input_parameters_with_no_comments()
+    def some_method_without_input_parameters_with_no_comments(self) -> bool: ...
 
-    def some_method_with_nothing(self):
-        """"""
-        return self._native.some_method_with_nothing()
+    def some_method_with_nothing(self): ...
 
-    def some_method_without_return_type_or_input_parameters(self):
-        """This is some very useful method that does nothing."""
-        return self._native.some_method_without_return_type_or_input_parameters()
+    def some_method_without_return_type_or_input_parameters(self): ...
 
-    def one_parameter_comment_only(self, undocumented: str, documented: str) -> str:
-        """"""
-        return self._native.one_parameter_comment_only(undocumented, documented)
+    def one_parameter_comment_only(self, undocumented: str, documented: str) -> str: ...
 
-    def return_comment_only(self, undocumented: str) -> str:
-        """"""
-        return self._native.return_comment_only(undocumented)
+    def return_comment_only(self, undocumented: str) -> str: ...
 
     @property
     def is_some_property(self) -> bool:

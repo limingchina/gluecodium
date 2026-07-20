@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -12,7 +12,6 @@ class OuterClassWithLambdaAndProperty(_NativeBase):
 
     def __init__(self, native):
         super().__init__(native)
-
 
     @property
     def some_integer(self) -> int:

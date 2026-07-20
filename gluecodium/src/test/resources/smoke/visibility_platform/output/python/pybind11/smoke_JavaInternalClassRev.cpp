@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using JavaInternalClassRev = ::smoke::JavaInternalClassRev;
 
+
 void register_JavaInternalClassRev(py::module_& module) {
     py::class_<JavaInternalClassRev, std::shared_ptr<JavaInternalClassRev>>(module, "JavaInternalClassRev")
         ;

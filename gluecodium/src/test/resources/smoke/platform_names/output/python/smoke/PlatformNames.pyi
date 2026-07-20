@@ -1,6 +1,7 @@
 
 
 from smoke.PlatformNamesBasicStruct import PlatformNamesBasicStruct
+import typing
 
 
 from _native_base import _NativeBase

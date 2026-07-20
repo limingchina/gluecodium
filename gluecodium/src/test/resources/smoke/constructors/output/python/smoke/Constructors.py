@@ -24,38 +24,13 @@ class Constructors(generated.Constructors):
         self._native = self
 
     @staticmethod
-    def create() -> Constructors:
+    def create(*args, **kwargs) -> Constructors:
         """"""
-        native_result = generated.Constructors.create()
+        native_result = generated.Constructors.create(*[getattr(a, "_native", a) for a in args])
         return Constructors(native_result)
 
-    @staticmethod
-    def create(other: Constructors) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(other._native)
-        return Constructors(native_result)
 
-    @staticmethod
-    def create(foo: str, bar: int) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(foo, bar)
-        return Constructors(native_result)
 
-    @staticmethod
-    def create(input: str) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(input)
-        return Constructors(native_result)
 
-    @staticmethod
-    def create(input: list[float]) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(input)
-        return Constructors(native_result)
 
-    @staticmethod
-    def create(input: int) -> Constructors:
-        """"""
-        native_result = generated.Constructors.create(input)
-        return Constructors(native_result)
 

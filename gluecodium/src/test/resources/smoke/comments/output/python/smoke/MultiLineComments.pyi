@@ -1,6 +1,6 @@
 
 
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -25,9 +25,5 @@ And now comes a list:
     def __init__(self, native):
         super().__init__(native)
 
-    def some_method_with_long_comment(self, input: str, ratio: float) -> float:
-        """This is very important method.
-It has very important parameters.
-It has side effects."""
-        return self._native.some_method_with_long_comment(input, ratio)
+    def some_method_with_long_comment(self, input: str, ratio: float) -> float: ...
 

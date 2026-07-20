@@ -14,6 +14,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SwiftPublicClass = ::smoke::SwiftPublicClass;
 
+
 void register_SwiftPublicClass(py::module_& module) {
     py::class_<SwiftPublicClass, std::shared_ptr<SwiftPublicClass>>(module, "SwiftPublicClass")
         ;

@@ -70,7 +70,7 @@ public:
 };
 
 void register_GrandChildInterface(py::module_& module) {
-    py::class_<GrandChildInterface, std::shared_ptr<GrandChildInterface>, GrandChildInterfaceTrampoline>(module, "GrandChildInterface")
+    py::class_<GrandChildInterface, ::smoke::ChildInterface, std::shared_ptr<GrandChildInterface>, GrandChildInterfaceTrampoline>(module, "GrandChildInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -87,6 +87,19 @@ void register_GrandChildInterface(py::module_& module) {
             return self.grand_child_method();
         })
 
+        .def("child_method", [](GrandChildInterface& self) {
+            return self.child_method();
+        })
+
+        .def("root_method", [](GrandChildInterface& self) {
+            return self.root_method();
+        })
+
+        .def_property("root_property", [](const GrandChildInterface& self) {
+            return self.get_root_property();
+        }, [](GrandChildInterface& self, const ::std::string& value) {
+            self.set_root_property(value);
+        })
         ;
 }
 

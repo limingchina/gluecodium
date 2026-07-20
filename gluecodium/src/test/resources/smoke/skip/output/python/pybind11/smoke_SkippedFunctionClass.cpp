@@ -15,9 +15,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkippedFunctionClass = ::smoke::SkippedFunctionClass;
 
+
 void register_SkippedFunctionClass(py::module_& module) {
     py::class_<SkippedFunctionClass, std::shared_ptr<SkippedFunctionClass>>(module, "SkippedFunctionClass")
         .def("do_foo", &SkippedFunctionClass::do_foo, py::arg("input"))
+
         ;
 }
 

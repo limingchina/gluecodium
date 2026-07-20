@@ -1,6 +1,7 @@
 
 
 from smoke.ParentClass import ParentClass
+import typing
 
 import generated
 
@@ -21,7 +22,5 @@ class ForwardDeclarationBug(generated.ForwardDeclarationBug):
             super().__init__()
         self._native = self
 
-    def foo(self, bar: ParentClass):
-        """"""
-        return generated.ForwardDeclarationBug.foo(self, bar._native)
+    def foo(self, bar: ParentClass): ...
 

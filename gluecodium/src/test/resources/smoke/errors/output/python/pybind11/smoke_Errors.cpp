@@ -17,13 +17,19 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Errors = ::smoke::Errors;
 
+
 void register_Errors(py::module_& module) {
     py::class_<Errors, std::shared_ptr<Errors>>(module, "Errors")
         .def_static("method_with_errors", &Errors::method_with_errors)
+
         .def_static("method_with_external_errors", &Errors::method_with_external_errors)
+
         .def_static("method_with_errors_and_return_value", &Errors::method_with_errors_and_return_value)
+
         .def_static("method_with_payload_error", &Errors::method_with_payload_error)
+
         .def_static("method_with_payload_error_and_return_value", &Errors::method_with_payload_error_and_return_value)
+
         ;
 }
 

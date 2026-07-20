@@ -16,6 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using OuterClassWithLambdaAndProperty = ::smoke::OuterClassWithLambdaAndProperty;
 
+
 void register_OuterClassWithLambdaAndProperty(py::module_& module) {
     py::class_<OuterClassWithLambdaAndProperty, std::shared_ptr<OuterClassWithLambdaAndProperty>>(module, "OuterClassWithLambdaAndProperty")
         .def_property("some_integer", py::overload_cast<>(&OuterClassWithLambdaAndProperty::get_some_integer, py::const_), py::overload_cast<const int32_t>(&OuterClassWithLambdaAndProperty::set_some_integer))

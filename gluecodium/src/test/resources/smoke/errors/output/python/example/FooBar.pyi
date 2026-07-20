@@ -2,6 +2,7 @@
 
 from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
 from smoke.SomeTypeCollectionSomeTypeCollectionError import SomeTypeCollectionSomeTypeCollectionError
+import typing
 
 from _native_base import _NativeBase
 
@@ -15,12 +16,8 @@ class FooBar(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def method_with_internal_error():
-        """"""
-        generated.FooBar.method_with_internal_error()
+    def method_with_internal_error(): ...
 
     @staticmethod
-    def method_with_type_collection_error():
-        """"""
-        generated.FooBar.method_with_type_collection_error()
+    def method_with_type_collection_error(): ...
 

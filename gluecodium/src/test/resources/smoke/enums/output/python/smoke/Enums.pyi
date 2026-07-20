@@ -3,6 +3,7 @@
 from smoke.EnumsErrorStruct import EnumsErrorStruct
 from smoke.EnumsInternalErrorCode import EnumsInternalErrorCode
 from smoke.EnumsSimpleEnum import EnumsSimpleEnum
+import typing
 
 from _native_base import _NativeBase
 
@@ -16,26 +17,14 @@ class Enums(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def method_with_enumeration(input: EnumsSimpleEnum) -> EnumsSimpleEnum:
-        """"""
-        native_result = generated.Enums.method_with_enumeration(input._native)
-        return EnumsSimpleEnum(native_result)
+    def method_with_enumeration(input: EnumsSimpleEnum) -> EnumsSimpleEnum: ...
 
     @staticmethod
-    def flip_enum_value(input: EnumsInternalErrorCode) -> EnumsInternalErrorCode:
-        """"""
-        native_result = generated.Enums.flip_enum_value(input._native)
-        return EnumsInternalErrorCode(native_result)
+    def flip_enum_value(input: EnumsInternalErrorCode) -> EnumsInternalErrorCode: ...
 
     @staticmethod
-    def extract_enum_from_struct(input: EnumsErrorStruct) -> EnumsInternalErrorCode:
-        """"""
-        native_result = generated.Enums.extract_enum_from_struct(input._native)
-        return EnumsInternalErrorCode(native_result)
+    def extract_enum_from_struct(input: EnumsErrorStruct) -> EnumsInternalErrorCode: ...
 
     @staticmethod
-    def create_struct_with_enum_inside(type: EnumsInternalErrorCode, message: str) -> EnumsErrorStruct:
-        """"""
-        native_result = generated.Enums.create_struct_with_enum_inside(type._native, message)
-        return EnumsErrorStruct(native_result)
+    def create_struct_with_enum_inside(type: EnumsInternalErrorCode, message: str) -> EnumsErrorStruct: ...
 

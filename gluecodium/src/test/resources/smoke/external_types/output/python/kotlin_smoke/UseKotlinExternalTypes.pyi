@@ -7,7 +7,7 @@ from kotlin_smoke.Season import Season
 from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
 from kotlin_smoke.VeryBoolean import VeryBoolean
-
+import typing
 
 from _native_base import _NativeBase
 
@@ -21,43 +21,23 @@ class UseKotlinExternalTypes(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def currency_round_trip(input: Currency) -> Currency:
-        """"""
-        native_result = generated.UseKotlinExternalTypes.currency_round_trip(input._native)
-        return Currency(native_result)
+    def currency_round_trip(input: Currency) -> Currency: ...
 
     @staticmethod
-    def time_zone_round_trip(input: TimeZone) -> TimeZone:
-        """"""
-        native_result = generated.UseKotlinExternalTypes.time_zone_round_trip(input._native)
-        return TimeZone(native_result)
+    def time_zone_round_trip(input: TimeZone) -> TimeZone: ...
 
     @staticmethod
-    def month_round_trip(input: Month) -> Month:
-        """"""
-        native_result = generated.UseKotlinExternalTypes.month_round_trip(input._native)
-        return Month(native_result)
+    def month_round_trip(input: Month) -> Month: ...
 
     @staticmethod
-    def color_round_trip(input: SystemColor) -> SystemColor:
-        """"""
-        native_result = generated.UseKotlinExternalTypes.color_round_trip(input._native)
-        return SystemColor(native_result)
+    def color_round_trip(input: SystemColor) -> SystemColor: ...
 
     @staticmethod
-    def season_round_trip(input: Season) -> Season:
-        """"""
-        native_result = generated.UseKotlinExternalTypes.season_round_trip(input._native)
-        return Season(native_result)
+    def season_round_trip(input: Season) -> Season: ...
 
     @staticmethod
-    def struct_round_trip(input: KotlinExternalTypesStruct) -> KotlinExternalTypesStruct:
-        """"""
-        native_result = generated.UseKotlinExternalTypes.struct_round_trip(input._native)
-        return KotlinExternalTypesStruct(native_result)
+    def struct_round_trip(input: KotlinExternalTypesStruct) -> KotlinExternalTypesStruct: ...
 
     @staticmethod
-    def very_boolean_unbox(input: VeryBoolean) -> bool:
-        """"""
-        return generated.UseKotlinExternalTypes.very_boolean_unbox(input._native)
+    def very_boolean_unbox(input: VeryBoolean) -> bool: ...
 

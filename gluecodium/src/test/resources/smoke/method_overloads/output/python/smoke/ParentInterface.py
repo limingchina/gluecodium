@@ -24,13 +24,10 @@ class ParentInterface(generated.ParentInterface):
             super().__init__()
         self._native = self
 
-    def foo(self):
+    def foo(*args, **kwargs):
         """"""
-        return generated.ParentInterface.foo(self)
+        return generated.ParentInterface.foo(self, *[getattr(a, "_native", a) for a in args])
 
-    def foo(self, input: int):
-        """"""
-        return generated.ParentInterface.foo(self, input)
 
     def bar(self):
         """"""

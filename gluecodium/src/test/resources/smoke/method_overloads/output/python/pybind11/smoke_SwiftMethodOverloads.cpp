@@ -17,10 +17,13 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SwiftMethodOverloads = ::smoke::SwiftMethodOverloads;
 
+
 void register_SwiftMethodOverloads(py::module_& module) {
     py::class_<SwiftMethodOverloads, std::shared_ptr<SwiftMethodOverloads>>(module, "SwiftMethodOverloads")
         .def("one", &SwiftMethodOverloads::one, py::arg("input"))
+
         .def("two", &SwiftMethodOverloads::two, py::arg("input"))
+
         ;
 }
 

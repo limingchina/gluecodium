@@ -15,12 +15,17 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipPlatforms = ::smoke::SkipPlatforms;
 
+
 void register_SkipPlatforms(py::module_& module) {
     py::class_<SkipPlatforms, std::shared_ptr<SkipPlatforms>>(module, "SkipPlatforms")
         .def_static("not_in_java", &SkipPlatforms::not_in_java, py::arg("input"))
+
         .def_static("not_in_swift", &SkipPlatforms::not_in_swift, py::arg("input"))
+
         .def_static("not_in_dart", &SkipPlatforms::not_in_dart, py::arg("input"))
+
         .def_static("not_in_kotlin", &SkipPlatforms::not_in_kotlin, py::arg("input"))
+
         ;
 }
 

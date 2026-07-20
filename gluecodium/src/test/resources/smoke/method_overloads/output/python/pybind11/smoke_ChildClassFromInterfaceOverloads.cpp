@@ -101,7 +101,7 @@ public:
 };
 
 void register_ChildClassFromInterfaceOverloads(py::module_& module) {
-    py::class_<ChildClassFromInterfaceOverloads, std::shared_ptr<ChildClassFromInterfaceOverloads>, ChildClassFromInterfaceOverloadsTrampoline>(module, "ChildClassFromInterfaceOverloads")
+    py::class_<ChildClassFromInterfaceOverloads, ::smoke::ParentInterface, std::shared_ptr<ChildClassFromInterfaceOverloads>, ChildClassFromInterfaceOverloadsTrampoline>(module, "ChildClassFromInterfaceOverloads")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -119,6 +119,22 @@ void register_ChildClassFromInterfaceOverloads(py::module_& module) {
         .def("bar", py::overload_cast<const ::std::string&>(&ChildClassFromInterfaceOverloads::bar), py::arg("input"))
 
         .def("bar", py::overload_cast<const double>(&ChildClassFromInterfaceOverloads::bar), py::arg("input"))
+
+        .def("foo", [](ChildClassFromInterfaceOverloads& self) {
+            return self.foo();
+        })
+
+        .def("foo", [](ChildClassFromInterfaceOverloads& self, const int32_t input) {
+            return self.foo(input);
+        }, py::arg("input"))
+
+        .def("bar", [](ChildClassFromInterfaceOverloads& self) {
+            return self.bar();
+        })
+
+        .def("baz", [](ChildClassFromInterfaceOverloads& self) {
+            return self.baz();
+        })
 
         ;
 }

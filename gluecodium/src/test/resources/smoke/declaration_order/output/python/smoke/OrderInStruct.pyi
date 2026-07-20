@@ -2,6 +2,7 @@
 
 from smoke.OrderInStructNestedStruct import OrderInStructNestedStruct
 from smoke.OrderInStructSomeEnum import OrderInStructSomeEnum
+import typing
 
 
 from _native_base import _NativeBase

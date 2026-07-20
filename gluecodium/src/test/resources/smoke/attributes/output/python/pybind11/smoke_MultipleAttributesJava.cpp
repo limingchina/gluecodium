@@ -14,13 +14,19 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MultipleAttributesJava = ::smoke::MultipleAttributesJava;
 
+
 void register_MultipleAttributesJava(py::module_& module) {
     py::class_<MultipleAttributesJava, std::shared_ptr<MultipleAttributesJava>>(module, "MultipleAttributesJava")
         .def("no_lists2", &MultipleAttributesJava::no_lists2)
+
         .def("no_lists3", &MultipleAttributesJava::no_lists3)
+
         .def("list_first", &MultipleAttributesJava::list_first)
+
         .def("list_second", &MultipleAttributesJava::list_second)
+
         .def("two_lists", &MultipleAttributesJava::two_lists)
+
         ;
 }
 

@@ -1,6 +1,7 @@
 
 
 from smoke.MapSceneLoadSceneCallback import MapSceneLoadSceneCallback
+import typing
 
 from _native_base import _NativeBase
 
@@ -13,11 +14,9 @@ class MapScene(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def load_scene(self, map_scheme: int, callback: Optional[MapSceneLoadSceneCallback]):
-        """"""
-        return self._native.load_scene(map_scheme, callback._native)
+    @typing.overload
+    def load_scene(self, map_scheme: int, callback: Optional[MapSceneLoadSceneCallback]): ...
 
-    def load_scene(self, configuration_file: str, callback: Optional[MapSceneLoadSceneCallback]):
-        """"""
-        return self._native.load_scene(configuration_file, callback._native)
+    @typing.overload
+    def load_scene(self, configuration_file: str, callback: Optional[MapSceneLoadSceneCallback]): ...
 

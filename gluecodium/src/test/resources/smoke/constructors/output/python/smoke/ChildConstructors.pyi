@@ -2,6 +2,7 @@
 
 from smoke.Constructors import Constructors
 from smoke.ConstructorsErrorEnum import ConstructorsErrorEnum
+import typing
 
 import generated
 
@@ -22,15 +23,11 @@ class ChildConstructors(generated.ChildConstructors):
             super().__init__()
         self._native = self
 
+    @typing.overload
     @staticmethod
-    def create() -> ChildConstructors:
-        """"""
-        native_result = generated.ChildConstructors.create()
-        return ChildConstructors(native_result)
+    def create() -> ChildConstructors: ...
 
+    @typing.overload
     @staticmethod
-    def create(other: Constructors) -> ChildConstructors:
-        """"""
-        native_result = generated.ChildConstructors.create(other._native)
-        return ChildConstructors(native_result)
+    def create(other: Constructors) -> ChildConstructors: ...
 

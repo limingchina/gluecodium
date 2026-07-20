@@ -2,6 +2,7 @@
 
 from smoke.CalculationResult import CalculationResult
 from smoke.CalculatorListenerResultStruct import CalculatorListenerResultStruct
+import typing
 
 
 import generated
@@ -24,27 +25,15 @@ class CalculatorListener(generated.CalculatorListener):
             super().__init__()
         self._native = self
 
-    def on_calculation_result(self, calculation_result: float):
-        """"""
-        return generated.CalculatorListener.on_calculation_result(self, calculation_result)
+    def on_calculation_result(self, calculation_result: float): ...
 
-    def on_calculation_result_const(self, calculation_result: float):
-        """"""
-        return generated.CalculatorListener.on_calculation_result_const(self, calculation_result)
+    def on_calculation_result_const(self, calculation_result: float): ...
 
-    def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct):
-        """"""
-        return generated.CalculatorListener.on_calculation_result_struct(self, calculation_result._native)
+    def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct): ...
 
-    def on_calculation_result_array(self, calculation_result: list[float]):
-        """"""
-        return generated.CalculatorListener.on_calculation_result_array(self, calculation_result)
+    def on_calculation_result_array(self, calculation_result: list[float]): ...
 
-    def on_calculation_result_map(self, calculation_results: dict[str, float]):
-        """"""
-        return generated.CalculatorListener.on_calculation_result_map(self, calculation_results)
+    def on_calculation_result_map(self, calculation_results: dict[str, float]): ...
 
-    def on_calculation_result_instance(self, calculation_result: CalculationResult):
-        """"""
-        return generated.CalculatorListener.on_calculation_result_instance(self, calculation_result._native)
+    def on_calculation_result_instance(self, calculation_result: CalculationResult): ...
 

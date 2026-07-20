@@ -7,7 +7,6 @@ from fire.Enum2 import Enum2
 from fire.Enum3 import Enum3
 from smoke.EnumWrapper import EnumWrapper
 
-
 from _native_base import _NativeBase
 
 import generated

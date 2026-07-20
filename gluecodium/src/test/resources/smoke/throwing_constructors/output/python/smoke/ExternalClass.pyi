@@ -3,6 +3,7 @@
 from smoke.ExternalClassErrorEnum import ExternalClassErrorEnum
 from smoke.ExternalClassInternalOne import ExternalClassInternalOne
 from smoke.ExternalClassInternalTwo import ExternalClassInternalTwo
+import typing
 
 import generated
 
@@ -24,8 +25,5 @@ class ExternalClass(generated.ExternalClass):
         self._native = self
 
     @staticmethod
-    def create() -> ExternalClass:
-        """"""
-        native_result = generated.ExternalClass.create()
-        return ExternalClass(native_result)
+    def create() -> ExternalClass: ...
 

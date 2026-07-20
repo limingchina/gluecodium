@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 import generated
@@ -22,14 +23,10 @@ class InterfaceWithStatic(generated.InterfaceWithStatic):
             super().__init__()
         self._native = self
 
-    def regular_function(self) -> str:
-        """"""
-        return generated.InterfaceWithStatic.regular_function(self)
+    def regular_function(self) -> str: ...
 
     @staticmethod
-    def static_function() -> str:
-        """"""
-        return generated.InterfaceWithStatic.static_function()
+    def static_function() -> str: ...
 
     @property
     def regular_property(self) -> str:

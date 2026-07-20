@@ -1,5 +1,6 @@
 
 
+import typing
 
 import generated
 
@@ -21,8 +22,5 @@ class ParentWithCustomConstructor(generated.ParentWithCustomConstructor):
         self._native = self
 
     @staticmethod
-    def create() -> ParentWithCustomConstructor:
-        """"""
-        native_result = generated.ParentWithCustomConstructor.create()
-        return ParentWithCustomConstructor(native_result)
+    def create() -> ParentWithCustomConstructor: ...
 
