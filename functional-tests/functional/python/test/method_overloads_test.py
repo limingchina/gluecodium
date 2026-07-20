@@ -18,7 +18,10 @@
 """Method overload mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.MethodOverloads import MethodOverloads, Point
+from test.MethodOverloads import MethodOverloads
+from test.MethodOverloadsPoint import MethodOverloadsPoint
+from test.ConstructorOverloads import ConstructorOverloads
+from test.StructConstructorOverloads import StructConstructorOverloads
 
 import pytest
 
@@ -27,14 +30,68 @@ class TestMethodOverloads:
     def test_is_boolean_bool(self):
         assert MethodOverloads.is_boolean(True) is True
 
-    def test_is_boolean_int(self):
-        assert MethodOverloads.is_boolean(5) is True
+    def test_is_boolean_byte(self):
+        assert MethodOverloads.is_boolean(5) is False
 
     def test_is_boolean_string(self):
-        assert MethodOverloads.is_boolean("text") is True
+        assert MethodOverloads.is_boolean("text") is False
 
     def test_is_boolean_point(self):
-        assert MethodOverloads.is_boolean(Point(1.0, 2.0)) is True
+        assert MethodOverloads.is_boolean(MethodOverloadsPoint(1.0, 2.0)) is False
 
-    def test_is_boolean_no_args(self):
-        assert MethodOverloads.is_boolean() is True
+    def test_is_boolean_multi(self):
+        assert MethodOverloads.is_boolean(True, 5, "text", MethodOverloadsPoint(1.0, 2.0)) is False
+
+    def test_is_boolean_string_list(self):
+        assert MethodOverloads.is_boolean(["a", "b"]) is False
+
+    def test_is_boolean_byte_list(self):
+        assert MethodOverloads.is_boolean([1, 2, 3]) is False
+
+    def test_is_boolean_string_set(self):
+        assert MethodOverloads.is_boolean({"a", "b"}) is False
+
+    def test_is_boolean_byte_set(self):
+        assert MethodOverloads.is_boolean({1, 2, 3}) is False
+
+
+class TestConstructorOverloads:
+    def test_create_no_args(self):
+        instance = ConstructorOverloads.create()
+        assert isinstance(instance, ConstructorOverloads)
+
+    def test_create_string(self):
+        instance = ConstructorOverloads.create("text")
+        assert isinstance(instance, ConstructorOverloads)
+
+    def test_create_bool(self):
+        instance = ConstructorOverloads.create(True)
+        assert isinstance(instance, ConstructorOverloads)
+
+    def test_create_multi(self):
+        instance = ConstructorOverloads.create("text", True)
+        assert isinstance(instance, ConstructorOverloads)
+
+    def test_create_list(self):
+        instance = ConstructorOverloads.create([1.0, 2.0])
+        assert isinstance(instance, ConstructorOverloads)
+
+    def test_create_ulong(self):
+        instance = ConstructorOverloads.create(42)
+        assert isinstance(instance, ConstructorOverloads)
+
+
+class TestStructConstructorOverloads:
+    def test_create_no_args(self):
+        instance = StructConstructorOverloads.create()
+        assert isinstance(instance, StructConstructorOverloads)
+
+    def test_create_string(self):
+        instance = StructConstructorOverloads.create("text")
+        assert isinstance(instance, StructConstructorOverloads)
+        assert instance.string_field == "text"
+
+    def test_create_two_strings(self):
+        instance = StructConstructorOverloads.create("foo", "bar")
+        assert isinstance(instance, StructConstructorOverloads)
+        assert instance.string_field == "foobar"

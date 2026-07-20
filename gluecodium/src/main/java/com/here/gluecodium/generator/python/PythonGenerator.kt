@@ -42,6 +42,7 @@ import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeSignatureResolver
 import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeHelper
 import java.io.File
@@ -118,13 +119,6 @@ internal class PythonGenerator : Generator {
         pythonNameResolver =
             PythonNameResolver(pybind11FilteredModel.referenceMap, nameRules, limeLogger, commentsProcessor)
 
-        val overloadsValidationResult =
-            PythonOverloadsValidator(pythonNameResolver, limeLogger, overloadsWerror)
-                .validate(pythonFilteredModel.referenceMap.values)
-        if (!overloadsValidationResult) {
-            throw GluecodiumExecutionException("Validation errors found, see log for details.")
-        }
-
         cppNameCache = CppNameCache(rootNamespace, pybind11FilteredModel.referenceMap, cppNameRules)
         pybind11NameResolver =
             Pybind11NameResolver(
@@ -133,6 +127,14 @@ internal class PythonGenerator : Generator {
                 cppNameCache,
                 cppNameRules,
             )
+        val signatureResolver = LimeSignatureResolver(pybind11FilteredModel.referenceMap)
+
+        val overloadsValidationResult =
+            PythonOverloadsValidator(pythonNameResolver, signatureResolver, limeLogger, overloadsWerror)
+                .validate(pythonFilteredModel.referenceMap.values)
+        if (!overloadsValidationResult) {
+            throw GluecodiumExecutionException("Validation errors found, see log for details.")
+        }
         val nameResolvers =
             mapOf(
                 "" to pythonNameResolver,
@@ -150,6 +152,7 @@ internal class PythonGenerator : Generator {
                 limeOverloadsValidatorSignatureResolver(pybind11FilteredModel),
                 pythonFilteredModel.referenceMap,
                 pybind11NameResolver,
+                pythonNameResolver,
                 pythonTypes.filterIsInstance<LimeEnumeration>().map { it.fullName }.toSet(),
                 internalNamespace,
             )
@@ -248,8 +251,8 @@ internal class PythonGenerator : Generator {
                 "nativeTypeName" to pythonNameResolver.resolveName(limeElement),
                 "contentTemplate" to selectPythonTemplate(limeElement),
             )
-        val content = TemplateEngine.render("python/PythonFile", templateData, nameResolvers, predicates)
-        val stubContent = TemplateEngine.render("python/PythonStub", templateData, nameResolvers, predicates)
+        val content = TemplateEngine.render("python/PythonFile", templateData + ("isStub" to false), nameResolvers, predicates)
+        val stubContent = TemplateEngine.render("python/PythonStub", templateData + ("isStub" to true), nameResolvers, predicates)
         return listOf(
             GeneratedFile(content, nameRules.getPythonFileName(limeElement)),
             GeneratedFile(stubContent, nameRules.getPythonStubFileName(limeElement)),
