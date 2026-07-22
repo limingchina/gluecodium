@@ -12,13 +12,14 @@ namespace py = pybind11;
 
 
 void register_WithPayloadError(py::module_& module) {
-    static py::exception<::std::error_code> exc(module, "WithPayloadError");
+    static py::exception<::smoke::Payload> exc(module, "WithPayloadError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
-        } catch (const ::std::error_code& e) {
+        } catch (const ::smoke::Payload& e) {
             PyErr_SetString(exc.ptr(), e.message().c_str());
         }
     });
+    registerReturnError<::smoke::Payload>(exc.ptr());
 }
 

@@ -1,8 +1,11 @@
 
 
+from smoke.ErrorsExternal import ErrorsExternal
 from smoke.ErrorsExternalErrors import ErrorsExternalErrors
+from smoke.ErrorsInternal import ErrorsInternal
 from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
 from smoke.Payload import Payload
+from smoke.WithPayloadError import WithPayloadError
 import typing
 
 from _native_base import _NativeBase

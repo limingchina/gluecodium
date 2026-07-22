@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from smoke.SomeTypeCollectionSome import SomeTypeCollectionSome
 from smoke.SomeTypeCollectionSomeTypeCollectionError import SomeTypeCollectionSomeTypeCollectionError
 
 from _native_base import _NativeBase
