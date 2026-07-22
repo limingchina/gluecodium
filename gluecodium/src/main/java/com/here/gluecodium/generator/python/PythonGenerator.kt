@@ -439,6 +439,7 @@ internal class PythonGenerator : Generator {
                             it is com.here.gluecodium.model.lime.LimeStruct ||
                             it is com.here.gluecodium.model.lime.LimeClass ||
                             it is com.here.gluecodium.model.lime.LimeInterface ||
+                            it is com.here.gluecodium.model.lime.LimeException ||
                             it is com.here.gluecodium.model.lime.LimeLambda
                     }.filter { it != topType }
         }.distinctBy { it.fullName }
@@ -454,6 +455,7 @@ internal class PythonGenerator : Generator {
                             it !is com.here.gluecodium.model.lime.LimeStruct &&
                             it !is com.here.gluecodium.model.lime.LimeClass &&
                             it !is com.here.gluecodium.model.lime.LimeInterface &&
+                            it !is com.here.gluecodium.model.lime.LimeException &&
                             it !is com.here.gluecodium.model.lime.LimeLambda
                     ) ||
                         nameRules.getPythonFileName(it) !in duplicateFileNames

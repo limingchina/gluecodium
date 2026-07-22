@@ -284,11 +284,17 @@ internal class PythonGeneratorPredicates(
             "isException" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeException
             },
-            // Whether a function/constructor throws (has a non-null exception type). Python exception
-            // translation for `Return<T, Error>` is not wired yet (see Phase E/G7 of the Python
-            // follow-up plan), so throwing functions are skipped in the pybind11 binding to avoid
-            // emitting ambiguous overloads (e.g. a `create` static method colliding with the
-            // all-fields `create`). The C++ and Dart generators still emit them.
+            // Whether an exception's error type is an enum (LimeEnumeration). Enum-based errors
+            // map to std::error_code in C++, and the thrown exception type is std::system_error.
+            // Struct-based errors map to the struct type itself, which is thrown directly.
+            "isEnumError" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeException &&
+                    limeElement.errorType.type.actualType is com.here.gluecodium.model.lime.LimeEnumeration
+            },
+            // Whether a function/constructor throws (has a non-null exception type). Throwing
+            // functions are bound in the pybind11 layer; the Return<T, Error> type caster
+            // translates errors into the specific Python exception registered by
+            // Pybind11Exception.mustache.
             "isThrowing" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeFunction &&
                     limeElement.exception != null
