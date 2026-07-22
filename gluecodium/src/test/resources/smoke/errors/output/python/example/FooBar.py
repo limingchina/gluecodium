@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from smoke.ErrorsInternal import ErrorsInternal
 from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
+from smoke.SomeTypeCollectionSome import SomeTypeCollectionSome
 from smoke.SomeTypeCollectionSomeTypeCollectionError import SomeTypeCollectionSomeTypeCollectionError
 
 from _native_base import _NativeBase

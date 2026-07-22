@@ -2,9 +2,12 @@
 
 from __future__ import annotations
 
+from smoke.ErrorsExternal import ErrorsExternal
 from smoke.ErrorsExternalErrors import ErrorsExternalErrors
+from smoke.ErrorsInternal import ErrorsInternal
 from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
 from smoke.Payload import Payload
+from smoke.WithPayloadError import WithPayloadError
 
 from _native_base import _NativeBase
 

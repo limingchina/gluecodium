@@ -12,13 +12,14 @@ namespace py = pybind11;
 
 
 void register_WithStringError(py::module_& module) {
-    static py::exception<::std::error_code> exc(module, "WithStringError");
+    static py::exception<::std::string> exc(module, "WithStringError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
-        } catch (const ::std::error_code& e) {
+        } catch (const ::std::string& e) {
             PyErr_SetString(exc.ptr(), e.message().c_str());
         }
     });
+    registerReturnError<::std::string>(exc.ptr());
 }
 

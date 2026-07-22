@@ -12,7 +12,7 @@ namespace py = pybind11;
 #include "smoke/SomeInternalEnum.h"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using SomeInternalEnum = ::smoke::SomeInternalEnum;
+using SomeInternalEnum = ::gluecodium::smoke::SomeInternalEnum;
 
 void register_SomeInternalEnum(py::module_& module) {
     py::enum_<SomeInternalEnum>(module, "SomeInternalEnum")
