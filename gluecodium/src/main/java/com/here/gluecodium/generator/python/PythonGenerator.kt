@@ -404,6 +404,10 @@ internal class PythonGenerator : Generator {
             GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
             GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
             GeneratedFile(wrapperCacheContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_wrapper_cache.h"),
+            GeneratedFile(
+                TemplateEngine.render("python/Pybind11GenericCaster", emptyMap<String, Any>(), nameResolvers, predicates),
+                PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_generic_caster.h",
+            ),
             GeneratedFile(moduleInitContent, PythonNameRules.MODULE_INIT_FILE),
             GeneratedFile(setupPyContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "setup.py"),
             GeneratedFile(pyprojectContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "pyproject.toml"),

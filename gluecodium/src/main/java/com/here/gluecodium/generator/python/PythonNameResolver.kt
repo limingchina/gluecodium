@@ -49,21 +49,41 @@ internal class PythonNameResolver(
     private val limeLogger: LimeLogger,
     private val commentsProcessor: CommentsProcessor,
 ) : ReferenceMapBasedResolver(limeReferenceMap), NameResolver {
-    override fun resolveName(element: Any): String =
+    override fun resolveName(element: Any): String = resolvePythonType(element)
+
+    private fun resolvePythonType(element: Any, requiresHashable: Boolean = false): String =
         when (element) {
             is LimeComment -> resolveComment(element)
             is LimeBasicType -> resolveBasicType(element)
-            is LimeReturnType -> resolveName(element.typeRef)
-            is LimeTypeRef -> resolveTypeRefName(element)
-            is LimeList -> "list[" + resolveName(element.elementType) + "]"
-            is LimeSet -> "set[" + resolveName(element.elementType) + "]"
-            is LimeMap -> "dict[" + resolveName(element.keyType) + ", " + resolveName(element.valueType) + "]"
-            is LimeTypeAlias -> resolveName(element.typeRef)
+            is LimeReturnType -> resolvePythonType(element.typeRef, requiresHashable)
+            is LimeTypeRef -> {
+                val typeName = resolvePythonType(element.type, requiresHashable)
+                if (element.isNullable) "Optional[" + typeName + "]" else typeName
+            }
+            is LimeList -> {
+                val elementType = resolvePythonType(element.elementType, requiresHashable)
+                if (requiresHashable) "tuple[" + elementType + ", ...]" else "list[" + elementType + "]"
+            }
+            is LimeSet -> {
+                val elementType = resolvePythonType(element.elementType, true)
+                if (requiresHashable) "frozenset[" + elementType + "]" else "set[" + elementType + "]"
+            }
+            is LimeMap -> {
+                val keyType = resolvePythonType(element.keyType, true)
+                val valueType = resolvePythonType(element.valueType, requiresHashable)
+                if (requiresHashable) {
+                    "frozenset[tuple[" + keyType + ", " + valueType + "]]"
+                } else {
+                    "dict[" + keyType + ", " + valueType + "]"
+                }
+            }
+            is LimeTypeAlias -> resolvePythonType(element.typeRef, requiresHashable)
             is LimeType -> nameRules.getName(element)
             is LimeNamedElement -> getPlatformName(element) ?: nameRules.getName(element)
             is LimeValue -> resolveValue(element)
             else -> throw GluecodiumExecutionException("Unsupported element type ${element.javaClass.name}")
         }
+
 
     private fun resolveComment(limeComment: LimeComment): String {
         val commentText = limeComment.getFor("Python")
@@ -86,11 +106,6 @@ internal class PythonNameResolver(
             LimeBasicType.TypeId.LOCALE -> "str"
             else -> "int"
         }
-    }
-
-    private fun resolveTypeRefName(limeTypeRef: LimeTypeRef): String {
-        val limeType = limeTypeRef.type
-        return if (limeTypeRef.isNullable) "Optional[" + resolveName(limeType) + "]" else resolveName(limeType)
     }
 
     /**

@@ -236,7 +236,7 @@ feature(WeakListeners swift SOURCES
     input/lime/WeakListeners.lime
 )
 
-feature(GenericTypes cpp android android-kotlin swift dart SOURCES
+feature(GenericTypes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Arrays.cpp
     input/src/cpp/SetType.cpp
     input/src/cpp/Maps.cpp

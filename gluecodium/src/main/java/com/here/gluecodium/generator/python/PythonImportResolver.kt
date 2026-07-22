@@ -72,9 +72,9 @@ internal class PythonImportResolver(
                 else -> emptyList()
             }
         }
-        // Generic (container) types are builtins in Python; their element types are resolved
-        // separately by resolveGenericTypeImports, so no import is needed here.
-        if (limeType is com.here.gluecodium.model.lime.LimeGenericType) return emptyList()
+        // Generic containers are builtins in Python, but their element types may be generated
+        // user-defined types and must be imported recursively.
+        if (limeType is LimeGenericType) return resolveGenericTypeImports(limeType)
         // Exceptions ARE generated as Python modules (PythonException.mustache emits a
         // Python Exception subclass), so they must be imported like any other user-defined type.
         val externalImport = resolveExternalImport(limeType)
