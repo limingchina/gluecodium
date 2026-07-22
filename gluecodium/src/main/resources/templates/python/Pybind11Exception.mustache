@@ -22,7 +22,7 @@ void register_{{resolveName}}(py::module_& module) {
             PyErr_SetString(exc.ptr(), e.message().c_str());
         }
     });
-    registerReturnError<::std::error_code>(exc.ptr());
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
 }
 {{/instanceOf}}
 {{#notInstanceOf model.errorType.type.actualType "LimeEnumeration"}}
@@ -35,6 +35,6 @@ void register_{{resolveName}}(py::module_& module) {
             PyErr_SetString(exc.ptr(), e.message().c_str());
         }
     });
-    registerReturnError<{{resolveName model.errorType "Pybind11"}}>(exc.ptr());
+    pybind11::detail::registerReturnError<{{resolveName model.errorType "Pybind11"}}>(exc.ptr());
 }
 {{/notInstanceOf}}
