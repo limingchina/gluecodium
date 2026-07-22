@@ -52,11 +52,12 @@ internal class PythonImportResolver(
             is LimeType -> resolveTypeImports(limeElement)
             // Constants are emitted as module-level variables, never imported.
             is LimeConstant -> emptyList()
-            // Throwing functions are not bound in the pybind11 layer yet (Python exception
-            // translation for `Return<T, Error>` is deferred to Phase E/G7 of the Python
-            // follow-up plan), so their exception type must not be imported either — the
-            // corresponding exception module is never generated.
-            is LimeFunction -> if (limeElement.exception != null) emptyList() else listOf(createImport(limeElement))
+            // Throwing functions are bound in the pybind11 layer; the Return<T, Error>
+            // type caster raises the specific Python exception registered by
+            // Pybind11Exception.mustache. The exception type must be imported so the
+            // Python wrapper can reference it (e.g. in type hints or try/except).
+            is LimeFunction -> listOf(createImport(limeElement)) +
+                (limeElement.exception?.let { resolveTypeImports(it) } ?: emptyList())
             is LimeNamedElement -> listOf(createImport(limeElement))
             else -> emptyList()
         }
@@ -74,11 +75,8 @@ internal class PythonImportResolver(
         // Generic (container) types are builtins in Python; their element types are resolved
         // separately by resolveGenericTypeImports, so no import is needed here.
         if (limeType is com.here.gluecodium.model.lime.LimeGenericType) return emptyList()
-        // Exceptions are represented as `std::error_code` in C++ and are never generated as a
-        // Python module, so importing them would reference a non-existent module. Throwing
-        // functions (whose return type carries the exception) are not bound for Python yet
-        // (see Phase E/G7 of the Python follow-up plan).
-        if (limeType is com.here.gluecodium.model.lime.LimeException) return emptyList()
+        // Exceptions ARE generated as Python modules (PythonException.mustache emits a
+        // Python Exception subclass), so they must be imported like any other user-defined type.
         val externalImport = resolveExternalImport(limeType)
         if (externalImport != null) return listOf(externalImport)
         return listOf(createImport(limeType))

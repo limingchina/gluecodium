@@ -1,11 +1,40 @@
 {{! pybind11 exception binding + translator to the generated Python Error subclass. }}
+{{! The C++ representation of a Gluecodium exception depends on its error type: }}
+{{! - Enum-based errors (LimeEnumeration) map to std::error_code in C++. The thrown }}
+{{!   exception type is std::system_error, which wraps the error_code. }}
+{{! - Struct-based errors (LimeStruct) map to the struct type itself in C++, and }}
+{{!   the struct is thrown directly as the exception. }}
+{{! The Python exception class is registered in the global Return<T, Error> }}
+{{! exception registry so the type caster can raise the specific exception. }}
+{{! For enum-based errors, the C++ error type is std::error_code (matching the }}
+{{! Return<T, std::error_code> instantiation); for struct-based errors, it is }}
+{{! the struct's C++ type (resolved via the Pybind11 name resolver). }}
+{{! The C++ error type is selected inline via instanceOf/notInstanceOf }}
+{{! in each place it is needed: the py::exception<>, the catch clause, }}
+{{! and the registerReturnError call. }}
+{{#instanceOf model.errorType.type.actualType "LimeEnumeration"}}
 void register_{{resolveName}}(py::module_& module) {
-    static py::exception<{{resolveName model "Pybind11"}}> exc(module, "{{resolveName}}");
+    static py::exception<::std::error_code> exc(module, "{{resolveName}}");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
-        } catch (const {{resolveName model "Pybind11"}}& e) {
+        } catch (const ::std::error_code& e) {
             PyErr_SetString(exc.ptr(), e.message().c_str());
         }
     });
+    registerReturnError<::std::error_code>(exc.ptr());
 }
+{{/instanceOf}}
+{{#notInstanceOf model.errorType.type.actualType "LimeEnumeration"}}
+void register_{{resolveName}}(py::module_& module) {
+    static py::exception<{{resolveName model.errorType "Pybind11"}}> exc(module, "{{resolveName}}");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const {{resolveName model.errorType "Pybind11"}}& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    registerReturnError<{{resolveName model.errorType "Pybind11"}}>(exc.ptr());
+}
+{{/notInstanceOf}}
