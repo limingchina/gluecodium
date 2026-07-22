@@ -1,5 +1,6 @@
 
 
+import typing
 
 
 from _native_base import _NativeBase
@@ -11,7 +12,7 @@ class Payload(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], Payload):
+        if len(args) == 1 and isinstance(args[0], generated.Payload):
             super().__init__(args[0])
         else:
             super().__init__(generated.Payload(*[getattr(arg, "_native", arg) for arg in args]))
@@ -21,7 +22,6 @@ class Payload(_NativeBase):
     def error_code(self) -> int:
         """"""
         return self._native.error_code
-
     @error_code.setter
     def error_code(self, value: int):
       self._native.error_code = getattr(value, "_native", value)
@@ -32,7 +32,6 @@ class Payload(_NativeBase):
     def message(self) -> str:
         """"""
         return self._native.message
-
     @message.setter
     def message(self, value: str):
       self._native.message = getattr(value, "_native", value)
