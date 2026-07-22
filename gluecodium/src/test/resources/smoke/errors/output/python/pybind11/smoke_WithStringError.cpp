@@ -20,6 +20,6 @@ void register_WithStringError(py::module_& module) {
             PyErr_SetString(exc.ptr(), e.message().c_str());
         }
     });
-    registerReturnError<::std::string>(exc.ptr());
+    pybind11::detail::registerReturnError<::std::string>(exc.ptr());
 }
 
