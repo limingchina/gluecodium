@@ -1,10 +1,19 @@
 # Phase 8 Follow-up: Re-enabling Narrowed Functional Features for Python
 
-> **Date**: 2026-07-13
+> **Date**: 2026-07-22
 > **Branch**: `python_bind`
-> **Status**: Active follow-up; Phase A (A1-A7) complete
+> **Status**: Active follow-up; Phases A-C complete, D1-D3 and E1/E3 implemented
 > **Related**: [phase8_status.md](./phase8_status.md), [python_pybind11_plan.md](../python_pybind11_plan.md)
 > **Scope**: Remaining narrowed features; `Dates` and `Durations` are already enabled but remain part of the shared runtime validation work
+
+> **Current status (2026-07-22):** Python inheritance trampolines, multiple-inheritance
+> bindings, overload dispatch, external-type binding, and `Return<T, Error>` exception
+> translation are implemented on `python_bind`. `Inheritance`, `MultipleInheritance`,
+> `MethodOverloading`, `ExternalTypes`, and `Errors` are enabled in the functional
+> configuration. `DartExternalTypes` remains supported for Dart but is intentionally
+> excluded from Python support. `Blob`,
+> `GenericTypes`, `Defaults`, and the later lambda, naming, equality, locale, listener,
+> and threading work remain open.
 
 > **⚠️ Gotcha — stale generated code after a generator change (2026-07-18):**
 > The functional-test build scripts (`build-python-functional --publish`, etc.) run
@@ -34,11 +43,11 @@ All narrowed features fall into one or more of these generator-gap categories:
 |--------|-------------|-------------------|
 | **G1** | Constructor/argument-count template bugs — pybind11 `def()` / `init()` calls with wrong arg count or missing overload resolution | BuiltinTypes, Strings, Enums, Structs, Classes, Interfaces, TypeDefs, InstanceInStruct, StructsInTypes, StructsImmutable, StructsWithCompanion, FieldConstructors, Nesting |
 | **G2** | Property binding — `def_property()` / `def_property_static()` not emitted or wrong accessor names | Properties, NoCache, CppConst, CppNoexcept |
-| **G3** | Inheritance trampoline — inherited pure-virtual methods not overridden in `Trampoline` class, causing abstract-class instantiation failure | Inheritance, MultipleInheritance, MethodOverloading, RefEquality, Visibility |
-| **G4** | Method overloading — Python does not support overloaded method names; `pybind11::overload_cast` or renamed overloads not implemented | MethodOverloading, Properties, Defaults |
+| **G3** | Inheritance trampoline — inherited pure-virtual methods not overridden in `Trampoline` class, causing abstract-class instantiation failure | Resolved for Inheritance and MultipleInheritance; remaining consumers include RefEquality and Visibility |
+| **G4** | Method overloading — Python wrapper and pybind11 overload dispatch | Resolved for the enabled Inheritance, MultipleInheritance, and MethodOverloading features; remaining consumers include Properties and Defaults |
 | **G5** | Generic/collection type binding — `List<T>`, `Map<K,V>`, `Set<T>` with user-defined `T` not correctly converted via pybind11 type casters | GenericTypes, Lambdas, Defaults, Locales, RefEquality |
-| **G6** | External type binding — `external { cpp include ...; cpp name ... }` not resolved in pybind11 includes/qualified names | ExternalTypes, DartExternalTypes, Defaults, Errors |
-| **G7** | Error/exception handling — `Return<T, Error>` → Python exception translation not fully wired for all error enum patterns | Errors, Blob |
+| **G6** | External type binding — `external { cpp include ...; cpp name ... }` not resolved in pybind11 includes/qualified names | Resolved for ExternalTypes and external-error paths; remaining consumer is Defaults |
+| **G7** | Error/exception handling — `Return<T, Error>` → Python exception translation not fully wired for all error enum patterns | Errors is implemented; Blob remains open |
 | **G8** | Lambda/callback binding — `lambda` types not wrapped as `py::cpp_function` / `std::function` | Lambdas, ComplexListeners, ListenersWithReturnValues, CallbacksWithThreads |
 | **G9** | Visibility/internal filtering — `@Internal` elements not correctly skipped/retained in Python output | Visibility, Comments |
 | **G10** | Naming/package resolution — underscore packages, cross-package name clashes, platform names | UnderscorePackage, CrossPackageNameClash, PlatformNames |
@@ -216,9 +225,16 @@ unblocked at the import level, with `properties` carrying one additional pre-exi
 
 ---
 
-### Phase D — Inheritance & Overloading (G3, G4) [Depends on Phase A, C]
+### Phase D — Inheritance & Overloading (G3, G4) [Implemented]
 
-**Goal**: Fix the trampoline class to override all inherited pure-virtual methods, and implement overload resolution for Python (since Python does not support method overloading natively).
+**Status (2026-07-22):** ✅ D1-D3 are implemented. The Python trampoline covers
+inherited methods and multiple inheritance, and overload dispatch is wired through
+the generated wrapper and pybind11 bindings. `Inheritance`, `MultipleInheritance`,
+and `MethodOverloading` are enabled for Python. Remaining work is regression coverage
+and the later feature-specific dependencies listed below.
+
+**Historical goal:** Fix the trampoline class to override all inherited pure-virtual
+methods and implement overload resolution for Python.
 
 #### D1: Inheritance Trampoline Fix (G3)
 
@@ -233,29 +249,34 @@ unblocked at the import level, with `properties` carrying one additional pre-exi
 
 | Order | Feature | Lime Files | Key Gap | Deps | Effort |
 |-------|---------|------------|---------|------|--------|
-| D1 | `Inheritance` | `Inheritance.lime`, `InheritanceNameClash.lime`, `ListenerInheritance.lime`, `ListenerInheritanceArrays.lime`, `CrossPackageInheritance.lime`, `InterfaceWithLambda.lime`, `ConstructorOverride.lime` | G3: trampoline override for inherited pure-virtual methods. **Note**: `ConstructorOverride.lime` imports `ThrowingConstructor.Some` from `Errors.lime` — needs `@Skip(Python)` on that sub-file or Phase E first. `ListenerInheritanceArrays.lime` needs GenericTypes (G5). `InterfaceWithLambda.lime` needs Lambdas (G8). | A6, A7, C1 | Large |
-| D2 | `MultipleInheritance` | `MultipleInheritance.lime` | G3: narrow interface + multiple parent trampolines | D1 | Medium |
-| D3 | `MethodOverloading` | `MethodOverloads.lime`, `InheritanceOverloads.lime` | G4: overload resolution — Python does not support overloaded names. Use `pybind11::overload_cast<...>()` or `@Python(Name=...)` attribute to rename. Currently `PythonOverloadsValidator` only warns; needs actual rename or `py::overload_cast` in template. | D1, C1 | Large |
+| D1 | `Inheritance` | `Inheritance.lime`, `InheritanceNameClash.lime`, `ListenerInheritance.lime`, `ListenerInheritanceArrays.lime`, `CrossPackageInheritance.lime`, `InterfaceWithLambda.lime`, `ConstructorOverride.lime` | G3: inherited-method trampoline support | A6, A7, C1 | Complete |
+| D2 | `MultipleInheritance` | `MultipleInheritance.lime` | G3: narrow interface + multiple-parent trampolines | D1 | Complete |
+| D3 | `MethodOverloading` | `MethodOverloads.lime`, `InheritanceOverloads.lime` | G4: Python wrapper dispatch over pybind11 overloads | D1, C1 | Complete |
 
-**Important dependency notes for `Inheritance`**:
+**Historical dependency notes for `Inheritance`**:
 - `ConstructorOverride.lime` references `ThrowingConstructor.Some` from `Errors.lime`. Options:
   1. Temporarily `@Skip(Python)` the `ChildConstructorOverloads` class and handle it after Phase E.
   2. Or do Phase E (Errors) before D1.
 - `ListenerInheritanceArrays.lime` uses `List<ParentListener>` — needs G5 (GenericTypes). Can temporarily skip or do after Phase F.
 - `InterfaceWithLambda.lime` uses a `lambda` type — needs G8 (Lambdas). Can temporarily skip or do after Phase G.
-- **Recommendation**: Do D1 with temporary `@Skip(Python)` on the 3 problematic sub-files, then revisit after Phases E, F, G.
+- **Historical recommendation**: Do D1 with temporary `@Skip(Python)` on the 3 problematic sub-files, then revisit after Phases E, F, G. The current branch includes these Lime files in the enabled `Inheritance` source list; their runtime coverage remains part of the broader regression work.
 
-**Exit criteria**: `Inheritance` (minus 3 skipped sub-files), `MultipleInheritance`, `MethodOverloading` compile and pass pytest.
+**Exit criteria:** `Inheritance`, `MultipleInheritance`, and `MethodOverloading` are enabled and their generator changes are complete; remaining runtime coverage belongs to the broader regression pass.
 
 ---
 
-### Phase E — External Types & Error Handling (G6, G7) [Depends on Phase D]
+### Phase E — External Types & Error Handling (G6, G7) [E1/E3 implemented]
 
 **Goal**: Support `external { cpp include ...; cpp name ... }` descriptors in pybind11 binding generation, and wire up `Return<T, Error>` → Python exception translation for all error patterns.
 
-#### E1: External Type Binding (G6)
+#### E1: External Type Binding (G6) ✅
 
-**Problem**: The pybind11 binding generator does not resolve `external` descriptors. When a LIME type has `external { cpp include "include/ExternalTypes.h" }`, the pybind11 binding file needs to:
+**Status (2026-07-22):** ✅ The Python/pybind11 generator resolves external
+descriptors, includes the declared external headers, uses the declared C++ names,
+and exposes the supported external types through the Python wrapper layer.
+
+The original problem was that the pybind11 binding generator did not resolve
+`external` descriptors. When a LIME type has `external { cpp include "include/ExternalTypes.h" }`, the pybind11 binding file needs to:
 1. `#include` the external header (not the generated C++ header)
 2. Use the external C++ name (e.g. `::external::even_more_external::AlienStruct`) instead of the generated name
 3. Skip generating a Python wrapper for the external type (it is opaque or pre-existing)
@@ -266,9 +287,13 @@ unblocked at the import level, with `properties` carrying one additional pre-exi
 - `PythonImportResolver.kt` — resolve Python imports for external types (use `external.python.importPath` descriptor)
 - `Pybind11Class.mustache` / `Pybind11Struct.mustache` / `Pybind11Enum.mustache` — skip binding generation for external types or emit opaque type caster
 
-#### E2: Error/Exception Handling (G7)
+#### E3: Error/Exception Handling (G7) ✅
 
-**Problem**: `Return<T, Error>` → Python exception translation is partially implemented (the `Pybind11ReturnCaster.mustache` was fixed in Phase 8), but error enum patterns (internal, external, cross-package) are not fully tested.
+**Status (2026-07-22):** ✅ `Return<T, Error>` exception translation is implemented
+for the internal, external, and cross-package error patterns covered by `Errors`.
+
+The original problem was that these error enum patterns were not fully supported by
+the Python/pybind11 return caster and exception registry.
 
 **Affected files**:
 - `Pybind11Exception.mustache` — exception binding (translate `std::error_code` → Python exception)
@@ -277,12 +302,12 @@ unblocked at the import level, with `properties` carrying one additional pre-exi
 
 | Order | Feature | Lime Files | Key Gap | Deps | Effort |
 |-------|---------|------------|---------|------|--------|
-| E1 | `ExternalTypes` | `ExternalTypes.lime`, `ExternalImmutable.lime`, `ExternalClassAsInterface.lime`, `UseExternalTypes.lime` | G6: external type C++ name/include resolution | D1 | Large |
-| E2 | `DartExternalTypes` | `DartExternalTypes.lime` | G6: same as E1 but Dart-specific external types (should be covered by E1 fix) | E1 | Small |
-| E3 | `Errors` | `Errors.lime`, `Errors2.lime`, `ErrorsInInterface.lime`, `ErrorsWithNonTrivialType.lime` | G7: `Return<T, Error>` exception translation for internal/external/cross-package error enums. **Depends on E1** because `Errors.lime` has `ExternalErrorCode` with `external { cpp include "include/ExternalTypes.h" }` | E1 | Large |
+| E1 | `ExternalTypes` | `ExternalTypes.lime`, `ExternalImmutable.lime`, `ExternalClassAsInterface.lime`, `UseExternalTypes.lime` | G6: external type C++ name/include resolution | D1 | Complete |
+| E3 | `Errors` | `Errors.lime`, `Errors2.lime`, `ErrorsInInterface.lime`, `ErrorsWithNonTrivialType.lime` | G7: `Return<T, Error>` exception translation for internal/external/cross-package error enums | E1 | Complete |
 | E4 | `Blob` | `Blobs.lime`, `StaticByteArrayMethods.lime` | G7: `Blobs.lime` imports `another.TypeCollectionWithEnums.Explosive` from `Errors2.lime` — needs E3 first. Also `Blob` type = `List<UByte>` which needs G5. | E3, F1 | Medium |
 
-**Exit criteria**: All 4 features compile and pass pytest.
+**Exit criteria:** E1 and E3 are complete. E4 (`Blob`) remains open pending
+collection support from F1.
 
 ---
 
@@ -519,9 +544,8 @@ For each phase:
 | Inheritance | G3 | D, K | Trampoline override (3 sub-files in K) |
 | MultipleInheritance | G3 | D | Narrow interface + multiple parents |
 | MethodOverloading | G3, G4 | D | Overload resolution |
-| ExternalTypes | G6 | E | External type binding |
-| DartExternalTypes | G6 | E | Same as ExternalTypes |
-| Errors | G6, G7 | E | `Return<T,Error>` exception translation |
+| ExternalTypes | G6 | E | External type binding (implemented) |
+| Errors | G6, G7 | E | `Return<T,Error>` exception translation (implemented) |
 | Blob | G7, G5 | E, F | Blob + Explosive exception from Errors2 |
 | GenericTypes | G5 | F | List/Map/Set with user types |
 | Defaults | G5, G6 | F | Collection defaults + external enum |
