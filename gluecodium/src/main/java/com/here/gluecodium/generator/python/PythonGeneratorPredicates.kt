@@ -190,6 +190,14 @@ internal class PythonGeneratorPredicates(
                             it !is com.here.gluecodium.model.lime.LimeGenericType
                     }
             },
+            "isCollectionType" to { limeTypeRef: Any ->
+                limeTypeRef is LimeTypeRef && isCollectionType(limeTypeRef.type)
+            },
+            "needsCollectionLambdaBinding" to { limeFunction: Any ->
+                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
+                    (limeFunction.parameters.any { isCollectionType(it.typeRef.type) } ||
+                        isCollectionType(limeFunction.returnType.typeRef.type))
+            },
             "needsAllFieldsConstructor" to { limeStruct: Any ->
                 when {
                     limeStruct !is LimeStruct -> false
@@ -428,4 +436,14 @@ internal class PythonGeneratorPredicates(
             else -> false
         }
     }
+
+    private fun isCollectionType(limeType: LimeType): Boolean =
+        when (limeType) {
+            is com.here.gluecodium.model.lime.LimeList,
+            is com.here.gluecodium.model.lime.LimeMap,
+            is com.here.gluecodium.model.lime.LimeSet,
+            -> true
+            is com.here.gluecodium.model.lime.LimeTypeAlias -> isCollectionType(limeType.typeRef.type)
+            else -> false
+        }
 }
