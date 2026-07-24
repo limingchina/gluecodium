@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.IncludableClass import IncludableClass
 from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
@@ -31,27 +34,27 @@ class ParentInterfaceWithIncludes(generated.ParentInterfaceWithIncludes):
 
     def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
         """"""
-        return generated.ParentInterfaceWithIncludes.root_method(self, input1._native, input2._native)
+        return _wrap(generated.ParentInterfaceWithIncludes.root_method(self, _unwrap(input1, IncludableStruct), _unwrap(input2, IncludableEnum)), IncludableClass)
 
     def not_in_java(self) -> ShouldNotInclude:
         """"""
-        return generated.ParentInterfaceWithIncludes.not_in_java(self)
+        return _wrap(generated.ParentInterfaceWithIncludes.not_in_java(self), ShouldNotInclude)
 
     @property
     def root_property(self) -> IncludableLambda:
         """"""
-        return generated.ParentInterfaceWithIncludes.root_property.fget(self)
+        return _wrap(generated.ParentInterfaceWithIncludes.root_property.fget(self), IncludableLambda)
 
     @root_property.setter
     def root_property(self, value: IncludableLambda):
-        generated.ParentInterfaceWithIncludes.root_property.fset(self, value)
+        generated.ParentInterfaceWithIncludes.root_property.fset(self, _unwrap(value, IncludableLambda))
 
     @property
     def not_in_java_property(self) -> ShouldNotInclude:
         """"""
-        return generated.ParentInterfaceWithIncludes.not_in_java_property.fget(self)
+        return _wrap(generated.ParentInterfaceWithIncludes.not_in_java_property.fget(self), ShouldNotInclude)
 
     @not_in_java_property.setter
     def not_in_java_property(self, value: ShouldNotInclude):
-        generated.ParentInterfaceWithIncludes.not_in_java_property.fset(self, value)
+        generated.ParentInterfaceWithIncludes.not_in_java_property.fset(self, _unwrap(value, ShouldNotInclude))
 

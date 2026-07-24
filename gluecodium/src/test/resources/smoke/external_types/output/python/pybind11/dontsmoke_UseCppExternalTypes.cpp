@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -20,14 +21,8 @@ namespace py = pybind11;
 using UseCppExternalTypes = ::dontsmoke::UseCppExternalTypes;
 
 
-void register_UseCppExternalTypes(py::module_& module) {
+void register_dontsmoke_UseCppExternalTypes(py::module_& module) {
     py::class_<UseCppExternalTypes, std::shared_ptr<UseCppExternalTypes>>(module, "UseCppExternalTypes")
-        .def_static("use_struct", &UseCppExternalTypes::use_struct, py::arg("input"))
-
-        .def_static("use_enum", &UseCppExternalTypes::use_enum, py::arg("input"))
-
-        .def_static("use_class", &UseCppExternalTypes::use_class, py::arg("input"))
-
         ;
 }
 

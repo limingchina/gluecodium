@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.LambdasDeclarationOrderSomeStruct import LambdasDeclarationOrderSomeStruct
 from smoke.LambdasInterface import LambdasInterface
 from smoke.LambdasWithStructuredTypesClassCallback import LambdasWithStructuredTypesClassCallback
@@ -20,9 +23,9 @@ class LambdasWithStructuredTypes(_NativeBase):
 
     def do_class_stuff(self, callback: LambdasWithStructuredTypesClassCallback):
         """"""
-        return self._native.do_class_stuff(callback._native)
+        return _wrap(self._native.do_class_stuff(_unwrap(callback, LambdasWithStructuredTypesClassCallback)), None)
 
     def do_struct_stuff(self, callback: LambdasWithStructuredTypesStructCallback):
         """"""
-        return self._native.do_struct_stuff(callback._native)
+        return _wrap(self._native.do_struct_stuff(_unwrap(callback, LambdasWithStructuredTypesStructCallback)), None)
 

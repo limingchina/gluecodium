@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -18,5 +21,5 @@ class InternalClassWithStaticProperty(_NativeBase):
     @staticmethod
     def foo_bar() -> str:
         """"""
-        return generated.InternalClassWithStaticProperty.foo_bar()
+        return _wrap(generated.InternalClassWithStaticProperty.foo_bar(), str)
 

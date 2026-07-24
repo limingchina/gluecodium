@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.TypesWithDefaultsImmutableStructWithCollections import TypesWithDefaultsImmutableStructWithCollections
 from smoke.TypesWithDefaultsSomeImmutableStructWithDefaults import TypesWithDefaultsSomeImmutableStructWithDefaults
 
@@ -18,33 +21,33 @@ class TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutable
         if len(args) == 1 and isinstance(args[0], generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def some_field1(self) -> TypesWithDefaultsSomeImmutableStructWithDefaults:
         """"""
-        return TypesWithDefaultsSomeImmutableStructWithDefaults(self._native.some_field1)
+        return _wrap(self._native.some_field1, TypesWithDefaultsSomeImmutableStructWithDefaults)
 
 
 
     @property
     def some_field2(self) -> TypesWithDefaultsImmutableStructWithCollections:
         """"""
-        return TypesWithDefaultsImmutableStructWithCollections(self._native.some_field2)
+        return _wrap(self._native.some_field2, TypesWithDefaultsImmutableStructWithCollections)
 
 
 
     @property
     def some_field(self) -> int:
         """"""
-        return self._native.some_field
+        return _wrap(self._native.some_field, int)
 
 
 
     @property
     def another_field(self) -> int:
         """"""
-        return self._native.another_field
+        return _wrap(self._native.another_field, int)
 
 

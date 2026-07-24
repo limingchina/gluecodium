@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ErrorsExternal import ErrorsExternal
 from smoke.ErrorsExternalErrors import ErrorsExternalErrors
 from smoke.ErrorsInternal import ErrorsInternal

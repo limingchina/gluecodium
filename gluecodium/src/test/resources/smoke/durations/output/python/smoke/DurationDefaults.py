@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 import datetime
 
 
@@ -17,75 +20,75 @@ class DurationDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DurationDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DurationDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DurationDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def dayz(self) -> datetime.timedelta:
         """"""
-        return self._native.dayz
+        return _wrap(self._native.dayz, datetime.timedelta)
     @dayz.setter
     def dayz(self, value: datetime.timedelta):
-      self._native.dayz = getattr(value, "_native", value)
+      self._native.dayz = _unwrap(value, datetime.timedelta)
 
 
 
     @property
     def hourz(self) -> datetime.timedelta:
         """"""
-        return self._native.hourz
+        return _wrap(self._native.hourz, datetime.timedelta)
     @hourz.setter
     def hourz(self, value: datetime.timedelta):
-      self._native.hourz = getattr(value, "_native", value)
+      self._native.hourz = _unwrap(value, datetime.timedelta)
 
 
 
     @property
     def minutez(self) -> datetime.timedelta:
         """"""
-        return self._native.minutez
+        return _wrap(self._native.minutez, datetime.timedelta)
     @minutez.setter
     def minutez(self, value: datetime.timedelta):
-      self._native.minutez = getattr(value, "_native", value)
+      self._native.minutez = _unwrap(value, datetime.timedelta)
 
 
 
     @property
     def secondz(self) -> datetime.timedelta:
         """"""
-        return self._native.secondz
+        return _wrap(self._native.secondz, datetime.timedelta)
     @secondz.setter
     def secondz(self, value: datetime.timedelta):
-      self._native.secondz = getattr(value, "_native", value)
+      self._native.secondz = _unwrap(value, datetime.timedelta)
 
 
 
     @property
     def milliz(self) -> datetime.timedelta:
         """"""
-        return self._native.milliz
+        return _wrap(self._native.milliz, datetime.timedelta)
     @milliz.setter
     def milliz(self, value: datetime.timedelta):
-      self._native.milliz = getattr(value, "_native", value)
+      self._native.milliz = _unwrap(value, datetime.timedelta)
 
 
 
     @property
     def microz(self) -> datetime.timedelta:
         """"""
-        return self._native.microz
+        return _wrap(self._native.microz, datetime.timedelta)
     @microz.setter
     def microz(self, value: datetime.timedelta):
-      self._native.microz = getattr(value, "_native", value)
+      self._native.microz = _unwrap(value, datetime.timedelta)
 
 
 
     @property
     def nanoz(self) -> datetime.timedelta:
         """"""
-        return self._native.nanoz
+        return _wrap(self._native.nanoz, datetime.timedelta)
     @nanoz.setter
     def nanoz(self, value: datetime.timedelta):
-      self._native.nanoz = getattr(value, "_native", value)
+      self._native.nanoz = _unwrap(value, datetime.timedelta)
 
 

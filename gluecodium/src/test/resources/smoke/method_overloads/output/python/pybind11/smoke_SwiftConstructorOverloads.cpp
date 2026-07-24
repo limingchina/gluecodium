@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,12 +18,14 @@ namespace py = pybind11;
 using SwiftConstructorOverloads = ::smoke::SwiftConstructorOverloads;
 
 
-void register_SwiftConstructorOverloads(py::module_& module) {
+void register_smoke_SwiftConstructorOverloads(py::module_& module) {
     py::class_<SwiftConstructorOverloads, std::shared_ptr<SwiftConstructorOverloads>>(module, "SwiftConstructorOverloads")
+        .def(py::init<::std::string>(py::arg("input")))
+
         .def_static("make", &SwiftConstructorOverloads::make, py::arg("input"))
+        .def(py::init<::std::string>(py::arg("throughput")))
 
         .def_static("make_do", &SwiftConstructorOverloads::make_do, py::arg("throughput"))
-
         ;
 }
 

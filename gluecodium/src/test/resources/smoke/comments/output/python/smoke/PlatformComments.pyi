@@ -1,6 +1,7 @@
 
 
 from smoke.PlatformCommentsSomeEnum import PlatformCommentsSomeEnum
+from smoke.PlatformCommentsSomethingWrong import PlatformCommentsSomethingWrong
 import typing
 
 from _native_base import _NativeBase

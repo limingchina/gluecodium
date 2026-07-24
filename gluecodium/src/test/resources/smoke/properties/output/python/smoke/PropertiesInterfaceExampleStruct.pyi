@@ -15,15 +15,15 @@ class PropertiesInterfaceExampleStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PropertiesInterfaceExampleStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PropertiesInterfaceExampleStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PropertiesInterfaceExampleStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def value(self) -> float:
         """"""
-        return self._native.value
+        return _wrap(self._native.value, float)
     @value.setter
     def value(self, value: float):
-      self._native.value = getattr(value, "_native", value)
+      self._native.value = _unwrap(value, float)
 
 

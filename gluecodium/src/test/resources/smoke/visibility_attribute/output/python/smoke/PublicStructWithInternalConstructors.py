@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,16 +19,16 @@ class PublicStructWithInternalConstructors(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PublicStructWithInternalConstructors):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicStructWithInternalConstructors(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PublicStructWithInternalConstructors(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def some_var(self) -> int:
         """"""
-        return self._native.some_var
+        return _wrap(self._native.some_var, int)
     @some_var.setter
     def some_var(self, value: int):
-      self._native.some_var = getattr(value, "_native", value)
+      self._native.some_var = _unwrap(value, int)
 
 
     @staticmethod

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,15 +19,15 @@ class OuterInternalStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.OuterInternalStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterInternalStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.OuterInternalStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def some_field(self) -> int:
         """"""
-        return self._native.some_field
+        return _wrap(self._native.some_field, int)
     @some_field.setter
     def some_field(self, value: int):
-      self._native.some_field = getattr(value, "_native", value)
+      self._native.some_field = _unwrap(value, int)
 
 

@@ -15,12 +15,12 @@ class ImmutableStructWithDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.ImmutableStructWithDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ImmutableStructWithDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.ImmutableStructWithDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
 
 

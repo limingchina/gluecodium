@@ -39,90 +39,90 @@ class Nullable(_NativeBase):
     @property
     def string_property(self):
         """"""
-        return self._native.string_property
+        return _wrap(self._native.string_property, Optional[str])
 
     @string_property.setter
     def string_property(self, value):
-        self._native.string_property = value
+        self._native.string_property = _unwrap(value, Optional[str])
 
     @property
     def is_bool_property(self):
         """"""
-        return self._native.is_bool_property
+        return _wrap(self._native.is_bool_property, Optional[bool])
 
     @is_bool_property.setter
     def is_bool_property(self, value):
-        self._native.is_bool_property = value
+        self._native.is_bool_property = _unwrap(value, Optional[bool])
 
     @property
     def double_property(self):
         """"""
-        return self._native.double_property
+        return _wrap(self._native.double_property, Optional[float])
 
     @double_property.setter
     def double_property(self, value):
-        self._native.double_property = value
+        self._native.double_property = _unwrap(value, Optional[float])
 
     @property
     def int_property(self):
         """"""
-        return self._native.int_property
+        return _wrap(self._native.int_property, Optional[int])
 
     @int_property.setter
     def int_property(self, value):
-        self._native.int_property = value
+        self._native.int_property = _unwrap(value, Optional[int])
 
     @property
     def struct_property(self):
         """"""
-        return self._native.struct_property
+        return _wrap(self._native.struct_property, Optional[NullableSomeStruct])
 
     @struct_property.setter
     def struct_property(self, value):
-        self._native.struct_property = value
+        self._native.struct_property = _unwrap(value, Optional[NullableSomeStruct])
 
     @property
     def enum_property(self):
         """"""
-        return self._native.enum_property
+        return _wrap(self._native.enum_property, Optional[NullableSomeEnum])
 
     @enum_property.setter
     def enum_property(self, value):
-        self._native.enum_property = value
+        self._native.enum_property = _unwrap(value, Optional[NullableSomeEnum])
 
     @property
     def array_property(self):
         """"""
-        return self._native.array_property
+        return _wrap(self._native.array_property, Optional[list[str]])
 
     @array_property.setter
     def array_property(self, value):
-        self._native.array_property = value
+        self._native.array_property = _unwrap(value, Optional[list[str]])
 
     @property
     def inline_array_property(self):
         """"""
-        return self._native.inline_array_property
+        return _wrap(self._native.inline_array_property, Optional[list[str]])
 
     @inline_array_property.setter
     def inline_array_property(self, value):
-        self._native.inline_array_property = value
+        self._native.inline_array_property = _unwrap(value, Optional[list[str]])
 
     @property
     def map_property(self):
         """"""
-        return self._native.map_property
+        return _wrap(self._native.map_property, Optional[dict[int, str]])
 
     @map_property.setter
     def map_property(self, value):
-        self._native.map_property = value
+        self._native.map_property = _unwrap(value, Optional[dict[int, str]])
 
     @property
     def instance_property(self):
         """"""
-        return self._native.instance_property
+        return _wrap(self._native.instance_property, Optional[SomeInterface])
 
     @instance_property.setter
     def instance_property(self, value):
-        self._native.instance_property = value
+        self._native.instance_property = _unwrap(value, Optional[SomeInterface])
 

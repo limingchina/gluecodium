@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,7 +16,7 @@ namespace py = pybind11;
 using CommentsTable = ::smoke::CommentsTable;
 
 
-void register_CommentsTable(py::module_& module) {
+void register_smoke_CommentsTable(py::module_& module) {
     py::class_<CommentsTable, std::shared_ptr<CommentsTable>>(module, "CommentsTable")
         ;
 }

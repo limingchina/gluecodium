@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ParentClass import ParentClass
 
 import generated
@@ -25,5 +28,5 @@ class ForwardDeclarationBug(generated.ForwardDeclarationBug):
 
     def foo(self, bar: ParentClass):
         """"""
-        return generated.ForwardDeclarationBug.foo(self, bar._native)
+        return _wrap(generated.ForwardDeclarationBug.foo(self, _unwrap(bar, ParentClass)), None)
 

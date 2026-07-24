@@ -1,5 +1,7 @@
 
 
+from smoke.CompressionState import CompressionState
+from smoke.Rectangle import Rectangle
 import typing
 
 from _native_base import _NativeBase

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,6 +20,6 @@ class CtorLinksSingleCtorWithTwoArgument(_NativeBase):
     @staticmethod
     def create(arg: int, arg2: str) -> CtorLinksSingleCtorWithTwoArgument:
         """"""
-        native_result = generated.CtorLinksSingleCtorWithTwoArgument.create(arg, arg2)
+        native_result = generated.CtorLinksSingleCtorWithTwoArgument.create(_unwrap(arg, int), _unwrap(arg2, str))
         return CtorLinksSingleCtorWithTwoArgument(native_result)
 

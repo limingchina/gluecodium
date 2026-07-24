@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.SpecialNamesInterfaceCallback import SpecialNamesInterfaceCallback
 
 
@@ -27,5 +30,5 @@ class SpecialNamesInterface(generated.SpecialNamesInterface):
 
     def dispatch(self, callback: SpecialNamesInterfaceCallback):
         """"""
-        return generated.SpecialNamesInterface.dispatch(self, callback._native)
+        return _wrap(generated.SpecialNamesInterface.dispatch(self, _unwrap(callback, SpecialNamesInterfaceCallback)), None)
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,6 +20,6 @@ class AsyncWithSkips(_NativeBase):
     @staticmethod
     def make_shared_instance(*args, **kwargs):
         """"""
-        generated.AsyncWithSkips.make_shared_instance(*[getattr(a, "_native", a) for a in args])
+        generated.AsyncWithSkips.make_shared_instance(*[_unwrap(a) for a in args])
 
 

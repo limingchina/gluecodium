@@ -15,15 +15,15 @@ class SkipTypesNotInKotlin(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.SkipTypesNotInKotlin):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkipTypesNotInKotlin(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.SkipTypesNotInKotlin(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def foo_field(self) -> str:
         """"""
-        return self._native.foo_field
+        return _wrap(self._native.foo_field, str)
     @foo_field.setter
     def foo_field(self, value: str):
-      self._native.foo_field = getattr(value, "_native", value)
+      self._native.foo_field = _unwrap(value, str)
 
 

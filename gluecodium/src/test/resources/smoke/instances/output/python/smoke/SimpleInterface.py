@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,9 +29,9 @@ class SimpleInterface(generated.SimpleInterface):
 
     def get_string_value(self) -> str:
         """"""
-        return generated.SimpleInterface.get_string_value(self)
+        return _wrap(generated.SimpleInterface.get_string_value(self), str)
 
     def use_simple_interface(self, input: SimpleInterface) -> SimpleInterface:
         """"""
-        return generated.SimpleInterface.use_simple_interface(self, input._native)
+        return _wrap(generated.SimpleInterface.use_simple_interface(self, _unwrap(input, SimpleInterface)), SimpleInterface)
 

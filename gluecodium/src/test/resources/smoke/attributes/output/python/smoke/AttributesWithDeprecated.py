@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,16 +19,16 @@ class AttributesWithDeprecated(_NativeBase):
 
     def very_fun(self):
         """"""
-        return self._native.very_fun()
+        return _wrap(self._native.very_fun(), None)
 
     @property
     def prop(self) -> str:
         """"""
-        return self._native.prop
+        return _wrap(self._native.prop, str)
 
     @prop.setter
     def prop(self, value: str):
-        self._native.prop = value
+        self._native.prop = _unwrap(value, str)
 
 
     PI = False

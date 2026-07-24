@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,14 +19,14 @@ class Locales(_NativeBase):
 
     def locale_method(self, input: str) -> str:
         """"""
-        return self._native.locale_method(input)
+        return _wrap(self._native.locale_method(_unwrap(input, str)), str)
 
     @property
     def locale_property(self) -> str:
         """"""
-        return self._native.locale_property
+        return _wrap(self._native.locale_property, str)
 
     @locale_property.setter
     def locale_property(self, value: str):
-        self._native.locale_property = value
+        self._native.locale_property = _unwrap(value, str)
 

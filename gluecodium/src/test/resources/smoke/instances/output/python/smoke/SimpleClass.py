@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,9 +19,9 @@ class SimpleClass(_NativeBase):
 
     def get_string_value(self) -> str:
         """"""
-        return self._native.get_string_value()
+        return _wrap(self._native.get_string_value(), str)
 
     def use_simple_class(self, input: SimpleClass) -> SimpleClass:
         """"""
-        return self._native.use_simple_class(input._native)
+        return _wrap(self._native.use_simple_class(_unwrap(input, SimpleClass)), SimpleClass)
 

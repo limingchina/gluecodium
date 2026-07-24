@@ -15,5 +15,5 @@ class RouteUtils(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.RouteUtils):
             super().__init__(args[0])
         else:
-            super().__init__(generated.RouteUtils(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.RouteUtils(*[_unwrap(arg) for arg in args]))
 

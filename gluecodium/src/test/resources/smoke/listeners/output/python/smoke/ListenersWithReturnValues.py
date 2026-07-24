@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.CalculationResult import CalculationResult
 from smoke.ListenersWithReturnValuesResultEnum import ListenersWithReturnValuesResultEnum
 from smoke.ListenersWithReturnValuesResultStruct import ListenersWithReturnValuesResultStruct
@@ -29,29 +32,29 @@ class ListenersWithReturnValues(generated.ListenersWithReturnValues):
 
     def fetch_data_double(self) -> float:
         """"""
-        return generated.ListenersWithReturnValues.fetch_data_double(self)
+        return _wrap(generated.ListenersWithReturnValues.fetch_data_double(self), float)
 
     def fetch_data_string(self) -> str:
         """"""
-        return generated.ListenersWithReturnValues.fetch_data_string(self)
+        return _wrap(generated.ListenersWithReturnValues.fetch_data_string(self), str)
 
     def fetch_data_struct(self) -> ListenersWithReturnValuesResultStruct:
         """"""
-        return generated.ListenersWithReturnValues.fetch_data_struct(self)
+        return _wrap(generated.ListenersWithReturnValues.fetch_data_struct(self), ListenersWithReturnValuesResultStruct)
 
     def fetch_data_enum(self) -> ListenersWithReturnValuesResultEnum:
         """"""
-        return generated.ListenersWithReturnValues.fetch_data_enum(self)
+        return _wrap(generated.ListenersWithReturnValues.fetch_data_enum(self), ListenersWithReturnValuesResultEnum)
 
     def fetch_data_array(self) -> list[float]:
         """"""
-        return generated.ListenersWithReturnValues.fetch_data_array(self)
+        return _wrap(generated.ListenersWithReturnValues.fetch_data_array(self), list[float])
 
     def fetch_data_map(self) -> dict[str, float]:
         """"""
-        return generated.ListenersWithReturnValues.fetch_data_map(self)
+        return _wrap(generated.ListenersWithReturnValues.fetch_data_map(self), dict[str, float])
 
     def fetch_data_instance(self) -> CalculationResult:
         """"""
-        return generated.ListenersWithReturnValues.fetch_data_instance(self)
+        return _wrap(generated.ListenersWithReturnValues.fetch_data_instance(self), CalculationResult)
 

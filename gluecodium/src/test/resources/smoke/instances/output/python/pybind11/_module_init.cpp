@@ -10,21 +10,21 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_Class1(pybind11::module_& module);
-void register_Class2(pybind11::module_& module);
-void register_InnerClassForwardDeclarations(pybind11::module_& module);
-void register_InnerClassForwardDeclarationsInnerClass1(pybind11::module_& module);
-void register_InnerClassForwardDeclarationsInnerClass2(pybind11::module_& module);
-void register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(pybind11::module_& module);
-void register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(pybind11::module_& module);
-void register_InnerClassForwardDeclarationsInnerInterface1(pybind11::module_& module);
-void register_InnerClassForwardDeclarationsInnerInterface2(pybind11::module_& module);
-void register_InnerClassForwardDeclarationsInnerInterface3(pybind11::module_& module);
-void register_SimpleClass(pybind11::module_& module);
-void register_SimpleInterface(pybind11::module_& module);
-void register_StructWithClass(pybind11::module_& module);
-void register_StructWithInterface(pybind11::module_& module);
-void register_UseForward(pybind11::module_& module);
+void register_smoke_SimpleClass(pybind11::module_& module);
+void register_smoke_SimpleInterface(pybind11::module_& module);
+void register_smoke_StructWithClass(pybind11::module_& module);
+void register_smoke_StructWithInterface(pybind11::module_& module);
+void register_smoke_forward_Class1(pybind11::module_& module);
+void register_smoke_forward_Class2(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarations(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarationsInnerClass1(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarationsInnerClass2(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface1(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface2(pybind11::module_& module);
+void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface3(pybind11::module_& module);
+void register_smoke_forward_UseForward(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -32,19 +32,19 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_Class1(m);
-    register_Class2(m);
-    register_InnerClassForwardDeclarations(m);
-    register_InnerClassForwardDeclarationsInnerClass1(m);
-    register_InnerClassForwardDeclarationsInnerClass2(m);
-    register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(m);
-    register_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(m);
-    register_InnerClassForwardDeclarationsInnerInterface1(m);
-    register_InnerClassForwardDeclarationsInnerInterface2(m);
-    register_InnerClassForwardDeclarationsInnerInterface3(m);
-    register_SimpleClass(m);
-    register_SimpleInterface(m);
-    register_StructWithClass(m);
-    register_StructWithInterface(m);
-    register_UseForward(m);
+    register_smoke_SimpleClass(m);
+    register_smoke_SimpleInterface(m);
+    register_smoke_StructWithClass(m);
+    register_smoke_StructWithInterface(m);
+    register_smoke_forward_Class1(m);
+    register_smoke_forward_Class2(m);
+    register_smoke_forward_InnerClassForwardDeclarations(m);
+    register_smoke_forward_InnerClassForwardDeclarationsInnerClass1(m);
+    register_smoke_forward_InnerClassForwardDeclarationsInnerClass2(m);
+    register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(m);
+    register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(m);
+    register_smoke_forward_InnerClassForwardDeclarationsInnerInterface1(m);
+    register_smoke_forward_InnerClassForwardDeclarationsInnerInterface2(m);
+    register_smoke_forward_InnerClassForwardDeclarationsInnerInterface3(m);
+    register_smoke_forward_UseForward(m);
 }

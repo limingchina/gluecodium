@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -52,7 +53,7 @@ public:
     }
 };
 
-void register_ParentNarrowTwo(py::module_& module) {
+void register_smoke_ParentNarrowTwo(py::module_& module) {
     py::class_<ParentNarrowTwo, std::shared_ptr<ParentNarrowTwo>, ParentNarrowTwoTrampoline>(module, "ParentNarrowTwo")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -66,10 +67,6 @@ void register_ParentNarrowTwo(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("parent_function_two", [](ParentNarrowTwo& self) {
-            return self.parent_function_two();
-        })
-
         .def_property("parent_property_two", [](const ParentNarrowTwo& self) {
             return self.get_parent_property_two();
         }, [](ParentNarrowTwo& self, const ::std::string& value) {

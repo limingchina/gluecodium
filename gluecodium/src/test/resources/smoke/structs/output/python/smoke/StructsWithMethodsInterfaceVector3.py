@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
+from smoke.ValidationUtilsValidation import ValidationUtilsValidation
 from smoke.ValidationUtilsValidationErrorCode import ValidationUtilsValidationErrorCode
 
 
@@ -17,55 +21,55 @@ class StructsWithMethodsInterfaceVector3(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsWithMethodsInterfaceVector3):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithMethodsInterfaceVector3(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsWithMethodsInterfaceVector3(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def x(self) -> float:
         """"""
-        return self._native.x
+        return _wrap(self._native.x, float)
     @x.setter
     def x(self, value: float):
-      self._native.x = getattr(value, "_native", value)
+      self._native.x = _unwrap(value, float)
 
 
 
     @property
     def y(self) -> float:
         """"""
-        return self._native.y
+        return _wrap(self._native.y, float)
     @y.setter
     def y(self, value: float):
-      self._native.y = getattr(value, "_native", value)
+      self._native.y = _unwrap(value, float)
 
 
 
     @property
     def z(self) -> float:
         """"""
-        return self._native.z
+        return _wrap(self._native.z, float)
     @z.setter
     def z(self, value: float):
-      self._native.z = getattr(value, "_native", value)
+      self._native.z = _unwrap(value, float)
 
 
     def distance_to(self, other: StructsWithMethodsInterfaceVector3) -> float:
         """"""
-        return self._native.distance_to(other._native)
+        return _wrap(self._native.distance_to(_unwrap(other, StructsWithMethodsInterfaceVector3)), float)
 
     def add(self, other: StructsWithMethodsInterfaceVector3) -> StructsWithMethodsInterfaceVector3:
         """"""
-        return self._native.add(other._native)
+        return _wrap(self._native.add(_unwrap(other, StructsWithMethodsInterfaceVector3)), StructsWithMethodsInterfaceVector3)
 
     @staticmethod
     def validate(x: float, y: float, z: float) -> bool:
         """"""
-        return generated.StructsWithMethodsInterfaceVector3.validate(x, y, z)
+        return generated.StructsWithMethodsInterfaceVector3.validate(_unwrap(x, float), _unwrap(y, float), _unwrap(z, float))
 
     @staticmethod
     def create(*args, **kwargs) -> StructsWithMethodsInterfaceVector3:
         """"""
-        native_result = generated.StructsWithMethodsInterfaceVector3.create(*[getattr(a, "_native", a) for a in args])
+        native_result = generated.StructsWithMethodsInterfaceVector3.create(*[_unwrap(a) for a in args])
         return StructsWithMethodsInterfaceVector3(native_result)
 
 

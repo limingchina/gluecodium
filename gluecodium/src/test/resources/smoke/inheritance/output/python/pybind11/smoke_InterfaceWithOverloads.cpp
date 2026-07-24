@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -46,7 +47,7 @@ public:
     }
 };
 
-void register_InterfaceWithOverloads(py::module_& module) {
+void register_smoke_InterfaceWithOverloads(py::module_& module) {
     py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "InterfaceWithOverloads")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -60,14 +61,6 @@ void register_InterfaceWithOverloads(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("parent_method", [](InterfaceWithOverloads& self) {
-            return self.parent_method();
-        })
-
-        .def("parent_method", [](InterfaceWithOverloads& self, const ::std::string& input) {
-            return self.parent_method(input);
-        }, py::arg("input"))
-
         ;
 }
 

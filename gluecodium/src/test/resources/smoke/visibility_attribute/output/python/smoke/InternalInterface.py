@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,11 +29,11 @@ class InternalInterface(generated.InternalInterface):
 
     def foo_bar(self):
         """"""
-        return generated.InternalInterface.foo_bar(self)
+        return _wrap(generated.InternalInterface.foo_bar(self), None)
 
 
     @staticmethod
     def some_property_of_internal_interface() -> str:
         """"""
-        return generated.InternalInterface.some_property_of_internal_interface()
+        return _wrap(generated.InternalInterface.some_property_of_internal_interface(), str)
 

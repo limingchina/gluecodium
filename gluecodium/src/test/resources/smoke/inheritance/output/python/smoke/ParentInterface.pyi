@@ -28,9 +28,9 @@ class ParentInterface(generated.ParentInterface):
     @property
     def root_property(self) -> str:
         """"""
-        return generated.ParentInterface.root_property.fget(self)
+        return _wrap(generated.ParentInterface.root_property.fget(self), str)
 
     @root_property.setter
     def root_property(self, value: str):
-        generated.ParentInterface.root_property.fset(self, value)
+        generated.ParentInterface.root_property.fset(self, _unwrap(value, str))
 

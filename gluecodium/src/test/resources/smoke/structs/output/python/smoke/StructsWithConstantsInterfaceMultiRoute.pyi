@@ -16,26 +16,26 @@ class StructsWithConstantsInterfaceMultiRoute(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsWithConstantsInterfaceMultiRoute):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithConstantsInterfaceMultiRoute(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsWithConstantsInterfaceMultiRoute(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def descriptions(self) -> list[str]:
         """"""
-        return self._native.descriptions
+        return _wrap(self._native.descriptions, list[str])
     @descriptions.setter
     def descriptions(self, value: list[str]):
-      self._native.descriptions = getattr(value, "_native", value)
+      self._native.descriptions = _unwrap(value, list[str])
 
 
 
     @property
     def type(self) -> RouteUtilsRouteType:
         """"""
-        return RouteUtilsRouteType(self._native.type)
+        return _wrap(self._native.type, RouteUtilsRouteType)
     @type.setter
     def type(self, value: RouteUtilsRouteType):
-      self._native.type = getattr(value, "_native", value)
+      self._native.type = _unwrap(value, RouteUtilsRouteType)
 
 
 

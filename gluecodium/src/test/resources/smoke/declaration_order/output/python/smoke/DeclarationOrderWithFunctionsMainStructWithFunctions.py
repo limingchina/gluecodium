@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.DeclarationOrderWithFunctionsFieldStruct import DeclarationOrderWithFunctionsFieldStruct
+from smoke.DeclarationOrderWithFunctionsFooBar import DeclarationOrderWithFunctionsFooBar
 from smoke.DeclarationOrderWithFunctionsParameterStruct import DeclarationOrderWithFunctionsParameterStruct
 from smoke.DeclarationOrderWithFunctionsReturnStruct import DeclarationOrderWithFunctionsReturnStruct
 from smoke.DeclarationOrderWithFunctionsThrownStruct import DeclarationOrderWithFunctionsThrownStruct
@@ -20,27 +24,27 @@ class DeclarationOrderWithFunctionsMainStructWithFunctions(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DeclarationOrderWithFunctionsMainStructWithFunctions):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DeclarationOrderWithFunctionsMainStructWithFunctions(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DeclarationOrderWithFunctionsMainStructWithFunctions(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def struct_field(self) -> DeclarationOrderWithFunctionsFieldStruct:
         """"""
-        return DeclarationOrderWithFunctionsFieldStruct(self._native.struct_field)
+        return _wrap(self._native.struct_field, DeclarationOrderWithFunctionsFieldStruct)
     @struct_field.setter
     def struct_field(self, value: DeclarationOrderWithFunctionsFieldStruct):
-      self._native.struct_field = getattr(value, "_native", value)
+      self._native.struct_field = _unwrap(value, DeclarationOrderWithFunctionsFieldStruct)
 
 
     def with_parameter(self, input: DeclarationOrderWithFunctionsParameterStruct):
         """"""
-        return self._native.with_parameter(input._native)
+        return _wrap(self._native.with_parameter(_unwrap(input, DeclarationOrderWithFunctionsParameterStruct)), None)
 
     def with_return(self) -> DeclarationOrderWithFunctionsReturnStruct:
         """"""
-        return self._native.with_return()
+        return _wrap(self._native.with_return(), DeclarationOrderWithFunctionsReturnStruct)
 
     def with_thrown(self):
         """"""
-        return self._native.with_thrown()
+        return _wrap(self._native.with_thrown(), None)
 

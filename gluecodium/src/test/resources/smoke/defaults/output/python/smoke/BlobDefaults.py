@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,25 +19,25 @@ class BlobDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.BlobDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.BlobDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.BlobDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def empty_list(self) -> bytes:
         """"""
-        return self._native.empty_list
+        return _wrap(self._native.empty_list, bytes)
     @empty_list.setter
     def empty_list(self, value: bytes):
-      self._native.empty_list = getattr(value, "_native", value)
+      self._native.empty_list = _unwrap(value, bytes)
 
 
 
     @property
     def dead_beef(self) -> bytes:
         """"""
-        return self._native.dead_beef
+        return _wrap(self._native.dead_beef, bytes)
     @dead_beef.setter
     def dead_beef(self, value: bytes):
-      self._native.dead_beef = getattr(value, "_native", value)
+      self._native.dead_beef = _unwrap(value, bytes)
 
 

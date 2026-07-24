@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.StructsNestingImmutableStruct import StructsNestingImmutableStruct
 
 
@@ -17,12 +20,12 @@ class StructsDoubleNestingImmutableStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsDoubleNestingImmutableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsDoubleNestingImmutableStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsDoubleNestingImmutableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def nesting_struct_field(self) -> StructsNestingImmutableStruct:
         """"""
-        return StructsNestingImmutableStruct(self._native.nesting_struct_field)
+        return _wrap(self._native.nesting_struct_field, StructsNestingImmutableStruct)
 
 

@@ -20,52 +20,52 @@ class KotlinExternalTypesStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.KotlinExternalTypesStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.KotlinExternalTypesStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.KotlinExternalTypesStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def currency(self) -> Currency:
         """"""
-        return Currency(self._native.currency)
+        return _wrap(self._native.currency, Currency)
 
 
 
     @property
     def time_zone(self) -> TimeZone:
         """"""
-        return TimeZone(self._native.time_zone)
+        return _wrap(self._native.time_zone, TimeZone)
     @time_zone.setter
     def time_zone(self, value: TimeZone):
-      self._native.time_zone = getattr(value, "_native", value)
+      self._native.time_zone = _unwrap(value, TimeZone)
 
 
 
     @property
     def month(self) -> Month:
         """"""
-        return Month(self._native.month)
+        return _wrap(self._native.month, Month)
     @month.setter
     def month(self, value: Month):
-      self._native.month = getattr(value, "_native", value)
+      self._native.month = _unwrap(value, Month)
 
 
 
     @property
     def color(self) -> SystemColor:
         """"""
-        return SystemColor(self._native.color)
+        return _wrap(self._native.color, SystemColor)
     @color.setter
     def color(self, value: SystemColor):
-      self._native.color = getattr(value, "_native", value)
+      self._native.color = _unwrap(value, SystemColor)
 
 
 
     @property
     def season(self) -> Season:
         """"""
-        return Season(self._native.season)
+        return _wrap(self._native.season, Season)
     @season.setter
     def season(self, value: Season):
-      self._native.season = getattr(value, "_native", value)
+      self._native.season = _unwrap(value, Season)
 
 

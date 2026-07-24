@@ -16,15 +16,15 @@ class OuterStructWithFieldConstructor(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.OuterStructWithFieldConstructor):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterStructWithFieldConstructor(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.OuterStructWithFieldConstructor(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def outer_struct_field(self) -> OuterStructWithFieldConstructorInnerStructWithDefaults:
         """"""
-        return OuterStructWithFieldConstructorInnerStructWithDefaults(self._native.outer_struct_field)
+        return _wrap(self._native.outer_struct_field, OuterStructWithFieldConstructorInnerStructWithDefaults)
     @outer_struct_field.setter
     def outer_struct_field(self, value: OuterStructWithFieldConstructorInnerStructWithDefaults):
-      self._native.outer_struct_field = getattr(value, "_native", value)
+      self._native.outer_struct_field = _unwrap(value, OuterStructWithFieldConstructorInnerStructWithDefaults)
 
 

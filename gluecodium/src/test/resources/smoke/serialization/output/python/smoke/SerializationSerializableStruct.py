@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.SerializationNestedSerializableStruct import SerializationNestedSerializableStruct
 from smoke.SerializationSomeEnum import SerializationSomeEnum
 
@@ -18,165 +21,165 @@ class SerializationSerializableStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.SerializationSerializableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SerializationSerializableStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.SerializationSerializableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def bool_field(self) -> bool:
         """"""
-        return self._native.bool_field
+        return _wrap(self._native.bool_field, bool)
     @bool_field.setter
     def bool_field(self, value: bool):
-      self._native.bool_field = getattr(value, "_native", value)
+      self._native.bool_field = _unwrap(value, bool)
 
 
 
     @property
     def byte_field(self) -> int:
         """"""
-        return self._native.byte_field
+        return _wrap(self._native.byte_field, int)
     @byte_field.setter
     def byte_field(self, value: int):
-      self._native.byte_field = getattr(value, "_native", value)
+      self._native.byte_field = _unwrap(value, int)
 
 
 
     @property
     def short_field(self) -> int:
         """"""
-        return self._native.short_field
+        return _wrap(self._native.short_field, int)
     @short_field.setter
     def short_field(self, value: int):
-      self._native.short_field = getattr(value, "_native", value)
+      self._native.short_field = _unwrap(value, int)
 
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):
-      self._native.int_field = getattr(value, "_native", value)
+      self._native.int_field = _unwrap(value, int)
 
 
 
     @property
     def long_field(self) -> int:
         """"""
-        return self._native.long_field
+        return _wrap(self._native.long_field, int)
     @long_field.setter
     def long_field(self, value: int):
-      self._native.long_field = getattr(value, "_native", value)
+      self._native.long_field = _unwrap(value, int)
 
 
 
     @property
     def float_field(self) -> float:
         """"""
-        return self._native.float_field
+        return _wrap(self._native.float_field, float)
     @float_field.setter
     def float_field(self, value: float):
-      self._native.float_field = getattr(value, "_native", value)
+      self._native.float_field = _unwrap(value, float)
 
 
 
     @property
     def double_field(self) -> float:
         """"""
-        return self._native.double_field
+        return _wrap(self._native.double_field, float)
     @double_field.setter
     def double_field(self, value: float):
-      self._native.double_field = getattr(value, "_native", value)
+      self._native.double_field = _unwrap(value, float)
 
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, str)
 
 
 
     @property
     def struct_field(self) -> SerializationNestedSerializableStruct:
         """"""
-        return SerializationNestedSerializableStruct(self._native.struct_field)
+        return _wrap(self._native.struct_field, SerializationNestedSerializableStruct)
     @struct_field.setter
     def struct_field(self, value: SerializationNestedSerializableStruct):
-      self._native.struct_field = getattr(value, "_native", value)
+      self._native.struct_field = _unwrap(value, SerializationNestedSerializableStruct)
 
 
 
     @property
     def byte_buffer_field(self) -> bytes:
         """"""
-        return self._native.byte_buffer_field
+        return _wrap(self._native.byte_buffer_field, bytes)
     @byte_buffer_field.setter
     def byte_buffer_field(self, value: bytes):
-      self._native.byte_buffer_field = getattr(value, "_native", value)
+      self._native.byte_buffer_field = _unwrap(value, bytes)
 
 
 
     @property
     def array_field(self) -> list[str]:
         """"""
-        return self._native.array_field
+        return _wrap(self._native.array_field, list[str])
     @array_field.setter
     def array_field(self, value: list[str]):
-      self._native.array_field = getattr(value, "_native", value)
+      self._native.array_field = _unwrap(value, list[str])
 
 
 
     @property
     def struct_array_field(self) -> list[SerializationNestedSerializableStruct]:
         """"""
-        return self._native.struct_array_field
+        return _wrap(self._native.struct_array_field, list[SerializationNestedSerializableStruct])
     @struct_array_field.setter
     def struct_array_field(self, value: list[SerializationNestedSerializableStruct]):
-      self._native.struct_array_field = getattr(value, "_native", value)
+      self._native.struct_array_field = _unwrap(value, list[SerializationNestedSerializableStruct])
 
 
 
     @property
     def map_field(self) -> dict[int, str]:
         """"""
-        return self._native.map_field
+        return _wrap(self._native.map_field, dict[int, str])
     @map_field.setter
     def map_field(self, value: dict[int, str]):
-      self._native.map_field = getattr(value, "_native", value)
+      self._native.map_field = _unwrap(value, dict[int, str])
 
 
 
     @property
     def set_field(self) -> set[str]:
         """"""
-        return self._native.set_field
+        return _wrap(self._native.set_field, set[str])
     @set_field.setter
     def set_field(self, value: set[str]):
-      self._native.set_field = getattr(value, "_native", value)
+      self._native.set_field = _unwrap(value, set[str])
 
 
 
     @property
     def enum_set_field(self) -> set[SerializationSomeEnum]:
         """"""
-        return self._native.enum_set_field
+        return _wrap(self._native.enum_set_field, set[SerializationSomeEnum])
     @enum_set_field.setter
     def enum_set_field(self, value: set[SerializationSomeEnum]):
-      self._native.enum_set_field = getattr(value, "_native", value)
+      self._native.enum_set_field = _unwrap(value, set[SerializationSomeEnum])
 
 
 
     @property
     def enum_field(self) -> SerializationSomeEnum:
         """"""
-        return SerializationSomeEnum(self._native.enum_field)
+        return _wrap(self._native.enum_field, SerializationSomeEnum)
     @enum_field.setter
     def enum_field(self, value: SerializationSomeEnum):
-      self._native.enum_field = getattr(value, "_native", value)
+      self._native.enum_field = _unwrap(value, SerializationSomeEnum)
 
 

@@ -36,9 +36,9 @@ class TypeDefs(_NativeBase):
     @property
     def primitive_type_property(self) -> list[float]:
         """"""
-        return self._native.primitive_type_property
+        return _wrap(self._native.primitive_type_property, list[float])
 
     @primitive_type_property.setter
     def primitive_type_property(self, value: list[float]):
-        self._native.primitive_type_property = value
+        self._native.primitive_type_property = _unwrap(value, list[float])
 

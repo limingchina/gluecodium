@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,10 +17,8 @@ namespace py = pybind11;
 using Basic = ::root::space::smoke::Basic;
 
 
-void register_Basic(py::module_& module) {
+void register_smoke_Basic(py::module_& module) {
     py::class_<Basic, std::shared_ptr<Basic>>(module, "Basic")
-        .def_static("basic_method", &Basic::basic_method, py::arg("input_string"))
-
         ;
 }
 

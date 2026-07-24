@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class InternalListener(generated.InternalListener):
 
     def on_event(self):
         """"""
-        return generated.InternalListener.on_event(self)
+        return _wrap(generated.InternalListener.on_event(self), None)
 

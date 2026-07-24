@@ -22,9 +22,9 @@ class PlatformNamesInterface(_NativeBase):
     @property
     def basic_property(self) -> int:
         """"""
-        return self._native.basic_property
+        return _wrap(self._native.basic_property, int)
 
     @basic_property.setter
     def basic_property(self, value: int):
-        self._native.basic_property = value
+        self._native.basic_property = _unwrap(value, int)
 

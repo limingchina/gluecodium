@@ -15,15 +15,15 @@ class SomeStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.SomeStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SomeStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.SomeStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):
-      self._native.int_field = getattr(value, "_native", value)
+      self._native.int_field = _unwrap(value, int)
 
 

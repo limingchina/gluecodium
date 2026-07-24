@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 import datetime
 
 
@@ -27,5 +30,5 @@ class DurationInterface(generated.DurationInterface):
 
     def duration_function(self, input: datetime.timedelta) -> str:
         """"""
-        return generated.DurationInterface.duration_function(self, input)
+        return _wrap(generated.DurationInterface.duration_function(self, _unwrap(input, datetime.timedelta)), str)
 

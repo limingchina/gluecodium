@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -18,12 +19,8 @@ namespace py = pybind11;
 using DurationOverloads = ::smoke::DurationOverloads;
 
 
-void register_DurationOverloads(py::module_& module) {
+void register_smoke_DurationOverloads(py::module_& module) {
     py::class_<DurationOverloads, std::shared_ptr<DurationOverloads>>(module, "DurationOverloads")
-        .def("duration_function", py::overload_cast<const ::std::chrono::seconds>(&DurationOverloads::duration_function), py::arg("input"))
-
-        .def("duration_function", py::overload_cast<const ::std::string&>(&DurationOverloads::duration_function), py::arg("input"))
-
         ;
 }
 

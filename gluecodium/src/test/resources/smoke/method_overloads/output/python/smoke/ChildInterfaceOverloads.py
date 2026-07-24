@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ParentInterface import ParentInterface
 
 
@@ -27,9 +30,9 @@ class ChildInterfaceOverloads(generated.ChildInterfaceOverloads):
 
     def foo(self, input: str):
         """"""
-        return generated.ChildInterfaceOverloads.foo(self, input)
+        return _wrap(generated.ChildInterfaceOverloads.foo(self, _unwrap(input, str)), None)
 
     def bar(self, input: str):
         """"""
-        return generated.ChildInterfaceOverloads.bar(self, input)
+        return _wrap(generated.ChildInterfaceOverloads.bar(self, _unwrap(input, str)), None)
 

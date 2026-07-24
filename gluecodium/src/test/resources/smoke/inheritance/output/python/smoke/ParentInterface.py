@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,14 +29,14 @@ class ParentInterface(generated.ParentInterface):
 
     def root_method(self):
         """"""
-        return generated.ParentInterface.root_method(self)
+        return _wrap(generated.ParentInterface.root_method(self), None)
 
     @property
     def root_property(self) -> str:
         """"""
-        return generated.ParentInterface.root_property.fget(self)
+        return _wrap(generated.ParentInterface.root_property.fget(self), str)
 
     @root_property.setter
     def root_property(self, value: str):
-        generated.ParentInterface.root_property.fset(self, value)
+        generated.ParentInterface.root_property.fset(self, _unwrap(value, str))
 

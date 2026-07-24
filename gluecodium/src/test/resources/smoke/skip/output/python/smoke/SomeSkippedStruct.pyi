@@ -1,5 +1,6 @@
 
 
+from smoke.SomeSkippedEnum import SomeSkippedEnum
 import typing
 
 
@@ -15,15 +16,15 @@ class SomeSkippedStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.SomeSkippedStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SomeSkippedStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.SomeSkippedStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> list[SomeSkippedEnum]:
         """"""
-        return self._native.field
+        return _wrap(self._native.field, list[SomeSkippedEnum])
     @field.setter
     def field(self, value: list[SomeSkippedEnum]):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, list[SomeSkippedEnum])
 
 

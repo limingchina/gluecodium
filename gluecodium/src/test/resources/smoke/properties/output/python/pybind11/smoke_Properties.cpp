@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -21,7 +22,7 @@ namespace py = pybind11;
 using Properties = ::smoke::Properties;
 
 
-void register_Properties(py::module_& module) {
+void register_smoke_Properties(py::module_& module) {
     py::class_<Properties, std::shared_ptr<Properties>>(module, "Properties")
         .def_property("built_in_type_property", py::overload_cast<>(&Properties::get_built_in_type_property, py::const_), py::overload_cast<const uint32_t>(&Properties::set_built_in_type_property))
         .def_property_readonly("readonly_property", py::overload_cast<>(&Properties::get_readonly_property, py::const_))

@@ -6,20 +6,23 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/Equatable.h"
 #include "cstdint"
 #include "optional"
 #include "string"
+#include "unordered_map"
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EquatableNullableStruct = ::smoke::Equatable::EquatableNullableStruct;
 
-void register_EquatableEquatableNullableStruct(py::module_& module) {
+void register_smoke_EquatableEquatableNullableStruct(py::module_& module) {
     py::class_<EquatableNullableStruct>(module, "EquatableEquatableNullableStruct")
         .def_readwrite("bool_field", &EquatableNullableStruct::bool_field)
         .def_readwrite("int_field", &EquatableNullableStruct::int_field)
@@ -31,6 +34,7 @@ void register_EquatableEquatableNullableStruct(py::module_& module) {
         .def_readwrite("array_field", &EquatableNullableStruct::array_field)
         .def_readwrite("map_field", &EquatableNullableStruct::map_field)
         .def(py::init<>())
+        .def(py::init<std::optional< bool >, std::optional< int32_t >, std::optional< uint16_t >, std::optional< float >, std::optional< ::std::string >, std::optional< ::smoke::Equatable::NestedEquatableStruct >, std::optional< ::smoke::Equatable::SomeEnum >, std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< int32_t, ::std::string > >(), py::arg("bool_field"), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
         ;
 }
 

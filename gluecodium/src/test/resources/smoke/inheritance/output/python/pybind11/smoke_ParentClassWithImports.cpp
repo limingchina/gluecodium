@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -55,7 +56,7 @@ public:
     }
 };
 
-void register_ParentClassWithImports(py::module_& module) {
+void register_smoke_ParentClassWithImports(py::module_& module) {
     py::class_<ParentClassWithImports, std::shared_ptr<ParentClassWithImports>, ParentClassWithImportsTrampoline>(module, "ParentClassWithImports")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
@@ -67,8 +68,6 @@ void register_ParentClassWithImports(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("root_method", &ParentClassWithImports::root_method, py::arg("input1"), py::arg("input2"))
-
         .def_property("root_property", py::overload_cast<>(&ParentClassWithImports::get_root_property, py::const_), py::overload_cast<const ::smoke::IncludableLambda&>(&ParentClassWithImports::set_root_property))
         ;
 }

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from dont.smoke.DontSmokeEnum import DontSmokeEnum
 
 from _native_base import _NativeBase
@@ -17,5 +20,5 @@ class SkippedFunctionClass(_NativeBase):
 
     def do_foo(self, input: DontSmokeEnum):
         """"""
-        return self._native.do_foo(input._native)
+        return _wrap(self._native.do_foo(_unwrap(input, DontSmokeEnum)), None)
 

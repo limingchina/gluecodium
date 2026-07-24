@@ -17,33 +17,33 @@ class TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingI
         if len(args) == 1 and isinstance(args[0], generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def some_field1(self):
         """"""
-        return Optional[TypesWithDefaultsSomeImmutableStructWithDefaults](self._native.some_field1)
+        return _wrap(self._native.some_field1, Optional[TypesWithDefaultsSomeImmutableStructWithDefaults])
 
 
 
     @property
     def some_field2(self):
         """"""
-        return Optional[TypesWithDefaultsImmutableStructWithCollections](self._native.some_field2)
+        return _wrap(self._native.some_field2, Optional[TypesWithDefaultsImmutableStructWithCollections])
 
 
 
     @property
     def some_field(self) -> int:
         """"""
-        return self._native.some_field
+        return _wrap(self._native.some_field, int)
 
 
 
     @property
     def another_field(self) -> int:
         """"""
-        return self._native.another_field
+        return _wrap(self._native.another_field, int)
 
 

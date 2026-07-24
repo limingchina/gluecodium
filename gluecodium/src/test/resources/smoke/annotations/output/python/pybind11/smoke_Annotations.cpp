@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,10 +18,8 @@ namespace py = pybind11;
 using Annotations = ::smoke::Annotations;
 
 
-void register_Annotations(py::module_& module) {
+void register_smoke_Annotations(py::module_& module) {
     py::class_<Annotations, std::shared_ptr<Annotations>>(module, "Annotations")
-        .def("test_optional", &Annotations::test_optional, py::arg("self"))
-
         ;
 }
 

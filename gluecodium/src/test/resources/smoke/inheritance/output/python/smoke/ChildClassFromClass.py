@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ParentClass import ParentClass
 
 import generated
@@ -25,5 +28,5 @@ class ChildClassFromClass(generated.ChildClassFromClass):
 
     def child_class_method(self):
         """"""
-        return generated.ChildClassFromClass.child_class_method(self)
+        return _wrap(generated.ChildClassFromClass.child_class_method(self), None)
 

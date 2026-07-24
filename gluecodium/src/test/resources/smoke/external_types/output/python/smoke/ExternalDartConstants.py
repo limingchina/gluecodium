@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.Rectangle import Rectangle
 
 
@@ -17,7 +20,7 @@ class ExternalDartConstants(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.ExternalDartConstants):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ExternalDartConstants(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.ExternalDartConstants(*[_unwrap(arg) for arg in args]))
 
 
     SMALL = {0, 0, 1, 1}

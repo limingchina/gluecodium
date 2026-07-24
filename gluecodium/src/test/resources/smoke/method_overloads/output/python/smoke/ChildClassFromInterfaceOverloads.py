@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ParentInterface import ParentInterface
 
 import generated
@@ -25,11 +28,11 @@ class ChildClassFromInterfaceOverloads(generated.ChildClassFromInterfaceOverload
 
     def foo(*args, **kwargs):
         """"""
-        return generated.ChildClassFromInterfaceOverloads.foo(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.ChildClassFromInterfaceOverloads.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(*args, **kwargs):
         """"""
-        return generated.ChildClassFromInterfaceOverloads.bar(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.ChildClassFromInterfaceOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,12 +19,12 @@ class InternalClassWithFunctions(_NativeBase):
 
     def foo_bar(self):
         """"""
-        return self._native.foo_bar()
+        return _wrap(self._native.foo_bar(), None)
 
     @staticmethod
     def make(*args, **kwargs) -> InternalClassWithFunctions:
         """"""
-        native_result = generated.InternalClassWithFunctions.make(*[getattr(a, "_native", a) for a in args])
+        native_result = generated.InternalClassWithFunctions.make(*[_unwrap(a) for a in args])
         return InternalClassWithFunctions(native_result)
 
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,7 +20,7 @@ class SkipOverloadsInDart(_NativeBase):
     @staticmethod
     def make(*args, **kwargs) -> SkipOverloadsInDart:
         """"""
-        native_result = generated.SkipOverloadsInDart.make(*[getattr(a, "_native", a) for a in args])
+        native_result = generated.SkipOverloadsInDart.make(*[_unwrap(a) for a in args])
         return SkipOverloadsInDart(native_result)
 
 

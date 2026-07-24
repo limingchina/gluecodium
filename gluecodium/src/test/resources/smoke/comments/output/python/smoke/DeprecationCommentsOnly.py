@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,16 +29,16 @@ class DeprecationCommentsOnly(generated.DeprecationCommentsOnly):
 
     def some_method_with_all_comments(self, input: str) -> bool:
         """"""
-        return generated.DeprecationCommentsOnly.some_method_with_all_comments(self, input)
+        return _wrap(generated.DeprecationCommentsOnly.some_method_with_all_comments(self, _unwrap(input, str)), bool)
 
     @property
     def is_some_property(self) -> bool:
         """"""
-        return generated.DeprecationCommentsOnly.is_some_property.fget(self)
+        return _wrap(generated.DeprecationCommentsOnly.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.DeprecationCommentsOnly.is_some_property.fset(self, value)
+        generated.DeprecationCommentsOnly.is_some_property.fset(self, _unwrap(value, bool))
 
 
     VERY_USEFUL = True

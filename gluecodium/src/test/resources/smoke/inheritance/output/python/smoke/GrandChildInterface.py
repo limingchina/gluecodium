@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ChildInterface import ChildInterface
 
 
@@ -27,5 +30,5 @@ class GrandChildInterface(generated.GrandChildInterface):
 
     def grand_child_method(self):
         """"""
-        return generated.GrandChildInterface.grand_child_method(self)
+        return _wrap(generated.GrandChildInterface.grand_child_method(self), None)
 

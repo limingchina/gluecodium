@@ -2,6 +2,7 @@
 
 from smoke.commentsSomeEnum import commentsSomeEnum
 from smoke.commentsSomeStruct import commentsSomeStruct
+from smoke.commentsSomethingWrong import commentsSomethingWrong
 import typing
 
 from _native_base import _NativeBase

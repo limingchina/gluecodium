@@ -16,25 +16,25 @@ class EnumDefaultsNullableEnum(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.EnumDefaultsNullableEnum):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnumDefaultsNullableEnum(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.EnumDefaultsNullableEnum(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def enum_field1(self):
         """"""
-        return Optional[Enum2](self._native.enum_field1)
+        return _wrap(self._native.enum_field1, Optional[Enum2])
     @enum_field1.setter
     def enum_field1(self, value):
-      self._native.enum_field1 = getattr(value, "_native", value)
+      self._native.enum_field1 = _unwrap(value, Optional[Enum2])
 
 
 
     @property
     def enum_field1(self):
         """"""
-        return Optional[Enum2](self._native.enum_field1)
+        return _wrap(self._native.enum_field1, Optional[Enum2])
     @enum_field1.setter
     def enum_field1(self, value):
-      self._native.enum_field1 = getattr(value, "_native", value)
+      self._native.enum_field1 = _unwrap(value, Optional[Enum2])
 
 

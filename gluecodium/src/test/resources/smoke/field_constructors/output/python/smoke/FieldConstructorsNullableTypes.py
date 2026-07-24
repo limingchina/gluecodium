@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.FieldConstructorsNullableTypesFoodType import FieldConstructorsNullableTypesFoodType
 from smoke.FieldConstructorsNullableTypesStructWithParameters import FieldConstructorsNullableTypesStructWithParameters
 
@@ -18,15 +21,15 @@ class FieldConstructorsNullableTypes(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.FieldConstructorsNullableTypes):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsNullableTypes(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.FieldConstructorsNullableTypes(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def nullable_field(self):
         """"""
-        return Optional[FieldConstructorsNullableTypesStructWithParameters](self._native.nullable_field)
+        return _wrap(self._native.nullable_field, Optional[FieldConstructorsNullableTypesStructWithParameters])
     @nullable_field.setter
     def nullable_field(self, value):
-      self._native.nullable_field = getattr(value, "_native", value)
+      self._native.nullable_field = _unwrap(value, Optional[FieldConstructorsNullableTypesStructWithParameters])
 
 

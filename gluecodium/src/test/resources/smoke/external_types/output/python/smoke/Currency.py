@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,19 +19,19 @@ class Currency(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.Currency):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Currency(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.Currency(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def currency_code(self) -> str:
         """"""
-        return self._native.currency_code
+        return _wrap(self._native.currency_code, str)
 
 
 
     @property
     def numeric_code(self) -> int:
         """"""
-        return self._native.numeric_code
+        return _wrap(self._native.numeric_code, int)
 
 

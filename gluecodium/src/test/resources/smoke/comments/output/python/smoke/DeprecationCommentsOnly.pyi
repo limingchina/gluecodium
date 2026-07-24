@@ -28,11 +28,11 @@ class DeprecationCommentsOnly(generated.DeprecationCommentsOnly):
     @property
     def is_some_property(self) -> bool:
         """"""
-        return generated.DeprecationCommentsOnly.is_some_property.fget(self)
+        return _wrap(generated.DeprecationCommentsOnly.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.DeprecationCommentsOnly.is_some_property.fset(self, value)
+        generated.DeprecationCommentsOnly.is_some_property.fset(self, _unwrap(value, bool))
 
 
     VERY_USEFUL = True

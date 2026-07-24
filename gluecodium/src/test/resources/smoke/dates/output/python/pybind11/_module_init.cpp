@@ -10,12 +10,12 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_DateDefaults(pybind11::module_& module);
-void register_DateDefaultsAliased(pybind11::module_& module);
-void register_Dates(pybind11::module_& module);
-void register_DatesDateStruct(pybind11::module_& module);
-void register_DatesSteady(pybind11::module_& module);
-void register_DatesSteadyDateStruct(pybind11::module_& module);
+void register_smoke_DateDefaults(pybind11::module_& module);
+void register_smoke_DateDefaultsAliased(pybind11::module_& module);
+void register_smoke_Dates(pybind11::module_& module);
+void register_smoke_DatesDateStruct(pybind11::module_& module);
+void register_smoke_DatesSteady(pybind11::module_& module);
+void register_smoke_DatesSteadyDateStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -23,10 +23,10 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_DateDefaults(m);
-    register_DateDefaultsAliased(m);
-    register_Dates(m);
-    register_DatesDateStruct(m);
-    register_DatesSteady(m);
-    register_DatesSteadyDateStruct(m);
+    register_smoke_DateDefaults(m);
+    register_smoke_DateDefaultsAliased(m);
+    register_smoke_Dates(m);
+    register_smoke_DatesDateStruct(m);
+    register_smoke_DatesSteady(m);
+    register_smoke_DatesSteadyDateStruct(m);
 }

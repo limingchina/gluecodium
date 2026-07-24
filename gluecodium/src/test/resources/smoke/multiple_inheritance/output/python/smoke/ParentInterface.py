@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from another.SomeCoolClassType import SomeCoolClassType
 
 
@@ -27,18 +30,18 @@ class ParentInterface(generated.ParentInterface):
 
     def parent_function(self):
         """"""
-        return generated.ParentInterface.parent_function(self)
+        return _wrap(generated.ParentInterface.parent_function(self), None)
 
     def some_function_that_uses_type_from_another_package(self, some_param: SomeCoolClassType):
         """"""
-        return generated.ParentInterface.some_function_that_uses_type_from_another_package(self, some_param._native)
+        return _wrap(generated.ParentInterface.some_function_that_uses_type_from_another_package(self, _unwrap(some_param, SomeCoolClassType)), None)
 
     @property
     def parent_property(self) -> str:
         """"""
-        return generated.ParentInterface.parent_property.fget(self)
+        return _wrap(generated.ParentInterface.parent_property.fget(self), str)
 
     @parent_property.setter
     def parent_property(self, value: str):
-        generated.ParentInterface.parent_property.fset(self, value)
+        generated.ParentInterface.parent_property.fset(self, _unwrap(value, str))
 

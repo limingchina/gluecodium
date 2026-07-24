@@ -10,22 +10,22 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_Equatable(pybind11::module_& module);
-void register_EquatableClass(pybind11::module_& module);
-void register_EquatableClassEquatableStruct(pybind11::module_& module);
-void register_EquatableEquatableNullableStruct(pybind11::module_& module);
-void register_EquatableEquatableStruct(pybind11::module_& module);
-void register_EquatableInterface(pybind11::module_& module);
-void register_EquatableNestedEquatableStruct(pybind11::module_& module);
-void register_EquatableSomeEnum(pybind11::module_& module);
-void register_EquatableStructWithAccessors(pybind11::module_& module);
-void register_EquatableStructWithInternalFields(pybind11::module_& module);
-void register_ExternalEquatable(pybind11::module_& module);
-void register_ExternalEquatableExternalEquatableStruct(pybind11::module_& module);
-void register_NonEquatableClass(pybind11::module_& module);
-void register_NonEquatableInterface(pybind11::module_& module);
-void register_PointerEquatableClass(pybind11::module_& module);
-void register_SimpleEquatableStruct(pybind11::module_& module);
+void register_smoke_Equatable(pybind11::module_& module);
+void register_smoke_EquatableClass(pybind11::module_& module);
+void register_smoke_EquatableClassEquatableStruct(pybind11::module_& module);
+void register_smoke_EquatableEquatableNullableStruct(pybind11::module_& module);
+void register_smoke_EquatableEquatableStruct(pybind11::module_& module);
+void register_smoke_EquatableInterface(pybind11::module_& module);
+void register_smoke_EquatableNestedEquatableStruct(pybind11::module_& module);
+void register_smoke_EquatableSomeEnum(pybind11::module_& module);
+void register_smoke_EquatableStructWithAccessors(pybind11::module_& module);
+void register_smoke_EquatableStructWithInternalFields(pybind11::module_& module);
+void register_smoke_ExternalEquatable(pybind11::module_& module);
+void register_smoke_ExternalEquatableExternalEquatableStruct(pybind11::module_& module);
+void register_smoke_NonEquatableClass(pybind11::module_& module);
+void register_smoke_NonEquatableInterface(pybind11::module_& module);
+void register_smoke_PointerEquatableClass(pybind11::module_& module);
+void register_smoke_SimpleEquatableStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -33,20 +33,20 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_Equatable(m);
-    register_EquatableClass(m);
-    register_EquatableClassEquatableStruct(m);
-    register_EquatableEquatableNullableStruct(m);
-    register_EquatableEquatableStruct(m);
-    register_EquatableInterface(m);
-    register_EquatableNestedEquatableStruct(m);
-    register_EquatableSomeEnum(m);
-    register_EquatableStructWithAccessors(m);
-    register_EquatableStructWithInternalFields(m);
-    register_ExternalEquatable(m);
-    register_ExternalEquatableExternalEquatableStruct(m);
-    register_NonEquatableClass(m);
-    register_NonEquatableInterface(m);
-    register_PointerEquatableClass(m);
-    register_SimpleEquatableStruct(m);
+    register_smoke_Equatable(m);
+    register_smoke_EquatableClass(m);
+    register_smoke_EquatableClassEquatableStruct(m);
+    register_smoke_EquatableEquatableNullableStruct(m);
+    register_smoke_EquatableEquatableStruct(m);
+    register_smoke_EquatableInterface(m);
+    register_smoke_EquatableNestedEquatableStruct(m);
+    register_smoke_EquatableSomeEnum(m);
+    register_smoke_EquatableStructWithAccessors(m);
+    register_smoke_EquatableStructWithInternalFields(m);
+    register_smoke_ExternalEquatable(m);
+    register_smoke_ExternalEquatableExternalEquatableStruct(m);
+    register_smoke_NonEquatableClass(m);
+    register_smoke_NonEquatableInterface(m);
+    register_smoke_PointerEquatableClass(m);
+    register_smoke_SimpleEquatableStruct(m);
 }

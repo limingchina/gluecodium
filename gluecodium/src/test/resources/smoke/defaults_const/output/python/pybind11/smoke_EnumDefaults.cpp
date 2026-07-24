@@ -6,11 +6,13 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "fire/Enum1.h"
 #include "fire/Enum2.h"
+#include "fire/Enum3.h"
 #include "smoke/EnumDefaults.h"
 #include "smoke/EnumWrapper.h"
 #include "optional"
@@ -19,7 +21,7 @@ namespace py = pybind11;
 using EnumDefaults = ::smoke::EnumDefaults;
 
 
-void register_EnumDefaults(py::module_& module) {
+void register_smoke_EnumDefaults(py::module_& module) {
     py::class_<EnumDefaults, std::shared_ptr<EnumDefaults>>(module, "EnumDefaults")
         ;
 }

@@ -29,5 +29,5 @@ class InternalInterface(generated.InternalInterface):
     @staticmethod
     def some_property_of_internal_interface() -> str:
         """"""
-        return generated.InternalInterface.some_property_of_internal_interface()
+        return _wrap(generated.InternalInterface.some_property_of_internal_interface(), str)
 

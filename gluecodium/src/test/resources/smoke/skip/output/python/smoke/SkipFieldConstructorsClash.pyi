@@ -15,15 +15,15 @@ class SkipFieldConstructorsClash(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.SkipFieldConstructorsClash):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkipFieldConstructorsClash(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.SkipFieldConstructorsClash(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def param(self) -> str:
         """"""
-        return self._native.param
+        return _wrap(self._native.param, str)
     @param.setter
     def param(self, value: str):
-      self._native.param = getattr(value, "_native", value)
+      self._native.param = _unwrap(value, str)
 
 

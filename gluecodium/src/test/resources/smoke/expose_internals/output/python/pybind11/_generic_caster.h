@@ -1,0 +1,168 @@
+#pragma once
+
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <type_traits>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
+
+namespace gluecodium::python {
+namespace py = pybind11;
+
+namespace detail {
+template <typename T>
+struct is_vector : std::false_type {};
+template <typename T, typename Allocator>
+struct is_vector<std::vector<T, Allocator>> : std::true_type {
+    using element_type = T;
+};
+
+template <typename T>
+struct is_unordered_set : std::false_type {};
+template <typename T, typename Hash, typename Equal, typename Allocator>
+struct is_unordered_set<std::unordered_set<T, Hash, Equal, Allocator>> : std::true_type {
+    using element_type = T;
+};
+
+template <typename T>
+struct is_unordered_map : std::false_type {};
+template <typename Key, typename Value, typename Hash, typename Equal, typename Allocator>
+struct is_unordered_map<std::unordered_map<Key, Value, Hash, Equal, Allocator>> : std::true_type {
+    using key_type = Key;
+    using mapped_type = Value;
+};
+
+template <typename T>
+using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
+
+}  // namespace detail
+
+template <typename T>
+T from_python_regular(py::handle source);
+
+template <typename T>
+T from_python_hashable(py::handle source);
+
+template <typename T>
+py::object to_python_regular(const T& value);
+
+template <typename T>
+py::object to_python_hashable(const T& value);
+
+template <typename T>
+T from_python_regular(py::handle source) {
+    using Value = detail::remove_cvref_t<T>;
+    if constexpr (detail::is_vector<Value>::value) {
+        Value result;
+        for (const py::handle item : source) {
+            result.emplace_back(from_python_regular<typename detail::is_vector<Value>::element_type>(item));
+        }
+        return result;
+    } else if constexpr (detail::is_unordered_set<Value>::value) {
+        Value result;
+        for (const py::handle item : source) {
+            result.emplace(from_python_hashable<typename detail::is_unordered_set<Value>::element_type>(item));
+        }
+        return result;
+    } else if constexpr (detail::is_unordered_map<Value>::value) {
+        Value result;
+        for (const py::handle item : source.attr("items")()) {
+            auto pair = py::reinterpret_borrow<py::tuple>(item);
+            result.emplace(
+                from_python_hashable<typename detail::is_unordered_map<Value>::key_type>(pair[0]),
+                from_python_regular<typename detail::is_unordered_map<Value>::mapped_type>(pair[1]));
+        }
+        return result;
+    } else {
+        return py::cast<Value>(source);
+    }
+}
+
+template <typename T>
+T from_python_hashable(py::handle source) {
+    using Value = detail::remove_cvref_t<T>;
+    if constexpr (detail::is_vector<Value>::value) {
+        Value result;
+        for (const py::handle item : source) {
+            result.emplace_back(from_python_hashable<typename detail::is_vector<Value>::element_type>(item));
+        }
+        return result;
+    } else if constexpr (detail::is_unordered_set<Value>::value) {
+        Value result;
+        for (const py::handle item : source) {
+            result.emplace(from_python_hashable<typename detail::is_unordered_set<Value>::element_type>(item));
+        }
+        return result;
+    } else if constexpr (detail::is_unordered_map<Value>::value) {
+        Value result;
+        for (const py::handle item : source) {
+            auto pair = py::reinterpret_borrow<py::tuple>(item);
+            result.emplace(
+                from_python_hashable<typename detail::is_unordered_map<Value>::key_type>(pair[0]),
+                from_python_hashable<typename detail::is_unordered_map<Value>::mapped_type>(pair[1]));
+        }
+        return result;
+    } else {
+        return py::cast<Value>(source);
+    }
+}
+
+template <typename T>
+py::object to_python_regular(const T& value) {
+    using Value = detail::remove_cvref_t<T>;
+    if constexpr (detail::is_vector<Value>::value) {
+        py::list result;
+        for (const auto& item : value) {
+            result.append(to_python_regular(item));
+        }
+        return result;
+    } else if constexpr (detail::is_unordered_set<Value>::value) {
+        py::set result;
+        for (const auto& item : value) {
+            result.add(to_python_hashable(item));
+        }
+        return result;
+    } else if constexpr (detail::is_unordered_map<Value>::value) {
+        py::dict result;
+        for (const auto& item : value) {
+            result[to_python_hashable(item.first)] = to_python_regular(item.second);
+        }
+        return result;
+    } else {
+        return py::cast(value);
+    }
+}
+
+template <typename T>
+py::object to_python_hashable(const T& value) {
+    using Value = detail::remove_cvref_t<T>;
+    if constexpr (detail::is_vector<Value>::value) {
+        py::tuple result(value.size());
+        size_t index = 0;
+        for (const auto& item : value) {
+            result[index++] = to_python_hashable(item);
+        }
+        return result;
+    } else if constexpr (detail::is_unordered_set<Value>::value) {
+        py::set items;
+        for (const auto& item : value) {
+            items.add(to_python_hashable(item));
+        }
+        return py::frozenset(items);
+    } else if constexpr (detail::is_unordered_map<Value>::value) {
+        py::set items;
+        for (const auto& item : value) {
+            py::tuple pair(2);
+            pair[0] = to_python_hashable(item.first);
+            pair[1] = to_python_hashable(item.second);
+            items.add(pair);
+        }
+        return py::frozenset(items);
+    } else {
+        return py::cast(value);
+    }
+}
+
+}  // namespace gluecodium::python

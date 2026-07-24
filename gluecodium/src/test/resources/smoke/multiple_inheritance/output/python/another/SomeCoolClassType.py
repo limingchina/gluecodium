@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,5 +19,5 @@ class SomeCoolClassType(_NativeBase):
 
     def do_important_stuff(self):
         """"""
-        return self._native.do_important_stuff()
+        return _wrap(self._native.do_important_stuff(), None)
 

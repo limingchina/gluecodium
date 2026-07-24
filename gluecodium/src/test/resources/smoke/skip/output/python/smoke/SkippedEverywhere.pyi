@@ -1,5 +1,6 @@
 
 
+from smoke.SkipTypesNotInDart import SkipTypesNotInDart
 import typing
 
 
@@ -15,16 +16,16 @@ class SkippedEverywhere(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.SkippedEverywhere):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkippedEverywhere(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.SkippedEverywhere(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def nothing_to_see_here(self) -> str:
         """"""
-        return self._native.nothing_to_see_here
+        return _wrap(self._native.nothing_to_see_here, str)
     @nothing_to_see_here.setter
     def nothing_to_see_here(self, value: str):
-      self._native.nothing_to_see_here = getattr(value, "_native", value)
+      self._native.nothing_to_see_here = _unwrap(value, str)
 
 
     def use_map_in_dart(self, foo: dict[int, SkipTypesNotInDart]): ...

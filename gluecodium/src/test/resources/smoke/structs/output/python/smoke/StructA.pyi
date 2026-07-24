@@ -1,5 +1,6 @@
 
 
+from smoke.StructB import StructB
 import typing
 
 
@@ -15,15 +16,15 @@ class StructA(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructA):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructA(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructA(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> list[StructB]:
         """"""
-        return self._native.field
+        return _wrap(self._native.field, list[StructB])
     @field.setter
     def field(self, value: list[StructB]):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, list[StructB])
 
 

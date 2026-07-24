@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,60 +20,60 @@ class BasicTypes(_NativeBase):
     @staticmethod
     def string_function(input: str) -> str:
         """"""
-        return generated.BasicTypes.string_function(input)
+        return generated.BasicTypes.string_function(_unwrap(input, str))
 
     @staticmethod
     def bool_function(input: bool) -> bool:
         """"""
-        return generated.BasicTypes.bool_function(input)
+        return generated.BasicTypes.bool_function(_unwrap(input, bool))
 
     @staticmethod
     def float_function(input: float) -> float:
         """"""
-        return generated.BasicTypes.float_function(input)
+        return generated.BasicTypes.float_function(_unwrap(input, float))
 
     @staticmethod
     def double_function(input: float) -> float:
         """"""
-        return generated.BasicTypes.double_function(input)
+        return generated.BasicTypes.double_function(_unwrap(input, float))
 
     @staticmethod
     def byte_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.byte_function(input)
+        return generated.BasicTypes.byte_function(_unwrap(input, int))
 
     @staticmethod
     def short_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.short_function(input)
+        return generated.BasicTypes.short_function(_unwrap(input, int))
 
     @staticmethod
     def int_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.int_function(input)
+        return generated.BasicTypes.int_function(_unwrap(input, int))
 
     @staticmethod
     def long_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.long_function(input)
+        return generated.BasicTypes.long_function(_unwrap(input, int))
 
     @staticmethod
     def ubyte_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.ubyte_function(input)
+        return generated.BasicTypes.ubyte_function(_unwrap(input, int))
 
     @staticmethod
     def ushort_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.ushort_function(input)
+        return generated.BasicTypes.ushort_function(_unwrap(input, int))
 
     @staticmethod
     def uint_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.uint_function(input)
+        return generated.BasicTypes.uint_function(_unwrap(input, int))
 
     @staticmethod
     def ulong_function(input: int) -> int:
         """"""
-        return generated.BasicTypes.ulong_function(input)
+        return generated.BasicTypes.ulong_function(_unwrap(input, int))
 

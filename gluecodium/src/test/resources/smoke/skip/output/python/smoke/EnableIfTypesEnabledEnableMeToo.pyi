@@ -16,15 +16,15 @@ class EnableIfTypesEnabledEnableMeToo(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.EnableIfTypesEnabledEnableMeToo):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnableIfTypesEnabledEnableMeToo(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.EnableIfTypesEnabledEnableMeToo(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> EnableIfTypesEnabledEnableMe:
         """"""
-        return EnableIfTypesEnabledEnableMe(self._native.field)
+        return _wrap(self._native.field, EnableIfTypesEnabledEnableMe)
     @field.setter
     def field(self, value: EnableIfTypesEnabledEnableMe):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, EnableIfTypesEnabledEnableMe)
 
 

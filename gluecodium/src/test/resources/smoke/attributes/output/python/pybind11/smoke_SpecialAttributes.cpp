@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,12 +16,8 @@ namespace py = pybind11;
 using SpecialAttributes = ::smoke::SpecialAttributes;
 
 
-void register_SpecialAttributes(py::module_& module) {
+void register_smoke_SpecialAttributes(py::module_& module) {
     py::class_<SpecialAttributes, std::shared_ptr<SpecialAttributes>>(module, "SpecialAttributes")
-        .def("with_escaping", &SpecialAttributes::with_escaping)
-
-        .def("with_line_break", &SpecialAttributes::with_line_break)
-
         ;
 }
 

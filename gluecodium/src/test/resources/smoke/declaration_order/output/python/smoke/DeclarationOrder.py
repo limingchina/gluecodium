@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.DeclarationOrderNestedStruct import DeclarationOrderNestedStruct
 from smoke.DeclarationOrderSomeEnum import DeclarationOrderSomeEnum
 
@@ -18,5 +21,5 @@ class DeclarationOrder(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DeclarationOrder):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DeclarationOrder(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DeclarationOrder(*[_unwrap(arg) for arg in args]))
 

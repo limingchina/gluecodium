@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,5 +19,5 @@ class AsyncRenamed(_NativeBase):
 
     def dispose(self):
         """"""
-        return self._native.dispose()
+        return _wrap(self._native.dispose(), None)
 

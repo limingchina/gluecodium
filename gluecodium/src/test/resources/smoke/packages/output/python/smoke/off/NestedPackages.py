@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.off.NestedPackagesSomeStruct import NestedPackagesSomeStruct
 
 from _native_base import _NativeBase
@@ -18,6 +21,6 @@ class NestedPackages(_NativeBase):
     @staticmethod
     def basic_method(input: NestedPackagesSomeStruct) -> NestedPackagesSomeStruct:
         """"""
-        native_result = generated.NestedPackages.basic_method(input._native)
+        native_result = generated.NestedPackages.basic_method(_unwrap(input, NestedPackagesSomeStruct))
         return NestedPackagesSomeStruct(native_result)
 

@@ -6,14 +6,17 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/CalculationResult.h"
 #include "smoke/ListenersWithReturnValues.h"
 #include "memory"
 #include "string"
+#include "unordered_map"
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
@@ -89,7 +92,7 @@ public:
     }
 };
 
-void register_ListenersWithReturnValues(py::module_& module) {
+void register_smoke_ListenersWithReturnValues(py::module_& module) {
     py::class_<ListenersWithReturnValues, std::shared_ptr<ListenersWithReturnValues>, ListenersWithReturnValuesTrampoline>(module, "ListenersWithReturnValues")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -103,34 +106,6 @@ void register_ListenersWithReturnValues(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("fetch_data_double", [](ListenersWithReturnValues& self) {
-            return self.fetch_data_double();
-        })
-
-        .def("fetch_data_string", [](ListenersWithReturnValues& self) {
-            return self.fetch_data_string();
-        })
-
-        .def("fetch_data_struct", [](ListenersWithReturnValues& self) {
-            return self.fetch_data_struct();
-        })
-
-        .def("fetch_data_enum", [](ListenersWithReturnValues& self) {
-            return self.fetch_data_enum();
-        })
-
-        .def("fetch_data_array", [](ListenersWithReturnValues& self) {
-            return self.fetch_data_array();
-        })
-
-        .def("fetch_data_map", [](ListenersWithReturnValues& self) {
-            return self.fetch_data_map();
-        })
-
-        .def("fetch_data_instance", [](ListenersWithReturnValues& self) {
-            return self.fetch_data_instance();
-        })
-
         ;
 }
 

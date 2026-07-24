@@ -15,26 +15,26 @@ class DartInternalElementsSkipped(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DartInternalElementsSkipped):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartInternalElementsSkipped(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DartInternalElementsSkipped(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def bool_field(self) -> bool:
         """"""
-        return self._native.bool_field
+        return _wrap(self._native.bool_field, bool)
     @bool_field.setter
     def bool_field(self, value: bool):
-      self._native.bool_field = getattr(value, "_native", value)
+      self._native.bool_field = _unwrap(value, bool)
 
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, str)
 
 
     def foo(self): ...

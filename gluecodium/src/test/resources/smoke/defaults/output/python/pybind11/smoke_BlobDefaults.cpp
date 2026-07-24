@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,11 +18,12 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using BlobDefaults = ::smoke::BlobDefaults;
 
-void register_BlobDefaults(py::module_& module) {
+void register_smoke_BlobDefaults(py::module_& module) {
     py::class_<BlobDefaults>(module, "BlobDefaults")
         .def_readwrite("empty_list", &BlobDefaults::empty_list)
         .def_readwrite("dead_beef", &BlobDefaults::dead_beef)
         .def(py::init<>())
+        .def(py::init<::std::shared_ptr< ::std::vector< uint8_t > >, ::std::shared_ptr< ::std::vector< uint8_t > >(), py::arg("empty_list"), py::arg("dead_beef"))
         ;
 }
 

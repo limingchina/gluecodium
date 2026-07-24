@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -19,16 +20,8 @@ namespace py = pybind11;
 using UseDartExternalTypes = ::smoke::UseDartExternalTypes;
 
 
-void register_UseDartExternalTypes(py::module_& module) {
+void register_smoke_UseDartExternalTypes(py::module_& module) {
     py::class_<UseDartExternalTypes, std::shared_ptr<UseDartExternalTypes>>(module, "UseDartExternalTypes")
-        .def_static("rectangle_round_trip", &UseDartExternalTypes::rectangle_round_trip, py::arg("input"))
-
-        .def_static("compression_state_round_trip", &UseDartExternalTypes::compression_state_round_trip, py::arg("input"))
-
-        .def_static("color_round_trip", &UseDartExternalTypes::color_round_trip, py::arg("input"))
-
-        .def_static("season_round_trip", &UseDartExternalTypes::season_round_trip, py::arg("input"))
-
         ;
 }
 

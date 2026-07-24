@@ -6,13 +6,17 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/CalculationResult.h"
 #include "smoke/CalculatorListener.h"
 #include "memory"
+#include "string"
+#include "unordered_map"
 #include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
@@ -85,7 +89,7 @@ public:
     }
 };
 
-void register_CalculatorListener(py::module_& module) {
+void register_smoke_CalculatorListener(py::module_& module) {
     py::class_<CalculatorListener, std::shared_ptr<CalculatorListener>, CalculatorListenerTrampoline>(module, "CalculatorListener")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -99,30 +103,6 @@ void register_CalculatorListener(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("on_calculation_result", [](CalculatorListener& self, const double calculation_result) {
-            return self.on_calculation_result(calculation_result);
-        }, py::arg("calculation_result"))
-
-        .def("on_calculation_result_const", [](CalculatorListener& self, const double calculation_result) {
-            return self.on_calculation_result_const(calculation_result);
-        }, py::arg("calculation_result"))
-
-        .def("on_calculation_result_struct", [](CalculatorListener& self, const ::smoke::CalculatorListener::ResultStruct& calculation_result) {
-            return self.on_calculation_result_struct(calculation_result);
-        }, py::arg("calculation_result"))
-
-        .def("on_calculation_result_array", [](CalculatorListener& self, const ::std::vector< double >& calculation_result) {
-            return self.on_calculation_result_array(calculation_result);
-        }, py::arg("calculation_result"))
-
-        .def("on_calculation_result_map", [](CalculatorListener& self, const ::std::unordered_map< ::std::string, double >& calculation_results) {
-            return self.on_calculation_result_map(calculation_results);
-        }, py::arg("calculation_results"))
-
-        .def("on_calculation_result_instance", [](CalculatorListener& self, const ::std::shared_ptr< ::smoke::CalculationResult >& calculation_result) {
-            return self.on_calculation_result_instance(calculation_result);
-        }, py::arg("calculation_result"))
-
         ;
 }
 

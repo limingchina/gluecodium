@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class NoCacheInterface(generated.NoCacheInterface):
 
     def foo(self):
         """"""
-        return generated.NoCacheInterface.foo(self)
+        return _wrap(generated.NoCacheInterface.foo(self), None)
 

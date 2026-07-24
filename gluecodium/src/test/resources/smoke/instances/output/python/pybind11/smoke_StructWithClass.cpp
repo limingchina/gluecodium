@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,11 +17,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithClass = ::smoke::StructWithClass;
 
-void register_StructWithClass(py::module_& module) {
+void register_smoke_StructWithClass(py::module_& module) {
     py::class_<StructWithClass>(module, "StructWithClass")
         .def_readwrite("class_instance", &StructWithClass::class_instance)
         .def(py::init<>())
-        .def(py::init<::std::shared_ptr< ::smoke::SimpleClass >>(), py::arg("class_instance"))
+        .def(py::init<::std::shared_ptr< ::smoke::SimpleClass >(), py::arg("class_instance"))
         ;
 }
 

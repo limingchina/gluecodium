@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.TypeCollectionPoint import TypeCollectionPoint
 from smoke.TypeDefsTestStruct import TypeDefsTestStruct
 
@@ -19,42 +22,42 @@ class TypeDefs(_NativeBase):
     @staticmethod
     def method_with_primitive_type_def(input: float) -> float:
         """"""
-        return generated.TypeDefs.method_with_primitive_type_def(input)
+        return generated.TypeDefs.method_with_primitive_type_def(_unwrap(input, float))
 
     @staticmethod
     def method_with_complex_type_def(input: list[TypeDefsTestStruct]) -> list[TypeDefsTestStruct]:
         """"""
-        return generated.TypeDefs.method_with_complex_type_def(input)
+        return _wrap(generated.TypeDefs.method_with_complex_type_def(_unwrap(input, list[TypeDefsTestStruct])), list[TypeDefsTestStruct])
 
     @staticmethod
     def return_nested_int_type_def(input: float) -> float:
         """"""
-        return generated.TypeDefs.return_nested_int_type_def(input)
+        return generated.TypeDefs.return_nested_int_type_def(_unwrap(input, float))
 
     @staticmethod
     def return_test_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
         """"""
-        native_result = generated.TypeDefs.return_test_struct_type_def(input._native)
+        native_result = generated.TypeDefs.return_test_struct_type_def(_unwrap(input, TypeDefsTestStruct))
         return TypeDefsTestStruct(native_result)
 
     @staticmethod
     def return_nested_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
         """"""
-        native_result = generated.TypeDefs.return_nested_struct_type_def(input._native)
+        native_result = generated.TypeDefs.return_nested_struct_type_def(_unwrap(input, TypeDefsTestStruct))
         return TypeDefsTestStruct(native_result)
 
     @staticmethod
     def return_type_def_point_from_type_collection(input: TypeCollectionPoint) -> TypeCollectionPoint:
         """"""
-        native_result = generated.TypeDefs.return_type_def_point_from_type_collection(input._native)
+        native_result = generated.TypeDefs.return_type_def_point_from_type_collection(_unwrap(input, TypeCollectionPoint))
         return TypeCollectionPoint(native_result)
 
     @property
     def primitive_type_property(self) -> list[float]:
         """"""
-        return self._native.primitive_type_property
+        return _wrap(self._native.primitive_type_property, list[float])
 
     @primitive_type_property.setter
     def primitive_type_property(self, value: list[float]):
-        self._native.primitive_type_property = value
+        self._native.primitive_type_property = _unwrap(value, list[float])
 

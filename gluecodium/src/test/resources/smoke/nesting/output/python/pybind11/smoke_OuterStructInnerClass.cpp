@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -18,10 +19,8 @@ namespace py = pybind11;
 using InnerClass = ::smoke::OuterStruct::InnerClass;
 
 
-void register_OuterStructInnerClass(py::module_& module) {
+void register_smoke_OuterStructInnerClass(py::module_& module) {
     py::class_<InnerClass, std::shared_ptr<InnerClass>>(module, "OuterStructInnerClass")
-        .def("foo_bar", &InnerClass::foo_bar)
-
         ;
 }
 

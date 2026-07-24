@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.MapSceneLoadSceneCallback import MapSceneLoadSceneCallback
 
 from _native_base import _NativeBase
@@ -17,6 +20,6 @@ class MapScene(_NativeBase):
 
     def load_scene(*args, **kwargs):
         """"""
-        return self._native.load_scene(*[getattr(a, "_native", a) for a in args])
+        return _wrap(self._native.load_scene(*[_unwrap(a) for a in args]), None)
 
 

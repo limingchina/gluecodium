@@ -1,5 +1,6 @@
 
 
+import datetime
 import typing
 
 
@@ -15,25 +16,25 @@ class MixedCollectionsStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.MixedCollectionsStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.MixedCollectionsStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.MixedCollectionsStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def almost_dates(self) -> list[Optional[datetime.datetime]]:
         """"""
-        return self._native.almost_dates
+        return _wrap(self._native.almost_dates, list[Optional[datetime.datetime]])
     @almost_dates.setter
     def almost_dates(self, value: list[Optional[datetime.datetime]]):
-      self._native.almost_dates = getattr(value, "_native", value)
+      self._native.almost_dates = _unwrap(value, list[Optional[datetime.datetime]])
 
 
 
     @property
     def dates(self) -> list[datetime.datetime]:
         """"""
-        return self._native.dates
+        return _wrap(self._native.dates, list[datetime.datetime])
     @dates.setter
     def dates(self, value: list[datetime.datetime]):
-      self._native.dates = getattr(value, "_native", value)
+      self._native.dates = _unwrap(value, list[datetime.datetime])
 
 

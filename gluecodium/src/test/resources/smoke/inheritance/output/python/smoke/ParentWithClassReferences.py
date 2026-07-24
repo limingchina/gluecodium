@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ChildClassFromClass import ChildClassFromClass
 from smoke.ParentClass import ParentClass
 
@@ -28,14 +31,14 @@ class ParentWithClassReferences(generated.ParentWithClassReferences):
 
     def class_function(self) -> ChildClassFromClass:
         """"""
-        return generated.ParentWithClassReferences.class_function(self)
+        return _wrap(generated.ParentWithClassReferences.class_function(self), ChildClassFromClass)
 
     @property
     def class_property(self) -> ParentClass:
         """"""
-        return generated.ParentWithClassReferences.class_property.fget(self)
+        return _wrap(generated.ParentWithClassReferences.class_property.fget(self), ParentClass)
 
     @class_property.setter
     def class_property(self, value: ParentClass):
-        generated.ParentWithClassReferences.class_property.fset(self, value)
+        generated.ParentWithClassReferences.class_property.fset(self, _unwrap(value, ParentClass))
 

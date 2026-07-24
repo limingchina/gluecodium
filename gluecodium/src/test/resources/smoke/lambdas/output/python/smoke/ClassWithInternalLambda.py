@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ClassWithInternalLambdaInternalNestedLambda import ClassWithInternalLambdaInternalNestedLambda
 
 from _native_base import _NativeBase
@@ -18,5 +21,5 @@ class ClassWithInternalLambda(_NativeBase):
     @staticmethod
     def invoke_internal_lambda(lambda: ClassWithInternalLambdaInternalNestedLambda, value: str) -> bool:
         """"""
-        return generated.ClassWithInternalLambda.invoke_internal_lambda(lambda._native, value)
+        return generated.ClassWithInternalLambda.invoke_internal_lambda(_unwrap(lambda, ClassWithInternalLambdaInternalNestedLambda), _unwrap(value, str))
 

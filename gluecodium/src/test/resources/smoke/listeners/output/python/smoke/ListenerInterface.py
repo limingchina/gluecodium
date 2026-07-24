@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class ListenerInterface(generated.ListenerInterface):
 
     def notify(self):
         """"""
-        return generated.ListenerInterface.notify(self)
+        return _wrap(generated.ListenerInterface.notify(self), None)
 

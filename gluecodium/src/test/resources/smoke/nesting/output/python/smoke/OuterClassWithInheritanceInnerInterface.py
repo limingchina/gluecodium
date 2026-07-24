@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class OuterClassWithInheritanceInnerInterface(generated.OuterClassWithInheritanc
 
     def baz(self, input: str) -> str:
         """"""
-        return generated.OuterClassWithInheritanceInnerInterface.baz(self, input)
+        return _wrap(generated.OuterClassWithInheritanceInnerInterface.baz(self, _unwrap(input, str)), str)
 

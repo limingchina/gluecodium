@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,7 +16,7 @@ namespace py = pybind11;
 using StructsInstance = ::smoke::StructsInstance;
 
 
-void register_StructsInstance(py::module_& module) {
+void register_smoke_StructsInstance(py::module_& module) {
     py::class_<StructsInstance, std::shared_ptr<StructsInstance>>(module, "StructsInstance")
         ;
 }

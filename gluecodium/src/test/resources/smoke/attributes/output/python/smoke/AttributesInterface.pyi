@@ -28,11 +28,11 @@ class AttributesInterface(generated.AttributesInterface):
     @property
     def prop(self) -> str:
         """"""
-        return generated.AttributesInterface.prop.fget(self)
+        return _wrap(generated.AttributesInterface.prop.fget(self), str)
 
     @prop.setter
     def prop(self, value: str):
-        generated.AttributesInterface.prop.fset(self, value)
+        generated.AttributesInterface.prop.fset(self, _unwrap(value, str))
 
 
     PI = False

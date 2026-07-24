@@ -28,9 +28,9 @@ class InternalInterfaceParent(generated.InternalInterfaceParent):
     @property
     def prop(self) -> str:
         """"""
-        return generated.InternalInterfaceParent.prop.fget(self)
+        return _wrap(generated.InternalInterfaceParent.prop.fget(self), str)
 
     @prop.setter
     def prop(self, value: str):
-        generated.InternalInterfaceParent.prop.fset(self, value)
+        generated.InternalInterfaceParent.prop.fset(self, _unwrap(value, str))
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.EquatableNestedEquatableStruct import EquatableNestedEquatableStruct
 from smoke.EquatableSomeEnum import EquatableSomeEnum
 
@@ -18,5 +21,5 @@ class Equatable(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.Equatable):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Equatable(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.Equatable(*[_unwrap(arg) for arg in args]))
 

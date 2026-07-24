@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,35 +19,35 @@ class FieldConstructorsPartialDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.FieldConstructorsPartialDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsPartialDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.FieldConstructorsPartialDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, str)
 
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):
-      self._native.int_field = getattr(value, "_native", value)
+      self._native.int_field = _unwrap(value, int)
 
 
 
     @property
     def bool_field(self) -> bool:
         """"""
-        return self._native.bool_field
+        return _wrap(self._native.bool_field, bool)
     @bool_field.setter
     def bool_field(self, value: bool):
-      self._native.bool_field = getattr(value, "_native", value)
+      self._native.bool_field = _unwrap(value, bool)
 
 

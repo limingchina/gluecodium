@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 import generated
 
@@ -24,14 +27,14 @@ class ParentClass(generated.ParentClass):
 
     def parent_fun(self):
         """"""
-        return generated.ParentClass.parent_fun(self)
+        return _wrap(generated.ParentClass.parent_fun(self), None)
 
     @property
     def parent_property(self) -> str:
         """"""
-        return generated.ParentClass.parent_property.fget(self)
+        return _wrap(generated.ParentClass.parent_property.fget(self), str)
 
     @parent_property.setter
     def parent_property(self, value: str):
-        generated.ParentClass.parent_property.fset(self, value)
+        generated.ParentClass.parent_property.fset(self, _unwrap(value, str))
 

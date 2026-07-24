@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -100,7 +101,7 @@ public:
     }
 };
 
-void register_FirstParentIsNarrowInterface(py::module_& module) {
+void register_smoke_FirstParentIsNarrowInterface(py::module_& module) {
     py::class_<FirstParentIsNarrowInterface, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowInterface>, FirstParentIsNarrowInterfaceTrampoline>(module, "FirstParentIsNarrowInterface", py::multiple_inheritance())
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -114,23 +115,11 @@ void register_FirstParentIsNarrowInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("child_function", [](FirstParentIsNarrowInterface& self) {
-            return self.child_function();
-        })
-
         .def_property("child_property", [](const FirstParentIsNarrowInterface& self) {
             return self.get_child_property();
         }, [](FirstParentIsNarrowInterface& self, const ::std::string& value) {
             self.set_child_property(value);
         })
-        .def("parent_function_one", [](FirstParentIsNarrowInterface& self) {
-            return self.parent_function_one();
-        })
-
-        .def("parent_function_two", [](FirstParentIsNarrowInterface& self) {
-            return self.parent_function_two();
-        })
-
         .def_property("parent_property_one", [](const FirstParentIsNarrowInterface& self) {
             return self.get_parent_property_one();
         }, [](FirstParentIsNarrowInterface& self, const ::std::string& value) {

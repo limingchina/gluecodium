@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class OuterStructInnerInterface(generated.OuterStructInnerInterface):
 
     def bar_baz(self) -> dict[str, bytes]:
         """"""
-        return generated.OuterStructInnerInterface.bar_baz(self)
+        return _wrap(generated.OuterStructInnerInterface.bar_baz(self), dict[str, bytes])
 

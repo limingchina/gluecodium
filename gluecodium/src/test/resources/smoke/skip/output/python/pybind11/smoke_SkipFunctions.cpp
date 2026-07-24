@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,16 +17,8 @@ namespace py = pybind11;
 using SkipFunctions = ::smoke::SkipFunctions;
 
 
-void register_SkipFunctions(py::module_& module) {
+void register_smoke_SkipFunctions(py::module_& module) {
     py::class_<SkipFunctions, std::shared_ptr<SkipFunctions>>(module, "SkipFunctions")
-        .def_static("not_in_java", &SkipFunctions::not_in_java, py::arg("input"))
-
-        .def_static("not_in_swift", &SkipFunctions::not_in_swift, py::arg("input"))
-
-        .def_static("not_in_dart", &SkipFunctions::not_in_dart, py::arg("input"))
-
-        .def_static("not_in_kotlin", &SkipFunctions::not_in_kotlin, py::arg("input"))
-
         ;
 }
 

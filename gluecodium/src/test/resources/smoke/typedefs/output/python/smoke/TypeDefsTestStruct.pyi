@@ -15,15 +15,15 @@ class TypeDefsTestStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.TypeDefsTestStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypeDefsTestStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.TypeDefsTestStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def something(self) -> str:
         """"""
-        return self._native.something
+        return _wrap(self._native.something, str)
     @something.setter
     def something(self, value: str):
-      self._native.something = getattr(value, "_native", value)
+      self._native.something = _unwrap(value, str)
 
 

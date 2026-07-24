@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,5 +19,5 @@ class OuterClass(_NativeBase):
 
     def foo(self, input: str) -> str:
         """"""
-        return self._native.foo(input)
+        return _wrap(self._native.foo(_unwrap(input, str)), str)
 

@@ -15,15 +15,15 @@ class StructWithList(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructWithList):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithList(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructWithList(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> list[StructWithList]:
         """"""
-        return self._native.field
+        return _wrap(self._native.field, list[StructWithList])
     @field.setter
     def field(self, value: list[StructWithList]):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, list[StructWithList])
 
 

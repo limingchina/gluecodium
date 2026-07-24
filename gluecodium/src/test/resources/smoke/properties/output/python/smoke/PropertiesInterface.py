@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.PropertiesInterfaceExampleStruct import PropertiesInterfaceExampleStruct
 
 
@@ -28,9 +31,9 @@ class PropertiesInterface(generated.PropertiesInterface):
     @property
     def struct_property(self) -> PropertiesInterfaceExampleStruct:
         """"""
-        return generated.PropertiesInterface.struct_property.fget(self)
+        return _wrap(generated.PropertiesInterface.struct_property.fget(self), PropertiesInterfaceExampleStruct)
 
     @struct_property.setter
     def struct_property(self, value: PropertiesInterfaceExampleStruct):
-        generated.PropertiesInterface.struct_property.fset(self, value)
+        generated.PropertiesInterface.struct_property.fset(self, _unwrap(value, PropertiesInterfaceExampleStruct))
 

@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,12 +18,14 @@ namespace py = pybind11;
 using SkippedOverloads = ::smoke::SkippedOverloads;
 
 
-void register_SkippedOverloads(py::module_& module) {
+void register_smoke_SkippedOverloads(py::module_& module) {
     py::class_<SkippedOverloads, std::shared_ptr<SkippedOverloads>>(module, "SkippedOverloads")
+        .def(py::init<>())
+
         .def_static("make", &SkippedOverloads::make)
+        .def(py::init<::std::string>(py::arg("input")))
 
         .def_static("make_for_dart", &SkippedOverloads::make_for_dart, py::arg("input"))
-
         ;
 }
 

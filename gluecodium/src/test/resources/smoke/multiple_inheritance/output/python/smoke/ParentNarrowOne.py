@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,14 +29,14 @@ class ParentNarrowOne(generated.ParentNarrowOne):
 
     def parent_function_one(self):
         """"""
-        return generated.ParentNarrowOne.parent_function_one(self)
+        return _wrap(generated.ParentNarrowOne.parent_function_one(self), None)
 
     @property
     def parent_property_one(self) -> str:
         """"""
-        return generated.ParentNarrowOne.parent_property_one.fget(self)
+        return _wrap(generated.ParentNarrowOne.parent_property_one.fget(self), str)
 
     @parent_property_one.setter
     def parent_property_one(self, value: str):
-        generated.ParentNarrowOne.parent_property_one.fset(self, value)
+        generated.ParentNarrowOne.parent_property_one.fset(self, _unwrap(value, str))
 

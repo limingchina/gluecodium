@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.SomeTypeCollectionSome import SomeTypeCollectionSome
 from smoke.SomeTypeCollectionSomeTypeCollectionError import SomeTypeCollectionSomeTypeCollectionError
 
@@ -18,5 +21,5 @@ class UseTcException(_NativeBase):
 
     def do_nothing(self):
         """"""
-        return self._native.do_nothing()
+        return _wrap(self._native.do_nothing(), None)
 

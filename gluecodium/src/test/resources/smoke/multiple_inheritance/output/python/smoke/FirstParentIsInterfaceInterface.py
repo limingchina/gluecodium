@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from another.SomeCoolClassType import SomeCoolClassType
 from smoke.ParentInterface import ParentInterface
 from smoke.ParentNarrowOne import ParentNarrowOne
@@ -29,14 +32,14 @@ class FirstParentIsInterfaceInterface(generated.FirstParentIsInterfaceInterface)
 
     def child_function(self):
         """"""
-        return generated.FirstParentIsInterfaceInterface.child_function(self)
+        return _wrap(generated.FirstParentIsInterfaceInterface.child_function(self), None)
 
     @property
     def child_property(self) -> str:
         """"""
-        return generated.FirstParentIsInterfaceInterface.child_property.fget(self)
+        return _wrap(generated.FirstParentIsInterfaceInterface.child_property.fget(self), str)
 
     @child_property.setter
     def child_property(self, value: str):
-        generated.FirstParentIsInterfaceInterface.child_property.fset(self, value)
+        generated.FirstParentIsInterfaceInterface.child_property.fset(self, _unwrap(value, str))
 

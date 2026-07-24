@@ -10,16 +10,16 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_ExposeClass(pybind11::module_& module);
-void register_ExposeEnum(pybind11::module_& module);
-void register_ExposeInterface(pybind11::module_& module);
-void register_ExposeInternalClass(pybind11::module_& module);
-void register_ExposeInternalEnum(pybind11::module_& module);
-void register_ExposeInternalInterface(pybind11::module_& module);
-void register_ExposeInternalNested(pybind11::module_& module);
-void register_ExposeInternalNestedInternalInterface(pybind11::module_& module);
-void register_ExposeInternalStruct(pybind11::module_& module);
-void register_ExposeStruct(pybind11::module_& module);
+void register_smoke_ExposeClass(pybind11::module_& module);
+void register_smoke_ExposeEnum(pybind11::module_& module);
+void register_smoke_ExposeInterface(pybind11::module_& module);
+void register_smoke_ExposeInternalClass(pybind11::module_& module);
+void register_smoke_ExposeInternalEnum(pybind11::module_& module);
+void register_smoke_ExposeInternalInterface(pybind11::module_& module);
+void register_smoke_ExposeInternalNested(pybind11::module_& module);
+void register_smoke_ExposeInternalNestedInternalInterface(pybind11::module_& module);
+void register_smoke_ExposeInternalStruct(pybind11::module_& module);
+void register_smoke_ExposeStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -27,14 +27,14 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_ExposeClass(m);
-    register_ExposeEnum(m);
-    register_ExposeInterface(m);
-    register_ExposeInternalClass(m);
-    register_ExposeInternalEnum(m);
-    register_ExposeInternalInterface(m);
-    register_ExposeInternalNested(m);
-    register_ExposeInternalNestedInternalInterface(m);
-    register_ExposeInternalStruct(m);
-    register_ExposeStruct(m);
+    register_smoke_ExposeClass(m);
+    register_smoke_ExposeEnum(m);
+    register_smoke_ExposeInterface(m);
+    register_smoke_ExposeInternalClass(m);
+    register_smoke_ExposeInternalEnum(m);
+    register_smoke_ExposeInternalInterface(m);
+    register_smoke_ExposeInternalNested(m);
+    register_smoke_ExposeInternalNestedInternalInterface(m);
+    register_smoke_ExposeInternalStruct(m);
+    register_smoke_ExposeStruct(m);
 }

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,19 +19,19 @@ class FieldConstructorsSkipAllFields(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.FieldConstructorsSkipAllFields):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsSkipAllFields(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.FieldConstructorsSkipAllFields(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
 
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
 
 

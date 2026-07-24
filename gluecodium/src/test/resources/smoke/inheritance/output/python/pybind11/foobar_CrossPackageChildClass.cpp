@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -51,7 +52,7 @@ public:
     }
 };
 
-void register_CrossPackageChildClass(py::module_& module) {
+void register_foobar_CrossPackageChildClass(py::module_& module) {
     py::class_<CrossPackageChildClass, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildClass>, CrossPackageChildClassTrampoline>(module, "CrossPackageChildClass")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
@@ -63,10 +64,6 @@ void register_CrossPackageChildClass(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("root_method", [](CrossPackageChildClass& self) {
-            return self.root_method();
-        })
-
         .def_property("root_property", [](const CrossPackageChildClass& self) {
             return self.get_root_property();
         }, [](CrossPackageChildClass& self, const ::std::string& value) {

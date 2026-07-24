@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,7 +17,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithDefaults = ::smoke::DefaultValues::StructWithDefaults;
 
-void register_DefaultValuesStructWithDefaults(py::module_& module) {
+void register_smoke_DefaultValuesStructWithDefaults(py::module_& module) {
     py::class_<StructWithDefaults>(module, "DefaultValuesStructWithDefaults")
         .def_readwrite("int_field", &StructWithDefaults::int_field)
         .def_readwrite("uint_field", &StructWithDefaults::uint_field)
@@ -25,6 +26,7 @@ void register_DefaultValuesStructWithDefaults(py::module_& module) {
         .def_readwrite("bool_field", &StructWithDefaults::bool_field)
         .def_readwrite("string_field", &StructWithDefaults::string_field)
         .def(py::init<>())
+        .def(py::init<int32_t, uint32_t, float, double, bool, ::std::string(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("double_field"), py::arg("bool_field"), py::arg("string_field"))
         ;
 }
 

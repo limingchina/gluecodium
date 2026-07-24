@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -14,14 +15,15 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Point = ::smoke::Structs::Point;
 
-void register_StructsPoint(py::module_& module) {
+void register_smoke_StructsPoint(py::module_& module) {
     py::class_<Point>(module, "StructsPoint")
         .def_readwrite("x", &Point::x)
         .def_readwrite("y", &Point::y)
         .def(py::init<>())
-        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
-        .def_static("from_polar", &Point::from_polar, py::arg("phi"), py::arg("r"))
+        .def(py::init<double, double(), py::arg("x"), py::arg("y"))
+        .def(py::init<double, double>(py::arg("phi"), py::arg("r")))
 
+        .def_static("from_polar", &Point::from_polar, py::arg("phi"), py::arg("r"))
         ;
 }
 

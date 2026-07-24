@@ -1,5 +1,6 @@
 
 
+from smoke.ScalarKeyframe import ScalarKeyframe
 import typing
 
 
@@ -15,32 +16,32 @@ class ScalarKeyframeTrack(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.ScalarKeyframeTrack):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ScalarKeyframeTrack(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.ScalarKeyframeTrack(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def keyframes(self) -> list[ScalarKeyframe]:
         """"""
-        return self._native.keyframes
+        return _wrap(self._native.keyframes, list[ScalarKeyframe])
 
 
 
     @property
     def easing_function(self) -> str:
         """"""
-        return self._native.easing_function
+        return _wrap(self._native.easing_function, str)
     @easing_function.setter
     def easing_function(self, value: str):
-      self._native.easing_function = getattr(value, "_native", value)
+      self._native.easing_function = _unwrap(value, str)
 
 
 
     @property
     def interpolation_mode(self) -> str:
         """"""
-        return self._native.interpolation_mode
+        return _wrap(self._native.interpolation_mode, str)
     @interpolation_mode.setter
     def interpolation_mode(self, value: str):
-      self._native.interpolation_mode = getattr(value, "_native", value)
+      self._native.interpolation_mode = _unwrap(value, str)
 
 

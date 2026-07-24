@@ -10,22 +10,22 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_AliasError(pybind11::module_& module);
-void register_EnumOptionSet(pybind11::module_& module);
-void register_EnumOptionSetComments(pybind11::module_& module);
-void register_EnumStartsWithOne(pybind11::module_& module);
-void register_EnumWithAccessibleValues(pybind11::module_& module);
-void register_EnumWithAlias(pybind11::module_& module);
-void register_EnumWithAliasWithDeprecated(pybind11::module_& module);
-void register_EnumWithToStringHelper(pybind11::module_& module);
-void register_Enums(pybind11::module_& module);
-void register_EnumsErrorStruct(pybind11::module_& module);
-void register_EnumsInTypeCollection(pybind11::module_& module);
-void register_EnumsInTypeCollectionInterface(pybind11::module_& module);
-void register_EnumsInTypeCollectionTCEnum(pybind11::module_& module);
-void register_EnumsInternalErrorCode(pybind11::module_& module);
-void register_EnumsSimpleEnum(pybind11::module_& module);
-void register_UseEnumOptionSet(pybind11::module_& module);
+void register_smoke_AliasError(pybind11::module_& module);
+void register_smoke_EnumOptionSet(pybind11::module_& module);
+void register_smoke_EnumOptionSetComments(pybind11::module_& module);
+void register_smoke_EnumStartsWithOne(pybind11::module_& module);
+void register_smoke_EnumWithAccessibleValues(pybind11::module_& module);
+void register_smoke_EnumWithAlias(pybind11::module_& module);
+void register_smoke_EnumWithAliasWithDeprecated(pybind11::module_& module);
+void register_smoke_EnumWithToStringHelper(pybind11::module_& module);
+void register_smoke_Enums(pybind11::module_& module);
+void register_smoke_EnumsErrorStruct(pybind11::module_& module);
+void register_smoke_EnumsInTypeCollection(pybind11::module_& module);
+void register_smoke_EnumsInTypeCollectionInterface(pybind11::module_& module);
+void register_smoke_EnumsInTypeCollectionTCEnum(pybind11::module_& module);
+void register_smoke_EnumsInternalErrorCode(pybind11::module_& module);
+void register_smoke_EnumsSimpleEnum(pybind11::module_& module);
+void register_smoke_UseEnumOptionSet(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -33,20 +33,20 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_AliasError(m);
-    register_EnumOptionSet(m);
-    register_EnumOptionSetComments(m);
-    register_EnumStartsWithOne(m);
-    register_EnumWithAccessibleValues(m);
-    register_EnumWithAlias(m);
-    register_EnumWithAliasWithDeprecated(m);
-    register_EnumWithToStringHelper(m);
-    register_Enums(m);
-    register_EnumsErrorStruct(m);
-    register_EnumsInTypeCollection(m);
-    register_EnumsInTypeCollectionInterface(m);
-    register_EnumsInTypeCollectionTCEnum(m);
-    register_EnumsInternalErrorCode(m);
-    register_EnumsSimpleEnum(m);
-    register_UseEnumOptionSet(m);
+    register_smoke_AliasError(m);
+    register_smoke_EnumOptionSet(m);
+    register_smoke_EnumOptionSetComments(m);
+    register_smoke_EnumStartsWithOne(m);
+    register_smoke_EnumWithAccessibleValues(m);
+    register_smoke_EnumWithAlias(m);
+    register_smoke_EnumWithAliasWithDeprecated(m);
+    register_smoke_EnumWithToStringHelper(m);
+    register_smoke_Enums(m);
+    register_smoke_EnumsErrorStruct(m);
+    register_smoke_EnumsInTypeCollection(m);
+    register_smoke_EnumsInTypeCollectionInterface(m);
+    register_smoke_EnumsInTypeCollectionTCEnum(m);
+    register_smoke_EnumsInternalErrorCode(m);
+    register_smoke_EnumsSimpleEnum(m);
+    register_smoke_UseEnumOptionSet(m);
 }

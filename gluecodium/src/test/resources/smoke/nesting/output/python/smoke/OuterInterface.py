@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class OuterInterface(generated.OuterInterface):
 
     def foo(self, input: str) -> str:
         """"""
-        return generated.OuterInterface.foo(self, input)
+        return _wrap(generated.OuterInterface.foo(self, _unwrap(input, str)), str)
 

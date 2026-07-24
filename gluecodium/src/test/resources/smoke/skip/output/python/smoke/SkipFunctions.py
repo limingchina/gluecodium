@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,20 +20,20 @@ class SkipFunctions(_NativeBase):
     @staticmethod
     def not_in_java(input: str) -> str:
         """"""
-        return generated.SkipFunctions.not_in_java(input)
+        return generated.SkipFunctions.not_in_java(_unwrap(input, str))
 
     @staticmethod
     def not_in_swift(input: bool) -> bool:
         """"""
-        return generated.SkipFunctions.not_in_swift(input)
+        return generated.SkipFunctions.not_in_swift(_unwrap(input, bool))
 
     @staticmethod
     def not_in_dart(input: float) -> float:
         """"""
-        return generated.SkipFunctions.not_in_dart(input)
+        return generated.SkipFunctions.not_in_dart(_unwrap(input, float))
 
     @staticmethod
     def not_in_kotlin(input: str) -> str:
         """"""
-        return generated.SkipFunctions.not_in_kotlin(input)
+        return generated.SkipFunctions.not_in_kotlin(_unwrap(input, str))
 

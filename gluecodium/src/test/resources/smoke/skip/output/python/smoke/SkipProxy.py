@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.SkippedEverywhere import SkippedEverywhere
 from smoke.SkippedEverywhereEnum import SkippedEverywhereEnum
 
@@ -28,71 +31,71 @@ class SkipProxy(generated.SkipProxy):
 
     def not_in_java(self, input: str) -> str:
         """"""
-        return generated.SkipProxy.not_in_java(self, input)
+        return _wrap(generated.SkipProxy.not_in_java(self, _unwrap(input, str)), str)
 
     def not_in_swift(self, input: bool) -> bool:
         """"""
-        return generated.SkipProxy.not_in_swift(self, input)
+        return _wrap(generated.SkipProxy.not_in_swift(self, _unwrap(input, bool)), bool)
 
     def not_in_dart(self, input: float) -> float:
         """"""
-        return generated.SkipProxy.not_in_dart(self, input)
+        return _wrap(generated.SkipProxy.not_in_dart(self, _unwrap(input, float)), float)
 
     def not_in_kotlin(self, input: float) -> float:
         """"""
-        return generated.SkipProxy.not_in_kotlin(self, input)
+        return _wrap(generated.SkipProxy.not_in_kotlin(self, _unwrap(input, float)), float)
 
     @property
     def skipped_in_java(self) -> str:
         """"""
-        return generated.SkipProxy.skipped_in_java.fget(self)
+        return _wrap(generated.SkipProxy.skipped_in_java.fget(self), str)
 
     @skipped_in_java.setter
     def skipped_in_java(self, value: str):
-        generated.SkipProxy.skipped_in_java.fset(self, value)
+        generated.SkipProxy.skipped_in_java.fset(self, _unwrap(value, str))
 
     @property
     def is_skipped_in_swift(self) -> bool:
         """"""
-        return generated.SkipProxy.is_skipped_in_swift.fget(self)
+        return _wrap(generated.SkipProxy.is_skipped_in_swift.fget(self), bool)
 
     @is_skipped_in_swift.setter
     def is_skipped_in_swift(self, value: bool):
-        generated.SkipProxy.is_skipped_in_swift.fset(self, value)
+        generated.SkipProxy.is_skipped_in_swift.fset(self, _unwrap(value, bool))
 
     @property
     def skipped_in_dart(self) -> float:
         """"""
-        return generated.SkipProxy.skipped_in_dart.fget(self)
+        return _wrap(generated.SkipProxy.skipped_in_dart.fget(self), float)
 
     @skipped_in_dart.setter
     def skipped_in_dart(self, value: float):
-        generated.SkipProxy.skipped_in_dart.fset(self, value)
+        generated.SkipProxy.skipped_in_dart.fset(self, _unwrap(value, float))
 
     @property
     def skipped_in_kotlin(self) -> float:
         """"""
-        return generated.SkipProxy.skipped_in_kotlin.fget(self)
+        return _wrap(generated.SkipProxy.skipped_in_kotlin.fget(self), float)
 
     @skipped_in_kotlin.setter
     def skipped_in_kotlin(self, value: float):
-        generated.SkipProxy.skipped_in_kotlin.fset(self, value)
+        generated.SkipProxy.skipped_in_kotlin.fset(self, _unwrap(value, float))
 
     @property
     def skipped_everywhere(self) -> SkippedEverywhere:
         """"""
-        return generated.SkipProxy.skipped_everywhere.fget(self)
+        return _wrap(generated.SkipProxy.skipped_everywhere.fget(self), SkippedEverywhere)
 
     @skipped_everywhere.setter
     def skipped_everywhere(self, value: SkippedEverywhere):
-        generated.SkipProxy.skipped_everywhere.fset(self, value)
+        generated.SkipProxy.skipped_everywhere.fset(self, _unwrap(value, SkippedEverywhere))
 
     @property
     def skipped_everywhere_too(self) -> SkippedEverywhereEnum:
         """"""
-        return generated.SkipProxy.skipped_everywhere_too.fget(self)
+        return _wrap(generated.SkipProxy.skipped_everywhere_too.fget(self), SkippedEverywhereEnum)
 
     @skipped_everywhere_too.setter
     def skipped_everywhere_too(self, value: SkippedEverywhereEnum):
-        generated.SkipProxy.skipped_everywhere_too.fset(self, value)
+        generated.SkipProxy.skipped_everywhere_too.fset(self, _unwrap(value, SkippedEverywhereEnum))
 

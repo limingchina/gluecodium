@@ -10,15 +10,15 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_DartInternalClassWithInternalTypedef(pybind11::module_& module);
-void register_SomeDartClassThatUsesInternal(pybind11::module_& module);
-void register_SomeDartStructWithTypedefField(pybind11::module_& module);
-void register_TypeCollection(pybind11::module_& module);
-void register_TypeCollectionPoint(pybind11::module_& module);
-void register_TypeCollectionStructHavingAliasFieldDefinedBelow(pybind11::module_& module);
-void register_TypeDefs(pybind11::module_& module);
-void register_TypeDefsStructHavingAliasFieldDefinedBelow(pybind11::module_& module);
-void register_TypeDefsTestStruct(pybind11::module_& module);
+void register_smoke_DartInternalClassWithInternalTypedef(pybind11::module_& module);
+void register_smoke_SomeDartClassThatUsesInternal(pybind11::module_& module);
+void register_smoke_SomeDartStructWithTypedefField(pybind11::module_& module);
+void register_smoke_TypeCollection(pybind11::module_& module);
+void register_smoke_TypeCollectionPoint(pybind11::module_& module);
+void register_smoke_TypeCollectionStructHavingAliasFieldDefinedBelow(pybind11::module_& module);
+void register_smoke_TypeDefs(pybind11::module_& module);
+void register_smoke_TypeDefsStructHavingAliasFieldDefinedBelow(pybind11::module_& module);
+void register_smoke_TypeDefsTestStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -26,13 +26,13 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_DartInternalClassWithInternalTypedef(m);
-    register_SomeDartClassThatUsesInternal(m);
-    register_SomeDartStructWithTypedefField(m);
-    register_TypeCollection(m);
-    register_TypeCollectionPoint(m);
-    register_TypeCollectionStructHavingAliasFieldDefinedBelow(m);
-    register_TypeDefs(m);
-    register_TypeDefsStructHavingAliasFieldDefinedBelow(m);
-    register_TypeDefsTestStruct(m);
+    register_smoke_DartInternalClassWithInternalTypedef(m);
+    register_smoke_SomeDartClassThatUsesInternal(m);
+    register_smoke_SomeDartStructWithTypedefField(m);
+    register_smoke_TypeCollection(m);
+    register_smoke_TypeCollectionPoint(m);
+    register_smoke_TypeCollectionStructHavingAliasFieldDefinedBelow(m);
+    register_smoke_TypeDefs(m);
+    register_smoke_TypeDefsStructHavingAliasFieldDefinedBelow(m);
+    register_smoke_TypeDefsTestStruct(m);
 }

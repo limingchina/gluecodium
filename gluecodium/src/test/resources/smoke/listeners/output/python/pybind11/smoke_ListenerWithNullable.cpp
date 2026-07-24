@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -117,7 +118,7 @@ public:
     }
 };
 
-void register_ListenerWithNullable(py::module_& module) {
+void register_smoke_ListenerWithNullable(py::module_& module) {
     py::class_<ListenerWithNullable, std::shared_ptr<ListenerWithNullable>, ListenerWithNullableTrampoline>(module, "ListenerWithNullable")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -131,50 +132,6 @@ void register_ListenerWithNullable(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("method_with_byte", [](ListenerWithNullable& self, const std::optional< int8_t >& input) {
-            return self.method_with_byte(input);
-        }, py::arg("input"))
-
-        .def("method_with_u_byte", [](ListenerWithNullable& self, const std::optional< uint8_t >& input) {
-            return self.method_with_u_byte(input);
-        }, py::arg("input"))
-
-        .def("method_with_short", [](ListenerWithNullable& self, const std::optional< int16_t >& input) {
-            return self.method_with_short(input);
-        }, py::arg("input"))
-
-        .def("method_with_u_short", [](ListenerWithNullable& self, const std::optional< uint16_t >& input) {
-            return self.method_with_u_short(input);
-        }, py::arg("input"))
-
-        .def("method_with_int", [](ListenerWithNullable& self, const std::optional< int32_t >& input) {
-            return self.method_with_int(input);
-        }, py::arg("input"))
-
-        .def("method_with_u_int", [](ListenerWithNullable& self, const std::optional< uint32_t >& input) {
-            return self.method_with_u_int(input);
-        }, py::arg("input"))
-
-        .def("method_with_long", [](ListenerWithNullable& self, const std::optional< int64_t >& input) {
-            return self.method_with_long(input);
-        }, py::arg("input"))
-
-        .def("method_with_u_long", [](ListenerWithNullable& self, const std::optional< uint64_t >& input) {
-            return self.method_with_u_long(input);
-        }, py::arg("input"))
-
-        .def("method_with_double", [](ListenerWithNullable& self, const std::optional< bool >& input) {
-            return self.method_with_double(input);
-        }, py::arg("input"))
-
-        .def("method_with_float", [](ListenerWithNullable& self, const std::optional< float >& input) {
-            return self.method_with_float(input);
-        }, py::arg("input"))
-
-        .def("method_with_double", [](ListenerWithNullable& self, const std::optional< double >& input) {
-            return self.method_with_double(input);
-        }, py::arg("input"))
-
         ;
 }
 

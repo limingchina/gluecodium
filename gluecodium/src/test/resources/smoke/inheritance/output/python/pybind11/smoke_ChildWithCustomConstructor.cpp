@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -27,7 +28,7 @@ public:
 
 };
 
-void register_ChildWithCustomConstructor(py::module_& module) {
+void register_smoke_ChildWithCustomConstructor(py::module_& module) {
     py::class_<ChildWithCustomConstructor, ::smoke::ParentWithCustomConstructor, std::shared_ptr<ChildWithCustomConstructor>, ChildWithCustomConstructorTrampoline>(module, "ChildWithCustomConstructor")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
@@ -39,8 +40,9 @@ void register_ChildWithCustomConstructor(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def_static("make", &ChildWithCustomConstructor::make)
+        .def(py::init<>())
 
+        .def_static("make", &ChildWithCustomConstructor::make)
         ;
 }
 

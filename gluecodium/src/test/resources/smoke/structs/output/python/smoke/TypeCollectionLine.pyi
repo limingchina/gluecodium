@@ -16,25 +16,25 @@ class TypeCollectionLine(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.TypeCollectionLine):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypeCollectionLine(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.TypeCollectionLine(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def a(self) -> TypeCollectionPoint:
         """"""
-        return TypeCollectionPoint(self._native.a)
+        return _wrap(self._native.a, TypeCollectionPoint)
     @a.setter
     def a(self, value: TypeCollectionPoint):
-      self._native.a = getattr(value, "_native", value)
+      self._native.a = _unwrap(value, TypeCollectionPoint)
 
 
 
     @property
     def b(self) -> TypeCollectionPoint:
         """"""
-        return TypeCollectionPoint(self._native.b)
+        return _wrap(self._native.b, TypeCollectionPoint)
     @b.setter
     def b(self, value: TypeCollectionPoint):
-      self._native.b = getattr(value, "_native", value)
+      self._native.b = _unwrap(value, TypeCollectionPoint)
 
 

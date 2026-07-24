@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -82,7 +83,7 @@ public:
     }
 };
 
-void register_ChildInterfaceOverloads(py::module_& module) {
+void register_smoke_ChildInterfaceOverloads(py::module_& module) {
     py::class_<ChildInterfaceOverloads, ::smoke::ParentInterface, std::shared_ptr<ChildInterfaceOverloads>, ChildInterfaceOverloadsTrampoline>(module, "ChildInterfaceOverloads")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -96,30 +97,6 @@ void register_ChildInterfaceOverloads(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("foo", [](ChildInterfaceOverloads& self, const ::std::string& input) {
-            return self.foo(input);
-        }, py::arg("input"))
-
-        .def("bar", [](ChildInterfaceOverloads& self, const ::std::string& input) {
-            return self.bar(input);
-        }, py::arg("input"))
-
-        .def("foo", [](ChildInterfaceOverloads& self) {
-            return self.foo();
-        })
-
-        .def("foo", [](ChildInterfaceOverloads& self, const int32_t input) {
-            return self.foo(input);
-        }, py::arg("input"))
-
-        .def("bar", [](ChildInterfaceOverloads& self) {
-            return self.bar();
-        })
-
-        .def("baz", [](ChildInterfaceOverloads& self) {
-            return self.baz();
-        })
-
         ;
 }
 

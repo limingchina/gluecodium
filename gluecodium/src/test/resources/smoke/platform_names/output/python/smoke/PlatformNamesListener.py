@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class PlatformNamesListener(generated.PlatformNamesListener):
 
     def basic_method(self, basic_parameter: str):
         """"""
-        return generated.PlatformNamesListener.basic_method(self, basic_parameter)
+        return _wrap(generated.PlatformNamesListener.basic_method(self, _unwrap(basic_parameter, str)), None)
 

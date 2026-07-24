@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from package.Interface import Interface
 from package.typesenum import typesenum
+from package.typesexception import typesexception
 from package.typesstruct import typesstruct
 
 import generated
@@ -33,14 +37,14 @@ class Class(generated.Class):
 
     def fun(self, double: list[typesstruct]) -> typesstruct:
         """"""
-        return generated.Class.fun(self, double)
+        return _wrap(generated.Class.fun(self, _unwrap(double, list[typesstruct])), typesstruct)
 
     @property
     def property(self) -> typesenum:
         """"""
-        return generated.Class.property.fget(self)
+        return _wrap(generated.Class.property.fget(self), typesenum)
 
     @property.setter
     def property(self, value: typesenum):
-        generated.Class.property.fset(self, value)
+        generated.Class.property.fset(self, _unwrap(value, typesenum))
 

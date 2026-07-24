@@ -10,16 +10,16 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_CollectionConstants(pybind11::module_& module);
-void register_Constants(pybind11::module_& module);
-void register_ConstantsInterface(pybind11::module_& module);
-void register_ConstantsInterfaceStateEnum(pybind11::module_& module);
-void register_ConstantsSkipCpp(pybind11::module_& module);
-void register_ConstantsStateEnum(pybind11::module_& module);
-void register_CrossFileConstants(pybind11::module_& module);
-void register_StructConstants(pybind11::module_& module);
-void register_StructConstantsNestingStruct(pybind11::module_& module);
-void register_StructConstantsSomeStruct(pybind11::module_& module);
+void register_smoke_CollectionConstants(pybind11::module_& module);
+void register_smoke_Constants(pybind11::module_& module);
+void register_smoke_ConstantsInterface(pybind11::module_& module);
+void register_smoke_ConstantsInterfaceStateEnum(pybind11::module_& module);
+void register_smoke_ConstantsSkipCpp(pybind11::module_& module);
+void register_smoke_ConstantsStateEnum(pybind11::module_& module);
+void register_smoke_CrossFileConstants(pybind11::module_& module);
+void register_smoke_StructConstants(pybind11::module_& module);
+void register_smoke_StructConstantsNestingStruct(pybind11::module_& module);
+void register_smoke_StructConstantsSomeStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -27,14 +27,14 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_CollectionConstants(m);
-    register_Constants(m);
-    register_ConstantsInterface(m);
-    register_ConstantsInterfaceStateEnum(m);
-    register_ConstantsSkipCpp(m);
-    register_ConstantsStateEnum(m);
-    register_CrossFileConstants(m);
-    register_StructConstants(m);
-    register_StructConstantsNestingStruct(m);
-    register_StructConstantsSomeStruct(m);
+    register_smoke_CollectionConstants(m);
+    register_smoke_Constants(m);
+    register_smoke_ConstantsInterface(m);
+    register_smoke_ConstantsInterfaceStateEnum(m);
+    register_smoke_ConstantsSkipCpp(m);
+    register_smoke_ConstantsStateEnum(m);
+    register_smoke_CrossFileConstants(m);
+    register_smoke_StructConstants(m);
+    register_smoke_StructConstantsNestingStruct(m);
+    register_smoke_StructConstantsSomeStruct(m);
 }

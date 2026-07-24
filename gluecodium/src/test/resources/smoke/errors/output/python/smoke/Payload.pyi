@@ -15,25 +15,25 @@ class Payload(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.Payload):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Payload(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.Payload(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def error_code(self) -> int:
         """"""
-        return self._native.error_code
+        return _wrap(self._native.error_code, int)
     @error_code.setter
     def error_code(self, value: int):
-      self._native.error_code = getattr(value, "_native", value)
+      self._native.error_code = _unwrap(value, int)
 
 
 
     @property
     def message(self) -> str:
         """"""
-        return self._native.message
+        return _wrap(self._native.message, str)
     @message.setter
     def message(self, value: str):
-      self._native.message = getattr(value, "_native", value)
+      self._native.message = _unwrap(value, str)
 
 

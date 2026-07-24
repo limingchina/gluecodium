@@ -26,9 +26,9 @@ class ParentClass(generated.ParentClass):
     @property
     def parent_property(self) -> str:
         """"""
-        return generated.ParentClass.parent_property.fget(self)
+        return _wrap(generated.ParentClass.parent_property.fget(self), str)
 
     @parent_property.setter
     def parent_property(self, value: str):
-        generated.ParentClass.parent_property.fset(self, value)
+        generated.ParentClass.parent_property.fset(self, _unwrap(value, str))
 

@@ -15,25 +15,25 @@ class FieldConstructorsSkipCpp(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.FieldConstructorsSkipCpp):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsSkipCpp(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.FieldConstructorsSkipCpp(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, str)
 
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):
-      self._native.int_field = getattr(value, "_native", value)
+      self._native.int_field = _unwrap(value, int)
 
 

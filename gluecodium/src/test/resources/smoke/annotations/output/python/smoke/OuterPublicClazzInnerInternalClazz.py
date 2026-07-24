@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,5 +19,5 @@ class OuterPublicClazzInnerInternalClazz(_NativeBase):
 
     def some_function(self) -> bool:
         """"""
-        return self._native.some_function()
+        return _wrap(self._native.some_function(), bool)
 

@@ -17,25 +17,25 @@ class OrderInStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.OrderInStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OrderInStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.OrderInStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def struct_field(self) -> OrderInStructNestedStruct:
         """"""
-        return OrderInStructNestedStruct(self._native.struct_field)
+        return _wrap(self._native.struct_field, OrderInStructNestedStruct)
     @struct_field.setter
     def struct_field(self, value: OrderInStructNestedStruct):
-      self._native.struct_field = getattr(value, "_native", value)
+      self._native.struct_field = _unwrap(value, OrderInStructNestedStruct)
 
 
 
     @property
     def enum_field(self) -> OrderInStructSomeEnum:
         """"""
-        return OrderInStructSomeEnum(self._native.enum_field)
+        return _wrap(self._native.enum_field, OrderInStructSomeEnum)
     @enum_field.setter
     def enum_field(self, value: OrderInStructSomeEnum):
-      self._native.enum_field = getattr(value, "_native", value)
+      self._native.enum_field = _unwrap(value, OrderInStructSomeEnum)
 
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda import ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda
 
 
@@ -17,29 +20,29 @@ class ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):
-      self._native.int_field = getattr(value, "_native", value)
+      self._native.int_field = _unwrap(value, int)
 
 
 
     @property
     def some_lambda(self) -> ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda:
         """"""
-        return ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda(self._native.some_lambda)
+        return _wrap(self._native.some_lambda, ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)
     @some_lambda.setter
     def some_lambda(self, value: ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda):
-      self._native.some_lambda = getattr(value, "_native", value)
+      self._native.some_lambda = _unwrap(value, ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)
 
 
     def use_lambda(self, some_lambda: ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda) -> ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda:
         """"""
-        return self._native.use_lambda(some_lambda._native)
+        return _wrap(self._native.use_lambda(_unwrap(some_lambda, ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)), ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)
 

@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -100,7 +101,7 @@ public:
     }
 };
 
-void register_ChildClassFromInterfaceOverloads(py::module_& module) {
+void register_smoke_ChildClassFromInterfaceOverloads(py::module_& module) {
     py::class_<ChildClassFromInterfaceOverloads, ::smoke::ParentInterface, std::shared_ptr<ChildClassFromInterfaceOverloads>, ChildClassFromInterfaceOverloadsTrampoline>(module, "ChildClassFromInterfaceOverloads")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
@@ -112,30 +113,6 @@ void register_ChildClassFromInterfaceOverloads(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("foo", py::overload_cast<const ::std::string&>(&ChildClassFromInterfaceOverloads::foo), py::arg("input"))
-
-        .def("foo", py::overload_cast<const double>(&ChildClassFromInterfaceOverloads::foo), py::arg("input"))
-
-        .def("bar", py::overload_cast<const ::std::string&>(&ChildClassFromInterfaceOverloads::bar), py::arg("input"))
-
-        .def("bar", py::overload_cast<const double>(&ChildClassFromInterfaceOverloads::bar), py::arg("input"))
-
-        .def("foo", [](ChildClassFromInterfaceOverloads& self) {
-            return self.foo();
-        })
-
-        .def("foo", [](ChildClassFromInterfaceOverloads& self, const int32_t input) {
-            return self.foo(input);
-        }, py::arg("input"))
-
-        .def("bar", [](ChildClassFromInterfaceOverloads& self) {
-            return self.bar();
-        })
-
-        .def("baz", [](ChildClassFromInterfaceOverloads& self) {
-            return self.baz();
-        })
-
         ;
 }
 

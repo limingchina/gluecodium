@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -23,12 +24,8 @@ namespace py = pybind11;
 using Lambdas = ::smoke::Lambdas;
 
 
-void register_Lambdas(py::module_& module) {
+void register_smoke_Lambdas(py::module_& module) {
     py::class_<Lambdas, std::shared_ptr<Lambdas>>(module, "Lambdas")
-        .def("deconfuse", &Lambdas::deconfuse, py::arg("value"), py::arg("confuser"))
-
-        .def_static("fuse", &Lambdas::fuse, py::arg("items"), py::arg("callback"))
-
         ;
 }
 

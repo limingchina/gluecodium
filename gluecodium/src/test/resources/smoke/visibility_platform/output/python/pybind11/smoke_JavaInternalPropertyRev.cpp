@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,7 +18,7 @@ namespace py = pybind11;
 using JavaInternalPropertyRev = ::smoke::JavaInternalPropertyRev;
 
 
-void register_JavaInternalPropertyRev(py::module_& module) {
+void register_smoke_JavaInternalPropertyRev(py::module_& module) {
     py::class_<JavaInternalPropertyRev, std::shared_ptr<JavaInternalPropertyRev>>(module, "JavaInternalPropertyRev")
         .def_property("app_context", py::overload_cast<>(&JavaInternalPropertyRev::get_app_context, py::const_), py::overload_cast<const std::optional< ::std::string >&>(&JavaInternalPropertyRev::set_app_context))
         ;

@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -19,12 +20,11 @@ namespace py = pybind11;
 using fooInterface = ::smoke::fooInterface;
 
 
-void register_PlatformNamesInterface(py::module_& module) {
+void register_smoke_PlatformNamesInterface(py::module_& module) {
     py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "PlatformNamesInterface")
-        .def("basic_method", &fooInterface::FooMethod, py::arg("basic_parameter"))
+        .def(py::init<::std::string>(py::arg("basic_parameter")))
 
         .def_static("create", &fooInterface::make, py::arg("basic_parameter"))
-
         .def_property("basic_property", py::overload_cast<>(&fooInterface::GET_FOO_PROPERTY, py::const_), py::overload_cast<const uint32_t>(&fooInterface::SET_FOO_PROPERTY))
         ;
 }

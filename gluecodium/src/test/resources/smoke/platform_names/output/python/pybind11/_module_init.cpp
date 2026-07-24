@@ -10,11 +10,11 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_PlatformNames(pybind11::module_& module);
-void register_PlatformNamesBasicEnum(pybind11::module_& module);
-void register_PlatformNamesBasicStruct(pybind11::module_& module);
-void register_PlatformNamesInterface(pybind11::module_& module);
-void register_PlatformNamesListener(pybind11::module_& module);
+void register_smoke_PlatformNames(pybind11::module_& module);
+void register_smoke_PlatformNamesBasicEnum(pybind11::module_& module);
+void register_smoke_PlatformNamesBasicStruct(pybind11::module_& module);
+void register_smoke_PlatformNamesInterface(pybind11::module_& module);
+void register_smoke_PlatformNamesListener(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -22,9 +22,9 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_PlatformNames(m);
-    register_PlatformNamesBasicEnum(m);
-    register_PlatformNamesBasicStruct(m);
-    register_PlatformNamesInterface(m);
-    register_PlatformNamesListener(m);
+    register_smoke_PlatformNames(m);
+    register_smoke_PlatformNamesBasicEnum(m);
+    register_smoke_PlatformNamesBasicStruct(m);
+    register_smoke_PlatformNamesInterface(m);
+    register_smoke_PlatformNamesListener(m);
 }

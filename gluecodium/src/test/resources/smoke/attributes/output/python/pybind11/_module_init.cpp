@@ -10,21 +10,21 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_AttributesClass(pybind11::module_& module);
-void register_AttributesCrashError(pybind11::module_& module);
-void register_AttributesEnum(pybind11::module_& module);
-void register_AttributesInterface(pybind11::module_& module);
-void register_AttributesStruct(pybind11::module_& module);
-void register_AttributesWithComments(pybind11::module_& module);
-void register_AttributesWithCommentsSomeStruct(pybind11::module_& module);
-void register_AttributesWithDeprecated(pybind11::module_& module);
-void register_AttributesWithDeprecatedSomeStruct(pybind11::module_& module);
-void register_MultipleAttributesCpp(pybind11::module_& module);
-void register_MultipleAttributesDart(pybind11::module_& module);
-void register_MultipleAttributesJava(pybind11::module_& module);
-void register_MultipleAttributesKotlin(pybind11::module_& module);
-void register_MultipleAttributesSwift(pybind11::module_& module);
-void register_SpecialAttributes(pybind11::module_& module);
+void register_smoke_AttributesClass(pybind11::module_& module);
+void register_smoke_AttributesCrashError(pybind11::module_& module);
+void register_smoke_AttributesEnum(pybind11::module_& module);
+void register_smoke_AttributesInterface(pybind11::module_& module);
+void register_smoke_AttributesStruct(pybind11::module_& module);
+void register_smoke_AttributesWithComments(pybind11::module_& module);
+void register_smoke_AttributesWithCommentsSomeStruct(pybind11::module_& module);
+void register_smoke_AttributesWithDeprecated(pybind11::module_& module);
+void register_smoke_AttributesWithDeprecatedSomeStruct(pybind11::module_& module);
+void register_smoke_MultipleAttributesCpp(pybind11::module_& module);
+void register_smoke_MultipleAttributesDart(pybind11::module_& module);
+void register_smoke_MultipleAttributesJava(pybind11::module_& module);
+void register_smoke_MultipleAttributesKotlin(pybind11::module_& module);
+void register_smoke_MultipleAttributesSwift(pybind11::module_& module);
+void register_smoke_SpecialAttributes(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -32,19 +32,19 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_AttributesClass(m);
-    register_AttributesCrashError(m);
-    register_AttributesEnum(m);
-    register_AttributesInterface(m);
-    register_AttributesStruct(m);
-    register_AttributesWithComments(m);
-    register_AttributesWithCommentsSomeStruct(m);
-    register_AttributesWithDeprecated(m);
-    register_AttributesWithDeprecatedSomeStruct(m);
-    register_MultipleAttributesCpp(m);
-    register_MultipleAttributesDart(m);
-    register_MultipleAttributesJava(m);
-    register_MultipleAttributesKotlin(m);
-    register_MultipleAttributesSwift(m);
-    register_SpecialAttributes(m);
+    register_smoke_AttributesClass(m);
+    register_smoke_AttributesCrashError(m);
+    register_smoke_AttributesEnum(m);
+    register_smoke_AttributesInterface(m);
+    register_smoke_AttributesStruct(m);
+    register_smoke_AttributesWithComments(m);
+    register_smoke_AttributesWithCommentsSomeStruct(m);
+    register_smoke_AttributesWithDeprecated(m);
+    register_smoke_AttributesWithDeprecatedSomeStruct(m);
+    register_smoke_MultipleAttributesCpp(m);
+    register_smoke_MultipleAttributesDart(m);
+    register_smoke_MultipleAttributesJava(m);
+    register_smoke_MultipleAttributesKotlin(m);
+    register_smoke_MultipleAttributesSwift(m);
+    register_smoke_SpecialAttributes(m);
 }

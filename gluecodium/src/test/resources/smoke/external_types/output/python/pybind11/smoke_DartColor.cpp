@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -14,14 +15,15 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartColor = ::smoke::DartColor;
 
-void register_DartColor(py::module_& module) {
+void register_smoke_DartColor(py::module_& module) {
     py::class_<DartColor>(module, "DartColor")
         .def_readwrite("red", &DartColor::red)
         .def_readwrite("green", &DartColor::green)
         .def_readwrite("blue", &DartColor::blue)
         .def_readwrite("alpha", &DartColor::alpha)
         .def(py::init<>())
-        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float>(py::arg("red"), py::arg("green"), py::arg("blue")))
+        .def(py::init<float, float, float, float(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;
 }
 

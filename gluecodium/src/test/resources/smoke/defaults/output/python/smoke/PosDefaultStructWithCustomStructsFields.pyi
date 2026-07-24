@@ -20,150 +20,150 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PosDefaultStructWithCustomStructsFields):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PosDefaultStructWithCustomStructsFields(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PosDefaultStructWithCustomStructsFields(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def const_ctor_field0(self) -> ImmutableStructWithDefaults:
         """"""
-        return ImmutableStructWithDefaults(self._native.const_ctor_field0)
+        return _wrap(self._native.const_ctor_field0, ImmutableStructWithDefaults)
 
 
 
     @property
     def const_ctor_field1(self):
         """"""
-        return Optional[ImmutableStructWithDefaults](self._native.const_ctor_field1)
+        return _wrap(self._native.const_ctor_field1, Optional[ImmutableStructWithDefaults])
 
 
 
     @property
     def const_ctor_field2(self) -> list[str]:
         """"""
-        return self._native.const_ctor_field2
+        return _wrap(self._native.const_ctor_field2, list[str])
     @const_ctor_field2.setter
     def const_ctor_field2(self, value: list[str]):
-      self._native.const_ctor_field2 = getattr(value, "_native", value)
+      self._native.const_ctor_field2 = _unwrap(value, list[str])
 
 
 
     @property
     def const_ctor_field3(self):
         """"""
-        return self._native.const_ctor_field3
+        return _wrap(self._native.const_ctor_field3, Optional[dict[str, str]])
     @const_ctor_field3.setter
     def const_ctor_field3(self, value):
-      self._native.const_ctor_field3 = getattr(value, "_native", value)
+      self._native.const_ctor_field3 = _unwrap(value, Optional[dict[str, str]])
 
 
 
     @property
     def const_ctor_field4(self) -> int:
         """"""
-        return self._native.const_ctor_field4
+        return _wrap(self._native.const_ctor_field4, int)
     @const_ctor_field4.setter
     def const_ctor_field4(self, value: int):
-      self._native.const_ctor_field4 = getattr(value, "_native", value)
+      self._native.const_ctor_field4 = _unwrap(value, int)
 
 
 
     @property
     def const_ctor_field5(self) -> float:
         """"""
-        return self._native.const_ctor_field5
+        return _wrap(self._native.const_ctor_field5, float)
     @const_ctor_field5.setter
     def const_ctor_field5(self, value: float):
-      self._native.const_ctor_field5 = getattr(value, "_native", value)
+      self._native.const_ctor_field5 = _unwrap(value, float)
 
 
 
     @property
     def const_ctor_field6(self):
         """"""
-        return Optional[ImmutableStructWithDefaults](self._native.const_ctor_field6)
+        return _wrap(self._native.const_ctor_field6, Optional[ImmutableStructWithDefaults])
 
 
 
     @property
     def const_ctor_field7(self):
         """"""
-        return Optional[ImmutableStructWithDefaults](self._native.const_ctor_field7)
+        return _wrap(self._native.const_ctor_field7, Optional[ImmutableStructWithDefaults])
 
 
 
     @property
     def non_const_ctor_field0(self) -> StructWithAllDefaults:
         """"""
-        return StructWithAllDefaults(self._native.non_const_ctor_field0)
+        return _wrap(self._native.non_const_ctor_field0, StructWithAllDefaults)
     @non_const_ctor_field0.setter
     def non_const_ctor_field0(self, value: StructWithAllDefaults):
-      self._native.non_const_ctor_field0 = getattr(value, "_native", value)
+      self._native.non_const_ctor_field0 = _unwrap(value, StructWithAllDefaults)
 
 
 
     @property
     def non_const_ctor_field1(self) -> PosDefaultStructWithFieldUsingImmutableStruct:
         """"""
-        return PosDefaultStructWithFieldUsingImmutableStruct(self._native.non_const_ctor_field1)
+        return _wrap(self._native.non_const_ctor_field1, PosDefaultStructWithFieldUsingImmutableStruct)
 
 
 
     @property
     def non_const_ctor_field2(self) -> SomeMutableCustomStructWithDefaults:
         """"""
-        return SomeMutableCustomStructWithDefaults(self._native.non_const_ctor_field2)
+        return _wrap(self._native.non_const_ctor_field2, SomeMutableCustomStructWithDefaults)
     @non_const_ctor_field2.setter
     def non_const_ctor_field2(self, value: SomeMutableCustomStructWithDefaults):
-      self._native.non_const_ctor_field2 = getattr(value, "_native", value)
+      self._native.non_const_ctor_field2 = _unwrap(value, SomeMutableCustomStructWithDefaults)
 
 
 
     @property
     def non_const_ctor_field3(self) -> StructWithNullableCollectionDefaults:
         """"""
-        return StructWithNullableCollectionDefaults(self._native.non_const_ctor_field3)
+        return _wrap(self._native.non_const_ctor_field3, StructWithNullableCollectionDefaults)
     @non_const_ctor_field3.setter
     def non_const_ctor_field3(self, value: StructWithNullableCollectionDefaults):
-      self._native.non_const_ctor_field3 = getattr(value, "_native", value)
+      self._native.non_const_ctor_field3 = _unwrap(value, StructWithNullableCollectionDefaults)
 
 
 
     @property
     def non_const_ctor_field4(self):
         """"""
-        return Optional[StructWithAllDefaults](self._native.non_const_ctor_field4)
+        return _wrap(self._native.non_const_ctor_field4, Optional[StructWithAllDefaults])
     @non_const_ctor_field4.setter
     def non_const_ctor_field4(self, value):
-      self._native.non_const_ctor_field4 = getattr(value, "_native", value)
+      self._native.non_const_ctor_field4 = _unwrap(value, Optional[StructWithAllDefaults])
 
 
 
     @property
     def non_const_ctor_field5(self) -> bytes:
         """"""
-        return self._native.non_const_ctor_field5
+        return _wrap(self._native.non_const_ctor_field5, bytes)
     @non_const_ctor_field5.setter
     def non_const_ctor_field5(self, value: bytes):
-      self._native.non_const_ctor_field5 = getattr(value, "_native", value)
+      self._native.non_const_ctor_field5 = _unwrap(value, bytes)
 
 
 
     @property
     def non_const_ctor_field6(self) -> bytes:
         """"""
-        return self._native.non_const_ctor_field6
+        return _wrap(self._native.non_const_ctor_field6, bytes)
     @non_const_ctor_field6.setter
     def non_const_ctor_field6(self, value: bytes):
-      self._native.non_const_ctor_field6 = getattr(value, "_native", value)
+      self._native.non_const_ctor_field6 = _unwrap(value, bytes)
 
 
 
     @property
     def non_const_ctor_field7(self):
         """"""
-        return self._native.non_const_ctor_field7
+        return _wrap(self._native.non_const_ctor_field7, Optional[bytes])
     @non_const_ctor_field7.setter
     def non_const_ctor_field7(self, value):
-      self._native.non_const_ctor_field7 = getattr(value, "_native", value)
+      self._native.non_const_ctor_field7 = _unwrap(value, Optional[bytes])
 
 

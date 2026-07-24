@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.Currency import Currency
 from smoke.JavaExternalTypesStruct import JavaExternalTypesStruct
 from smoke.Month import Month
@@ -23,36 +26,36 @@ class UseJavaExternalTypes(_NativeBase):
     @staticmethod
     def currency_round_trip(input: Currency) -> Currency:
         """"""
-        native_result = generated.UseJavaExternalTypes.currency_round_trip(input._native)
+        native_result = generated.UseJavaExternalTypes.currency_round_trip(_unwrap(input, Currency))
         return Currency(native_result)
 
     @staticmethod
     def time_zone_round_trip(input: TimeZone) -> TimeZone:
         """"""
-        native_result = generated.UseJavaExternalTypes.time_zone_round_trip(input._native)
+        native_result = generated.UseJavaExternalTypes.time_zone_round_trip(_unwrap(input, TimeZone))
         return TimeZone(native_result)
 
     @staticmethod
     def month_round_trip(input: Month) -> Month:
         """"""
-        native_result = generated.UseJavaExternalTypes.month_round_trip(input._native)
+        native_result = generated.UseJavaExternalTypes.month_round_trip(_unwrap(input, Month))
         return Month(native_result)
 
     @staticmethod
     def color_round_trip(input: SystemColor) -> SystemColor:
         """"""
-        native_result = generated.UseJavaExternalTypes.color_round_trip(input._native)
+        native_result = generated.UseJavaExternalTypes.color_round_trip(_unwrap(input, SystemColor))
         return SystemColor(native_result)
 
     @staticmethod
     def season_round_trip(input: Season) -> Season:
         """"""
-        native_result = generated.UseJavaExternalTypes.season_round_trip(input._native)
+        native_result = generated.UseJavaExternalTypes.season_round_trip(_unwrap(input, Season))
         return Season(native_result)
 
     @staticmethod
     def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
         """"""
-        native_result = generated.UseJavaExternalTypes.struct_round_trip(input._native)
+        native_result = generated.UseJavaExternalTypes.struct_round_trip(_unwrap(input, JavaExternalTypesStruct))
         return JavaExternalTypesStruct(native_result)
 

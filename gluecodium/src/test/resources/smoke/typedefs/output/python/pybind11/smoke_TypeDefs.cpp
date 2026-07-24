@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -19,20 +20,8 @@ namespace py = pybind11;
 using TypeDefs = ::smoke::TypeDefs;
 
 
-void register_TypeDefs(py::module_& module) {
+void register_smoke_TypeDefs(py::module_& module) {
     py::class_<TypeDefs, std::shared_ptr<TypeDefs>>(module, "TypeDefs")
-        .def_static("method_with_primitive_type_def", &TypeDefs::method_with_primitive_type_def, py::arg("input"))
-
-        .def_static("method_with_complex_type_def", &TypeDefs::method_with_complex_type_def, py::arg("input"))
-
-        .def_static("return_nested_int_type_def", &TypeDefs::return_nested_int_type_def, py::arg("input"))
-
-        .def_static("return_test_struct_type_def", &TypeDefs::return_test_struct_type_def, py::arg("input"))
-
-        .def_static("return_nested_struct_type_def", &TypeDefs::return_nested_struct_type_def, py::arg("input"))
-
-        .def_static("return_type_def_point_from_type_collection", &TypeDefs::return_type_def_point_from_type_collection, py::arg("input"))
-
         .def_property("primitive_type_property", py::overload_cast<>(&TypeDefs::get_primitive_type_property, py::const_), py::overload_cast<const ::std::vector< double >&>(&TypeDefs::set_primitive_type_property))
         ;
 }

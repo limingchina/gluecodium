@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,14 +18,8 @@ namespace py = pybind11;
 using MyClass = ::com::example::test::MyClass;
 
 
-void register_RenamedClass(py::module_& module) {
+void register_com_example_test_RenamedClass(py::module_& module) {
     py::class_<MyClass, std::shared_ptr<MyClass>>(module, "RenamedClass")
-        .def("hidden_method", &MyClass::hidden_method)
-
-        .def("internal_method", &MyClass::internal_method)
-
-        .def("visible_method", &MyClass::visible_method, py::arg("param"))
-
         ;
 }
 

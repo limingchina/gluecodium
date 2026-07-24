@@ -1,0 +1,18 @@
+
+
+import typing
+
+from enum import Enum
+
+import generated
+
+
+class ExternalInterfacesome_Enum(Enum):
+    """"""
+
+    SOME_VALUE = generated.ExternalInterfacesome_Enum.some_Value
+
+    @property
+    def _native(self):
+        return self.value
+

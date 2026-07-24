@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,5 +29,5 @@ class ParentInterfaceWithBool(generated.ParentInterfaceWithBool):
 
     def root_method(self, input1: bool):
         """"""
-        return generated.ParentInterfaceWithBool.root_method(self, input1)
+        return _wrap(generated.ParentInterfaceWithBool.root_method(self, _unwrap(input1, bool)), None)
 

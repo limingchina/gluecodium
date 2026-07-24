@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.DeprecationCommentsSomeEnum import DeprecationCommentsSomeEnum
 
 
@@ -27,25 +30,25 @@ class DeprecationComments(generated.DeprecationComments):
 
     def some_method_with_all_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return generated.DeprecationComments.some_method_with_all_comments(self, input)
+        return _wrap(generated.DeprecationComments.some_method_with_all_comments(self, _unwrap(input, str)), bool)
 
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
-        return generated.DeprecationComments.is_some_property.fget(self)
+        return _wrap(generated.DeprecationComments.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.DeprecationComments.is_some_property.fset(self, value)
+        generated.DeprecationComments.is_some_property.fset(self, _unwrap(value, bool))
 
     @property
     def property_but_not_accessors(self) -> str:
         """Describes the property but not accessors."""
-        return generated.DeprecationComments.property_but_not_accessors.fget(self)
+        return _wrap(generated.DeprecationComments.property_but_not_accessors.fget(self), str)
 
     @property_but_not_accessors.setter
     def property_but_not_accessors(self, value: str):
-        generated.DeprecationComments.property_but_not_accessors.fset(self, value)
+        generated.DeprecationComments.property_but_not_accessors.fset(self, _unwrap(value, str))
 
     This is some very useful constant.
     VERY_USEFUL = True

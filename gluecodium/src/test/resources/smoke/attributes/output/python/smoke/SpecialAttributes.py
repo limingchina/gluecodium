@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,9 +19,9 @@ class SpecialAttributes(_NativeBase):
 
     def with_escaping(self):
         """"""
-        return self._native.with_escaping()
+        return _wrap(self._native.with_escaping(), None)
 
     def with_line_break(self):
         """"""
-        return self._native.with_line_break()
+        return _wrap(self._native.with_line_break(), None)
 

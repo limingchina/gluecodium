@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,13 +29,13 @@ class EnableTagsInJava(generated.EnableTagsInJava):
 
     def enable_tagged(self):
         """"""
-        return generated.EnableTagsInJava.enable_tagged(self)
+        return _wrap(generated.EnableTagsInJava.enable_tagged(self), None)
 
     def dont_enable_tagged(self):
         """"""
-        return generated.EnableTagsInJava.dont_enable_tagged(self)
+        return _wrap(generated.EnableTagsInJava.dont_enable_tagged(self), None)
 
     def enable_tagged_list(self):
         """"""
-        return generated.EnableTagsInJava.enable_tagged_list(self)
+        return _wrap(generated.EnableTagsInJava.enable_tagged_list(self), None)
 
