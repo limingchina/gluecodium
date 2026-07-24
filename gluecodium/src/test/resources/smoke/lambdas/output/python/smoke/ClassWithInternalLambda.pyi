@@ -2,6 +2,7 @@
 
 from smoke.ClassWithInternalLambdaInternalNestedLambda import ClassWithInternalLambdaInternalNestedLambda
 import typing
+from typing import Callable
 
 from _native_base import _NativeBase
 
@@ -15,5 +16,5 @@ class ClassWithInternalLambda(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def invoke_internal_lambda(lambda: ClassWithInternalLambdaInternalNestedLambda, value: str) -> bool: ...
+    def invoke_internal_lambda(lambda: Callable[[str], bool], value: str) -> bool: ...
 

@@ -43,6 +43,8 @@
 {{/importedName}}{{^importedName}}import {{modulePath}}
 {{/importedName}}{{/imports}}
 import typing
+{{#usesCallable}}from typing import Callable
+{{/usesCallable}}
 
 {{#model}}
 {{include contentTemplate}}

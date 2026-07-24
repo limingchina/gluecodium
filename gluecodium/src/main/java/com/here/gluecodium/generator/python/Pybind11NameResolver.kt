@@ -24,7 +24,10 @@ import com.here.gluecodium.generator.cpp.CppNameCache
 import com.here.gluecodium.generator.cpp.CppNameResolver
 import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.model.lime.LimeElement
+import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeReturnType
+import com.here.gluecodium.model.lime.LimeTypeRef
 
 /**
  * Name resolver that exposes the C++ names used inside the generated pybind11 binding code.
@@ -44,7 +47,12 @@ internal class Pybind11NameResolver(
     private val cppNameResolver =
         CppNameResolver(limeReferenceMap, internalNamespace, nameCache, forceFollowThrough = true)
 
-    override fun resolveName(element: Any): String = cppNameResolver.resolveName(element)
+    override fun resolveName(element: Any): String =
+        when (element) {
+            is LimeTypeRef -> resolveTypeRef(element)
+            is LimeReturnType -> resolveTypeRef(element.typeRef)
+            else -> cppNameResolver.resolveName(element)
+        }
 
     override fun resolveGetterName(element: Any) = cppNameResolver.resolveGetterName(element)
 
@@ -59,5 +67,23 @@ internal class Pybind11NameResolver(
     fun resolveFullName(element: LimeNamedElement): String {
         val parts: List<String> = listOf("") + internalNs + element.path.head + element.path.tail
         return parts.joinToString("::")
+    }
+
+    /**
+     * Lambdas are emitted as C++ aliases, but pybind11 must see their underlying
+     * `std::function` signature for its built-in callable caster to participate. Keep every
+     * non-lambda spelling delegated to [CppNameResolver], so optional, alias, and external-type
+     * handling remains identical to the generated C++ API.
+     */
+    private fun resolveTypeRef(limeTypeRef: LimeTypeRef): String {
+        val limeLambda = limeTypeRef.type.actualType as? LimeLambda ?: return cppNameResolver.resolveName(limeTypeRef)
+        val function = limeLambda.asFunction()
+        val parameters =
+            function.parameters.joinToString(", ") { parameter ->
+                "const ${resolveName(parameter.typeRef)}" +
+                    if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "&" else ""
+            }
+        val functionType = "::std::function<${resolveName(function.returnType)}($parameters)>"
+        return if (limeTypeRef.isNullable) "std::optional< $functionType >" else functionType
     }
 }
