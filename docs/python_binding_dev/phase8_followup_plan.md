@@ -2,18 +2,18 @@
 
 > **Date**: 2026-07-22
 > **Branch**: `python_bind`
-> **Status**: Active follow-up; Phases A-C complete, D1-D3 and E1/E3 implemented
+> **Status**: Active follow-up; Phases A-C complete, D1-D3, E1/E3, and F1 implemented
 > **Related**: [phase8_status.md](./phase8_status.md), [python_pybind11_plan.md](../python_pybind11_plan.md)
 > **Scope**: Remaining narrowed features; `Dates` and `Durations` are already enabled but remain part of the shared runtime validation work
 
 > **Current status (2026-07-22):** Python inheritance trampolines, multiple-inheritance
 > bindings, overload dispatch, external-type binding, and `Return<T, Error>` exception
-> translation are implemented on `python_bind`. `Inheritance`, `MultipleInheritance`,
-> `MethodOverloading`, `ExternalTypes`, and `Errors` are enabled in the functional
-> configuration. `DartExternalTypes` remains supported for Dart but is intentionally
-> excluded from Python support. `Blob`,
-> `GenericTypes`, `Defaults`, and the later lambda, naming, equality, locale, listener,
-> and threading work remain open.
+> translation are implemented on `python_bind`. Python nested generic collection
+> conversion is also implemented for F1. `Inheritance`, `MultipleInheritance`,
+> `MethodOverloading`, `ExternalTypes`, `Errors`, and `GenericTypes` are enabled in the
+> functional configuration. `DartExternalTypes` remains supported for Dart but is
+> intentionally excluded from Python support. `Blob`, `Defaults`, and the later lambda,
+> naming, equality, locale, listener, and threading work remain open.
 
 > **⚠️ Gotcha — stale generated code after a generator change (2026-07-18):**
 > The functional-test build scripts (`build-python-functional --publish`, etc.) run
@@ -304,10 +304,10 @@ the Python/pybind11 return caster and exception registry.
 |-------|---------|------------|---------|------|--------|
 | E1 | `ExternalTypes` | `ExternalTypes.lime`, `ExternalImmutable.lime`, `ExternalClassAsInterface.lime`, `UseExternalTypes.lime` | G6: external type C++ name/include resolution | D1 | Complete |
 | E3 | `Errors` | `Errors.lime`, `Errors2.lime`, `ErrorsInInterface.lime`, `ErrorsWithNonTrivialType.lime` | G7: `Return<T, Error>` exception translation for internal/external/cross-package error enums | E1 | Complete |
-| E4 | `Blob` | `Blobs.lime`, `StaticByteArrayMethods.lime` | G7: `Blobs.lime` imports `another.TypeCollectionWithEnums.Explosive` from `Errors2.lime` — needs E3 first. Also `Blob` type = `List<UByte>` which needs G5. | E3, F1 | Medium |
+| E4 | `Blob` | `Blobs.lime`, `StaticByteArrayMethods.lime` | G7: `Blobs.lime` imports `another.TypeCollectionWithEnums.Explosive` from `Errors2.lime` — needs E3 first. Also `Blob` type = `List<UByte>` and requires the F1 collection conversion path. | E3, F1 | Medium |
 
-**Exit criteria:** E1 and E3 are complete. E4 (`Blob`) remains open pending
-collection support from F1.
+**Exit criteria:** E1 and E3 are complete. E4 (`Blob`) remains open for separate
+feature implementation and validation.
 
 ---
 
@@ -315,9 +315,20 @@ collection support from F1.
 
 **Goal**: Support `List<T>`, `Map<K,V>`, `Set<T>` with user-defined element types in pybind11 bindings.
 
-**Problem**: pybind11 has built-in support for `std::vector<T>`, `std::map<K,V>`, `std::set<T>` via `<pybind11/stl.h>`. The gap is that user-defined types wrapped by Gluecodium are not directly compatible with pybind11's STL converters — the wrapper type needs to be unwrapped to its C++ representation.
+**Problem**: pybind11's default STL casters do not provide the recursive facade
+conversion needed when Gluecodium wrapper objects occur inside nested collections.
+They also cannot represent native unordered sets or maps containing mutable Python
+lists, sets, or dictionaries, because those values must be hashable.
 
-**Fix**: Ensure that `Pybind11NameResolver` resolves generic type parameters to their C++ representation (e.g. `std::vector<::test::MyClass*>`), and that the pybind11 type caster for the wrapper class is registered before the STL container caster is used.
+**Fix (implemented 2026-07-22)**: Python facade conversion now recursively unwraps
+and wraps lists, sets, frozensets, tuples, dictionaries, and nullable union values
+using the declared type hints. Native vectors used in hash-required positions are
+represented as Python tuples; native unordered sets and maps used in hash-required
+positions are represented as frozensets. A generated `_generic_caster.h` recursively
+converts native vectors, unordered sets, and unordered maps to and from those Python
+representations, and collection-bearing functions use generated pybind11 lambdas
+instead of direct member-function pointers. Generic imports also recurse through
+container element, key, and value types.
 
 **Affected files**:
 - `Pybind11NameResolver.kt` — resolve `LimeList` → `std::vector<...>`, `LimeMap` → `std::map<...>`, `LimeSet` → `std::set<...>`
@@ -326,10 +337,25 @@ collection support from F1.
 
 | Order | Feature | Lime Files | Key Gap | Deps | Effort |
 |-------|---------|------------|---------|------|--------|
-| F1 | `GenericTypes` | `Arrays.lime`, `SetType.lime`, `Maps.lime`, `NestedGenericTypes.lime`, `OptimizedList.lime` | G5: `List`/`Map`/`Set` with user-defined types + nested generics | A6, A7 | Large |
+| F1 | `GenericTypes` | `Arrays.lime`, `SetType.lime`, `Maps.lime`, `NestedGenericTypes.lime`, `OptimizedList.lime` | G5: `List`/`Map`/`Set` with user-defined types + nested generics | A6, A7 | Complete |
 | F2 | `Defaults` | `Defaults.lime`, `DefaultsWithFcStruct.lime`, `PositionalDefaults.lime`, `PositionalEnumerators.lime`, `InternalEnumDefaults.lime`, `FireConstants.lime`, `ConstantDefaults.lime` | G5+G6: collection defaults + external enum defaults. **Depends on E1** for `ExternalEnum` with `external { cpp include "include/ExternalTypes.h" }` | E1, F1 | Large |
 
-**Exit criteria**: Both features compile and pass pytest.
+**F1 implementation status (2026-07-22):** ✅ `GenericTypes` is enabled for Python.
+The focused `NestedGenericTypes` regression covers nested lists, maps, and sets,
+mixed collections, and generic map keys. Generator compilation, fresh F1 generation,
+generated Python syntax compilation, the focused `NestedGenericTypes` pybind11 object
+compilation, the recursive facade conversion smoke test, and `git diff --check` pass.
+
+The aggregate Python functional build remains blocked by an unrelated generated
+`ArraysFancyStruct` error involving incomplete `test::SimpleInstantiableOne` types.
+Because that aggregate extension does not link, the end-to-end pytest assertions for
+the new regression cannot currently run; the focused generated F1 binding compilation
+does not show any caster errors. Properties and struct constructors containing these
+hash-required nested collection shapes are outside the current F1 function-binding
+scope and remain follow-up work if later fixtures require them.
+
+**Exit criteria**: F1 is implemented with focused compile and conversion validation;
+F2 (`Defaults`) remains open.
 
 ---
 
