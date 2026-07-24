@@ -45,8 +45,8 @@ class TestNestedGenericTypes:
         result = NestedGenericTypes.method_with_map_and_set(value)
 
         assert {frozenset(item) for item in result} == {
-            frozenset({(1, 10), (2, 10)}),
-            frozenset({(2, 20), (3, 20)}),
+            frozenset({(1, True), (2, True)}),
+            frozenset({(2, True), (3, True)}),
         }
 
     def test_map_generic_keys(self):

@@ -18,11 +18,11 @@
  */
 
 /**
- * Python generator (pybind11 approach). Generates Python source files plus pybind11 C++
- * binding files that wrap the generated C++ API directly (no C-ABI intermediate layer).
+ * Python generator (pybind11 approach). Generates Python source files plus pybind11 C++ binding
+ * files that wrap the generated C++ API directly (no C-ABI intermediate layer).
  *
- * <p>The architecture mirrors the Swift generator: a platform-language generator
- * ({@code PythonGenerator}) plus a C++ binding generator ({@code Pybind11Generator}) that
- * both consume the same filtered LIME model.
+ * <p>The architecture mirrors the Swift generator: a platform-language generator ({@code
+ * PythonGenerator}) plus a C++ binding generator ({@code Pybind11Generator}) that both consume the
+ * same filtered LIME model.
  */
 package com.here.gluecodium.generator.python;

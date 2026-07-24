@@ -56,8 +56,9 @@ internal class PythonImportResolver(
             // type caster raises the specific Python exception registered by
             // Pybind11Exception.mustache. The exception type must be imported so the
             // Python wrapper can reference it (e.g. in type hints or try/except).
-            is LimeFunction -> listOf(createImport(limeElement)) +
-                (limeElement.exception?.let { resolveTypeImports(it) } ?: emptyList())
+            is LimeFunction ->
+                listOf(createImport(limeElement)) +
+                    (limeElement.exception?.let { resolveTypeImports(it) } ?: emptyList())
             is LimeNamedElement -> listOf(createImport(limeElement))
             else -> emptyList()
         }
@@ -115,8 +116,9 @@ internal class PythonImportResolver(
     }
 
     private fun createImport(limeElement: LimeNamedElement): PythonImport {
-        val modulePath = (limeElement.path.head + nameResolver.resolveName(limeElement))
-            .joinToString(".")
+        val modulePath =
+            (limeElement.path.head + nameResolver.resolveName(limeElement))
+                .joinToString(".")
         return PythonImport(modulePath, nameResolver.resolveName(limeElement))
     }
 }

@@ -26,7 +26,6 @@ import com.here.gluecodium.model.lime.LimeAttributeValueType.NAME
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeProperty
-import com.here.gluecodium.model.lime.LimeStruct
 import com.here.gluecodium.model.lime.LimeType
 import java.io.File
 
@@ -43,8 +42,7 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
                 super.getName(limeElement)
             }
 
-    override fun getPropertyName(limeProperty: LimeProperty) =
-        getPlatformName(limeProperty) ?: super.getPropertyName(limeProperty)
+    override fun getPropertyName(limeProperty: LimeProperty) = getPlatformName(limeProperty) ?: super.getPropertyName(limeProperty)
 
     /** Resolve the output path of a generated Python source file for the given element. */
     fun getPythonFileName(limeElement: LimeNamedElement): String {

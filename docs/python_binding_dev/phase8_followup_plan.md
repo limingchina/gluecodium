@@ -346,16 +346,24 @@ mixed collections, and generic map keys. Generator compilation, fresh F1 generat
 generated Python syntax compilation, the focused `NestedGenericTypes` pybind11 object
 compilation, the recursive facade conversion smoke test, and `git diff --check` pass.
 
-The aggregate Python functional build remains blocked by an unrelated generated
-`ArraysFancyStruct` error involving incomplete `test::SimpleInstantiableOne` types.
-Because that aggregate extension does not link, the end-to-end pytest assertions for
-the new regression cannot currently run; the focused generated F1 binding compilation
-does not show any caster errors. Properties and struct constructors containing these
+The aggregate Python extension now builds. The build required three related
+pybind11 include/exception fixes: complete headers for user-defined types nested
+through collection aliases, owning headers for struct-backed exception payloads,
+and the shared `ReturnErrorToString` fallback for payload structs without a
+`message()` method. The focused regression runs all seven nested-generic cases
+successfully against the built extension. Full CTest still reports unrelated
+collection-time failures for Python features that remain disabled, plus existing
+generated enum-name issues. Properties and struct constructors containing these
 hash-required nested collection shapes are outside the current F1 function-binding
 scope and remain follow-up work if later fixtures require them.
 
 **Exit criteria**: F1 is implemented with focused compile and conversion validation;
-F2 (`Defaults`) remains open.
+F2 (`Defaults`) is implemented for Python. The Defaults feature is enabled for Python in
+CMakeLists.txt, and package-qualified `register_*` function names (via `resolveRegisterName`)
+are in place to prevent duplicate symbol linker errors. Struct default values (including
+collection defaults, external enum defaults, and struct defaults with field constructors)
+are supported through the pybind11 C++ default constructor which uses C++ in-class initializers
+derived from LIME default values.
 
 ---
 
@@ -574,7 +582,7 @@ For each phase:
 | Errors | G6, G7 | E | `Return<T,Error>` exception translation (implemented) |
 | Blob | G7, G5 | E, F | Blob + Explosive exception from Errors2 |
 | GenericTypes | G5 | F | List/Map/Set with user types |
-| Defaults | G5, G6 | F | Collection defaults + external enum |
+| Defaults | G5, G6 | F | Collection defaults + external enum; Python enabled, register-name fix in place |
 | Lambdas | G5, G8 | G | `std::function` binding |
 | PlatformNames | G10 | H | `@Python(Name=...)` |
 | Visibility | G3, G9 | H | `@Internal` filtering |

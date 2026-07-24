@@ -52,6 +52,5 @@ internal object Pybind11Helpers {
         limeElement.attributes.get(PYTHON, LimeAttributeValueType.NAME) ?: limeElement.name
 
     /** Whether the element is marked `@Python(Internal)`. */
-    fun isInternal(limeElement: LimeNamedElement) =
-        limeElement.attributes.have(PYTHON, LimeAttributeValueType.INTERNAL)
+    fun isInternal(limeElement: LimeNamedElement) = limeElement.attributes.have(PYTHON, LimeAttributeValueType.INTERNAL)
 }

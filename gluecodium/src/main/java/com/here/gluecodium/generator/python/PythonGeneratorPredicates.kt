@@ -21,8 +21,8 @@ package com.here.gluecodium.generator.python
 
 import com.here.gluecodium.generator.common.CommonGeneratorPredicates
 import com.here.gluecodium.generator.cpp.CppNameResolver
-import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeAttributeType.CPP
+import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeAttributeValueType.REF
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeField
@@ -47,7 +47,9 @@ internal class PythonGeneratorPredicates(
     // Collects all functions visible on a container, including those inherited from parent
     // containers (interfaces/classes). In C++ a child class exposes every inherited overload, so
     // this is what determines whether a method pointer is ambiguous for pybind11's .def().
-    private fun allContainerFunctions(container: com.here.gluecodium.model.lime.LimeContainer): List<com.here.gluecodium.model.lime.LimeFunction> {
+    private fun allContainerFunctions(
+        container: com.here.gluecodium.model.lime.LimeContainer,
+    ): List<com.here.gluecodium.model.lime.LimeFunction> {
         val own = container.functions
         val inherited =
             (container as? com.here.gluecodium.model.lime.LimeContainerWithInheritance)
@@ -114,10 +116,10 @@ internal class PythonGeneratorPredicates(
                         limeReferenceMap[it.path.parent.toString()] as? LimeNamedElement
                     }.any { CommonGeneratorPredicates.isInternal(it, PYTHON) }
             },
-                    "isStandaloneEnum" to { limeElement: Any ->
-                    limeElement is com.here.gluecodium.model.lime.LimeEnumeration &&
-                        limeElement.fullName in standaloneEnums
-                    },
+            "isStandaloneEnum" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeEnumeration &&
+                    limeElement.fullName in standaloneEnums
+            },
             "isOverloaded" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     signatureResolver.isOverloaded(limeFunction)
@@ -195,8 +197,10 @@ internal class PythonGeneratorPredicates(
             },
             "needsCollectionLambdaBinding" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
-                    (limeFunction.parameters.any { isCollectionType(it.typeRef.type) } ||
-                        isCollectionType(limeFunction.returnType.typeRef.type))
+                    (
+                        limeFunction.parameters.any { isCollectionType(it.typeRef.type) } ||
+                            isCollectionType(limeFunction.returnType.typeRef.type)
+                    )
             },
             "needsAllFieldsConstructor" to { limeStruct: Any ->
                 when {
@@ -247,14 +251,15 @@ internal class PythonGeneratorPredicates(
                 ) == true
             },
             "isImmutableField" to { limeElement: Any ->
-                limeElement is LimeField && run {
-                    val parentKey = limeElement.path.parent.toString()
-                    val parent = limeReferenceMap[parentKey] as? LimeStruct
-                    val parentIsImmutable = parent?.attributes?.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) == true
-                    val fieldType = limeElement.typeRef.type.actualType
-                    val fieldTypeIsImmutable = fieldTypeHasImmutableFields(fieldType)
-                    parentIsImmutable || fieldTypeIsImmutable
-                }
+                limeElement is LimeField &&
+                    run {
+                        val parentKey = limeElement.path.parent.toString()
+                        val parent = limeReferenceMap[parentKey] as? LimeStruct
+                        val parentIsImmutable = parent?.attributes?.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) == true
+                        val fieldType = limeElement.typeRef.type.actualType
+                        val fieldTypeIsImmutable = fieldTypeHasImmutableFields(fieldType)
+                        parentIsImmutable || fieldTypeIsImmutable
+                    }
             },
             // Whether a field's type is one of the *ancestors* of its own container (e.g. a
             // nested struct with a field pointing back to its enclosing class, as in
@@ -405,7 +410,12 @@ internal class PythonGeneratorPredicates(
 
     private fun isFieldTypeAncestor(limeField: LimeField): Boolean {
         val fieldTypeName = (limeField.typeRef.type.actualType as? LimeNamedElement)?.fullName ?: return false
-        return limeField.path.parent.allParents.any { limeReferenceMap[it.toString()]?.let { e -> (e as? LimeNamedElement)?.fullName } == fieldTypeName }
+        return limeField.path.parent.allParents.any {
+            limeReferenceMap[it.toString()]?.let {
+                    e ->
+                (e as? LimeNamedElement)?.fullName
+            } == fieldTypeName
+        }
     }
 
     private fun isTypeAncestor(limeTypeRef: LimeTypeRef): Boolean {
