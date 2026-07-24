@@ -26,6 +26,7 @@ import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeAttributeValueType.REF
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeField
+import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeSignatureResolver
@@ -189,16 +190,41 @@ internal class PythonGeneratorPredicates(
                 limeTypeRef is LimeTypeRef &&
                     limeTypeRef.type.actualType.let {
                         it !is com.here.gluecodium.model.lime.LimeBasicType &&
-                            it !is com.here.gluecodium.model.lime.LimeGenericType
+                            it !is com.here.gluecodium.model.lime.LimeGenericType &&
+                            it !is LimeLambda
                     }
+            },
+            "isLambdaType" to { limeTypeRef: Any ->
+                limeTypeRef is LimeTypeRef && limeTypeRef.type.actualType is LimeLambda
             },
             "isCollectionType" to { limeTypeRef: Any ->
                 limeTypeRef is LimeTypeRef && isCollectionType(limeTypeRef.type)
             },
+            "needsLambdaBinding" to { limeFunction: Any ->
+                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
+                    (
+                        limeFunction.parameters.any { it.typeRef.type.actualType is LimeLambda } ||
+                            limeFunction.returnType.typeRef.type.actualType is LimeLambda
+                    )
+            },
             "needsCollectionLambdaBinding" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     (
+                        limeFunction.parameters.any { it.typeRef.type.actualType is LimeLambda } ||
+                            limeFunction.returnType.typeRef.type.actualType is LimeLambda ||
                         limeFunction.parameters.any { isCollectionType(it.typeRef.type) } ||
+                            isCollectionType(limeFunction.returnType.typeRef.type)
+                    )
+            },
+            // pybind11 must see a literal std::function signature for direct lambda parameters
+            // and returns. Collection parameters need the same wrapper so the generic caster can
+            // recursively convert their elements.
+            "needsCallableBinding" to { limeFunction: Any ->
+                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
+                    (
+                        limeFunction.parameters.any { it.typeRef.type.actualType is LimeLambda } ||
+                            limeFunction.returnType.typeRef.type.actualType is LimeLambda ||
+                            limeFunction.parameters.any { isCollectionType(it.typeRef.type) } ||
                             isCollectionType(limeFunction.returnType.typeRef.type)
                     )
             },
