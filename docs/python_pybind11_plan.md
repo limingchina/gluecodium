@@ -863,4 +863,31 @@ Phase 1 (LIME model layer)
 - [ ] Referential equality tests pass
 - [ ] GIL-safe callback tests pass
 - [ ] `@Python(Skip)` / `@Python(Internal)` / `@Python(Name=...)` attributes work correctly
+
+---
+
+## 7. Architecture Decision: Python File Organization
+
+### Decision: One `.py` file per LIME type (not per `.lime` source file)
+
+The Python generator produces one `.py` file and one `.pyi` stub per LIME type element (class, struct, interface, enum, exception, lambda). Each file is named after the type itself (e.g., `BasicTypes.py`, `CppRefReturnTypeSomeStruct.py`).
+
+This was established in the original Python generator design and preserved through all subsequent work. A half-finished attempt to switch to file-based grouping (one `.py` per `.lime` source file) was introduced in commit `bcc79e151` ("Python file-based module grouping for pybind11 bindings") but was found to be incomplete and was reverted in commit `168c0fadd`. The dead code from that attempt was cleaned up.
+
+### Rationale for per-type organization
+
+| Criterion | Per-type (adopted) | Per-source-file (rejected) |
+|---|---|---|
+| **Readability** | Each file has one clear responsibility | Large files with unrelated types |
+| **IDE navigation** | Find any type instantly | Must scan large files |
+| **Import granularity** | `from smoke.CppRefReturnType import CppRefReturnType` | `from smoke.CppRefReturnType import SomeStruct` (pulls in unrelated types) |
+| **Consistency** | Matches C++, Dart, Swift, Kotlin generators | Inconsistent across targets |
+| **Nested types** | Named `ParentNestedType.py` (clear ownership) | Buried in parent's file (ambiguous) |
+| **Circular imports** | Handled via deferred `from <module> import <name>` in function bodies | No advantage over per-type |
+
+### Deferred import strategy
+
+The Python generator uses deferred imports to avoid circular import issues. When type `A` references nested type `B` (where `B` is defined inside `A`), the generated code emits `from <module> import B` inside the function body that references `B`, rather than at module level. This is handled by `PythonNameResolver.resolveReferenceName()` which computes the deferred import path by preferring the element-based module path (e.g., `smoke.CppRefReturnTypeSomeStruct`).
+
+The file-based module path logic (`resolveFileReferenceName()`) that was introduced in the abandoned grouping attempt has been removed; `resolveReferenceName()` now always uses element-based paths, which are correct for per-type organization.
 - [ ] Documentation is complete, including usage guide and type mapping table

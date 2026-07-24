@@ -62,29 +62,6 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
         return PYTHON_TARGET_DIRECTORY + packagePath + File.separator + getName(limeElement) + ".pyi"
     }
 
-    /**
-     * Resolve the output path of a generated Python source file for the given `.lime` source file.
-     * All elements declared in that source file are emitted into a single module named after the
-     * file's basename (e.g. `test/Inheritance.lime` -> `python/test/Inheritance.py`), so the
-     * generated wrappers match the per-feature import style used by the test harness.
-     */
-    fun getPythonFileNameForFile(
-        fileName: String,
-        packagePath: String,
-    ): String {
-        val moduleName = File(fileName).nameWithoutExtension
-        return PYTHON_TARGET_DIRECTORY + packagePath + File.separator + moduleName + ".py"
-    }
-
-    /** Resolve the output path of a generated Python type-stub (`.pyi`) file for the source file. */
-    fun getPythonStubFileNameForFile(
-        fileName: String,
-        packagePath: String,
-    ): String {
-        val moduleName = File(fileName).nameWithoutExtension
-        return PYTHON_TARGET_DIRECTORY + packagePath + File.separator + moduleName + ".pyi"
-    }
-
     private fun getPlatformName(limeElement: LimeNamedElement?) = limeElement?.attributes?.get(PYTHON, NAME)
 
     companion object {
