@@ -369,24 +369,216 @@ derived from LIME default values.
 
 ### Phase G — Lambdas/Callbacks (G8) [Depends on Phase D, F]
 
-**Goal**: Bind LIME `lambda` types as Python callables (`py::cpp_function` / `std::function`).
+**Status (2026-07-24):** ❌ Not started. `Lambdas` is not in the `python` generator
+list in `functional/CMakeLists.txt`. `Pybind11Lambda.mustache` and `PythonLambda.mustache`
+are unused placeholder/stub templates left over from an earlier phase (their header
+comments say "Phase 2" and "skeleton") — they emit either a comment-only line or a
+`typing.Callable` alias that nothing currently references. Critically, **`LimeLambda`
+types are not resolved at all** by either `Pybind11NameResolver.kt` or
+`PythonNameResolver.kt` (confirmed by search — zero matches for `Lambda`/`Callable` in
+either file), so any function parameter or return type of lambda type falls through to
+the generic/default resolution path today and would not compile. All of the work below
+is greenfield; there is no partially-working binding to repair.
 
-**Problem**: LIME lambdas map to `std::function<Signature>` in C++. pybind11 supports converting Python callables to `std::function` automatically, but the generator needs to:
-1. Generate a type alias/typedef for the `std::function` type
-2. Register the lambda type so pybind11 can convert it
-3. Handle nullable lambdas (`std::optional<std::function<...>>`)
+**Goal**: Bind LIME `lambda` types (which the C++ generator maps to `std::function<Sig>`,
+see `CppLambda.mustache` / `CppIncludeResolver.kt`'s `LimeLambda -> ... FUNCTIONAL` include)
+as Python callables, using pybind11's built-in Python-callable ⇄ `std::function` conversion.
 
-**Affected files**:
-- `Pybind11Lambda.mustache` — lambda type binding (register `std::function` type alias)
-- `Pybind11Function.mustache` — function arguments of lambda type
-- `PythonLambda.mustache` — Python-side lambda type alias (`Callable[...]`)
-- `PythonNameResolver.kt` — resolve lambda types to `Callable[...]` in type stubs
+#### G0 — Baseline enablement and name resolution (foundational, blocks everything else)
 
-| Order | Feature | Lime Files | Key Gap | Deps | Effort |
-|-------|---------|------------|---------|------|--------|
-| G1 | `Lambdas` | `Lambdas.lime` | G8: lambda type binding, nullable lambdas, lambda in struct fields, overloaded lambdas (`@Overloaded`), lambda composition | D1, F1 | Large |
+1. **`Pybind11NameResolver.kt`**: add a `LimeLambda` case that resolves to the C++
+   `std::function<ReturnType(ParamTypes...)>` spelling, mirroring
+   `CppNameResolver`'s existing lambda-to-`std::function` logic (reuse
+   `LimeLambda.asFunction()` to get the parameter/return types, then reuse whatever
+   helper the C++ resolver already has for building the `std::function<...>` string
+   rather than re-deriving it, to avoid the two resolvers drifting apart on nullable /
+   ref-qualified param handling).
+2. **`PythonNameResolver.kt`**: add a `LimeLambda` case that resolves to
+   `Callable[[ParamTypes...], ReturnType]` (using `typing.Callable`), matching what
+   `PythonLambda.mustache` already assumes but does not currently get invoked with.
+   Also decide + implement the nullable case: `Optional[Callable[...]]` when the LIME
+   type is used behind a `?`.
+3. **`PythonGenerator.kt`**: verify `LimeLambda` top-level types still correctly emit
+   *no* `PYBIND11_MODULE` binding line (already true — see the `filter` at line 371 —
+   this needs to keep working once lambdas produce real content) but *do* still need a
+   generated `.py` file for the `Callable` alias so other modules can `from ... import
+   Concatenator` and use it in type hints (per `Lambdas.lime`'s `LambdaHolder.concatenator:
+   Concatenator` struct field and `getConcatenator(...)` return type).
+4. Re-enable `python` for the `Lambdas` feature in `functional-tests/functional/CMakeLists.txt`
+   only after G1/G2 land enough to compile the focused case — do this incrementally
+   (see Testing strategy below), not as a single big-bang flip.
 
-**Exit criteria**: `Lambdas` compiles and passes pytest.
+**Affected files**: `Pybind11NameResolver.kt`, `PythonNameResolver.kt`, `PythonGenerator.kt`,
+`PythonLambda.mustache`, `PythonStubLambda.mustache`.
+
+#### G1 — Function parameters of lambda type (top-level `lambda` used as a callback argument)
+
+Covers `Lambdas.lime`: `getConcatenator`, `concatenate`, `composeConcatenators`,
+`static property realConcatenator`.
+
+- pybind11 auto-converts a Python callable argument to `std::function<Sig>` **only**
+  when the parameter type in the `.def(...)` signature is literally `std::function<Sig>`
+  (or a type with a registered caster) — it will not work through an opaque wrapper
+  type. So `Pybind11Function.mustache` needs a new predicate (e.g.
+  `isLambdaType`/`needsLambdaBinding`, parallel to the existing
+  `needsCollectionLambdaBinding`) that detects a parameter/return whose type is a
+  `LimeLambda`, and for those cases must emit the pybind11 binding as a lambda-wrapped
+  `.def(...)` (like the existing collection-lambda-binding branch does), not a direct
+  `&Class::method` pointer — because the underlying C++ signature parameter is
+  `std::function<Sig>` while the Python-visible signature should accept any Python
+  callable directly (pybind11 handles that conversion natively; no manual `py::handle`
+  unwrapping is needed here, unlike the collection case).
+- **Overload interaction**: `concatenateList(strings: List<String>, concatenators:
+  List<Concatenator>)` combines a lambda-valued collection *and* a plain collection in
+  one call — this exercises both `needsCollectionLambdaBinding` and the new lambda
+  predicate simultaneously. The existing `Pybind11Function.mustache` branches for
+  collection lambda binding assume element types are either plain or collection; a
+  `List<Concatenator>` (a `List<lambda>`) needs the `_generic_caster.h` conversion path
+  (Phase F machinery) to also know how to convert a Python list of callables into
+  `std::vector<std::function<Sig>>` and back. This is likely the single largest
+  sub-task in Phase G — extend the generic caster's element-type dispatch
+  (`_generic_caster.h`, generated by the F1 work) to add a lambda branch alongside its
+  existing wrapper/native branches.
+- **Static property of lambda type** (`realConcatenator`): exercises
+  `Pybind11Property.mustache`'s getter/setter with a `std::function` C++ type; likely
+  needs the same lambda-wrapping treatment as function parameters/returns.
+
+**Affected files**: `Pybind11Function.mustache`, `Pybind11Property.mustache`,
+`PythonGeneratorPredicates.kt` (new predicate), the generated `_generic_caster.h`
+lambda-in-collection support (from Phase F infra).
+
+#### G2 — Nullable lambdas
+
+Covers `getConcatenatorOrNull(delimiter: String?): Concatenator?` and
+`concatenateOrNot(..., concatenator: Concatenator?): String?`, plus
+`NullableConfuser = (String?) -> StandaloneProducer?` (nullable lambda *parameters and
+return type inside the signature itself*, not just a nullable lambda value).
+
+- C++ side: nullable lambda value is `std::optional<std::function<Sig>>`. Need to
+  confirm/extend `Pybind11NameResolver`'s optional-wrapping logic already applied to
+  other types to also cover the lambda case.
+- Python side: `None` must convert cleanly to `std::nullopt` and a callable to
+  `std::optional<std::function<Sig>>{...}` — verify pybind11's stl-optional caster
+  (`pybind11/stl.h`, already included per Phase F) composes correctly with a
+  `std::function` inner type without extra glue.
+- The signature-internal nullability (`NullableConfuser`'s own parameter/return being
+  `?`) affects the generated `Callable[[Optional[str]], Optional[StandaloneProducer]]`
+  Python alias and the C++ `std::function<std::optional<...>(std::optional<...>)>`
+  type spelling — this is purely a name-resolution concern (G0), not a new binding
+  mechanism, but should be covered by its own test case since it's easy to get the
+  bracket nesting wrong.
+
+**Affected files**: `Pybind11NameResolver.kt`, `PythonNameResolver.kt` (Optional handling
+in G0), `Pybind11Function.mustache` (null/`std::nullopt` handling if not already generic).
+
+#### G3 — Lambda used as a struct field
+
+Covers `LambdaHolder.concatenator: Concatenator` (`Lambdas.LambdaHolder`) and
+`StructWithLambda.LambdaCallback` (a lambda declared *inside* a struct).
+
+- `PythonStruct.mustache` / `Pybind11Struct.mustache` field binding needs the same
+  lambda-vs-plain-type branch as G1's function parameters, for both the constructor
+  and any generated accessor.
+- A lambda type declared *inside* a struct (`StructWithLambda.LambdaCallback`, nested
+  the same way nested enums/structs are flattened per the A3/B-phase nested-type
+  flattening work) needs the nested-type module-path resolution already built for
+  nested enums/structs (see `resolveReferenceName` / nested flattening in
+  `PythonNameResolver.kt` from Phase B5) to also route `LimeLambda` through that path.
+
+**Affected files**: `Pybind11Struct.mustache`, `PythonStruct.mustache`,
+`PythonNameResolver.kt` (nested-type routing for `LimeLambda`).
+
+#### G4 — Lambda used in interface/class methods, and structured payload types
+
+Covers `LambdasInterface.take_screenshot(callback: TakeScreenshotCallback)` (lambda
+parameter on an interface method — interacts with the D1 trampoline machinery since
+the trampoline override signature must also spell out `std::function<...>`),
+`LambdasWithStructuredTypes.ClassCallback = (LambdasInterface) -> Void` and
+`StructCallback = (Lambdas.LambdaHolder) -> Void` (lambdas whose *own* parameter types
+are user-defined wrapper/interface/struct types, not just builtins).
+
+- This is where the lambda binding must call back **into Python** with wrapper-typed
+  arguments: when C++ invokes the stored `std::function`, and that function was
+  supplied by the Python side, pybind11 will pass the argument through its normal
+  caster machinery — but if the argument type is a user-defined struct/interface, the
+  C++ call site needs to hold/pass the *native* pybind11 object, and the Python
+  callable (per Phase A/D conventions elsewhere) actually expects the *wrapper* object
+  (`_native`-based). This mirrors the "unwrap native → wrap in Python facade" problem
+  already solved for collections (Phase F `_generic_caster.h`) and structs
+  (`hasattr`/`isinstance` checks in `PythonStruct.mustache` from B4/B5) — the same
+  wrap/unwrap helper functions should be reused for lambda parameter/return marshaling
+  rather than re-invented.
+- `take_screenshot`'s callback type `TakeScreenshotCallback = (Blob?) -> Void` also
+  depends on `Blob` (currently gap G7/E4, not yet implemented) — this specific method
+  may need a temporary `@Skip(Python)` or can be deferred to Phase K-style cleanup
+  until `Blob` lands, rather than blocking the rest of `Lambdas`.
+
+**Affected files**: `Pybind11TrampolineFunction.mustache` (lambda-typed trampoline
+params), `Pybind11Function.mustache`, wrapper wrap/unwrap helper (shared with Phase F/B).
+
+#### G5 — `@Overloaded` lambdas and lambda composition
+
+Covers `@Overloaded lambda OverloadedLambda = (Int) -> String` +
+`CallOverloadedLambda.invokeOverloadedLambda`, and `composeConcatenators` (a function
+that takes two lambdas and returns a third, composed, lambda — exercises returning a
+freshly-constructed `std::function` back across the boundary, not just passing one
+through).
+
+- `@Overloaded` on a lambda type is a C++-side attribute for generating multiple
+  overloaded call operators; confirm what this actually means for a `std::function`
+  (it may only be relevant to Java/Kotlin/Swift codegen and be a no-op for Python — the
+  functional-tests already mark `CallOverloadedLambda`/`OverloadedLambda` as
+  `@Skip(Swift, Dart)`, suggesting this is inherently a narrow-platform feature; verify
+  before spending effort here, and prefer skipping Python too if it's Java/Kotlin-only).
+- `composeConcatenators` returning a lambda that was itself constructed from two
+  Python-supplied callables round-trips through C++ and back into Python — this is a
+  good end-to-end regression case for "Python callable in, C++-composed
+  `std::function` out, callable again from Python."
+
+**Affected files**: none new beyond G1–G4's; this is a validation/regression pass, plus
+possibly a `@Skip(Python)` decision recorded in `Lambdas.lime` or the CMake feature list.
+
+#### G6 — `@Internal` lambda and doc-comment lambda
+
+Covers `ClassWithInternalLambda` (`@Internal lambda InternalLambda`, `@Internal static
+fun invokeInternalLambda`) and the doc-commented top-level `StandaloneProducer` lambda
+(exercises G11 doc-comment propagation once Phase H lands, but the `@Internal`
+filtering (G9) should already apply cleanly via the existing internal-element
+filtering built for other types — verify no lambda-specific gap here rather than
+assuming it "just works").
+
+**Affected files**: none expected; verification-only sub-task.
+
+#### Suggested implementation order
+
+| Order | Sub-task | Lime coverage | Deps | Effort |
+|-------|----------|---------------|------|--------|
+| G0 | Name resolution (`Pybind11NameResolver`, `PythonNameResolver`) + `.py` alias emission | — | D1, F1 | Medium |
+| G1 | Function/property parameters & returns of lambda type, incl. lambda-in-collection | `getConcatenator`, `concatenate`, `composeConcatenators`, `concatenateList`, `realConcatenator` | G0 | Large |
+| G2 | Nullable lambdas (value-nullable and signature-internal-nullable) | `getConcatenatorOrNull`, `concatenateOrNot`, `NullableConfuser`, `getNullableConfuser`, `applyNullableConfuser` | G0, G1 | Medium |
+| G3 | Lambda as struct field / nested lambda type | `LambdaHolder`, `getConcatenatorInStruct`, `concatenateInStruct`, `StructWithLambda` | G0, G1 | Medium |
+| G4 | Lambda on interface methods + lambda params/returns that are wrapper types | `LambdasInterface`, `LambdasWithStructuredTypes` | G0, G1, D1 (trampoline) | Large |
+| G5 | `@Overloaded` lambda + composition regression | `OverloadedLambda`, `CallOverloadedLambda`, `composeConcatenators` | G1 | Small |
+| G6 | `@Internal` lambda + doc comments (verification) | `ClassWithInternalLambda`, `StandaloneProducer` | G0 | Small |
+| G7 | `LambdasDeclarationOrder`, `SignatureClashLambda` regression (declaration-order and name-clash edge cases) | `LambdasDeclarationOrder`, `SignatureClashLambda` | G0–G3 | Small |
+
+**Testing strategy**: unlike earlier phases, do *not* flip the whole `Lambdas` feature
+to `python` in one step. Instead, prototype against a minimal focused `.lime` snippet
+(a copy of just `Concatenator`/`getConcatenator`/`concatenate`) compiled standalone
+first (mirroring how F1 validated nested generics with a focused
+`NestedGenericTypes`-only build) to avoid the stale-generated-code trap (see the
+gotcha note at the top of this document) and to isolate failures to a single gap at a
+time. Only add the full `Lambdas.lime` to `functional/CMakeLists.txt`'s `python`
+generator list once G0–G4 all compile; then iterate on the remaining sub-tasks against
+the real `lambdas_test.py` (already written for other platforms — will need a Python
+version, following the PascalCase-module convention fix from Phase C's test-suite
+naming cleanup).
+
+**Exit criteria**: `Lambdas` is enabled for `python` in `functional/CMakeLists.txt`, all
+sub-tasks G0–G7 compile, and a new `lambdas_test.py` passes end-to-end, including the
+lambda-in-collection (`concatenateList`), nullable-lambda, struct-field-lambda, and
+interface-callback-lambda cases. `TakeScreenshotCallback`'s `Blob?` parameter may remain
+`@Skip(Python)` pending `Blob` (E4) if that still hasn't landed.
 
 ---
 
