@@ -369,19 +369,36 @@ internal class PythonGeneratorPredicates(
             // Whether a struct needs a `py::init<>()` with no arguments. Mirrors the C++ generator's
             // `hasDefaultConstructor` predicate: the C++ struct is default-constructible unless it is
             // immutable, has an explicit no-arg field constructor, or has an uninitialized field
-            // whose (recursively expanded) type is immutable. An explicit no-arg field constructor
+            // whose (struct-recursively expanded) type is immutable. An explicit no-arg field constructor
             // already yields the same `py::init<>()`, so it is suppressed here to avoid registering a
             // duplicate constructor in pybind11.
+            // IMPORTANT: unlike CommonGeneratorPredicates.getAllFieldTypes, this uses a local version that
+            // does NOT unwrap through LimeTypeAlias/LimeList/LimeSet/LimeMap — only LimeStruct types are
+            // descended into. This matches CppGeneratorPredicates.getAllFieldTypes and the C++
+            // hasDefaultConstructor semantics (e.g. `List<SomeImmutableStruct>` IS default-constructible
+            // because std::vector has a default constructor, even though some elements are immutable).
             "hasDefaultConstructor" to { limeElement: Any ->
                 when {
                     limeElement !is com.here.gluecodium.model.lime.LimeStruct -> false
                     limeElement.fieldConstructors.any { it.fieldRefs.isEmpty() } -> false
                     limeElement.uninitializedFields.isEmpty() -> true
                     limeElement.uninitializedFields
-                        .flatMap { com.here.gluecodium.generator.common.CommonGeneratorPredicates.getAllFieldTypes(it.typeRef.type) }
+                        .flatMap { pythonGetAllFieldTypes(it.typeRef.type) }
                         .any { it.attributes.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) } -> false
                     !limeElement.attributes.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) -> true
                     else -> false
+                }
+            },
+            // Whether a struct has some fields with Lime defaults and some without, and no
+            // explicit field constructor. Mirrors the C++ generator's `hasPartialDefaults`
+            // predicate. When true, the pybind11 binding needs a constructor that takes only
+            // the uninitialized fields, letting C++ default-initialize the rest.
+            "hasPartialDefaults" to { limeElement: Any ->
+                when {
+                    limeElement !is com.here.gluecodium.model.lime.LimeStruct -> false
+                    limeElement.uninitializedFields.isEmpty() -> false
+                    limeElement.fieldConstructors.isNotEmpty() -> false
+                    else -> limeElement.uninitializedFields.size < limeElement.fields.size
                 }
             },
             // Whether a struct needs a `py::init<...>()` taking every field. True when the struct
@@ -390,9 +407,6 @@ internal class PythonGeneratorPredicates(
             "needsAllFieldsConstructor" to { limeElement: Any ->
                 when {
                     limeElement !is com.here.gluecodium.model.lime.LimeStruct -> false
-                    // A default constructor (all fields defaulted) already covers the no-arg case,
-                    // so the all-fields constructor would be a redundant duplicate py::init<>().
-                    limeElement.uninitializedFields.isEmpty() -> false
                     limeElement.fieldConstructors.isEmpty() -> true
                     com.here.gluecodium.generator.common.CommonGeneratorPredicates
                         .hasImmutableFields(limeElement) -> limeElement.allFieldsConstructor == null
@@ -445,6 +459,22 @@ internal class PythonGeneratorPredicates(
                     fieldTypeHasImmutableFields(limeType.valueType.type)
             else -> false
         }
+    }
+
+    // Matches C++ `CppGeneratorPredicates.getAllFieldTypes`: only descends into LimeStruct
+    // types, does NOT unwrap through LimeTypeAlias, LimeList, LimeSet, or LimeMap.
+    // This is used by `hasDefaultConstructor` so that collection/alias-wrapped immutable
+    // types are not incorrectly treated as making a struct non-default-constructible.
+    private fun pythonGetAllFieldTypes(limeType: LimeType): List<LimeType> = pythonGetAllFieldTypesRec(limeType.actualType, mutableSetOf())
+
+    private fun pythonGetAllFieldTypesRec(
+        leafType: LimeType,
+        visitedTypes: MutableSet<LimeType>,
+    ): List<LimeType> {
+        if (leafType !is LimeStruct) return listOf(leafType)
+        visitedTypes += leafType
+        val typesToVisit = leafType.fields.map { it.typeRef.type.actualType }.distinct() - visitedTypes
+        return typesToVisit.flatMap { pythonGetAllFieldTypesRec(it, visitedTypes) } + leafType
     }
 
     private fun isCollectionType(limeType: LimeType): Boolean =
