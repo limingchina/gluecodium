@@ -31,7 +31,6 @@ import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
-import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeReturnType
 import com.here.gluecodium.model.lime.LimeSet
@@ -39,22 +38,19 @@ import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeAlias
 import com.here.gluecodium.model.lime.LimeTypeRef
 import com.here.gluecodium.model.lime.LimeValue
-import java.io.File
 
 /**
  * Main name resolver for the Python generator. Resolves Python-side names for types, type
  * references and comments. Type names are resolved as own (unqualified) names.
  *
- * Module paths are derived from the source `.lime` file that declares an element (via
- * [LimeModel.fileNameMap]) rather than from the element's own name, so that all elements of a
- * file are grouped into a single module named after the file.
+ * Module paths are derived from the element's own name so that each type gets its own Python
+ * module (e.g. `test.InstanceInStruct` for the `InstanceInStruct` type in package `test`).
  */
 internal class PythonNameResolver(
     limeReferenceMap: Map<String, LimeElement>,
     private val nameRules: PythonNameRules,
     private val limeLogger: LimeLogger,
     private val commentsProcessor: CommentsProcessor,
-    private val fileNameMap: Map<String, String> = emptyMap(),
 ) : ReferenceMapBasedResolver(limeReferenceMap), NameResolver {
     override fun resolveName(element: Any): String = resolvePythonType(element)
 
@@ -132,29 +128,7 @@ internal class PythonNameResolver(
                 else -> return null
             }
         val namedType = limeType as? LimeNamedElement ?: return null
-        // Prefer the file-based module path (all elements of a source file share one module named
-        // after the file), falling back to the element-based path when the declaring file is unknown.
-        return resolveFileReferenceName(namedType)
-            ?: (namedType.path.head + resolveName(namedType)).joinToString(".")
-    }
-
-    /**
-     * Resolves the dotted module path (e.g. `test.Inheritance`) that declares the given type
-     * reference, derived from the source `.lime` file that declares it (via [fileNameMap]) rather
-     * than from the element's own name. Used to emit `from <module> import <name>` statements that
-     * match the per-file module grouping. Returns `null` when the declaring file is unknown.
-     */
-    fun resolveFileReferenceName(element: Any): String? {
-        val limeType =
-            when (element) {
-                is LimeTypeRef -> element.type.actualType
-                is LimeType -> element.actualType
-                else -> return null
-            }
-        val namedType = limeType as? LimeNamedElement ?: return null
-        val fileName = fileNameMap[namedType.fullName] ?: return null
-        val moduleName = File(fileName).nameWithoutExtension
-        return (namedType.path.head + moduleName).joinToString(".")
+        return (namedType.path.head + resolveName(namedType)).joinToString(".")
     }
 
     private fun resolveValue(limeValue: LimeValue): String {
