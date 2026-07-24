@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,32 +18,8 @@ namespace py = pybind11;
 using BasicTypes = ::smoke::BasicTypes;
 
 
-void register_BasicTypes(py::module_& module) {
+void register_smoke_BasicTypes(py::module_& module) {
     py::class_<BasicTypes, std::shared_ptr<BasicTypes>>(module, "BasicTypes")
-        .def_static("string_function", &BasicTypes::string_function, py::arg("input"))
-
-        .def_static("bool_function", &BasicTypes::bool_function, py::arg("input"))
-
-        .def_static("float_function", &BasicTypes::float_function, py::arg("input"))
-
-        .def_static("double_function", &BasicTypes::double_function, py::arg("input"))
-
-        .def_static("byte_function", &BasicTypes::byte_function, py::arg("input"))
-
-        .def_static("short_function", &BasicTypes::short_function, py::arg("input"))
-
-        .def_static("int_function", &BasicTypes::int_function, py::arg("input"))
-
-        .def_static("long_function", &BasicTypes::long_function, py::arg("input"))
-
-        .def_static("ubyte_function", &BasicTypes::ubyte_function, py::arg("input"))
-
-        .def_static("ushort_function", &BasicTypes::ushort_function, py::arg("input"))
-
-        .def_static("uint_function", &BasicTypes::uint_function, py::arg("input"))
-
-        .def_static("ulong_function", &BasicTypes::ulong_function, py::arg("input"))
-
         ;
 }
 

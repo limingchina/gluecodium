@@ -29,9 +29,9 @@ class FirstParentIsInterfaceClass(generated.FirstParentIsInterfaceClass):
     @property
     def child_property(self) -> str:
         """"""
-        return generated.FirstParentIsInterfaceClass.child_property.fget(self)
+        return _wrap(generated.FirstParentIsInterfaceClass.child_property.fget(self), str)
 
     @child_property.setter
     def child_property(self, value: str):
-        generated.FirstParentIsInterfaceClass.child_property.fset(self, value)
+        generated.FirstParentIsInterfaceClass.child_property.fset(self, _unwrap(value, str))
 

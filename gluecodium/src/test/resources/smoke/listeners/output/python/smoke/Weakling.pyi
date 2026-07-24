@@ -27,9 +27,9 @@ class Weakling(generated.Weakling):
     @property
     def listener(self):
         """"""
-        return generated.Weakling.listener.fget(self)
+        return _wrap(generated.Weakling.listener.fget(self), Optional[ListenerInterface])
 
     @listener.setter
     def listener(self, value):
-        generated.Weakling.listener.fset(self, value)
+        generated.Weakling.listener.fset(self, _unwrap(value, Optional[ListenerInterface]))
 

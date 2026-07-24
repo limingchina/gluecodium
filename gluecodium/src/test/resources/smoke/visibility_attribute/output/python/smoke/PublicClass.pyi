@@ -19,9 +19,9 @@ class PublicClass(_NativeBase):
     @property
     def internal_struct_property(self) -> PublicClassInternalStruct:
         """"""
-        return self._native.internal_struct_property
+        return _wrap(self._native.internal_struct_property, PublicClassInternalStruct)
 
     @internal_struct_property.setter
     def internal_struct_property(self, value: PublicClassInternalStruct):
-        self._native.internal_struct_property = value
+        self._native.internal_struct_property = _unwrap(value, PublicClassInternalStruct)
 

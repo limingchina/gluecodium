@@ -1,6 +1,9 @@
 
 
 import datetime
+from smoke.TemperatureObserver import TemperatureObserver
+from smoke.ThermometerAnotherNotification import ThermometerAnotherNotification
+from smoke.ThermometerNotification import ThermometerNotification
 from smoke.ThermometerSomeThermometerErrorCode import ThermometerSomeThermometerErrorCode
 import typing
 

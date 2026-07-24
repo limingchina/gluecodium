@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.DartInternalClassWithInternalTypedef import DartInternalClassWithInternalTypedef
 
 from _native_base import _NativeBase
@@ -17,5 +20,5 @@ class SomeDartClassThatUsesInternal(_NativeBase):
 
     def add_entity(self, entity: DartInternalClassWithInternalTypedef):
         """"""
-        return self._native.add_entity(entity._native)
+        return _wrap(self._native.add_entity(_unwrap(entity, DartInternalClassWithInternalTypedef)), None)
 

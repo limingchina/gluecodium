@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,5 +20,5 @@ class Basic(_NativeBase):
     @staticmethod
     def basic_method(input_string: str) -> str:
         """"""
-        return generated.Basic.basic_method(input_string)
+        return generated.Basic.basic_method(_unwrap(input_string, str))
 

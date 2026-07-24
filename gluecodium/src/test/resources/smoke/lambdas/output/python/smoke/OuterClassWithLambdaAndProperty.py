@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,15 +20,15 @@ class OuterClassWithLambdaAndProperty(_NativeBase):
     @property
     def some_integer(self) -> int:
         """"""
-        return self._native.some_integer
+        return _wrap(self._native.some_integer, int)
 
     @some_integer.setter
     def some_integer(self, value: int):
-        self._native.some_integer = value
+        self._native.some_integer = _unwrap(value, int)
 
 
     @staticmethod
     def another_integer() -> int:
         """"""
-        return generated.OuterClassWithLambdaAndProperty.another_integer()
+        return _wrap(generated.OuterClassWithLambdaAndProperty.another_integer(), int)
 

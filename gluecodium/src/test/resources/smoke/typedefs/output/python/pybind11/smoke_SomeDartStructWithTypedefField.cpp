@@ -6,20 +6,23 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/VectorHash.h"
 #include "smoke/GlobalListTypeDef.h"
 #include "smoke/SomeDartStructWithTypedefField.h"
+#include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SomeDartStructWithTypedefField = ::smoke::SomeDartStructWithTypedefField;
 
-void register_SomeDartStructWithTypedefField(py::module_& module) {
+void register_smoke_SomeDartStructWithTypedefField(py::module_& module) {
     py::class_<SomeDartStructWithTypedefField>(module, "SomeDartStructWithTypedefField")
         .def_readwrite("some_field", &SomeDartStructWithTypedefField::some_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< float >>(), py::arg("some_field"))
+        .def(py::init<::std::vector< float >(), py::arg("some_field"))
         ;
 }
 

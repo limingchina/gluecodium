@@ -15,15 +15,15 @@ class PlatformCommentssomething(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PlatformCommentssomething):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PlatformCommentssomething(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PlatformCommentssomething(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def nothing(self) -> str:
         """"""
-        return self._native.nothing
+        return _wrap(self._native.nothing, str)
     @nothing.setter
     def nothing(self, value: str):
-      self._native.nothing = getattr(value, "_native", value)
+      self._native.nothing = _unwrap(value, str)
 
 

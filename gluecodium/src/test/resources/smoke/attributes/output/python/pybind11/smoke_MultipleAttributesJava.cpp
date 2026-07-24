@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,18 +16,8 @@ namespace py = pybind11;
 using MultipleAttributesJava = ::smoke::MultipleAttributesJava;
 
 
-void register_MultipleAttributesJava(py::module_& module) {
+void register_smoke_MultipleAttributesJava(py::module_& module) {
     py::class_<MultipleAttributesJava, std::shared_ptr<MultipleAttributesJava>>(module, "MultipleAttributesJava")
-        .def("no_lists2", &MultipleAttributesJava::no_lists2)
-
-        .def("no_lists3", &MultipleAttributesJava::no_lists3)
-
-        .def("list_first", &MultipleAttributesJava::list_first)
-
-        .def("list_second", &MultipleAttributesJava::list_second)
-
-        .def("two_lists", &MultipleAttributesJava::two_lists)
-
         ;
 }
 

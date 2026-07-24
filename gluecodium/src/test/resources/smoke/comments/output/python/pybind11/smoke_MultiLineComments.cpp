@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,10 +17,8 @@ namespace py = pybind11;
 using MultiLineComments = ::smoke::MultiLineComments;
 
 
-void register_MultiLineComments(py::module_& module) {
+void register_smoke_MultiLineComments(py::module_& module) {
     py::class_<MultiLineComments, std::shared_ptr<MultiLineComments>>(module, "MultiLineComments")
-        .def("some_method_with_long_comment", &MultiLineComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
-
         ;
 }
 

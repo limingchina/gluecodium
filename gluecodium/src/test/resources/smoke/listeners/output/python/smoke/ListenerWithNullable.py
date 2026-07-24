@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,42 +29,42 @@ class ListenerWithNullable(generated.ListenerWithNullable):
 
     def method_with_byte(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_byte(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_byte(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_u_byte(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_u_byte(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_u_byte(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_short(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_short(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_short(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_u_short(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_u_short(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_u_short(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_int(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_int(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_int(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_u_int(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_u_int(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_u_int(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_long(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_long(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_long(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_u_long(self, input: Optional[int]) -> Optional[int]:
         """"""
-        return generated.ListenerWithNullable.method_with_u_long(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_u_long(self, _unwrap(input, Optional[int])), Optional[int])
 
     def method_with_double(*args, **kwargs) -> Optional[bool]:
         """"""
-        return generated.ListenerWithNullable.method_with_double(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.ListenerWithNullable.method_with_double(self, *[_unwrap(a) for a in args]), Optional[bool])
 
     def method_with_float(self, input: Optional[float]) -> Optional[float]:
         """"""
-        return generated.ListenerWithNullable.method_with_float(self, input)
+        return _wrap(generated.ListenerWithNullable.method_with_float(self, _unwrap(input, Optional[float])), Optional[float])
 
 

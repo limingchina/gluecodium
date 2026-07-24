@@ -15,55 +15,55 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructWithKotlinPositionalDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithKotlinPositionalDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructWithKotlinPositionalDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def first_init_field(self) -> int:
         """"""
-        return self._native.first_init_field
+        return _wrap(self._native.first_init_field, int)
     @first_init_field.setter
     def first_init_field(self, value: int):
-      self._native.first_init_field = getattr(value, "_native", value)
+      self._native.first_init_field = _unwrap(value, int)
 
 
 
     @property
     def first_free_field(self) -> str:
         """"""
-        return self._native.first_free_field
+        return _wrap(self._native.first_free_field, str)
     @first_free_field.setter
     def first_free_field(self, value: str):
-      self._native.first_free_field = getattr(value, "_native", value)
+      self._native.first_free_field = _unwrap(value, str)
 
 
 
     @property
     def second_init_field(self) -> float:
         """"""
-        return self._native.second_init_field
+        return _wrap(self._native.second_init_field, float)
     @second_init_field.setter
     def second_init_field(self, value: float):
-      self._native.second_init_field = getattr(value, "_native", value)
+      self._native.second_init_field = _unwrap(value, float)
 
 
 
     @property
     def second_free_field(self) -> bool:
         """"""
-        return self._native.second_free_field
+        return _wrap(self._native.second_free_field, bool)
     @second_free_field.setter
     def second_free_field(self, value: bool):
-      self._native.second_free_field = getattr(value, "_native", value)
+      self._native.second_free_field = _unwrap(value, bool)
 
 
 
     @property
     def third_init_field(self) -> str:
         """"""
-        return self._native.third_init_field
+        return _wrap(self._native.third_init_field, str)
     @third_init_field.setter
     def third_init_field(self, value: str):
-      self._native.third_init_field = getattr(value, "_native", value)
+      self._native.third_init_field = _unwrap(value, str)
 
 

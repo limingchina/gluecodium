@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,23 +19,23 @@ class SpecialNames(_NativeBase):
 
     def create(self):
         """"""
-        return self._native.create()
+        return _wrap(self._native.create(), None)
 
     def release(self):
         """"""
-        return self._native.release()
+        return _wrap(self._native.release(), None)
 
     def create_proxy(self):
         """"""
-        return self._native.create_proxy()
+        return _wrap(self._native.create_proxy(), None)
 
     def _uppercase(self):
         """"""
-        return self._native._uppercase()
+        return _wrap(self._native._uppercase(), None)
 
     @staticmethod
     def make(result: str) -> SpecialNames:
         """"""
-        native_result = generated.SpecialNames.make(result)
+        native_result = generated.SpecialNames.make(_unwrap(result, str))
         return SpecialNames(native_result)
 

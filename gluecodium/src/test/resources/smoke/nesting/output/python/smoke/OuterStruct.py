@@ -2,7 +2,12 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
+import datetime
 from smoke.OuterStructInnerEnum import OuterStructInnerEnum
+from smoke.OuterStructInstantiation import OuterStructInstantiation
 
 
 from _native_base import _NativeBase
@@ -17,19 +22,19 @@ class OuterStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.OuterStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.OuterStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> str:
         """"""
-        return self._native.field
+        return _wrap(self._native.field, str)
     @field.setter
     def field(self, value: str):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, str)
 
 
     def do_nothing(self):
         """"""
-        return self._native.do_nothing()
+        return _wrap(self._native.do_nothing(), None)
 

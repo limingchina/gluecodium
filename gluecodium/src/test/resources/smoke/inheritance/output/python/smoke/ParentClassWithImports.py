@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.IncludableClass import IncludableClass
 from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
@@ -28,14 +31,14 @@ class ParentClassWithImports(generated.ParentClassWithImports):
 
     def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
         """"""
-        return generated.ParentClassWithImports.root_method(self, input1._native, input2._native)
+        return _wrap(generated.ParentClassWithImports.root_method(self, _unwrap(input1, IncludableStruct), _unwrap(input2, IncludableEnum)), IncludableClass)
 
     @property
     def root_property(self) -> IncludableLambda:
         """"""
-        return generated.ParentClassWithImports.root_property.fget(self)
+        return _wrap(generated.ParentClassWithImports.root_property.fget(self), IncludableLambda)
 
     @root_property.setter
     def root_property(self, value: IncludableLambda):
-        generated.ParentClassWithImports.root_property.fset(self, value)
+        generated.ParentClassWithImports.root_property.fset(self, _unwrap(value, IncludableLambda))
 

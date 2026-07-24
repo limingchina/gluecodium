@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,10 +18,8 @@ namespace py = pybind11;
 using NestedReferences = ::smoke::NestedReferences;
 
 
-void register_NestedReferences(py::module_& module) {
+void register_smoke_NestedReferences(py::module_& module) {
     py::class_<NestedReferences, std::shared_ptr<NestedReferences>>(module, "NestedReferences")
-        .def("inside_out", &NestedReferences::inside_out, py::arg("struct1"), py::arg("struct2"))
-
         ;
 }
 

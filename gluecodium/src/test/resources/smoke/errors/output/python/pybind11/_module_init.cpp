@@ -10,26 +10,26 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_Errors(pybind11::module_& module);
-void register_ErrorsExternal(pybind11::module_& module);
-void register_ErrorsExternalErrors(pybind11::module_& module);
-void register_ErrorsInterface(pybind11::module_& module);
-void register_ErrorsInterfaceExternal(pybind11::module_& module);
-void register_ErrorsInterfaceExternalErrors(pybind11::module_& module);
-void register_ErrorsInterfaceInternal(pybind11::module_& module);
-void register_ErrorsInterfaceInternalError(pybind11::module_& module);
-void register_ErrorsInternal(pybind11::module_& module);
-void register_ErrorsInternalErrorCode(pybind11::module_& module);
-void register_FooBar(pybind11::module_& module);
-void register_Payload(pybind11::module_& module);
-void register_SomeInternalEnum(pybind11::module_& module);
-void register_SomeTypeCollection(pybind11::module_& module);
-void register_SomeTypeCollectionSome(pybind11::module_& module);
-void register_SomeTypeCollectionSomeTypeCollectionError(pybind11::module_& module);
-void register_SomethingBadHappenedError(pybind11::module_& module);
-void register_UseTcException(pybind11::module_& module);
-void register_WithPayloadError(pybind11::module_& module);
-void register_WithStringError(pybind11::module_& module);
+void register_example_FooBar(pybind11::module_& module);
+void register_smoke_Errors(pybind11::module_& module);
+void register_smoke_ErrorsExternal(pybind11::module_& module);
+void register_smoke_ErrorsExternalErrors(pybind11::module_& module);
+void register_smoke_ErrorsInterface(pybind11::module_& module);
+void register_smoke_ErrorsInterfaceExternal(pybind11::module_& module);
+void register_smoke_ErrorsInterfaceExternalErrors(pybind11::module_& module);
+void register_smoke_ErrorsInterfaceInternal(pybind11::module_& module);
+void register_smoke_ErrorsInterfaceInternalError(pybind11::module_& module);
+void register_smoke_ErrorsInternal(pybind11::module_& module);
+void register_smoke_ErrorsInternalErrorCode(pybind11::module_& module);
+void register_smoke_Payload(pybind11::module_& module);
+void register_smoke_SomeInternalEnum(pybind11::module_& module);
+void register_smoke_SomeTypeCollection(pybind11::module_& module);
+void register_smoke_SomeTypeCollectionSome(pybind11::module_& module);
+void register_smoke_SomeTypeCollectionSomeTypeCollectionError(pybind11::module_& module);
+void register_smoke_SomethingBadHappenedError(pybind11::module_& module);
+void register_smoke_UseTcException(pybind11::module_& module);
+void register_smoke_WithPayloadError(pybind11::module_& module);
+void register_smoke_WithStringError(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -37,24 +37,24 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_Errors(m);
-    register_ErrorsExternal(m);
-    register_ErrorsExternalErrors(m);
-    register_ErrorsInterface(m);
-    register_ErrorsInterfaceExternal(m);
-    register_ErrorsInterfaceExternalErrors(m);
-    register_ErrorsInterfaceInternal(m);
-    register_ErrorsInterfaceInternalError(m);
-    register_ErrorsInternal(m);
-    register_ErrorsInternalErrorCode(m);
-    register_FooBar(m);
-    register_Payload(m);
-    register_SomeInternalEnum(m);
-    register_SomeTypeCollection(m);
-    register_SomeTypeCollectionSome(m);
-    register_SomeTypeCollectionSomeTypeCollectionError(m);
-    register_SomethingBadHappenedError(m);
-    register_UseTcException(m);
-    register_WithPayloadError(m);
-    register_WithStringError(m);
+    register_example_FooBar(m);
+    register_smoke_Errors(m);
+    register_smoke_ErrorsExternal(m);
+    register_smoke_ErrorsExternalErrors(m);
+    register_smoke_ErrorsInterface(m);
+    register_smoke_ErrorsInterfaceExternal(m);
+    register_smoke_ErrorsInterfaceExternalErrors(m);
+    register_smoke_ErrorsInterfaceInternal(m);
+    register_smoke_ErrorsInterfaceInternalError(m);
+    register_smoke_ErrorsInternal(m);
+    register_smoke_ErrorsInternalErrorCode(m);
+    register_smoke_Payload(m);
+    register_smoke_SomeInternalEnum(m);
+    register_smoke_SomeTypeCollection(m);
+    register_smoke_SomeTypeCollectionSome(m);
+    register_smoke_SomeTypeCollectionSomeTypeCollectionError(m);
+    register_smoke_SomethingBadHappenedError(m);
+    register_smoke_UseTcException(m);
+    register_smoke_WithPayloadError(m);
+    register_smoke_WithStringError(m);
 }

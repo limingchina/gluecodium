@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ParentClass import ParentClass
 from smoke.ParentNarrowOne import ParentNarrowOne
 
@@ -26,14 +29,14 @@ class FirstParentIsClassClass(generated.FirstParentIsClassClass):
 
     def child_function(self):
         """"""
-        return generated.FirstParentIsClassClass.child_function(self)
+        return _wrap(generated.FirstParentIsClassClass.child_function(self), None)
 
     @property
     def child_property(self) -> str:
         """"""
-        return generated.FirstParentIsClassClass.child_property.fget(self)
+        return _wrap(generated.FirstParentIsClassClass.child_property.fget(self), str)
 
     @child_property.setter
     def child_property(self, value: str):
-        generated.FirstParentIsClassClass.child_property.fset(self, value)
+        generated.FirstParentIsClassClass.child_property.fset(self, _unwrap(value, str))
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.CalculationResult import CalculationResult
 from smoke.CalculatorListenerResultStruct import CalculatorListenerResultStruct
 
@@ -28,25 +31,25 @@ class CalculatorListener(generated.CalculatorListener):
 
     def on_calculation_result(self, calculation_result: float):
         """"""
-        return generated.CalculatorListener.on_calculation_result(self, calculation_result)
+        return _wrap(generated.CalculatorListener.on_calculation_result(self, _unwrap(calculation_result, float)), None)
 
     def on_calculation_result_const(self, calculation_result: float):
         """"""
-        return generated.CalculatorListener.on_calculation_result_const(self, calculation_result)
+        return _wrap(generated.CalculatorListener.on_calculation_result_const(self, _unwrap(calculation_result, float)), None)
 
     def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct):
         """"""
-        return generated.CalculatorListener.on_calculation_result_struct(self, calculation_result._native)
+        return _wrap(generated.CalculatorListener.on_calculation_result_struct(self, _unwrap(calculation_result, CalculatorListenerResultStruct)), None)
 
     def on_calculation_result_array(self, calculation_result: list[float]):
         """"""
-        return generated.CalculatorListener.on_calculation_result_array(self, calculation_result)
+        return _wrap(generated.CalculatorListener.on_calculation_result_array(self, _unwrap(calculation_result, list[float])), None)
 
     def on_calculation_result_map(self, calculation_results: dict[str, float]):
         """"""
-        return generated.CalculatorListener.on_calculation_result_map(self, calculation_results)
+        return _wrap(generated.CalculatorListener.on_calculation_result_map(self, _unwrap(calculation_results, dict[str, float])), None)
 
     def on_calculation_result_instance(self, calculation_result: CalculationResult):
         """"""
-        return generated.CalculatorListener.on_calculation_result_instance(self, calculation_result._native)
+        return _wrap(generated.CalculatorListener.on_calculation_result_instance(self, _unwrap(calculation_result, CalculationResult)), None)
 

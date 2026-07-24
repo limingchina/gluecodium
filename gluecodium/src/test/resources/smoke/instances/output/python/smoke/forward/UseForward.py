@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.SimpleClass import SimpleClass
 from smoke.SimpleInterface import SimpleInterface
 from smoke.forward.Class1 import Class1
@@ -30,5 +33,5 @@ class UseForward(generated.UseForward):
 
     def use_it(self, param1: Class1, param2: Class2, simple_class: SimpleClass, simple_interface: SimpleInterface):
         """"""
-        return generated.UseForward.use_it(self, param1._native, param2._native, simple_class._native, simple_interface._native)
+        return _wrap(generated.UseForward.use_it(self, _unwrap(param1, Class1), _unwrap(param2, Class2), _unwrap(simple_class, SimpleClass), _unwrap(simple_interface, SimpleInterface)), None)
 

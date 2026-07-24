@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,21 +19,21 @@ class AttributesStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.AttributesStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.AttributesStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.AttributesStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> str:
         """"""
-        return self._native.field
+        return _wrap(self._native.field, str)
     @field.setter
     def field(self, value: str):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, str)
 
 
     def very_fun(self, param: str):
         """"""
-        return self._native.very_fun(param)
+        return _wrap(self._native.very_fun(_unwrap(param, str)), None)
 
 
     PI = False

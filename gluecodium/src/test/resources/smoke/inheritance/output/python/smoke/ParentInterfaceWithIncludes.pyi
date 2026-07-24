@@ -35,18 +35,18 @@ class ParentInterfaceWithIncludes(generated.ParentInterfaceWithIncludes):
     @property
     def root_property(self) -> IncludableLambda:
         """"""
-        return generated.ParentInterfaceWithIncludes.root_property.fget(self)
+        return _wrap(generated.ParentInterfaceWithIncludes.root_property.fget(self), IncludableLambda)
 
     @root_property.setter
     def root_property(self, value: IncludableLambda):
-        generated.ParentInterfaceWithIncludes.root_property.fset(self, value)
+        generated.ParentInterfaceWithIncludes.root_property.fset(self, _unwrap(value, IncludableLambda))
 
     @property
     def not_in_java_property(self) -> ShouldNotInclude:
         """"""
-        return generated.ParentInterfaceWithIncludes.not_in_java_property.fget(self)
+        return _wrap(generated.ParentInterfaceWithIncludes.not_in_java_property.fget(self), ShouldNotInclude)
 
     @not_in_java_property.setter
     def not_in_java_property(self, value: ShouldNotInclude):
-        generated.ParentInterfaceWithIncludes.not_in_java_property.fset(self, value)
+        generated.ParentInterfaceWithIncludes.not_in_java_property.fset(self, _unwrap(value, ShouldNotInclude))
 

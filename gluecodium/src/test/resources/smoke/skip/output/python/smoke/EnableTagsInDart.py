@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,13 +29,13 @@ class EnableTagsInDart(generated.EnableTagsInDart):
 
     def enable_tagged(self):
         """"""
-        return generated.EnableTagsInDart.enable_tagged(self)
+        return _wrap(generated.EnableTagsInDart.enable_tagged(self), None)
 
     def dont_enable_tagged(self):
         """"""
-        return generated.EnableTagsInDart.dont_enable_tagged(self)
+        return _wrap(generated.EnableTagsInDart.dont_enable_tagged(self), None)
 
     def enable_tagged_list(self):
         """"""
-        return generated.EnableTagsInDart.enable_tagged_list(self)
+        return _wrap(generated.EnableTagsInDart.enable_tagged_list(self), None)
 

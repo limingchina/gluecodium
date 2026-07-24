@@ -2,8 +2,13 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
+from smoke.CppRefReturnTypeEnumBased import CppRefReturnTypeEnumBased
 from smoke.CppRefReturnTypeInternalError import CppRefReturnTypeInternalError
 from smoke.CppRefReturnTypeSomeStruct import CppRefReturnTypeSomeStruct
+from smoke.CppRefReturnTypeStructBased import CppRefReturnTypeStructBased
 
 from _native_base import _NativeBase
 
@@ -72,5 +77,5 @@ class CppRefReturnType(_NativeBase):
     @staticmethod
     def string_property() -> str:
         """"""
-        return generated.CppRefReturnType.string_property()
+        return _wrap(generated.CppRefReturnType.string_property(), str)
 

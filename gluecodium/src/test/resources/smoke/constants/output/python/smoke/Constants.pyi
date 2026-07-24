@@ -15,7 +15,7 @@ class Constants(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.Constants):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Constants(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.Constants(*[_unwrap(arg) for arg in args]))
 
 
     BOOL_CONSTANT = True

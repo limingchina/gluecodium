@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -99,7 +100,7 @@ public:
     }
 };
 
-void register_FirstParentIsNarrowClass(py::module_& module) {
+void register_smoke_FirstParentIsNarrowClass(py::module_& module) {
     py::class_<FirstParentIsNarrowClass, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowClass>, FirstParentIsNarrowClassTrampoline>(module, "FirstParentIsNarrowClass", py::multiple_inheritance())
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
@@ -111,17 +112,7 @@ void register_FirstParentIsNarrowClass(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("child_function", &FirstParentIsNarrowClass::child_function)
-
         .def_property("child_property", py::overload_cast<>(&FirstParentIsNarrowClass::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsNarrowClass::set_child_property))
-        .def("parent_function_one", [](FirstParentIsNarrowClass& self) {
-            return self.parent_function_one();
-        })
-
-        .def("parent_function_two", [](FirstParentIsNarrowClass& self) {
-            return self.parent_function_two();
-        })
-
         .def_property("parent_property_one", [](const FirstParentIsNarrowClass& self) {
             return self.get_parent_property_one();
         }, [](FirstParentIsNarrowClass& self, const ::std::string& value) {

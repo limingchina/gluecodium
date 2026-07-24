@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.commentsSomeEnum import commentsSomeEnum
+from smoke.commentsSomethingWrong import commentsSomethingWrong
 
 from _native_base import _NativeBase
 
@@ -17,5 +21,5 @@ class UnicodeComments(_NativeBase):
 
     def some_method_with_all_comments(self, input: str) -> bool:
         """Süßölgefäß"""
-        return self._native.some_method_with_all_comments(input)
+        return _wrap(self._native.some_method_with_all_comments(_unwrap(input, str)), bool)
 

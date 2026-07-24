@@ -16,15 +16,15 @@ class EnumDefaultsSimpleEnum(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.EnumDefaultsSimpleEnum):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnumDefaultsSimpleEnum(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.EnumDefaultsSimpleEnum(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def enum_field(self) -> Enum1:
         """"""
-        return Enum1(self._native.enum_field)
+        return _wrap(self._native.enum_field, Enum1)
     @enum_field.setter
     def enum_field(self, value: Enum1):
-      self._native.enum_field = getattr(value, "_native", value)
+      self._native.enum_field = _unwrap(value, Enum1)
 
 

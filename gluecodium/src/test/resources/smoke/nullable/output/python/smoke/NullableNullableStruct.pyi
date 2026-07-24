@@ -18,95 +18,95 @@ class NullableNullableStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.NullableNullableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.NullableNullableStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.NullableNullableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def string_field(self):
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, Optional[str])
     @string_field.setter
     def string_field(self, value):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, Optional[str])
 
 
 
     @property
     def bool_field(self):
         """"""
-        return self._native.bool_field
+        return _wrap(self._native.bool_field, Optional[bool])
     @bool_field.setter
     def bool_field(self, value):
-      self._native.bool_field = getattr(value, "_native", value)
+      self._native.bool_field = _unwrap(value, Optional[bool])
 
 
 
     @property
     def double_field(self):
         """"""
-        return self._native.double_field
+        return _wrap(self._native.double_field, Optional[float])
     @double_field.setter
     def double_field(self, value):
-      self._native.double_field = getattr(value, "_native", value)
+      self._native.double_field = _unwrap(value, Optional[float])
 
 
 
     @property
     def struct_field(self):
         """"""
-        return Optional[NullableSomeStruct](self._native.struct_field)
+        return _wrap(self._native.struct_field, Optional[NullableSomeStruct])
     @struct_field.setter
     def struct_field(self, value):
-      self._native.struct_field = getattr(value, "_native", value)
+      self._native.struct_field = _unwrap(value, Optional[NullableSomeStruct])
 
 
 
     @property
     def enum_field(self):
         """"""
-        return Optional[NullableSomeEnum](self._native.enum_field)
+        return _wrap(self._native.enum_field, Optional[NullableSomeEnum])
     @enum_field.setter
     def enum_field(self, value):
-      self._native.enum_field = getattr(value, "_native", value)
+      self._native.enum_field = _unwrap(value, Optional[NullableSomeEnum])
 
 
 
     @property
     def array_field(self):
         """"""
-        return self._native.array_field
+        return _wrap(self._native.array_field, Optional[list[str]])
     @array_field.setter
     def array_field(self, value):
-      self._native.array_field = getattr(value, "_native", value)
+      self._native.array_field = _unwrap(value, Optional[list[str]])
 
 
 
     @property
     def inline_array_field(self):
         """"""
-        return self._native.inline_array_field
+        return _wrap(self._native.inline_array_field, Optional[list[str]])
     @inline_array_field.setter
     def inline_array_field(self, value):
-      self._native.inline_array_field = getattr(value, "_native", value)
+      self._native.inline_array_field = _unwrap(value, Optional[list[str]])
 
 
 
     @property
     def map_field(self):
         """"""
-        return self._native.map_field
+        return _wrap(self._native.map_field, Optional[dict[int, str]])
     @map_field.setter
     def map_field(self, value):
-      self._native.map_field = getattr(value, "_native", value)
+      self._native.map_field = _unwrap(value, Optional[dict[int, str]])
 
 
 
     @property
     def instance_field(self):
         """"""
-        return Optional[SomeInterface](self._native.instance_field)
+        return _wrap(self._native.instance_field, Optional[SomeInterface])
     @instance_field.setter
     def instance_field(self, value):
-      self._native.instance_field = getattr(value, "_native", value)
+      self._native.instance_field = _unwrap(value, Optional[SomeInterface])
 
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.TypesWithDefaultsImmutableStructWithCollections import TypesWithDefaultsImmutableStructWithCollections
 from smoke.TypesWithDefaultsSomeImmutableStructWithDefaults import TypesWithDefaultsSomeImmutableStructWithDefaults
 
@@ -18,19 +21,19 @@ class TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(_Nat
         if len(args) == 1 and isinstance(args[0], generated.TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def some_field1(self):
         """"""
-        return Optional[TypesWithDefaultsSomeImmutableStructWithDefaults](self._native.some_field1)
+        return _wrap(self._native.some_field1, Optional[TypesWithDefaultsSomeImmutableStructWithDefaults])
 
 
 
     @property
     def some_field2(self):
         """"""
-        return Optional[TypesWithDefaultsImmutableStructWithCollections](self._native.some_field2)
+        return _wrap(self._native.some_field2, Optional[TypesWithDefaultsImmutableStructWithCollections])
 
 

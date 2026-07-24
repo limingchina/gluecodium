@@ -17,25 +17,25 @@ class LearnToRead(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.LearnToRead):
             super().__init__(args[0])
         else:
-            super().__init__(generated.LearnToRead(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.LearnToRead(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field_a(self) -> Alphabet:
         """"""
-        return Alphabet(self._native.field_a)
+        return _wrap(self._native.field_a, Alphabet)
     @field_a.setter
     def field_a(self, value: Alphabet):
-      self._native.field_a = getattr(value, "_native", value)
+      self._native.field_a = _unwrap(value, Alphabet)
 
 
 
     @property
     def field_b(self) -> Alphabet:
         """"""
-        return Alphabet(self._native.field_b)
+        return _wrap(self._native.field_b, Alphabet)
     @field_b.setter
     def field_b(self, value: Alphabet):
-      self._native.field_b = getattr(value, "_native", value)
+      self._native.field_b = _unwrap(value, Alphabet)
 
 

@@ -28,9 +28,9 @@ class FirstParentIsNarrowClass(generated.FirstParentIsNarrowClass):
     @property
     def child_property(self) -> str:
         """"""
-        return generated.FirstParentIsNarrowClass.child_property.fget(self)
+        return _wrap(generated.FirstParentIsNarrowClass.child_property.fget(self), str)
 
     @child_property.setter
     def child_property(self, value: str):
-        generated.FirstParentIsNarrowClass.child_property.fset(self, value)
+        generated.FirstParentIsNarrowClass.child_property.fset(self, _unwrap(value, str))
 

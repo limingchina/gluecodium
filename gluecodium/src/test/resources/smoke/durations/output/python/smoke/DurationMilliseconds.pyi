@@ -21,9 +21,9 @@ class DurationMilliseconds(_NativeBase):
     @property
     def duration_property(self) -> datetime.timedelta:
         """"""
-        return self._native.duration_property
+        return _wrap(self._native.duration_property, datetime.timedelta)
 
     @duration_property.setter
     def duration_property(self, value: datetime.timedelta):
-        self._native.duration_property = value
+        self._native.duration_property = _unwrap(value, datetime.timedelta)
 

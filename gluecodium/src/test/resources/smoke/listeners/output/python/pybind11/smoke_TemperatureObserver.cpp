@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -38,7 +39,7 @@ public:
     }
 };
 
-void register_TemperatureObserver(py::module_& module) {
+void register_smoke_TemperatureObserver(py::module_& module) {
     py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "TemperatureObserver")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -52,10 +53,6 @@ void register_TemperatureObserver(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("on_temperature_update", [](TemperatureObserver& self, const ::std::shared_ptr< ::smoke::Thermometer >& thermometer) {
-            return self.on_temperature_update(thermometer);
-        }, py::arg("thermometer"))
-
         ;
 }
 

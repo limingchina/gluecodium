@@ -18,9 +18,9 @@ class Locales(_NativeBase):
     @property
     def locale_property(self) -> str:
         """"""
-        return self._native.locale_property
+        return _wrap(self._native.locale_property, str)
 
     @locale_property.setter
     def locale_property(self, value: str):
-        self._native.locale_property = value
+        self._native.locale_property = _unwrap(value, str)
 

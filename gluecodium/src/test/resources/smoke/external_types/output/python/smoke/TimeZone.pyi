@@ -15,15 +15,15 @@ class TimeZone(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.TimeZone):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TimeZone(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.TimeZone(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def raw_offset(self) -> int:
         """"""
-        return self._native.raw_offset
+        return _wrap(self._native.raw_offset, int)
     @raw_offset.setter
     def raw_offset(self, value: int):
-      self._native.raw_offset = getattr(value, "_native", value)
+      self._native.raw_offset = _unwrap(value, int)
 
 

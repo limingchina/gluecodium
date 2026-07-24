@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,14 +18,11 @@ namespace py = pybind11;
 using Builder = ::smoke::OuterStruct::Builder;
 
 
-void register_OuterStructBuilder(py::module_& module) {
+void register_smoke_OuterStructBuilder(py::module_& module) {
     py::class_<Builder, std::shared_ptr<Builder>>(module, "OuterStructBuilder")
+        .def(py::init<>())
+
         .def_static("create", &Builder::create)
-
-        .def("field", &Builder::field, py::arg("value"))
-
-        .def("build", &Builder::build)
-
         ;
 }
 

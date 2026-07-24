@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,10 +17,8 @@ namespace py = pybind11;
 using AttributesWithComments = ::smoke::AttributesWithComments;
 
 
-void register_AttributesWithComments(py::module_& module) {
+void register_smoke_AttributesWithComments(py::module_& module) {
     py::class_<AttributesWithComments, std::shared_ptr<AttributesWithComments>>(module, "AttributesWithComments")
-        .def("very_fun", &AttributesWithComments::very_fun)
-
         .def_property("prop", py::overload_cast<>(&AttributesWithComments::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithComments::set_prop))
         ;
 }

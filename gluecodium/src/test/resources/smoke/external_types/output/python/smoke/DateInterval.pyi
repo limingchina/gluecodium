@@ -16,25 +16,25 @@ class DateInterval(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DateInterval):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DateInterval(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DateInterval(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def start(self) -> datetime.datetime:
         """"""
-        return self._native.start
+        return _wrap(self._native.start, datetime.datetime)
     @start.setter
     def start(self, value: datetime.datetime):
-      self._native.start = getattr(value, "_native", value)
+      self._native.start = _unwrap(value, datetime.datetime)
 
 
 
     @property
     def end(self) -> datetime.datetime:
         """"""
-        return self._native.end
+        return _wrap(self._native.end, datetime.datetime)
     @end.setter
     def end(self, value: datetime.datetime):
-      self._native.end = getattr(value, "_native", value)
+      self._native.end = _unwrap(value, datetime.datetime)
 
 

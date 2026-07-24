@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -37,7 +38,7 @@ public:
     }
 };
 
-void register_InternalInterface(py::module_& module) {
+void register_smoke_InternalInterface(py::module_& module) {
     py::class_<InternalInterface, std::shared_ptr<InternalInterface>, InternalInterfaceTrampoline>(module, "InternalInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -51,10 +52,6 @@ void register_InternalInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("foo_bar", [](InternalInterface& self) {
-            return self.foo_bar();
-        })
-
         .def_static("some_property_of_internal_interface", &InternalInterface::get_some_property_of_internal_interface)
         .def_static("some_property_of_internal_interface_set", &InternalInterface::set_some_property_of_internal_interface)
         ;

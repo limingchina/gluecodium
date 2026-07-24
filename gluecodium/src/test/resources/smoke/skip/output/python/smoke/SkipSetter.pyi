@@ -26,9 +26,9 @@ class SkipSetter(generated.SkipSetter):
     @property
     def foo(self) -> str:
         """"""
-        return generated.SkipSetter.foo.fget(self)
+        return _wrap(generated.SkipSetter.foo.fget(self), str)
 
     @foo.setter
     def foo(self, value: str):
-        generated.SkipSetter.foo.fset(self, value)
+        generated.SkipSetter.foo.fset(self, _unwrap(value, str))
 

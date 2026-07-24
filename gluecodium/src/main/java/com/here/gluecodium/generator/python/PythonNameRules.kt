@@ -68,13 +68,19 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
      * file's basename (e.g. `test/Inheritance.lime` -> `python/test/Inheritance.py`), so the
      * generated wrappers match the per-feature import style used by the test harness.
      */
-    fun getPythonFileNameForFile(fileName: String, packagePath: String): String {
+    fun getPythonFileNameForFile(
+        fileName: String,
+        packagePath: String,
+    ): String {
         val moduleName = File(fileName).nameWithoutExtension
         return PYTHON_TARGET_DIRECTORY + packagePath + File.separator + moduleName + ".py"
     }
 
     /** Resolve the output path of a generated Python type-stub (`.pyi`) file for the source file. */
-    fun getPythonStubFileNameForFile(fileName: String, packagePath: String): String {
+    fun getPythonStubFileNameForFile(
+        fileName: String,
+        packagePath: String,
+    ): String {
         val moduleName = File(fileName).nameWithoutExtension
         return PYTHON_TARGET_DIRECTORY + packagePath + File.separator + moduleName + ".pyi"
     }

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.EnumsInternalErrorCode import EnumsInternalErrorCode
 
 
@@ -17,25 +20,25 @@ class EnumsErrorStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.EnumsErrorStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnumsErrorStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.EnumsErrorStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def type(self) -> EnumsInternalErrorCode:
         """"""
-        return EnumsInternalErrorCode(self._native.type)
+        return _wrap(self._native.type, EnumsInternalErrorCode)
     @type.setter
     def type(self, value: EnumsInternalErrorCode):
-      self._native.type = getattr(value, "_native", value)
+      self._native.type = _unwrap(value, EnumsInternalErrorCode)
 
 
 
     @property
     def message(self) -> str:
         """"""
-        return self._native.message
+        return _wrap(self._native.message, str)
     @message.setter
     def message(self, value: str):
-      self._native.message = getattr(value, "_native", value)
+      self._native.message = _unwrap(value, str)
 
 

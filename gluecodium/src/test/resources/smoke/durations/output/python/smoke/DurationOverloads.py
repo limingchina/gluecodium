@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 import datetime
 
 from _native_base import _NativeBase
@@ -17,6 +20,6 @@ class DurationOverloads(_NativeBase):
 
     def duration_function(*args, **kwargs) -> str:
         """"""
-        return self._native.duration_function(*[getattr(a, "_native", a) for a in args])
+        return _wrap(self._native.duration_function(*[_unwrap(a) for a in args]), str)
 
 

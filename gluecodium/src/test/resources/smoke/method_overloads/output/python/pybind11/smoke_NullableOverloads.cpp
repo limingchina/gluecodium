@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,12 +18,8 @@ namespace py = pybind11;
 using NullableOverloads = ::smoke::NullableOverloads;
 
 
-void register_NullableOverloads(py::module_& module) {
+void register_smoke_NullableOverloads(py::module_& module) {
     py::class_<NullableOverloads, std::shared_ptr<NullableOverloads>>(module, "NullableOverloads")
-        .def("foo", py::overload_cast<const ::std::string&>(&NullableOverloads::foo), py::arg("input"))
-
-        .def("foo", py::overload_cast<const std::optional< ::std::string >&>(&NullableOverloads::foo), py::arg("input"))
-
         ;
 }
 

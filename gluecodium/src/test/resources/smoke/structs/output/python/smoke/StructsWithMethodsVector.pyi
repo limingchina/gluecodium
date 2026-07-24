@@ -1,5 +1,6 @@
 
 
+from smoke.ValidationUtilsValidation import ValidationUtilsValidation
 from smoke.ValidationUtilsValidationErrorCode import ValidationUtilsValidationErrorCode
 import typing
 
@@ -16,26 +17,26 @@ class StructsWithMethodsVector(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsWithMethodsVector):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithMethodsVector(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsWithMethodsVector(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def x(self) -> float:
         """"""
-        return self._native.x
+        return _wrap(self._native.x, float)
     @x.setter
     def x(self, value: float):
-      self._native.x = getattr(value, "_native", value)
+      self._native.x = _unwrap(value, float)
 
 
 
     @property
     def y(self) -> float:
         """"""
-        return self._native.y
+        return _wrap(self._native.y, float)
     @y.setter
     def y(self, value: float):
-      self._native.y = getattr(value, "_native", value)
+      self._native.y = _unwrap(value, float)
 
 
     def distance_to(self, other: StructsWithMethodsVector) -> float: ...

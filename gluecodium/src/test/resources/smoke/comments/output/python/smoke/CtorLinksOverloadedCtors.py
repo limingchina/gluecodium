@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,7 +20,7 @@ class CtorLinksOverloadedCtors(_NativeBase):
     @staticmethod
     def create(*args, **kwargs) -> CtorLinksOverloadedCtors:
         """"""
-        native_result = generated.CtorLinksOverloadedCtors.create(*[getattr(a, "_native", a) for a in args])
+        native_result = generated.CtorLinksOverloadedCtors.create(*[_unwrap(a) for a in args])
         return CtorLinksOverloadedCtors(native_result)
 
 

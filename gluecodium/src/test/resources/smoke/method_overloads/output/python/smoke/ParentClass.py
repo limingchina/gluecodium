@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 import generated
 
@@ -24,14 +27,14 @@ class ParentClass(generated.ParentClass):
 
     def foo(*args, **kwargs):
         """"""
-        return generated.ParentClass.foo(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.ParentClass.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(self):
         """"""
-        return generated.ParentClass.bar(self)
+        return _wrap(generated.ParentClass.bar(self), None)
 
     def baz(self):
         """"""
-        return generated.ParentClass.baz(self)
+        return _wrap(generated.ParentClass.baz(self), None)
 

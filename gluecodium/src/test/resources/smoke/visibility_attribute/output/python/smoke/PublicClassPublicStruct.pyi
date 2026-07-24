@@ -16,15 +16,15 @@ class PublicClassPublicStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PublicClassPublicStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicClassPublicStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PublicClassPublicStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def internal_field(self) -> PublicClassInternalStruct:
         """"""
-        return PublicClassInternalStruct(self._native.internal_field)
+        return _wrap(self._native.internal_field, PublicClassInternalStruct)
     @internal_field.setter
     def internal_field(self, value: PublicClassInternalStruct):
-      self._native.internal_field = getattr(value, "_native", value)
+      self._native.internal_field = _unwrap(value, PublicClassInternalStruct)
 
 

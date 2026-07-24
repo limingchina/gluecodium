@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,7 +19,7 @@ class StructsWithConstantsInterfaceStructWithConstantsOnly(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsWithConstantsInterfaceStructWithConstantsOnly):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithConstantsInterfaceStructWithConstantsOnly(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsWithConstantsInterfaceStructWithConstantsOnly(*[_unwrap(arg) for arg in args]))
 
 
     DEFAULT_DESCRIPTION = "Foo"

@@ -28,9 +28,9 @@ class ParentNarrowTwo(generated.ParentNarrowTwo):
     @property
     def parent_property_two(self) -> str:
         """"""
-        return generated.ParentNarrowTwo.parent_property_two.fget(self)
+        return _wrap(generated.ParentNarrowTwo.parent_property_two.fget(self), str)
 
     @parent_property_two.setter
     def parent_property_two(self, value: str):
-        generated.ParentNarrowTwo.parent_property_two.fset(self, value)
+        generated.ParentNarrowTwo.parent_property_two.fset(self, _unwrap(value, str))
 

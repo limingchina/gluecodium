@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.OuterNameInnerName import OuterNameInnerName
 
 from _native_base import _NativeBase
@@ -17,5 +20,5 @@ class UseInnerName(_NativeBase):
 
     def do_foo(self) -> OuterNameInnerName:
         """"""
-        return self._native.do_foo()
+        return _wrap(self._native.do_foo(), OuterNameInnerName)
 

@@ -6,10 +6,13 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/TimePointHash.h"
 #include "smoke/FreeTypeDef.h"
+#include "chrono"
 
 
 // datetime.datetime is a type alias, no binding needed.

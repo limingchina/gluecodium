@@ -15,25 +15,25 @@ class PublicFieldsNoInit(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PublicFieldsNoInit):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicFieldsNoInit(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PublicFieldsNoInit(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def public_field(self) -> str:
         """"""
-        return self._native.public_field
+        return _wrap(self._native.public_field, str)
     @public_field.setter
     def public_field(self, value: str):
-      self._native.public_field = getattr(value, "_native", value)
+      self._native.public_field = _unwrap(value, str)
 
 
 
     @property
     def internal_field(self) -> str:
         """"""
-        return self._native.internal_field
+        return _wrap(self._native.internal_field, str)
     @internal_field.setter
     def internal_field(self, value: str):
-      self._native.internal_field = getattr(value, "_native", value)
+      self._native.internal_field = _unwrap(value, str)
 
 

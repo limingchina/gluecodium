@@ -10,13 +10,13 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_AsyncClass(pybind11::module_& module);
-void register_AsyncError(pybind11::module_& module);
-void register_AsyncErrorCode(pybind11::module_& module);
-void register_AsyncRenamed(pybind11::module_& module);
-void register_AsyncStruct(pybind11::module_& module);
-void register_AsyncWithSkips(pybind11::module_& module);
-void register_ThrowMeError(pybind11::module_& module);
+void register_smoke_AsyncClass(pybind11::module_& module);
+void register_smoke_AsyncError(pybind11::module_& module);
+void register_smoke_AsyncErrorCode(pybind11::module_& module);
+void register_smoke_AsyncRenamed(pybind11::module_& module);
+void register_smoke_AsyncStruct(pybind11::module_& module);
+void register_smoke_AsyncWithSkips(pybind11::module_& module);
+void register_smoke_ThrowMeError(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -24,11 +24,11 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_AsyncClass(m);
-    register_AsyncError(m);
-    register_AsyncErrorCode(m);
-    register_AsyncRenamed(m);
-    register_AsyncStruct(m);
-    register_AsyncWithSkips(m);
-    register_ThrowMeError(m);
+    register_smoke_AsyncClass(m);
+    register_smoke_AsyncError(m);
+    register_smoke_AsyncErrorCode(m);
+    register_smoke_AsyncRenamed(m);
+    register_smoke_AsyncStruct(m);
+    register_smoke_AsyncWithSkips(m);
+    register_smoke_ThrowMeError(m);
 }

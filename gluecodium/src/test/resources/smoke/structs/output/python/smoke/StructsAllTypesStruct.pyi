@@ -16,103 +16,103 @@ class StructsAllTypesStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsAllTypesStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsAllTypesStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsAllTypesStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def int8_field(self) -> int:
         """"""
-        return self._native.int8_field
+        return _wrap(self._native.int8_field, int)
 
 
 
     @property
     def uint8_field(self) -> int:
         """"""
-        return self._native.uint8_field
+        return _wrap(self._native.uint8_field, int)
 
 
 
     @property
     def int16_field(self) -> int:
         """"""
-        return self._native.int16_field
+        return _wrap(self._native.int16_field, int)
 
 
 
     @property
     def uint16_field(self) -> int:
         """"""
-        return self._native.uint16_field
+        return _wrap(self._native.uint16_field, int)
 
 
 
     @property
     def int32_field(self) -> int:
         """"""
-        return self._native.int32_field
+        return _wrap(self._native.int32_field, int)
 
 
 
     @property
     def uint32_field(self) -> int:
         """"""
-        return self._native.uint32_field
+        return _wrap(self._native.uint32_field, int)
 
 
 
     @property
     def int64_field(self) -> int:
         """"""
-        return self._native.int64_field
+        return _wrap(self._native.int64_field, int)
 
 
 
     @property
     def uint64_field(self) -> int:
         """"""
-        return self._native.uint64_field
+        return _wrap(self._native.uint64_field, int)
 
 
 
     @property
     def float_field(self) -> float:
         """"""
-        return self._native.float_field
+        return _wrap(self._native.float_field, float)
 
 
 
     @property
     def double_field(self) -> float:
         """"""
-        return self._native.double_field
+        return _wrap(self._native.double_field, float)
 
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
 
 
 
     @property
     def boolean_field(self) -> bool:
         """"""
-        return self._native.boolean_field
+        return _wrap(self._native.boolean_field, bool)
 
 
 
     @property
     def bytes_field(self) -> bytes:
         """"""
-        return self._native.bytes_field
+        return _wrap(self._native.bytes_field, bytes)
 
 
 
     @property
     def point_field(self) -> StructsPoint:
         """"""
-        return StructsPoint(self._native.point_field)
+        return _wrap(self._native.point_field, StructsPoint)
 
 

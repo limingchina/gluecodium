@@ -16,18 +16,18 @@ class DartInternalClassWithInternalTypedef(_NativeBase):
     @property
     def numbers(self) -> dict[str, int]:
         """"""
-        return self._native.numbers
+        return _wrap(self._native.numbers, dict[str, int])
 
     @numbers.setter
     def numbers(self, value: dict[str, int]):
-        self._native.numbers = value
+        self._native.numbers = _unwrap(value, dict[str, int])
 
     @property
     def labels(self) -> list[str]:
         """"""
-        return self._native.labels
+        return _wrap(self._native.labels, list[str])
 
     @labels.setter
     def labels(self, value: list[str]):
-        self._native.labels = value
+        self._native.labels = _unwrap(value, list[str])
 

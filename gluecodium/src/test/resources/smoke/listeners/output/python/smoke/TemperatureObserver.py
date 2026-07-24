@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.Thermometer import Thermometer
 
 
@@ -27,5 +30,5 @@ class TemperatureObserver(generated.TemperatureObserver):
 
     def on_temperature_update(self, thermometer: Thermometer):
         """"""
-        return generated.TemperatureObserver.on_temperature_update(self, thermometer._native)
+        return _wrap(generated.TemperatureObserver.on_temperature_update(self, _unwrap(thermometer, Thermometer)), None)
 

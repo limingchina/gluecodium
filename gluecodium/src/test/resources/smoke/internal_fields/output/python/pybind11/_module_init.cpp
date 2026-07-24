@@ -10,11 +10,11 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_PublicFieldsAllInit(pybind11::module_& module);
-void register_PublicFieldsAllInitPosDefaults(pybind11::module_& module);
-void register_PublicFieldsMixedInit(pybind11::module_& module);
-void register_PublicFieldsNoInit(pybind11::module_& module);
-void register_PublicFieldsNone(pybind11::module_& module);
+void register_smoke_PublicFieldsAllInit(pybind11::module_& module);
+void register_smoke_PublicFieldsAllInitPosDefaults(pybind11::module_& module);
+void register_smoke_PublicFieldsMixedInit(pybind11::module_& module);
+void register_smoke_PublicFieldsNoInit(pybind11::module_& module);
+void register_smoke_PublicFieldsNone(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -22,9 +22,9 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_PublicFieldsAllInit(m);
-    register_PublicFieldsAllInitPosDefaults(m);
-    register_PublicFieldsMixedInit(m);
-    register_PublicFieldsNoInit(m);
-    register_PublicFieldsNone(m);
+    register_smoke_PublicFieldsAllInit(m);
+    register_smoke_PublicFieldsAllInitPosDefaults(m);
+    register_smoke_PublicFieldsMixedInit(m);
+    register_smoke_PublicFieldsNoInit(m);
+    register_smoke_PublicFieldsNone(m);
 }

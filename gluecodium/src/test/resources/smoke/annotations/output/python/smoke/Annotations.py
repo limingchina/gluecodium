@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,5 +19,5 @@ class Annotations(_NativeBase):
 
     def test_optional(self, self: Annotations) -> Optional[bool]:
         """"""
-        return self._native.test_optional(self._native)
+        return _wrap(self._native.test_optional(_unwrap(self, Annotations)), Optional[bool])
 

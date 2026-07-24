@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,7 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DefaultsWithFcStruct = ::smoke::DefaultsWithFcStruct;
 
-void register_DefaultsWithFcStruct(py::module_& module) {
+void register_smoke_DefaultsWithFcStruct(py::module_& module) {
     py::class_<DefaultsWithFcStruct>(module, "DefaultsWithFcStruct")
         .def_readwrite("struct_field", &DefaultsWithFcStruct::struct_field)
         .def(py::init<>())

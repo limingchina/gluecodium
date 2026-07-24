@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -41,7 +42,7 @@ public:
     }
 };
 
-void register_UseForward(py::module_& module) {
+void register_smoke_forward_UseForward(py::module_& module) {
     py::class_<UseForward, std::shared_ptr<UseForward>, UseForwardTrampoline>(module, "UseForward")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -55,10 +56,6 @@ void register_UseForward(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("use_it", [](UseForward& self, const ::std::shared_ptr< ::smoke::forward::Class1 >& param1, const ::std::shared_ptr< ::smoke::forward::Class2 >& param2, const ::std::shared_ptr< ::smoke::SimpleClass >& simple_class, const ::std::shared_ptr< ::smoke::SimpleInterface >& simple_interface) {
-            return self.use_it(param1, param2, simple_class, simple_interface);
-        }, py::arg("param1"), py::arg("param2"), py::arg("simple_class"), py::arg("simple_interface"))
-
         ;
 }
 

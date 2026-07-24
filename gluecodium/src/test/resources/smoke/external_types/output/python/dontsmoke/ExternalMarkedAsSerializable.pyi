@@ -15,15 +15,15 @@ class ExternalMarkedAsSerializable(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.ExternalMarkedAsSerializable):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ExternalMarkedAsSerializable(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.ExternalMarkedAsSerializable(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> int:
         """"""
-        return self._native.field
+        return _wrap(self._native.field, int)
     @field.setter
     def field(self, value: int):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, int)
 
 

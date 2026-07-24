@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,6 +19,6 @@ class NullableOverloads(_NativeBase):
 
     def foo(*args, **kwargs):
         """"""
-        return self._native.foo(*[getattr(a, "_native", a) for a in args])
+        return _wrap(self._native.foo(*[_unwrap(a) for a in args]), None)
 
 

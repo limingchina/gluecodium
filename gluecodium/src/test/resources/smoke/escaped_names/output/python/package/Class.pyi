@@ -2,6 +2,7 @@
 
 from package.Interface import Interface
 from package.typesenum import typesenum
+from package.typesexception import typesexception
 from package.typesstruct import typesstruct
 import typing
 
@@ -32,9 +33,9 @@ class Class(generated.Class):
     @property
     def property(self) -> typesenum:
         """"""
-        return generated.Class.property.fget(self)
+        return _wrap(generated.Class.property.fget(self), typesenum)
 
     @property.setter
     def property(self, value: typesenum):
-        generated.Class.property.fset(self, value)
+        generated.Class.property.fset(self, _unwrap(value, typesenum))
 

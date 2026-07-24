@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ParentClass import ParentClass
 
 import generated
@@ -25,5 +28,5 @@ class OuterClassWithInheritance(generated.OuterClassWithInheritance):
 
     def foo(self, input: str) -> str:
         """"""
-        return generated.OuterClassWithInheritance.foo(self, input)
+        return _wrap(generated.OuterClassWithInheritance.foo(self, _unwrap(input, str)), str)
 

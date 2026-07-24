@@ -10,11 +10,11 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_SerializableEquatableStruct(pybind11::module_& module);
-void register_Serialization(pybind11::module_& module);
-void register_SerializationNestedSerializableStruct(pybind11::module_& module);
-void register_SerializationSerializableStruct(pybind11::module_& module);
-void register_SerializationSomeEnum(pybind11::module_& module);
+void register_smoke_SerializableEquatableStruct(pybind11::module_& module);
+void register_smoke_Serialization(pybind11::module_& module);
+void register_smoke_SerializationNestedSerializableStruct(pybind11::module_& module);
+void register_smoke_SerializationSerializableStruct(pybind11::module_& module);
+void register_smoke_SerializationSomeEnum(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -22,9 +22,9 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_SerializableEquatableStruct(m);
-    register_Serialization(m);
-    register_SerializationNestedSerializableStruct(m);
-    register_SerializationSerializableStruct(m);
-    register_SerializationSomeEnum(m);
+    register_smoke_SerializableEquatableStruct(m);
+    register_smoke_Serialization(m);
+    register_smoke_SerializationNestedSerializableStruct(m);
+    register_smoke_SerializationSerializableStruct(m);
+    register_smoke_SerializationSomeEnum(m);
 }

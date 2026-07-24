@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,9 +20,9 @@ class InternalPropertyOnly(_NativeBase):
     @property
     def foo(self) -> str:
         """"""
-        return self._native.foo
+        return _wrap(self._native.foo, str)
 
     @foo.setter
     def foo(self, value: str):
-        self._native.foo = value
+        self._native.foo = _unwrap(value, str)
 

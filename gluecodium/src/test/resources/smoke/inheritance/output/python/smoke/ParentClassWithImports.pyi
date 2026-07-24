@@ -30,9 +30,9 @@ class ParentClassWithImports(generated.ParentClassWithImports):
     @property
     def root_property(self) -> IncludableLambda:
         """"""
-        return generated.ParentClassWithImports.root_property.fget(self)
+        return _wrap(generated.ParentClassWithImports.root_property.fget(self), IncludableLambda)
 
     @root_property.setter
     def root_property(self, value: IncludableLambda):
-        generated.ParentClassWithImports.root_property.fset(self, value)
+        generated.ParentClassWithImports.root_property.fset(self, _unwrap(value, IncludableLambda))
 

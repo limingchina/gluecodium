@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.LevelOneLevelTwoLevelThreeLevelFour import LevelOneLevelTwoLevelThreeLevelFour
 from smoke.OuterClassInnerInterface import OuterClassInnerInterface
 from smoke.OuterInterfaceInnerClass import OuterInterfaceInnerClass
@@ -19,5 +22,5 @@ class LevelOneLevelTwoLevelThree(_NativeBase):
 
     def foo(self, input: OuterClassInnerInterface) -> OuterInterfaceInnerClass:
         """"""
-        return self._native.foo(input._native)
+        return _wrap(self._native.foo(_unwrap(input, OuterClassInnerInterface)), OuterInterfaceInnerClass)
 

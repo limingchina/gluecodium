@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.OuterStruct import OuterStruct
 
 from _native_base import _NativeBase
@@ -23,9 +26,9 @@ class OuterStructBuilder(_NativeBase):
 
     def field(self, value: str) -> OuterStructBuilder:
         """"""
-        return self._native.field(value)
+        return _wrap(self._native.field(_unwrap(value, str)), OuterStructBuilder)
 
     def build(self) -> OuterStruct:
         """"""
-        return self._native.build()
+        return _wrap(self._native.build(), OuterStruct)
 

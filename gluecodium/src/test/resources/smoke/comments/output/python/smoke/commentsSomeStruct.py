@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,7 +19,7 @@ class commentsSomeStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.commentsSomeStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.commentsSomeStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.commentsSomeStruct(*[_unwrap(arg) for arg in args]))
 
     How useful this struct is
     remains to be seen
@@ -24,25 +27,25 @@ class commentsSomeStruct(_NativeBase):
     def some_field(self) -> bool:
         """How useful this struct is
 remains to be seen"""
-        return self._native.some_field
+        return _wrap(self._native.some_field, bool)
     @some_field.setter
     def some_field(self, value: bool):
-      self._native.some_field = getattr(value, "_native", value)
+      self._native.some_field = _unwrap(value, bool)
 
 
     Can be `null`
     @property
     def nullable_field(self):
         """Can be `None`"""
-        return self._native.nullable_field
+        return _wrap(self._native.nullable_field, Optional[str])
     @nullable_field.setter
     def nullable_field(self, value):
-      self._native.nullable_field = getattr(value, "_native", value)
+      self._native.nullable_field = _unwrap(value, Optional[str])
 
 
     def some_struct_method(self):
         """This is some struct method that does nothing."""
-        return self._native.some_struct_method()
+        return _wrap(self._native.some_struct_method(), None)
 
     @staticmethod
     def some_static_struct_method():

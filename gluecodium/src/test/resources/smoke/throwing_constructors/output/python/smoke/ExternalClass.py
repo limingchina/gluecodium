@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
+from smoke.ExternalClassConstructorExploded import ExternalClassConstructorExploded
 from smoke.ExternalClassErrorEnum import ExternalClassErrorEnum
 from smoke.ExternalClassInternalOne import ExternalClassInternalOne
 from smoke.ExternalClassInternalTwo import ExternalClassInternalTwo

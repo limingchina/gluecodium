@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,11 +16,11 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using TimeZone = ::kotlin_smoke::TimeZone;
 
-void register_TimeZone(py::module_& module) {
+void register_kotlin_smoke_TimeZone(py::module_& module) {
     py::class_<TimeZone>(module, "TimeZone")
         .def_readwrite("raw_offset", &TimeZone::raw_offset)
         .def(py::init<>())
-        .def(py::init<int32_t>(), py::arg("raw_offset"))
+        .def(py::init<int32_t(), py::arg("raw_offset"))
         ;
 }
 

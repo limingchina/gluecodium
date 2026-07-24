@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.SimpleClass import SimpleClass
 
 
@@ -17,15 +20,15 @@ class StructWithClass(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructWithClass):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithClass(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructWithClass(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def class_instance(self) -> SimpleClass:
         """"""
-        return SimpleClass(self._native.class_instance)
+        return _wrap(self._native.class_instance, SimpleClass)
     @class_instance.setter
     def class_instance(self, value: SimpleClass):
-      self._native.class_instance = getattr(value, "_native", value)
+      self._native.class_instance = _unwrap(value, SimpleClass)
 
 

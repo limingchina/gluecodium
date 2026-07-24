@@ -17,5 +17,5 @@ class Serialization(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.Serialization):
             super().__init__(args[0])
         else:
-            super().__init__(generated.Serialization(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.Serialization(*[_unwrap(arg) for arg in args]))
 

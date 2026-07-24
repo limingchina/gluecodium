@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.PlatformCommentsSomeEnum import PlatformCommentsSomeEnum
+from smoke.PlatformCommentsSomethingWrong import PlatformCommentsSomethingWrong
 
 from _native_base import _NativeBase
 
@@ -17,17 +21,17 @@ class PlatformComments(_NativeBase):
 
     def do_nothing(self):
         """This is some very useless method that ."""
-        return self._native.do_nothing()
+        return _wrap(self._native.do_nothing(), None)
 
     def do_magic(self):
         """"""
-        return self._native.do_magic()
+        return _wrap(self._native.do_magic(), None)
 
     def some_method_with_all_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input or \esc@pe{s}."""
-        return self._native.some_method_with_all_comments(input)
+        return _wrap(self._native.some_method_with_all_comments(_unwrap(input, str)), bool)
 
     def some_deprecated_method(self):
         """"""
-        return self._native.some_deprecated_method()
+        return _wrap(self._native.some_deprecated_method(), None)
 

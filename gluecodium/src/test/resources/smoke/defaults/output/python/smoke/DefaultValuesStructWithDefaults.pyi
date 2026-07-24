@@ -15,65 +15,65 @@ class DefaultValuesStructWithDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DefaultValuesStructWithDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DefaultValuesStructWithDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DefaultValuesStructWithDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):
-      self._native.int_field = getattr(value, "_native", value)
+      self._native.int_field = _unwrap(value, int)
 
 
 
     @property
     def uint_field(self) -> int:
         """"""
-        return self._native.uint_field
+        return _wrap(self._native.uint_field, int)
     @uint_field.setter
     def uint_field(self, value: int):
-      self._native.uint_field = getattr(value, "_native", value)
+      self._native.uint_field = _unwrap(value, int)
 
 
 
     @property
     def float_field(self) -> float:
         """"""
-        return self._native.float_field
+        return _wrap(self._native.float_field, float)
     @float_field.setter
     def float_field(self, value: float):
-      self._native.float_field = getattr(value, "_native", value)
+      self._native.float_field = _unwrap(value, float)
 
 
 
     @property
     def double_field(self) -> float:
         """"""
-        return self._native.double_field
+        return _wrap(self._native.double_field, float)
     @double_field.setter
     def double_field(self, value: float):
-      self._native.double_field = getattr(value, "_native", value)
+      self._native.double_field = _unwrap(value, float)
 
 
 
     @property
     def bool_field(self) -> bool:
         """"""
-        return self._native.bool_field
+        return _wrap(self._native.bool_field, bool)
     @bool_field.setter
     def bool_field(self, value: bool):
-      self._native.bool_field = getattr(value, "_native", value)
+      self._native.bool_field = _unwrap(value, bool)
 
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, str)
 
 

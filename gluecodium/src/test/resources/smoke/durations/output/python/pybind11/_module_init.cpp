@@ -10,13 +10,13 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_DurationDefaults(pybind11::module_& module);
-void register_DurationInterface(pybind11::module_& module);
-void register_DurationMilliseconds(pybind11::module_& module);
-void register_DurationMillisecondsDurationStruct(pybind11::module_& module);
-void register_DurationOverloads(pybind11::module_& module);
-void register_DurationSeconds(pybind11::module_& module);
-void register_DurationSecondsDurationStruct(pybind11::module_& module);
+void register_smoke_DurationDefaults(pybind11::module_& module);
+void register_smoke_DurationInterface(pybind11::module_& module);
+void register_smoke_DurationMilliseconds(pybind11::module_& module);
+void register_smoke_DurationMillisecondsDurationStruct(pybind11::module_& module);
+void register_smoke_DurationOverloads(pybind11::module_& module);
+void register_smoke_DurationSeconds(pybind11::module_& module);
+void register_smoke_DurationSecondsDurationStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -24,11 +24,11 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_DurationDefaults(m);
-    register_DurationInterface(m);
-    register_DurationMilliseconds(m);
-    register_DurationMillisecondsDurationStruct(m);
-    register_DurationOverloads(m);
-    register_DurationSeconds(m);
-    register_DurationSecondsDurationStruct(m);
+    register_smoke_DurationDefaults(m);
+    register_smoke_DurationInterface(m);
+    register_smoke_DurationMilliseconds(m);
+    register_smoke_DurationMillisecondsDurationStruct(m);
+    register_smoke_DurationOverloads(m);
+    register_smoke_DurationSeconds(m);
+    register_smoke_DurationSecondsDurationStruct(m);
 }

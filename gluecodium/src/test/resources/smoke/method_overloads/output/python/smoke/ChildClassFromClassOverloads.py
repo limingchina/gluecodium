@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ParentClass import ParentClass
 
 import generated
@@ -25,11 +28,11 @@ class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
 
     def foo(*args, **kwargs):
         """"""
-        return generated.ChildClassFromClassOverloads.foo(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.ChildClassFromClassOverloads.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(*args, **kwargs):
         """"""
-        return generated.ChildClassFromClassOverloads.bar(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.ChildClassFromClassOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,35 +19,35 @@ class SomeMutableCustomStructWithDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.SomeMutableCustomStructWithDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SomeMutableCustomStructWithDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.SomeMutableCustomStructWithDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def int_field(self) -> int:
         """"""
-        return self._native.int_field
+        return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):
-      self._native.int_field = getattr(value, "_native", value)
+      self._native.int_field = _unwrap(value, int)
 
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, str)
 
 
 
     @property
     def list_field(self) -> list[int]:
         """"""
-        return self._native.list_field
+        return _wrap(self._native.list_field, list[int])
     @list_field.setter
     def list_field(self, value: list[int]):
-      self._native.list_field = getattr(value, "_native", value)
+      self._native.list_field = _unwrap(value, list[int])
 
 

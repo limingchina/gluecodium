@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,14 +18,14 @@ namespace py = pybind11;
 using InternalClassWithFunctions = ::smoke::InternalClassWithFunctions;
 
 
-void register_InternalClassWithFunctions(py::module_& module) {
+void register_smoke_InternalClassWithFunctions(py::module_& module) {
     py::class_<InternalClassWithFunctions, std::shared_ptr<InternalClassWithFunctions>>(module, "InternalClassWithFunctions")
-        .def("foo_bar", &InternalClassWithFunctions::foo_bar)
+        .def(py::init<>())
 
         .def_static("make", py::overload_cast<>(&InternalClassWithFunctions::make))
+        .def(py::init<::std::string>(py::arg("foo")))
 
         .def_static("make", py::overload_cast<const ::std::string&>(&InternalClassWithFunctions::make), py::arg("foo"))
-
         ;
 }
 

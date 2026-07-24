@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 import datetime
 
 
@@ -17,25 +20,25 @@ class DatesSteadyDateStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DatesSteadyDateStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DatesSteadyDateStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DatesSteadyDateStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def date_field(self) -> datetime.datetime:
         """"""
-        return self._native.date_field
+        return _wrap(self._native.date_field, datetime.datetime)
     @date_field.setter
     def date_field(self, value: datetime.datetime):
-      self._native.date_field = getattr(value, "_native", value)
+      self._native.date_field = _unwrap(value, datetime.datetime)
 
 
 
     @property
     def nullable_date_field(self):
         """"""
-        return self._native.nullable_date_field
+        return _wrap(self._native.nullable_date_field, Optional[datetime.datetime])
     @nullable_date_field.setter
     def nullable_date_field(self, value):
-      self._native.nullable_date_field = getattr(value, "_native", value)
+      self._native.nullable_date_field = _unwrap(value, Optional[datetime.datetime])
 
 

@@ -15,15 +15,15 @@ class ListenersWithReturnValuesResultStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.ListenersWithReturnValuesResultStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ListenersWithReturnValuesResultStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.ListenersWithReturnValuesResultStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def result(self) -> float:
         """"""
-        return self._native.result
+        return _wrap(self._native.result, float)
     @result.setter
     def result(self, value: float):
-      self._native.result = getattr(value, "_native", value)
+      self._native.result = _unwrap(value, float)
 
 

@@ -1,5 +1,6 @@
 
 
+from smoke.AsyncError import AsyncError
 from smoke.AsyncErrorCode import AsyncErrorCode
 import typing
 

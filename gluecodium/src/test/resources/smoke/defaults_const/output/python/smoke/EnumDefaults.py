@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from fire.Enum1 import Enum1
 from fire.Enum2 import Enum2
 from fire.Enum3 import Enum3

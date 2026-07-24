@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,21 +19,21 @@ class PlatformNamesBasicStruct(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PlatformNamesBasicStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PlatformNamesBasicStruct(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PlatformNamesBasicStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def string_field(self) -> str:
         """"""
-        return self._native.string_field
+        return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
-      self._native.string_field = getattr(value, "_native", value)
+      self._native.string_field = _unwrap(value, str)
 
 
     @staticmethod
     def make(basic_parameter: str) -> PlatformNamesBasicStruct:
         """"""
-        native_result = generated.PlatformNamesBasicStruct.make(basic_parameter)
+        native_result = generated.PlatformNamesBasicStruct.make(_unwrap(basic_parameter, str))
         return PlatformNamesBasicStruct(native_result)
 

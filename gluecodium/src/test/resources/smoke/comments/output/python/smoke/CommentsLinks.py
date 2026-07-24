@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.commentsSomeEnum import commentsSomeEnum
 from smoke.commentsSomeStruct import commentsSomeStruct
+from smoke.commentsSomethingWrong import commentsSomethingWrong
 
 from _native_base import _NativeBase
 
@@ -54,6 +58,6 @@ Not working for Java:
 
 Not working for Swift:
 * named comment: [Alternative name for the link, stripped for Swift][comments.VeryUseful]"""
-        return self._native.random_method(*[getattr(a, "_native", a) for a in args])
+        return _wrap(self._native.random_method(*[_unwrap(a) for a in args]), commentsSomeEnum)
 
 

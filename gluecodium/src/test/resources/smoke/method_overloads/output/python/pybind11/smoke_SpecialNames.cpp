@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,18 +18,11 @@ namespace py = pybind11;
 using SpecialNames = ::smoke::SpecialNames;
 
 
-void register_SpecialNames(py::module_& module) {
+void register_smoke_SpecialNames(py::module_& module) {
     py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(module, "SpecialNames")
-        .def("create", &SpecialNames::create)
-
-        .def("release", &SpecialNames::release)
-
-        .def("create_proxy", &SpecialNames::create_proxy)
-
-        .def("_uppercase", &SpecialNames::_uppercase)
+        .def(py::init<::std::string>(py::arg("result")))
 
         .def_static("make", &SpecialNames::make, py::arg("result"))
-
         ;
 }
 

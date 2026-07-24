@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -17,24 +20,24 @@ class CachedProperties(_NativeBase):
     @property
     def cached_property(self) -> list[str]:
         """"""
-        return self._native.cached_property
+        return _wrap(self._native.cached_property, list[str])
 
 
     @property
     def internal_cached_property(self) -> list[str]:
         """"""
-        return self._native.internal_cached_property
+        return _wrap(self._native.internal_cached_property, list[str])
 
 
 
     @staticmethod
     def static_cached_property() -> bytes:
         """"""
-        return generated.CachedProperties.static_cached_property()
+        return _wrap(generated.CachedProperties.static_cached_property(), bytes)
 
 
     @staticmethod
     def internal_static_cached_property() -> bytes:
         """"""
-        return generated.CachedProperties.internal_static_cached_property()
+        return _wrap(generated.CachedProperties.internal_static_cached_property(), bytes)
 

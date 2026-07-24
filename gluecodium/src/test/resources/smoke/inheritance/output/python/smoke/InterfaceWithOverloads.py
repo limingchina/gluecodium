@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,6 +29,6 @@ class InterfaceWithOverloads(generated.InterfaceWithOverloads):
 
     def parent_method(*args, **kwargs):
         """"""
-        return generated.InterfaceWithOverloads.parent_method(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.InterfaceWithOverloads.parent_method(self, *[_unwrap(a) for a in args]), None)
 
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ErrorsInterfaceExternal import ErrorsInterfaceExternal
 from smoke.ErrorsInterfaceExternalErrors import ErrorsInterfaceExternalErrors
 from smoke.ErrorsInterfaceInternal import ErrorsInterfaceInternal
@@ -32,15 +35,15 @@ class ErrorsInterface(generated.ErrorsInterface):
 
     def method_with_errors(self):
         """"""
-        return generated.ErrorsInterface.method_with_errors(self)
+        return _wrap(generated.ErrorsInterface.method_with_errors(self), None)
 
     def method_with_external_errors(self):
         """"""
-        return generated.ErrorsInterface.method_with_external_errors(self)
+        return _wrap(generated.ErrorsInterface.method_with_external_errors(self), None)
 
     def method_with_errors_and_return_value(self) -> str:
         """"""
-        return generated.ErrorsInterface.method_with_errors_and_return_value(self)
+        return _wrap(generated.ErrorsInterface.method_with_errors_and_return_value(self), str)
 
     @staticmethod
     def method_with_payload_error():

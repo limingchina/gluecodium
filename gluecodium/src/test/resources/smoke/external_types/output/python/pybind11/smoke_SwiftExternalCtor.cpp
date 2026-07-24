@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,13 +16,14 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SwiftExternalCtor = ::smoke::SwiftExternalCtor;
 
-void register_SwiftExternalCtor(py::module_& module) {
+void register_smoke_SwiftExternalCtor(py::module_& module) {
     py::class_<SwiftExternalCtor>(module, "SwiftExternalCtor")
         .def_readwrite("field", &SwiftExternalCtor::field)
         .def(py::init<>())
-        .def(py::init<::std::string>(), py::arg("field"))
-        .def_static("make", &SwiftExternalCtor::make, py::arg("field"))
+        .def(py::init<::std::string(), py::arg("field"))
+        .def(py::init<::std::string>(py::arg("field")))
 
+        .def_static("make", &SwiftExternalCtor::make, py::arg("field"))
         ;
 }
 

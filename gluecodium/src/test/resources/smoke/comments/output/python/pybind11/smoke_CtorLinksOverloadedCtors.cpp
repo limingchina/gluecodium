@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,12 +18,14 @@ namespace py = pybind11;
 using OverloadedCtors = ::smoke::CtorLinks::OverloadedCtors;
 
 
-void register_CtorLinksOverloadedCtors(py::module_& module) {
+void register_smoke_CtorLinksOverloadedCtors(py::module_& module) {
     py::class_<OverloadedCtors, std::shared_ptr<OverloadedCtors>>(module, "CtorLinksOverloadedCtors")
+        .def(py::init<::std::string>(py::arg("input")))
+
         .def_static("create", py::overload_cast<const ::std::string&>(&OverloadedCtors::create), py::arg("input"))
+        .def(py::init<::std::string, bool>(py::arg("input"), py::arg("flag")))
 
         .def_static("create", py::overload_cast<const ::std::string&, const bool>(&OverloadedCtors::create), py::arg("input"), py::arg("flag"))
-
         ;
 }
 

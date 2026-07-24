@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
+from smoke.ConstructorsConstructorExploded import ConstructorsConstructorExploded
 from smoke.ConstructorsErrorEnum import ConstructorsErrorEnum
 
 import generated
@@ -26,7 +30,7 @@ class Constructors(generated.Constructors):
     @staticmethod
     def create(*args, **kwargs) -> Constructors:
         """"""
-        native_result = generated.Constructors.create(*[getattr(a, "_native", a) for a in args])
+        native_result = generated.Constructors.create(*[_unwrap(a) for a in args])
         return Constructors(native_result)
 
 

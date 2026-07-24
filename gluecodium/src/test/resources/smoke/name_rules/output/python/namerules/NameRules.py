@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
+from namerules.NameRulesExample import NameRulesExample
 from namerules.NameRulesExampleErrorCode import NameRulesExampleErrorCode
 from namerules.NameRulesExampleStruct import NameRulesExampleStruct
 
@@ -24,32 +28,32 @@ class NameRules(_NativeBase):
 
     def some_method(self, some_argument: NameRulesExampleStruct) -> float:
         """"""
-        return self._native.some_method(some_argument._native)
+        return _wrap(self._native.some_method(_unwrap(some_argument, NameRulesExampleStruct)), float)
 
     @property
     def int_property(self) -> int:
         """"""
-        return self._native.int_property
+        return _wrap(self._native.int_property, int)
 
     @int_property.setter
     def int_property(self, value: int):
-        self._native.int_property = value
+        self._native.int_property = _unwrap(value, int)
 
     @property
     def is_boolean_property(self) -> bool:
         """"""
-        return self._native.is_boolean_property
+        return _wrap(self._native.is_boolean_property, bool)
 
     @is_boolean_property.setter
     def is_boolean_property(self, value: bool):
-        self._native.is_boolean_property = value
+        self._native.is_boolean_property = _unwrap(value, bool)
 
     @property
     def struct_property(self) -> NameRulesExampleStruct:
         """"""
-        return self._native.struct_property
+        return _wrap(self._native.struct_property, NameRulesExampleStruct)
 
     @struct_property.setter
     def struct_property(self, value: NameRulesExampleStruct):
-        self._native.struct_property = value
+        self._native.struct_property = _unwrap(value, NameRulesExampleStruct)
 

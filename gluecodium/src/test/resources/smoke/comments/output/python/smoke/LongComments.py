@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -19,5 +22,5 @@ This too!"""
 
     def some_method_with_long_comment(self, input: str, ratio: float) -> float:
         """This is very important method. It has very important parameters. It has side effects."""
-        return self._native.some_method_with_long_comment(input, ratio)
+        return _wrap(self._native.some_method_with_long_comment(_unwrap(input, str), _unwrap(ratio, float)), float)
 

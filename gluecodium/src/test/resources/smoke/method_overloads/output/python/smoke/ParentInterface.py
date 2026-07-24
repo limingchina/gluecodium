@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,14 +29,14 @@ class ParentInterface(generated.ParentInterface):
 
     def foo(*args, **kwargs):
         """"""
-        return generated.ParentInterface.foo(self, *[getattr(a, "_native", a) for a in args])
+        return _wrap(generated.ParentInterface.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(self):
         """"""
-        return generated.ParentInterface.bar(self)
+        return _wrap(generated.ParentInterface.bar(self), None)
 
     def baz(self):
         """"""
-        return generated.ParentInterface.baz(self)
+        return _wrap(generated.ParentInterface.baz(self), None)
 

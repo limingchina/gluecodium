@@ -145,11 +145,12 @@ internal class PythonNameResolver(
      * match the per-file module grouping. Returns `null` when the declaring file is unknown.
      */
     fun resolveFileReferenceName(element: Any): String? {
-        val limeType = when (element) {
-            is LimeTypeRef -> element.type.actualType
-            is LimeType -> element.actualType
-            else -> return null
-        }
+        val limeType =
+            when (element) {
+                is LimeTypeRef -> element.type.actualType
+                is LimeType -> element.actualType
+                else -> return null
+            }
         val namedType = limeType as? LimeNamedElement ?: return null
         val fileName = fileNameMap[namedType.fullName] ?: return null
         val moduleName = File(fileName).nameWithoutExtension

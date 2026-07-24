@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,15 +19,15 @@ class TypeDefsStructHavingAliasFieldDefinedBelow(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.TypeDefsStructHavingAliasFieldDefinedBelow):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypeDefsStructHavingAliasFieldDefinedBelow(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.TypeDefsStructHavingAliasFieldDefinedBelow(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def field(self) -> float:
         """"""
-        return self._native.field
+        return _wrap(self._native.field, float)
     @field.setter
     def field(self, value: float):
-      self._native.field = getattr(value, "_native", value)
+      self._native.field = _unwrap(value, float)
 
 

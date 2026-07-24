@@ -21,18 +21,18 @@ class Dates(_NativeBase):
     @property
     def date_property(self) -> datetime.datetime:
         """"""
-        return self._native.date_property
+        return _wrap(self._native.date_property, datetime.datetime)
 
     @date_property.setter
     def date_property(self, value: datetime.datetime):
-        self._native.date_property = value
+        self._native.date_property = _unwrap(value, datetime.datetime)
 
     @property
     def date_set(self) -> set[datetime.datetime]:
         """"""
-        return self._native.date_set
+        return _wrap(self._native.date_set, set[datetime.datetime])
 
     @date_set.setter
     def date_set(self, value: set[datetime.datetime]):
-        self._native.date_set = value
+        self._native.date_set = _unwrap(value, set[datetime.datetime])
 

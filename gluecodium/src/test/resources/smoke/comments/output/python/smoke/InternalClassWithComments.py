@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,5 +19,5 @@ class InternalClassWithComments(_NativeBase):
 
     def do_nothing(self):
         """This is definitely internal"""
-        return self._native.do_nothing()
+        return _wrap(self._native.do_nothing(), None)
 

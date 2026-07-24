@@ -29,63 +29,63 @@ class ListenerWithProperties(generated.ListenerWithProperties):
     @property
     def message(self) -> str:
         """"""
-        return generated.ListenerWithProperties.message.fget(self)
+        return _wrap(generated.ListenerWithProperties.message.fget(self), str)
 
     @message.setter
     def message(self, value: str):
-        generated.ListenerWithProperties.message.fset(self, value)
+        generated.ListenerWithProperties.message.fset(self, _unwrap(value, str))
 
     @property
     def packed_message(self) -> CalculationResult:
         """"""
-        return generated.ListenerWithProperties.packed_message.fget(self)
+        return _wrap(generated.ListenerWithProperties.packed_message.fget(self), CalculationResult)
 
     @packed_message.setter
     def packed_message(self, value: CalculationResult):
-        generated.ListenerWithProperties.packed_message.fset(self, value)
+        generated.ListenerWithProperties.packed_message.fset(self, _unwrap(value, CalculationResult))
 
     @property
     def structured_message(self) -> ListenerWithPropertiesResultStruct:
         """"""
-        return generated.ListenerWithProperties.structured_message.fget(self)
+        return _wrap(generated.ListenerWithProperties.structured_message.fget(self), ListenerWithPropertiesResultStruct)
 
     @structured_message.setter
     def structured_message(self, value: ListenerWithPropertiesResultStruct):
-        generated.ListenerWithProperties.structured_message.fset(self, value)
+        generated.ListenerWithProperties.structured_message.fset(self, _unwrap(value, ListenerWithPropertiesResultStruct))
 
     @property
     def enumerated_message(self) -> ListenerWithPropertiesResultEnum:
         """"""
-        return generated.ListenerWithProperties.enumerated_message.fget(self)
+        return _wrap(generated.ListenerWithProperties.enumerated_message.fget(self), ListenerWithPropertiesResultEnum)
 
     @enumerated_message.setter
     def enumerated_message(self, value: ListenerWithPropertiesResultEnum):
-        generated.ListenerWithProperties.enumerated_message.fset(self, value)
+        generated.ListenerWithProperties.enumerated_message.fset(self, _unwrap(value, ListenerWithPropertiesResultEnum))
 
     @property
     def arrayed_message(self) -> list[str]:
         """"""
-        return generated.ListenerWithProperties.arrayed_message.fget(self)
+        return _wrap(generated.ListenerWithProperties.arrayed_message.fget(self), list[str])
 
     @arrayed_message.setter
     def arrayed_message(self, value: list[str]):
-        generated.ListenerWithProperties.arrayed_message.fset(self, value)
+        generated.ListenerWithProperties.arrayed_message.fset(self, _unwrap(value, list[str]))
 
     @property
     def mapped_message(self) -> dict[str, float]:
         """"""
-        return generated.ListenerWithProperties.mapped_message.fget(self)
+        return _wrap(generated.ListenerWithProperties.mapped_message.fget(self), dict[str, float])
 
     @mapped_message.setter
     def mapped_message(self, value: dict[str, float]):
-        generated.ListenerWithProperties.mapped_message.fset(self, value)
+        generated.ListenerWithProperties.mapped_message.fset(self, _unwrap(value, dict[str, float]))
 
     @property
     def buffered_message(self) -> bytes:
         """"""
-        return generated.ListenerWithProperties.buffered_message.fget(self)
+        return _wrap(generated.ListenerWithProperties.buffered_message.fget(self), bytes)
 
     @buffered_message.setter
     def buffered_message(self, value: bytes):
-        generated.ListenerWithProperties.buffered_message.fset(self, value)
+        generated.ListenerWithProperties.buffered_message.fset(self, _unwrap(value, bytes))
 

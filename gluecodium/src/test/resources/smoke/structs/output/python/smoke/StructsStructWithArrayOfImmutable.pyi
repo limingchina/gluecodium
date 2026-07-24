@@ -1,5 +1,6 @@
 
 
+from smoke.StructsAllTypesStruct import StructsAllTypesStruct
 import typing
 
 
@@ -15,12 +16,12 @@ class StructsStructWithArrayOfImmutable(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsStructWithArrayOfImmutable):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsStructWithArrayOfImmutable(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsStructWithArrayOfImmutable(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def array_field(self) -> list[StructsAllTypesStruct]:
         """"""
-        return self._native.array_field
+        return _wrap(self._native.array_field, list[StructsAllTypesStruct])
 
 

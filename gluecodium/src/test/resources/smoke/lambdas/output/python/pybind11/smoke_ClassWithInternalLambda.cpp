@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -17,10 +18,8 @@ namespace py = pybind11;
 using ClassWithInternalLambda = ::smoke::ClassWithInternalLambda;
 
 
-void register_ClassWithInternalLambda(py::module_& module) {
+void register_smoke_ClassWithInternalLambda(py::module_& module) {
     py::class_<ClassWithInternalLambda, std::shared_ptr<ClassWithInternalLambda>>(module, "ClassWithInternalLambda")
-        .def_static("invoke_internal_lambda", &ClassWithInternalLambda::invoke_internal_lambda, py::arg("lambda"), py::arg("value"))
-
         ;
 }
 

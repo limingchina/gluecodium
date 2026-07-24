@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -18,15 +19,14 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseEnumOptionSet = ::smoke::UseEnumOptionSet;
 
-void register_UseEnumOptionSet(py::module_& module) {
+void register_smoke_UseEnumOptionSet(py::module_& module) {
     py::class_<UseEnumOptionSet>(module, "UseEnumOptionSet")
         .def_readwrite("set_field", &UseEnumOptionSet::set_field)
         .def_readwrite("set_field_empty", &UseEnumOptionSet::set_field_empty)
         .def_readwrite("set_field_value", &UseEnumOptionSet::set_field_value)
         .def(py::init<>())
-        .def(py::init<::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >>(), py::arg("set_field"), py::arg("set_field_empty"), py::arg("set_field_value"))
-        .def_static("round_trip", &UseEnumOptionSet::round_trip, py::arg("input"))
-
+        .def(py::init<::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >>(py::arg("set_field")))
+        .def(py::init<::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >(), py::arg("set_field"), py::arg("set_field_empty"), py::arg("set_field_value"))
         ;
 }
 

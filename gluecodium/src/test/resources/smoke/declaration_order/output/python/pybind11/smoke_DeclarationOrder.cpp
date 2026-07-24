@@ -6,18 +6,25 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/UnorderedMapHash.h"
+#include "gluecodium/VectorHash.h"
 #include "smoke/DeclarationOrder.h"
+#include "cstdint"
 #include "string"
+#include "unordered_map"
+#include "vector"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DeclarationOrder = ::smoke::DeclarationOrder;
 
-void register_DeclarationOrder(py::module_& module) {
+void register_smoke_DeclarationOrder(py::module_& module) {
     py::class_<DeclarationOrder>(module, "DeclarationOrder")
         .def(py::init<>())
+        .def(py::init<(), )
         ;
 }
 

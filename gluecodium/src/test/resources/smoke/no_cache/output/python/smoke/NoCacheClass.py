@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -22,5 +25,5 @@ class NoCacheClass(_NativeBase):
 
     def foo(self):
         """"""
-        return self._native.foo()
+        return _wrap(self._native.foo(), None)
 

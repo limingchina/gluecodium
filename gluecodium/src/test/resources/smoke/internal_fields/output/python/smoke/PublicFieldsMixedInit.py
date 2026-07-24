@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,35 +19,35 @@ class PublicFieldsMixedInit(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.PublicFieldsMixedInit):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicFieldsMixedInit(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.PublicFieldsMixedInit(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def public_field1(self) -> str:
         """"""
-        return self._native.public_field1
+        return _wrap(self._native.public_field1, str)
     @public_field1.setter
     def public_field1(self, value: str):
-      self._native.public_field1 = getattr(value, "_native", value)
+      self._native.public_field1 = _unwrap(value, str)
 
 
 
     @property
     def public_field2(self) -> str:
         """"""
-        return self._native.public_field2
+        return _wrap(self._native.public_field2, str)
     @public_field2.setter
     def public_field2(self, value: str):
-      self._native.public_field2 = getattr(value, "_native", value)
+      self._native.public_field2 = _unwrap(value, str)
 
 
 
     @property
     def internal_field(self) -> str:
         """"""
-        return self._native.internal_field
+        return _wrap(self._native.internal_field, str)
     @internal_field.setter
     def internal_field(self, value: str):
-      self._native.internal_field = getattr(value, "_native", value)
+      self._native.internal_field = _unwrap(value, str)
 
 

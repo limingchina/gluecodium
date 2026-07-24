@@ -10,13 +10,13 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_ClassWithInternalLambda(pybind11::module_& module);
-void register_Lambdas(pybind11::module_& module);
-void register_LambdasDeclarationOrder(pybind11::module_& module);
-void register_LambdasDeclarationOrderSomeStruct(pybind11::module_& module);
-void register_LambdasInterface(pybind11::module_& module);
-void register_LambdasWithStructuredTypes(pybind11::module_& module);
-void register_OuterClassWithLambdaAndProperty(pybind11::module_& module);
+void register_smoke_ClassWithInternalLambda(pybind11::module_& module);
+void register_smoke_Lambdas(pybind11::module_& module);
+void register_smoke_LambdasDeclarationOrder(pybind11::module_& module);
+void register_smoke_LambdasDeclarationOrderSomeStruct(pybind11::module_& module);
+void register_smoke_LambdasInterface(pybind11::module_& module);
+void register_smoke_LambdasWithStructuredTypes(pybind11::module_& module);
+void register_smoke_OuterClassWithLambdaAndProperty(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -24,11 +24,11 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_ClassWithInternalLambda(m);
-    register_Lambdas(m);
-    register_LambdasDeclarationOrder(m);
-    register_LambdasDeclarationOrderSomeStruct(m);
-    register_LambdasInterface(m);
-    register_LambdasWithStructuredTypes(m);
-    register_OuterClassWithLambdaAndProperty(m);
+    register_smoke_ClassWithInternalLambda(m);
+    register_smoke_Lambdas(m);
+    register_smoke_LambdasDeclarationOrder(m);
+    register_smoke_LambdasDeclarationOrderSomeStruct(m);
+    register_smoke_LambdasInterface(m);
+    register_smoke_LambdasWithStructuredTypes(m);
+    register_smoke_OuterClassWithLambdaAndProperty(m);
 }

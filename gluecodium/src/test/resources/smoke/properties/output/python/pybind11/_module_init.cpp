@@ -10,12 +10,12 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_CachedProperties(pybind11::module_& module);
-void register_Properties(pybind11::module_& module);
-void register_PropertiesExampleStruct(pybind11::module_& module);
-void register_PropertiesInterface(pybind11::module_& module);
-void register_PropertiesInterfaceExampleStruct(pybind11::module_& module);
-void register_PropertiesInternalErrorCode(pybind11::module_& module);
+void register_smoke_CachedProperties(pybind11::module_& module);
+void register_smoke_Properties(pybind11::module_& module);
+void register_smoke_PropertiesExampleStruct(pybind11::module_& module);
+void register_smoke_PropertiesInterface(pybind11::module_& module);
+void register_smoke_PropertiesInterfaceExampleStruct(pybind11::module_& module);
+void register_smoke_PropertiesInternalErrorCode(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -23,10 +23,10 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_CachedProperties(m);
-    register_Properties(m);
-    register_PropertiesExampleStruct(m);
-    register_PropertiesInterface(m);
-    register_PropertiesInterfaceExampleStruct(m);
-    register_PropertiesInternalErrorCode(m);
+    register_smoke_CachedProperties(m);
+    register_smoke_Properties(m);
+    register_smoke_PropertiesExampleStruct(m);
+    register_smoke_PropertiesInterface(m);
+    register_smoke_PropertiesInterfaceExampleStruct(m);
+    register_smoke_PropertiesInternalErrorCode(m);
 }

@@ -10,24 +10,26 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_CalculationResult(pybind11::module_& module);
-void register_Calculator(pybind11::module_& module);
-void register_CalculatorListener(pybind11::module_& module);
-void register_CalculatorListenerResultStruct(pybind11::module_& module);
-void register_InterfaceWithStatic(pybind11::module_& module);
-void register_InternalListener(pybind11::module_& module);
-void register_ListenerInterface(pybind11::module_& module);
-void register_ListenerWithNullable(pybind11::module_& module);
-void register_ListenerWithProperties(pybind11::module_& module);
-void register_ListenerWithPropertiesResultEnum(pybind11::module_& module);
-void register_ListenerWithPropertiesResultStruct(pybind11::module_& module);
-void register_ListenersWithReturnValues(pybind11::module_& module);
-void register_ListenersWithReturnValuesResultEnum(pybind11::module_& module);
-void register_ListenersWithReturnValuesResultStruct(pybind11::module_& module);
-void register_TemperatureObserver(pybind11::module_& module);
-void register_Thermometer(pybind11::module_& module);
-void register_ThermometerSomeThermometerErrorCode(pybind11::module_& module);
-void register_Weakling(pybind11::module_& module);
+void register_smoke_CalculationResult(pybind11::module_& module);
+void register_smoke_Calculator(pybind11::module_& module);
+void register_smoke_CalculatorListener(pybind11::module_& module);
+void register_smoke_CalculatorListenerResultStruct(pybind11::module_& module);
+void register_smoke_InterfaceWithStatic(pybind11::module_& module);
+void register_smoke_InternalListener(pybind11::module_& module);
+void register_smoke_ListenerInterface(pybind11::module_& module);
+void register_smoke_ListenerWithNullable(pybind11::module_& module);
+void register_smoke_ListenerWithProperties(pybind11::module_& module);
+void register_smoke_ListenerWithPropertiesResultEnum(pybind11::module_& module);
+void register_smoke_ListenerWithPropertiesResultStruct(pybind11::module_& module);
+void register_smoke_ListenersWithReturnValues(pybind11::module_& module);
+void register_smoke_ListenersWithReturnValuesResultEnum(pybind11::module_& module);
+void register_smoke_ListenersWithReturnValuesResultStruct(pybind11::module_& module);
+void register_smoke_TemperatureObserver(pybind11::module_& module);
+void register_smoke_Thermometer(pybind11::module_& module);
+void register_smoke_ThermometerAnotherNotification(pybind11::module_& module);
+void register_smoke_ThermometerNotification(pybind11::module_& module);
+void register_smoke_ThermometerSomeThermometerErrorCode(pybind11::module_& module);
+void register_smoke_Weakling(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -35,22 +37,24 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_CalculationResult(m);
-    register_Calculator(m);
-    register_CalculatorListener(m);
-    register_CalculatorListenerResultStruct(m);
-    register_InterfaceWithStatic(m);
-    register_InternalListener(m);
-    register_ListenerInterface(m);
-    register_ListenerWithNullable(m);
-    register_ListenerWithProperties(m);
-    register_ListenerWithPropertiesResultEnum(m);
-    register_ListenerWithPropertiesResultStruct(m);
-    register_ListenersWithReturnValues(m);
-    register_ListenersWithReturnValuesResultEnum(m);
-    register_ListenersWithReturnValuesResultStruct(m);
-    register_TemperatureObserver(m);
-    register_Thermometer(m);
-    register_ThermometerSomeThermometerErrorCode(m);
-    register_Weakling(m);
+    register_smoke_CalculationResult(m);
+    register_smoke_Calculator(m);
+    register_smoke_CalculatorListener(m);
+    register_smoke_CalculatorListenerResultStruct(m);
+    register_smoke_InterfaceWithStatic(m);
+    register_smoke_InternalListener(m);
+    register_smoke_ListenerInterface(m);
+    register_smoke_ListenerWithNullable(m);
+    register_smoke_ListenerWithProperties(m);
+    register_smoke_ListenerWithPropertiesResultEnum(m);
+    register_smoke_ListenerWithPropertiesResultStruct(m);
+    register_smoke_ListenersWithReturnValues(m);
+    register_smoke_ListenersWithReturnValuesResultEnum(m);
+    register_smoke_ListenersWithReturnValuesResultStruct(m);
+    register_smoke_TemperatureObserver(m);
+    register_smoke_Thermometer(m);
+    register_smoke_ThermometerAnotherNotification(m);
+    register_smoke_ThermometerNotification(m);
+    register_smoke_ThermometerSomeThermometerErrorCode(m);
+    register_smoke_Weakling(m);
 }

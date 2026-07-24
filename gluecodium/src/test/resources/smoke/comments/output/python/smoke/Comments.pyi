@@ -1,6 +1,7 @@
 
 
 from smoke.commentsSomeEnum import commentsSomeEnum
+from smoke.commentsSomethingWrong import commentsSomethingWrong
 import typing
 
 from _native_base import _NativeBase
@@ -41,26 +42,26 @@ class Comments(_NativeBase):
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
-        return self._native.is_some_property
+        return _wrap(self._native.is_some_property, bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        self._native.is_some_property = value
+        self._native.is_some_property = _unwrap(value, bool)
 
     @property
     def only_getter_property(self) -> int:
         """OnlyGetterProperty, which does not have a setter."""
-        return self._native.only_getter_property
+        return _wrap(self._native.only_getter_property, int)
 
 
     @property
     def is_is_visible(self) -> bool:
         """A flag that determines if [OnlyGetterProperty] is visible on the screen."""
-        return self._native.is_is_visible
+        return _wrap(self._native.is_is_visible, bool)
 
     @is_is_visible.setter
     def is_is_visible(self, value: bool):
-        self._native.is_is_visible = value
+        self._native.is_is_visible = _unwrap(value, bool)
 
     This is some very useful constant.
     VERY_USEFUL = True

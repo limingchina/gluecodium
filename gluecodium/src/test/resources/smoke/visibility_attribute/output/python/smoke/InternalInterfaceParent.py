@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,14 +29,14 @@ class InternalInterfaceParent(generated.InternalInterfaceParent):
 
     def foo_bar(self):
         """"""
-        return generated.InternalInterfaceParent.foo_bar(self)
+        return _wrap(generated.InternalInterfaceParent.foo_bar(self), None)
 
     @property
     def prop(self) -> str:
         """"""
-        return generated.InternalInterfaceParent.prop.fget(self)
+        return _wrap(generated.InternalInterfaceParent.prop.fget(self), str)
 
     @prop.setter
     def prop(self, value: str):
-        generated.InternalInterfaceParent.prop.fset(self, value)
+        generated.InternalInterfaceParent.prop.fset(self, _unwrap(value, str))
 

@@ -16,15 +16,15 @@ class StructWithInterface(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructWithInterface):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithInterface(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructWithInterface(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def interface_instance(self) -> SimpleInterface:
         """"""
-        return SimpleInterface(self._native.interface_instance)
+        return _wrap(self._native.interface_instance, SimpleInterface)
     @interface_instance.setter
     def interface_instance(self, value: SimpleInterface):
-      self._native.interface_instance = getattr(value, "_native", value)
+      self._native.interface_instance = _unwrap(value, SimpleInterface)
 
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,21 +19,21 @@ class MultipleAttributesSwift(_NativeBase):
 
     def no_lists2(self):
         """"""
-        return self._native.no_lists2()
+        return _wrap(self._native.no_lists2(), None)
 
     def no_lists3(self):
         """"""
-        return self._native.no_lists3()
+        return _wrap(self._native.no_lists3(), None)
 
     def list_first(self):
         """"""
-        return self._native.list_first()
+        return _wrap(self._native.list_first(), None)
 
     def list_second(self):
         """"""
-        return self._native.list_second()
+        return _wrap(self._native.list_second(), None)
 
     def two_lists(self):
         """"""
-        return self._native.two_lists()
+        return _wrap(self._native.two_lists(), None)
 

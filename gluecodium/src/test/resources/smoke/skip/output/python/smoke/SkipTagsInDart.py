@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,13 +29,13 @@ class SkipTagsInDart(generated.SkipTagsInDart):
 
     def skip_tagged(self):
         """"""
-        return generated.SkipTagsInDart.skip_tagged(self)
+        return _wrap(generated.SkipTagsInDart.skip_tagged(self), None)
 
     def dont_skip_tagged(self):
         """"""
-        return generated.SkipTagsInDart.dont_skip_tagged(self)
+        return _wrap(generated.SkipTagsInDart.dont_skip_tagged(self), None)
 
     def skip_tagged_list(self):
         """"""
-        return generated.SkipTagsInDart.skip_tagged_list(self)
+        return _wrap(generated.SkipTagsInDart.skip_tagged_list(self), None)
 

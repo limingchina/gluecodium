@@ -16,15 +16,15 @@ class OuterStructWithInternalAttribute(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.OuterStructWithInternalAttribute):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterStructWithInternalAttribute(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.OuterStructWithInternalAttribute(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def inner(self) -> OuterStructWithInternalAttributeStructNestedInInternalStruct:
         """"""
-        return OuterStructWithInternalAttributeStructNestedInInternalStruct(self._native.inner)
+        return _wrap(self._native.inner, OuterStructWithInternalAttributeStructNestedInInternalStruct)
     @inner.setter
     def inner(self, value: OuterStructWithInternalAttributeStructNestedInInternalStruct):
-      self._native.inner = getattr(value, "_native", value)
+      self._native.inner = _unwrap(value, OuterStructWithInternalAttributeStructNestedInInternalStruct)
 
 

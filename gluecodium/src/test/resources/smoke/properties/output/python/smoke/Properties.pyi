@@ -19,81 +19,81 @@ class Properties(_NativeBase):
     @property
     def built_in_type_property(self) -> int:
         """"""
-        return self._native.built_in_type_property
+        return _wrap(self._native.built_in_type_property, int)
 
     @built_in_type_property.setter
     def built_in_type_property(self, value: int):
-        self._native.built_in_type_property = value
+        self._native.built_in_type_property = _unwrap(value, int)
 
     @property
     def readonly_property(self) -> float:
         """"""
-        return self._native.readonly_property
+        return _wrap(self._native.readonly_property, float)
 
 
     @property
     def struct_property(self) -> PropertiesExampleStruct:
         """"""
-        return self._native.struct_property
+        return _wrap(self._native.struct_property, PropertiesExampleStruct)
 
     @struct_property.setter
     def struct_property(self, value: PropertiesExampleStruct):
-        self._native.struct_property = value
+        self._native.struct_property = _unwrap(value, PropertiesExampleStruct)
 
     @property
     def array_property(self) -> list[str]:
         """"""
-        return self._native.array_property
+        return _wrap(self._native.array_property, list[str])
 
     @array_property.setter
     def array_property(self, value: list[str]):
-        self._native.array_property = value
+        self._native.array_property = _unwrap(value, list[str])
 
     @property
     def complex_type_property(self) -> PropertiesInternalErrorCode:
         """"""
-        return self._native.complex_type_property
+        return _wrap(self._native.complex_type_property, PropertiesInternalErrorCode)
 
     @complex_type_property.setter
     def complex_type_property(self, value: PropertiesInternalErrorCode):
-        self._native.complex_type_property = value
+        self._native.complex_type_property = _unwrap(value, PropertiesInternalErrorCode)
 
     @property
     def byte_buffer_property(self) -> bytes:
         """"""
-        return self._native.byte_buffer_property
+        return _wrap(self._native.byte_buffer_property, bytes)
 
     @byte_buffer_property.setter
     def byte_buffer_property(self, value: bytes):
-        self._native.byte_buffer_property = value
+        self._native.byte_buffer_property = _unwrap(value, bytes)
 
     @property
     def instance_property(self) -> PropertiesInterface:
         """"""
-        return self._native.instance_property
+        return _wrap(self._native.instance_property, PropertiesInterface)
 
     @instance_property.setter
     def instance_property(self, value: PropertiesInterface):
-        self._native.instance_property = value
+        self._native.instance_property = _unwrap(value, PropertiesInterface)
 
     @property
     def is_boolean_property(self) -> bool:
         """"""
-        return self._native.is_boolean_property
+        return _wrap(self._native.is_boolean_property, bool)
 
     @is_boolean_property.setter
     def is_boolean_property(self, value: bool):
-        self._native.is_boolean_property = value
+        self._native.is_boolean_property = _unwrap(value, bool)
 
 
     @staticmethod
     def static_property() -> str:
         """"""
-        return generated.Properties.static_property()
+        return _wrap(generated.Properties.static_property(), str)
 
 
     @staticmethod
     def static_readonly_property() -> PropertiesExampleStruct:
         """"""
-        return generated.Properties.static_readonly_property()
+        return _wrap(generated.Properties.static_readonly_property(), PropertiesExampleStruct)
 

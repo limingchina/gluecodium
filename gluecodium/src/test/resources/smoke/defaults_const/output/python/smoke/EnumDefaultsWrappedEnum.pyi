@@ -16,15 +16,15 @@ class EnumDefaultsWrappedEnum(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.EnumDefaultsWrappedEnum):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnumDefaultsWrappedEnum(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.EnumDefaultsWrappedEnum(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def struct_field(self) -> EnumWrapper:
         """"""
-        return EnumWrapper(self._native.struct_field)
+        return _wrap(self._native.struct_field, EnumWrapper)
     @struct_field.setter
     def struct_field(self, value: EnumWrapper):
-      self._native.struct_field = getattr(value, "_native", value)
+      self._native.struct_field = _unwrap(value, EnumWrapper)
 
 

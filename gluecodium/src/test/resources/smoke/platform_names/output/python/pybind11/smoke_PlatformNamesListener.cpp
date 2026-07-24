@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -37,7 +38,7 @@ public:
     }
 };
 
-void register_PlatformNamesListener(py::module_& module) {
+void register_smoke_PlatformNamesListener(py::module_& module) {
     py::class_<fooListener, std::shared_ptr<fooListener>, PlatformNamesListenerTrampoline>(module, "PlatformNamesListener")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -51,10 +52,6 @@ void register_PlatformNamesListener(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("basic_method", [](fooListener& self, const ::std::string& basic_parameter) {
-            return self.FooMethod(basic_parameter);
-        }, py::arg("basic_parameter"))
-
         ;
 }
 

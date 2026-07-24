@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -15,18 +16,8 @@ namespace py = pybind11;
 using MultipleAttributesSwift = ::smoke::MultipleAttributesSwift;
 
 
-void register_MultipleAttributesSwift(py::module_& module) {
+void register_smoke_MultipleAttributesSwift(py::module_& module) {
     py::class_<MultipleAttributesSwift, std::shared_ptr<MultipleAttributesSwift>>(module, "MultipleAttributesSwift")
-        .def("no_lists2", &MultipleAttributesSwift::no_lists2)
-
-        .def("no_lists3", &MultipleAttributesSwift::no_lists3)
-
-        .def("list_first", &MultipleAttributesSwift::list_first)
-
-        .def("list_second", &MultipleAttributesSwift::list_second)
-
-        .def("two_lists", &MultipleAttributesSwift::two_lists)
-
         ;
 }
 

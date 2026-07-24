@@ -46,11 +46,11 @@ class CommentsInterface(generated.CommentsInterface):
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
-        return generated.CommentsInterface.is_some_property.fget(self)
+        return _wrap(generated.CommentsInterface.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.CommentsInterface.is_some_property.fset(self, value)
+        generated.CommentsInterface.is_some_property.fset(self, _unwrap(value, bool))
 
     This is some very useful constant.
     VERY_USEFUL = True

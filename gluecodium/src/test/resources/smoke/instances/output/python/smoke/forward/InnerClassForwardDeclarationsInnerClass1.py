@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.forward.InnerClassForwardDeclarationsInnerInterface1 import InnerClassForwardDeclarationsInnerInterface1
 
 import generated
@@ -25,5 +28,5 @@ class InnerClassForwardDeclarationsInnerClass1(generated.InnerClassForwardDeclar
 
     def get_inner_interface(self) -> InnerClassForwardDeclarationsInnerInterface1:
         """"""
-        return generated.InnerClassForwardDeclarationsInnerClass1.get_inner_interface(self)
+        return _wrap(generated.InnerClassForwardDeclarationsInnerClass1.get_inner_interface(self), InnerClassForwardDeclarationsInnerInterface1)
 

@@ -1,6 +1,7 @@
 
 
 from smoke.StructsWithMethodsVector import StructsWithMethodsVector
+from smoke.ValidationUtilsValidation import ValidationUtilsValidation
 from smoke.ValidationUtilsValidationErrorCode import ValidationUtilsValidationErrorCode
 import typing
 
@@ -17,5 +18,5 @@ class StructsWithMethods(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsWithMethods):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithMethods(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsWithMethods(*[_unwrap(arg) for arg in args]))
 

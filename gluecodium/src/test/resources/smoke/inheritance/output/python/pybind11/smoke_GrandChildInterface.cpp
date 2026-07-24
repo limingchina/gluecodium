@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -69,7 +70,7 @@ public:
     }
 };
 
-void register_GrandChildInterface(py::module_& module) {
+void register_smoke_GrandChildInterface(py::module_& module) {
     py::class_<GrandChildInterface, ::smoke::ChildInterface, std::shared_ptr<GrandChildInterface>, GrandChildInterfaceTrampoline>(module, "GrandChildInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -83,18 +84,6 @@ void register_GrandChildInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("grand_child_method", [](GrandChildInterface& self) {
-            return self.grand_child_method();
-        })
-
-        .def("child_method", [](GrandChildInterface& self) {
-            return self.child_method();
-        })
-
-        .def("root_method", [](GrandChildInterface& self) {
-            return self.root_method();
-        })
-
         .def_property("root_property", [](const GrandChildInterface& self) {
             return self.get_root_property();
         }, [](GrandChildInterface& self, const ::std::string& value) {

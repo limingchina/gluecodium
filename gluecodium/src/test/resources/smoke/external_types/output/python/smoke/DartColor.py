@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,45 +19,45 @@ class DartColor(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DartColor):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartColor(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DartColor(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def red(self) -> float:
         """"""
-        return self._native.red
+        return _wrap(self._native.red, float)
     @red.setter
     def red(self, value: float):
-      self._native.red = getattr(value, "_native", value)
+      self._native.red = _unwrap(value, float)
 
 
 
     @property
     def green(self) -> float:
         """"""
-        return self._native.green
+        return _wrap(self._native.green, float)
     @green.setter
     def green(self, value: float):
-      self._native.green = getattr(value, "_native", value)
+      self._native.green = _unwrap(value, float)
 
 
 
     @property
     def blue(self) -> float:
         """"""
-        return self._native.blue
+        return _wrap(self._native.blue, float)
     @blue.setter
     def blue(self, value: float):
-      self._native.blue = getattr(value, "_native", value)
+      self._native.blue = _unwrap(value, float)
 
 
 
     @property
     def alpha(self) -> float:
         """"""
-        return self._native.alpha
+        return _wrap(self._native.alpha, float)
     @alpha.setter
     def alpha(self, value: float):
-      self._native.alpha = getattr(value, "_native", value)
+      self._native.alpha = _unwrap(value, float)
 
 

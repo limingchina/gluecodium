@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -19,16 +20,8 @@ namespace py = pybind11;
 using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
 
 
-void register_UseSwiftExternalTypes(py::module_& module) {
+void register_smoke_UseSwiftExternalTypes(py::module_& module) {
     py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "UseSwiftExternalTypes")
-        .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
-
-        .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
-
-        .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
-
-        .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
-
         ;
 }
 

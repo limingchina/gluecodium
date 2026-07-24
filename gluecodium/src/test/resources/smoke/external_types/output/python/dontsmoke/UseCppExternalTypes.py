@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.ClassWithOverloads import ClassWithOverloads
 from smoke.EnumsExternal_Enum import EnumsExternal_Enum
 from smoke.StructsAnotherExternalStruct import StructsAnotherExternalStruct
@@ -20,15 +23,15 @@ class UseCppExternalTypes(_NativeBase):
     @staticmethod
     def use_struct(input: StructsAnotherExternalStruct):
         """"""
-        generated.UseCppExternalTypes.use_struct(input._native)
+        generated.UseCppExternalTypes.use_struct(_unwrap(input, StructsAnotherExternalStruct))
 
     @staticmethod
     def use_enum(input: EnumsExternal_Enum):
         """"""
-        generated.UseCppExternalTypes.use_enum(input._native)
+        generated.UseCppExternalTypes.use_enum(_unwrap(input, EnumsExternal_Enum))
 
     @staticmethod
     def use_class(input: ClassWithOverloads):
         """"""
-        generated.UseCppExternalTypes.use_class(input._native)
+        generated.UseCppExternalTypes.use_class(_unwrap(input, ClassWithOverloads))
 

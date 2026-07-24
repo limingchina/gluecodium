@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,7 +29,7 @@ class InterfaceWithStatic(generated.InterfaceWithStatic):
 
     def regular_function(self) -> str:
         """"""
-        return generated.InterfaceWithStatic.regular_function(self)
+        return _wrap(generated.InterfaceWithStatic.regular_function(self), str)
 
     @staticmethod
     def static_function() -> str:
@@ -36,15 +39,15 @@ class InterfaceWithStatic(generated.InterfaceWithStatic):
     @property
     def regular_property(self) -> str:
         """"""
-        return generated.InterfaceWithStatic.regular_property.fget(self)
+        return _wrap(generated.InterfaceWithStatic.regular_property.fget(self), str)
 
     @regular_property.setter
     def regular_property(self, value: str):
-        generated.InterfaceWithStatic.regular_property.fset(self, value)
+        generated.InterfaceWithStatic.regular_property.fset(self, _unwrap(value, str))
 
 
     @staticmethod
     def static_property() -> str:
         """"""
-        return generated.InterfaceWithStatic.static_property()
+        return _wrap(generated.InterfaceWithStatic.static_property(), str)
 

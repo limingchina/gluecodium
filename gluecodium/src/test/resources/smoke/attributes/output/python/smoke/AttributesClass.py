@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,16 +19,16 @@ class AttributesClass(_NativeBase):
 
     def very_fun(self, param: str):
         """"""
-        return self._native.very_fun(param)
+        return _wrap(self._native.very_fun(_unwrap(param, str)), None)
 
     @property
     def prop(self) -> str:
         """"""
-        return self._native.prop
+        return _wrap(self._native.prop, str)
 
     @prop.setter
     def prop(self, value: str):
-        self._native.prop = value
+        self._native.prop = _unwrap(value, str)
 
 
     PI = False

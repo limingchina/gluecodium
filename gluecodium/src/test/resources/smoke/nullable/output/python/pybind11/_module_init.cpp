@@ -10,14 +10,14 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_MixedCollectionsStruct(pybind11::module_& module);
-void register_Nullable(pybind11::module_& module);
-void register_NullableCollectionsStruct(pybind11::module_& module);
-void register_NullableNullableIntsStruct(pybind11::module_& module);
-void register_NullableNullableStruct(pybind11::module_& module);
-void register_NullableSomeEnum(pybind11::module_& module);
-void register_NullableSomeStruct(pybind11::module_& module);
-void register_SomeInterface(pybind11::module_& module);
+void register_smoke_MixedCollectionsStruct(pybind11::module_& module);
+void register_smoke_Nullable(pybind11::module_& module);
+void register_smoke_NullableCollectionsStruct(pybind11::module_& module);
+void register_smoke_NullableNullableIntsStruct(pybind11::module_& module);
+void register_smoke_NullableNullableStruct(pybind11::module_& module);
+void register_smoke_NullableSomeEnum(pybind11::module_& module);
+void register_smoke_NullableSomeStruct(pybind11::module_& module);
+void register_smoke_SomeInterface(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -25,12 +25,12 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_MixedCollectionsStruct(m);
-    register_Nullable(m);
-    register_NullableCollectionsStruct(m);
-    register_NullableNullableIntsStruct(m);
-    register_NullableNullableStruct(m);
-    register_NullableSomeEnum(m);
-    register_NullableSomeStruct(m);
-    register_SomeInterface(m);
+    register_smoke_MixedCollectionsStruct(m);
+    register_smoke_Nullable(m);
+    register_smoke_NullableCollectionsStruct(m);
+    register_smoke_NullableNullableIntsStruct(m);
+    register_smoke_NullableNullableStruct(m);
+    register_smoke_NullableSomeEnum(m);
+    register_smoke_NullableSomeStruct(m);
+    register_smoke_SomeInterface(m);
 }

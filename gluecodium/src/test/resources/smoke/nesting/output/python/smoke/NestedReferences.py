@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.NestedReferencesNestedReferences import NestedReferencesNestedReferences
 
 from _native_base import _NativeBase
@@ -17,5 +20,5 @@ class NestedReferences(_NativeBase):
 
     def inside_out(self, struct1: NestedReferencesNestedReferences, struct2: NestedReferencesNestedReferences) -> NestedReferences:
         """"""
-        return self._native.inside_out(struct1._native, struct2._native)
+        return _wrap(self._native.inside_out(_unwrap(struct1, NestedReferencesNestedReferences), _unwrap(struct2, NestedReferencesNestedReferences)), NestedReferences)
 

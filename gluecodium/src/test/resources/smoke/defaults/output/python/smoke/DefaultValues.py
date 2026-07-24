@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.DefaultValuesStructWithDefaults import DefaultValuesStructWithDefaults
 
 from _native_base import _NativeBase
@@ -18,6 +21,6 @@ class DefaultValues(_NativeBase):
     @staticmethod
     def process_struct_with_defaults(input: DefaultValuesStructWithDefaults) -> DefaultValuesStructWithDefaults:
         """"""
-        native_result = generated.DefaultValues.process_struct_with_defaults(input._native)
+        native_result = generated.DefaultValues.process_struct_with_defaults(_unwrap(input, DefaultValuesStructWithDefaults))
         return DefaultValuesStructWithDefaults(native_result)
 

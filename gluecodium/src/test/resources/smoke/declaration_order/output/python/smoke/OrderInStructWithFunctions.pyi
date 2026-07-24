@@ -17,16 +17,16 @@ class OrderInStructWithFunctions(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.OrderInStructWithFunctions):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OrderInStructWithFunctions(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.OrderInStructWithFunctions(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def some_field(self) -> str:
         """"""
-        return self._native.some_field
+        return _wrap(self._native.some_field, str)
     @some_field.setter
     def some_field(self, value: str):
-      self._native.some_field = getattr(value, "_native", value)
+      self._native.some_field = _unwrap(value, str)
 
 
     def do_stuff(self, struct_foo: OrderInStructWithFunctionsNestedStruct) -> OrderInStructWithFunctionsSomeEnum: ...

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 import generated
@@ -26,16 +29,16 @@ class AttributesInterface(generated.AttributesInterface):
 
     def very_fun(self, param: str):
         """"""
-        return generated.AttributesInterface.very_fun(self, param)
+        return _wrap(generated.AttributesInterface.very_fun(self, _unwrap(param, str)), None)
 
     @property
     def prop(self) -> str:
         """"""
-        return generated.AttributesInterface.prop.fget(self)
+        return _wrap(generated.AttributesInterface.prop.fget(self), str)
 
     @prop.setter
     def prop(self, value: str):
-        generated.AttributesInterface.prop.fset(self, value)
+        generated.AttributesInterface.prop.fset(self, _unwrap(value, str))
 
 
     PI = False

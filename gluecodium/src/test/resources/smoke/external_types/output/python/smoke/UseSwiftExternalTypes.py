@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.DateInterval import DateInterval
 from smoke.Persistence import Persistence
 from smoke.PseudoColor import PseudoColor
@@ -21,24 +24,24 @@ class UseSwiftExternalTypes(_NativeBase):
     @staticmethod
     def date_interval_round_trip(input: DateInterval) -> DateInterval:
         """"""
-        native_result = generated.UseSwiftExternalTypes.date_interval_round_trip(input._native)
+        native_result = generated.UseSwiftExternalTypes.date_interval_round_trip(_unwrap(input, DateInterval))
         return DateInterval(native_result)
 
     @staticmethod
     def persistence_round_trip(input: Persistence) -> Persistence:
         """"""
-        native_result = generated.UseSwiftExternalTypes.persistence_round_trip(input._native)
+        native_result = generated.UseSwiftExternalTypes.persistence_round_trip(_unwrap(input, Persistence))
         return Persistence(native_result)
 
     @staticmethod
     def color_round_trip(input: PseudoColor) -> PseudoColor:
         """"""
-        native_result = generated.UseSwiftExternalTypes.color_round_trip(input._native)
+        native_result = generated.UseSwiftExternalTypes.color_round_trip(_unwrap(input, PseudoColor))
         return PseudoColor(native_result)
 
     @staticmethod
     def season_round_trip(input: SwiftSeason) -> SwiftSeason:
         """"""
-        native_result = generated.UseSwiftExternalTypes.season_round_trip(input._native)
+        native_result = generated.UseSwiftExternalTypes.season_round_trip(_unwrap(input, SwiftSeason))
         return SwiftSeason(native_result)
 

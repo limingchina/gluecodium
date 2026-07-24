@@ -18,11 +18,11 @@ class AttributesWithComments(_NativeBase):
     @property
     def prop(self) -> str:
         """Property comment"""
-        return self._native.prop
+        return _wrap(self._native.prop, str)
 
     @prop.setter
     def prop(self, value: str):
-        self._native.prop = value
+        self._native.prop = _unwrap(value, str)
 
     Const comment
     PI = False

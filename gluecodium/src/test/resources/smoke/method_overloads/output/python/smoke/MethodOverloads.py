@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.MethodOverloadsPoint import MethodOverloadsPoint
 
 from _native_base import _NativeBase
@@ -17,7 +20,7 @@ class MethodOverloads(_NativeBase):
 
     def is_boolean(*args, **kwargs) -> bool:
         """"""
-        return self._native.is_boolean(*[getattr(a, "_native", a) for a in args])
+        return _wrap(self._native.is_boolean(*[_unwrap(a) for a in args]), bool)
 
 
 
@@ -28,6 +31,6 @@ class MethodOverloads(_NativeBase):
 
     def is_float(*args, **kwargs) -> bool:
         """"""
-        return self._native.is_float(*[getattr(a, "_native", a) for a in args])
+        return _wrap(self._native.is_float(*[_unwrap(a) for a in args]), bool)
 
 

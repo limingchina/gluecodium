@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 from smoke.Basic import Basic
 
 from _native_base import _NativeBase
@@ -17,5 +20,5 @@ class BasicForwardDeclarations(_NativeBase):
 
     def use_basic(self) -> Basic:
         """"""
-        return self._native.use_basic()
+        return _wrap(self._native.use_basic(), Basic)
 

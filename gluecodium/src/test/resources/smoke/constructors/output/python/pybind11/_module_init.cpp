@@ -11,10 +11,12 @@
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_Constructors(pybind11::module_& module);
-void register_ChildConstructors(pybind11::module_& module);
-void register_ConstructorsErrorEnum(pybind11::module_& module);
-void register_SingleNamedConstructor(pybind11::module_& module);
-void register_SingleNamelessConstructor(pybind11::module_& module);
+void register_smoke_ChildConstructors(pybind11::module_& module);
+void register_smoke_Constructors(pybind11::module_& module);
+void register_smoke_ConstructorsConstructorExploded(pybind11::module_& module);
+void register_smoke_ConstructorsErrorEnum(pybind11::module_& module);
+void register_smoke_SingleNamedConstructor(pybind11::module_& module);
+void register_smoke_SingleNamelessConstructor(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -23,8 +25,10 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_Constructors(m);
-    register_ChildConstructors(m);
-    register_ConstructorsErrorEnum(m);
-    register_SingleNamedConstructor(m);
-    register_SingleNamelessConstructor(m);
+    register_smoke_ChildConstructors(m);
+    register_smoke_Constructors(m);
+    register_smoke_ConstructorsConstructorExploded(m);
+    register_smoke_ConstructorsErrorEnum(m);
+    register_smoke_SingleNamedConstructor(m);
+    register_smoke_SingleNamelessConstructor(m);
 }

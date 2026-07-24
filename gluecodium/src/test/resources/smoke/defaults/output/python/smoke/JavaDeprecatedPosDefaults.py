@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 
 from _native_base import _NativeBase
@@ -16,25 +19,25 @@ class JavaDeprecatedPosDefaults(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.JavaDeprecatedPosDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.JavaDeprecatedPosDefaults(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.JavaDeprecatedPosDefaults(*[_unwrap(arg) for arg in args]))
 
     first init!
     @property
     def first_init_field(self) -> int:
         """first init!"""
-        return self._native.first_init_field
+        return _wrap(self._native.first_init_field, int)
     @first_init_field.setter
     def first_init_field(self, value: int):
-      self._native.first_init_field = getattr(value, "_native", value)
+      self._native.first_init_field = _unwrap(value, int)
 
 
     first free!
     @property
     def first_free_field(self) -> str:
         """first free!"""
-        return self._native.first_free_field
+        return _wrap(self._native.first_free_field, str)
     @first_free_field.setter
     def first_free_field(self, value: str):
-      self._native.first_free_field = getattr(value, "_native", value)
+      self._native.first_free_field = _unwrap(value, str)
 
 

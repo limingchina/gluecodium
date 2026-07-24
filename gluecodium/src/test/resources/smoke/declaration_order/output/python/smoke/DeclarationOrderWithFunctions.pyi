@@ -1,6 +1,7 @@
 
 
 from smoke.DeclarationOrderWithFunctionsFieldStruct import DeclarationOrderWithFunctionsFieldStruct
+from smoke.DeclarationOrderWithFunctionsFooBar import DeclarationOrderWithFunctionsFooBar
 from smoke.DeclarationOrderWithFunctionsParameterStruct import DeclarationOrderWithFunctionsParameterStruct
 from smoke.DeclarationOrderWithFunctionsReturnStruct import DeclarationOrderWithFunctionsReturnStruct
 from smoke.DeclarationOrderWithFunctionsThrownStruct import DeclarationOrderWithFunctionsThrownStruct
@@ -19,5 +20,5 @@ class DeclarationOrderWithFunctions(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.DeclarationOrderWithFunctions):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DeclarationOrderWithFunctions(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.DeclarationOrderWithFunctions(*[_unwrap(arg) for arg in args]))
 

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from _native_base import _unwrap, _wrap
+from typing import Optional
+
 
 from _native_base import _NativeBase
 
@@ -16,9 +19,9 @@ class JavaMethodOverloads(_NativeBase):
 
     def one(self, input: str):
         """"""
-        return self._native.one(input)
+        return _wrap(self._native.one(_unwrap(input, str)), None)
 
     def two(self, input: list[str]):
         """"""
-        return self._native.two(input)
+        return _wrap(self._native.two(_unwrap(input, list[str])), None)
 

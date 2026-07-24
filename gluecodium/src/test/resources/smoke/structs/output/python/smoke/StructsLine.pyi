@@ -16,25 +16,25 @@ class StructsLine(_NativeBase):
         if len(args) == 1 and isinstance(args[0], generated.StructsLine):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsLine(*[getattr(arg, "_native", arg) for arg in args]))
+            super().__init__(generated.StructsLine(*[_unwrap(arg) for arg in args]))
 
 
     @property
     def a(self) -> StructsPoint:
         """"""
-        return StructsPoint(self._native.a)
+        return _wrap(self._native.a, StructsPoint)
     @a.setter
     def a(self, value: StructsPoint):
-      self._native.a = getattr(value, "_native", value)
+      self._native.a = _unwrap(value, StructsPoint)
 
 
 
     @property
     def b(self) -> StructsPoint:
         """"""
-        return StructsPoint(self._native.b)
+        return _wrap(self._native.b, StructsPoint)
     @b.setter
     def b(self, value: StructsPoint):
-      self._native.b = getattr(value, "_native", value)
+      self._native.b = _unwrap(value, StructsPoint)
 
 

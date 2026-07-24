@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -66,7 +67,7 @@ public:
     }
 };
 
-void register_DeprecationComments(py::module_& module) {
+void register_smoke_DeprecationComments(py::module_& module) {
     py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "DeprecationComments")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -80,10 +81,6 @@ void register_DeprecationComments(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def("some_method_with_all_comments", [](DeprecationComments& self, const ::std::string& input) {
-            return self.some_method_with_all_comments(input);
-        }, py::arg("input"))
-
         .def_property("is_some_property", [](const DeprecationComments& self) {
             return self.is_some_property();
         }, [](DeprecationComments& self, const bool value) {

@@ -6,6 +6,7 @@
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
+#include "_generic_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,11 +17,12 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using LearnToReadAgain = ::smoke::LearnToReadAgain;
 
-void register_LearnToReadAgain(py::module_& module) {
+void register_smoke_LearnToReadAgain(py::module_& module) {
     py::class_<LearnToReadAgain>(module, "LearnToReadAgain")
         .def_readwrite("field_b", &LearnToReadAgain::field_b)
         .def_readwrite("field_c", &LearnToReadAgain::field_c)
         .def(py::init<>())
+        .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet(), py::arg("field_b"), py::arg("field_c"))
         ;
 }
 

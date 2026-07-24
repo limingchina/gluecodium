@@ -30,9 +30,9 @@ class ParentWithClassReferences(generated.ParentWithClassReferences):
     @property
     def class_property(self) -> ParentClass:
         """"""
-        return generated.ParentWithClassReferences.class_property.fget(self)
+        return _wrap(generated.ParentWithClassReferences.class_property.fget(self), ParentClass)
 
     @class_property.setter
     def class_property(self, value: ParentClass):
-        generated.ParentWithClassReferences.class_property.fset(self, value)
+        generated.ParentWithClassReferences.class_property.fset(self, _unwrap(value, ParentClass))
 
