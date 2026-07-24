@@ -144,6 +144,9 @@ All generators use Mustache templates (via Trimou engine) located in `gluecodium
 
 # Publish to local Maven repository
 ./gradlew publishToLocalMaven
+
+# Code formatting
+./gradlew :gluecodium:spotlessApply
 ```
 
 ### Running Gluecodium
