@@ -47,7 +47,11 @@ from typing import Optional
 {{#importedName}}from {{modulePath}} import {{importedName}}
 {{/importedName}}{{^importedName}}import {{modulePath}}
 {{/importedName}}{{/imports}}
+{{#imports}}
+{{/imports}}
 
+{{#models}}
 {{#model}}
 {{include contentTemplate}}
 {{/model}}
+{{/models}}
