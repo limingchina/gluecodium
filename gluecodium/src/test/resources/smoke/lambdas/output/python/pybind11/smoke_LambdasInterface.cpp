@@ -32,7 +32,7 @@ public:
     std::shared_ptr<LambdasInterface> m_impl;
 
     void take_screenshot(
-            const ::smoke::LambdasInterface::TakeScreenshotCallback& callback ) override {
+            const ::std::function<void(const std::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >&)>& callback ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->take_screenshot(callback);

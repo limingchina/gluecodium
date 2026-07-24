@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from _native_base import _unwrap, _wrap
 from typing import Optional
+from typing import Callable
 
 from smoke.LambdasInterfaceTakeScreenshotCallback import LambdasInterfaceTakeScreenshotCallback
 
@@ -28,7 +29,7 @@ class LambdasInterface(generated.LambdasInterface):
             super().__init__()
         self._native = self
 
-    def take_screenshot(self, callback: LambdasInterfaceTakeScreenshotCallback):
+    def take_screenshot(self, callback: Callable[[Optional[bytes]], None]):
         """"""
-        return _wrap(generated.LambdasInterface.take_screenshot(self, _unwrap(callback, LambdasInterfaceTakeScreenshotCallback)), None)
+        return _wrap(generated.LambdasInterface.take_screenshot(self, _unwrap(callback, Callable[[Optional[bytes]], None])), None)
 

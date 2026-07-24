@@ -30,6 +30,7 @@ import com.here.gluecodium.model.lime.LimeBasicType
 import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeList
+import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeReturnType
@@ -63,7 +64,10 @@ internal class PythonNameResolver(
             is LimeBasicType -> resolveBasicType(element)
             is LimeReturnType -> resolvePythonType(element.typeRef, requiresHashable)
             is LimeTypeRef -> {
-                val typeName = resolvePythonType(element.type, requiresHashable)
+                val typeName =
+                    (element.type.actualType as? LimeLambda)
+                        ?.let(::resolveLambdaType)
+                        ?: resolvePythonType(element.type, requiresHashable)
                 if (element.isNullable) "Optional[" + typeName + "]" else typeName
             }
             is LimeList -> {
@@ -112,6 +116,12 @@ internal class PythonNameResolver(
             LimeBasicType.TypeId.LOCALE -> "str"
             else -> "int"
         }
+    }
+
+    private fun resolveLambdaType(limeLambda: LimeLambda): String {
+        val function = limeLambda.asFunction()
+        val parameters = function.parameters.joinToString(", ") { resolvePythonType(it.typeRef) }
+        return "Callable[[$parameters], ${resolvePythonType(function.returnType)}]"
     }
 
     /**

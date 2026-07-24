@@ -40,12 +40,16 @@ import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeFieldConstructor
+import com.here.gluecodium.model.lime.LimeGenericType
+import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeSignatureResolver
 import com.here.gluecodium.model.lime.LimeStruct
 import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeHelper
+import com.here.gluecodium.model.lime.LimeTypeAlias
+import com.here.gluecodium.model.lime.LimeTypeRef
 import java.io.File
 import java.util.logging.Logger
 
@@ -256,6 +260,7 @@ internal class PythonGenerator : Generator {
                 "nativeModule" to pythonModule,
                 "typeName" to pythonNameResolver.resolveName(limeElement),
                 "nativeTypeName" to pythonNameResolver.resolveName(limeElement),
+                "usesCallable" to usesCallable(limeElement),
                 "contentTemplate" to selectPythonTemplate(limeElement),
             )
         val content = TemplateEngine.render("python/PythonFile", templateData + ("isStub" to false), nameResolvers, predicates)
@@ -478,6 +483,25 @@ internal class PythonGenerator : Generator {
                         nameRules.getPythonFileName(it) !in duplicateFileNames
                 }
             }
+
+    private fun usesCallable(limeElement: LimeNamedElement): Boolean =
+        when (limeElement) {
+            is LimeLambda -> true
+            is LimeTypeAlias -> containsLambda(limeElement.typeRef)
+            is LimeStruct -> limeElement.fields.any { containsLambda(it.typeRef) }
+            is com.here.gluecodium.model.lime.LimeContainer ->
+                limeElement.functions.any { function ->
+                    function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)
+                } || limeElement.properties.any { containsLambda(it.typeRef) }
+            else -> false
+        }
+
+    private fun containsLambda(limeTypeRef: LimeTypeRef): Boolean =
+        when (val limeType = limeTypeRef.type) {
+            is LimeTypeAlias -> containsLambda(limeType.typeRef)
+            is LimeGenericType -> limeType.childTypes.any(::containsLambda)
+            else -> limeType.actualType is LimeLambda
+        }
 
     private fun selectPythonTemplate(limeElement: LimeNamedElement) =
         when (limeElement) {

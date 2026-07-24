@@ -19,6 +19,4 @@
   !
   !}}
 {{! Python lambda / callback type stub: a typing.Callable alias. }}
-from typing import Callable
-
-{{resolveName}} = Callable[{{#parameters}}[{{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}]{{/parameters}}{{^parameters}}[]{{/parameters}}, {{resolveName returnType}}]
+{{resolveName}} = Callable[[{{#parameters}}{{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}], {{resolveName returnType}}]

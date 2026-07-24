@@ -369,22 +369,25 @@ derived from LIME default values.
 
 ### Phase G — Lambdas/Callbacks (G8) [Depends on Phase D, F]
 
-**Status (2026-07-24):** ❌ Not started. `Lambdas` is not in the `python` generator
-list in `functional/CMakeLists.txt`. `Pybind11Lambda.mustache` and `PythonLambda.mustache`
-are unused placeholder/stub templates left over from an earlier phase (their header
-comments say "Phase 2" and "skeleton") — they emit either a comment-only line or a
-`typing.Callable` alias that nothing currently references. Critically, **`LimeLambda`
-types are not resolved at all** by either `Pybind11NameResolver.kt` or
-`PythonNameResolver.kt` (confirmed by search — zero matches for `Lambda`/`Callable` in
-either file), so any function parameter or return type of lambda type falls through to
-the generic/default resolution path today and would not compile. All of the work below
-is greenfield; there is no partially-working binding to repair.
+**Status (2026-07-24):** 🟡 G0 is complete and G1 is in progress. `Lambdas` remains
+intentionally excluded from the `python` generator list in `functional/CMakeLists.txt`
+until G1/G2 compile the focused functional fixture. The generated top-level/nested
+callable aliases and the no-binding pybind11 lambda translation units now exist;
+function/property invocation support is the remaining work.
 
 **Goal**: Bind LIME `lambda` types (which the C++ generator maps to `std::function<Sig>`,
 see `CppLambda.mustache` / `CppIncludeResolver.kt`'s `LimeLambda -> ... FUNCTIONAL` include)
 as Python callables, using pybind11's built-in Python-callable ⇄ `std::function` conversion.
 
 #### G0 — Baseline enablement and name resolution (foundational, blocks everything else)
+
+**Implementation status (2026-07-24):** ✅ Complete. `Pybind11NameResolver` expands
+lambda type references to their `std::function` signatures (including `std::optional`),
+while `PythonNameResolver` expands them to `Callable[[...], ...]` (including `Optional`).
+`PythonGenerator` conditionally imports `Callable` for generated runtime and stub modules,
+and lambda aliases are emitted with valid multi-parameter callable syntax. Lambdas remain
+excluded from the functional generator list; the focused `lambdas` Python smoke suite and
+the Kotlin compilation task both pass.
 
 1. **`Pybind11NameResolver.kt`**: add a `LimeLambda` case that resolves to the C++
    `std::function<ReturnType(ParamTypes...)>` spelling, mirroring
