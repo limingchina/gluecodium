@@ -51,7 +51,10 @@ internal class PythonNameResolver(
 ) : ReferenceMapBasedResolver(limeReferenceMap), NameResolver {
     override fun resolveName(element: Any): String = resolvePythonType(element)
 
-    private fun resolvePythonType(element: Any, requiresHashable: Boolean = false): String =
+    private fun resolvePythonType(
+        element: Any,
+        requiresHashable: Boolean = false,
+    ): String =
         when (element) {
             is LimeComment -> resolveComment(element)
             is LimeBasicType -> resolveBasicType(element)
@@ -84,12 +87,12 @@ internal class PythonNameResolver(
             else -> throw GluecodiumExecutionException("Unsupported element type ${element.javaClass.name}")
         }
 
-
     private fun resolveComment(limeComment: LimeComment): String {
         val commentText = limeComment.getFor("Python")
         if (commentText.isBlank()) return ""
-        val commentedElement = limeReferenceMap[limeComment.path.toString()] as? LimeNamedElement
-            ?: getParentElement(limeComment.path)
+        val commentedElement =
+            limeReferenceMap[limeComment.path.toString()] as? LimeNamedElement
+                ?: getParentElement(limeComment.path)
         return commentsProcessor.process(commentedElement.fullName, commentText, emptyMap(), limeLogger)
     }
 
@@ -115,11 +118,12 @@ internal class PythonNameResolver(
      * as a nested struct field referencing its own enclosing type.
      */
     override fun resolveReferenceName(element: Any): String? {
-        val limeType = when (element) {
-            is LimeTypeRef -> element.type.actualType
-            is LimeType -> element.actualType
-            else -> return null
-        }
+        val limeType =
+            when (element) {
+                is LimeTypeRef -> element.type.actualType
+                is LimeType -> element.actualType
+                else -> return null
+            }
         val namedType = limeType as? LimeNamedElement ?: return null
         return (namedType.path.head + resolveName(namedType)).joinToString(".")
     }
@@ -145,6 +149,18 @@ internal class PythonNameResolver(
             }
         }
         return limeValue.toString()
+    }
+
+    /**
+     * Resolves a unique C++ function name for the per-type `register_*` function emitted by each
+     * pybind11 translation unit. The name includes the LIME package path (e.g. `test_StructConstants`)
+     * so that two types with the same short name in different packages (e.g. `test.StructConstants` and
+     * `fire.StructConstants`) do not collide at link time.
+     */
+    fun resolveRegisterName(limeElement: LimeNamedElement): String {
+        val name = resolveName(limeElement)
+        val packagePath = limeElement.path.head.joinToString("_")
+        return if (packagePath.isNotEmpty()) "${packagePath}_$name" else name
     }
 
     private fun getPlatformName(limeElement: LimeNamedElement): String? = limeElement.attributes.get(PYTHON, NAME)

@@ -23,7 +23,6 @@ import com.here.gluecodium.common.LimeLogger
 import com.here.gluecodium.model.lime.LimeContainer
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeElement
-import com.here.gluecodium.model.lime.LimeFunction
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeSignatureResolver
 

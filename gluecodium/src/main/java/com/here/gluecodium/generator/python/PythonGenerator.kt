@@ -39,11 +39,11 @@ import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
 import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeEnumeration
-import com.here.gluecodium.model.lime.LimeExternalDescriptor
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeSignatureResolver
+import com.here.gluecodium.model.lime.LimeStruct
 import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeHelper
 import java.io.File
@@ -204,15 +204,19 @@ internal class PythonGenerator : Generator {
                         .filter { predicates["isAncestorField"]?.invoke(it) == true }
                         .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
                 is com.here.gluecodium.model.lime.LimeClass ->
-                    (limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
-                        .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
-                        limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
-                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) })
+                    (
+                        limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
+                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
+                            limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
+                                .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
+                    )
                 is com.here.gluecodium.model.lime.LimeInterface ->
-                    (limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
-                        .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
-                        limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
-                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) })
+                    (
+                        limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
+                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
+                            limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
+                                .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
+                    )
                 else -> emptyList()
             }.toSet()
         // A parent type must not import a nested child at module level if doing so would create
@@ -229,8 +233,9 @@ internal class PythonGenerator : Generator {
                 .filter { it != limeElement && it.path.allParents.contains(limeElement.path) }
                 .mapNotNull { child ->
                     pythonNameResolver.resolveReferenceName(child)?.let { childModulePath ->
-                        childModulePath to pythonImportsCollector.collectImports(child)
-                            .any { it.modulePath == selfModulePath }
+                        childModulePath to
+                            pythonImportsCollector.collectImports(child)
+                                .any { it.modulePath == selfModulePath }
                     }
                 }
                 .filter { it.second }
@@ -269,12 +274,15 @@ internal class PythonGenerator : Generator {
         pybind11FilteredModel: LimeModel,
     ): List<GeneratedFile> {
         val limeType = limeElement as? com.here.gluecodium.model.lime.LimeType ?: return emptyList()
-        // Exceptions are represented as std::error_code in C++ (no dedicated header is generated),
-        // so the include collector would resolve a non-existent header. The exception translator
-        // only needs the common pybind11 headers, so we skip per-element includes for exceptions.
+        // Enum-based exceptions are represented as std::error_code in C++ and have no dedicated
+        // header. Struct-backed exceptions need the payload header for their translator.
         val includes =
             if (limeType is com.here.gluecodium.model.lime.LimeException) {
-                emptyList()
+                if (limeType.errorType.type.actualType is LimeStruct) {
+                    includeCollector.collectImports(limeType).distinct().sorted()
+                } else {
+                    emptyList()
+                }
             } else {
                 includeCollector.collectImports(limeType).distinct().sorted()
             }
@@ -306,6 +314,10 @@ internal class PythonGenerator : Generator {
                     },
                 "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
                 "trampolineName" to (pythonNameResolver.resolveName(limeElement) + "Trampoline"),
+                // Unique C++ function name for this type's `register_*` function. Includes the LIME
+                // package path so that types with the same short name in different packages (e.g.
+                // `test.StructConstants` and `fire.StructConstants`) do not collide at link time.
+                "registerName" to pythonNameResolver.resolveRegisterName(limeElement),
                 // Base classes (parents) that are actually bound, as fully-qualified C++ names.
                 // pybind11 requires every base class to be listed as a template argument of
                 // `py::class_` for (multiple) inheritance to be visible and for `std::shared_ptr`
@@ -365,7 +377,7 @@ internal class PythonGenerator : Generator {
                         ?.mapNotNull { it.type.actualType as? LimeNamedElement }
                         ?.map { pythonNameResolver.resolveName(it) }
                         .orEmpty()
-                pythonNameResolver.resolveName(type) to parents
+                pythonNameResolver.resolveRegisterName(type) to parents
             }
         val registerFunctions =
             topologicalSort(typeNameToParents).map { mapOf("name" to it) }
@@ -423,6 +435,7 @@ internal class PythonGenerator : Generator {
     private fun topologicalSort(parents: Map<String, List<String>>): List<String> {
         val visited = mutableSetOf<String>()
         val result = mutableListOf<String>()
+
         fun visit(name: String) {
             if (name in visited) return
             visited.add(name)
