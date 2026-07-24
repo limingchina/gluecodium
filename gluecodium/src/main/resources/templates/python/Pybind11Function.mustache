@@ -22,6 +22,18 @@
 {{! pybind11 method binding. Throwing functions (Return<T, Error>) are bound
     directly; the generated _return_caster translates the error into a Python
     exception, so they are not skipped. }}
+{{#if isConstructor}}
+    {{! Constructors are bound via py::init<>() for proper Python constructor syntax. }}
+    {{#ifPredicate "needsCollectionLambdaBinding"}}
+        .def(py::init([]({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}} {
+                return {{resolveName model "Pybind11"}}({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::from_python_regular<{{resolveName typeRef "Pybind11"}}>({{resolveName}}){{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}};
+            }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+    {{/ifPredicate}}
+    {{#unlessPredicate "needsCollectionLambdaBinding"}}
+        .def(py::init<{{#parameters}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>({{#parameters}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/parameters}}))
+    {{/unlessPredicate}}
+{{! Non-constructor static methods (including static factory functions and regular static methods). }}
+{{else}}
 {{#ifPredicate "needsCollectionLambdaBinding"}}
 {{#if isStatic}}
                 .def_static("{{resolveName}}", []({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}} {
@@ -57,4 +69,4 @@
 {{/unlessPredicate}}
 {{/unless}}
 {{/unlessPredicate}}
-
+{{/if}}
