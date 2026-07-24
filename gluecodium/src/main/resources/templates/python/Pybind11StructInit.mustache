@@ -23,16 +23,18 @@
         .def(py::init<>())
 {{/ifPredicate}}
 {{#ifPredicate model "hasPartialDefaults"}}
-        .def(py::init<{{#uninitializedFields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/uninitializedFields}}>({{#uninitializedFields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/uninitializedFields}}))
+        .def(py::init<{{#uninitializedFields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/uninitializedFields}}>(){{#uninitializedFields}}, py::arg("{{resolveName}}"){{/uninitializedFields}})
 {{/ifPredicate}}
 {{#ifPredicate model "needsAllFieldsConstructor"}}
-        .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
+{{#fields}}
+        .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}>(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
+{{/fields}}
 {{/ifPredicate}}
 {{#fieldConstructors}}
 {{#ifPredicate "isEmptyFieldConstructor"}}
         .def(py::init<>())
 {{/ifPredicate}}
 {{#unlessPredicate "isEmptyFieldConstructor"}}
-        .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
+        .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}>(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
 {{/unlessPredicate}}
 {{/fieldConstructors}}

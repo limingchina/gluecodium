@@ -23,26 +23,29 @@
     directly; the generated _return_caster translates the error into a Python
     exception, so they are not skipped. }}
 {{#if isConstructor}}
-    {{! Constructors are bound via py::init<>() for proper Python constructor syntax. }}
-    {{#ifPredicate "needsCollectionLambdaBinding"}}
-        .def(py::init([]({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}} {
-                return {{resolveName model "Pybind11"}}({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::from_python_regular<{{resolveName typeRef "Pybind11"}}>({{resolveName}}){{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}};
+{{#ifPredicate "needsCollectionLambdaBinding"}}
+        .def_static("{{resolveName}}", []({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
+                return {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::from_python_regular<{{resolveName typeRef "Pybind11"}}>({{resolveName}}){{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
             }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
-    {{/ifPredicate}}
-    {{#unlessPredicate "needsCollectionLambdaBinding"}}
-        .def(py::init<{{#parameters}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>({{#parameters}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/parameters}}))
-    {{/unlessPredicate}}
+{{/ifPredicate}}
+{{#unlessPredicate "needsCollectionLambdaBinding"}}
+{{#ifPredicate "isCppOverloaded"}}
+        .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>({{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
+        .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unlessPredicate}}
+{{/unlessPredicate}}
 {{! Non-constructor static methods (including static factory functions and regular static methods). }}
-{{else}}
+{{/if}}{{#unless isConstructor}}
 {{#ifPredicate "needsCollectionLambdaBinding"}}
 {{#if isStatic}}
-                .def_static("{{resolveName}}", []({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}} {
-                        {{#ifPredicate returnType.typeRef "isCollectionType"}}return gluecodium::python::to_python_regular({{/ifPredicate}}{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::from_python_regular<{{resolveName typeRef "Pybind11"}}>({{resolveName}}){{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}};
+                .def_static("{{resolveName}}", []({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}} -> py::object{{/ifPredicate}} {
+                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}py::cast({{/ifPredicate}}{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::from_python_regular<{{resolveName typeRef "Pybind11"}}>({{resolveName}}){{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
                 }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/if}}
 {{#unless isStatic}}
-                .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, {{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}} {
-                        {{#ifPredicate returnType.typeRef "isCollectionType"}}return gluecodium::python::to_python_regular({{/ifPredicate}}self.{{resolveName this "Pybind11"}}({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::from_python_regular<{{resolveName typeRef "Pybind11"}}>({{resolveName}}){{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}};
+                .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, {{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}} -> py::object{{/ifPredicate}} {
+                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}py::cast({{/ifPredicate}}self.{{resolveName this "Pybind11"}}({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::from_python_regular<{{resolveName typeRef "Pybind11"}}>({{resolveName}}){{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
                 }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/unless}}
 {{/ifPredicate}}{{#unlessPredicate "needsCollectionLambdaBinding"}}{{#if isStatic}}{{#ifPredicate "isCppOverloaded"}}
@@ -69,4 +72,4 @@
 {{/unlessPredicate}}
 {{/unless}}
 {{/unlessPredicate}}
-{{/if}}
+{{/unless}}
