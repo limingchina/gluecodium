@@ -237,7 +237,7 @@ imported by the *same* Python version that built it — a 3.9 interpreter cannot
 `build-python-functional` pins the interpreter explicitly so build and test always agree:
 
 ```bash
--DPython_EXECUTABLE="$(which python3.14 || echo /opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14)"
+-DPython_EXECUTABLE="$(which python3 || echo python3)"
 ```
 
 The pytest `add_test` in `functional-tests/functional/python/CMakeLists.txt` already runs

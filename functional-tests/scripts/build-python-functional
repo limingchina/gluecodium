@@ -167,6 +167,8 @@ step "CMake configure (generators: cpp;python)"
 tee cmake_output.log < "$tmppipe" &
 safe cmake \
     -DBUILD_SHARED_LIBS=ON \
+    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
     -DCMAKE_C_COMPILER="$(which clang)" \
     -DCMAKE_CXX_COMPILER="$(which clang++)" \
     -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
@@ -174,7 +176,8 @@ safe cmake \
     -DGLUECODIUM_GENERATORS_DEFAULT="cpp;python" \
     -DGLUECODIUM_VERSION_DEFAULT="${GLUECODIUM_VERSION}" \
     -DFUNCTIONAL_BUILD_PYTHON_TESTS=ON \
-    -DPython_EXECUTABLE="$(which python3.14 || echo /opt/homebrew/Frameworks/Python.framework/Versions/3.14/bin/python3.14)" \
+    -DPython_EXECUTABLE="$(which python3 || echo python3)" \
+    -Dpybind11_DIR="$(python3 -m pybind11 --cmakedir)" \
     -G Ninja \
     ${CMAKE_EXTRA_PARAMETERS} \
     .. > "$tmppipe"
