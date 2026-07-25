@@ -20,7 +20,7 @@
   !}}
 {{! pybind11 struct binding. }}
 void register_{{registerName}}(py::module_& module) {
-    py::class_<{{resolveName model "Pybind11"}}>(module, "{{resolveName}}")
+    py::class_<{{resolveName model "Pybind11"}}>(module, "{{registerName}}")
 {{#unless external.cpp}}
 {{#fields}}
 {{#ifPredicate "hasFieldAccessors"}}
