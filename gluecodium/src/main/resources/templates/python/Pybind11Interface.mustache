@@ -59,7 +59,7 @@ public:
 {{/unless}}
 
 void register_{{registerName}}(py::module_& module) {
-    py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>{{#unless external.cpp}}, {{resolveName}}Trampoline{{/unless}}>(module, "{{resolveName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
+    py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>{{#unless external.cpp}}, {{resolveName}}Trampoline{{/unless}}>(module, "{{registerName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
 {{#unless external.cpp}}
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

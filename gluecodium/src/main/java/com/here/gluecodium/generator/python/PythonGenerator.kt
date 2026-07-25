@@ -258,8 +258,8 @@ internal class PythonGenerator : Generator {
                 "imports" to imports,
                 "moduleName" to pythonModule,
                 "nativeModule" to pythonModule,
-                "typeName" to pythonNameResolver.resolveName(limeElement),
-                "nativeTypeName" to pythonNameResolver.resolveName(limeElement),
+                "typeName" to pythonNameResolver.resolveRegisterName(limeElement),
+                "nativeTypeName" to pythonNameResolver.resolveRegisterName(limeElement),
                 "usesCallable" to usesCallable(limeElement),
                 "contentTemplate" to selectPythonTemplate(limeElement),
             )
@@ -380,7 +380,7 @@ internal class PythonGenerator : Generator {
                     (type as? LimeContainerWithInheritance)
                         ?.parents
                         ?.mapNotNull { it.type.actualType as? LimeNamedElement }
-                        ?.map { pythonNameResolver.resolveName(it) }
+                        ?.map { pythonNameResolver.resolveRegisterName(it) }
                         .orEmpty()
                 pythonNameResolver.resolveRegisterName(type) to parents
             }
