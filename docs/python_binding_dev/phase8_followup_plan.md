@@ -6,7 +6,7 @@
 > **Related**: [phase8_status.md](./phase8_status.md), [python_pybind11_plan.md](../python_pybind11_plan.md)
 > **Scope**: Remaining narrowed features; `Dates` and `Durations` are already enabled but remain part of the shared runtime validation work
 
-> **Current status (2026-07-22):** Python inheritance trampolines, multiple-inheritance
+> **Current status (2026-07-27):** Python inheritance trampolines, multiple-inheritance
 > bindings, overload dispatch, external-type binding, and `Return<T, Error>` exception
 > translation are implemented on `python_bind`. Python nested generic collection
 > conversion is also implemented for F1. `Inheritance`, `MultipleInheritance`,
@@ -14,6 +14,13 @@
 > functional configuration. `DartExternalTypes` remains supported for Dart but is
 > intentionally excluded from Python support. `Blob`, `Defaults`, and the later lambda,
 > naming, equality, locale, listener, and threading work remain open.
+>
+> **Functional test failures (2026-07-27):** A full pytest run revealed 19 failing test
+> cases across 8 test files. 4 of the 8 root-cause groups are regressions in features
+> previously marked "complete" (B1, B5, D3, E3). See
+> [Section 8](#8-functional-test-failure-analysis-2026-07-27) below and
+> [`functional_test_failures_plan.md`](./functional_test_failures_plan.md) for the
+> detailed analysis and fix plan.
 
 > **⚠️ Gotcha — stale generated code after a generator change (2026-07-18):**
 > The functional-test build scripts (`build-python-functional --publish`, etc.) run
@@ -789,3 +796,55 @@ For each phase:
 | ComplexListeners | G3, G8 | J | Complex callback patterns |
 | ListenersWithReturnValues | G3, G8 | J | Listeners with return values |
 | CallbacksWithThreads | G8, G12 | J | GIL management |
+
+---
+
+## 8. Functional Test Failure Analysis (2026-07-27)
+
+A full pytest run of the currently-enabled Python functional tests revealed **19 failing
+test cases** across 8 test files. The complete failure output is captured in
+[`FunctionalTestFailures.txt`](../../FunctionalTestFailures.txt) and the detailed fix plan
+is in [`functional_test_failures_plan.md`](./functional_test_failures_plan.md).
+
+### 8.1 Summary
+
+The 19 failures fall into 8 root-cause groups:
+
+| Group | Gap ID | Phase | Failures | Status |
+|-------|--------|-------|----------|--------|
+| **A** — Test/API drift (wrong constructor call in tests) | — | — | 4 | Test-only fix |
+| **B** — Struct `__init__` doesn't accept `**kwargs` | G1 | B1 | 4 | Regression |
+| **C** — Missing deferred import in static method body | G1 | B5 | 2 | Regression |
+| **D** — Native pybind11 exception ≠ Python exception class; SFINAE doesn't handle member fields | G7 | E3 | 2 | Regression |
+| **E** — Static property setter not emitted (lambda type) | G8 | G | 1 | Phase G gap |
+| **F** — Overload dispatch fails for collection types | G4 | D3 | 3 | Regression |
+| **G** — Wrapper cache not used in factory functions | G13 | I | 2 | Phase I not started |
+| **H** — `@Equatable` structs lack `__eq__`/`__hash__` | G13 | I | 1 | Phase I not started |
+
+### 8.2 Key Findings
+
+- **4 of 8 groups are regressions** in features marked "complete" in earlier phases (B1, B5,
+  D3, E3). The phase exit criteria were met at the compile level but not validated at the
+  runtime test level — the generated code compiles but doesn't pass functional pytest.
+- **2 groups (G, H)** correspond to Phase I (`Equatable`/`RefEquality`), which has not yet
+  been started.
+- **1 group (E)** is a gap in the in-progress Phase G (Lambdas) — the static property setter
+  for lambda-typed properties was never emitted.
+- **1 group (A)** is purely test-side: the hand-written tests use wrong constructor calls
+  (`EquatableClass()` instead of `EquatableClass.create("name")`).
+
+### 8.3 Implementation Sprints
+
+The fix plan is organized into 5 sprints, all independent (no cross-sprint dependencies):
+
+| Sprint | Tasks | Failures | Est. Effort |
+|--------|-------|----------|-------------|
+| 1 — Quick Wins | A (test fixes), B (struct kwargs), C (deferred import) | 10 | ~1 day |
+| 2 — Exception Fix | D (exc type + message SFINAE) | 2 | ~1 day |
+| 3 — Lambda Property | E (static prop setter) | 1 | ~0.5 day |
+| 4 — Overload Dispatch | F (collection overload type dispatch) | 3 | ~2-3 days |
+| 5 — Equality & Cache | G (wrapper cache), H (struct `__eq__`) | 3 | ~2 days |
+| **Total** | | **19** | **~6-8 days** |
+
+See [`functional_test_failures_plan.md`](./functional_test_failures_plan.md) for the full
+task-by-task implementation details, affected files, and verification steps.
