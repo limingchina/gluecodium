@@ -18,7 +18,8 @@
 """Reference equality tests for the Python (pybind11) bindings."""
 
 import functional
-from test.RefEquality import DummyFactory, DummyClass
+from test.DummyFactory import DummyFactory
+from test.DummyClass import DummyClass
 
 import pytest
 
