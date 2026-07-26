@@ -26,6 +26,8 @@ class SkipFunctions {
     static fun notInDart(input: Float): Float
     @Kotlin(Skip)
     static fun notInKotlin(input: Float): Float
+    @Python(Skip)
+    static fun notInPython(input: Float): Float
 }
 
 class SkipTypes {

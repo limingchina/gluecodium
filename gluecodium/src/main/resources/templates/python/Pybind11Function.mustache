@@ -22,6 +22,10 @@
 {{! pybind11 method binding. Throwing functions (Return<T, Error>) are bound
     directly; the generated _return_caster translates the error into a Python
     exception, so they are not skipped. }}
+{{! This function may still be present in the model (retained so an interface's
+    trampoline class can override every pure-virtual C++ method), but if it is
+    itself skipped for Python it must not get an actual pybind11 binding. }}
+{{#unlessPredicate "isSkippedForPython"}}
 {{#if isConstructor}}
 {{#ifPredicate "needsCollectionLambdaBinding"}}
         .def_static("{{resolveName}}", []({{#parameters}}{{#ifPredicate typeRef "isCollectionType"}}py::handle{{/ifPredicate}}{{#unlessPredicate typeRef "isCollectionType"}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{/unlessPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
@@ -73,3 +77,4 @@
 {{/unless}}
 {{/unlessPredicate}}
 {{/unless}}
+{{/unlessPredicate}}

@@ -23,6 +23,10 @@
   ! def_property_readonly_static passes the class type as the getter argument for
   ! static getters, which fails to compile/run. The Python wrapper exposes them as
   ! @staticmethod so the API stays consistent. }}
+{{! This property may still be present in the model (retained so an interface's
+    trampoline class can override every pure-virtual C++ accessor), but if it is
+    itself skipped for Python it must not get an actual pybind11 binding. }}
+{{#unlessPredicate "isSkippedForPython"}}
 {{#if isStatic}}{{#ifPredicate typeRef "isLambdaType"}}
         .def_static("{{resolveName}}", []() {
             return {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}();
@@ -70,3 +74,4 @@
 {{/unlessPredicate}}{{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/unless}}
+{{/unlessPredicate}}

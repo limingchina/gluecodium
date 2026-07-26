@@ -23,6 +23,10 @@ void register_{{registerName}}(py::module_& module) {
     py::class_<{{resolveName model "Pybind11"}}>(module, "{{registerName}}")
 {{#unless external.cpp}}
 {{#fields}}
+{{! A skipped field may still be present here (retained for Pybind11StructInit's
+    constructor signature, which must match the real C++ struct), but it must not
+    get its own accessor exposed to Python. }}
+{{#unlessPredicate "isSkippedForPython"}}
 {{#ifPredicate "hasFieldAccessors"}}
 {{#ifPredicate "isImmutableField"}}
         .def_property_readonly("{{resolveName}}", {{#ifPredicate typeRef "needsRefSuffix"}}static_cast<const {{resolveName typeRef "Pybind11"}}& ({{resolveName model "Pybind11"}}::*)() const &>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/ifPredicate}}{{#unlessPredicate typeRef "needsRefSuffix"}}static_cast<{{resolveName typeRef "Pybind11"}} ({{resolveName model "Pybind11"}}::*)() const>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/unlessPredicate}})
@@ -34,6 +38,7 @@ void register_{{registerName}}(py::module_& module) {
         .def_readonly("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
 {{/ifPredicate}}{{#unlessPredicate "isImmutableField"}}
         .def_readwrite("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
+{{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/fields}}
