@@ -46,5 +46,5 @@ class StructsWithConstantsInterfaceMultiRoute(_NativeBase):
     DEFAULT_DESCRIPTION = "Foo"
 
 
-    DEFAULT_TYPE = RouteType.NONE
+    DEFAULT_TYPE = RouteUtilsRouteType.NONE
 

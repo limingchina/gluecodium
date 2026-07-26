@@ -29,8 +29,8 @@ import com.here.gluecodium.model.lime.LimeAttributeValueType.NAME
 import com.here.gluecodium.model.lime.LimeBasicType
 import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeElement
-import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeLambda
+import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeReturnType
@@ -141,28 +141,36 @@ internal class PythonNameResolver(
         return (namedType.path.head + resolveName(namedType)).joinToString(".")
     }
 
-    private fun resolveValue(limeValue: LimeValue): String {
-        // Special float literals (NaN / Infinity) are not Python builtins; render as float() calls.
-        if (limeValue is LimeValue.Special) {
-            return when (limeValue.value) {
-                LimeValue.Special.ValueId.NAN -> "float('nan')"
-                LimeValue.Special.ValueId.INFINITY -> "float('inf')"
-                LimeValue.Special.ValueId.NEGATIVE_INFINITY -> "float('-inf')"
+    private fun resolveValue(limeValue: LimeValue): String =
+        when (limeValue) {
+            is LimeValue.Special -> {
+                when (limeValue.value) {
+                    LimeValue.Special.ValueId.NAN -> "float('nan')"
+                    LimeValue.Special.ValueId.INFINITY -> "float('inf')"
+                    LimeValue.Special.ValueId.NEGATIVE_INFINITY -> "float('-inf')"
+                }
             }
-        }
-        if (limeValue !is LimeValue.Literal) return limeValue.toString()
-        val actualType = limeValue.typeRef.type.actualType
-        // Boolean literals must use Python's capitalized True/False (LimeValue.Literal.toString()
-        // returns the lowercase "true"/"false" used by most LIME targets).
-        if (actualType is LimeBasicType && actualType.typeId == LimeBasicType.TypeId.BOOLEAN) {
-            return when (limeValue.value) {
-                "true" -> "True"
-                "false" -> "False"
-                else -> limeValue.value
+            is LimeValue.Constant -> {
+                val limeElement = limeValue.valueRef.element
+                val parentElement = getParentElement(limeElement)
+                "${resolveName(parentElement)}.${resolveName(limeElement)}"
             }
+            is LimeValue.Literal -> {
+                val actualType = limeValue.typeRef.type.actualType
+                // Boolean literals must use Python's capitalized True/False (LimeValue.Literal.toString()
+                // returns the lowercase "true"/"false" used by most LIME targets).
+                if (actualType is LimeBasicType && actualType.typeId == LimeBasicType.TypeId.BOOLEAN) {
+                    when (limeValue.value) {
+                        "true" -> "True"
+                        "false" -> "False"
+                        else -> limeValue.value
+                    }
+                } else {
+                    limeValue.toString()
+                }
+            }
+            else -> limeValue.toString()
         }
-        return limeValue.toString()
-    }
 
     /**
      * Resolves a unique C++ function name for the per-type `register_*` function emitted by each

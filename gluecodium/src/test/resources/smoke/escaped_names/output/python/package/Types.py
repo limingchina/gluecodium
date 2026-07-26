@@ -24,5 +24,5 @@ class Types(_NativeBase):
             super().__init__(generated.package_Types(*[_unwrap(arg) for arg in args]))
 
 
-    CONST = enum.NaN
+    CONST = typesenum.NA_N
 

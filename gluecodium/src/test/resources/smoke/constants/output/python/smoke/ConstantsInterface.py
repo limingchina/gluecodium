@@ -5,6 +5,7 @@ from __future__ import annotations
 from _native_base import _unwrap, _wrap
 from typing import Optional
 
+from smoke.ConstantsInterfaceStateEnum import ConstantsInterfaceStateEnum
 
 from _native_base import _NativeBase
 
@@ -36,5 +37,5 @@ class ConstantsInterface(_NativeBase):
     STRING_CONSTANT = "Foo bar"
 
 
-    ENUM_CONSTANT = StateEnum.ON
+    ENUM_CONSTANT = ConstantsInterfaceStateEnum.ON
 
