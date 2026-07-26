@@ -33,16 +33,6 @@ class EnableIfField(_NativeBase):
 
 
     @property
-    def string_field(self) -> str:
-        """"""
-        return _wrap(self._native.string_field, str)
-    @string_field.setter
-    def string_field(self, value: str):
-      self._native.string_field = _unwrap(value, str)
-
-
-
-    @property
     def bool_field(self) -> bool:
         """"""
         return _wrap(self._native.bool_field, bool)

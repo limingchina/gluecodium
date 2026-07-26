@@ -10,7 +10,7 @@ import generated
 class StandaloneExternalEnum(Enum):
     """"""
 
-    FOO = generated.smoke_StandaloneExternalEnum.foo
+    FOO = generated.smoke_StandaloneExternalEnum.FOO
 
     @property
     def _native(self):

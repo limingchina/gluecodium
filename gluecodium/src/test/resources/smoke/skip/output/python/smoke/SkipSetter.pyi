@@ -28,7 +28,4 @@ class SkipSetter(generated.smoke_SkipSetter):
         """"""
         return _wrap(generated.smoke_SkipSetter.foo.fget(self), str)
 
-    @foo.setter
-    def foo(self, value: str):
-        generated.smoke_SkipSetter.foo.fset(self, _unwrap(value, str))
 

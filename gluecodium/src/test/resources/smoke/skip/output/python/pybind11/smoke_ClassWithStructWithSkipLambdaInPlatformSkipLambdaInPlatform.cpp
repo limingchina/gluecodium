@@ -21,13 +21,9 @@ using SkipLambdaInPlatform = ::smoke::ClassWithStructWithSkipLambdaInPlatform::S
 void register_smoke_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(py::module_& module) {
     py::class_<SkipLambdaInPlatform>(module, "smoke_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform")
         .def_readwrite("int_field", &SkipLambdaInPlatform::int_field)
-        .def_readwrite("some_lambda", &SkipLambdaInPlatform::some_lambda)
         .def(py::init<>())
         .def(py::init<int32_t, ::std::function<int32_t()>>(), py::arg("int_field"), py::arg("some_lambda"))
         .def(py::init<int32_t, ::std::function<int32_t()>>(), py::arg("int_field"), py::arg("some_lambda"))
-                .def("use_lambda", [](SkipLambdaInPlatform& self, const ::std::function<int32_t()>& some_lambda) -> py::object {
-                        return py::cast(self.use_lambda(some_lambda));
-                }, py::arg("some_lambda"))
         ;
 }
 

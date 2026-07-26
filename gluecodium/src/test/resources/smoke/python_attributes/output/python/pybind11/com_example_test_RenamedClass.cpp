@@ -21,7 +21,6 @@ using MyClass = ::com::example::test::MyClass;
 
 void register_com_example_test_RenamedClass(py::module_& module) {
     py::class_<MyClass, std::shared_ptr<MyClass>>(module, "com_example_test_RenamedClass")
-        .def("hidden_method", &MyClass::hidden_method)
         .def("internal_method", &MyClass::internal_method)
         .def("visible_method", &MyClass::visible_method, py::arg("param"))
         ;

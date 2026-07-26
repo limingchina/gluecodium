@@ -10,8 +10,8 @@ import generated
 class EnumsExternal_Enum(Enum):
     """"""
 
-    FOO_VALUE = generated.smoke_EnumsExternal_Enum.Foo_Value
-    BAR_VALUE = generated.smoke_EnumsExternal_Enum.Bar_Value
+    FOO_VALUE = generated.smoke_EnumsExternal_Enum.FOO_VALUE
+    BAR_VALUE = generated.smoke_EnumsExternal_Enum.BAR_VALUE
 
     @property
     def _native(self):

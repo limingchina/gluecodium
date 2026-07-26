@@ -6,8 +6,6 @@ from _native_base import _unwrap, _wrap
 from typing import Optional
 
 from smoke.SkipProxy import SkipProxy
-from smoke.SkippedEverywhere import SkippedEverywhere
-from smoke.SkippedEverywhereEnum import SkippedEverywhereEnum
 
 
 import generated

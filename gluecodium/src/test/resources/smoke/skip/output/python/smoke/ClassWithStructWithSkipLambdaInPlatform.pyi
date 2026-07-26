@@ -1,6 +1,5 @@
 
 
-from smoke.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda import ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda
 import typing
 
 from _native_base import _NativeBase

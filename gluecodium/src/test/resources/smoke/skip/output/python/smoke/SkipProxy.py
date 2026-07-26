@@ -5,8 +5,6 @@ from __future__ import annotations
 from _native_base import _unwrap, _wrap
 from typing import Optional
 
-from smoke.SkippedEverywhere import SkippedEverywhere
-from smoke.SkippedEverywhereEnum import SkippedEverywhereEnum
 
 
 import generated
@@ -80,22 +78,4 @@ class SkipProxy(generated.smoke_SkipProxy):
     @skipped_in_kotlin.setter
     def skipped_in_kotlin(self, value: float):
         generated.smoke_SkipProxy.skipped_in_kotlin.fset(self, _unwrap(value, float))
-
-    @property
-    def skipped_everywhere(self) -> SkippedEverywhere:
-        """"""
-        return _wrap(generated.smoke_SkipProxy.skipped_everywhere.fget(self), SkippedEverywhere)
-
-    @skipped_everywhere.setter
-    def skipped_everywhere(self, value: SkippedEverywhere):
-        generated.smoke_SkipProxy.skipped_everywhere.fset(self, _unwrap(value, SkippedEverywhere))
-
-    @property
-    def skipped_everywhere_too(self) -> SkippedEverywhereEnum:
-        """"""
-        return _wrap(generated.smoke_SkipProxy.skipped_everywhere_too.fget(self), SkippedEverywhereEnum)
-
-    @skipped_everywhere_too.setter
-    def skipped_everywhere_too(self, value: SkippedEverywhereEnum):
-        generated.smoke_SkipProxy.skipped_everywhere_too.fset(self, _unwrap(value, SkippedEverywhereEnum))
 
