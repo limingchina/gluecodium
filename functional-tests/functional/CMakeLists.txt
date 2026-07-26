@@ -361,7 +361,7 @@ feature(Equatable cpp android android-kotlin swift dart python SOURCES
     input/lime/SimpleEquality.lime
 )
 
-feature(Nullable cpp android android-kotlin swift dart SOURCES
+feature(Nullable cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/NullableInstances.cpp
     input/src/cpp/NullableInterfaceImpl.cpp
     input/src/cpp/NullableCollections.cpp
