@@ -46,5 +46,5 @@ class StructsWithConstantsRoute(_NativeBase):
     DEFAULT_DESCRIPTION = "Nonsense"
 
 
-    DEFAULT_TYPE = RouteType.EQUESTRIAN
+    DEFAULT_TYPE = RouteUtilsRouteType.EQUESTRIAN
 

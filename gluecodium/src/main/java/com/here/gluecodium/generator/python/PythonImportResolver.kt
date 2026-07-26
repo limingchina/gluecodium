@@ -102,7 +102,7 @@ internal class PythonImportResolver(
             // A constant reference is resolved in-place at the use site (e.g. `ENUM_CONSTANT =
             // StateEnum.ON`), not via a cross-module import. Emitting an import here would produce
             // a bogus `from test.<NAME> import <NAME>` for a submodule that is never generated.
-            is LimeValue.Constant -> emptyList()
+            is LimeValue.Constant -> resolveTypeImports(limeValue.typeRef.type)
             else -> emptyList()
         }
 

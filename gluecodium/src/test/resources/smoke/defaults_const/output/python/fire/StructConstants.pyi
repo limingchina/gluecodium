@@ -21,7 +21,7 @@ class StructConstants(_NativeBase):
     DUMMY2 = {11}
 
 
-    DUMMY3 = StructConstants.dummy2
+    DUMMY3 = StructConstants.DUMMY2
 
 
     DUMMY4 = {-1}

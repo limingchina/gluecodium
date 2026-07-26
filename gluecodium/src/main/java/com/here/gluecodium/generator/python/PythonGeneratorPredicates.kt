@@ -212,7 +212,7 @@ internal class PythonGeneratorPredicates(
                     (
                         limeFunction.parameters.any { it.typeRef.type.actualType is LimeLambda } ||
                             limeFunction.returnType.typeRef.type.actualType is LimeLambda ||
-                        limeFunction.parameters.any { isCollectionType(it.typeRef.type) } ||
+                            limeFunction.parameters.any { isCollectionType(it.typeRef.type) } ||
                             isCollectionType(limeFunction.returnType.typeRef.type)
                     )
             },

@@ -1,5 +1,6 @@
 
 
+from smoke.ConstantsInterfaceStateEnum import ConstantsInterfaceStateEnum
 import typing
 
 from _native_base import _NativeBase
@@ -32,5 +33,5 @@ class ConstantsInterface(_NativeBase):
     STRING_CONSTANT = "Foo bar"
 
 
-    ENUM_CONSTANT = StateEnum.ON
+    ENUM_CONSTANT = ConstantsInterfaceStateEnum.ON
 
