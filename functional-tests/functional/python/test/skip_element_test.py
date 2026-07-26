@@ -39,4 +39,4 @@ class TestSkipElement:
         assert SkipFunctions.not_in_dart(1.5) == 1.5
 
     def test_not_in_kotlin_present(self):
-        assert SkipFunctions.not_in_kotlin("input") == "input"
+        assert SkipFunctions.not_in_kotlin(1.5) == 1.5
