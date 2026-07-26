@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,12 +20,13 @@ namespace py = pybind11;
 using DateStruct = ::smoke::Dates::DateStruct;
 
 void register_smoke_DatesDateStruct(py::module_& module) {
-    py::class_<DateStruct>(module, "DatesDateStruct")
+    py::class_<DateStruct>(module, "smoke_DatesDateStruct")
         .def_readwrite("date_field", &DateStruct::date_field)
         .def_readwrite("nullable_date_field", &DateStruct::nullable_date_field)
         .def(py::init<>())
-        .def(py::init<::std::chrono::system_clock::time_point>(py::arg("date_field")))
-        .def(py::init<::std::chrono::system_clock::time_point, std::optional< ::std::chrono::system_clock::time_point >(), py::arg("date_field"), py::arg("nullable_date_field"))
+        .def(py::init<::std::chrono::system_clock::time_point>(), py::arg("date_field"))
+        .def(py::init<::std::chrono::system_clock::time_point, std::optional< ::std::chrono::system_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))
+        .def(py::init<::std::chrono::system_clock::time_point, std::optional< ::std::chrono::system_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))
         ;
 }
 

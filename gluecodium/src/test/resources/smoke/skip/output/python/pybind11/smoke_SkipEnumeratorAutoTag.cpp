@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SkipEnumeratorAutoTag = ::smoke::SkipEnumeratorAutoTag;
 
 void register_smoke_SkipEnumeratorAutoTag(py::module_& module) {
-    py::enum_<SkipEnumeratorAutoTag>(module, "SkipEnumeratorAutoTag")
+    py::enum_<SkipEnumeratorAutoTag>(module, "smoke_SkipEnumeratorAutoTag")
         .value("ONE", SkipEnumeratorAutoTag::ONE)
         .value("THREE", SkipEnumeratorAutoTag::THREE)
         ;

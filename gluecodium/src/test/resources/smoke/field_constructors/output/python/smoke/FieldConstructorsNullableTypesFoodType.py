@@ -14,8 +14,8 @@ import generated
 class FieldConstructorsNullableTypesFoodType(Enum):
     """"""
 
-    VEGETABLES = generated.FieldConstructorsNullableTypesFoodType.VEGETABLES
-    FRUITS = generated.FieldConstructorsNullableTypesFoodType.FRUITS
+    VEGETABLES = generated.smoke_FieldConstructorsNullableTypesFoodType.VEGETABLES
+    FRUITS = generated.smoke_FieldConstructorsNullableTypesFoodType.FRUITS
 
     @property
     def _native(self):

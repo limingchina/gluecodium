@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using EnumStartsWithOne = ::smoke::EnumStartsWithOne;
 
 void register_smoke_EnumStartsWithOne(py::module_& module) {
-    py::enum_<EnumStartsWithOne>(module, "EnumStartsWithOne")
+    py::enum_<EnumStartsWithOne>(module, "smoke_EnumStartsWithOne")
         .value("FIRST", EnumStartsWithOne::FIRST)
         .value("SECOND", EnumStartsWithOne::SECOND)
         ;

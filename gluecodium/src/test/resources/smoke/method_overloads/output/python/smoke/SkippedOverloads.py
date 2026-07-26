@@ -20,12 +20,12 @@ class SkippedOverloads(_NativeBase):
     @staticmethod
     def make() -> SkippedOverloads:
         """"""
-        native_result = generated.SkippedOverloads.make()
+        native_result = generated.smoke_SkippedOverloads.make()
         return SkippedOverloads(native_result)
 
     @staticmethod
     def make_for_dart(input: str) -> SkippedOverloads:
         """"""
-        native_result = generated.SkippedOverloads.make_for_dart(_unwrap(input, str))
+        native_result = generated.smoke_SkippedOverloads.make_for_dart(_unwrap(input, str))
         return SkippedOverloads(native_result)
 

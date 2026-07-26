@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using InternalError = ::smoke::CppRefReturnType::InternalError;
 
 void register_smoke_CppRefReturnTypeInternalError(py::module_& module) {
-    py::enum_<InternalError>(module, "CppRefReturnTypeInternalError")
+    py::enum_<InternalError>(module, "smoke_CppRefReturnTypeInternalError")
         .value("FOO", InternalError::FOO)
         .value("BAR", InternalError::BAR)
         ;

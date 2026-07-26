@@ -13,10 +13,10 @@ class EnumsErrorStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.EnumsErrorStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_EnumsErrorStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnumsErrorStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_EnumsErrorStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

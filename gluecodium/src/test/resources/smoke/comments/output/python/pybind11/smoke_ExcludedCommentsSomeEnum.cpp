@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SomeEnum = ::smoke::ExcludedComments::SomeEnum;
 
 void register_smoke_ExcludedCommentsSomeEnum(py::module_& module) {
-    py::enum_<SomeEnum>(module, "ExcludedCommentsSomeEnum")
+    py::enum_<SomeEnum>(module, "smoke_ExcludedCommentsSomeEnum")
         .value("USELESS", SomeEnum::USELESS)
         ;
 }

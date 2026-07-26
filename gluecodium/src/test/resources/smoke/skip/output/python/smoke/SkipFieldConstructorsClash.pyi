@@ -12,10 +12,10 @@ class SkipFieldConstructorsClash(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.SkipFieldConstructorsClash):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_SkipFieldConstructorsClash):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkipFieldConstructorsClash(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_SkipFieldConstructorsClash(*[_unwrap(arg) for arg in args]))
 
 
     @property

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using SimpleEnum = ::smoke::EnumDefaultsExternal::SimpleEnum;
 
 void register_smoke_EnumDefaultsExternalSimpleEnum(py::module_& module) {
-    py::class_<SimpleEnum>(module, "EnumDefaultsExternalSimpleEnum")
+    py::class_<SimpleEnum>(module, "smoke_EnumDefaultsExternalSimpleEnum")
         .def_readwrite("enum_field", &SimpleEnum::enum_field)
         .def(py::init<>())
-        .def(py::init<foo::AlienEnum1(), py::arg("enum_field"))
+        .def(py::init<foo::AlienEnum1>(), py::arg("enum_field"))
         ;
 }
 

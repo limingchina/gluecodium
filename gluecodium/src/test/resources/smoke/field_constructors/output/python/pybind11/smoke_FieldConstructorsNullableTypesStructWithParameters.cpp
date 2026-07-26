@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using StructWithParameters = ::smoke::FieldConstructorsNullableTypes::StructWithParameters;
 
 void register_smoke_FieldConstructorsNullableTypesStructWithParameters(py::module_& module) {
-    py::class_<StructWithParameters>(module, "FieldConstructorsNullableTypesStructWithParameters")
+    py::class_<StructWithParameters>(module, "smoke_FieldConstructorsNullableTypesStructWithParameters")
         .def_readwrite("food_type", &StructWithParameters::food_type)
         .def(py::init<>())
-        .def(py::init<::smoke::FieldConstructorsNullableTypes::FoodType(), py::arg("food_type"))
+        .def(py::init<::smoke::FieldConstructorsNullableTypes::FoodType>(), py::arg("food_type"))
         ;
 }
 

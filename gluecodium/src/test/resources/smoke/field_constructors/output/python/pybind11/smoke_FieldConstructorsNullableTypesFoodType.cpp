@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using FoodType = ::smoke::FieldConstructorsNullableTypes::FoodType;
 
 void register_smoke_FieldConstructorsNullableTypesFoodType(py::module_& module) {
-    py::enum_<FoodType>(module, "FieldConstructorsNullableTypesFoodType")
+    py::enum_<FoodType>(module, "smoke_FieldConstructorsNullableTypesFoodType")
         .value("VEGETABLES", FoodType::VEGETABLES)
         .value("FRUITS", FoodType::FRUITS)
         ;

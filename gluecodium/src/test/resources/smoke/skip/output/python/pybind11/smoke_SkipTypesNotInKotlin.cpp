@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using NotInKotlin = ::smoke::SkipTypes::NotInKotlin;
 
 void register_smoke_SkipTypesNotInKotlin(py::module_& module) {
-    py::class_<NotInKotlin>(module, "SkipTypesNotInKotlin")
+    py::class_<NotInKotlin>(module, "smoke_SkipTypesNotInKotlin")
         .def_readwrite("foo_field", &NotInKotlin::foo_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("foo_field"))
+        .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 }
 

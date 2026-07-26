@@ -21,5 +21,5 @@ class InternalClassWithStaticProperty(_NativeBase):
     @staticmethod
     def foo_bar() -> str:
         """"""
-        return _wrap(generated.InternalClassWithStaticProperty.foo_bar(), str)
+        return _wrap(generated.smoke_InternalClassWithStaticProperty.foo_bar(), str)
 

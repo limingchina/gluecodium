@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,11 +17,12 @@ namespace py = pybind11;
 using ImmutableStructWithFieldUsingImmutableStruct = ::smoke::TypesWithDefaults::ImmutableStructWithFieldUsingImmutableStruct;
 
 void register_smoke_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct(py::module_& module) {
-    py::class_<ImmutableStructWithFieldUsingImmutableStruct>(module, "TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct")
+    py::class_<ImmutableStructWithFieldUsingImmutableStruct>(module, "smoke_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct")
         .def_readonly("some_field1", &ImmutableStructWithFieldUsingImmutableStruct::some_field1)
         .def_readonly("some_field2", &ImmutableStructWithFieldUsingImmutableStruct::some_field2)
         .def(py::init<>())
-        .def(py::init<::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults, ::smoke::TypesWithDefaults::ImmutableStructWithCollections(), py::arg("some_field1"), py::arg("some_field2"))
+        .def(py::init<::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults, ::smoke::TypesWithDefaults::ImmutableStructWithCollections>(), py::arg("some_field1"), py::arg("some_field2"))
+        .def(py::init<::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults, ::smoke::TypesWithDefaults::ImmutableStructWithCollections>(), py::arg("some_field1"), py::arg("some_field2"))
         ;
 }
 

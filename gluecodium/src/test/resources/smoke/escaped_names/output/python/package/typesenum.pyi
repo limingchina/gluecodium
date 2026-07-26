@@ -10,7 +10,7 @@ import generated
 class typesenum(Enum):
     """"""
 
-    NA_N = generated.typesenum.NA_N
+    NA_N = generated.package_typesenum.NA_N
 
     @property
     def _native(self):

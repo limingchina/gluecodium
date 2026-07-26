@@ -10,7 +10,7 @@ from smoke.ParentWithCustomConstructor import ParentWithCustomConstructor
 import generated
 
 
-class ChildWithCustomConstructor(generated.ChildWithCustomConstructor):
+class ChildWithCustomConstructor(generated.smoke_ChildWithCustomConstructor):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class ChildWithCustomConstructor(generated.ChildWithCustomConstructor):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildWithCustomConstructor):
+        if native is not None and isinstance(native, generated.smoke_ChildWithCustomConstructor):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,6 +29,6 @@ class ChildWithCustomConstructor(generated.ChildWithCustomConstructor):
     @staticmethod
     def make() -> ChildWithCustomConstructor:
         """"""
-        native_result = generated.ChildWithCustomConstructor.make()
+        native_result = generated.smoke_ChildWithCustomConstructor.make()
         return ChildWithCustomConstructor(native_result)
 

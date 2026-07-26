@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ParentNarrowTwo(generated.ParentNarrowTwo):
+class ParentNarrowTwo(generated.smoke_ParentNarrowTwo):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class ParentNarrowTwo(generated.ParentNarrowTwo):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ParentNarrowTwo):
+        if native is not None and isinstance(native, generated.smoke_ParentNarrowTwo):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,9 +28,9 @@ class ParentNarrowTwo(generated.ParentNarrowTwo):
     @property
     def parent_property_two(self) -> str:
         """"""
-        return _wrap(generated.ParentNarrowTwo.parent_property_two.fget(self), str)
+        return _wrap(generated.smoke_ParentNarrowTwo.parent_property_two.fget(self), str)
 
     @parent_property_two.setter
     def parent_property_two(self, value: str):
-        generated.ParentNarrowTwo.parent_property_two.fset(self, _unwrap(value, str))
+        generated.smoke_ParentNarrowTwo.parent_property_two.fset(self, _unwrap(value, str))
 

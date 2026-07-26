@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -61,7 +62,7 @@ public:
 };
 
 void register_smoke_OuterClassWithInheritance(py::module_& module) {
-    py::class_<OuterClassWithInheritance, ::smoke::ParentClass, std::shared_ptr<OuterClassWithInheritance>, OuterClassWithInheritanceTrampoline>(module, "OuterClassWithInheritance")
+    py::class_<OuterClassWithInheritance, ::smoke::ParentClass, std::shared_ptr<OuterClassWithInheritance>, OuterClassWithInheritanceTrampoline>(module, "smoke_OuterClassWithInheritance")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -72,6 +73,8 @@ void register_smoke_OuterClassWithInheritance(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("foo", &OuterClassWithInheritance::foo, py::arg("input"))
+        .def("parent_fun", &OuterClassWithInheritance::parent_fun)
         .def_property("parent_property", py::overload_cast<>(&OuterClassWithInheritance::get_parent_property, py::const_), py::overload_cast<const ::std::string&>(&OuterClassWithInheritance::set_parent_property))
         ;
 }

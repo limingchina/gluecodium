@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -101,7 +102,7 @@ public:
 };
 
 void register_smoke_FirstParentIsClassClass(py::module_& module) {
-    py::class_<FirstParentIsClassClass, ::smoke::ParentClass, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsClassClass>, FirstParentIsClassClassTrampoline>(module, "FirstParentIsClassClass", py::multiple_inheritance())
+    py::class_<FirstParentIsClassClass, ::smoke::ParentClass, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsClassClass>, FirstParentIsClassClassTrampoline>(module, "smoke_FirstParentIsClassClass", py::multiple_inheritance())
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -112,7 +113,12 @@ void register_smoke_FirstParentIsClassClass(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("child_function", &FirstParentIsClassClass::child_function)
         .def_property("child_property", py::overload_cast<>(&FirstParentIsClassClass::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsClassClass::set_child_property))
+        .def("parent_function", &FirstParentIsClassClass::parent_function)
+        .def("parent_function_one", [](FirstParentIsClassClass& self) {
+            return self.parent_function_one();
+        })
         .def_property("parent_property", py::overload_cast<>(&FirstParentIsClassClass::get_parent_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsClassClass::set_parent_property))
         .def_property("parent_property_one", [](const FirstParentIsClassClass& self) {
             return self.get_parent_property_one();

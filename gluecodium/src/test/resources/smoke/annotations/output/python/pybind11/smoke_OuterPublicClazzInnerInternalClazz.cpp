@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,8 @@ using InnerInternalClazz = ::smoke::OuterPublicClazz::InnerInternalClazz;
 
 
 void register_smoke_OuterPublicClazzInnerInternalClazz(py::module_& module) {
-    py::class_<InnerInternalClazz, std::shared_ptr<InnerInternalClazz>>(module, "OuterPublicClazzInnerInternalClazz")
+    py::class_<InnerInternalClazz, std::shared_ptr<InnerInternalClazz>>(module, "smoke_OuterPublicClazzInnerInternalClazz")
+        .def("some_function", &InnerInternalClazz::some_function)
         ;
 }
 

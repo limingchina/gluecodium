@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,11 +17,13 @@ namespace py = pybind11;
 using FreePoint = ::smoke::FreePoint;
 
 void register_smoke_FreePoint(py::module_& module) {
-    py::class_<FreePoint>(module, "FreePoint")
+    py::class_<FreePoint>(module, "smoke_FreePoint")
         .def_readwrite("x", &FreePoint::x)
         .def_readwrite("y", &FreePoint::y)
         .def(py::init<>())
-        .def(py::init<double, double(), py::arg("x"), py::arg("y"))
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        .def("flip", &FreePoint::flip)
         ;
 }
 

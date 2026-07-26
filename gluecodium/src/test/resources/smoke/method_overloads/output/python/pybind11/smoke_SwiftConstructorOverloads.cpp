@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,12 +20,8 @@ using SwiftConstructorOverloads = ::smoke::SwiftConstructorOverloads;
 
 
 void register_smoke_SwiftConstructorOverloads(py::module_& module) {
-    py::class_<SwiftConstructorOverloads, std::shared_ptr<SwiftConstructorOverloads>>(module, "SwiftConstructorOverloads")
-        .def(py::init<::std::string>(py::arg("input")))
-
+    py::class_<SwiftConstructorOverloads, std::shared_ptr<SwiftConstructorOverloads>>(module, "smoke_SwiftConstructorOverloads")
         .def_static("make", &SwiftConstructorOverloads::make, py::arg("input"))
-        .def(py::init<::std::string>(py::arg("throughput")))
-
         .def_static("make_do", &SwiftConstructorOverloads::make_do, py::arg("throughput"))
         ;
 }

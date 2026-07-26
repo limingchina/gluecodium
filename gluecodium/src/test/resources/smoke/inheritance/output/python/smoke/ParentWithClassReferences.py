@@ -12,7 +12,7 @@ from smoke.ParentClass import ParentClass
 import generated
 
 
-class ParentWithClassReferences(generated.ParentWithClassReferences):
+class ParentWithClassReferences(generated.smoke_ParentWithClassReferences):
     """"""
 
     def __init__(self, native=None):
@@ -23,7 +23,7 @@ class ParentWithClassReferences(generated.ParentWithClassReferences):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ParentWithClassReferences):
+        if native is not None and isinstance(native, generated.smoke_ParentWithClassReferences):
             super().__init__(native)
         else:
             super().__init__()
@@ -31,14 +31,14 @@ class ParentWithClassReferences(generated.ParentWithClassReferences):
 
     def class_function(self) -> ChildClassFromClass:
         """"""
-        return _wrap(generated.ParentWithClassReferences.class_function(self), ChildClassFromClass)
+        return _wrap(generated.smoke_ParentWithClassReferences.class_function(self), ChildClassFromClass)
 
     @property
     def class_property(self) -> ParentClass:
         """"""
-        return _wrap(generated.ParentWithClassReferences.class_property.fget(self), ParentClass)
+        return _wrap(generated.smoke_ParentWithClassReferences.class_property.fget(self), ParentClass)
 
     @class_property.setter
     def class_property(self, value: ParentClass):
-        generated.ParentWithClassReferences.class_property.fset(self, _unwrap(value, ParentClass))
+        generated.smoke_ParentWithClassReferences.class_property.fset(self, _unwrap(value, ParentClass))
 

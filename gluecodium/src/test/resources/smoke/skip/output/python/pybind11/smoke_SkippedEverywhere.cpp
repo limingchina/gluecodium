@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,10 +22,13 @@ namespace py = pybind11;
 using SkippedEverywhere = ::smoke::SkippedEverywhere;
 
 void register_smoke_SkippedEverywhere(py::module_& module) {
-    py::class_<SkippedEverywhere>(module, "SkippedEverywhere")
+    py::class_<SkippedEverywhere>(module, "smoke_SkippedEverywhere")
         .def_readwrite("nothing_to_see_here", &SkippedEverywhere::nothing_to_see_here)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("nothing_to_see_here"))
+        .def(py::init<::std::string>(), py::arg("nothing_to_see_here"))
+                .def("use_map_in_dart", [](SkippedEverywhere& self, py::handle foo) {
+                        self.use_map_in_dart(gluecodium::python::from_python_regular<::std::unordered_map< int32_t, ::smoke::SkipTypes::NotInDart >>(foo));
+                }, py::arg("foo"))
         ;
 }
 

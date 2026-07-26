@@ -10,11 +10,11 @@ import generated
 class EnumWithAlias(Enum):
     """"""
 
-    ONE = generated.EnumWithAlias.ONE
-    TWO = generated.EnumWithAlias.TWO
-    THREE = generated.EnumWithAlias.THREE
-    FIRST = generated.EnumWithAlias.FIRST
-    THE_BEST = generated.EnumWithAlias.THE_BEST
+    ONE = generated.smoke_EnumWithAlias.ONE
+    TWO = generated.smoke_EnumWithAlias.TWO
+    THREE = generated.smoke_EnumWithAlias.THREE
+    FIRST = generated.smoke_EnumWithAlias.FIRST
+    THE_BEST = generated.smoke_EnumWithAlias.THE_BEST
 
     @property
     def _native(self):

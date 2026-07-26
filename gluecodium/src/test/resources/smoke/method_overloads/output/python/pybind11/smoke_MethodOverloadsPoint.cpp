@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,11 +17,12 @@ namespace py = pybind11;
 using Point = ::smoke::MethodOverloads::Point;
 
 void register_smoke_MethodOverloadsPoint(py::module_& module) {
-    py::class_<Point>(module, "MethodOverloadsPoint")
+    py::class_<Point>(module, "smoke_MethodOverloadsPoint")
         .def_readwrite("x", &Point::x)
         .def_readwrite("y", &Point::y)
         .def(py::init<>())
-        .def(py::init<double, double(), py::arg("x"), py::arg("y"))
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
         ;
 }
 

@@ -11,7 +11,7 @@ import typing
 import generated
 
 
-class ChildClassWithIncludes(generated.ChildClassWithIncludes):
+class ChildClassWithIncludes(generated.smoke_ChildClassWithIncludes):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class ChildClassWithIncludes(generated.ChildClassWithIncludes):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassWithIncludes):
+        if native is not None and isinstance(native, generated.smoke_ChildClassWithIncludes):
             super().__init__(native)
         else:
             super().__init__()

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,9 +19,8 @@ namespace py = pybind11;
 using ClassInStruct = ::smoke::ClassInStruct;
 
 void register_smoke_ClassInStruct(py::module_& module) {
-    py::class_<ClassInStruct>(module, "ClassInStruct")
+    py::class_<ClassInStruct>(module, "smoke_ClassInStruct")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -56,7 +57,7 @@ public:
 };
 
 void register_smoke_SkipTagsInKotlin(py::module_& module) {
-    py::class_<SkipTagsInKotlin, std::shared_ptr<SkipTagsInKotlin>, SkipTagsInKotlinTrampoline>(module, "SkipTagsInKotlin")
+    py::class_<SkipTagsInKotlin, std::shared_ptr<SkipTagsInKotlin>, SkipTagsInKotlinTrampoline>(module, "smoke_SkipTagsInKotlin")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -69,6 +70,15 @@ void register_smoke_SkipTagsInKotlin(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("skip_tagged", [](SkipTagsInKotlin& self) {
+            return self.skip_tagged();
+        })
+        .def("dont_skip_tagged", [](SkipTagsInKotlin& self) {
+            return self.dont_skip_tagged();
+        })
+        .def("skip_tagged_list", [](SkipTagsInKotlin& self) {
+            return self.skip_tagged_list();
+        })
         ;
 }
 

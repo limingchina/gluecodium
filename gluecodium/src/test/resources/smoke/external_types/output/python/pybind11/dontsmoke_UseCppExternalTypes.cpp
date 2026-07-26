@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -22,7 +23,10 @@ using UseCppExternalTypes = ::dontsmoke::UseCppExternalTypes;
 
 
 void register_dontsmoke_UseCppExternalTypes(py::module_& module) {
-    py::class_<UseCppExternalTypes, std::shared_ptr<UseCppExternalTypes>>(module, "UseCppExternalTypes")
+    py::class_<UseCppExternalTypes, std::shared_ptr<UseCppExternalTypes>>(module, "dontsmoke_UseCppExternalTypes")
+        .def_static("use_struct", &UseCppExternalTypes::use_struct, py::arg("input"))
+        .def_static("use_enum", &UseCppExternalTypes::use_enum, py::arg("input"))
+        .def_static("use_class", &UseCppExternalTypes::use_class, py::arg("input"))
         ;
 }
 

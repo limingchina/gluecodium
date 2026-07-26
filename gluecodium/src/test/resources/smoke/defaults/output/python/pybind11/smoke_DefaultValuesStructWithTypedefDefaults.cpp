@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,12 +19,14 @@ namespace py = pybind11;
 using StructWithTypedefDefaults = ::smoke::DefaultValues::StructWithTypedefDefaults;
 
 void register_smoke_DefaultValuesStructWithTypedefDefaults(py::module_& module) {
-    py::class_<StructWithTypedefDefaults>(module, "DefaultValuesStructWithTypedefDefaults")
+    py::class_<StructWithTypedefDefaults>(module, "smoke_DefaultValuesStructWithTypedefDefaults")
         .def_readwrite("long_field", &StructWithTypedefDefaults::long_field)
         .def_readwrite("bool_field", &StructWithTypedefDefaults::bool_field)
         .def_readwrite("string_field", &StructWithTypedefDefaults::string_field)
         .def(py::init<>())
-        .def(py::init<int64_t, bool, ::std::string(), py::arg("long_field"), py::arg("bool_field"), py::arg("string_field"))
+        .def(py::init<int64_t, bool, ::std::string>(), py::arg("long_field"), py::arg("bool_field"), py::arg("string_field"))
+        .def(py::init<int64_t, bool, ::std::string>(), py::arg("long_field"), py::arg("bool_field"), py::arg("string_field"))
+        .def(py::init<int64_t, bool, ::std::string>(), py::arg("long_field"), py::arg("bool_field"), py::arg("string_field"))
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -43,7 +44,7 @@ public:
 };
 
 void register_smoke_forward_UseForward(py::module_& module) {
-    py::class_<UseForward, std::shared_ptr<UseForward>, UseForwardTrampoline>(module, "UseForward")
+    py::class_<UseForward, std::shared_ptr<UseForward>, UseForwardTrampoline>(module, "smoke_forward_UseForward")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -56,6 +57,9 @@ void register_smoke_forward_UseForward(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("use_it", [](UseForward& self, const ::std::shared_ptr< ::smoke::forward::Class1 >& param1, const ::std::shared_ptr< ::smoke::forward::Class2 >& param2, const ::std::shared_ptr< ::smoke::SimpleClass >& simple_class, const ::std::shared_ptr< ::smoke::SimpleInterface >& simple_interface) {
+            return self.use_it(param1, param2, simple_class, simple_interface);
+        }, py::arg("param1"), py::arg("param2"), py::arg("simple_class"), py::arg("simple_interface"))
         ;
 }
 

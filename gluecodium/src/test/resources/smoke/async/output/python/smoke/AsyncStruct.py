@@ -17,10 +17,10 @@ class AsyncStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.AsyncStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_AsyncStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.AsyncStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_AsyncStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -51,5 +51,5 @@ class AsyncStruct(_NativeBase):
     @staticmethod
     def async_static(input: bool):
         """"""
-        generated.AsyncStruct.async_static(_unwrap(input, bool))
+        generated.smoke_AsyncStruct.async_static(_unwrap(input, bool))
 

@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ChildClassNameClash(generated.ChildClassNameClash):
+class ChildClassNameClash(generated.smoke_ChildClassNameClash):
     """"""
 
     def __init__(self, native=None):
@@ -16,7 +16,7 @@ class ChildClassNameClash(generated.ChildClassNameClash):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassNameClash):
+        if native is not None and isinstance(native, generated.smoke_ChildClassNameClash):
             super().__init__(native)
         else:
             super().__init__()

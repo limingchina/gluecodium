@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,11 +18,12 @@ namespace py = pybind11;
 using OrderInStruct = ::smoke::OrderInStruct;
 
 void register_smoke_OrderInStruct(py::module_& module) {
-    py::class_<OrderInStruct>(module, "OrderInStruct")
+    py::class_<OrderInStruct>(module, "smoke_OrderInStruct")
         .def_readwrite("struct_field", &OrderInStruct::struct_field)
         .def_readwrite("enum_field", &OrderInStruct::enum_field)
         .def(py::init<>())
-        .def(py::init<::smoke::OrderInStruct::NestedStruct, ::smoke::OrderInStruct::SomeEnum(), py::arg("struct_field"), py::arg("enum_field"))
+        .def(py::init<::smoke::OrderInStruct::NestedStruct, ::smoke::OrderInStruct::SomeEnum>(), py::arg("struct_field"), py::arg("enum_field"))
+        .def(py::init<::smoke::OrderInStruct::NestedStruct, ::smoke::OrderInStruct::SomeEnum>(), py::arg("struct_field"), py::arg("enum_field"))
         ;
 }
 

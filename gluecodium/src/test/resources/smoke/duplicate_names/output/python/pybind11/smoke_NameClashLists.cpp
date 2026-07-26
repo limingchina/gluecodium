@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -20,11 +21,12 @@ namespace py = pybind11;
 using NameClashLists = ::smoke::NameClashLists;
 
 void register_smoke_NameClashLists(py::module_& module) {
-    py::class_<NameClashLists>(module, "NameClashLists")
+    py::class_<NameClashLists>(module, "smoke_NameClashLists")
         .def_readwrite("field_a", &NameClashLists::field_a)
         .def_readwrite("field_b", &NameClashLists::field_b)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::smoke::Alphabet >, ::std::vector< ::smoke::foo::Alphabet >(), py::arg("field_a"), py::arg("field_b"))
+        .def(py::init<::std::vector< ::smoke::Alphabet >, ::std::vector< ::smoke::foo::Alphabet >>(), py::arg("field_a"), py::arg("field_b"))
+        .def(py::init<::std::vector< ::smoke::Alphabet >, ::std::vector< ::smoke::foo::Alphabet >>(), py::arg("field_a"), py::arg("field_b"))
         ;
 }
 

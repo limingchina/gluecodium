@@ -10,8 +10,8 @@ import generated
 class NullableSomeEnum(Enum):
     """"""
 
-    ON = generated.NullableSomeEnum.ON
-    OFF = generated.NullableSomeEnum.OFF
+    ON = generated.smoke_NullableSomeEnum.ON
+    OFF = generated.smoke_NullableSomeEnum.OFF
 
     @property
     def _native(self):

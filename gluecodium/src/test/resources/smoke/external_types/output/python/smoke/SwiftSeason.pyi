@@ -10,10 +10,10 @@ import generated
 class SwiftSeason(Enum):
     """"""
 
-    WINTER = generated.SwiftSeason.WINTER
-    SPRING = generated.SwiftSeason.SPRING
-    SUMMER = generated.SwiftSeason.SUMMER
-    AUTUMN = generated.SwiftSeason.AUTUMN
+    WINTER = generated.smoke_SwiftSeason.WINTER
+    SPRING = generated.smoke_SwiftSeason.SPRING
+    SUMMER = generated.smoke_SwiftSeason.SUMMER
+    AUTUMN = generated.smoke_SwiftSeason.AUTUMN
 
     @property
     def _native(self):

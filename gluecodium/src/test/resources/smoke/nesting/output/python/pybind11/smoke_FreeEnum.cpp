@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using FreeEnum = ::smoke::FreeEnum;
 
 void register_smoke_FreeEnum(py::module_& module) {
-    py::enum_<FreeEnum>(module, "FreeEnum")
+    py::enum_<FreeEnum>(module, "smoke_FreeEnum")
         .value("FOO", FreeEnum::FOO)
         .value("BAR", FreeEnum::BAR)
         ;

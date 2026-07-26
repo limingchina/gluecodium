@@ -21,6 +21,6 @@ class DefaultValues(_NativeBase):
     @staticmethod
     def process_struct_with_defaults(input: DefaultValuesStructWithDefaults) -> DefaultValuesStructWithDefaults:
         """"""
-        native_result = generated.DefaultValues.process_struct_with_defaults(_unwrap(input, DefaultValuesStructWithDefaults))
+        native_result = generated.smoke_DefaultValues.process_struct_with_defaults(_unwrap(input, DefaultValuesStructWithDefaults))
         return DefaultValuesStructWithDefaults(native_result)
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -29,7 +30,7 @@ public:
 };
 
 void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface2(py::module_& module) {
-    py::class_<InnerInterface2, std::shared_ptr<InnerInterface2>, InnerClassForwardDeclarationsInnerInterface2Trampoline>(module, "InnerClassForwardDeclarationsInnerInterface2")
+    py::class_<InnerInterface2, std::shared_ptr<InnerInterface2>, InnerClassForwardDeclarationsInnerInterface2Trampoline>(module, "smoke_forward_InnerClassForwardDeclarationsInnerInterface2")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

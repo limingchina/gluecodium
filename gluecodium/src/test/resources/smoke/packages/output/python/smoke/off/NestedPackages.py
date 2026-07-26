@@ -21,6 +21,6 @@ class NestedPackages(_NativeBase):
     @staticmethod
     def basic_method(input: NestedPackagesSomeStruct) -> NestedPackagesSomeStruct:
         """"""
-        native_result = generated.NestedPackages.basic_method(_unwrap(input, NestedPackagesSomeStruct))
+        native_result = generated.smoke_off_NestedPackages.basic_method(_unwrap(input, NestedPackagesSomeStruct))
         return NestedPackagesSomeStruct(native_result)
 

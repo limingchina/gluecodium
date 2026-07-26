@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -28,7 +29,7 @@ public:
 };
 
 void register_smoke_InternalParent(py::module_& module) {
-    py::class_<InternalParent, std::shared_ptr<InternalParent>, InternalParentTrampoline>(module, "InternalParent")
+    py::class_<InternalParent, std::shared_ptr<InternalParent>, InternalParentTrampoline>(module, "smoke_InternalParent")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

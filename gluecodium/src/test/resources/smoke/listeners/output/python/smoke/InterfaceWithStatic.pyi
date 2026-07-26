@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class InterfaceWithStatic(generated.InterfaceWithStatic):
+class InterfaceWithStatic(generated.smoke_InterfaceWithStatic):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class InterfaceWithStatic(generated.InterfaceWithStatic):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.InterfaceWithStatic):
+        if native is not None and isinstance(native, generated.smoke_InterfaceWithStatic):
             super().__init__(native)
         else:
             super().__init__()
@@ -31,15 +31,15 @@ class InterfaceWithStatic(generated.InterfaceWithStatic):
     @property
     def regular_property(self) -> str:
         """"""
-        return _wrap(generated.InterfaceWithStatic.regular_property.fget(self), str)
+        return _wrap(generated.smoke_InterfaceWithStatic.regular_property.fget(self), str)
 
     @regular_property.setter
     def regular_property(self, value: str):
-        generated.InterfaceWithStatic.regular_property.fset(self, _unwrap(value, str))
+        generated.smoke_InterfaceWithStatic.regular_property.fset(self, _unwrap(value, str))
 
 
     @staticmethod
     def static_property() -> str:
         """"""
-        return _wrap(generated.InterfaceWithStatic.static_property(), str)
+        return _wrap(generated.smoke_InterfaceWithStatic.static_property(), str)
 

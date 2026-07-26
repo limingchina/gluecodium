@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using ResultEnum = ::smoke::ListenerWithProperties::ResultEnum;
 
 void register_smoke_ListenerWithPropertiesResultEnum(py::module_& module) {
-    py::enum_<ResultEnum>(module, "ListenerWithPropertiesResultEnum")
+    py::enum_<ResultEnum>(module, "smoke_ListenerWithPropertiesResultEnum")
         .value("NONE", ResultEnum::NONE)
         .value("RESULT", ResultEnum::RESULT)
         ;

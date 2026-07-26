@@ -16,10 +16,10 @@ class StructsPoint(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructsPoint):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructsPoint):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsPoint(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructsPoint(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -44,6 +44,6 @@ class StructsPoint(_NativeBase):
     @staticmethod
     def from_polar(phi: float, r: float) -> StructsPoint:
         """This is some constructor, which constructs Point from polar coordinates."""
-        native_result = generated.StructsPoint.from_polar(_unwrap(phi, float), _unwrap(r, float))
+        native_result = generated.smoke_StructsPoint.from_polar(_unwrap(phi, float), _unwrap(r, float))
         return StructsPoint(native_result)
 

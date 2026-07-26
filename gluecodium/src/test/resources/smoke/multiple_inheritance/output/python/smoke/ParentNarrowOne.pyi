@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ParentNarrowOne(generated.ParentNarrowOne):
+class ParentNarrowOne(generated.smoke_ParentNarrowOne):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class ParentNarrowOne(generated.ParentNarrowOne):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ParentNarrowOne):
+        if native is not None and isinstance(native, generated.smoke_ParentNarrowOne):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,9 +28,9 @@ class ParentNarrowOne(generated.ParentNarrowOne):
     @property
     def parent_property_one(self) -> str:
         """"""
-        return _wrap(generated.ParentNarrowOne.parent_property_one.fget(self), str)
+        return _wrap(generated.smoke_ParentNarrowOne.parent_property_one.fget(self), str)
 
     @parent_property_one.setter
     def parent_property_one(self, value: str):
-        generated.ParentNarrowOne.parent_property_one.fset(self, _unwrap(value, str))
+        generated.smoke_ParentNarrowOne.parent_property_one.fset(self, _unwrap(value, str))
 

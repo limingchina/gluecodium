@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ namespace py = pybind11;
 
 
 void register_smoke_ExternalClass(py::module_& module) {
-    py::class_<::fire::Baz, std::shared_ptr<::fire::Baz>>(module, "ExternalClass")
+    py::class_<::fire::Baz, std::shared_ptr<::fire::Baz>>(module, "smoke_ExternalClass")
         ;
 }
 

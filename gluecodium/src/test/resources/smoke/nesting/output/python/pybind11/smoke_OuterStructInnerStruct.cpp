@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -20,10 +21,11 @@ namespace py = pybind11;
 using InnerStruct = ::smoke::OuterStruct::InnerStruct;
 
 void register_smoke_OuterStructInnerStruct(py::module_& module) {
-    py::class_<InnerStruct>(module, "OuterStructInnerStruct")
+    py::class_<InnerStruct>(module, "smoke_OuterStructInnerStruct")
         .def_readwrite("other_field", &InnerStruct::other_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::std::chrono::system_clock::time_point >(), py::arg("other_field"))
+        .def(py::init<::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("other_field"))
+        .def("do_something", &InnerStruct::do_something)
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using NestedEquatableStruct = ::smoke::Equatable::NestedEquatableStruct;
 
 void register_smoke_EquatableNestedEquatableStruct(py::module_& module) {
-    py::class_<NestedEquatableStruct>(module, "EquatableNestedEquatableStruct")
+    py::class_<NestedEquatableStruct>(module, "smoke_EquatableNestedEquatableStruct")
         .def_readwrite("foo_field", &NestedEquatableStruct::foo_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("foo_field"))
+        .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 }
 

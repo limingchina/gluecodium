@@ -16,10 +16,10 @@ class PublicFieldsMixedInit(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.PublicFieldsMixedInit):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_PublicFieldsMixedInit):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicFieldsMixedInit(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_PublicFieldsMixedInit(*[_unwrap(arg) for arg in args]))
 
 
     @property

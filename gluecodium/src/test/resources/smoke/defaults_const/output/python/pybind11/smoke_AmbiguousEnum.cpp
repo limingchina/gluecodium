@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using AmbiguousEnum = ::smoke::AmbiguousEnum;
 
 void register_smoke_AmbiguousEnum(py::module_& module) {
-    py::enum_<AmbiguousEnum>(module, "AmbiguousEnum")
+    py::enum_<AmbiguousEnum>(module, "smoke_AmbiguousEnum")
         .value("DISABLED", AmbiguousEnum::DISABLED)
         ;
 }

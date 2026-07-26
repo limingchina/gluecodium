@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,9 +17,8 @@ namespace py = pybind11;
 using SkipEnableConstants = ::smoke::SkipEnableConstants;
 
 void register_smoke_SkipEnableConstants(py::module_& module) {
-    py::class_<SkipEnableConstants>(module, "SkipEnableConstants")
+    py::class_<SkipEnableConstants>(module, "smoke_SkipEnableConstants")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using CollectionConstants = ::smoke::CollectionConstants;
 
 
 void register_smoke_CollectionConstants(py::module_& module) {
-    py::class_<CollectionConstants, std::shared_ptr<CollectionConstants>>(module, "CollectionConstants")
+    py::class_<CollectionConstants, std::shared_ptr<CollectionConstants>>(module, "smoke_CollectionConstants")
         ;
 }
 

@@ -11,7 +11,7 @@ from smoke.ParentNarrowOne import ParentNarrowOne
 import generated
 
 
-class FirstParentIsClassClass(generated.FirstParentIsClassClass):
+class FirstParentIsClassClass(generated.smoke_FirstParentIsClassClass):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class FirstParentIsClassClass(generated.FirstParentIsClassClass):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.FirstParentIsClassClass):
+        if native is not None and isinstance(native, generated.smoke_FirstParentIsClassClass):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,14 +29,14 @@ class FirstParentIsClassClass(generated.FirstParentIsClassClass):
 
     def child_function(self):
         """"""
-        return _wrap(generated.FirstParentIsClassClass.child_function(self), None)
+        return _wrap(generated.smoke_FirstParentIsClassClass.child_function(self), None)
 
     @property
     def child_property(self) -> str:
         """"""
-        return _wrap(generated.FirstParentIsClassClass.child_property.fget(self), str)
+        return _wrap(generated.smoke_FirstParentIsClassClass.child_property.fget(self), str)
 
     @child_property.setter
     def child_property(self, value: str):
-        generated.FirstParentIsClassClass.child_property.fset(self, _unwrap(value, str))
+        generated.smoke_FirstParentIsClassClass.child_property.fset(self, _unwrap(value, str))
 

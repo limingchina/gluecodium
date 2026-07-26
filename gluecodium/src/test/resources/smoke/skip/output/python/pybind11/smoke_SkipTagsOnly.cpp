@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using SkipTagsOnly = ::smoke::SkipTagsOnly;
 
 
 void register_smoke_SkipTagsOnly(py::module_& module) {
-    py::class_<SkipTagsOnly, std::shared_ptr<SkipTagsOnly>>(module, "SkipTagsOnly")
+    py::class_<SkipTagsOnly, std::shared_ptr<SkipTagsOnly>>(module, "smoke_SkipTagsOnly")
         ;
 }
 

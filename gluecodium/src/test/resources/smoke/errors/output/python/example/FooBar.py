@@ -24,10 +24,10 @@ class FooBar(_NativeBase):
     @staticmethod
     def method_with_internal_error():
         """"""
-        generated.FooBar.method_with_internal_error()
+        generated.example_FooBar.method_with_internal_error()
 
     @staticmethod
     def method_with_type_collection_error():
         """"""
-        generated.FooBar.method_with_type_collection_error()
+        generated.example_FooBar.method_with_type_collection_error()
 

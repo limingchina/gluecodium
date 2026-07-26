@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,9 @@ using SimpleClass = ::smoke::SimpleClass;
 
 
 void register_smoke_SimpleClass(py::module_& module) {
-    py::class_<SimpleClass, std::shared_ptr<SimpleClass>>(module, "SimpleClass")
+    py::class_<SimpleClass, std::shared_ptr<SimpleClass>>(module, "smoke_SimpleClass")
+        .def("get_string_value", &SimpleClass::get_string_value)
+        .def("use_simple_class", &SimpleClass::use_simple_class, py::arg("input"))
         ;
 }
 

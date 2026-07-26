@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SomeTypeCollectionError = ::smoke::SomeTypeCollection::SomeTypeCollectionError;
 
 void register_smoke_SomeTypeCollectionSomeTypeCollectionError(py::module_& module) {
-    py::enum_<SomeTypeCollectionError>(module, "SomeTypeCollectionSomeTypeCollectionError")
+    py::enum_<SomeTypeCollectionError>(module, "smoke_SomeTypeCollectionSomeTypeCollectionError")
         .value("ERROR_A", SomeTypeCollectionError::ERROR_A)
         .value("ERROR_B", SomeTypeCollectionError::ERROR_B)
         ;

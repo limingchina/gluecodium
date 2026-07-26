@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using AttributesWithComments = ::smoke::AttributesWithComments;
 
 
 void register_smoke_AttributesWithComments(py::module_& module) {
-    py::class_<AttributesWithComments, std::shared_ptr<AttributesWithComments>>(module, "AttributesWithComments")
+    py::class_<AttributesWithComments, std::shared_ptr<AttributesWithComments>>(module, "smoke_AttributesWithComments")
+        .def("very_fun", &AttributesWithComments::very_fun)
         .def_property("prop", py::overload_cast<>(&AttributesWithComments::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithComments::set_prop))
         ;
 }

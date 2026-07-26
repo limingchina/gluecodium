@@ -17,8 +17,8 @@ class TypeCollection(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.TypeCollection):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_TypeCollection):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypeCollection(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_TypeCollection(*[_unwrap(arg) for arg in args]))
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -65,7 +66,7 @@ public:
 };
 
 void register_smoke_ParentInterface(py::module_& module) {
-    py::class_<ParentInterface, std::shared_ptr<ParentInterface>, ParentInterfaceTrampoline>(module, "ParentInterface")
+    py::class_<ParentInterface, std::shared_ptr<ParentInterface>, ParentInterfaceTrampoline>(module, "smoke_ParentInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -78,6 +79,12 @@ void register_smoke_ParentInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("parent_function", [](ParentInterface& self) {
+            return self.parent_function();
+        })
+        .def("some_function_that_uses_type_from_another_package", [](ParentInterface& self, const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param) {
+            return self.some_function_that_uses_type_from_another_package(some_param);
+        }, py::arg("some_param"))
         .def_property("parent_property", [](const ParentInterface& self) {
             return self.get_parent_property();
         }, [](ParentInterface& self, const ::std::string& value) {

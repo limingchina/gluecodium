@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using SomeStruct = ::smoke::AttributesWithDeprecated::SomeStruct;
 
 void register_smoke_AttributesWithDeprecatedSomeStruct(py::module_& module) {
-    py::class_<SomeStruct>(module, "AttributesWithDeprecatedSomeStruct")
+    py::class_<SomeStruct>(module, "smoke_AttributesWithDeprecatedSomeStruct")
         .def_readwrite("field", &SomeStruct::field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("field"))
+        .def(py::init<::std::string>(), py::arg("field"))
         ;
 }
 

@@ -10,7 +10,7 @@ import generated
 class AttributesEnum(Enum):
     """"""
 
-    NOPE = generated.AttributesEnum.NOPE
+    NOPE = generated.smoke_AttributesEnum.NOPE
 
     @property
     def _native(self):

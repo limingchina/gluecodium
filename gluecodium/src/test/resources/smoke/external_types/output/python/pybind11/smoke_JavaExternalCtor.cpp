@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,12 +18,10 @@ namespace py = pybind11;
 using JavaExternalCtor = ::smoke::JavaExternalCtor;
 
 void register_smoke_JavaExternalCtor(py::module_& module) {
-    py::class_<JavaExternalCtor>(module, "JavaExternalCtor")
+    py::class_<JavaExternalCtor>(module, "smoke_JavaExternalCtor")
         .def_readwrite("field", &JavaExternalCtor::field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("field"))
-        .def(py::init<::std::string>(py::arg("field")))
-
+        .def(py::init<::std::string>(), py::arg("field"))
         .def_static("make", &JavaExternalCtor::make, py::arg("field"))
         ;
 }

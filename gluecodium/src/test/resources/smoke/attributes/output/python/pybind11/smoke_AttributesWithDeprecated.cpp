@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using AttributesWithDeprecated = ::smoke::AttributesWithDeprecated;
 
 
 void register_smoke_AttributesWithDeprecated(py::module_& module) {
-    py::class_<AttributesWithDeprecated, std::shared_ptr<AttributesWithDeprecated>>(module, "AttributesWithDeprecated")
+    py::class_<AttributesWithDeprecated, std::shared_ptr<AttributesWithDeprecated>>(module, "smoke_AttributesWithDeprecated")
+        .def("very_fun", &AttributesWithDeprecated::very_fun)
         .def_property("prop", py::overload_cast<>(&AttributesWithDeprecated::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithDeprecated::set_prop))
         ;
 }

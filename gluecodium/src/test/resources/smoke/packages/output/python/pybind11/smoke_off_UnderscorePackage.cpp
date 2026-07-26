@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using UnderscorePackage = ::smoke_off::UnderscorePackage;
 
 
 void register_smoke_off_UnderscorePackage(py::module_& module) {
-    py::class_<UnderscorePackage, std::shared_ptr<UnderscorePackage>>(module, "UnderscorePackage")
+    py::class_<UnderscorePackage, std::shared_ptr<UnderscorePackage>>(module, "smoke_off_UnderscorePackage")
+        .def_static("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"))
         ;
 }
 

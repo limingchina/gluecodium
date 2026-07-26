@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using AmbiguousConstants = ::smoke::AmbiguousConstants;
 
 
 void register_smoke_AmbiguousConstants(py::module_& module) {
-    py::class_<AmbiguousConstants, std::shared_ptr<AmbiguousConstants>>(module, "AmbiguousConstants")
+    py::class_<AmbiguousConstants, std::shared_ptr<AmbiguousConstants>>(module, "smoke_AmbiguousConstants")
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,10 +19,11 @@ namespace py = pybind11;
 using FieldConstructorsSkipAllFields = ::smoke::FieldConstructorsSkipAllFields;
 
 void register_smoke_FieldConstructorsSkipAllFields(py::module_& module) {
-    py::class_<FieldConstructorsSkipAllFields>(module, "FieldConstructorsSkipAllFields")
+    py::class_<FieldConstructorsSkipAllFields>(module, "smoke_FieldConstructorsSkipAllFields")
         .def_readonly("string_field", &FieldConstructorsSkipAllFields::string_field)
         .def_readonly("int_field", &FieldConstructorsSkipAllFields::int_field)
-        .def(py::init<::std::string, int32_t(), py::arg("string_field"), py::arg("int_field"))
+        .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
+        .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
         ;
 }
 

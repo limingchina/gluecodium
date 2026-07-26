@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -20,7 +21,10 @@ using SkipTypes = ::smoke::SkipTypes;
 
 
 void register_smoke_SkipTypes(py::module_& module) {
-    py::class_<SkipTypes, std::shared_ptr<SkipTypes>>(module, "SkipTypes")
+    py::class_<SkipTypes, std::shared_ptr<SkipTypes>>(module, "smoke_SkipTypes")
+                .def("use_list_in_dart", [](SkipTypes& self) -> py::object {
+                        return gluecodium::python::to_python_regular(self.use_list_in_dart());
+                })
         ;
 }
 

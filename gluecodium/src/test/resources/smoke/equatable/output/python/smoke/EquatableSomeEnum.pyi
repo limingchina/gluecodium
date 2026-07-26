@@ -10,8 +10,8 @@ import generated
 class EquatableSomeEnum(Enum):
     """"""
 
-    FOO = generated.EquatableSomeEnum.FOO
-    BAR = generated.EquatableSomeEnum.BAR
+    FOO = generated.smoke_EquatableSomeEnum.FOO
+    BAR = generated.smoke_EquatableSomeEnum.BAR
 
     @property
     def _native(self):

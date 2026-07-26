@@ -20,5 +20,5 @@ class Basic(_NativeBase):
     @staticmethod
     def basic_method(input_string: str) -> str:
         """"""
-        return generated.Basic.basic_method(_unwrap(input_string, str))
+        return generated.smoke_Basic.basic_method(_unwrap(input_string, str))
 

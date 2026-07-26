@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,11 +19,12 @@ namespace py = pybind11;
 using NullableEnum = ::smoke::EnumDefaults::NullableEnum;
 
 void register_smoke_EnumDefaultsNullableEnum(py::module_& module) {
-    py::class_<NullableEnum>(module, "EnumDefaultsNullableEnum")
+    py::class_<NullableEnum>(module, "smoke_EnumDefaultsNullableEnum")
         .def_readwrite("enum_field1", &NullableEnum::enum_field1)
         .def_readwrite("enum_field1", &NullableEnum::enum_field1)
         .def(py::init<>())
-        .def(py::init<std::optional< ::fire::Enum2 >, std::optional< ::fire::Enum2 >(), py::arg("enum_field1"), py::arg("enum_field1"))
+        .def(py::init<std::optional< ::fire::Enum2 >, std::optional< ::fire::Enum2 >>(), py::arg("enum_field1"), py::arg("enum_field1"))
+        .def(py::init<std::optional< ::fire::Enum2 >, std::optional< ::fire::Enum2 >>(), py::arg("enum_field1"), py::arg("enum_field1"))
         ;
 }
 

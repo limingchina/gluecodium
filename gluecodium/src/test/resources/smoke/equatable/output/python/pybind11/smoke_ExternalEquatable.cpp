@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,9 +19,8 @@ namespace py = pybind11;
 using ExternalEquatable = ::smoke::ExternalEquatable;
 
 void register_smoke_ExternalEquatable(py::module_& module) {
-    py::class_<ExternalEquatable>(module, "ExternalEquatable")
+    py::class_<ExternalEquatable>(module, "smoke_ExternalEquatable")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

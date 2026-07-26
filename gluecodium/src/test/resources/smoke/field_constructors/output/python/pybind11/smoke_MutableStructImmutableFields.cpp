@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,11 +19,13 @@ namespace py = pybind11;
 using MutableStructImmutableFields = ::smoke::MutableStructImmutableFields;
 
 void register_smoke_MutableStructImmutableFields(py::module_& module) {
-    py::class_<MutableStructImmutableFields>(module, "MutableStructImmutableFields")
+    py::class_<MutableStructImmutableFields>(module, "smoke_MutableStructImmutableFields")
         .def_readonly("struct_field", &MutableStructImmutableFields::struct_field)
         .def_readwrite("int_field", &MutableStructImmutableFields::int_field)
         .def_readwrite("bool_field", &MutableStructImmutableFields::bool_field)
-        .def(py::init<::smoke::ImmutableStructNoClash, int32_t, bool(), py::arg("struct_field"), py::arg("int_field"), py::arg("bool_field"))
+        .def(py::init<::smoke::ImmutableStructNoClash, int32_t, bool>(), py::arg("struct_field"), py::arg("int_field"), py::arg("bool_field"))
+        .def(py::init<::smoke::ImmutableStructNoClash, int32_t, bool>(), py::arg("struct_field"), py::arg("int_field"), py::arg("bool_field"))
+        .def(py::init<::smoke::ImmutableStructNoClash, int32_t, bool>(), py::arg("struct_field"), py::arg("int_field"), py::arg("bool_field"))
         .def(py::init<>())
         ;
 }

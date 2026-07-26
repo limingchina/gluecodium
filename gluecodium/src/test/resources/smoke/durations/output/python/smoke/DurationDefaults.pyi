@@ -13,10 +13,10 @@ class DurationDefaults(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DurationDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DurationDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DurationDefaults(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DurationDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property

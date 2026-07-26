@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from _native_base import _unwrap, _wrap
 from typing import Optional
+from typing import Callable
 
 from smoke.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda import ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda
 
@@ -17,10 +18,10 @@ class ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -34,15 +35,15 @@ class ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(_NativeBase):
 
 
     @property
-    def some_lambda(self) -> ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda:
+    def some_lambda(self) -> Callable[[], int]:
         """"""
-        return _wrap(self._native.some_lambda, ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)
+        return _wrap(self._native.some_lambda, Callable[[], int])
     @some_lambda.setter
-    def some_lambda(self, value: ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda):
-      self._native.some_lambda = _unwrap(value, ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)
+    def some_lambda(self, value: Callable[[], int]):
+      self._native.some_lambda = _unwrap(value, Callable[[], int])
 
 
-    def use_lambda(self, some_lambda: ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda) -> ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda:
+    def use_lambda(self, some_lambda: Callable[[], int]) -> Callable[[], int]:
         """"""
-        return _wrap(self._native.use_lambda(_unwrap(some_lambda, ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)), ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatformSomeLambda)
+        return _wrap(self._native.use_lambda(_unwrap(some_lambda, Callable[[], int])), Callable[[], int])
 

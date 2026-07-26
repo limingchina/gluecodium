@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using PointerEquatableClass = ::smoke::PointerEquatableClass;
 
 
 void register_smoke_PointerEquatableClass(py::module_& module) {
-    py::class_<PointerEquatableClass, std::shared_ptr<PointerEquatableClass>>(module, "PointerEquatableClass")
+    py::class_<PointerEquatableClass, std::shared_ptr<PointerEquatableClass>>(module, "smoke_PointerEquatableClass")
         ;
 }
 

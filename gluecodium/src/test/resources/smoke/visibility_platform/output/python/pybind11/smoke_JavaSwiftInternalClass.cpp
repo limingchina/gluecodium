@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using JavaSwiftInternalClass = ::smoke::JavaSwiftInternalClass;
 
 
 void register_smoke_JavaSwiftInternalClass(py::module_& module) {
-    py::class_<JavaSwiftInternalClass, std::shared_ptr<JavaSwiftInternalClass>>(module, "JavaSwiftInternalClass")
+    py::class_<JavaSwiftInternalClass, std::shared_ptr<JavaSwiftInternalClass>>(module, "smoke_JavaSwiftInternalClass")
         ;
 }
 

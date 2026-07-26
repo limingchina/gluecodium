@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,9 +17,9 @@ namespace py = pybind11;
 using StructWithStaticMethodsOnly = ::smoke::StructsWithMethodsInterface::StructWithStaticMethodsOnly;
 
 void register_smoke_StructsWithMethodsInterfaceStructWithStaticMethodsOnly(py::module_& module) {
-    py::class_<StructWithStaticMethodsOnly>(module, "StructsWithMethodsInterfaceStructWithStaticMethodsOnly")
+    py::class_<StructWithStaticMethodsOnly>(module, "smoke_StructsWithMethodsInterfaceStructWithStaticMethodsOnly")
         .def(py::init<>())
-        .def(py::init<(), )
+        .def_static("do_stuff", &StructWithStaticMethodsOnly::do_stuff)
         ;
 }
 

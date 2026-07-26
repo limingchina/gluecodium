@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using Basic = ::root::space::smoke::Basic;
 
 
 void register_smoke_Basic(py::module_& module) {
-    py::class_<Basic, std::shared_ptr<Basic>>(module, "Basic")
+    py::class_<Basic, std::shared_ptr<Basic>>(module, "smoke_Basic")
+        .def_static("basic_method", &Basic::basic_method, py::arg("input_string"))
         ;
 }
 

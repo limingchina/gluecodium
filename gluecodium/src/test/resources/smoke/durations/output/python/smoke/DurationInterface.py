@@ -11,7 +11,7 @@ import datetime
 import generated
 
 
-class DurationInterface(generated.DurationInterface):
+class DurationInterface(generated.smoke_DurationInterface):
     """"""
 
     def __init__(self, native=None):
@@ -22,7 +22,7 @@ class DurationInterface(generated.DurationInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.DurationInterface):
+        if native is not None and isinstance(native, generated.smoke_DurationInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -30,5 +30,5 @@ class DurationInterface(generated.DurationInterface):
 
     def duration_function(self, input: datetime.timedelta) -> str:
         """"""
-        return _wrap(generated.DurationInterface.duration_function(self, _unwrap(input, datetime.timedelta)), str)
+        return _wrap(generated.smoke_DurationInterface.duration_function(self, _unwrap(input, datetime.timedelta)), str)
 

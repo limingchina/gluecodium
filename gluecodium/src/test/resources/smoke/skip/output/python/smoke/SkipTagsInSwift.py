@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class SkipTagsInSwift(generated.SkipTagsInSwift):
+class SkipTagsInSwift(generated.smoke_SkipTagsInSwift):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class SkipTagsInSwift(generated.SkipTagsInSwift):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.SkipTagsInSwift):
+        if native is not None and isinstance(native, generated.smoke_SkipTagsInSwift):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,13 +29,13 @@ class SkipTagsInSwift(generated.SkipTagsInSwift):
 
     def skip_tagged(self):
         """"""
-        return _wrap(generated.SkipTagsInSwift.skip_tagged(self), None)
+        return _wrap(generated.smoke_SkipTagsInSwift.skip_tagged(self), None)
 
     def dont_skip_tagged(self):
         """"""
-        return _wrap(generated.SkipTagsInSwift.dont_skip_tagged(self), None)
+        return _wrap(generated.smoke_SkipTagsInSwift.dont_skip_tagged(self), None)
 
     def skip_tagged_list(self):
         """"""
-        return _wrap(generated.SkipTagsInSwift.skip_tagged_list(self), None)
+        return _wrap(generated.smoke_SkipTagsInSwift.skip_tagged_list(self), None)
 

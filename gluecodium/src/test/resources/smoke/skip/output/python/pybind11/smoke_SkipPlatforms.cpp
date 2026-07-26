@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,11 @@ using SkipPlatforms = ::smoke::SkipPlatforms;
 
 
 void register_smoke_SkipPlatforms(py::module_& module) {
-    py::class_<SkipPlatforms, std::shared_ptr<SkipPlatforms>>(module, "SkipPlatforms")
+    py::class_<SkipPlatforms, std::shared_ptr<SkipPlatforms>>(module, "smoke_SkipPlatforms")
+        .def_static("not_in_java", &SkipPlatforms::not_in_java, py::arg("input"))
+        .def_static("not_in_swift", &SkipPlatforms::not_in_swift, py::arg("input"))
+        .def_static("not_in_dart", &SkipPlatforms::not_in_dart, py::arg("input"))
+        .def_static("not_in_kotlin", &SkipPlatforms::not_in_kotlin, py::arg("input"))
         ;
 }
 

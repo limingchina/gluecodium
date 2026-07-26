@@ -16,10 +16,10 @@ class UnusedTopLevelPoint(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.UnusedTopLevelPoint):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_UnusedTopLevelPoint):
             super().__init__(args[0])
         else:
-            super().__init__(generated.UnusedTopLevelPoint(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_UnusedTopLevelPoint(*[_unwrap(arg) for arg in args]))
 
 
     @property

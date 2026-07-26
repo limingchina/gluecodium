@@ -10,9 +10,9 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_ParentClass(pybind11::module_& module);
+void register_smoke_ParentClass(pybind11::module_& module);
 void register_smoke_ChildClassFromClassOverloads(pybind11::module_& module);
-void register_ParentInterface(pybind11::module_& module);
+void register_smoke_ParentInterface(pybind11::module_& module);
 void register_smoke_ChildClassFromInterfaceOverloads(pybind11::module_& module);
 void register_smoke_ChildInterfaceOverloads(pybind11::module_& module);
 void register_smoke_JavaMethodOverloads(pybind11::module_& module);
@@ -21,8 +21,6 @@ void register_smoke_MethodOverloads(pybind11::module_& module);
 void register_smoke_MethodOverloadsPoint(pybind11::module_& module);
 void register_smoke_NullableOverloads(pybind11::module_& module);
 void register_smoke_OverloadsWithComments(pybind11::module_& module);
-void register_smoke_ParentClass(pybind11::module_& module);
-void register_smoke_ParentInterface(pybind11::module_& module);
 void register_smoke_SkippedOverloads(pybind11::module_& module);
 void register_smoke_SpecialNames(pybind11::module_& module);
 void register_smoke_SpecialNamesInterface(pybind11::module_& module);
@@ -35,9 +33,9 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_ParentClass(m);
+    register_smoke_ParentClass(m);
     register_smoke_ChildClassFromClassOverloads(m);
-    register_ParentInterface(m);
+    register_smoke_ParentInterface(m);
     register_smoke_ChildClassFromInterfaceOverloads(m);
     register_smoke_ChildInterfaceOverloads(m);
     register_smoke_JavaMethodOverloads(m);
@@ -46,8 +44,6 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_MethodOverloadsPoint(m);
     register_smoke_NullableOverloads(m);
     register_smoke_OverloadsWithComments(m);
-    register_smoke_ParentClass(m);
-    register_smoke_ParentInterface(m);
     register_smoke_SkippedOverloads(m);
     register_smoke_SpecialNames(m);
     register_smoke_SpecialNamesInterface(m);

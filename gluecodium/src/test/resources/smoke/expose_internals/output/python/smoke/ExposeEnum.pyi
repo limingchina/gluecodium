@@ -10,7 +10,7 @@ import generated
 class ExposeEnum(Enum):
     """"""
 
-    FOO = generated.ExposeEnum.FOO
+    FOO = generated.smoke_ExposeEnum.FOO
 
     @property
     def _native(self):

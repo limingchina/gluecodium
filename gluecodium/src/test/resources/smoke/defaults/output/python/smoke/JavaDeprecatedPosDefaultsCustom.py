@@ -16,10 +16,10 @@ class JavaDeprecatedPosDefaultsCustom(_NativeBase):
     """Foo Bar this is a comment"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.JavaDeprecatedPosDefaultsCustom):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_JavaDeprecatedPosDefaultsCustom):
             super().__init__(args[0])
         else:
-            super().__init__(generated.JavaDeprecatedPosDefaultsCustom(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_JavaDeprecatedPosDefaultsCustom(*[_unwrap(arg) for arg in args]))
 
     first init!
     @property
@@ -44,6 +44,6 @@ class JavaDeprecatedPosDefaultsCustom(_NativeBase):
     @staticmethod
     def custom() -> JavaDeprecatedPosDefaultsCustom:
         """"""
-        native_result = generated.JavaDeprecatedPosDefaultsCustom.custom()
+        native_result = generated.smoke_JavaDeprecatedPosDefaultsCustom.custom()
         return JavaDeprecatedPosDefaultsCustom(native_result)
 

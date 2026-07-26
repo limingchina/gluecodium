@@ -9,7 +9,7 @@ from typing import Optional
 import generated
 
 
-class ParentClass(generated.ParentClass):
+class ParentClass(generated.smoke_ParentClass):
     """"""
 
     def __init__(self, native=None):
@@ -19,7 +19,7 @@ class ParentClass(generated.ParentClass):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ParentClass):
+        if native is not None and isinstance(native, generated.smoke_ParentClass):
             super().__init__(native)
         else:
             super().__init__()
@@ -27,14 +27,14 @@ class ParentClass(generated.ParentClass):
 
     def foo(*args, **kwargs):
         """"""
-        return _wrap(generated.ParentClass.foo(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ParentClass.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(self):
         """"""
-        return _wrap(generated.ParentClass.bar(self), None)
+        return _wrap(generated.smoke_ParentClass.bar(self), None)
 
     def baz(self):
         """"""
-        return _wrap(generated.ParentClass.baz(self), None)
+        return _wrap(generated.smoke_ParentClass.baz(self), None)
 

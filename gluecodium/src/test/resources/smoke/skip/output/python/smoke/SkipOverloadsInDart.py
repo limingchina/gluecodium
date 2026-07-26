@@ -20,7 +20,7 @@ class SkipOverloadsInDart(_NativeBase):
     @staticmethod
     def make(*args, **kwargs) -> SkipOverloadsInDart:
         """"""
-        native_result = generated.SkipOverloadsInDart.make(*[_unwrap(a) for a in args])
+        native_result = generated.smoke_SkipOverloadsInDart.make(*[_unwrap(a) for a in args])
         return SkipOverloadsInDart(native_result)
 
 

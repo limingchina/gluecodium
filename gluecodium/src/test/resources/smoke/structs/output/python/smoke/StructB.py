@@ -17,10 +17,10 @@ class StructB(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructB):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructB):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructB(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructB(*[_unwrap(arg) for arg in args]))
 
 
     @property

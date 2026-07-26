@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -56,7 +57,7 @@ public:
 };
 
 void register_smoke_EnableTagsInSwift(py::module_& module) {
-    py::class_<EnableTagsInSwift, std::shared_ptr<EnableTagsInSwift>, EnableTagsInSwiftTrampoline>(module, "EnableTagsInSwift")
+    py::class_<EnableTagsInSwift, std::shared_ptr<EnableTagsInSwift>, EnableTagsInSwiftTrampoline>(module, "smoke_EnableTagsInSwift")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -69,6 +70,15 @@ void register_smoke_EnableTagsInSwift(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("enable_tagged", [](EnableTagsInSwift& self) {
+            return self.enable_tagged();
+        })
+        .def("dont_enable_tagged", [](EnableTagsInSwift& self) {
+            return self.dont_enable_tagged();
+        })
+        .def("enable_tagged_list", [](EnableTagsInSwift& self) {
+            return self.enable_tagged_list();
+        })
         ;
 }
 

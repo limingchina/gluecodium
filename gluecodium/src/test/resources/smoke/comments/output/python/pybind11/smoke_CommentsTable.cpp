@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using CommentsTable = ::smoke::CommentsTable;
 
 
 void register_smoke_CommentsTable(py::module_& module) {
-    py::class_<CommentsTable, std::shared_ptr<CommentsTable>>(module, "CommentsTable")
+    py::class_<CommentsTable, std::shared_ptr<CommentsTable>>(module, "smoke_CommentsTable")
         ;
 }
 

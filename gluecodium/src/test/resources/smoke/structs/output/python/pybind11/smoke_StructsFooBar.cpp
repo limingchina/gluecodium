@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using FooBar = ::smoke::Structs::FooBar;
 
 void register_smoke_StructsFooBar(py::module_& module) {
-    py::enum_<FooBar>(module, "StructsFooBar")
+    py::enum_<FooBar>(module, "smoke_StructsFooBar")
         .value("FOO", FooBar::FOO)
         .value("BAR", FooBar::BAR)
         ;

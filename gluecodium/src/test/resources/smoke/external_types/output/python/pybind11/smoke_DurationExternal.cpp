@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -15,7 +16,7 @@ namespace py = pybind11;
 
 
 void register_smoke_DurationExternal(py::module_& module) {
-    py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "DurationExternal")
+    py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "smoke_DurationExternal")
         ;
 }
 

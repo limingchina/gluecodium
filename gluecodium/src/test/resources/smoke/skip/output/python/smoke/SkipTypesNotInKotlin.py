@@ -16,10 +16,10 @@ class SkipTypesNotInKotlin(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.SkipTypesNotInKotlin):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_SkipTypesNotInKotlin):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SkipTypesNotInKotlin(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_SkipTypesNotInKotlin(*[_unwrap(arg) for arg in args]))
 
 
     @property

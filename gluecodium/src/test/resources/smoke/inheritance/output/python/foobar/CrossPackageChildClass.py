@@ -10,7 +10,7 @@ from smoke.ParentInterface import ParentInterface
 import generated
 
 
-class CrossPackageChildClass(generated.CrossPackageChildClass):
+class CrossPackageChildClass(generated.foobar_CrossPackageChildClass):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class CrossPackageChildClass(generated.CrossPackageChildClass):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.CrossPackageChildClass):
+        if native is not None and isinstance(native, generated.foobar_CrossPackageChildClass):
             super().__init__(native)
         else:
             super().__init__()

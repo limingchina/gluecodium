@@ -14,9 +14,9 @@ import generated
 class Alphabet(Enum):
     """"""
 
-    A = generated.Alphabet.A
-    B = generated.Alphabet.B
-    C = generated.Alphabet.C
+    A = generated.smoke_Alphabet.A
+    B = generated.smoke_Alphabet.B
+    C = generated.smoke_Alphabet.C
 
     @property
     def _native(self):

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,9 +19,8 @@ namespace py = pybind11;
 using StructsWithMethods = ::smoke::StructsWithMethods;
 
 void register_smoke_StructsWithMethods(py::module_& module) {
-    py::class_<StructsWithMethods>(module, "StructsWithMethods")
+    py::class_<StructsWithMethods>(module, "smoke_StructsWithMethods")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

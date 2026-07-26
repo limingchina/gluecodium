@@ -16,10 +16,10 @@ class SomeMutableCustomStructWithDefaults(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.SomeMutableCustomStructWithDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_SomeMutableCustomStructWithDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SomeMutableCustomStructWithDefaults(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_SomeMutableCustomStructWithDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property

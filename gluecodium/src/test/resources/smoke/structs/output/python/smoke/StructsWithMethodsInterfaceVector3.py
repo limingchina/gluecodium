@@ -18,10 +18,10 @@ class StructsWithMethodsInterfaceVector3(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructsWithMethodsInterfaceVector3):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructsWithMethodsInterfaceVector3):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithMethodsInterfaceVector3(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructsWithMethodsInterfaceVector3(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -64,12 +64,12 @@ class StructsWithMethodsInterfaceVector3(_NativeBase):
     @staticmethod
     def validate(x: float, y: float, z: float) -> bool:
         """"""
-        return generated.StructsWithMethodsInterfaceVector3.validate(_unwrap(x, float), _unwrap(y, float), _unwrap(z, float))
+        return generated.smoke_StructsWithMethodsInterfaceVector3.validate(_unwrap(x, float), _unwrap(y, float), _unwrap(z, float))
 
     @staticmethod
     def create(*args, **kwargs) -> StructsWithMethodsInterfaceVector3:
         """"""
-        native_result = generated.StructsWithMethodsInterfaceVector3.create(*[_unwrap(a) for a in args])
+        native_result = generated.smoke_StructsWithMethodsInterfaceVector3.create(*[_unwrap(a) for a in args])
         return StructsWithMethodsInterfaceVector3(native_result)
 
 

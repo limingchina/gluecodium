@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,7 +22,11 @@ using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
 
 
 void register_smoke_UseSwiftExternalTypes(py::module_& module) {
-    py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "UseSwiftExternalTypes")
+    py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "smoke_UseSwiftExternalTypes")
+        .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
+        .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
+        .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
+        .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
         ;
 }
 

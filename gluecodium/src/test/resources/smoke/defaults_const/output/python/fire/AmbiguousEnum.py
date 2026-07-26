@@ -14,7 +14,7 @@ import generated
 class AmbiguousEnum(Enum):
     """"""
 
-    DISABLED = generated.AmbiguousEnum.DISABLED
+    DISABLED = generated.fire_AmbiguousEnum.DISABLED
 
     @property
     def _native(self):

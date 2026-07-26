@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using TCEnum = ::smoke::EnumsInTypeCollection::TCEnum;
 
 void register_smoke_EnumsInTypeCollectionTCEnum(py::module_& module) {
-    py::enum_<TCEnum>(module, "EnumsInTypeCollectionTCEnum")
+    py::enum_<TCEnum>(module, "smoke_EnumsInTypeCollectionTCEnum")
         .value("FIRST", TCEnum::FIRST)
         .value("SECOND", TCEnum::SECOND)
         ;

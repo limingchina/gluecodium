@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,11 @@ namespace py = pybind11;
 using OrderInStructWithFunctions = ::smoke::OrderInStructWithFunctions;
 
 void register_smoke_OrderInStructWithFunctions(py::module_& module) {
-    py::class_<OrderInStructWithFunctions>(module, "OrderInStructWithFunctions")
+    py::class_<OrderInStructWithFunctions>(module, "smoke_OrderInStructWithFunctions")
         .def_readwrite("some_field", &OrderInStructWithFunctions::some_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("some_field"))
+        .def(py::init<::std::string>(), py::arg("some_field"))
+        .def("do_stuff", &OrderInStructWithFunctions::do_stuff, py::arg("struct_foo"))
         ;
 }
 

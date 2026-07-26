@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,9 +19,7 @@ using InternalTwo = ::smoke::ExternalClass::InternalTwo;
 
 
 void register_smoke_ExternalClassInternalTwo(py::module_& module) {
-    py::class_<InternalTwo, std::shared_ptr<InternalTwo>>(module, "ExternalClassInternalTwo")
-        .def(py::init<>())
-
+    py::class_<InternalTwo, std::shared_ptr<InternalTwo>>(module, "smoke_ExternalClassInternalTwo")
         .def_static("create", &InternalTwo::create)
         ;
 }

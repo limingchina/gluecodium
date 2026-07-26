@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class CrossPackageChildInterface(generated.CrossPackageChildInterface):
+class CrossPackageChildInterface(generated.foobar_CrossPackageChildInterface):
     """"""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class CrossPackageChildInterface(generated.CrossPackageChildInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.CrossPackageChildInterface):
+        if native is not None and isinstance(native, generated.foobar_CrossPackageChildInterface):
             super().__init__(native)
         else:
             super().__init__()

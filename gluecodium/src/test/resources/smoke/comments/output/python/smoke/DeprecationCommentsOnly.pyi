@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class DeprecationCommentsOnly(generated.DeprecationCommentsOnly):
+class DeprecationCommentsOnly(generated.smoke_DeprecationCommentsOnly):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class DeprecationCommentsOnly(generated.DeprecationCommentsOnly):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.DeprecationCommentsOnly):
+        if native is not None and isinstance(native, generated.smoke_DeprecationCommentsOnly):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,11 +28,11 @@ class DeprecationCommentsOnly(generated.DeprecationCommentsOnly):
     @property
     def is_some_property(self) -> bool:
         """"""
-        return _wrap(generated.DeprecationCommentsOnly.is_some_property.fget(self), bool)
+        return _wrap(generated.smoke_DeprecationCommentsOnly.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.DeprecationCommentsOnly.is_some_property.fset(self, _unwrap(value, bool))
+        generated.smoke_DeprecationCommentsOnly.is_some_property.fset(self, _unwrap(value, bool))
 
 
     VERY_USEFUL = True

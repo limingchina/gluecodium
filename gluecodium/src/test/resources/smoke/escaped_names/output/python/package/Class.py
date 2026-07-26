@@ -13,7 +13,7 @@ from package.typesstruct import typesstruct
 import generated
 
 
-class Class(generated.Class):
+class Class(generated.package_Class):
     """"""
 
     def __init__(self, native=None):
@@ -23,7 +23,7 @@ class Class(generated.Class):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.Class):
+        if native is not None and isinstance(native, generated.package_Class):
             super().__init__(native)
         else:
             super().__init__()
@@ -32,19 +32,19 @@ class Class(generated.Class):
     @staticmethod
     def constructor() -> Class:
         """"""
-        native_result = generated.Class.constructor()
+        native_result = generated.package_Class.constructor()
         return Class(native_result)
 
     def fun(self, double: list[typesstruct]) -> typesstruct:
         """"""
-        return _wrap(generated.Class.fun(self, _unwrap(double, list[typesstruct])), typesstruct)
+        return _wrap(generated.package_Class.fun(self, _unwrap(double, list[typesstruct])), typesstruct)
 
     @property
     def property(self) -> typesenum:
         """"""
-        return _wrap(generated.Class.property.fget(self), typesenum)
+        return _wrap(generated.package_Class.property.fget(self), typesenum)
 
     @property.setter
     def property(self, value: typesenum):
-        generated.Class.property.fset(self, _unwrap(value, typesenum))
+        generated.package_Class.property.fset(self, _unwrap(value, typesenum))
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -15,7 +16,7 @@ namespace py = pybind11;
 
 
 void register_smoke_ExternalTypeInTypesCollectionIntStruct(py::module_& module) {
-    py::class_<::external::IntStruct>(module, "ExternalTypeInTypesCollectionIntStruct")
+    py::class_<::external::IntStruct>(module, "smoke_ExternalTypeInTypesCollectionIntStruct")
         ;
 }
 

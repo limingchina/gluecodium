@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using FieldConstructorsNullableTypes = ::smoke::FieldConstructorsNullableTypes;
 
 void register_smoke_FieldConstructorsNullableTypes(py::module_& module) {
-    py::class_<FieldConstructorsNullableTypes>(module, "FieldConstructorsNullableTypes")
+    py::class_<FieldConstructorsNullableTypes>(module, "smoke_FieldConstructorsNullableTypes")
         .def_readwrite("nullable_field", &FieldConstructorsNullableTypes::nullable_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >(), py::arg("nullable_field"))
+        .def(py::init<std::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >>(), py::arg("nullable_field"))
         ;
 }
 

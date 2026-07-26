@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -54,7 +55,7 @@ public:
 };
 
 void register_smoke_AttributesInterface(py::module_& module) {
-    py::class_<AttributesInterface, std::shared_ptr<AttributesInterface>, AttributesInterfaceTrampoline>(module, "AttributesInterface")
+    py::class_<AttributesInterface, std::shared_ptr<AttributesInterface>, AttributesInterfaceTrampoline>(module, "smoke_AttributesInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -67,6 +68,9 @@ void register_smoke_AttributesInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("very_fun", [](AttributesInterface& self, const ::std::string& param) {
+            return self.very_fun(param);
+        }, py::arg("param"))
         .def_property("prop", [](const AttributesInterface& self) {
             return self.get_prop();
         }, [](AttributesInterface& self, const ::std::string& value) {

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using EnumWithAliasWithDeprecated = ::smoke::EnumWithAliasWithDeprecated;
 
 void register_smoke_EnumWithAliasWithDeprecated(py::module_& module) {
-    py::enum_<EnumWithAliasWithDeprecated>(module, "EnumWithAliasWithDeprecated")
+    py::enum_<EnumWithAliasWithDeprecated>(module, "smoke_EnumWithAliasWithDeprecated")
         .value("ONE", EnumWithAliasWithDeprecated::ONE)
         .value("TWO", EnumWithAliasWithDeprecated::TWO)
         .value("THREE", EnumWithAliasWithDeprecated::THREE)

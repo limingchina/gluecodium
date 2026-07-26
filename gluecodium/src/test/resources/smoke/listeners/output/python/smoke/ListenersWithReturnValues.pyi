@@ -9,7 +9,7 @@ import typing
 import generated
 
 
-class ListenersWithReturnValues(generated.ListenersWithReturnValues):
+class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class ListenersWithReturnValues(generated.ListenersWithReturnValues):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ListenersWithReturnValues):
+        if native is not None and isinstance(native, generated.smoke_ListenersWithReturnValues):
             super().__init__(native)
         else:
             super().__init__()

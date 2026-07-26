@@ -16,10 +16,10 @@ class ExposeStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.ExposeStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_ExposeStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ExposeStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_ExposeStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

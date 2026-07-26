@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using NestedPackages = ::smoke::off::NestedPackages;
 
 
 void register_smoke_off_NestedPackages(py::module_& module) {
-    py::class_<NestedPackages, std::shared_ptr<NestedPackages>>(module, "NestedPackages")
+    py::class_<NestedPackages, std::shared_ptr<NestedPackages>>(module, "smoke_off_NestedPackages")
+        .def_static("basic_method", &NestedPackages::basic_method, py::arg("input"))
         ;
 }
 

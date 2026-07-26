@@ -10,9 +10,9 @@ import generated
 class CompressionState(Enum):
     """"""
 
-    COMPRESSED = generated.CompressionState.COMPRESSED
-    DECOMPRESSED = generated.CompressionState.DECOMPRESSED
-    NOT_COMPRESSED = generated.CompressionState.NOT_COMPRESSED
+    COMPRESSED = generated.smoke_CompressionState.COMPRESSED
+    DECOMPRESSED = generated.smoke_CompressionState.DECOMPRESSED
+    NOT_COMPRESSED = generated.smoke_CompressionState.NOT_COMPRESSED
 
     @property
     def _native(self):

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,13 +18,15 @@ namespace py = pybind11;
 using PublicStructWithNonDefaultInternalField = ::smoke::PublicStructWithNonDefaultInternalField;
 
 void register_smoke_PublicStructWithNonDefaultInternalField(py::module_& module) {
-    py::class_<PublicStructWithNonDefaultInternalField>(module, "PublicStructWithNonDefaultInternalField")
+    py::class_<PublicStructWithNonDefaultInternalField>(module, "smoke_PublicStructWithNonDefaultInternalField")
         .def_readwrite("defaulted_field", &PublicStructWithNonDefaultInternalField::defaulted_field)
         .def_readwrite("internal_field", &PublicStructWithNonDefaultInternalField::internal_field)
         .def_readwrite("public_field", &PublicStructWithNonDefaultInternalField::public_field)
         .def(py::init<>())
-        .def(py::init<::std::string, bool>(py::arg("internal_field"), py::arg("public_field")))
-        .def(py::init<int32_t, ::std::string, bool(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
+        .def(py::init<::std::string, bool>(), py::arg("internal_field"), py::arg("public_field"))
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
         ;
 }
 

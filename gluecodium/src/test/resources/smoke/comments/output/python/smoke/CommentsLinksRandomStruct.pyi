@@ -13,10 +13,10 @@ class CommentsLinksRandomStruct(_NativeBase):
     """Links also work in:"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.CommentsLinksRandomStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_CommentsLinksRandomStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.CommentsLinksRandomStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_CommentsLinksRandomStruct(*[_unwrap(arg) for arg in args]))
 
     Some random field [comments.SomeStruct]
     @property

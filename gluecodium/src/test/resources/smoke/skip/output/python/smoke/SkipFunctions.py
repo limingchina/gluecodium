@@ -20,20 +20,20 @@ class SkipFunctions(_NativeBase):
     @staticmethod
     def not_in_java(input: str) -> str:
         """"""
-        return generated.SkipFunctions.not_in_java(_unwrap(input, str))
+        return generated.smoke_SkipFunctions.not_in_java(_unwrap(input, str))
 
     @staticmethod
     def not_in_swift(input: bool) -> bool:
         """"""
-        return generated.SkipFunctions.not_in_swift(_unwrap(input, bool))
+        return generated.smoke_SkipFunctions.not_in_swift(_unwrap(input, bool))
 
     @staticmethod
     def not_in_dart(input: float) -> float:
         """"""
-        return generated.SkipFunctions.not_in_dart(_unwrap(input, float))
+        return generated.smoke_SkipFunctions.not_in_dart(_unwrap(input, float))
 
     @staticmethod
     def not_in_kotlin(input: str) -> str:
         """"""
-        return generated.SkipFunctions.not_in_kotlin(_unwrap(input, str))
+        return generated.smoke_SkipFunctions.not_in_kotlin(_unwrap(input, str))
 

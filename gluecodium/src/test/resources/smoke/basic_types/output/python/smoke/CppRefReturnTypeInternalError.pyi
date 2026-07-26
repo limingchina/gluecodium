@@ -10,8 +10,8 @@ import generated
 class CppRefReturnTypeInternalError(Enum):
     """"""
 
-    FOO = generated.CppRefReturnTypeInternalError.FOO
-    BAR = generated.CppRefReturnTypeInternalError.BAR
+    FOO = generated.smoke_CppRefReturnTypeInternalError.FOO
+    BAR = generated.smoke_CppRefReturnTypeInternalError.BAR
 
     @property
     def _native(self):

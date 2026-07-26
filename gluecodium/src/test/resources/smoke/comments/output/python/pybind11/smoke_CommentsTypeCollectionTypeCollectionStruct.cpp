@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using TypeCollectionStruct = ::smoke::CommentsTypeCollection::TypeCollectionStruct;
 
 void register_smoke_CommentsTypeCollectionTypeCollectionStruct(py::module_& module) {
-    py::class_<TypeCollectionStruct>(module, "CommentsTypeCollectionTypeCollectionStruct")
+    py::class_<TypeCollectionStruct>(module, "smoke_CommentsTypeCollectionTypeCollectionStruct")
         .def_readwrite("field", &TypeCollectionStruct::field)
         .def(py::init<>())
-        .def(py::init<int32_t(), py::arg("field"))
+        .def(py::init<int32_t>(), py::arg("field"))
         ;
 }
 

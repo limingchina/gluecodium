@@ -14,8 +14,8 @@ import generated
 class OrderInClassSomeEnum(Enum):
     """"""
 
-    FOO = generated.OrderInClassSomeEnum.FOO
-    BAR = generated.OrderInClassSomeEnum.BAR
+    FOO = generated.smoke_OrderInClassSomeEnum.FOO
+    BAR = generated.smoke_OrderInClassSomeEnum.BAR
 
     @property
     def _native(self):

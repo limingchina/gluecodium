@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,13 +20,10 @@ using InternalClassWithFunctions = ::smoke::InternalClassWithFunctions;
 
 
 void register_smoke_InternalClassWithFunctions(py::module_& module) {
-    py::class_<InternalClassWithFunctions, std::shared_ptr<InternalClassWithFunctions>>(module, "InternalClassWithFunctions")
-        .def(py::init<>())
-
-        .def_static("make", py::overload_cast<>(&InternalClassWithFunctions::make))
-        .def(py::init<::std::string>(py::arg("foo")))
-
-        .def_static("make", py::overload_cast<const ::std::string&>(&InternalClassWithFunctions::make), py::arg("foo"))
+    py::class_<InternalClassWithFunctions, std::shared_ptr<InternalClassWithFunctions>>(module, "smoke_InternalClassWithFunctions")
+        .def("foo_bar", &InternalClassWithFunctions::foo_bar)
+        .def_static("make", py::overload_cast<>(InternalClassWithFunctions::make))
+        .def_static("make", py::overload_cast<const ::std::string&>(InternalClassWithFunctions::make), py::arg("foo"))
         ;
 }
 

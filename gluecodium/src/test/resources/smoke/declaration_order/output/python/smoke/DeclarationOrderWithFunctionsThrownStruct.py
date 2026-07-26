@@ -16,10 +16,10 @@ class DeclarationOrderWithFunctionsThrownStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DeclarationOrderWithFunctionsThrownStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctionsThrownStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DeclarationOrderWithFunctionsThrownStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DeclarationOrderWithFunctionsThrownStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

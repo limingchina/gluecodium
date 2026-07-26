@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -38,7 +39,7 @@ public:
 };
 
 void register_smoke_OuterInternalInterface(py::module_& module) {
-    py::class_<OuterInternalInterface, std::shared_ptr<OuterInternalInterface>, OuterInternalInterfaceTrampoline>(module, "OuterInternalInterface")
+    py::class_<OuterInternalInterface, std::shared_ptr<OuterInternalInterface>, OuterInternalInterfaceTrampoline>(module, "smoke_OuterInternalInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -51,6 +52,9 @@ void register_smoke_OuterInternalInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("some_function", [](OuterInternalInterface& self) {
+            return self.some_function();
+        })
         ;
 }
 

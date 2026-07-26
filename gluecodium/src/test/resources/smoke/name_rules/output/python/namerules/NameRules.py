@@ -23,7 +23,7 @@ class NameRules(_NativeBase):
     @staticmethod
     def create() -> NameRules:
         """"""
-        native_result = generated.NameRules.create()
+        native_result = generated.namerules_NameRules.create()
         return NameRules(native_result)
 
     def some_method(self, some_argument: NameRulesExampleStruct) -> float:

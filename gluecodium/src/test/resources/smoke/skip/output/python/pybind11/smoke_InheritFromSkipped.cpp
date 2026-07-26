@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -151,7 +152,7 @@ public:
 };
 
 void register_smoke_InheritFromSkipped(py::module_& module) {
-    py::class_<InheritFromSkipped, ::smoke::SkipProxy, std::shared_ptr<InheritFromSkipped>, InheritFromSkippedTrampoline>(module, "InheritFromSkipped")
+    py::class_<InheritFromSkipped, ::smoke::SkipProxy, std::shared_ptr<InheritFromSkipped>, InheritFromSkippedTrampoline>(module, "smoke_InheritFromSkipped")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -164,6 +165,18 @@ void register_smoke_InheritFromSkipped(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("not_in_java", [](InheritFromSkipped& self, const ::std::string& input) {
+            return self.not_in_java(input);
+        }, py::arg("input"))
+        .def("not_in_swift", [](InheritFromSkipped& self, const bool input) {
+            return self.not_in_swift(input);
+        }, py::arg("input"))
+        .def("not_in_dart", [](InheritFromSkipped& self, const float input) {
+            return self.not_in_dart(input);
+        }, py::arg("input"))
+        .def("not_in_kotlin", [](InheritFromSkipped& self, const float input) {
+            return self.not_in_kotlin(input);
+        }, py::arg("input"))
         .def_property("skipped_in_java", [](const InheritFromSkipped& self) {
             return self.get_skipped_in_java();
         }, [](InheritFromSkipped& self, const ::std::string& value) {

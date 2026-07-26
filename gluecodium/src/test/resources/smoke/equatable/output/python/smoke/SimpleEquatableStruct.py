@@ -18,10 +18,10 @@ class SimpleEquatableStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.SimpleEquatableStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_SimpleEquatableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SimpleEquatableStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_SimpleEquatableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

@@ -11,7 +11,7 @@ from smoke.ParentInterface import ParentInterface
 import generated
 
 
-class ChildInterfaceOverloads(generated.ChildInterfaceOverloads):
+class ChildInterfaceOverloads(generated.smoke_ChildInterfaceOverloads):
     """"""
 
     def __init__(self, native=None):
@@ -22,7 +22,7 @@ class ChildInterfaceOverloads(generated.ChildInterfaceOverloads):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ChildInterfaceOverloads):
+        if native is not None and isinstance(native, generated.smoke_ChildInterfaceOverloads):
             super().__init__(native)
         else:
             super().__init__()
@@ -30,9 +30,9 @@ class ChildInterfaceOverloads(generated.ChildInterfaceOverloads):
 
     def foo(self, input: str):
         """"""
-        return _wrap(generated.ChildInterfaceOverloads.foo(self, _unwrap(input, str)), None)
+        return _wrap(generated.smoke_ChildInterfaceOverloads.foo(self, _unwrap(input, str)), None)
 
     def bar(self, input: str):
         """"""
-        return _wrap(generated.ChildInterfaceOverloads.bar(self, _unwrap(input, str)), None)
+        return _wrap(generated.smoke_ChildInterfaceOverloads.bar(self, _unwrap(input, str)), None)
 

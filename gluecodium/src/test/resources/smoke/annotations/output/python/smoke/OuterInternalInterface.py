@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class OuterInternalInterface(generated.OuterInternalInterface):
+class OuterInternalInterface(generated.smoke_OuterInternalInterface):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class OuterInternalInterface(generated.OuterInternalInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.OuterInternalInterface):
+        if native is not None and isinstance(native, generated.smoke_OuterInternalInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,5 +29,5 @@ class OuterInternalInterface(generated.OuterInternalInterface):
 
     def some_function(self) -> int:
         """"""
-        return _wrap(generated.OuterInternalInterface.some_function(self), int)
+        return _wrap(generated.smoke_OuterInternalInterface.some_function(self), int)
 

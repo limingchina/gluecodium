@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -30,7 +31,7 @@ public:
 };
 
 void register_smoke_ChildConstructors(py::module_& module) {
-    py::class_<ChildConstructors, ::smoke::Constructors, std::shared_ptr<ChildConstructors>, ChildConstructorsTrampoline>(module, "ChildConstructors")
+    py::class_<ChildConstructors, ::smoke::Constructors, std::shared_ptr<ChildConstructors>, ChildConstructorsTrampoline>(module, "smoke_ChildConstructors")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -41,12 +42,8 @@ void register_smoke_ChildConstructors(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def(py::init<>())
-
-        .def_static("create", py::overload_cast<>(&ChildConstructors::create))
-        .def(py::init<::std::shared_ptr< ::smoke::Constructors >>(py::arg("other")))
-
-        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(&ChildConstructors::create), py::arg("other"))
+        .def_static("create", py::overload_cast<>(ChildConstructors::create))
+        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(ChildConstructors::create), py::arg("other"))
         ;
 }
 

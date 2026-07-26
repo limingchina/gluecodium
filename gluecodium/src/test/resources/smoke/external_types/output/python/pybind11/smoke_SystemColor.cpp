@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,13 +17,16 @@ namespace py = pybind11;
 using SystemColor = ::smoke::SystemColor;
 
 void register_smoke_SystemColor(py::module_& module) {
-    py::class_<SystemColor>(module, "SystemColor")
+    py::class_<SystemColor>(module, "smoke_SystemColor")
         .def_readwrite("red", &SystemColor::red)
         .def_readwrite("green", &SystemColor::green)
         .def_readwrite("blue", &SystemColor::blue)
         .def_readwrite("alpha", &SystemColor::alpha)
         .def(py::init<>())
-        .def(py::init<float, float, float, float(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;
 }
 

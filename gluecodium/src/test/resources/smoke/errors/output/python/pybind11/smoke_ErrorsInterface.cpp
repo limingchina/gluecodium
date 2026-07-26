@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -58,7 +59,7 @@ public:
 };
 
 void register_smoke_ErrorsInterface(py::module_& module) {
-    py::class_<ErrorsInterface, std::shared_ptr<ErrorsInterface>, ErrorsInterfaceTrampoline>(module, "ErrorsInterface")
+    py::class_<ErrorsInterface, std::shared_ptr<ErrorsInterface>, ErrorsInterfaceTrampoline>(module, "smoke_ErrorsInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -71,6 +72,17 @@ void register_smoke_ErrorsInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("method_with_errors", [](ErrorsInterface& self) {
+            return self.method_with_errors();
+        })
+        .def("method_with_external_errors", [](ErrorsInterface& self) {
+            return self.method_with_external_errors();
+        })
+        .def("method_with_errors_and_return_value", [](ErrorsInterface& self) {
+            return self.method_with_errors_and_return_value();
+        })
+        .def_static("method_with_payload_error", &ErrorsInterface::method_with_payload_error)
+        .def_static("method_with_payload_error_and_return_value", &ErrorsInterface::method_with_payload_error_and_return_value)
         ;
 }
 

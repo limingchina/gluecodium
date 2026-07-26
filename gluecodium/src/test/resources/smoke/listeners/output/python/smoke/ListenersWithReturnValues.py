@@ -13,7 +13,7 @@ from smoke.ListenersWithReturnValuesResultStruct import ListenersWithReturnValue
 import generated
 
 
-class ListenersWithReturnValues(generated.ListenersWithReturnValues):
+class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
     """"""
 
     def __init__(self, native=None):
@@ -24,7 +24,7 @@ class ListenersWithReturnValues(generated.ListenersWithReturnValues):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ListenersWithReturnValues):
+        if native is not None and isinstance(native, generated.smoke_ListenersWithReturnValues):
             super().__init__(native)
         else:
             super().__init__()
@@ -32,29 +32,29 @@ class ListenersWithReturnValues(generated.ListenersWithReturnValues):
 
     def fetch_data_double(self) -> float:
         """"""
-        return _wrap(generated.ListenersWithReturnValues.fetch_data_double(self), float)
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_double(self), float)
 
     def fetch_data_string(self) -> str:
         """"""
-        return _wrap(generated.ListenersWithReturnValues.fetch_data_string(self), str)
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_string(self), str)
 
     def fetch_data_struct(self) -> ListenersWithReturnValuesResultStruct:
         """"""
-        return _wrap(generated.ListenersWithReturnValues.fetch_data_struct(self), ListenersWithReturnValuesResultStruct)
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_struct(self), ListenersWithReturnValuesResultStruct)
 
     def fetch_data_enum(self) -> ListenersWithReturnValuesResultEnum:
         """"""
-        return _wrap(generated.ListenersWithReturnValues.fetch_data_enum(self), ListenersWithReturnValuesResultEnum)
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_enum(self), ListenersWithReturnValuesResultEnum)
 
     def fetch_data_array(self) -> list[float]:
         """"""
-        return _wrap(generated.ListenersWithReturnValues.fetch_data_array(self), list[float])
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_array(self), list[float])
 
     def fetch_data_map(self) -> dict[str, float]:
         """"""
-        return _wrap(generated.ListenersWithReturnValues.fetch_data_map(self), dict[str, float])
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_map(self), dict[str, float])
 
     def fetch_data_instance(self) -> CalculationResult:
         """"""
-        return _wrap(generated.ListenersWithReturnValues.fetch_data_instance(self), CalculationResult)
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_instance(self), CalculationResult)
 

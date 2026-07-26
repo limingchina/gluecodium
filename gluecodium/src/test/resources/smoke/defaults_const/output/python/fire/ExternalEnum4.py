@@ -14,8 +14,8 @@ import generated
 class ExternalEnum4(Enum):
     """"""
 
-    ENABLED = generated.ExternalEnum4.ENABLED
-    DISABLED = generated.ExternalEnum4.DISABLED
+    ENABLED = generated.fire_ExternalEnum4.ENABLED
+    DISABLED = generated.fire_ExternalEnum4.DISABLED
 
     @property
     def _native(self):

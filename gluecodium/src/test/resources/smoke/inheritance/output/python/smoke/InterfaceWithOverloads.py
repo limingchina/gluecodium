@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class InterfaceWithOverloads(generated.InterfaceWithOverloads):
+class InterfaceWithOverloads(generated.smoke_InterfaceWithOverloads):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class InterfaceWithOverloads(generated.InterfaceWithOverloads):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.InterfaceWithOverloads):
+        if native is not None and isinstance(native, generated.smoke_InterfaceWithOverloads):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,6 +29,6 @@ class InterfaceWithOverloads(generated.InterfaceWithOverloads):
 
     def parent_method(*args, **kwargs):
         """"""
-        return _wrap(generated.InterfaceWithOverloads.parent_method(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_InterfaceWithOverloads.parent_method(self, *[_unwrap(a) for a in args]), None)
 
 

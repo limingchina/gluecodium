@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -25,7 +26,8 @@ using Locales = ::smoke::Locales;
 
 
 void register_smoke_Locales(py::module_& module) {
-    py::class_<Locales, std::shared_ptr<Locales>>(module, "Locales")
+    py::class_<Locales, std::shared_ptr<Locales>>(module, "smoke_Locales")
+        .def("locale_method", &Locales::locale_method, py::arg("input"))
         .def_property("locale_property", py::overload_cast<>(&Locales::get_locale_property, py::const_), py::overload_cast<const ::gluecodium::Locale&>(&Locales::set_locale_property))
         ;
 }

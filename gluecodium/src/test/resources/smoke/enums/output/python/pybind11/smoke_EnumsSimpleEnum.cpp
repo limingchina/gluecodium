@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SimpleEnum = ::smoke::Enums::SimpleEnum;
 
 void register_smoke_EnumsSimpleEnum(py::module_& module) {
-    py::enum_<SimpleEnum>(module, "EnumsSimpleEnum")
+    py::enum_<SimpleEnum>(module, "smoke_EnumsSimpleEnum")
         .value("FIRST", SimpleEnum::FIRST)
         .value("SECOND", SimpleEnum::SECOND)
         ;

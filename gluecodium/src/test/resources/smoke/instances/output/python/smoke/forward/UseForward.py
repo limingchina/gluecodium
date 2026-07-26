@@ -14,7 +14,7 @@ from smoke.forward.Class2 import Class2
 import generated
 
 
-class UseForward(generated.UseForward):
+class UseForward(generated.smoke_forward_UseForward):
     """"""
 
     def __init__(self, native=None):
@@ -25,7 +25,7 @@ class UseForward(generated.UseForward):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.UseForward):
+        if native is not None and isinstance(native, generated.smoke_forward_UseForward):
             super().__init__(native)
         else:
             super().__init__()
@@ -33,5 +33,5 @@ class UseForward(generated.UseForward):
 
     def use_it(self, param1: Class1, param2: Class2, simple_class: SimpleClass, simple_interface: SimpleInterface):
         """"""
-        return _wrap(generated.UseForward.use_it(self, _unwrap(param1, Class1), _unwrap(param2, Class2), _unwrap(simple_class, SimpleClass), _unwrap(simple_interface, SimpleInterface)), None)
+        return _wrap(generated.smoke_forward_UseForward.use_it(self, _unwrap(param1, Class1), _unwrap(param2, Class2), _unwrap(simple_class, SimpleClass), _unwrap(simple_interface, SimpleInterface)), None)
 

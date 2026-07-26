@@ -12,10 +12,10 @@ class DartInternalElements(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DartInternalElements):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DartInternalElements):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartInternalElements(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DartInternalElements(*[_unwrap(arg) for arg in args]))
 
 
     @property

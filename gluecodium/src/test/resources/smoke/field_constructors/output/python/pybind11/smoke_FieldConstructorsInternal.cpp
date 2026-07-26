@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,13 +18,13 @@ namespace py = pybind11;
 using FieldConstructorsInternal = ::smoke::FieldConstructorsInternal;
 
 void register_smoke_FieldConstructorsInternal(py::module_& module) {
-    py::class_<FieldConstructorsInternal>(module, "FieldConstructorsInternal")
+    py::class_<FieldConstructorsInternal>(module, "smoke_FieldConstructorsInternal")
         .def_readwrite("public_field", &FieldConstructorsInternal::public_field)
         .def_readwrite("internal_field", &FieldConstructorsInternal::internal_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("public_field"))
-        .def(py::init<double(), py::arg("internal_field"))
-        .def(py::init<double, ::std::string(), py::arg("internal_field"), py::arg("public_field"))
+        .def(py::init<::std::string>(), py::arg("public_field"))
+        .def(py::init<double>(), py::arg("internal_field"))
+        .def(py::init<double, ::std::string>(), py::arg("internal_field"), py::arg("public_field"))
         ;
 }
 

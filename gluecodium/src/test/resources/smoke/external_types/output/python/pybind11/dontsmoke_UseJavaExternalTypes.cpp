@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -23,7 +24,13 @@ using UseJavaExternalTypes = ::dontsmoke::UseJavaExternalTypes;
 
 
 void register_dontsmoke_UseJavaExternalTypes(py::module_& module) {
-    py::class_<UseJavaExternalTypes, std::shared_ptr<UseJavaExternalTypes>>(module, "UseJavaExternalTypes")
+    py::class_<UseJavaExternalTypes, std::shared_ptr<UseJavaExternalTypes>>(module, "dontsmoke_UseJavaExternalTypes")
+        .def_static("currency_round_trip", &UseJavaExternalTypes::currency_round_trip, py::arg("input"))
+        .def_static("time_zone_round_trip", &UseJavaExternalTypes::time_zone_round_trip, py::arg("input"))
+        .def_static("month_round_trip", &UseJavaExternalTypes::month_round_trip, py::arg("input"))
+        .def_static("color_round_trip", &UseJavaExternalTypes::color_round_trip, py::arg("input"))
+        .def_static("season_round_trip", &UseJavaExternalTypes::season_round_trip, py::arg("input"))
+        .def_static("struct_round_trip", &UseJavaExternalTypes::struct_round_trip, py::arg("input"))
         ;
 }
 

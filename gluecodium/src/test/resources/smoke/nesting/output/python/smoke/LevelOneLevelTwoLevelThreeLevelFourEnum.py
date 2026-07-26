@@ -14,7 +14,7 @@ import generated
 class LevelOneLevelTwoLevelThreeLevelFourEnum(Enum):
     """"""
 
-    NONE = generated.LevelOneLevelTwoLevelThreeLevelFourEnum.NONE
+    NONE = generated.smoke_LevelOneLevelTwoLevelThreeLevelFourEnum.NONE
 
     @property
     def _native(self):

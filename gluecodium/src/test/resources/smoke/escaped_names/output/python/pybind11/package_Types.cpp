@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,9 +19,8 @@ namespace py = pybind11;
 using Types = ::package::Types;
 
 void register_package_Types(py::module_& module) {
-    py::class_<Types>(module, "Types")
+    py::class_<Types>(module, "package_Types")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

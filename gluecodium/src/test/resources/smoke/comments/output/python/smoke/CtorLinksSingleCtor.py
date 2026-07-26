@@ -20,6 +20,6 @@ class CtorLinksSingleCtor(_NativeBase):
     @staticmethod
     def create() -> CtorLinksSingleCtor:
         """"""
-        native_result = generated.CtorLinksSingleCtor.create()
+        native_result = generated.smoke_CtorLinksSingleCtor.create()
         return CtorLinksSingleCtor(native_result)
 

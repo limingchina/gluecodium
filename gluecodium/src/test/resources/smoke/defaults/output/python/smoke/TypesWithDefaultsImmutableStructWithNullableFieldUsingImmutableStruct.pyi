@@ -14,10 +14,10 @@ class TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(_Nat
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

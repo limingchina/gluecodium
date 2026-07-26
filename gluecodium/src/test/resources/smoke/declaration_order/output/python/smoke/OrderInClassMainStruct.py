@@ -18,10 +18,10 @@ class OrderInClassMainStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.OrderInClassMainStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_OrderInClassMainStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OrderInClassMainStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_OrderInClassMainStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

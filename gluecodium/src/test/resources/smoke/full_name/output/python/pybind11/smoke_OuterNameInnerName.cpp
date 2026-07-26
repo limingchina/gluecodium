@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using InnerName = ::smoke::OuterName::InnerName;
 
 void register_smoke_OuterNameInnerName(py::module_& module) {
-    py::class_<InnerName>(module, "OuterNameInnerName")
+    py::class_<InnerName>(module, "smoke_OuterNameInnerName")
         .def_readwrite("string_field", &InnerName::string_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("string_field"))
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

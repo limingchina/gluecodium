@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class SimpleInterface(generated.SimpleInterface):
+class SimpleInterface(generated.smoke_SimpleInterface):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class SimpleInterface(generated.SimpleInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.SimpleInterface):
+        if native is not None and isinstance(native, generated.smoke_SimpleInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,9 +29,9 @@ class SimpleInterface(generated.SimpleInterface):
 
     def get_string_value(self) -> str:
         """"""
-        return _wrap(generated.SimpleInterface.get_string_value(self), str)
+        return _wrap(generated.smoke_SimpleInterface.get_string_value(self), str)
 
     def use_simple_interface(self, input: SimpleInterface) -> SimpleInterface:
         """"""
-        return _wrap(generated.SimpleInterface.use_simple_interface(self, _unwrap(input, SimpleInterface)), SimpleInterface)
+        return _wrap(generated.smoke_SimpleInterface.use_simple_interface(self, _unwrap(input, SimpleInterface)), SimpleInterface)
 

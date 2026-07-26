@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -93,7 +94,7 @@ public:
 };
 
 void register_smoke_ListenersWithReturnValues(py::module_& module) {
-    py::class_<ListenersWithReturnValues, std::shared_ptr<ListenersWithReturnValues>, ListenersWithReturnValuesTrampoline>(module, "ListenersWithReturnValues")
+    py::class_<ListenersWithReturnValues, std::shared_ptr<ListenersWithReturnValues>, ListenersWithReturnValuesTrampoline>(module, "smoke_ListenersWithReturnValues")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -106,6 +107,27 @@ void register_smoke_ListenersWithReturnValues(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("fetch_data_double", [](ListenersWithReturnValues& self) {
+            return self.fetch_data_double();
+        })
+        .def("fetch_data_string", [](ListenersWithReturnValues& self) {
+            return self.fetch_data_string();
+        })
+        .def("fetch_data_struct", [](ListenersWithReturnValues& self) {
+            return self.fetch_data_struct();
+        })
+        .def("fetch_data_enum", [](ListenersWithReturnValues& self) {
+            return self.fetch_data_enum();
+        })
+                .def("fetch_data_array", [](ListenersWithReturnValues& self) -> py::object {
+                        return gluecodium::python::to_python_regular(self.fetch_data_array());
+                })
+                .def("fetch_data_map", [](ListenersWithReturnValues& self) -> py::object {
+                        return gluecodium::python::to_python_regular(self.fetch_data_map());
+                })
+        .def("fetch_data_instance", [](ListenersWithReturnValues& self) {
+            return self.fetch_data_instance();
+        })
         ;
 }
 

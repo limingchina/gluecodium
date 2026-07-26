@@ -10,7 +10,7 @@ import generated
 class CommentsTypeCollectionTypeCollectionEnum(Enum):
     """"""
 
-    ITEM = generated.CommentsTypeCollectionTypeCollectionEnum.ITEM
+    ITEM = generated.smoke_CommentsTypeCollectionTypeCollectionEnum.ITEM
 
     @property
     def _native(self):

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using NestedSerializableStruct = ::smoke::Serialization::NestedSerializableStruct;
 
 void register_smoke_SerializationNestedSerializableStruct(py::module_& module) {
-    py::class_<NestedSerializableStruct>(module, "SerializationNestedSerializableStruct")
+    py::class_<NestedSerializableStruct>(module, "smoke_SerializationNestedSerializableStruct")
         .def_readwrite("some_field", &NestedSerializableStruct::some_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("some_field"))
+        .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 }
 

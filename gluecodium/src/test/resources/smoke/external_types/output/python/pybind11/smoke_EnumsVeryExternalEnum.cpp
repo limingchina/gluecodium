@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -14,7 +15,7 @@ namespace py = pybind11;
 
 
 void register_smoke_EnumsVeryExternalEnum(py::module_& module) {
-    py::enum_<::fire::SomeVeryExternalEnum>(module, "EnumsVeryExternalEnum")
+    py::enum_<::fire::SomeVeryExternalEnum>(module, "smoke_EnumsVeryExternalEnum")
         .value("FOO", ::fire::SomeVeryExternalEnum::FOO)
         .value("BAR", ::fire::SomeVeryExternalEnum::BAR)
         ;

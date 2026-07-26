@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,13 +20,9 @@ using InternalOne = ::smoke::ExternalClass::InternalOne;
 
 
 void register_smoke_ExternalClassInternalOne(py::module_& module) {
-    py::class_<InternalOne, std::shared_ptr<InternalOne>>(module, "ExternalClassInternalOne")
-        .def(py::init<>())
-
-        .def_static("create", py::overload_cast<>(&InternalOne::create))
-        .def(py::init<uint64_t>(py::arg("value")))
-
-        .def_static("create", py::overload_cast<const uint64_t>(&InternalOne::create), py::arg("value"))
+    py::class_<InternalOne, std::shared_ptr<InternalOne>>(module, "smoke_ExternalClassInternalOne")
+        .def_static("create", py::overload_cast<>(InternalOne::create))
+        .def_static("create", py::overload_cast<const uint64_t>(InternalOne::create), py::arg("value"))
         ;
 }
 

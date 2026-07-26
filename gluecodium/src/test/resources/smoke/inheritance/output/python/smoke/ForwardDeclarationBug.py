@@ -10,7 +10,7 @@ from smoke.ParentClass import ParentClass
 import generated
 
 
-class ForwardDeclarationBug(generated.ForwardDeclarationBug):
+class ForwardDeclarationBug(generated.smoke_ForwardDeclarationBug):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class ForwardDeclarationBug(generated.ForwardDeclarationBug):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ForwardDeclarationBug):
+        if native is not None and isinstance(native, generated.smoke_ForwardDeclarationBug):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,5 +28,5 @@ class ForwardDeclarationBug(generated.ForwardDeclarationBug):
 
     def foo(self, bar: ParentClass):
         """"""
-        return _wrap(generated.ForwardDeclarationBug.foo(self, _unwrap(bar, ParentClass)), None)
+        return _wrap(generated.smoke_ForwardDeclarationBug.foo(self, _unwrap(bar, ParentClass)), None)
 

@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class CommentsInterface(generated.CommentsInterface):
+class CommentsInterface(generated.smoke_CommentsInterface):
     """This is some very useful interface."""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class CommentsInterface(generated.CommentsInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.CommentsInterface):
+        if native is not None and isinstance(native, generated.smoke_CommentsInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -46,11 +46,11 @@ class CommentsInterface(generated.CommentsInterface):
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
-        return _wrap(generated.CommentsInterface.is_some_property.fget(self), bool)
+        return _wrap(generated.smoke_CommentsInterface.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.CommentsInterface.is_some_property.fset(self, _unwrap(value, bool))
+        generated.smoke_CommentsInterface.is_some_property.fset(self, _unwrap(value, bool))
 
     This is some very useful constant.
     VERY_USEFUL = True

@@ -14,10 +14,10 @@ class FieldConstructorsNullableTypes(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.FieldConstructorsNullableTypes):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_FieldConstructorsNullableTypes):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsNullableTypes(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_FieldConstructorsNullableTypes(*[_unwrap(arg) for arg in args]))
 
 
     @property

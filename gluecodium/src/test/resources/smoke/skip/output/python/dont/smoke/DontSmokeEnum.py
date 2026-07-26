@@ -14,7 +14,7 @@ import generated
 class DontSmokeEnum(Enum):
     """"""
 
-    FOO = generated.DontSmokeEnum.FOO
+    FOO = generated.dont_smoke_DontSmokeEnum.FOO
 
     @property
     def _native(self):

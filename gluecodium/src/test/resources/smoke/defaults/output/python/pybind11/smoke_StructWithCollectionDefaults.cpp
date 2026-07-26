@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -23,7 +24,7 @@ namespace py = pybind11;
 using StructWithCollectionDefaults = ::smoke::StructWithCollectionDefaults;
 
 void register_smoke_StructWithCollectionDefaults(py::module_& module) {
-    py::class_<StructWithCollectionDefaults>(module, "StructWithCollectionDefaults")
+    py::class_<StructWithCollectionDefaults>(module, "smoke_StructWithCollectionDefaults")
         .def_readwrite("empty_list_field", &StructWithCollectionDefaults::empty_list_field)
         .def_readwrite("empty_map_field", &StructWithCollectionDefaults::empty_map_field)
         .def_readwrite("empty_set_field", &StructWithCollectionDefaults::empty_set_field)
@@ -31,7 +32,12 @@ void register_smoke_StructWithCollectionDefaults(py::module_& module) {
         .def_readwrite("map_field", &StructWithCollectionDefaults::map_field)
         .def_readwrite("set_field", &StructWithCollectionDefaults::set_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
+        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
+        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
+        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
+        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
+        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
+        .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
         ;
 }
 

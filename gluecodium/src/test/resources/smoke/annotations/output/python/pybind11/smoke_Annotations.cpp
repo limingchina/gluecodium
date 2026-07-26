@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,8 @@ using Annotations = ::smoke::Annotations;
 
 
 void register_smoke_Annotations(py::module_& module) {
-    py::class_<Annotations, std::shared_ptr<Annotations>>(module, "Annotations")
+    py::class_<Annotations, std::shared_ptr<Annotations>>(module, "smoke_Annotations")
+        .def("test_optional", &Annotations::test_optional, py::arg("self"))
         ;
 }
 

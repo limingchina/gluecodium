@@ -14,9 +14,9 @@ import generated
 class EnumOptionSet(Enum):
     """"""
 
-    ONE = generated.EnumOptionSet.ONE
-    TWO = generated.EnumOptionSet.TWO
-    THREE = generated.EnumOptionSet.THREE
+    ONE = generated.smoke_EnumOptionSet.ONE
+    TWO = generated.smoke_EnumOptionSet.TWO
+    THREE = generated.smoke_EnumOptionSet.THREE
 
     @property
     def _native(self):

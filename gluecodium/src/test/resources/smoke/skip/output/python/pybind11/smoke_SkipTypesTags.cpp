@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,9 +17,8 @@ namespace py = pybind11;
 using SkipTypesTags = ::smoke::SkipTypesTags;
 
 void register_smoke_SkipTypesTags(py::module_& module) {
-    py::class_<SkipTypesTags>(module, "SkipTypesTags")
+    py::class_<SkipTypesTags>(module, "smoke_SkipTypesTags")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

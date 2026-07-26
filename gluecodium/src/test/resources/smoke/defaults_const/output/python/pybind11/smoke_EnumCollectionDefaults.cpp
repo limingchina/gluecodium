@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -27,12 +28,14 @@ namespace py = pybind11;
 using EnumCollectionDefaults = ::smoke::EnumCollectionDefaults;
 
 void register_smoke_EnumCollectionDefaults(py::module_& module) {
-    py::class_<EnumCollectionDefaults>(module, "EnumCollectionDefaults")
+    py::class_<EnumCollectionDefaults>(module, "smoke_EnumCollectionDefaults")
         .def_readwrite("list_field", &EnumCollectionDefaults::list_field)
         .def_readwrite("set_field", &EnumCollectionDefaults::set_field)
         .def_readwrite("map_field", &EnumCollectionDefaults::map_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::fire::Enum1 >, ::std::unordered_set< ::fire::Enum2, ::gluecodium::hash< ::fire::Enum2 > >, ::std::unordered_map< ::fire::Enum3, ::fire::Enum4, ::gluecodium::hash< ::fire::Enum3 > >(), py::arg("list_field"), py::arg("set_field"), py::arg("map_field"))
+        .def(py::init<::std::vector< ::fire::Enum1 >, ::std::unordered_set< ::fire::Enum2, ::gluecodium::hash< ::fire::Enum2 > >, ::std::unordered_map< ::fire::Enum3, ::fire::Enum4, ::gluecodium::hash< ::fire::Enum3 > >>(), py::arg("list_field"), py::arg("set_field"), py::arg("map_field"))
+        .def(py::init<::std::vector< ::fire::Enum1 >, ::std::unordered_set< ::fire::Enum2, ::gluecodium::hash< ::fire::Enum2 > >, ::std::unordered_map< ::fire::Enum3, ::fire::Enum4, ::gluecodium::hash< ::fire::Enum3 > >>(), py::arg("list_field"), py::arg("set_field"), py::arg("map_field"))
+        .def(py::init<::std::vector< ::fire::Enum1 >, ::std::unordered_set< ::fire::Enum2, ::gluecodium::hash< ::fire::Enum2 > >, ::std::unordered_map< ::fire::Enum3, ::fire::Enum4, ::gluecodium::hash< ::fire::Enum3 > >>(), py::arg("list_field"), py::arg("set_field"), py::arg("map_field"))
         ;
 }
 

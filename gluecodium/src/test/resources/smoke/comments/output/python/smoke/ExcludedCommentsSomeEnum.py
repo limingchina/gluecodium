@@ -14,7 +14,7 @@ import generated
 class ExcludedCommentsSomeEnum(Enum):
     """This is some very useful enum."""
 
-    USELESS = generated.ExcludedCommentsSomeEnum.USELESS
+    USELESS = generated.smoke_ExcludedCommentsSomeEnum.USELESS
 
     @property
     def _native(self):

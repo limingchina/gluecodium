@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,11 +18,12 @@ namespace py = pybind11;
 using ErrorStruct = ::smoke::Enums::ErrorStruct;
 
 void register_smoke_EnumsErrorStruct(py::module_& module) {
-    py::class_<ErrorStruct>(module, "EnumsErrorStruct")
+    py::class_<ErrorStruct>(module, "smoke_EnumsErrorStruct")
         .def_readwrite("type", &ErrorStruct::type)
         .def_readwrite("message", &ErrorStruct::message)
         .def(py::init<>())
-        .def(py::init<::smoke::Enums::InternalErrorCode, ::std::string(), py::arg("type"), py::arg("message"))
+        .def(py::init<::smoke::Enums::InternalErrorCode, ::std::string>(), py::arg("type"), py::arg("message"))
+        .def(py::init<::smoke::Enums::InternalErrorCode, ::std::string>(), py::arg("type"), py::arg("message"))
         ;
 }
 

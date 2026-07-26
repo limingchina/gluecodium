@@ -12,10 +12,10 @@ class JavaDeprecatedPosDefaults(_NativeBase):
     """Foo Bar this is a comment"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.JavaDeprecatedPosDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_JavaDeprecatedPosDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.JavaDeprecatedPosDefaults(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_JavaDeprecatedPosDefaults(*[_unwrap(arg) for arg in args]))
 
     first init!
     @property

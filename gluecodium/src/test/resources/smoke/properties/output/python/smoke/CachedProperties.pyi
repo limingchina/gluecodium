@@ -29,11 +29,11 @@ class CachedProperties(_NativeBase):
     @staticmethod
     def static_cached_property() -> bytes:
         """"""
-        return _wrap(generated.CachedProperties.static_cached_property(), bytes)
+        return _wrap(generated.smoke_CachedProperties.static_cached_property(), bytes)
 
 
     @staticmethod
     def internal_static_cached_property() -> bytes:
         """"""
-        return _wrap(generated.CachedProperties.internal_static_cached_property(), bytes)
+        return _wrap(generated.smoke_CachedProperties.internal_static_cached_property(), bytes)
 

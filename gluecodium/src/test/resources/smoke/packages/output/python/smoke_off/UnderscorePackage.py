@@ -20,5 +20,5 @@ class UnderscorePackage(_NativeBase):
     @staticmethod
     def basic_method(input_string: str) -> str:
         """"""
-        return generated.UnderscorePackage.basic_method(_unwrap(input_string, str))
+        return generated.smoke_off_UnderscorePackage.basic_method(_unwrap(input_string, str))
 

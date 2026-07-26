@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using LocaleStruct = ::smoke::Locales::LocaleStruct;
 
 void register_smoke_LocalesLocaleStruct(py::module_& module) {
-    py::class_<LocaleStruct>(module, "LocalesLocaleStruct")
+    py::class_<LocaleStruct>(module, "smoke_LocalesLocaleStruct")
         .def_readwrite("locale_field", &LocaleStruct::locale_field)
         .def(py::init<>())
-        .def(py::init<::gluecodium::Locale(), py::arg("locale_field"))
+        .def(py::init<::gluecodium::Locale>(), py::arg("locale_field"))
         ;
 }
 

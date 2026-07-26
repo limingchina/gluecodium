@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -14,7 +15,7 @@ namespace py = pybind11;
 
 
 void register_smoke_CppRefReturnTypeStructBased(py::module_& module) {
-    static py::exception<::smoke::CppRefReturnType::SomeStruct> exc(module, "CppRefReturnTypeStructBased");
+    static py::exception<::smoke::CppRefReturnType::SomeStruct> exc(module, "smoke_CppRefReturnTypeStructBased");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);

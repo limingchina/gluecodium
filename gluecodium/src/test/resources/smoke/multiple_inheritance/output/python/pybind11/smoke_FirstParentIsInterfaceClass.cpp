@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -112,7 +113,7 @@ public:
 };
 
 void register_smoke_FirstParentIsInterfaceClass(py::module_& module) {
-    py::class_<FirstParentIsInterfaceClass, ::smoke::ParentInterface, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsInterfaceClass>, FirstParentIsInterfaceClassTrampoline>(module, "FirstParentIsInterfaceClass", py::multiple_inheritance())
+    py::class_<FirstParentIsInterfaceClass, ::smoke::ParentInterface, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsInterfaceClass>, FirstParentIsInterfaceClassTrampoline>(module, "smoke_FirstParentIsInterfaceClass", py::multiple_inheritance())
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -123,7 +124,17 @@ void register_smoke_FirstParentIsInterfaceClass(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("child_function", &FirstParentIsInterfaceClass::child_function)
         .def_property("child_property", py::overload_cast<>(&FirstParentIsInterfaceClass::get_child_property, py::const_), py::overload_cast<const ::std::string&>(&FirstParentIsInterfaceClass::set_child_property))
+        .def("parent_function", [](FirstParentIsInterfaceClass& self) {
+            return self.parent_function();
+        })
+        .def("some_function_that_uses_type_from_another_package", [](FirstParentIsInterfaceClass& self, const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param) {
+            return self.some_function_that_uses_type_from_another_package(some_param);
+        }, py::arg("some_param"))
+        .def("parent_function_one", [](FirstParentIsInterfaceClass& self) {
+            return self.parent_function_one();
+        })
         .def_property("parent_property", [](const FirstParentIsInterfaceClass& self) {
             return self.get_parent_property();
         }, [](FirstParentIsInterfaceClass& self, const ::std::string& value) {

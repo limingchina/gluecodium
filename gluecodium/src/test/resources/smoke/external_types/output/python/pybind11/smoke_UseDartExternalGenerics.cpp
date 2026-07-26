@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -26,7 +27,10 @@ using UseDartExternalGenerics = ::smoke::UseDartExternalGenerics;
 
 
 void register_smoke_UseDartExternalGenerics(py::module_& module) {
-    py::class_<UseDartExternalGenerics, std::shared_ptr<UseDartExternalGenerics>>(module, "UseDartExternalGenerics")
+    py::class_<UseDartExternalGenerics, std::shared_ptr<UseDartExternalGenerics>>(module, "smoke_UseDartExternalGenerics")
+                .def("use_generics", [](UseDartExternalGenerics& self, py::handle list, py::handle set) -> py::object {
+                        return gluecodium::python::to_python_regular(self.use_generics(gluecodium::python::from_python_regular<::std::vector< ::smoke::Rectangle >>(list), gluecodium::python::from_python_regular<::std::unordered_set< ::smoke::CompressionState, ::gluecodium::hash< ::smoke::CompressionState > >>(set)));
+                }, py::arg("list"), py::arg("set"))
         ;
 }
 

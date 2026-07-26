@@ -16,10 +16,10 @@ class FieldCustomConstructorsMix(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.FieldCustomConstructorsMix):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_FieldCustomConstructorsMix):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldCustomConstructorsMix(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_FieldCustomConstructorsMix(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -54,6 +54,6 @@ class FieldCustomConstructorsMix(_NativeBase):
     @staticmethod
     def create_me(int_value: int, dummy: float) -> FieldCustomConstructorsMix:
         """"""
-        native_result = generated.FieldCustomConstructorsMix.create_me(_unwrap(int_value, int), _unwrap(dummy, float))
+        native_result = generated.smoke_FieldCustomConstructorsMix.create_me(_unwrap(int_value, int), _unwrap(dummy, float))
         return FieldCustomConstructorsMix(native_result)
 

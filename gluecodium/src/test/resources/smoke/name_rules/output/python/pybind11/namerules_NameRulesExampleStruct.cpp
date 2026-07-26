@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,11 +20,12 @@ namespace py = pybind11;
 using ExampleStruct = ::namerules::NameRules::ExampleStruct;
 
 void register_namerules_NameRulesExampleStruct(py::module_& module) {
-    py::class_<ExampleStruct>(module, "NameRulesExampleStruct")
+    py::class_<ExampleStruct>(module, "namerules_NameRulesExampleStruct")
         .def_readwrite("value", &ExampleStruct::m_value)
         .def_readwrite("int_value", &ExampleStruct::m_int_value)
         .def(py::init<>())
-        .def(py::init<double, ::std::vector< int64_t >(), py::arg("value"), py::arg("int_value"))
+        .def(py::init<double, ::std::vector< int64_t >>(), py::arg("value"), py::arg("int_value"))
+        .def(py::init<double, ::std::vector< int64_t >>(), py::arg("value"), py::arg("int_value"))
         ;
 }
 

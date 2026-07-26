@@ -30,5 +30,5 @@ class OuterClassWithLambdaAndProperty(_NativeBase):
     @staticmethod
     def another_integer() -> int:
         """"""
-        return _wrap(generated.OuterClassWithLambdaAndProperty.another_integer(), int)
+        return _wrap(generated.smoke_OuterClassWithLambdaAndProperty.another_integer(), int)
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -53,7 +54,7 @@ public:
 };
 
 void register_smoke_ParentClass(py::module_& module) {
-    py::class_<ParentClass, std::shared_ptr<ParentClass>, ParentClassTrampoline>(module, "ParentClass")
+    py::class_<ParentClass, std::shared_ptr<ParentClass>, ParentClassTrampoline>(module, "smoke_ParentClass")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -64,6 +65,7 @@ void register_smoke_ParentClass(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("parent_fun", &ParentClass::parent_fun)
         .def_property("parent_property", py::overload_cast<>(&ParentClass::get_parent_property, py::const_), py::overload_cast<const ::std::string&>(&ParentClass::set_parent_property))
         ;
 }

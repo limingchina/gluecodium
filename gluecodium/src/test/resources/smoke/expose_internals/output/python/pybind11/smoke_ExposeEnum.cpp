@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using ExposeEnum = ::smoke::ExposeEnum;
 
 void register_smoke_ExposeEnum(py::module_& module) {
-    py::enum_<ExposeEnum>(module, "ExposeEnum")
+    py::enum_<ExposeEnum>(module, "smoke_ExposeEnum")
         .value("FOO", ExposeEnum::FOO)
         ;
 }

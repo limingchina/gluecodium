@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class ParentInterface(generated.ParentInterface):
+class ParentInterface(generated.smoke_ParentInterface):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class ParentInterface(generated.ParentInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ParentInterface):
+        if native is not None and isinstance(native, generated.smoke_ParentInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,14 +29,14 @@ class ParentInterface(generated.ParentInterface):
 
     def foo(*args, **kwargs):
         """"""
-        return _wrap(generated.ParentInterface.foo(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ParentInterface.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(self):
         """"""
-        return _wrap(generated.ParentInterface.bar(self), None)
+        return _wrap(generated.smoke_ParentInterface.bar(self), None)
 
     def baz(self):
         """"""
-        return _wrap(generated.ParentInterface.baz(self), None)
+        return _wrap(generated.smoke_ParentInterface.baz(self), None)
 

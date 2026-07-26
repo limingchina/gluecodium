@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using SkipEnableParameters = ::smoke::SkipEnableParameters;
 
 
 void register_smoke_SkipEnableParameters(py::module_& module) {
-    py::class_<SkipEnableParameters, std::shared_ptr<SkipEnableParameters>>(module, "SkipEnableParameters")
+    py::class_<SkipEnableParameters, std::shared_ptr<SkipEnableParameters>>(module, "smoke_SkipEnableParameters")
+        .def("do_something", &SkipEnableParameters::do_something, py::arg("input"))
         ;
 }
 

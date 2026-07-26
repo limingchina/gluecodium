@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,9 +18,8 @@ namespace py = pybind11;
 using fooTypes = ::smoke::fooTypes;
 
 void register_smoke_PlatformNames(py::module_& module) {
-    py::class_<fooTypes>(module, "PlatformNames")
+    py::class_<fooTypes>(module, "smoke_PlatformNames")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

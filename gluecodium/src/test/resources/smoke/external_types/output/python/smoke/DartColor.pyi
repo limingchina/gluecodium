@@ -12,10 +12,10 @@ class DartColor(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DartColor):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DartColor):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartColor(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DartColor(*[_unwrap(arg) for arg in args]))
 
 
     @property

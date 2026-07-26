@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using EnableMeToo = ::smoke::EnableIfTypesEnabled::EnableMeToo;
 
 void register_smoke_EnableIfTypesEnabledEnableMeToo(py::module_& module) {
-    py::class_<EnableMeToo>(module, "EnableIfTypesEnabledEnableMeToo")
+    py::class_<EnableMeToo>(module, "smoke_EnableIfTypesEnabledEnableMeToo")
         .def_readwrite("field", &EnableMeToo::field)
         .def(py::init<>())
-        .def(py::init<::smoke::EnableIfTypesEnabled::EnableMe(), py::arg("field"))
+        .def(py::init<::smoke::EnableIfTypesEnabled::EnableMe>(), py::arg("field"))
         ;
 }
 

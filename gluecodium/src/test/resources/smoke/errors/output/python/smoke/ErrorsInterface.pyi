@@ -12,7 +12,7 @@ import typing
 import generated
 
 
-class ErrorsInterface(generated.ErrorsInterface):
+class ErrorsInterface(generated.smoke_ErrorsInterface):
     """"""
 
     def __init__(self, native=None):
@@ -23,7 +23,7 @@ class ErrorsInterface(generated.ErrorsInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ErrorsInterface):
+        if native is not None and isinstance(native, generated.smoke_ErrorsInterface):
             super().__init__(native)
         else:
             super().__init__()

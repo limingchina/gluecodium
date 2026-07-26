@@ -10,9 +10,9 @@ import generated
 class Persistence(Enum):
     """"""
 
-    NONE = generated.Persistence.NONE
-    FOR_SESSION = generated.Persistence.FOR_SESSION
-    PERMANENT = generated.Persistence.PERMANENT
+    NONE = generated.smoke_Persistence.NONE
+    FOR_SESSION = generated.smoke_Persistence.FOR_SESSION
+    PERMANENT = generated.smoke_Persistence.PERMANENT
 
     @property
     def _native(self):

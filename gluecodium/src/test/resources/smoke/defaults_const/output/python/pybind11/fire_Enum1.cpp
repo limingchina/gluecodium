@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using Enum1 = ::fire::Enum1;
 
 void register_fire_Enum1(py::module_& module) {
-    py::enum_<Enum1>(module, "Enum1")
+    py::enum_<Enum1>(module, "fire_Enum1")
         .value("ENABLED", Enum1::ENABLED)
         .value("DISABLED", Enum1::DISABLED)
         ;

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,7 @@ using InnerClass2 = ::smoke::forward::InnerClassForwardDeclarations::InnerClass2
 
 
 void register_smoke_forward_InnerClassForwardDeclarationsInnerClass2(py::module_& module) {
-    py::class_<InnerClass2, std::shared_ptr<InnerClass2>>(module, "InnerClassForwardDeclarationsInnerClass2")
+    py::class_<InnerClass2, std::shared_ptr<InnerClass2>>(module, "smoke_forward_InnerClassForwardDeclarationsInnerClass2")
         ;
 }
 

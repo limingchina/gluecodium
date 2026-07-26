@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using NestedStruct = ::smoke::OrderInStruct::NestedStruct;
 
 void register_smoke_OrderInStructNestedStruct(py::module_& module) {
-    py::class_<NestedStruct>(module, "OrderInStructNestedStruct")
+    py::class_<NestedStruct>(module, "smoke_OrderInStructNestedStruct")
         .def_readwrite("some_field", &NestedStruct::some_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("some_field"))
+        .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 }
 

@@ -5,11 +5,12 @@ from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
 from smoke.IncludableStruct import IncludableStruct
 import typing
+from typing import Callable
 
 import generated
 
 
-class ParentClassWithImports(generated.ParentClassWithImports):
+class ParentClassWithImports(generated.smoke_ParentClassWithImports):
     """"""
 
     def __init__(self, native=None):
@@ -19,7 +20,7 @@ class ParentClassWithImports(generated.ParentClassWithImports):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ParentClassWithImports):
+        if native is not None and isinstance(native, generated.smoke_ParentClassWithImports):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,11 +29,11 @@ class ParentClassWithImports(generated.ParentClassWithImports):
     def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass: ...
 
     @property
-    def root_property(self) -> IncludableLambda:
+    def root_property(self) -> Callable[[int], None]:
         """"""
-        return _wrap(generated.ParentClassWithImports.root_property.fget(self), IncludableLambda)
+        return _wrap(generated.smoke_ParentClassWithImports.root_property.fget(self), Callable[[int], None])
 
     @root_property.setter
-    def root_property(self, value: IncludableLambda):
-        generated.ParentClassWithImports.root_property.fset(self, _unwrap(value, IncludableLambda))
+    def root_property(self, value: Callable[[int], None]):
+        generated.smoke_ParentClassWithImports.root_property.fset(self, _unwrap(value, Callable[[int], None]))
 

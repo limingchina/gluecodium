@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,10 +20,10 @@ namespace py = pybind11;
 using SomeDartStructWithTypedefField = ::smoke::SomeDartStructWithTypedefField;
 
 void register_smoke_SomeDartStructWithTypedefField(py::module_& module) {
-    py::class_<SomeDartStructWithTypedefField>(module, "SomeDartStructWithTypedefField")
+    py::class_<SomeDartStructWithTypedefField>(module, "smoke_SomeDartStructWithTypedefField")
         .def_readwrite("some_field", &SomeDartStructWithTypedefField::some_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< float >(), py::arg("some_field"))
+        .def(py::init<::std::vector< float >>(), py::arg("some_field"))
         ;
 }
 

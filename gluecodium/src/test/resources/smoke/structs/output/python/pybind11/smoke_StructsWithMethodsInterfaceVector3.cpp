@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,18 +19,19 @@ namespace py = pybind11;
 using Vector3 = ::smoke::StructsWithMethodsInterface::Vector3;
 
 void register_smoke_StructsWithMethodsInterfaceVector3(py::module_& module) {
-    py::class_<Vector3>(module, "StructsWithMethodsInterfaceVector3")
+    py::class_<Vector3>(module, "smoke_StructsWithMethodsInterfaceVector3")
         .def_readwrite("x", &Vector3::x)
         .def_readwrite("y", &Vector3::y)
         .def_readwrite("z", &Vector3::z)
         .def(py::init<>())
-        .def(py::init<double, double, double(), py::arg("x"), py::arg("y"), py::arg("z"))
-        .def(py::init<::std::string>(py::arg("input")))
-
-        .def_static("create", py::overload_cast<const ::std::string&>(&Vector3::create), py::arg("input"))
-        .def(py::init<::smoke::StructsWithMethodsInterface::Vector3>(py::arg("other")))
-
-        .def_static("create", py::overload_cast<const ::smoke::StructsWithMethodsInterface::Vector3&>(&Vector3::create), py::arg("other"))
+        .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
+        .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
+        .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
+        .def("distance_to", &Vector3::distance_to, py::arg("other"))
+        .def("add", &Vector3::add, py::arg("other"))
+        .def_static("validate", &Vector3::validate, py::arg("x"), py::arg("y"), py::arg("z"))
+        .def_static("create", py::overload_cast<const ::std::string&>(Vector3::create), py::arg("input"))
+        .def_static("create", py::overload_cast<const ::smoke::StructsWithMethodsInterface::Vector3&>(Vector3::create), py::arg("other"))
         ;
 }
 

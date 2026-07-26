@@ -13,10 +13,10 @@ class StructsWithConstantsRoute(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructsWithConstantsRoute):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructsWithConstantsRoute):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithConstantsRoute(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructsWithConstantsRoute(*[_unwrap(arg) for arg in args]))
 
 
     @property

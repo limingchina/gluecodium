@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,14 +22,18 @@ namespace py = pybind11;
 using MainStruct = ::smoke::DeclarationOrder::MainStruct;
 
 void register_smoke_DeclarationOrderMainStruct(py::module_& module) {
-    py::class_<MainStruct>(module, "DeclarationOrderMainStruct")
+    py::class_<MainStruct>(module, "smoke_DeclarationOrderMainStruct")
         .def_readwrite("struct_field", &MainStruct::struct_field)
         .def_readwrite("type_def_field", &MainStruct::type_def_field)
         .def_readwrite("struct_array_field", &MainStruct::struct_array_field)
         .def_readwrite("map_field", &MainStruct::map_field)
         .def_readwrite("enum_field", &MainStruct::enum_field)
         .def(py::init<>())
-        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
+        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
+        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
+        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
+        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
+        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
         ;
 }
 

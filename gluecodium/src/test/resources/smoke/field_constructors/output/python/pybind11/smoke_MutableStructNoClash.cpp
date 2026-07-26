@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,7 @@ namespace py = pybind11;
 using MutableStructNoClash = ::smoke::MutableStructNoClash;
 
 void register_smoke_MutableStructNoClash(py::module_& module) {
-    py::class_<MutableStructNoClash>(module, "MutableStructNoClash")
+    py::class_<MutableStructNoClash>(module, "smoke_MutableStructNoClash")
         .def_readwrite("string_field", &MutableStructNoClash::string_field)
         .def_readwrite("int_field", &MutableStructNoClash::int_field)
         .def_readwrite("bool_field", &MutableStructNoClash::bool_field)

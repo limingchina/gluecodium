@@ -16,10 +16,10 @@ class TimeZone(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.TimeZone):
+        if len(args) == 1 and isinstance(args[0], generated.kotlin_smoke_TimeZone):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TimeZone(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.kotlin_smoke_TimeZone(*[_unwrap(arg) for arg in args]))
 
 
     @property

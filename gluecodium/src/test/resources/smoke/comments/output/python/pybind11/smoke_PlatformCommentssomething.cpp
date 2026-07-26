@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using Something = ::smoke::PlatformComments::Something;
 
 void register_smoke_PlatformCommentssomething(py::module_& module) {
-    py::class_<Something>(module, "PlatformCommentssomething")
+    py::class_<Something>(module, "smoke_PlatformCommentssomething")
         .def_readwrite("nothing", &Something::nothing)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("nothing"))
+        .def(py::init<::std::string>(), py::arg("nothing"))
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using some_Struct = ::smoke::ExternalInterface::some_Struct;
 
 void register_smoke_ExternalInterfacesome_Struct(py::module_& module) {
-    py::class_<some_Struct>(module, "ExternalInterfacesome_Struct")
+    py::class_<some_Struct>(module, "smoke_ExternalInterfacesome_Struct")
         .def_readwrite("some_field", &some_Struct::some_Field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("some_field"))
+        .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 }
 

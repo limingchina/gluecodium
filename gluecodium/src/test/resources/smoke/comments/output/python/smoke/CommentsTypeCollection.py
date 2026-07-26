@@ -16,10 +16,10 @@ class CommentsTypeCollection(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.CommentsTypeCollection):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_CommentsTypeCollection):
             super().__init__(args[0])
         else:
-            super().__init__(generated.CommentsTypeCollection(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_CommentsTypeCollection(*[_unwrap(arg) for arg in args]))
 
 
     TYPE_COLLECTION_CONSTANT = True

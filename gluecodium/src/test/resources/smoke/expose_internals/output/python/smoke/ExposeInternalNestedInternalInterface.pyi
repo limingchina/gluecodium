@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ExposeInternalNestedInternalInterface(generated.ExposeInternalNestedInternalInterface):
+class ExposeInternalNestedInternalInterface(generated.smoke_ExposeInternalNestedInternalInterface):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class ExposeInternalNestedInternalInterface(generated.ExposeInternalNestedIntern
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ExposeInternalNestedInternalInterface):
+        if native is not None and isinstance(native, generated.smoke_ExposeInternalNestedInternalInterface):
             super().__init__(native)
         else:
             super().__init__()

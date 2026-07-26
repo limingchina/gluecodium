@@ -16,10 +16,10 @@ class EnableIfField(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.EnableIfField):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_EnableIfField):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnableIfField(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_EnableIfField(*[_unwrap(arg) for arg in args]))
 
 
     @property

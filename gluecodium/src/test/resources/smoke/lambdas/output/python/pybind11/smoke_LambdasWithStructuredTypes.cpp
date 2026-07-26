@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,7 +22,13 @@ using LambdasWithStructuredTypes = ::smoke::LambdasWithStructuredTypes;
 
 
 void register_smoke_LambdasWithStructuredTypes(py::module_& module) {
-    py::class_<LambdasWithStructuredTypes, std::shared_ptr<LambdasWithStructuredTypes>>(module, "LambdasWithStructuredTypes")
+    py::class_<LambdasWithStructuredTypes, std::shared_ptr<LambdasWithStructuredTypes>>(module, "smoke_LambdasWithStructuredTypes")
+                .def("do_class_stuff", [](LambdasWithStructuredTypes& self, const ::std::function<void(const ::std::shared_ptr< ::smoke::LambdasInterface >&)>& callback) {
+                        self.do_class_stuff(callback);
+                }, py::arg("callback"))
+                .def("do_struct_stuff", [](LambdasWithStructuredTypes& self, const ::std::function<void(const ::smoke::LambdasDeclarationOrder::SomeStruct&)>& callback) {
+                        self.do_struct_stuff(callback);
+                }, py::arg("callback"))
         ;
 }
 

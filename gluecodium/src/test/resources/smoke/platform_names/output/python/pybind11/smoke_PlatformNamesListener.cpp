@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -39,7 +40,7 @@ public:
 };
 
 void register_smoke_PlatformNamesListener(py::module_& module) {
-    py::class_<fooListener, std::shared_ptr<fooListener>, PlatformNamesListenerTrampoline>(module, "PlatformNamesListener")
+    py::class_<fooListener, std::shared_ptr<fooListener>, PlatformNamesListenerTrampoline>(module, "smoke_PlatformNamesListener")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -52,6 +53,9 @@ void register_smoke_PlatformNamesListener(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("basic_method", [](fooListener& self, const ::std::string& basic_parameter) {
+            return self.FooMethod(basic_parameter);
+        }, py::arg("basic_parameter"))
         ;
 }
 

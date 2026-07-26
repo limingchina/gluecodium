@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,10 +19,10 @@ namespace py = pybind11;
 using StructWithArrayOfImmutable = ::smoke::Structs::StructWithArrayOfImmutable;
 
 void register_smoke_StructsStructWithArrayOfImmutable(py::module_& module) {
-    py::class_<StructWithArrayOfImmutable>(module, "StructsStructWithArrayOfImmutable")
+    py::class_<StructWithArrayOfImmutable>(module, "smoke_StructsStructWithArrayOfImmutable")
         .def_readonly("array_field", &StructWithArrayOfImmutable::array_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::smoke::Structs::AllTypesStruct >(), py::arg("array_field"))
+        .def(py::init<::std::vector< ::smoke::Structs::AllTypesStruct >>(), py::arg("array_field"))
         ;
 }
 

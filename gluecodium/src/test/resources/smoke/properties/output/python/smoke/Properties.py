@@ -93,11 +93,11 @@ class Properties(_NativeBase):
     @staticmethod
     def static_property() -> str:
         """"""
-        return _wrap(generated.Properties.static_property(), str)
+        return _wrap(generated.smoke_Properties.static_property(), str)
 
 
     @staticmethod
     def static_readonly_property() -> PropertiesExampleStruct:
         """"""
-        return _wrap(generated.Properties.static_readonly_property(), PropertiesExampleStruct)
+        return _wrap(generated.smoke_Properties.static_readonly_property(), PropertiesExampleStruct)
 

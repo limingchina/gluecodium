@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using KotlinPublicClass = ::smoke::KotlinPublicClass;
 
 
 void register_smoke_KotlinPublicClass(py::module_& module) {
-    py::class_<KotlinPublicClass, std::shared_ptr<KotlinPublicClass>>(module, "KotlinPublicClass")
+    py::class_<KotlinPublicClass, std::shared_ptr<KotlinPublicClass>>(module, "smoke_KotlinPublicClass")
         ;
 }
 

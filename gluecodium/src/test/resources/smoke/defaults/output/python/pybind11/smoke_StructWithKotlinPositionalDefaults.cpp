@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,15 +19,19 @@ namespace py = pybind11;
 using StructWithKotlinPositionalDefaults = ::smoke::StructWithKotlinPositionalDefaults;
 
 void register_smoke_StructWithKotlinPositionalDefaults(py::module_& module) {
-    py::class_<StructWithKotlinPositionalDefaults>(module, "StructWithKotlinPositionalDefaults")
+    py::class_<StructWithKotlinPositionalDefaults>(module, "smoke_StructWithKotlinPositionalDefaults")
         .def_readwrite("first_init_field", &StructWithKotlinPositionalDefaults::first_init_field)
         .def_readwrite("first_free_field", &StructWithKotlinPositionalDefaults::first_free_field)
         .def_readwrite("second_init_field", &StructWithKotlinPositionalDefaults::second_init_field)
         .def_readwrite("second_free_field", &StructWithKotlinPositionalDefaults::second_free_field)
         .def_readwrite("third_init_field", &StructWithKotlinPositionalDefaults::third_init_field)
         .def(py::init<>())
-        .def(py::init<::std::string, bool>(py::arg("first_free_field"), py::arg("second_free_field")))
-        .def(py::init<int32_t, ::std::string, float, bool, ::std::string(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))
+        .def(py::init<::std::string, bool>(), py::arg("first_free_field"), py::arg("second_free_field"))
+        .def(py::init<int32_t, ::std::string, float, bool, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))
+        .def(py::init<int32_t, ::std::string, float, bool, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))
+        .def(py::init<int32_t, ::std::string, float, bool, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))
+        .def(py::init<int32_t, ::std::string, float, bool, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))
+        .def(py::init<int32_t, ::std::string, float, bool, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))
         ;
 }
 

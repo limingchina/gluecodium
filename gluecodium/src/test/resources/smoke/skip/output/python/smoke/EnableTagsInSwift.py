@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class EnableTagsInSwift(generated.EnableTagsInSwift):
+class EnableTagsInSwift(generated.smoke_EnableTagsInSwift):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class EnableTagsInSwift(generated.EnableTagsInSwift):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.EnableTagsInSwift):
+        if native is not None and isinstance(native, generated.smoke_EnableTagsInSwift):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,13 +29,13 @@ class EnableTagsInSwift(generated.EnableTagsInSwift):
 
     def enable_tagged(self):
         """"""
-        return _wrap(generated.EnableTagsInSwift.enable_tagged(self), None)
+        return _wrap(generated.smoke_EnableTagsInSwift.enable_tagged(self), None)
 
     def dont_enable_tagged(self):
         """"""
-        return _wrap(generated.EnableTagsInSwift.dont_enable_tagged(self), None)
+        return _wrap(generated.smoke_EnableTagsInSwift.dont_enable_tagged(self), None)
 
     def enable_tagged_list(self):
         """"""
-        return _wrap(generated.EnableTagsInSwift.enable_tagged_list(self), None)
+        return _wrap(generated.smoke_EnableTagsInSwift.enable_tagged_list(self), None)
 

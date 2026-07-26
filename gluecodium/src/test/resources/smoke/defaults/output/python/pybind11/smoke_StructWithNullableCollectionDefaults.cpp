@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -24,12 +25,14 @@ namespace py = pybind11;
 using StructWithNullableCollectionDefaults = ::smoke::StructWithNullableCollectionDefaults;
 
 void register_smoke_StructWithNullableCollectionDefaults(py::module_& module) {
-    py::class_<StructWithNullableCollectionDefaults>(module, "StructWithNullableCollectionDefaults")
+    py::class_<StructWithNullableCollectionDefaults>(module, "smoke_StructWithNullableCollectionDefaults")
         .def_readwrite("nullable_list_field", &StructWithNullableCollectionDefaults::nullable_list_field)
         .def_readwrite("nullable_map_field", &StructWithNullableCollectionDefaults::nullable_map_field)
         .def_readwrite("nullable_set_field", &StructWithNullableCollectionDefaults::nullable_set_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
+        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
+        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
+        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
         ;
 }
 

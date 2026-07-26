@@ -16,10 +16,10 @@ class SwiftExternalCtor(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.SwiftExternalCtor):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_SwiftExternalCtor):
             super().__init__(args[0])
         else:
-            super().__init__(generated.SwiftExternalCtor(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_SwiftExternalCtor(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -34,6 +34,6 @@ class SwiftExternalCtor(_NativeBase):
     @staticmethod
     def make(field: str) -> SwiftExternalCtor:
         """"""
-        native_result = generated.SwiftExternalCtor.make(_unwrap(field, str))
+        native_result = generated.smoke_SwiftExternalCtor.make(_unwrap(field, str))
         return SwiftExternalCtor(native_result)
 

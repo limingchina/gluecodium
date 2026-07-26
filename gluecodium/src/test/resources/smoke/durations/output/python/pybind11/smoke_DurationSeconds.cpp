@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -27,7 +28,9 @@ using DurationSeconds = ::smoke::DurationSeconds;
 
 
 void register_smoke_DurationSeconds(py::module_& module) {
-    py::class_<DurationSeconds, std::shared_ptr<DurationSeconds>>(module, "DurationSeconds")
+    py::class_<DurationSeconds, std::shared_ptr<DurationSeconds>>(module, "smoke_DurationSeconds")
+        .def("duration_function", &DurationSeconds::duration_function, py::arg("input"))
+        .def("nullable_duration_function", &DurationSeconds::nullable_duration_function, py::arg("input"))
         .def_property("duration_property", py::overload_cast<>(&DurationSeconds::get_duration_property, py::const_), py::overload_cast<const ::std::chrono::seconds>(&DurationSeconds::set_duration_property))
         ;
 }

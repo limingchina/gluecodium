@@ -10,7 +10,7 @@ from smoke.ParentClass import ParentClass
 import generated
 
 
-class OuterClassWithInheritance(generated.OuterClassWithInheritance):
+class OuterClassWithInheritance(generated.smoke_OuterClassWithInheritance):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class OuterClassWithInheritance(generated.OuterClassWithInheritance):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.OuterClassWithInheritance):
+        if native is not None and isinstance(native, generated.smoke_OuterClassWithInheritance):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,5 +28,5 @@ class OuterClassWithInheritance(generated.OuterClassWithInheritance):
 
     def foo(self, input: str) -> str:
         """"""
-        return _wrap(generated.OuterClassWithInheritance.foo(self, _unwrap(input, str)), str)
+        return _wrap(generated.smoke_OuterClassWithInheritance.foo(self, _unwrap(input, str)), str)
 

@@ -16,10 +16,10 @@ class PublicStructWithInternalConstructors(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.PublicStructWithInternalConstructors):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_PublicStructWithInternalConstructors):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PublicStructWithInternalConstructors(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_PublicStructWithInternalConstructors(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -34,6 +34,6 @@ class PublicStructWithInternalConstructors(_NativeBase):
     @staticmethod
     def make() -> PublicStructWithInternalConstructors:
         """"""
-        native_result = generated.PublicStructWithInternalConstructors.make()
+        native_result = generated.smoke_PublicStructWithInternalConstructors.make()
         return PublicStructWithInternalConstructors(native_result)
 

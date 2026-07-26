@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,9 @@ using FooBar = ::example::FooBar;
 
 
 void register_example_FooBar(py::module_& module) {
-    py::class_<FooBar, std::shared_ptr<FooBar>>(module, "FooBar")
+    py::class_<FooBar, std::shared_ptr<FooBar>>(module, "example_FooBar")
+        .def_static("method_with_internal_error", &FooBar::method_with_internal_error)
+        .def_static("method_with_type_collection_error", &FooBar::method_with_type_collection_error)
         ;
 }
 

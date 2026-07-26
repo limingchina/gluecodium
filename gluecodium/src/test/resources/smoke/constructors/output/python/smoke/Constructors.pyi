@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class Constructors(generated.Constructors):
+class Constructors(generated.smoke_Constructors):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class Constructors(generated.Constructors):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.Constructors):
+        if native is not None and isinstance(native, generated.smoke_Constructors):
             super().__init__(native)
         else:
             super().__init__()

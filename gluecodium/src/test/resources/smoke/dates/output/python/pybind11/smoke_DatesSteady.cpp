@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -25,7 +26,12 @@ using DatesSteady = ::smoke::DatesSteady;
 
 
 void register_smoke_DatesSteady(py::module_& module) {
-    py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(module, "DatesSteady")
+    py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(module, "smoke_DatesSteady")
+        .def("date_method", &DatesSteady::date_method, py::arg("input"))
+        .def("nullable_date_method", &DatesSteady::nullable_date_method, py::arg("input"))
+                .def("date_list_method", [](DatesSteady& self, py::handle input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.date_list_method(gluecodium::python::from_python_regular<::std::vector< std::chrono::steady_clock::time_point >>(input)));
+                }, py::arg("input"))
         ;
 }
 

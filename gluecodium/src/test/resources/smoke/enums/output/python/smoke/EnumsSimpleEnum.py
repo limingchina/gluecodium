@@ -14,8 +14,8 @@ import generated
 class EnumsSimpleEnum(Enum):
     """"""
 
-    FIRST = generated.EnumsSimpleEnum.FIRST
-    SECOND = generated.EnumsSimpleEnum.SECOND
+    FIRST = generated.smoke_EnumsSimpleEnum.FIRST
+    SECOND = generated.smoke_EnumsSimpleEnum.SECOND
 
     @property
     def _native(self):

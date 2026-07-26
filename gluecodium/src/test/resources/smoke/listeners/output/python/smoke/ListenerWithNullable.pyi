@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ListenerWithNullable(generated.ListenerWithNullable):
+class ListenerWithNullable(generated.smoke_ListenerWithNullable):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class ListenerWithNullable(generated.ListenerWithNullable):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ListenerWithNullable):
+        if native is not None and isinstance(native, generated.smoke_ListenerWithNullable):
             super().__init__(native)
         else:
             super().__init__()

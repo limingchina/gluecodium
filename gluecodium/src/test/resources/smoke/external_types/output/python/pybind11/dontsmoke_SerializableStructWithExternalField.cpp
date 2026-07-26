@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using SerializableStructWithExternalField = ::dontsmoke::SerializableStructWithExternalField;
 
 void register_dontsmoke_SerializableStructWithExternalField(py::module_& module) {
-    py::class_<SerializableStructWithExternalField>(module, "SerializableStructWithExternalField")
+    py::class_<SerializableStructWithExternalField>(module, "dontsmoke_SerializableStructWithExternalField")
         .def_readwrite("some_struct", &SerializableStructWithExternalField::some_struct)
         .def(py::init<>())
-        .def(py::init<::dontsmoke::ExternalMarkedAsSerializable(), py::arg("some_struct"))
+        .def(py::init<::dontsmoke::ExternalMarkedAsSerializable>(), py::arg("some_struct"))
         ;
 }
 

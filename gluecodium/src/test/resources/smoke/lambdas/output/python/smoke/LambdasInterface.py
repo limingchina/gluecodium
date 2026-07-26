@@ -12,7 +12,7 @@ from smoke.LambdasInterfaceTakeScreenshotCallback import LambdasInterfaceTakeScr
 import generated
 
 
-class LambdasInterface(generated.LambdasInterface):
+class LambdasInterface(generated.smoke_LambdasInterface):
     """"""
 
     def __init__(self, native=None):
@@ -23,7 +23,7 @@ class LambdasInterface(generated.LambdasInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.LambdasInterface):
+        if native is not None and isinstance(native, generated.smoke_LambdasInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -31,5 +31,5 @@ class LambdasInterface(generated.LambdasInterface):
 
     def take_screenshot(self, callback: Callable[[Optional[bytes]], None]):
         """"""
-        return _wrap(generated.LambdasInterface.take_screenshot(self, _unwrap(callback, Callable[[Optional[bytes]], None])), None)
+        return _wrap(generated.smoke_LambdasInterface.take_screenshot(self, _unwrap(callback, Callable[[Optional[bytes]], None])), None)
 

@@ -20,6 +20,6 @@ class SingleNamelessConstructor(_NativeBase):
     @staticmethod
     def create() -> SingleNamelessConstructor:
         """"""
-        native_result = generated.SingleNamelessConstructor.create()
+        native_result = generated.smoke_SingleNamelessConstructor.create()
         return SingleNamelessConstructor(native_result)
 

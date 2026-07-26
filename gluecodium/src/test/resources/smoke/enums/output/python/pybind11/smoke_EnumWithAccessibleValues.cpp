@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ namespace py = pybind11;
 using EnumWithAccessibleValues = ::smoke::EnumWithAccessibleValues;
 
 void register_smoke_EnumWithAccessibleValues(py::module_& module) {
-    py::enum_<EnumWithAccessibleValues>(module, "EnumWithAccessibleValues")
+    py::enum_<EnumWithAccessibleValues>(module, "smoke_EnumWithAccessibleValues")
         .value("FOO", EnumWithAccessibleValues::FOO)
         .value("BAR", EnumWithAccessibleValues::BAR)
         .value("BAZ", EnumWithAccessibleValues::BAZ)

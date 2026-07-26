@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using InternalClassWithStaticProperty = ::smoke::InternalClassWithStaticProperty
 
 
 void register_smoke_InternalClassWithStaticProperty(py::module_& module) {
-    py::class_<InternalClassWithStaticProperty, std::shared_ptr<InternalClassWithStaticProperty>>(module, "InternalClassWithStaticProperty")
+    py::class_<InternalClassWithStaticProperty, std::shared_ptr<InternalClassWithStaticProperty>>(module, "smoke_InternalClassWithStaticProperty")
         .def_static("foo_bar", &InternalClassWithStaticProperty::get_foo_bar)
         .def_static("foo_bar_set", &InternalClassWithStaticProperty::set_foo_bar)
         ;

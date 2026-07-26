@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -53,7 +54,7 @@ public:
 };
 
 void register_smoke_InternalClassInherits(py::module_& module) {
-    py::class_<InternalClassInherits, ::smoke::InternalInterfaceParent, std::shared_ptr<InternalClassInherits>, InternalClassInheritsTrampoline>(module, "InternalClassInherits")
+    py::class_<InternalClassInherits, ::smoke::InternalInterfaceParent, std::shared_ptr<InternalClassInherits>, InternalClassInheritsTrampoline>(module, "smoke_InternalClassInherits")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -64,6 +65,9 @@ void register_smoke_InternalClassInherits(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("foo_bar", [](InternalClassInherits& self) {
+            return self.foo_bar();
+        })
         .def_property("prop", [](const InternalClassInherits& self) {
             return self.get_prop();
         }, [](InternalClassInherits& self, const ::std::string& value) {

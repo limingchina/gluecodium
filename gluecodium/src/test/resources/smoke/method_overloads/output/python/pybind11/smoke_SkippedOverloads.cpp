@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,12 +20,8 @@ using SkippedOverloads = ::smoke::SkippedOverloads;
 
 
 void register_smoke_SkippedOverloads(py::module_& module) {
-    py::class_<SkippedOverloads, std::shared_ptr<SkippedOverloads>>(module, "SkippedOverloads")
-        .def(py::init<>())
-
+    py::class_<SkippedOverloads, std::shared_ptr<SkippedOverloads>>(module, "smoke_SkippedOverloads")
         .def_static("make", &SkippedOverloads::make)
-        .def(py::init<::std::string>(py::arg("input")))
-
         .def_static("make_for_dart", &SkippedOverloads::make_for_dart, py::arg("input"))
         ;
 }

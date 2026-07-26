@@ -14,9 +14,9 @@ import generated
 class SkipEnumeratorExplicitTag(Enum):
     """"""
 
-    ZERO = generated.SkipEnumeratorExplicitTag.ZERO
-    ONE = generated.SkipEnumeratorExplicitTag.ONE
-    THREE = generated.SkipEnumeratorExplicitTag.THREE
+    ZERO = generated.smoke_SkipEnumeratorExplicitTag.ZERO
+    ONE = generated.smoke_SkipEnumeratorExplicitTag.ONE
+    THREE = generated.smoke_SkipEnumeratorExplicitTag.THREE
 
     @property
     def _native(self):

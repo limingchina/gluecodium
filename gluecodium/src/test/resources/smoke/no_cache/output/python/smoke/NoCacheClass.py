@@ -20,7 +20,7 @@ class NoCacheClass(_NativeBase):
     @staticmethod
     def make() -> NoCacheClass:
         """"""
-        native_result = generated.NoCacheClass.make()
+        native_result = generated.smoke_NoCacheClass.make()
         return NoCacheClass(native_result)
 
     def foo(self):

@@ -51,5 +51,5 @@ class CppRefReturnType(_NativeBase):
     @staticmethod
     def string_property() -> str:
         """"""
-        return _wrap(generated.CppRefReturnType.string_property(), str)
+        return _wrap(generated.smoke_CppRefReturnType.string_property(), str)
 

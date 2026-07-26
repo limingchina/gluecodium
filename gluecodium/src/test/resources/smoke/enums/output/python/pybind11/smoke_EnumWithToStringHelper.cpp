@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ namespace py = pybind11;
 using EnumWithToStringHelper = ::smoke::EnumWithToStringHelper;
 
 void register_smoke_EnumWithToStringHelper(py::module_& module) {
-    py::enum_<EnumWithToStringHelper>(module, "EnumWithToStringHelper")
+    py::enum_<EnumWithToStringHelper>(module, "smoke_EnumWithToStringHelper")
         .value("FIRST", EnumWithToStringHelper::FIRST)
         .value("SECOND", EnumWithToStringHelper::SECOND)
         ;

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -129,7 +130,7 @@ public:
 };
 
 void register_smoke_CommentsInterface(py::module_& module) {
-    py::class_<CommentsInterface, std::shared_ptr<CommentsInterface>, CommentsInterfaceTrampoline>(module, "CommentsInterface")
+    py::class_<CommentsInterface, std::shared_ptr<CommentsInterface>, CommentsInterfaceTrampoline>(module, "smoke_CommentsInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -142,6 +143,36 @@ void register_smoke_CommentsInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("some_method_with_all_comments", [](CommentsInterface& self, const ::std::string& input) {
+            return self.some_method_with_all_comments(input);
+        }, py::arg("input"))
+        .def("some_method_with_input_comments", [](CommentsInterface& self, const ::std::string& input) {
+            return self.some_method_with_input_comments(input);
+        }, py::arg("input"))
+        .def("some_method_with_output_comments", [](CommentsInterface& self, const ::std::string& input) {
+            return self.some_method_with_output_comments(input);
+        }, py::arg("input"))
+        .def("some_method_with_no_comments", [](CommentsInterface& self, const ::std::string& input) {
+            return self.some_method_with_no_comments(input);
+        }, py::arg("input"))
+        .def("some_method_without_return_type_with_all_comments", [](CommentsInterface& self, const ::std::string& input) {
+            return self.some_method_without_return_type_with_all_comments(input);
+        }, py::arg("input"))
+        .def("some_method_without_return_type_with_no_comments", [](CommentsInterface& self, const ::std::string& input) {
+            return self.some_method_without_return_type_with_no_comments(input);
+        }, py::arg("input"))
+        .def("some_method_without_input_parameters_with_all_comments", [](CommentsInterface& self) {
+            return self.some_method_without_input_parameters_with_all_comments();
+        })
+        .def("some_method_without_input_parameters_with_no_comments", [](CommentsInterface& self) {
+            return self.some_method_without_input_parameters_with_no_comments();
+        })
+        .def("some_method_with_nothing", [](CommentsInterface& self) {
+            return self.some_method_with_nothing();
+        })
+        .def("some_method_without_return_type_or_input_parameters", [](CommentsInterface& self) {
+            return self.some_method_without_return_type_or_input_parameters();
+        })
         .def_property("is_some_property", [](const CommentsInterface& self) {
             return self.is_some_property();
         }, [](CommentsInterface& self, const bool value) {

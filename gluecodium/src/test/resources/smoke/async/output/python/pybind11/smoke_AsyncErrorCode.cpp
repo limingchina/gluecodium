@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using AsyncErrorCode = ::smoke::AsyncErrorCode;
 
 void register_smoke_AsyncErrorCode(py::module_& module) {
-    py::enum_<AsyncErrorCode>(module, "AsyncErrorCode")
+    py::enum_<AsyncErrorCode>(module, "smoke_AsyncErrorCode")
         .value("VALUE1", AsyncErrorCode::VALUE1)
         ;
 }

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using MyOuterClass = ::smoke::MyOuterClass;
 
 
 void register_smoke_MyOuterClass(py::module_& module) {
-    py::class_<MyOuterClass, std::shared_ptr<MyOuterClass>>(module, "MyOuterClass")
+    py::class_<MyOuterClass, std::shared_ptr<MyOuterClass>>(module, "smoke_MyOuterClass")
         ;
 }
 

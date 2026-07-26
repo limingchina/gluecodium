@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using OuterInternalEnum = ::smoke::OuterInternalEnum;
 
 void register_smoke_OuterInternalEnum(py::module_& module) {
-    py::enum_<OuterInternalEnum>(module, "OuterInternalEnum")
+    py::enum_<OuterInternalEnum>(module, "smoke_OuterInternalEnum")
         .value("FIRST", OuterInternalEnum::FIRST)
         .value("SECOND", OuterInternalEnum::SECOND)
         ;

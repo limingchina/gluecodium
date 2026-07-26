@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,12 +19,14 @@ namespace py = pybind11;
 using SkipFieldInPlatform = ::smoke::SkipFieldInPlatform;
 
 void register_smoke_SkipFieldInPlatform(py::module_& module) {
-    py::class_<SkipFieldInPlatform>(module, "SkipFieldInPlatform")
+    py::class_<SkipFieldInPlatform>(module, "smoke_SkipFieldInPlatform")
         .def_readwrite("int_field", &SkipFieldInPlatform::int_field)
         .def_readwrite("string_field", &SkipFieldInPlatform::string_field)
         .def_readwrite("bool_field", &SkipFieldInPlatform::bool_field)
         .def(py::init<>())
-        .def(py::init<int32_t, ::std::string, bool(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
+        .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;
 }
 

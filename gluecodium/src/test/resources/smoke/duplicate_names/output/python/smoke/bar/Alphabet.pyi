@@ -10,9 +10,9 @@ import generated
 class Alphabet(Enum):
     """"""
 
-    ALEPH = generated.Alphabet.ALEPH
-    BEIT = generated.Alphabet.BEIT
-    GIMEL = generated.Alphabet.GIMEL
+    ALEPH = generated.smoke_bar_Alphabet.ALEPH
+    BEIT = generated.smoke_bar_Alphabet.BEIT
+    GIMEL = generated.smoke_bar_Alphabet.GIMEL
 
     @property
     def _native(self):

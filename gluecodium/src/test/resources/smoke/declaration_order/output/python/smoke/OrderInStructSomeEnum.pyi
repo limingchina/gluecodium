@@ -10,8 +10,8 @@ import generated
 class OrderInStructSomeEnum(Enum):
     """"""
 
-    FOO = generated.OrderInStructSomeEnum.FOO
-    BAR = generated.OrderInStructSomeEnum.BAR
+    FOO = generated.smoke_OrderInStructSomeEnum.FOO
+    BAR = generated.smoke_OrderInStructSomeEnum.BAR
 
     @property
     def _native(self):

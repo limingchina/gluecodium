@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class ParentInterface(generated.ParentInterface):
+class ParentInterface(generated.smoke_ParentInterface):
     """"""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class ParentInterface(generated.ParentInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ParentInterface):
+        if native is not None and isinstance(native, generated.smoke_ParentInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -31,9 +31,9 @@ class ParentInterface(generated.ParentInterface):
     @property
     def parent_property(self) -> str:
         """"""
-        return _wrap(generated.ParentInterface.parent_property.fget(self), str)
+        return _wrap(generated.smoke_ParentInterface.parent_property.fget(self), str)
 
     @parent_property.setter
     def parent_property(self, value: str):
-        generated.ParentInterface.parent_property.fset(self, _unwrap(value, str))
+        generated.smoke_ParentInterface.parent_property.fset(self, _unwrap(value, str))
 

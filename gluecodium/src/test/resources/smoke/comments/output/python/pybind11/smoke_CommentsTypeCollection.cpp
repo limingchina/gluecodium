@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,9 +18,8 @@ namespace py = pybind11;
 using CommentsTypeCollection = ::smoke::CommentsTypeCollection;
 
 void register_smoke_CommentsTypeCollection(py::module_& module) {
-    py::class_<CommentsTypeCollection>(module, "CommentsTypeCollection")
+    py::class_<CommentsTypeCollection>(module, "smoke_CommentsTypeCollection")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using ExposeInternalClass = ::smoke::ExposeInternalClass;
 
 
 void register_smoke_ExposeInternalClass(py::module_& module) {
-    py::class_<ExposeInternalClass, std::shared_ptr<ExposeInternalClass>>(module, "ExposeInternalClass")
+    py::class_<ExposeInternalClass, std::shared_ptr<ExposeInternalClass>>(module, "smoke_ExposeInternalClass")
         ;
 }
 

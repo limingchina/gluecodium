@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,11 +19,12 @@ namespace py = pybind11;
 using Route = ::smoke::StructsWithConstants::Route;
 
 void register_smoke_StructsWithConstantsRoute(py::module_& module) {
-    py::class_<Route>(module, "StructsWithConstantsRoute")
+    py::class_<Route>(module, "smoke_StructsWithConstantsRoute")
         .def_readwrite("description", &Route::description)
         .def_readwrite("type", &Route::type)
         .def(py::init<>())
-        .def(py::init<::std::string, ::smoke::RouteUtils::RouteType(), py::arg("description"), py::arg("type"))
+        .def(py::init<::std::string, ::smoke::RouteUtils::RouteType>(), py::arg("description"), py::arg("type"))
+        .def(py::init<::std::string, ::smoke::RouteUtils::RouteType>(), py::arg("description"), py::arg("type"))
         ;
 }
 

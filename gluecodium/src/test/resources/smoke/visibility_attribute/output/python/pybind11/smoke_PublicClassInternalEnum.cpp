@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using InternalEnum = ::smoke::PublicClass::InternalEnum;
 
 void register_smoke_PublicClassInternalEnum(py::module_& module) {
-    py::enum_<InternalEnum>(module, "PublicClassInternalEnum")
+    py::enum_<InternalEnum>(module, "smoke_PublicClassInternalEnum")
         .value("FOO", InternalEnum::FOO)
         .value("BAR", InternalEnum::BAR)
         ;

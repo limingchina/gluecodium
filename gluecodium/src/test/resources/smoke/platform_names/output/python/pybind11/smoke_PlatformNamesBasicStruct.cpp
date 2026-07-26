@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,12 +18,10 @@ namespace py = pybind11;
 using fooStruct = ::smoke::fooTypes::fooStruct;
 
 void register_smoke_PlatformNamesBasicStruct(py::module_& module) {
-    py::class_<fooStruct>(module, "PlatformNamesBasicStruct")
+    py::class_<fooStruct>(module, "smoke_PlatformNamesBasicStruct")
         .def_readwrite("string_field", &fooStruct::FOO_FIELD)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("string_field"))
-        .def(py::init<::std::string>(py::arg("basic_parameter")))
-
+        .def(py::init<::std::string>(), py::arg("string_field"))
         .def_static("make", &fooStruct::FooCreate, py::arg("basic_parameter"))
         ;
 }

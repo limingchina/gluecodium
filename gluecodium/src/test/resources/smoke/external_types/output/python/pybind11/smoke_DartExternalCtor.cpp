@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,12 +18,10 @@ namespace py = pybind11;
 using DartExternalCtor = ::smoke::DartExternalCtor;
 
 void register_smoke_DartExternalCtor(py::module_& module) {
-    py::class_<DartExternalCtor>(module, "DartExternalCtor")
+    py::class_<DartExternalCtor>(module, "smoke_DartExternalCtor")
         .def_readwrite("field", &DartExternalCtor::field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("field"))
-        .def(py::init<::std::string>(py::arg("field")))
-
+        .def(py::init<::std::string>(), py::arg("field"))
         .def_static("make", &DartExternalCtor::make, py::arg("field"))
         ;
 }

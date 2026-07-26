@@ -10,8 +10,8 @@ import generated
 class OuterInternalEnum(Enum):
     """"""
 
-    FIRST = generated.OuterInternalEnum.FIRST
-    SECOND = generated.OuterInternalEnum.SECOND
+    FIRST = generated.smoke_OuterInternalEnum.FIRST
+    SECOND = generated.smoke_OuterInternalEnum.SECOND
 
     @property
     def _native(self):

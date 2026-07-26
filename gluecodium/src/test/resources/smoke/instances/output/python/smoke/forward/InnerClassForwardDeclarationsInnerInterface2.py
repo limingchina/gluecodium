@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class InnerClassForwardDeclarationsInnerInterface2(generated.InnerClassForwardDeclarationsInnerInterface2):
+class InnerClassForwardDeclarationsInnerInterface2(generated.smoke_forward_InnerClassForwardDeclarationsInnerInterface2):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class InnerClassForwardDeclarationsInnerInterface2(generated.InnerClassForwardDe
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.InnerClassForwardDeclarationsInnerInterface2):
+        if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarationsInnerInterface2):
             super().__init__(native)
         else:
             super().__init__()

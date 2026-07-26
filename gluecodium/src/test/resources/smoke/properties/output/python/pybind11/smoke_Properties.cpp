@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -23,7 +24,7 @@ using Properties = ::smoke::Properties;
 
 
 void register_smoke_Properties(py::module_& module) {
-    py::class_<Properties, std::shared_ptr<Properties>>(module, "Properties")
+    py::class_<Properties, std::shared_ptr<Properties>>(module, "smoke_Properties")
         .def_property("built_in_type_property", py::overload_cast<>(&Properties::get_built_in_type_property, py::const_), py::overload_cast<const uint32_t>(&Properties::set_built_in_type_property))
         .def_property_readonly("readonly_property", py::overload_cast<>(&Properties::get_readonly_property, py::const_))
         .def_property("struct_property", py::overload_cast<>(&Properties::get_struct_property, py::const_), py::overload_cast<const ::smoke::Properties::ExampleStruct&>(&Properties::set_struct_property))

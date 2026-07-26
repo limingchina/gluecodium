@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -101,7 +102,7 @@ public:
 };
 
 void register_smoke_ChildClassFromClassOverloads(py::module_& module) {
-    py::class_<ChildClassFromClassOverloads, ::smoke::ParentClass, std::shared_ptr<ChildClassFromClassOverloads>, ChildClassFromClassOverloadsTrampoline>(module, "ChildClassFromClassOverloads")
+    py::class_<ChildClassFromClassOverloads, ::smoke::ParentClass, std::shared_ptr<ChildClassFromClassOverloads>, ChildClassFromClassOverloadsTrampoline>(module, "smoke_ChildClassFromClassOverloads")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -112,6 +113,14 @@ void register_smoke_ChildClassFromClassOverloads(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("foo", py::overload_cast<const ::std::string&>(&ChildClassFromClassOverloads::foo), py::arg("input"))
+        .def("foo", py::overload_cast<const double>(&ChildClassFromClassOverloads::foo), py::arg("input"))
+        .def("bar", py::overload_cast<const ::std::string&>(&ChildClassFromClassOverloads::bar), py::arg("input"))
+        .def("bar", py::overload_cast<const double>(&ChildClassFromClassOverloads::bar), py::arg("input"))
+        .def("foo", py::overload_cast<>(&ChildClassFromClassOverloads::foo))
+        .def("foo", py::overload_cast<const int32_t>(&ChildClassFromClassOverloads::foo), py::arg("input"))
+        .def("bar", py::overload_cast<>(&ChildClassFromClassOverloads::bar))
+        .def("baz", &ChildClassFromClassOverloads::baz)
         ;
 }
 

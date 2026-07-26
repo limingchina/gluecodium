@@ -10,7 +10,7 @@ import generated
 class DeprecationCommentsSomeEnum(Enum):
     """This is some very useful enum."""
 
-    USELESS = generated.DeprecationCommentsSomeEnum.USELESS
+    USELESS = generated.smoke_DeprecationCommentsSomeEnum.USELESS
 
     @property
     def _native(self):

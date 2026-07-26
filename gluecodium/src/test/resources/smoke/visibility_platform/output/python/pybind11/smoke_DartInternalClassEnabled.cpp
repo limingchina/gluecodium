@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using DartInternalClassEnabled = ::smoke::DartInternalClassEnabled;
 
 
 void register_smoke_DartInternalClassEnabled(py::module_& module) {
-    py::class_<DartInternalClassEnabled, std::shared_ptr<DartInternalClassEnabled>>(module, "DartInternalClassEnabled")
+    py::class_<DartInternalClassEnabled, std::shared_ptr<DartInternalClassEnabled>>(module, "smoke_DartInternalClassEnabled")
         ;
 }
 

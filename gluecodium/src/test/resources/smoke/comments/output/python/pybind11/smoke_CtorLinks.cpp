@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -20,7 +21,7 @@ using CtorLinks = ::smoke::CtorLinks;
 
 
 void register_smoke_CtorLinks(py::module_& module) {
-    py::class_<CtorLinks, std::shared_ptr<CtorLinks>>(module, "CtorLinks")
+    py::class_<CtorLinks, std::shared_ptr<CtorLinks>>(module, "smoke_CtorLinks")
         ;
 }
 

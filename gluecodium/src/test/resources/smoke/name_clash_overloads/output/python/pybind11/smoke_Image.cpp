@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using Image = ::smoke::Image;
 
 
 void register_smoke_Image(py::module_& module) {
-    py::class_<Image, std::shared_ptr<Image>>(module, "Image")
+    py::class_<Image, std::shared_ptr<Image>>(module, "smoke_Image")
         ;
 }
 

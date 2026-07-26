@@ -12,7 +12,7 @@ from smoke.CalculatorListenerResultStruct import CalculatorListenerResultStruct
 import generated
 
 
-class CalculatorListener(generated.CalculatorListener):
+class CalculatorListener(generated.smoke_CalculatorListener):
     """"""
 
     def __init__(self, native=None):
@@ -23,7 +23,7 @@ class CalculatorListener(generated.CalculatorListener):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.CalculatorListener):
+        if native is not None and isinstance(native, generated.smoke_CalculatorListener):
             super().__init__(native)
         else:
             super().__init__()
@@ -31,25 +31,25 @@ class CalculatorListener(generated.CalculatorListener):
 
     def on_calculation_result(self, calculation_result: float):
         """"""
-        return _wrap(generated.CalculatorListener.on_calculation_result(self, _unwrap(calculation_result, float)), None)
+        return _wrap(generated.smoke_CalculatorListener.on_calculation_result(self, _unwrap(calculation_result, float)), None)
 
     def on_calculation_result_const(self, calculation_result: float):
         """"""
-        return _wrap(generated.CalculatorListener.on_calculation_result_const(self, _unwrap(calculation_result, float)), None)
+        return _wrap(generated.smoke_CalculatorListener.on_calculation_result_const(self, _unwrap(calculation_result, float)), None)
 
     def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct):
         """"""
-        return _wrap(generated.CalculatorListener.on_calculation_result_struct(self, _unwrap(calculation_result, CalculatorListenerResultStruct)), None)
+        return _wrap(generated.smoke_CalculatorListener.on_calculation_result_struct(self, _unwrap(calculation_result, CalculatorListenerResultStruct)), None)
 
     def on_calculation_result_array(self, calculation_result: list[float]):
         """"""
-        return _wrap(generated.CalculatorListener.on_calculation_result_array(self, _unwrap(calculation_result, list[float])), None)
+        return _wrap(generated.smoke_CalculatorListener.on_calculation_result_array(self, _unwrap(calculation_result, list[float])), None)
 
     def on_calculation_result_map(self, calculation_results: dict[str, float]):
         """"""
-        return _wrap(generated.CalculatorListener.on_calculation_result_map(self, _unwrap(calculation_results, dict[str, float])), None)
+        return _wrap(generated.smoke_CalculatorListener.on_calculation_result_map(self, _unwrap(calculation_results, dict[str, float])), None)
 
     def on_calculation_result_instance(self, calculation_result: CalculationResult):
         """"""
-        return _wrap(generated.CalculatorListener.on_calculation_result_instance(self, _unwrap(calculation_result, CalculationResult)), None)
+        return _wrap(generated.smoke_CalculatorListener.on_calculation_result_instance(self, _unwrap(calculation_result, CalculationResult)), None)
 
