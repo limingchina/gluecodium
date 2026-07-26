@@ -111,6 +111,19 @@ internal class PythonGeneratorPredicates(
             },
             "isInternal" to { it is LimeNamedElement && CommonGeneratorPredicates.isInternal(it, PYTHON) },
             "isPublic" to { it is LimeNamedElement && !CommonGeneratorPredicates.isInternal(it, PYTHON) },
+            // Whether a function/property/field is skipped for Python and must not get an actual
+            // pybind11 binding (`.def()` / `.def_property()` / `.def_readwrite()`), even though it
+            // is still present in the model this class was built from (`pybind11FilteredModel`,
+            // built with `retainFunctionsAndFields = true`). That flag exists so container bodies
+            // stay complete for the C++-facing trampoline (an interface's Python trampoline must
+            // override *every* pure-virtual member, including Python-skipped ones, to remain a
+            // valid concrete C++ type) - it must not also cause skipped members to be exposed to
+            // Python users. `limeReferenceMap` here is `pythonFilteredModel.referenceMap`, i.e. the
+            // strict model built with `retainFunctionsAndFields = false`, which is exactly the
+            // membership test we need: present there means "not skipped for Python".
+            "isSkippedForPython" to { limeElement: Any ->
+                limeElement is LimeNamedElement && !limeReferenceMap.containsKey(limeElement.fullName)
+            },
             "isNestedInternal" to { limeElement: Any ->
                 limeElement is LimeNamedElement &&
                     generateSequence(limeElement) {
