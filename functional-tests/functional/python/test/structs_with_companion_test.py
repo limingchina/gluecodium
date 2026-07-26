@@ -30,7 +30,7 @@ from test.SimpleRoute import SimpleRoute
 from test.StructsWithConstantsInterfaceMultiRoute import (
     StructsWithConstantsInterfaceMultiRoute as MultiRoute,
 )
-from test.RouteType import RouteType
+from test.RouteUtilsRouteType import RouteUtilsRouteType
 
 import pytest
 
@@ -111,7 +111,7 @@ class TestStructsWithConstants:
         assert SimpleRoute.DEFAULT_DESCRIPTION == "Nonsense"
 
     def test_simple_route_default_type(self):
-        assert SimpleRoute.DEFAULT_TYPE == RouteType.EQUESTRIAN
+        assert SimpleRoute.DEFAULT_TYPE == RouteUtilsRouteType.EQUESTRIAN
 
     def test_simple_route_get_default_description(self):
         assert SimpleRoute.get_default_description() == "Nonsense"
@@ -120,7 +120,7 @@ class TestStructsWithConstants:
         assert MultiRoute.DEFAULT_DESCRIPTION == "Foo"
 
     def test_multi_route_default_type(self):
-        assert MultiRoute.DEFAULT_TYPE == RouteType.NONE
+        assert MultiRoute.DEFAULT_TYPE == RouteUtilsRouteType.NONE
 
     def test_multi_route_get_default_description(self):
         assert MultiRoute.get_default_description() == "Foo"
