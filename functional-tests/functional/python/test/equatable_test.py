@@ -18,7 +18,8 @@
 """Equatable mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.Equatable import EquatableClass, Equatable
+from test.EquatableClass import EquatableClass
+from test.Equatable import Equatable
 
 import pytest
 
@@ -37,7 +38,7 @@ class TestEquatable:
         assert EquatableClass.are_equal(a, b) is True
 
     def test_struct_equality(self):
-        a = Equatable(field1="x", field2=1)
-        b = Equatable(field1="x", field2=1)
+        a = Equatable()
+        b = Equatable()
 
         assert a == b

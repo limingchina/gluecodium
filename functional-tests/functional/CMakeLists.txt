@@ -351,7 +351,7 @@ feature(Constants cpp android android-kotlin swift dart python SOURCES
     input/lime/Constants.lime
 )
 
-feature(Equatable cpp android android-kotlin swift dart SOURCES
+feature(Equatable cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/EquatableImpl.cpp
     input/src/cpp/RefEquality.cpp
     input/src/cpp/SimpleEquality.cpp
@@ -665,10 +665,18 @@ elseif(python IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
 
     # Copy the generated Python wrapper package next to the built extension module so that
     # `import functional` (the .so) and `from test.X import Y` (the wrappers) both resolve.
+    # Also copy any additional generated Python packages (e.g. another, external) that contain
+    # types referenced by wrapper modules in the test package.
     add_custom_command(TARGET ${functional_python} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${_main_output}/python/test
                 "$<TARGET_FILE_DIR:${functional_python}>/test"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/another
+                "$<TARGET_FILE_DIR:${functional_python}>/another"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/external
+                "$<TARGET_FILE_DIR:${functional_python}>/external"
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${_main_output}/python/__init__.py
                 ${_main_output}/python/_native_base.py
