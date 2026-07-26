@@ -36,14 +36,14 @@ class TestCollections:
 
         assert result == [3, 2, 1]
 
-    def test_map_round_trip(self):
-        input_map = {"one": 1, "two": 2}
+    def test_map_method(self):
+        input_map = {1: "one", 2: "two"}
         result = Maps.method_with_map(input_map)
 
-        assert result == input_map
+        assert result == {1: "ONE", 2: "TWO"}
 
     def test_set_round_trip(self):
         input_set = {"x", "y", "z"}
-        result = SetType.method_with_set(input_set)
+        result = SetType.string_set_round_trip(input_set)
 
         assert result == input_set
