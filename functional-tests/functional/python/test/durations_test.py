@@ -19,7 +19,7 @@
 
 import datetime
 
-from functional import DurationSeconds
+from test.DurationSeconds import DurationSeconds
 
 import pytest
 
