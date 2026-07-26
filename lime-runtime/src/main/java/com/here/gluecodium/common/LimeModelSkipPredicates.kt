@@ -37,24 +37,12 @@ object LimeModelSkipPredicates {
         platformAttribute: LimeAttributeType? = null,
         retainFunctionsAndFields: Boolean = false,
     ) = when {
-        isSkippedByTags(limeElement, activeTags) -> {
-            println("DEBUG: Element ${limeElement.fullName} skipped by general tags")
-            false
-        }
+        isSkippedByTags(limeElement, activeTags) -> false
         retainFunctionsAndFields &&
-            (limeElement is LimeFunction || limeElement is LimeProperty || limeElement is LimeField) -> {
-            println("DEBUG: Element ${limeElement.fullName} retained for functions/fields (pybind11)")
-            true
-        }
+            (limeElement is LimeFunction || limeElement is LimeProperty || limeElement is LimeField) -> true
         platformAttribute == null -> true
-        isSkippedByTagsOnPlatform(limeElement, activeTags, platformAttribute) -> {
-            println("DEBUG: Element ${limeElement.fullName} skipped by platform ${platformAttribute}")
-            false
-        }
-        else -> {
-            println("DEBUG: Element ${limeElement.fullName} retained normally")
-            true
-        }
+        isSkippedByTagsOnPlatform(limeElement, activeTags, platformAttribute) -> false
+        else -> true
     }
 
     fun shouldRetainCheckParent(
@@ -91,23 +79,7 @@ object LimeModelSkipPredicates {
         if (isEnabled == false) return true
 
         val isSkipped = hasTagsMatch(limeElement, platformAttribute, SKIP, activeTags)
-        if (isSkipped == true) return true
-        
-        // Also check the generic SKIP attribute type for platform names as tags
-        // e.g., @Skip(Java, Dart, Swift, Kotlin, Python) should skip for Python platform
-        val genericSkipTags = limeElement.attributes.get(LimeAttributeType.SKIP, TAG, Any::class.java)
-        println("DEBUG: Element ${limeElement.fullName}, checking generic SKIP for platform ${platformAttribute}")
-        println("DEBUG: genericSkipTags = ${genericSkipTags}")
-        val result = when (genericSkipTags) {
-            is List<*> -> {
-                val skipPlatforms = genericSkipTags.filterIsInstance<String>()
-                println("DEBUG: skip platforms = ${skipPlatforms}")
-                skipPlatforms.contains(platformAttribute.toString())
-            }
-            else -> false
-        }
-        println("DEBUG: isSkippedByTagsOnPlatform result = ${result}")
-        return result
+        return isSkipped ?: false
     }
 
     private fun hasTagsMatch(
