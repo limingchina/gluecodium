@@ -31,7 +31,7 @@ class {{resolveName}}(Enum):
 {{#ifPredicate "isStandaloneEnum"}}
 {{#enumerators}}
 
-    {{resolveName}} = {{nativeModule}}.{{nativeTypeName}}.{{resolveName this "Pybind11"}}{{/enumerators}}
+    {{resolveName}} = {{nativeModule}}.{{nativeTypeName}}.{{resolveName}}{{/enumerators}}
 {{/ifPredicate}}{{#unlessPredicate "isStandaloneEnum"}}
 {{#enumerators}}
 
