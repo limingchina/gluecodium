@@ -69,20 +69,20 @@ interface SkipProxy {
     @Kotlin(Skip)
     property skippedInKotlin: Int
 
-    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip)
+    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip) @Python(Skip)
     property skippedEverywhere: SkippedEverywhere
-    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip)
+    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip) @Python(Skip)
     property skippedEverywhereToo: SkippedEverywhereEnum
 }
 
-@Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip)
+@Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip) @Python(Skip)
 struct SkippedEverywhere {
     nothingToSeeHere: String
 
     fun useMapInDart(foo: Map<Int, SkipTypes.NotInDart>)
 }
 
-@Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip)
+@Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip) @Python(Skip)
 enum SkippedEverywhereEnum {
     nothingToSeeHere
 }
@@ -91,7 +91,7 @@ interface InheritFromSkipped: SkipProxy { }
 
 struct SkipFieldInPlatform {
     intField: Int
-    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip)
+    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip) @Python(Skip)
     stringField: String
     boolField: Boolean
 }
@@ -100,13 +100,13 @@ class ClassWithStructWithSkipLambdaInPlatform {
     struct SkipLambdaInPlatform {
         intField: Int
 
-        @Skip(Java, Dart, Swift, Kotlin)
+        @Skip(Java, Dart, Swift, Kotlin, Python)
         lambda SomeLambda = () -> Int
 
-        @Skip(Java, Dart, Swift, Kotlin)
+        @Skip(Java, Dart, Swift, Kotlin, Python)
         someLambda: SomeLambda
 
-        @Skip(Java, Dart, Swift, Kotlin)
+        @Skip(Java, Dart, Swift, Kotlin, Python)
         fun useLambda(someLambda: SomeLambda): SomeLambda
     }
 }
@@ -114,7 +114,7 @@ class ClassWithStructWithSkipLambdaInPlatform {
 @Immutable
 struct SkipFieldInPlatformImmutable {
     intField: Int
-    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip)
+    @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip) @Python(Skip)
     stringField: DummyStruct = {}
     boolField: Boolean
 }
@@ -126,7 +126,7 @@ struct DummyStruct {
 interface SkipSetter {
     property foo: String {
         get
-        @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip)
+        @Java(Skip) @Swift(Skip) @Dart(Skip) @Kotlin(Skip) @Python(Skip)
         set
     }
 }
