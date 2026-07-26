@@ -31,6 +31,7 @@ class Defaults {
         enumField: ExternalEnum = ExternalEnum.Another_Value
         @Dart("withDefaults")
         field constructor()
+        // @param[enumField] the external enum field
         @Dart(Default)
         field constructor(enumField)
     }
@@ -74,6 +75,8 @@ class Defaults {
         someField: Int = 5
         anotherField: Int = 7
 
+        // @param[someField] the first integer field
+        // @param[anotherField] the second integer field
         @Dart("withIntegers")
         field constructor(someField, anotherField)
     }
@@ -110,6 +113,8 @@ class Defaults {
         someField: Int = 5
         anotherField: Int = 7
 
+        // @param[someField] the first integer field
+        // @param[anotherField] the second integer field
         @Dart("withIntegers")
         field constructor(someField, anotherField)
     }
@@ -161,32 +166,46 @@ class Defaults {
     typealias IdToStringMap = Map<UInt, String>
     typealias StringSet = Set<String>
     // Get a default-initialized StructWithDefaults object.
+    // @return a default-initialized StructWithDefaults object.
     static fun getDefault(): StructWithDefaults
     // Check if a StructWithDefaults object is a default-initialized one.
+    // @param[input] the StructWithDefaults object to check
+    // @return true if the input is a default-initialized one, false otherwise
     static fun checkDefault(
         input: StructWithDefaults
     ): Boolean
     // Get a default-initialized ImmutableStructWithDefaults object.
+    // @return a default-initialized ImmutableStructWithDefaults object.
     @Skip(JS)
     static fun getImmutableDefault(): ImmutableStructWithDefaults
     @Dart("floatIsNan")
     static fun isNan(
         value: Float
     ): Boolean
+    // @param[value] the double value to check
+    // @return true if the value is NaN, false otherwise
     @Dart("doubleIsNan")
     static fun isNan(
         value: Double
     ): Boolean
+    // @param[value] the float value to check
+    // @return true if the value is infinity, false otherwise
     @Dart("floatIsInfinity")
     static fun isInfinity(
         value: Float
     ): Boolean
+    // @param[value] the double value to check
+    // @return true if the value is infinity, false otherwise
     @Dart("doubleIsInfinity")
     static fun isInfinity(
         value: Double
     ): Boolean
+    // @return a StructWithSpecialDefaults object with special float/double values
     static fun createSpecial(): StructWithSpecialDefaults
+    // @return a StructWithEmptyDefaults object with empty default values
     static fun getEmptyDefaults(): StructWithEmptyDefaults
+    // Get a default-initialized StructWithInitializerDefaults object.
+    // @return a default-initialized StructWithInitializerDefaults object.
     static fun getInitializerDefaults(): StructWithInitializerDefaults
 }
 
@@ -196,5 +215,7 @@ struct BlobDefaults {
 
     field constructor()
 
+    // Get a default-initialized BlobDefaults object.
+    // @return a default-initialized BlobDefaults object.
     static fun getCppDefaults(): BlobDefaults
 }
