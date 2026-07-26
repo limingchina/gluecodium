@@ -18,7 +18,7 @@
 """Default value mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.Defaults import Defaults, StructWithDefaults
+from test.Defaults import Defaults, DefaultsStructWithDefaults
 
 import pytest
 
@@ -27,7 +27,7 @@ class TestDefaults:
     def test_default_struct_fields(self):
         value = Defaults.get_default()
 
-        assert isinstance(value, StructWithDefaults)
+        assert isinstance(value, DefaultsStructWithDefaults)
         assert value.int_field == 42
         assert value.uint_field == 4294967295
         assert value.float_field == pytest.approx(3.14)
@@ -35,7 +35,7 @@ class TestDefaults:
         assert value.string_field == "some string"
 
     def test_struct_field_mutation(self):
-        value = StructWithDefaults()
+        value = DefaultsStructWithDefaults()
         value.int_field = 7
         value.string_field = "changed"
 
