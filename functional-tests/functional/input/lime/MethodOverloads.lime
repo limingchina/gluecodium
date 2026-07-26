@@ -21,29 +21,52 @@ class MethodOverloads {
     struct Point {
         x: Double = 0.0
         y: Double = 0.0
+        // Default constructor
         @Dart(Skip)
         field constructor()
+        // Constructor with coordinates
+        // @param[x] the x coordinate
+        // @param[y] the y coordinate
         field constructor(x, y)
     }
     typealias StringArray = List<String>
     typealias IntArray = List<Byte>
     typealias StringSet = Set<String>
     typealias IntSet = Set<Byte>
+    // Check if boolean input is true
+    // @param[input] the boolean value to check
+    // @return true if input is true, false otherwise
     static fun isBoolean(
         input: Boolean
     ): Boolean
+    // Check if byte input represents true (non-zero)
+    // @param[input] the byte value to check
+    // @return true if input is non-zero, false otherwise
     @Dart("isBooleanByte")
     static fun isBoolean(
         input: Byte
     ): Boolean
+    // Check if string input represents true
+    // @param[input] the string value to check
+    // @return true if input is "true", false otherwise
     @Dart("isBooleanString")
     static fun isBoolean(
         input: String
     ): Boolean
+    // Check if point is at non-origin position
+    // @param[input] the point to check
+    // @return true if point is not at origin (0,0), false otherwise
     @Dart("isBooleanPoint")
     static fun isBoolean(
         input: Point
     ): Boolean
+
+    // Check if multiple inputs represent true
+    // @param[input1] the boolean value to check
+    // @param[input2] the byte value to check (non-zero is true)
+    // @param[input3] the string value to check ("true" is true)
+    // @param[input4] the point to check (non-origin is true)
+    // @return true if all inputs represent true, false otherwise
     @Dart("isBooleanMulti")
     static fun isBoolean(
         input1: Boolean,
@@ -51,24 +74,40 @@ class MethodOverloads {
         input3: String,
         input4: Point
     ): Boolean
+
+    // Check if string array contains "true"
+    // @param[input] the string array to check
+    // @return true if array contains "true", false otherwise
     @Dart("isBooleanStringList")
     @Java("isBooleanStringArrayOverload")
     @Kotlin("isBooleanStringArrayOverload")
     static fun isBoolean(
         input: StringArray
     ): Boolean
+
+    // Check if int array contains non-zero values
+    // @param[input] the int array to check
+    // @return true if array contains non-zero values, false otherwise
     @Dart("isBooleanIntList")
     @Java("isBooleanIntArrayOverload")
     @Kotlin("isBooleanIntArrayOverload")
     static fun isBoolean(
         input: IntArray
     ): Boolean
+
+    // Check if string set contains "true"
+    // @param[input] the string set to check
+    // @return true if set contains "true", false otherwise
     @Dart("isBooleanStringSet")
     @Java("isBooleanStringSetOverload")
     @Kotlin("isBooleanStringSetOverload")
     static fun isBoolean(
         input: StringSet
     ): Boolean
+
+    // Check if int set contains non-zero values
+    // @param[input] the int set to check
+    // @return true if set contains non-zero values, false otherwise
     @Dart("isBooleanIntSet")
     @Java("isBooleanIntSetOverload")
     @Kotlin("isBooleanIntSetOverload")
@@ -84,67 +123,100 @@ interface SpecialNames {
 }
 
 open class ConstructorOverloads {
+    // Default constructor
     @Dart(Default)
     constructor create()
+    // Constructor from string
+    // @param[input] the string input
     @Dart("fromString")
     constructor create(
         input: String
     )
+    // Constructor from boolean
+    // @param[input] the boolean input
     @Dart("fromBoolean")
     constructor create(
         input: Boolean
     )
+    // Constructor from multiple inputs
+    // @param[stringInput] the string input
+    // @param[booleanInput] the boolean input
     @Dart("fromMulti")
     constructor create(
         stringInput: String,
         booleanInput: Boolean
     )
+    // Constructor from list
+    // @param[input] the list of doubles
     @Dart("fromList")
     constructor create(
         input: List<Double>
     )
 
+    // Constructor from result
+    // @param[result] the unsigned long result
     constructor create(result: ULong)
 }
 
 struct StructConstructorOverloads {
     stringField: String
 
+    // Default constructor
     @Dart("empty")
     constructor create()
+    // Constructor from single string
+    // @param[input] the string input
     @Dart(Default)
     constructor create(input: String)
 
+    // Constructor from two strings
+    // @param[input1] the first string input
+    // @param[input2] the second string input
     constructor create(input1: String, input2: String)
 }
 
 @Java(Skip) @Dart(Skip) @Kotlin(Skip)
 class SwiftMethodOverloads {
+    // First overload
+    // @param[input] the string input
     @Swift("three")
     fun one(input: String)
+    // Second overload
+    // @param[input] the list of strings
     @Swift("three")
     fun two(input: List<String>)
 }
 
 @Swift(Skip) @Dart(Skip) @Kotlin(EnableIf="KotlinTestsRunWithJavaJni")
 class JavaMethodOverloads {
+    // First overload
+    // @param[input] the string input
     @Java("three")
     fun one(input: String)
+    // Second overload
+    // @param[input] the list of strings
     @Java("three")
     fun two(input: List<String>)
 }
 
 @Swift(Skip) @Dart(Skip) @Java(Skip)
 class KotlinMethodOverloads {
+    // First overload
+    // @param[input] the string input
     @Kotlin("three")
     fun one(input: String)
+    // Second overload
+    // @param[input] the list of strings
     @Kotlin("three")
     fun two(input: List<String>)
 }
 
 @Java(Skip) @Swift(Skip) @Kotlin(Skip)
 interface SpecialNamesInterface {
+    // Callback lambda with no parameters and no return
     lambda Callback = () -> Void
+    // Dispatch the callback
+    // @param[callback] the callback to dispatch
     @Cpp(Const)
     fun dispatch(callback: Callback)
 }
