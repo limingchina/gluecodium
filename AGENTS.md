@@ -240,6 +240,12 @@ imported by the *same* Python version that built it — a 3.9 interpreter cannot
 -DPython_EXECUTABLE="$(which python3 || echo python3)"
 ```
 
+Sometimes, one could specify a specify python environment to run the test. For example:
+
+```bash
+cd ./gluecodium/functional-tests && PATH="~/miniconda3/bin:$PATH" scripts/build-python-functional --
+```
+
 The pytest `add_test` in `functional-tests/functional/python/CMakeLists.txt` already runs
 under `Python::Interpreter` — the same imported target created by the build's
 `find_package(Python)` — so pinning the build interpreter automatically pins the test
