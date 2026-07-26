@@ -5,7 +5,6 @@ from __future__ import annotations
 from _native_base import _unwrap, _wrap
 from typing import Optional
 
-from smoke.DummyStruct import DummyStruct
 
 
 from _native_base import _NativeBase
@@ -27,13 +26,6 @@ class SkipFieldInPlatformImmutable(_NativeBase):
     def int_field(self) -> int:
         """"""
         return _wrap(self._native.int_field, int)
-
-
-
-    @property
-    def string_field(self) -> DummyStruct:
-        """"""
-        return _wrap(self._native.string_field, DummyStruct)
 
 
 

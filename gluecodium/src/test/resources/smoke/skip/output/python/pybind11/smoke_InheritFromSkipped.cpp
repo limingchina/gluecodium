@@ -197,16 +197,6 @@ void register_smoke_InheritFromSkipped(py::module_& module) {
         }, [](InheritFromSkipped& self, const float value) {
             self.set_skipped_in_kotlin(value);
         })
-        .def_property("skipped_everywhere", [](const InheritFromSkipped& self) {
-            return self.get_skipped_everywhere();
-        }, [](InheritFromSkipped& self, const ::smoke::SkippedEverywhere& value) {
-            self.set_skipped_everywhere(value);
-        })
-        .def_property("skipped_everywhere_too", [](const InheritFromSkipped& self) {
-            return self.get_skipped_everywhere_too();
-        }, [](InheritFromSkipped& self, const ::smoke::SkippedEverywhereEnum value) {
-            self.set_skipped_everywhere_too(value);
-        })
         ;
 }
 

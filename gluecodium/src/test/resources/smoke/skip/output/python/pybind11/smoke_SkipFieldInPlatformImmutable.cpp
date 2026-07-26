@@ -21,7 +21,6 @@ using SkipFieldInPlatformImmutable = ::smoke::SkipFieldInPlatformImmutable;
 void register_smoke_SkipFieldInPlatformImmutable(py::module_& module) {
     py::class_<SkipFieldInPlatformImmutable>(module, "smoke_SkipFieldInPlatformImmutable")
         .def_readonly("int_field", &SkipFieldInPlatformImmutable::int_field)
-        .def_readonly("string_field", &SkipFieldInPlatformImmutable::string_field)
         .def_readonly("bool_field", &SkipFieldInPlatformImmutable::bool_field)
         .def(py::init<int32_t, bool>(), py::arg("int_field"), py::arg("bool_field"))
         .def(py::init<int32_t, ::smoke::DummyStruct, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))

@@ -1,8 +1,6 @@
 
 
 from smoke.SkipProxy import SkipProxy
-from smoke.SkippedEverywhere import SkippedEverywhere
-from smoke.SkippedEverywhereEnum import SkippedEverywhereEnum
 import typing
 
 

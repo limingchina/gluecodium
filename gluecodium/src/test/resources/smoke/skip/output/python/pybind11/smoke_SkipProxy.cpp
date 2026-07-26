@@ -200,16 +200,6 @@ void register_smoke_SkipProxy(py::module_& module) {
         }, [](SkipProxy& self, const float value) {
             self.set_skipped_in_kotlin(value);
         })
-        .def_property("skipped_everywhere", [](const SkipProxy& self) {
-            return self.get_skipped_everywhere();
-        }, [](SkipProxy& self, const ::smoke::SkippedEverywhere& value) {
-            self.set_skipped_everywhere(value);
-        })
-        .def_property("skipped_everywhere_too", [](const SkipProxy& self) {
-            return self.get_skipped_everywhere_too();
-        }, [](SkipProxy& self, const ::smoke::SkippedEverywhereEnum value) {
-            self.set_skipped_everywhere_too(value);
-        })
         ;
 }
 
