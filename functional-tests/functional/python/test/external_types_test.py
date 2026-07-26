@@ -18,18 +18,24 @@
 """External type mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from external.ExternalTypes import ClassWithOverloads, StandaloneExternalType
+from external.ClassWithOverloads import ClassWithOverloads
+from external.StandaloneExternalType import StandaloneExternalType
 
 import pytest
 
 
 class TestExternalTypes:
-    def test_class_with_overloads(self):
-        instance = ClassWithOverloads()
+    def test_class_with_overloads_import(self):
+        # Test that the external abstract class can be imported successfully
+        # Note: ClassWithOverloads is an abstract class in C++ with only pure virtual methods,
+        # so it cannot be instantiated directly in Python
+        assert ClassWithOverloads is not None
+        assert hasattr(ClassWithOverloads, 'one_overload_not_exposed')
+        assert hasattr(ClassWithOverloads, 'all_overloads_exposed')
 
-        assert instance is not None
-
-    def test_standalone_external_type(self):
-        instance = StandaloneExternalType()
-
-        assert instance is not None
+    def test_standalone_external_type_import(self):
+        # Test that the external abstract class can be imported successfully
+        # Note: StandaloneExternalType is an abstract class in C++ with a pure virtual method,
+        # so it cannot be instantiated directly in Python
+        assert StandaloneExternalType is not None
+        assert hasattr(StandaloneExternalType, 'foo')
