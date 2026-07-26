@@ -1,0 +1,347 @@
+ =================================== FAILURES ===================================
+1: _________________________ TestEquatable.test_are_equal _________________________
+1: 
+1: self = <equatable_test.TestEquatable object at 0x104080470>
+1: 
+1:     def test_are_equal(self):
+1: >       a = EquatableClass()
+1:             ^^^^^^^^^^^^^^^^
+1: E       TypeError: EquatableClass.__init__() missing 1 required positional argument: 'native'
+1: 
+1: tests/equatable_test.py:29: TypeError
+1: _________________________ TestEquatable.test_not_equal _________________________
+1: 
+1: self = <equatable_test.TestEquatable object at 0x104080ad0>
+1: 
+1:     def test_not_equal(self):
+1: >       a = EquatableClass()
+1:             ^^^^^^^^^^^^^^^^
+1: E       TypeError: EquatableClass.__init__() missing 1 required positional argument: 'native'
+1: 
+1: tests/equatable_test.py:35: TypeError
+1: ______________________ TestEquatable.test_struct_equality ______________________
+1: 
+1: self = <equatable_test.TestEquatable object at 0x104080e00>
+1: 
+1:     def test_struct_equality(self):
+1:         a = Equatable()
+1:         b = Equatable()
+1:     
+1: >       assert a == b
+1: E       assert <test.Equatable.Equatable object at 0x104211580> == <test.Equatable.Equatable object at 0x104211700>
+1: 
+1: tests/equatable_test.py:44: AssertionError
+1: _________________ TestExceptions.test_method_with_error_throws _________________
+1: 
+1: self = <exceptions_test.TestExceptions object at 0x104082810>
+1: 
+1:     def test_method_with_error_throws(self):
+1:         with pytest.raises(WithPayloadError) as exc_info:
+1: >           Errors.method_with_payload_error(True)
+1: 
+1: tests/exceptions_test.py:30: 
+1: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+1: 
+1: error_flag = True
+1: 
+1:     @staticmethod
+1:     def method_with_payload_error(error_flag: bool):
+1:         """"""
+1: >       functional.test_Errors.method_with_payload_error(_unwrap(error_flag, bool))
+1: E       functional.test_WithPayloadError: unknown error
+1: 
+1: ../test/Errors.py:86: test_WithPayloadError
+1: ________ TestExceptions.test_method_with_payload_error_and_return_value ________
+1: 
+1: self = <exceptions_test.TestExceptions object at 0x104083020>
+1: 
+1:     def test_method_with_payload_error_and_return_value(self):
+1:         with pytest.raises(WithPayloadError):
+1: >           Errors.method_with_payload_error_and_return_value(True)
+1: 
+1: tests/exceptions_test.py:39: 
+1: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+1: 
+1: error_flag = True
+1: 
+1:     @staticmethod
+1:     def method_with_payload_error_and_return_value(error_flag: bool) -> str:
+1:         """"""
+1: >       return functional.test_Errors.method_with_payload_error_and_return_value(_unwrap(error_flag, bool))
+1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: E       functional.test_WithPayloadError: unknown error
+1: 
+1: ../test/Errors.py:91: test_WithPayloadError
+1: ________ TestInstanceInStruct.test_copy_instance_in_struct_from_method _________
+1: 
+1: self = <instance_in_struct_test.TestInstanceInStruct object at 0x1041b6390>
+1: 
+1:     def test_copy_instance_in_struct_from_method(self):
+1: >       holder = InstanceInStruct.create_in_struct()
+1:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: 
+1: tests/instance_in_struct_test.py:37: 
+1: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+1: 
+1:     @staticmethod
+1:     def create_in_struct() -> InstanceInStructSelfHolder:
+1:         """"""
+1:         native_result = functional.test_InstanceInStruct.create_in_struct()
+1: >       return InstanceInStructSelfHolder(native_result)
+1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: E       NameError: name 'InstanceInStructSelfHolder' is not defined
+1: 
+1: ../test/InstanceInStruct.py:55: NameError
+1: ____________ TestInstanceInStruct.test_instance_in_not_null_struct _____________
+1: 
+1: self = <instance_in_struct_test.TestInstanceInStruct object at 0x1041b6840>
+1: 
+1:     def test_instance_in_not_null_struct(self):
+1: >       holder = InstanceInStruct.create_in_not_null_struct()
+1:                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: 
+1: tests/instance_in_struct_test.py:43: 
+1: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+1: 
+1:     @staticmethod
+1:     def create_in_not_null_struct() -> InstanceInStructNotNullSelfHolder:
+1:         """"""
+1:         native_result = functional.test_InstanceInStruct.create_in_not_null_struct()
+1: >       return InstanceInStructNotNullSelfHolder(native_result)
+1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: E       NameError: name 'InstanceInStructNotNullSelfHolder' is not defined
+1: 
+1: ../test/InstanceInStruct.py:67: NameError
+1: ___________________ TestLambdas.test_static_lambda_property ____________________
+1: 
+1: self = <lambdas_test.TestLambdas object at 0x1041a0fb0>
+1: 
+1:     def test_static_lambda_property(self):
+1: >       Lambdas.real_concatenator_set(lambda first, second: f"{first}:{second}")
+1:         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: E       AttributeError: type object 'Lambdas' has no attribute 'real_concatenator_set'. Did you mean: 'real_concatenator'?
+1: 
+1: tests/lambdas_test.py:51: AttributeError
+1: ________________ TestMethodOverloads.test_is_boolean_byte_list _________________
+1: 
+1: self = <method_overloads_test.TestMethodOverloads object at 0x1041a2f60>
+1: 
+1:     def test_is_boolean_byte_list(self):
+1: >       assert MethodOverloads.is_boolean([1, 2, 3]) is False
+1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: 
+1: tests/method_overloads_test.py:49: 
+1: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+1: 
+1: args = ([1, 2, 3],), kwargs = {}
+1: 
+1:     @staticmethod
+1:     def is_boolean(*args, **kwargs) -> bool:
+1:         """Check if boolean input is true"""
+1: >       return functional.test_MethodOverloads.is_boolean(*[_unwrap(a) for a in args])
+1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: E       RuntimeError: Unable to cast Python instance of type <class 'int'> to C++ type 'std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>'
+1: 
+1: ../test/MethodOverloads.py:41: RuntimeError
+1: _________________ TestMethodOverloads.test_is_boolean_byte_set _________________
+1: 
+1: self = <method_overloads_test.TestMethodOverloads object at 0x1041a3950>
+1: 
+1:     def test_is_boolean_byte_set(self):
+1: >       assert MethodOverloads.is_boolean({1, 2, 3}) is False
+1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: 
+1: tests/method_overloads_test.py:55: 
+1: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+1: 
+1: args = ({1, 2, 3},), kwargs = {}
+1: 
+1:     @staticmethod
+1:     def is_boolean(*args, **kwargs) -> bool:
+1:         """Check if boolean input is true"""
+1: >       return functional.test_MethodOverloads.is_boolean(*[_unwrap(a) for a in args])
+1:                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: E       RuntimeError: Unable to cast Python instance of type <class 'int'> to C++ type 'std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>>'
+1: 
+1: ../test/MethodOverloads.py:41: RuntimeError
+1: __________________ TestConstructorOverloads.test_create_ulong __________________
+1: 
+1: self = <method_overloads_test.TestConstructorOverloads object at 0x1041a3f50>
+1: 
+1:     def test_create_ulong(self):
+1: >       instance = ConstructorOverloads.create(42)
+1:                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: 
+1: tests/method_overloads_test.py:80: 
+1: _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+1: 
+1: args = (42,), kwargs = {}
+1: 
+1:     @staticmethod
+1:     def create(*args, **kwargs) -> ConstructorOverloads:
+1:         """Default constructor"""
+1: >       native_result = functional.test_ConstructorOverloads.create(*[_unwrap(a) for a in args])
+1:                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1: E       TypeError: 'int' object is not iterable
+1: 
+1: ../test/ConstructorOverloads.py:48: TypeError
+1: ____________________ TestProperties.test_readonly_attribute ____________________
+1: 
+1: self = <properties_test.TestProperties object at 0x1040f75f0>
+1: 
+1:     def test_readonly_attribute(self):
+1: >       attributes = Attributes()
+1:                      ^^^^^^^^^^^^
+1: E       TypeError: Attributes.__init__() missing 1 required positional argument: 'native'
+1: 
+1: tests/properties_test.py:28: TypeError
+1: ___________________ TestProperties.test_readwrite_attribute ____________________
+1: 
+1: self = <properties_test.TestProperties object at 0x1040f7f50>
+1: 
+1:     def test_readwrite_attribute(self):
+1: >       attributes = Attributes()
+1:                      ^^^^^^^^^^^^
+1: E       TypeError: Attributes.__init__() missing 1 required positional argument: 'native'
+1: 
+1: tests/properties_test.py:33: TypeError
+1: _______________ TestRefEquality.test_singleton_is_same_instance ________________
+1: 
+1: self = <ref_equality_test.TestRefEquality object at 0x1041307a0>
+1: 
+1:     def test_singleton_is_same_instance(self):
+1:         first = DummyFactory.get_dummy_class_singleton()
+1:         second = DummyFactory.get_dummy_class_singleton()
+1:     
+1: >       assert first is second
+1: E       assert <test.DummyClass.DummyClass object at 0x1042cb8f0> is <test.DummyClass.DummyClass object at 0x1042cb830>
+1: 
+1: tests/ref_equality_test.py:32: AssertionError
+1: ______________ TestRefEquality.test_round_trip_preserves_identity ______________
+1: 
+1: self = <ref_equality_test.TestRefEquality object at 0x1041315e0>
+1: 
+1:     def test_round_trip_preserves_identity(self):
+1:         original = DummyFactory.get_dummy_class_singleton()
+1:         result = DummyClass.dummy_class_round_trip(original)
+1:     
+1: >       assert result is original
+1: E       assert <test.DummyClass.DummyClass object at 0x1042f4b60> is <test.DummyClass.DummyClass object at 0x1042f4b90>
+1: 
+1: tests/ref_equality_test.py:44: AssertionError
+1: _________ TestStructsImmutable.test_create_all_types_immutable_struct __________
+1: 
+1: self = <structs_immutable_test.TestStructsImmutable object at 0x1041453a0>
+1: 
+1:     def test_create_all_types_immutable_struct(self):
+1:         point = Point(1.0, 2.0)
+1: >       struct = AllTypesImmutableStruct(
+1:             int8Field=0,
+1:             uint8Field=0,
+1:             int16Field=0,
+1:             uint16Field=0,
+1:             int32Field=0,
+1:             uint32Field=0,
+1:             int64Field=0,
+1:             uint64Field=0,
+1:             floatField=0.0,
+1:             doubleField=0.0,
+1:             stringField="",
+1:             booleanField=False,
+1:             pointField=point,
+1:         )
+1: E       TypeError: PlainDataStructuresImmutableAllTypesImmutableStruct.__init__() got an unexpected keyword argument 'int8Field'
+1: 
+1: tests/structs_immutable_test.py:38: TypeError
+1: ______________ TestStructsImmutable.test_nesting_immutable_struct ______________
+1: 
+1: self = <structs_immutable_test.TestStructsImmutable object at 0x1041441d0>
+1: 
+1:     def test_nesting_immutable_struct(self):
+1:         point = Point(1.0, 2.0)
+1: >       all_types = AllTypesImmutableStruct(
+1:             int8Field=1,
+1:             uint8Field=2,
+1:             int16Field=3,
+1:             uint16Field=4,
+1:             int32Field=5,
+1:             uint32Field=6,
+1:             int64Field=7,
+1:             uint64Field=8,
+1:             floatField=9.0,
+1:             doubleField=10.0,
+1:             stringField="test",
+1:             booleanField=True,
+1:             pointField=point,
+1:         )
+1: E       TypeError: PlainDataStructuresImmutableAllTypesImmutableStruct.__init__() got an unexpected keyword argument 'int8Field'
+1: 
+1: tests/structs_immutable_test.py:60: TypeError
+1: _________ TestStructsImmutable.test_immutable_struct_field_is_readonly _________
+1: 
+1: self = <structs_immutable_test.TestStructsImmutable object at 0x104144e00>
+1: 
+1:     def test_immutable_struct_field_is_readonly(self):
+1:         point = Point(1.0, 2.0)
+1: >       struct = AllTypesImmutableStruct(
+1:             int8Field=0,
+1:             uint8Field=0,
+1:             int16Field=0,
+1:             uint16Field=0,
+1:             int32Field=0,
+1:             uint32Field=0,
+1:             int64Field=0,
+1:             uint64Field=0,
+1:             floatField=0.0,
+1:             doubleField=0.0,
+1:             stringField="",
+1:             booleanField=False,
+1:             pointField=point,
+1:         )
+1: E       TypeError: PlainDataStructuresImmutableAllTypesImmutableStruct.__init__() got an unexpected keyword argument 'int8Field'
+1: 
+1: tests/structs_immutable_test.py:82: TypeError
+1: ____________ TestStructsImmutable.test_immutable_struct_round_trip _____________
+1: 
+1: self = <structs_immutable_test.TestStructsImmutable object at 0x104145160>
+1: 
+1:     def test_immutable_struct_round_trip(self):
+1:         point = Point(1.0, 2.0)
+1: >       struct = AllTypesImmutableStruct(
+1:             int8Field=42,
+1:             uint8Field=255,
+1:             int16Field=1000,
+1:             uint16Field=2000,
+1:             int32Field=3000,
+1:             uint32Field=4000,
+1:             int64Field=5000,
+1:             uint64Field=6000,
+1:             floatField=3.14,
+1:             doubleField=2.718,
+1:             stringField="hello",
+1:             booleanField=True,
+1:             pointField=point,
+1:         )
+1: E       TypeError: PlainDataStructuresImmutableAllTypesImmutableStruct.__init__() got an unexpected keyword argument 'int8Field'
+1: 
+1: tests/structs_immutable_test.py:103: TypeError
+1: =========================== short test summary info ============================
+1: FAILED tests/equatable_test.py::TestEquatable::test_are_equal - TypeError: Eq...
+1: FAILED tests/equatable_test.py::TestEquatable::test_not_equal - TypeError: Eq...
+1: FAILED tests/equatable_test.py::TestEquatable::test_struct_equality - assert ...
+1: FAILED tests/exceptions_test.py::TestExceptions::test_method_with_error_throws
+1: FAILED tests/exceptions_test.py::TestExceptions::test_method_with_payload_error_and_return_value
+1: FAILED tests/instance_in_struct_test.py::TestInstanceInStruct::test_copy_instance_in_struct_from_method
+1: FAILED tests/instance_in_struct_test.py::TestInstanceInStruct::test_instance_in_not_null_struct
+1: FAILED tests/lambdas_test.py::TestLambdas::test_static_lambda_property - Attr...
+1: FAILED tests/method_overloads_test.py::TestMethodOverloads::test_is_boolean_byte_list
+1: FAILED tests/method_overloads_test.py::TestMethodOverloads::test_is_boolean_byte_set
+1: FAILED tests/method_overloads_test.py::TestConstructorOverloads::test_create_ulong
+1: FAILED tests/properties_test.py::TestProperties::test_readonly_attribute - Ty...
+1: FAILED tests/properties_test.py::TestProperties::test_readwrite_attribute - T...
+1: FAILED tests/ref_equality_test.py::TestRefEquality::test_singleton_is_same_instance
+1: FAILED tests/ref_equality_test.py::TestRefEquality::test_round_trip_preserves_identity
+1: FAILED tests/structs_immutable_test.py::TestStructsImmutable::test_create_all_types_immutable_struct
+1: FAILED tests/structs_immutable_test.py::TestStructsImmutable::test_nesting_immutable_struct
+1: FAILED tests/structs_immutable_test.py::TestStructsImmutable::test_immutable_struct_field_is_readonly
+1: FAILED tests/structs_immutable_test.py::TestStructsImmutable::test_immutable_struct_round_trip
