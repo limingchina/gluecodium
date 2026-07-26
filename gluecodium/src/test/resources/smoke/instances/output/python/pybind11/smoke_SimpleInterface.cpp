@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -47,7 +48,7 @@ public:
 };
 
 void register_smoke_SimpleInterface(py::module_& module) {
-    py::class_<SimpleInterface, std::shared_ptr<SimpleInterface>, SimpleInterfaceTrampoline>(module, "SimpleInterface")
+    py::class_<SimpleInterface, std::shared_ptr<SimpleInterface>, SimpleInterfaceTrampoline>(module, "smoke_SimpleInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -60,6 +61,12 @@ void register_smoke_SimpleInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("get_string_value", [](SimpleInterface& self) {
+            return self.get_string_value();
+        })
+        .def("use_simple_interface", [](SimpleInterface& self, const ::std::shared_ptr< ::smoke::SimpleInterface >& input) {
+            return self.use_simple_interface(input);
+        }, py::arg("input"))
         ;
 }
 

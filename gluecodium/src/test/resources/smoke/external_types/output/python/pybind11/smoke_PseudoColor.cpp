@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,13 +17,16 @@ namespace py = pybind11;
 using PseudoColor = ::smoke::PseudoColor;
 
 void register_smoke_PseudoColor(py::module_& module) {
-    py::class_<PseudoColor>(module, "PseudoColor")
+    py::class_<PseudoColor>(module, "smoke_PseudoColor")
         .def_readwrite("red", &PseudoColor::red)
         .def_readwrite("green", &PseudoColor::green)
         .def_readwrite("blue", &PseudoColor::blue)
         .def_readwrite("alpha", &PseudoColor::alpha)
         .def(py::init<>())
-        .def(py::init<float, float, float, float(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;
 }
 

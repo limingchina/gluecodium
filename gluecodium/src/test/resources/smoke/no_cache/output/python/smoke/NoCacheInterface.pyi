@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class NoCacheInterface(generated.NoCacheInterface):
+class NoCacheInterface(generated.smoke_NoCacheInterface):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class NoCacheInterface(generated.NoCacheInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.NoCacheInterface):
+        if native is not None and isinstance(native, generated.smoke_NoCacheInterface):
             super().__init__(native)
         else:
             super().__init__()

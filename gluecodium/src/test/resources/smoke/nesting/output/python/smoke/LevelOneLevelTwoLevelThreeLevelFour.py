@@ -16,10 +16,10 @@ class LevelOneLevelTwoLevelThreeLevelFour(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.LevelOneLevelTwoLevelThreeLevelFour):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_LevelOneLevelTwoLevelThreeLevelFour):
             super().__init__(args[0])
         else:
-            super().__init__(generated.LevelOneLevelTwoLevelThreeLevelFour(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_LevelOneLevelTwoLevelThreeLevelFour(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -34,7 +34,7 @@ class LevelOneLevelTwoLevelThreeLevelFour(_NativeBase):
     @staticmethod
     def foo_factory() -> LevelOneLevelTwoLevelThreeLevelFour:
         """"""
-        native_result = generated.LevelOneLevelTwoLevelThreeLevelFour.foo_factory()
+        native_result = generated.smoke_LevelOneLevelTwoLevelThreeLevelFour.foo_factory()
         return LevelOneLevelTwoLevelThreeLevelFour(native_result)
 
 

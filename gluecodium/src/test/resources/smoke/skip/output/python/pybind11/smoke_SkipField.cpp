@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using SkipField = ::smoke::SkipField;
 
 void register_smoke_SkipField(py::module_& module) {
-    py::class_<SkipField>(module, "SkipField")
+    py::class_<SkipField>(module, "smoke_SkipField")
         .def_readwrite("field", &SkipField::field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("field"))
+        .def(py::init<::std::string>(), py::arg("field"))
         ;
 }
 

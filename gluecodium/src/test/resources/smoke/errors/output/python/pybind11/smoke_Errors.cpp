@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -20,7 +21,12 @@ using Errors = ::smoke::Errors;
 
 
 void register_smoke_Errors(py::module_& module) {
-    py::class_<Errors, std::shared_ptr<Errors>>(module, "Errors")
+    py::class_<Errors, std::shared_ptr<Errors>>(module, "smoke_Errors")
+        .def_static("method_with_errors", &Errors::method_with_errors)
+        .def_static("method_with_external_errors", &Errors::method_with_external_errors)
+        .def_static("method_with_errors_and_return_value", &Errors::method_with_errors_and_return_value)
+        .def_static("method_with_payload_error", &Errors::method_with_payload_error)
+        .def_static("method_with_payload_error_and_return_value", &Errors::method_with_payload_error_and_return_value)
         ;
 }
 

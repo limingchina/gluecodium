@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SkippedEverywhereEnum = ::smoke::SkippedEverywhereEnum;
 
 void register_smoke_SkippedEverywhereEnum(py::module_& module) {
-    py::enum_<SkippedEverywhereEnum>(module, "SkippedEverywhereEnum")
+    py::enum_<SkippedEverywhereEnum>(module, "smoke_SkippedEverywhereEnum")
         .value("NOTHING_TO_SEE_HERE", SkippedEverywhereEnum::NOTHING_TO_SEE_HERE)
         ;
 }

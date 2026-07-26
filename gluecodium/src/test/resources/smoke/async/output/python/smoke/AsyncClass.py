@@ -38,5 +38,5 @@ class AsyncClass(_NativeBase):
     @staticmethod
     def async_static(input: bool):
         """"""
-        generated.AsyncClass.async_static(_unwrap(input, bool))
+        generated.smoke_AsyncClass.async_static(_unwrap(input, bool))
 

@@ -12,10 +12,10 @@ class FieldConstructorsCppSkip(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.FieldConstructorsCppSkip):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_FieldConstructorsCppSkip):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsCppSkip(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_FieldConstructorsCppSkip(*[_unwrap(arg) for arg in args]))
 
 
     @property

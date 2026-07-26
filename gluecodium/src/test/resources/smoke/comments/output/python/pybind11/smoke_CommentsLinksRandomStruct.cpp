@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using RandomStruct = ::smoke::CommentsLinks::RandomStruct;
 
 void register_smoke_CommentsLinksRandomStruct(py::module_& module) {
-    py::class_<RandomStruct>(module, "CommentsLinksRandomStruct")
+    py::class_<RandomStruct>(module, "smoke_CommentsLinksRandomStruct")
         .def_readwrite("random_field", &RandomStruct::random_field)
         .def(py::init<>())
-        .def(py::init<::smoke::Comments::SomeStruct(), py::arg("random_field"))
+        .def(py::init<::smoke::Comments::SomeStruct>(), py::arg("random_field"))
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,11 +19,12 @@ namespace py = pybind11;
 using DateInterval = ::smoke::DateInterval;
 
 void register_smoke_DateInterval(py::module_& module) {
-    py::class_<DateInterval>(module, "DateInterval")
+    py::class_<DateInterval>(module, "smoke_DateInterval")
         .def_readwrite("start", &DateInterval::start)
         .def_readwrite("end", &DateInterval::end)
         .def(py::init<>())
-        .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point(), py::arg("start"), py::arg("end"))
+        .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("start"), py::arg("end"))
+        .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("start"), py::arg("end"))
         ;
 }
 

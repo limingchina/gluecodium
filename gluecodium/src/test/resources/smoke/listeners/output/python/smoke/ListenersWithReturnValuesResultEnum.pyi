@@ -10,8 +10,8 @@ import generated
 class ListenersWithReturnValuesResultEnum(Enum):
     """"""
 
-    NONE = generated.ListenersWithReturnValuesResultEnum.NONE
-    RESULT = generated.ListenersWithReturnValuesResultEnum.RESULT
+    NONE = generated.smoke_ListenersWithReturnValuesResultEnum.NONE
+    RESULT = generated.smoke_ListenersWithReturnValuesResultEnum.RESULT
 
     @property
     def _native(self):

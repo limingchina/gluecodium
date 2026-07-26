@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -53,7 +54,7 @@ public:
 };
 
 void register_foobar_CrossPackageChildClass(py::module_& module) {
-    py::class_<CrossPackageChildClass, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildClass>, CrossPackageChildClassTrampoline>(module, "CrossPackageChildClass")
+    py::class_<CrossPackageChildClass, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildClass>, CrossPackageChildClassTrampoline>(module, "foobar_CrossPackageChildClass")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -64,6 +65,9 @@ void register_foobar_CrossPackageChildClass(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("root_method", [](CrossPackageChildClass& self) {
+            return self.root_method();
+        })
         .def_property("root_property", [](const CrossPackageChildClass& self) {
             return self.get_root_property();
         }, [](CrossPackageChildClass& self, const ::std::string& value) {

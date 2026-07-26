@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,11 +19,12 @@ namespace py = pybind11;
 using LearnToReadAgain = ::smoke::LearnToReadAgain;
 
 void register_smoke_LearnToReadAgain(py::module_& module) {
-    py::class_<LearnToReadAgain>(module, "LearnToReadAgain")
+    py::class_<LearnToReadAgain>(module, "smoke_LearnToReadAgain")
         .def_readwrite("field_b", &LearnToReadAgain::field_b)
         .def_readwrite("field_c", &LearnToReadAgain::field_c)
         .def(py::init<>())
-        .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet(), py::arg("field_b"), py::arg("field_c"))
+        .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet>(), py::arg("field_b"), py::arg("field_c"))
+        .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet>(), py::arg("field_b"), py::arg("field_c"))
         ;
 }
 

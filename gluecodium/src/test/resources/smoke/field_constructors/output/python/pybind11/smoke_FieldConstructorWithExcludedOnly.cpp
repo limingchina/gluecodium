@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using FieldConstructorWithExcludedOnly = ::smoke::FieldConstructorWithExcludedOnly;
 
 void register_smoke_FieldConstructorWithExcludedOnly(py::module_& module) {
-    py::class_<FieldConstructorWithExcludedOnly>(module, "FieldConstructorWithExcludedOnly")
+    py::class_<FieldConstructorWithExcludedOnly>(module, "smoke_FieldConstructorWithExcludedOnly")
         .def_readwrite("string_field", &FieldConstructorWithExcludedOnly::string_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("string_field"))
+        .def(py::init<::std::string>(), py::arg("string_field"))
         ;
 }
 

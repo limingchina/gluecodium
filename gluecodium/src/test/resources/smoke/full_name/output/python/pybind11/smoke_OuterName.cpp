@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,7 @@ using OuterName = ::smoke::OuterName;
 
 
 void register_smoke_OuterName(py::module_& module) {
-    py::class_<OuterName, std::shared_ptr<OuterName>>(module, "OuterName")
+    py::class_<OuterName, std::shared_ptr<OuterName>>(module, "smoke_OuterName")
         ;
 }
 

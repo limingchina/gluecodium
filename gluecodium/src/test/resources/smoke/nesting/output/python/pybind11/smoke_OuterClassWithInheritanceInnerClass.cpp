@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using InnerClass = ::smoke::OuterClassWithInheritance::InnerClass;
 
 
 void register_smoke_OuterClassWithInheritanceInnerClass(py::module_& module) {
-    py::class_<InnerClass, std::shared_ptr<InnerClass>>(module, "OuterClassWithInheritanceInnerClass")
+    py::class_<InnerClass, std::shared_ptr<InnerClass>>(module, "smoke_OuterClassWithInheritanceInnerClass")
+        .def("bar", &InnerClass::bar, py::arg("input"))
         ;
 }
 

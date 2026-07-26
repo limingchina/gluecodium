@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using Alphabet = ::smoke::Alphabet;
 
 void register_smoke_Alphabet(py::module_& module) {
-    py::enum_<Alphabet>(module, "Alphabet")
+    py::enum_<Alphabet>(module, "smoke_Alphabet")
         .value("A", Alphabet::A)
         .value("B", Alphabet::B)
         .value("C", Alphabet::C)

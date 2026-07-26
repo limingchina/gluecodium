@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class OuterInterface(generated.OuterInterface):
+class OuterInterface(generated.smoke_OuterInterface):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class OuterInterface(generated.OuterInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.OuterInterface):
+        if native is not None and isinstance(native, generated.smoke_OuterInterface):
             super().__init__(native)
         else:
             super().__init__()

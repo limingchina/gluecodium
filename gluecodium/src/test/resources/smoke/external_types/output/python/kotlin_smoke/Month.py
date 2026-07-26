@@ -14,9 +14,9 @@ import generated
 class Month(Enum):
     """"""
 
-    JANUARY = generated.Month.JANUARY
-    FEBRUARY = generated.Month.FEBRUARY
-    MARCH = generated.Month.MARCH
+    JANUARY = generated.kotlin_smoke_Month.JANUARY
+    FEBRUARY = generated.kotlin_smoke_Month.FEBRUARY
+    MARCH = generated.kotlin_smoke_Month.MARCH
 
     @property
     def _native(self):

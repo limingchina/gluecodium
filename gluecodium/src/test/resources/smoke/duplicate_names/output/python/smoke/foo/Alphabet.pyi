@@ -10,9 +10,9 @@ import generated
 class Alphabet(Enum):
     """"""
 
-    ALPHA = generated.Alphabet.ALPHA
-    BETA = generated.Alphabet.BETA
-    GAMMA = generated.Alphabet.GAMMA
+    ALPHA = generated.smoke_foo_Alphabet.ALPHA
+    BETA = generated.smoke_foo_Alphabet.BETA
+    GAMMA = generated.smoke_foo_Alphabet.GAMMA
 
     @property
     def _native(self):

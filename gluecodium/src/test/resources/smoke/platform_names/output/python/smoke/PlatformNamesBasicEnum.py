@@ -14,7 +14,7 @@ import generated
 class PlatformNamesBasicEnum(Enum):
     """"""
 
-    BASIC_ITEM = generated.PlatformNamesBasicEnum.foo_item
+    BASIC_ITEM = generated.smoke_PlatformNamesBasicEnum.foo_item
 
     @property
     def _native(self):

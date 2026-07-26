@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,11 @@ namespace py = pybind11;
 using LevelFour = ::smoke::LevelOne::LevelTwo::LevelThree::LevelFour;
 
 void register_smoke_LevelOneLevelTwoLevelThreeLevelFour(py::module_& module) {
-    py::class_<LevelFour>(module, "LevelOneLevelTwoLevelThreeLevelFour")
+    py::class_<LevelFour>(module, "smoke_LevelOneLevelTwoLevelThreeLevelFour")
         .def_readwrite("string_field", &LevelFour::string_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("string_field"))
+        .def(py::init<::std::string>(), py::arg("string_field"))
+        .def_static("foo_factory", &LevelFour::foo_factory)
         ;
 }
 

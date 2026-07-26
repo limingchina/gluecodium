@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class EnableTagsInJava(generated.EnableTagsInJava):
+class EnableTagsInJava(generated.smoke_EnableTagsInJava):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class EnableTagsInJava(generated.EnableTagsInJava):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.EnableTagsInJava):
+        if native is not None and isinstance(native, generated.smoke_EnableTagsInJava):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,13 +29,13 @@ class EnableTagsInJava(generated.EnableTagsInJava):
 
     def enable_tagged(self):
         """"""
-        return _wrap(generated.EnableTagsInJava.enable_tagged(self), None)
+        return _wrap(generated.smoke_EnableTagsInJava.enable_tagged(self), None)
 
     def dont_enable_tagged(self):
         """"""
-        return _wrap(generated.EnableTagsInJava.dont_enable_tagged(self), None)
+        return _wrap(generated.smoke_EnableTagsInJava.dont_enable_tagged(self), None)
 
     def enable_tagged_list(self):
         """"""
-        return _wrap(generated.EnableTagsInJava.enable_tagged_list(self), None)
+        return _wrap(generated.smoke_EnableTagsInJava.enable_tagged_list(self), None)
 

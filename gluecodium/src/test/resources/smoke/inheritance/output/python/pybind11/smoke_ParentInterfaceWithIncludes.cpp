@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -49,14 +50,14 @@ public:
         }
         PYBIND11_OVERRIDE_PURE(::smoke::ShouldNotInclude, ParentInterfaceWithIncludes, not_in_java);
     }
-    ::smoke::IncludableLambda get_root_property() const override {
+    ::std::function<void(const int64_t)> get_root_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
         }
-        PYBIND11_OVERRIDE_PURE(::smoke::IncludableLambda, ParentInterfaceWithIncludes, get_root_property);
+        PYBIND11_OVERRIDE_PURE(::std::function<void(const int64_t)>, ParentInterfaceWithIncludes, get_root_property);
     }
-    void set_root_property(const ::smoke::IncludableLambda& value) override {
+    void set_root_property(const ::std::function<void(const int64_t)>& value) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_root_property(value);
@@ -82,7 +83,7 @@ public:
 };
 
 void register_smoke_ParentInterfaceWithIncludes(py::module_& module) {
-    py::class_<ParentInterfaceWithIncludes, std::shared_ptr<ParentInterfaceWithIncludes>, ParentInterfaceWithIncludesTrampoline>(module, "ParentInterfaceWithIncludes")
+    py::class_<ParentInterfaceWithIncludes, std::shared_ptr<ParentInterfaceWithIncludes>, ParentInterfaceWithIncludesTrampoline>(module, "smoke_ParentInterfaceWithIncludes")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -95,9 +96,15 @@ void register_smoke_ParentInterfaceWithIncludes(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("root_method", [](ParentInterfaceWithIncludes& self, const ::smoke::IncludableStruct& input1, const ::smoke::IncludableEnum input2) {
+            return self.root_method(input1, input2);
+        }, py::arg("input1"), py::arg("input2"))
+        .def("not_in_java", [](ParentInterfaceWithIncludes& self) {
+            return self.not_in_java();
+        })
         .def_property("root_property", [](const ParentInterfaceWithIncludes& self) {
             return self.get_root_property();
-        }, [](ParentInterfaceWithIncludes& self, const ::smoke::IncludableLambda& value) {
+        }, [](ParentInterfaceWithIncludes& self, const ::std::function<void(const int64_t)>& value) {
             self.set_root_property(value);
         })
         .def_property("not_in_java_property", [](const ParentInterfaceWithIncludes& self) {

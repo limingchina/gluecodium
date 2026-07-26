@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class SkipTagsInJava(generated.SkipTagsInJava):
+class SkipTagsInJava(generated.smoke_SkipTagsInJava):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class SkipTagsInJava(generated.SkipTagsInJava):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.SkipTagsInJava):
+        if native is not None and isinstance(native, generated.smoke_SkipTagsInJava):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,13 +29,13 @@ class SkipTagsInJava(generated.SkipTagsInJava):
 
     def skip_tagged(self):
         """"""
-        return _wrap(generated.SkipTagsInJava.skip_tagged(self), None)
+        return _wrap(generated.smoke_SkipTagsInJava.skip_tagged(self), None)
 
     def dont_skip_tagged(self):
         """"""
-        return _wrap(generated.SkipTagsInJava.dont_skip_tagged(self), None)
+        return _wrap(generated.smoke_SkipTagsInJava.dont_skip_tagged(self), None)
 
     def skip_tagged_list(self):
         """"""
-        return _wrap(generated.SkipTagsInJava.skip_tagged_list(self), None)
+        return _wrap(generated.smoke_SkipTagsInJava.skip_tagged_list(self), None)
 

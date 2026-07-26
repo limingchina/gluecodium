@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class TemperatureObserver(generated.TemperatureObserver):
+class TemperatureObserver(generated.smoke_TemperatureObserver):
     """Observer interface for monitoring changes in thermometer (\"Observer of subject\")."""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class TemperatureObserver(generated.TemperatureObserver):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.TemperatureObserver):
+        if native is not None and isinstance(native, generated.smoke_TemperatureObserver):
             super().__init__(native)
         else:
             super().__init__()

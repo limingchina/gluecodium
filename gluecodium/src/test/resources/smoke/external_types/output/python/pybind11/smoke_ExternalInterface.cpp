@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,7 @@ using ExternalInterface = ::smoke::ExternalInterface;
 
 
 void register_smoke_ExternalInterface(py::module_& module) {
-    py::class_<ExternalInterface, std::shared_ptr<ExternalInterface>>(module, "ExternalInterface")
+    py::class_<ExternalInterface, std::shared_ptr<ExternalInterface>>(module, "smoke_ExternalInterface")
         ;
 }
 

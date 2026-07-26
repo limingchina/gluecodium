@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using EquatableStructWithAccessors = ::smoke::EquatableStructWithAccessors;
 
 void register_smoke_EquatableStructWithAccessors(py::module_& module) {
-    py::class_<EquatableStructWithAccessors>(module, "EquatableStructWithAccessors")
+    py::class_<EquatableStructWithAccessors>(module, "smoke_EquatableStructWithAccessors")
         .def_property("foo_field", static_cast<const ::std::string& (EquatableStructWithAccessors::*)() const &>(&EquatableStructWithAccessors::get_foo_field), py::overload_cast<const ::std::string&>(&EquatableStructWithAccessors::set_foo_field))
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("foo_field"))
+        .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 }
 

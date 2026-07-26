@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class PropertiesInterface(generated.PropertiesInterface):
+class PropertiesInterface(generated.smoke_PropertiesInterface):
     """"""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class PropertiesInterface(generated.PropertiesInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.PropertiesInterface):
+        if native is not None and isinstance(native, generated.smoke_PropertiesInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -27,9 +27,9 @@ class PropertiesInterface(generated.PropertiesInterface):
     @property
     def struct_property(self) -> PropertiesInterfaceExampleStruct:
         """"""
-        return _wrap(generated.PropertiesInterface.struct_property.fget(self), PropertiesInterfaceExampleStruct)
+        return _wrap(generated.smoke_PropertiesInterface.struct_property.fget(self), PropertiesInterfaceExampleStruct)
 
     @struct_property.setter
     def struct_property(self, value: PropertiesInterfaceExampleStruct):
-        generated.PropertiesInterface.struct_property.fset(self, _unwrap(value, PropertiesInterfaceExampleStruct))
+        generated.smoke_PropertiesInterface.struct_property.fset(self, _unwrap(value, PropertiesInterfaceExampleStruct))
 

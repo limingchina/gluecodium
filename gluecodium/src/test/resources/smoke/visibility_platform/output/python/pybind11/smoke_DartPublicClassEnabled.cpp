@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using DartPublicClassEnabled = ::smoke::DartPublicClassEnabled;
 
 
 void register_smoke_DartPublicClassEnabled(py::module_& module) {
-    py::class_<DartPublicClassEnabled, std::shared_ptr<DartPublicClassEnabled>>(module, "DartPublicClassEnabled")
+    py::class_<DartPublicClassEnabled, std::shared_ptr<DartPublicClassEnabled>>(module, "smoke_DartPublicClassEnabled")
         ;
 }
 

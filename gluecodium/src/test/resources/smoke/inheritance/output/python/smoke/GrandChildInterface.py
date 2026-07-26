@@ -11,7 +11,7 @@ from smoke.ChildInterface import ChildInterface
 import generated
 
 
-class GrandChildInterface(generated.GrandChildInterface):
+class GrandChildInterface(generated.smoke_GrandChildInterface):
     """"""
 
     def __init__(self, native=None):
@@ -22,7 +22,7 @@ class GrandChildInterface(generated.GrandChildInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.GrandChildInterface):
+        if native is not None and isinstance(native, generated.smoke_GrandChildInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -30,5 +30,5 @@ class GrandChildInterface(generated.GrandChildInterface):
 
     def grand_child_method(self):
         """"""
-        return _wrap(generated.GrandChildInterface.grand_child_method(self), None)
+        return _wrap(generated.smoke_GrandChildInterface.grand_child_method(self), None)
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using ExposeInternalEnum = ::smoke::ExposeInternalEnum;
 
 void register_smoke_ExposeInternalEnum(py::module_& module) {
-    py::enum_<ExposeInternalEnum>(module, "ExposeInternalEnum")
+    py::enum_<ExposeInternalEnum>(module, "smoke_ExposeInternalEnum")
         .value("FOO", ExposeInternalEnum::FOO)
         ;
 }

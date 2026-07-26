@@ -10,7 +10,7 @@ from smoke.ParentClass import ParentClass
 import generated
 
 
-class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
+class ChildClassFromClassOverloads(generated.smoke_ChildClassFromClassOverloads):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassFromClassOverloads):
+        if native is not None and isinstance(native, generated.smoke_ChildClassFromClassOverloads):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,11 +28,11 @@ class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
 
     def foo(*args, **kwargs):
         """"""
-        return _wrap(generated.ChildClassFromClassOverloads.foo(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ChildClassFromClassOverloads.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(*args, **kwargs):
         """"""
-        return _wrap(generated.ChildClassFromClassOverloads.bar(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ChildClassFromClassOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 

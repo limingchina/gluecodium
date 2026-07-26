@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,7 +22,7 @@ using StructsWithConstantsInterface = ::smoke::StructsWithConstantsInterface;
 
 
 void register_smoke_StructsWithConstantsInterface(py::module_& module) {
-    py::class_<StructsWithConstantsInterface, std::shared_ptr<StructsWithConstantsInterface>>(module, "StructsWithConstantsInterface")
+    py::class_<StructsWithConstantsInterface, std::shared_ptr<StructsWithConstantsInterface>>(module, "smoke_StructsWithConstantsInterface")
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,10 +20,10 @@ using Builder = ::smoke::OuterStruct::Builder;
 
 
 void register_smoke_OuterStructBuilder(py::module_& module) {
-    py::class_<Builder, std::shared_ptr<Builder>>(module, "OuterStructBuilder")
-        .def(py::init<>())
-
+    py::class_<Builder, std::shared_ptr<Builder>>(module, "smoke_OuterStructBuilder")
         .def_static("create", &Builder::create)
+        .def("field", &Builder::field, py::arg("value"))
+        .def("build", &Builder::build)
         ;
 }
 

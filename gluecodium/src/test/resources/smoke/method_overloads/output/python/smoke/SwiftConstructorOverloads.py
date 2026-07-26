@@ -20,12 +20,12 @@ class SwiftConstructorOverloads(_NativeBase):
     @staticmethod
     def make(input: str) -> SwiftConstructorOverloads:
         """"""
-        native_result = generated.SwiftConstructorOverloads.make(_unwrap(input, str))
+        native_result = generated.smoke_SwiftConstructorOverloads.make(_unwrap(input, str))
         return SwiftConstructorOverloads(native_result)
 
     @staticmethod
     def make_do(throughput: str) -> SwiftConstructorOverloads:
         """"""
-        native_result = generated.SwiftConstructorOverloads.make_do(_unwrap(throughput, str))
+        native_result = generated.smoke_SwiftConstructorOverloads.make_do(_unwrap(throughput, str))
         return SwiftConstructorOverloads(native_result)
 

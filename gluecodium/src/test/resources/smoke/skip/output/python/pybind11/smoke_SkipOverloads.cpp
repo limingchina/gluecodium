@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,11 @@ namespace py = pybind11;
 using SkipOverloads = ::smoke::SkipOverloads;
 
 void register_smoke_SkipOverloads(py::module_& module) {
-    py::class_<SkipOverloads>(module, "SkipOverloads")
+    py::class_<SkipOverloads>(module, "smoke_SkipOverloads")
         .def_readwrite("dummy", &SkipOverloads::dummy)
         .def(py::init<>())
-        .def(py::init<double(), py::arg("dummy"))
+        .def(py::init<double>(), py::arg("dummy"))
+        .def("do_foo", &SkipOverloads::do_foo, py::arg("input"))
         ;
 }
 

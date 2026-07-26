@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using SomeStruct = ::smoke::DeprecationCommentsOnly::SomeStruct;
 
 void register_smoke_DeprecationCommentsOnlySomeStruct(py::module_& module) {
-    py::class_<SomeStruct>(module, "DeprecationCommentsOnlySomeStruct")
+    py::class_<SomeStruct>(module, "smoke_DeprecationCommentsOnlySomeStruct")
         .def_readwrite("some_field", &SomeStruct::some_field)
         .def(py::init<>())
-        .def(py::init<bool(), py::arg("some_field"))
+        .def(py::init<bool>(), py::arg("some_field"))
         ;
 }
 

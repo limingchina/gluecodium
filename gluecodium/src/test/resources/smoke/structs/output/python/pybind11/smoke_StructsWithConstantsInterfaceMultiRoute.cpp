@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -20,11 +21,12 @@ namespace py = pybind11;
 using MultiRoute = ::smoke::StructsWithConstantsInterface::MultiRoute;
 
 void register_smoke_StructsWithConstantsInterfaceMultiRoute(py::module_& module) {
-    py::class_<MultiRoute>(module, "StructsWithConstantsInterfaceMultiRoute")
+    py::class_<MultiRoute>(module, "smoke_StructsWithConstantsInterfaceMultiRoute")
         .def_readwrite("descriptions", &MultiRoute::descriptions)
         .def_readwrite("type", &MultiRoute::type)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::std::string >, ::smoke::RouteUtils::RouteType(), py::arg("descriptions"), py::arg("type"))
+        .def(py::init<::std::vector< ::std::string >, ::smoke::RouteUtils::RouteType>(), py::arg("descriptions"), py::arg("type"))
+        .def(py::init<::std::vector< ::std::string >, ::smoke::RouteUtils::RouteType>(), py::arg("descriptions"), py::arg("type"))
         ;
 }
 

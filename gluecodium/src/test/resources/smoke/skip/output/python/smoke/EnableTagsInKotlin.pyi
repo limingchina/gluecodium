@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class EnableTagsInKotlin(generated.EnableTagsInKotlin):
+class EnableTagsInKotlin(generated.smoke_EnableTagsInKotlin):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class EnableTagsInKotlin(generated.EnableTagsInKotlin):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.EnableTagsInKotlin):
+        if native is not None and isinstance(native, generated.smoke_EnableTagsInKotlin):
             super().__init__(native)
         else:
             super().__init__()

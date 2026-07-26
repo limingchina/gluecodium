@@ -16,10 +16,10 @@ class MethodOverloadsPoint(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.MethodOverloadsPoint):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_MethodOverloadsPoint):
             super().__init__(args[0])
         else:
-            super().__init__(generated.MethodOverloadsPoint(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_MethodOverloadsPoint(*[_unwrap(arg) for arg in args]))
 
 
     @property

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -20,7 +21,7 @@ using ClassWithOverloads = ::smoke::ClassWithOverloads;
 
 
 void register_smoke_ClassWithOverloads(py::module_& module) {
-    py::class_<ClassWithOverloads, std::shared_ptr<ClassWithOverloads>>(module, "ClassWithOverloads")
+    py::class_<ClassWithOverloads, std::shared_ptr<ClassWithOverloads>>(module, "smoke_ClassWithOverloads")
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -30,7 +31,7 @@ public:
 };
 
 void register_smoke_InterfaceWithLambda(py::module_& module) {
-    py::class_<InterfaceWithLambda, std::shared_ptr<InterfaceWithLambda>, InterfaceWithLambdaTrampoline>(module, "InterfaceWithLambda")
+    py::class_<InterfaceWithLambda, std::shared_ptr<InterfaceWithLambda>, InterfaceWithLambdaTrampoline>(module, "smoke_InterfaceWithLambda")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

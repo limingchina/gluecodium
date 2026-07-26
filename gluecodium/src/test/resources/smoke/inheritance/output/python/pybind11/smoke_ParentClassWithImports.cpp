@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -39,14 +40,14 @@ public:
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::IncludableClass >, ParentClassWithImports, root_method, input1, input2);
     }
-    ::smoke::IncludableLambda get_root_property() const override {
+    ::std::function<void(const int64_t)> get_root_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
         }
-        PYBIND11_OVERRIDE_PURE(::smoke::IncludableLambda, ParentClassWithImports, get_root_property);
+        PYBIND11_OVERRIDE_PURE(::std::function<void(const int64_t)>, ParentClassWithImports, get_root_property);
     }
-    void set_root_property(const ::smoke::IncludableLambda& value) override {
+    void set_root_property(const ::std::function<void(const int64_t)>& value) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_root_property(value);
@@ -57,7 +58,7 @@ public:
 };
 
 void register_smoke_ParentClassWithImports(py::module_& module) {
-    py::class_<ParentClassWithImports, std::shared_ptr<ParentClassWithImports>, ParentClassWithImportsTrampoline>(module, "ParentClassWithImports")
+    py::class_<ParentClassWithImports, std::shared_ptr<ParentClassWithImports>, ParentClassWithImportsTrampoline>(module, "smoke_ParentClassWithImports")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -68,7 +69,12 @@ void register_smoke_ParentClassWithImports(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def_property("root_property", py::overload_cast<>(&ParentClassWithImports::get_root_property, py::const_), py::overload_cast<const ::smoke::IncludableLambda&>(&ParentClassWithImports::set_root_property))
+        .def("root_method", &ParentClassWithImports::root_method, py::arg("input1"), py::arg("input2"))
+        .def_property("root_property", [](const ParentClassWithImports& self) {
+            return self.get_root_property();
+        }, [](ParentClassWithImports& self, const ::std::function<void(const int64_t)>& value) {
+            self.set_root_property(value);
+        })
         ;
 }
 

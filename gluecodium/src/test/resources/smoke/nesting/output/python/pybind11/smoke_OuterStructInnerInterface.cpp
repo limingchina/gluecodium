@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -44,7 +45,7 @@ public:
 };
 
 void register_smoke_OuterStructInnerInterface(py::module_& module) {
-    py::class_<InnerInterface, std::shared_ptr<InnerInterface>, OuterStructInnerInterfaceTrampoline>(module, "OuterStructInnerInterface")
+    py::class_<InnerInterface, std::shared_ptr<InnerInterface>, OuterStructInnerInterfaceTrampoline>(module, "smoke_OuterStructInnerInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -57,6 +58,9 @@ void register_smoke_OuterStructInnerInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+                .def("bar_baz", [](InnerInterface& self) -> py::object {
+                        return gluecodium::python::to_python_regular(self.bar_baz());
+                })
         ;
 }
 

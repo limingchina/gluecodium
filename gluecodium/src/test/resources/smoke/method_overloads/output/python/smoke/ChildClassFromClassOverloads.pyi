@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
+class ChildClassFromClassOverloads(generated.smoke_ChildClassFromClassOverloads):
     """"""
 
     def __init__(self, native=None):
@@ -16,7 +16,7 @@ class ChildClassFromClassOverloads(generated.ChildClassFromClassOverloads):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassFromClassOverloads):
+        if native is not None and isinstance(native, generated.smoke_ChildClassFromClassOverloads):
             super().__init__(native)
         else:
             super().__init__()

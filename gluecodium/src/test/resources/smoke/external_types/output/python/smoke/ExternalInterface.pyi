@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ExternalInterface(generated.ExternalInterface):
+class ExternalInterface(generated.smoke_ExternalInterface):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class ExternalInterface(generated.ExternalInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ExternalInterface):
+        if native is not None and isinstance(native, generated.smoke_ExternalInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,6 +28,6 @@ class ExternalInterface(generated.ExternalInterface):
     @property
     def some_property(self) -> str:
         """"""
-        return _wrap(generated.ExternalInterface.some_property.fget(self), str)
+        return _wrap(generated.smoke_ExternalInterface.some_property.fget(self), str)
 
 

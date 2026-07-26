@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -47,7 +48,7 @@ public:
 };
 
 void register_smoke_ChildClassNameClash(py::module_& module) {
-    py::class_<ChildClassNameClash, ::smoke::InterfaceWithOverloads, std::shared_ptr<ChildClassNameClash>, ChildClassNameClashTrampoline>(module, "ChildClassNameClash")
+    py::class_<ChildClassNameClash, ::smoke::InterfaceWithOverloads, std::shared_ptr<ChildClassNameClash>, ChildClassNameClashTrampoline>(module, "smoke_ChildClassNameClash")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -58,6 +59,12 @@ void register_smoke_ChildClassNameClash(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("parent_method", [](ChildClassNameClash& self) {
+            return self.parent_method();
+        })
+        .def("parent_method", [](ChildClassNameClash& self, const ::std::string& input) {
+            return self.parent_method(input);
+        }, py::arg("input"))
         ;
 }
 

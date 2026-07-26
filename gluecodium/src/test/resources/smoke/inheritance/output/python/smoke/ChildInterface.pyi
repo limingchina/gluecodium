@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class ChildInterface(generated.ChildInterface):
+class ChildInterface(generated.smoke_ChildInterface):
     """"""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class ChildInterface(generated.ChildInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ChildInterface):
+        if native is not None and isinstance(native, generated.smoke_ChildInterface):
             super().__init__(native)
         else:
             super().__init__()

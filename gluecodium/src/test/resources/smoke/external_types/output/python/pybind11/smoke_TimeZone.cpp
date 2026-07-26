@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using TimeZone = ::smoke::TimeZone;
 
 void register_smoke_TimeZone(py::module_& module) {
-    py::class_<TimeZone>(module, "TimeZone")
+    py::class_<TimeZone>(module, "smoke_TimeZone")
         .def_readwrite("raw_offset", &TimeZone::raw_offset)
         .def(py::init<>())
-        .def(py::init<int32_t(), py::arg("raw_offset"))
+        .def(py::init<int32_t>(), py::arg("raw_offset"))
         ;
 }
 

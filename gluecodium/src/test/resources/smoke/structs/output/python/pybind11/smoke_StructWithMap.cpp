@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,10 +20,10 @@ namespace py = pybind11;
 using StructWithMap = ::smoke::StructWithMap;
 
 void register_smoke_StructWithMap(py::module_& module) {
-    py::class_<StructWithMap>(module, "StructWithMap")
+    py::class_<StructWithMap>(module, "smoke_StructWithMap")
         .def_readwrite("field", &StructWithMap::field)
         .def(py::init<>())
-        .def(py::init<::std::unordered_map< ::std::string, ::smoke::StructWithMap >(), py::arg("field"))
+        .def(py::init<::std::unordered_map< ::std::string, ::smoke::StructWithMap >>(), py::arg("field"))
         ;
 }
 

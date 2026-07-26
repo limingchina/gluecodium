@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,8 @@ using InternalClassWithComments = ::smoke::InternalClassWithComments;
 
 
 void register_smoke_InternalClassWithComments(py::module_& module) {
-    py::class_<InternalClassWithComments, std::shared_ptr<InternalClassWithComments>>(module, "InternalClassWithComments")
+    py::class_<InternalClassWithComments, std::shared_ptr<InternalClassWithComments>>(module, "smoke_InternalClassWithComments")
+        .def("do_nothing", &InternalClassWithComments::do_nothing)
         ;
 }
 

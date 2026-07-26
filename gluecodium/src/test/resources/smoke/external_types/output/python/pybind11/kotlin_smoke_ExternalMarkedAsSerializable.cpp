@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using ExternalMarkedAsSerializable = ::kotlin_smoke::ExternalMarkedAsSerializable;
 
 void register_kotlin_smoke_ExternalMarkedAsSerializable(py::module_& module) {
-    py::class_<ExternalMarkedAsSerializable>(module, "ExternalMarkedAsSerializable")
+    py::class_<ExternalMarkedAsSerializable>(module, "kotlin_smoke_ExternalMarkedAsSerializable")
         .def_readwrite("field", &ExternalMarkedAsSerializable::field)
         .def(py::init<>())
-        .def(py::init<int32_t(), py::arg("field"))
+        .def(py::init<int32_t>(), py::arg("field"))
         ;
 }
 

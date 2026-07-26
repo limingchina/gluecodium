@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using DontSmokeEnum = ::dont::smoke::DontSmokeEnum;
 
 void register_dont_smoke_DontSmokeEnum(py::module_& module) {
-    py::enum_<DontSmokeEnum>(module, "DontSmokeEnum")
+    py::enum_<DontSmokeEnum>(module, "dont_smoke_DontSmokeEnum")
         .value("FOO", DontSmokeEnum::FOO)
         ;
 }

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using LevelFourEnum = ::smoke::LevelOne::LevelTwo::LevelThree::LevelFourEnum;
 
 void register_smoke_LevelOneLevelTwoLevelThreeLevelFourEnum(py::module_& module) {
-    py::enum_<LevelFourEnum>(module, "LevelOneLevelTwoLevelThreeLevelFourEnum")
+    py::enum_<LevelFourEnum>(module, "smoke_LevelOneLevelTwoLevelThreeLevelFourEnum")
         .value("NONE", LevelFourEnum::NONE)
         ;
 }

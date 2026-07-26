@@ -14,7 +14,7 @@ import generated
 class IncludableEnum(Enum):
     """"""
 
-    FOO = generated.IncludableEnum.FOO
+    FOO = generated.smoke_IncludableEnum.FOO
 
     @property
     def _native(self):

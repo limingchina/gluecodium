@@ -17,10 +17,10 @@ class ExternalDartConstants(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.ExternalDartConstants):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_ExternalDartConstants):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ExternalDartConstants(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_ExternalDartConstants(*[_unwrap(arg) for arg in args]))
 
 
     SMALL = {0, 0, 1, 1}

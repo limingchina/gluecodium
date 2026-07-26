@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -23,7 +24,7 @@ using OrderInClass = ::smoke::OrderInClass;
 
 
 void register_smoke_OrderInClass(py::module_& module) {
-    py::class_<OrderInClass, std::shared_ptr<OrderInClass>>(module, "OrderInClass")
+    py::class_<OrderInClass, std::shared_ptr<OrderInClass>>(module, "smoke_OrderInClass")
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -56,7 +57,7 @@ public:
 };
 
 void register_smoke_SkipTagsInJava(py::module_& module) {
-    py::class_<SkipTagsInJava, std::shared_ptr<SkipTagsInJava>, SkipTagsInJavaTrampoline>(module, "SkipTagsInJava")
+    py::class_<SkipTagsInJava, std::shared_ptr<SkipTagsInJava>, SkipTagsInJavaTrampoline>(module, "smoke_SkipTagsInJava")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -69,6 +70,15 @@ void register_smoke_SkipTagsInJava(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("skip_tagged", [](SkipTagsInJava& self) {
+            return self.skip_tagged();
+        })
+        .def("dont_skip_tagged", [](SkipTagsInJava& self) {
+            return self.dont_skip_tagged();
+        })
+        .def("skip_tagged_list", [](SkipTagsInJava& self) {
+            return self.skip_tagged_list();
+        })
         ;
 }
 

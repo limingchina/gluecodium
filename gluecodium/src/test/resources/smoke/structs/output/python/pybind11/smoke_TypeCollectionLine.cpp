@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,11 +17,12 @@ namespace py = pybind11;
 using Line = ::smoke::TypeCollection::Line;
 
 void register_smoke_TypeCollectionLine(py::module_& module) {
-    py::class_<Line>(module, "TypeCollectionLine")
+    py::class_<Line>(module, "smoke_TypeCollectionLine")
         .def_readwrite("a", &Line::a)
         .def_readwrite("b", &Line::b)
         .def(py::init<>())
-        .def(py::init<::smoke::TypeCollection::Point, ::smoke::TypeCollection::Point(), py::arg("a"), py::arg("b"))
+        .def(py::init<::smoke::TypeCollection::Point, ::smoke::TypeCollection::Point>(), py::arg("a"), py::arg("b"))
+        .def(py::init<::smoke::TypeCollection::Point, ::smoke::TypeCollection::Point>(), py::arg("a"), py::arg("b"))
         ;
 }
 

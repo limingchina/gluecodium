@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,7 @@ namespace py = pybind11;
 using MutableStructImmutableFieldsNameless = ::smoke::MutableStructImmutableFieldsNameless;
 
 void register_smoke_MutableStructImmutableFieldsNameless(py::module_& module) {
-    py::class_<MutableStructImmutableFieldsNameless>(module, "MutableStructImmutableFieldsNameless")
+    py::class_<MutableStructImmutableFieldsNameless>(module, "smoke_MutableStructImmutableFieldsNameless")
         .def_readwrite("struct_field", &MutableStructImmutableFieldsNameless::struct_field)
         .def_readwrite("int_field", &MutableStructImmutableFieldsNameless::int_field)
         .def_readwrite("bool_field", &MutableStructImmutableFieldsNameless::bool_field)

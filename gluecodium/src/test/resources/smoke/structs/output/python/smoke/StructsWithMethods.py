@@ -19,8 +19,8 @@ class StructsWithMethods(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructsWithMethods):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructsWithMethods):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithMethods(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructsWithMethods(*[_unwrap(arg) for arg in args]))
 

@@ -11,12 +11,11 @@
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
 void register_smoke_InternalClass(pybind11::module_& module);
-void register_InternalInterfaceParent(pybind11::module_& module);
+void register_smoke_InternalInterfaceParent(pybind11::module_& module);
 void register_smoke_InternalClassInherits(pybind11::module_& module);
 void register_smoke_InternalClassWithFunctions(pybind11::module_& module);
 void register_smoke_InternalClassWithStaticProperty(pybind11::module_& module);
 void register_smoke_InternalInterface(pybind11::module_& module);
-void register_smoke_InternalInterfaceParent(pybind11::module_& module);
 void register_smoke_InternalPropertyOnly(pybind11::module_& module);
 void register_smoke_OuterClassWithInternalAttribute(pybind11::module_& module);
 void register_smoke_OuterClassWithInternalAttributeClassNestedInInternalClass(pybind11::module_& module);
@@ -43,12 +42,11 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_smoke_InternalClass(m);
-    register_InternalInterfaceParent(m);
+    register_smoke_InternalInterfaceParent(m);
     register_smoke_InternalClassInherits(m);
     register_smoke_InternalClassWithFunctions(m);
     register_smoke_InternalClassWithStaticProperty(m);
     register_smoke_InternalInterface(m);
-    register_smoke_InternalInterfaceParent(m);
     register_smoke_InternalPropertyOnly(m);
     register_smoke_OuterClassWithInternalAttribute(m);
     register_smoke_OuterClassWithInternalAttributeClassNestedInInternalClass(m);

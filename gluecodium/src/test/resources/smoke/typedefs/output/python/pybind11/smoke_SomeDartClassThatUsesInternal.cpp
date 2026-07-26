@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,7 +22,8 @@ using SomeDartClassThatUsesInternal = ::smoke::SomeDartClassThatUsesInternal;
 
 
 void register_smoke_SomeDartClassThatUsesInternal(py::module_& module) {
-    py::class_<SomeDartClassThatUsesInternal, std::shared_ptr<SomeDartClassThatUsesInternal>>(module, "SomeDartClassThatUsesInternal")
+    py::class_<SomeDartClassThatUsesInternal, std::shared_ptr<SomeDartClassThatUsesInternal>>(module, "smoke_SomeDartClassThatUsesInternal")
+        .def("add_entity", &SomeDartClassThatUsesInternal::add_entity, py::arg("entity"))
         ;
 }
 

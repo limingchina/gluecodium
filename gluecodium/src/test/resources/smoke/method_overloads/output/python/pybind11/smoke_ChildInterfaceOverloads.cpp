@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -84,7 +85,7 @@ public:
 };
 
 void register_smoke_ChildInterfaceOverloads(py::module_& module) {
-    py::class_<ChildInterfaceOverloads, ::smoke::ParentInterface, std::shared_ptr<ChildInterfaceOverloads>, ChildInterfaceOverloadsTrampoline>(module, "ChildInterfaceOverloads")
+    py::class_<ChildInterfaceOverloads, ::smoke::ParentInterface, std::shared_ptr<ChildInterfaceOverloads>, ChildInterfaceOverloadsTrampoline>(module, "smoke_ChildInterfaceOverloads")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -97,6 +98,24 @@ void register_smoke_ChildInterfaceOverloads(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("foo", [](ChildInterfaceOverloads& self, const ::std::string& input) {
+            return self.foo(input);
+        }, py::arg("input"))
+        .def("bar", [](ChildInterfaceOverloads& self, const ::std::string& input) {
+            return self.bar(input);
+        }, py::arg("input"))
+        .def("foo", [](ChildInterfaceOverloads& self) {
+            return self.foo();
+        })
+        .def("foo", [](ChildInterfaceOverloads& self, const int32_t input) {
+            return self.foo(input);
+        }, py::arg("input"))
+        .def("bar", [](ChildInterfaceOverloads& self) {
+            return self.bar();
+        })
+        .def("baz", [](ChildInterfaceOverloads& self) {
+            return self.baz();
+        })
         ;
 }
 

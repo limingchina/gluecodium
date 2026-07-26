@@ -16,10 +16,10 @@ class ScalarKeyframe(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.ScalarKeyframe):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_ScalarKeyframe):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ScalarKeyframe(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_ScalarKeyframe(*[_unwrap(arg) for arg in args]))
 
 
     @property

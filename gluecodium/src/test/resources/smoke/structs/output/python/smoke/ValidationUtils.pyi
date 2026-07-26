@@ -13,8 +13,8 @@ class ValidationUtils(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.ValidationUtils):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_ValidationUtils):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ValidationUtils(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_ValidationUtils(*[_unwrap(arg) for arg in args]))
 

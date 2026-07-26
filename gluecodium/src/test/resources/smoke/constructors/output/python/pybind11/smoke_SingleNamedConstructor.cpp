@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,9 +19,7 @@ using SingleNamedConstructor = ::smoke::SingleNamedConstructor;
 
 
 void register_smoke_SingleNamedConstructor(py::module_& module) {
-    py::class_<SingleNamedConstructor, std::shared_ptr<SingleNamedConstructor>>(module, "SingleNamedConstructor")
-        .def(py::init<>())
-
+    py::class_<SingleNamedConstructor, std::shared_ptr<SingleNamedConstructor>>(module, "smoke_SingleNamedConstructor")
         .def_static("create", &SingleNamedConstructor::create)
         ;
 }

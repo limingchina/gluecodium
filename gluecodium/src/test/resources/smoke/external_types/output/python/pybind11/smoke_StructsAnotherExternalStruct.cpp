@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 
 
 void register_smoke_StructsAnotherExternalStruct(py::module_& module) {
-    py::class_<::fire::SomeVeryExternalStruct>(module, "StructsAnotherExternalStruct")
+    py::class_<::fire::SomeVeryExternalStruct>(module, "smoke_StructsAnotherExternalStruct")
         ;
 }
 

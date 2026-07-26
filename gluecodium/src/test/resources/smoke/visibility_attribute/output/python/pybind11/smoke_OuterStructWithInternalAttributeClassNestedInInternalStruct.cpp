@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using ClassNestedInInternalStruct = ::smoke::OuterStructWithInternalAttribute::C
 
 
 void register_smoke_OuterStructWithInternalAttributeClassNestedInInternalStruct(py::module_& module) {
-    py::class_<ClassNestedInInternalStruct, std::shared_ptr<ClassNestedInInternalStruct>>(module, "OuterStructWithInternalAttributeClassNestedInInternalStruct")
+    py::class_<ClassNestedInInternalStruct, std::shared_ptr<ClassNestedInInternalStruct>>(module, "smoke_OuterStructWithInternalAttributeClassNestedInInternalStruct")
         ;
 }
 

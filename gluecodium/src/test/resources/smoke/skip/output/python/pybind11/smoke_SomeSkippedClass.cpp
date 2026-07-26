@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using SomeSkippedClass = ::smoke::SomeSkippedClass;
 
 
 void register_smoke_SomeSkippedClass(py::module_& module) {
-    py::class_<SomeSkippedClass, std::shared_ptr<SomeSkippedClass>>(module, "SomeSkippedClass")
+    py::class_<SomeSkippedClass, std::shared_ptr<SomeSkippedClass>>(module, "smoke_SomeSkippedClass")
+        .def("do_foo", &SomeSkippedClass::do_foo)
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using FooBarEnum = ::smoke::FooBarEnum;
 
 void register_smoke_FooBarEnum(py::module_& module) {
-    py::enum_<FooBarEnum>(module, "FooBarEnum")
+    py::enum_<FooBarEnum>(module, "smoke_FooBarEnum")
         .value("FOO", FooBarEnum::FOO)
         .value("BAR", FooBarEnum::BAR)
         .value("BAZ", FooBarEnum::BAZ)

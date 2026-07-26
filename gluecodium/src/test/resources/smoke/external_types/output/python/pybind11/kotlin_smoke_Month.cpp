@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using Month = ::kotlin_smoke::Month;
 
 void register_kotlin_smoke_Month(py::module_& module) {
-    py::enum_<Month>(module, "Month")
+    py::enum_<Month>(module, "kotlin_smoke_Month")
         .value("JANUARY", Month::JANUARY)
         .value("FEBRUARY", Month::FEBRUARY)
         .value("MARCH", Month::MARCH)

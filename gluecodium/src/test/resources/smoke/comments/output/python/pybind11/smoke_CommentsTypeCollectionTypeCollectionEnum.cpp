@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using TypeCollectionEnum = ::smoke::CommentsTypeCollection::TypeCollectionEnum;
 
 void register_smoke_CommentsTypeCollectionTypeCollectionEnum(py::module_& module) {
-    py::enum_<TypeCollectionEnum>(module, "CommentsTypeCollectionTypeCollectionEnum")
+    py::enum_<TypeCollectionEnum>(module, "smoke_CommentsTypeCollectionTypeCollectionEnum")
         .value("ITEM", TypeCollectionEnum::ITEM)
         ;
 }

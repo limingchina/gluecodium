@@ -21,10 +21,10 @@ class Calculator(_NativeBase):
     @staticmethod
     def register_listener(listener: CalculatorListener):
         """"""
-        generated.Calculator.register_listener(_unwrap(listener, CalculatorListener))
+        generated.smoke_Calculator.register_listener(_unwrap(listener, CalculatorListener))
 
     @staticmethod
     def unregister_listener(listener: CalculatorListener):
         """"""
-        generated.Calculator.unregister_listener(_unwrap(listener, CalculatorListener))
+        generated.smoke_Calculator.unregister_listener(_unwrap(listener, CalculatorListener))
 

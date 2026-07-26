@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,11 +19,12 @@ namespace py = pybind11;
 using Payload = ::smoke::Payload;
 
 void register_smoke_Payload(py::module_& module) {
-    py::class_<Payload>(module, "Payload")
+    py::class_<Payload>(module, "smoke_Payload")
         .def_readwrite("error_code", &Payload::error_code)
         .def_readwrite("message", &Payload::message)
         .def(py::init<>())
-        .def(py::init<int32_t, ::std::string(), py::arg("error_code"), py::arg("message"))
+        .def(py::init<int32_t, ::std::string>(), py::arg("error_code"), py::arg("message"))
+        .def(py::init<int32_t, ::std::string>(), py::arg("error_code"), py::arg("message"))
         ;
 }
 

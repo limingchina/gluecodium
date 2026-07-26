@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using IncludableClass = ::smoke::IncludableClass;
 
 
 void register_smoke_IncludableClass(py::module_& module) {
-    py::class_<IncludableClass, std::shared_ptr<IncludableClass>>(module, "IncludableClass")
+    py::class_<IncludableClass, std::shared_ptr<IncludableClass>>(module, "smoke_IncludableClass")
         ;
 }
 

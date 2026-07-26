@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using StructsInstance = ::smoke::StructsInstance;
 
 
 void register_smoke_StructsInstance(py::module_& module) {
-    py::class_<StructsInstance, std::shared_ptr<StructsInstance>>(module, "StructsInstance")
+    py::class_<StructsInstance, std::shared_ptr<StructsInstance>>(module, "smoke_StructsInstance")
         ;
 }
 

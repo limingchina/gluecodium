@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -22,7 +23,7 @@ namespace py = pybind11;
 using EquatableStruct = ::smoke::Equatable::EquatableStruct;
 
 void register_smoke_EquatableEquatableStruct(py::module_& module) {
-    py::class_<EquatableStruct>(module, "EquatableEquatableStruct")
+    py::class_<EquatableStruct>(module, "smoke_EquatableEquatableStruct")
         .def_readwrite("bool_field", &EquatableStruct::bool_field)
         .def_readwrite("int_field", &EquatableStruct::int_field)
         .def_readwrite("long_field", &EquatableStruct::long_field)
@@ -34,7 +35,16 @@ void register_smoke_EquatableEquatableStruct(py::module_& module) {
         .def_readwrite("array_field", &EquatableStruct::array_field)
         .def_readwrite("map_field", &EquatableStruct::map_field)
         .def(py::init<>())
-        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
+        .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
         ;
 }
 

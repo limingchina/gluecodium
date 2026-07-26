@@ -16,10 +16,10 @@ class LocaleDefaults(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.LocaleDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_LocaleDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.LocaleDefaults(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_LocaleDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property

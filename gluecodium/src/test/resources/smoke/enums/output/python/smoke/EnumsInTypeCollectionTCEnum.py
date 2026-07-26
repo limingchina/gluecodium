@@ -14,8 +14,8 @@ import generated
 class EnumsInTypeCollectionTCEnum(Enum):
     """"""
 
-    FIRST = generated.EnumsInTypeCollectionTCEnum.FIRST
-    SECOND = generated.EnumsInTypeCollectionTCEnum.SECOND
+    FIRST = generated.smoke_EnumsInTypeCollectionTCEnum.FIRST
+    SECOND = generated.smoke_EnumsInTypeCollectionTCEnum.SECOND
 
     @property
     def _native(self):

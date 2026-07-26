@@ -28,5 +28,5 @@ class Lambdas(_NativeBase):
     @staticmethod
     def fuse(items: list[str], callback: Callable[[str, float], int]) -> dict[int, str]:
         """"""
-        return _wrap(generated.Lambdas.fuse(_unwrap(items, list[str]), _unwrap(callback, Callable[[str, float], int])), dict[int, str])
+        return _wrap(generated.smoke_Lambdas.fuse(_unwrap(items, list[str]), _unwrap(callback, Callable[[str, float], int])), dict[int, str])
 

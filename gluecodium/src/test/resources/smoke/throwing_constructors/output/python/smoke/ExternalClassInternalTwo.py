@@ -22,6 +22,6 @@ class ExternalClassInternalTwo(_NativeBase):
     @staticmethod
     def create() -> ExternalClassInternalTwo:
         """"""
-        native_result = generated.ExternalClassInternalTwo.create()
+        native_result = generated.smoke_ExternalClassInternalTwo.create()
         return ExternalClassInternalTwo(native_result)
 

@@ -10,8 +10,8 @@ import generated
 class StructsFooBar(Enum):
     """"""
 
-    FOO = generated.StructsFooBar.FOO
-    BAR = generated.StructsFooBar.BAR
+    FOO = generated.smoke_StructsFooBar.FOO
+    BAR = generated.smoke_StructsFooBar.BAR
 
     @property
     def _native(self):

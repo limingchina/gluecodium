@@ -10,8 +10,8 @@ import generated
 class ExternalClassErrorEnum(Enum):
     """"""
 
-    NONE = generated.ExternalClassErrorEnum.NONE
-    CRASHED = generated.ExternalClassErrorEnum.CRASHED
+    NONE = generated.smoke_ExternalClassErrorEnum.NONE
+    CRASHED = generated.smoke_ExternalClassErrorEnum.CRASHED
 
     @property
     def _native(self):

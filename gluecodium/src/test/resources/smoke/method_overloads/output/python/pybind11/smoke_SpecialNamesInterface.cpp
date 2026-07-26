@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -28,7 +29,7 @@ public:
     std::shared_ptr<SpecialNamesInterface> m_impl;
 
     void dispatch(
-            const ::smoke::SpecialNamesInterface::Callback& callback ) const override {
+            const ::std::function<void()>& callback ) const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->dispatch(callback);
@@ -39,7 +40,7 @@ public:
 };
 
 void register_smoke_SpecialNamesInterface(py::module_& module) {
-    py::class_<SpecialNamesInterface, std::shared_ptr<SpecialNamesInterface>, SpecialNamesInterfaceTrampoline>(module, "SpecialNamesInterface")
+    py::class_<SpecialNamesInterface, std::shared_ptr<SpecialNamesInterface>, SpecialNamesInterfaceTrampoline>(module, "smoke_SpecialNamesInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -52,6 +53,9 @@ void register_smoke_SpecialNamesInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+                .def("dispatch", [](SpecialNamesInterface& self, const ::std::function<void()>& callback) {
+                        self.dispatch(callback);
+                }, py::arg("callback"))
         ;
 }
 

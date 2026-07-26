@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SomethingEnum = ::smoke::SomethingEnum;
 
 void register_smoke_SomethingEnum(py::module_& module) {
-    py::enum_<SomethingEnum>(module, "SomethingEnum")
+    py::enum_<SomethingEnum>(module, "smoke_SomethingEnum")
         .value("REALLY_FIRST", SomethingEnum::REALLY_FIRST)
         .value("EXPLICIT", SomethingEnum::EXPLICIT)
         .value("LAST", SomethingEnum::LAST)

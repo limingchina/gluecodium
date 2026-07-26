@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,12 @@ using AsyncClass = ::smoke::AsyncClass;
 
 
 void register_smoke_AsyncClass(py::module_& module) {
-    py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "AsyncClass")
+    py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "smoke_AsyncClass")
+        .def("async_void", &AsyncClass::async_void, py::arg("input"))
+        .def("async_void_throws", &AsyncClass::async_void_throws, py::arg("input"))
+        .def("async_int", &AsyncClass::async_int, py::arg("input"))
+        .def("async_int_throws", &AsyncClass::async_int_throws, py::arg("input"))
+        .def_static("async_static", &AsyncClass::async_static, py::arg("input"))
         ;
 }
 

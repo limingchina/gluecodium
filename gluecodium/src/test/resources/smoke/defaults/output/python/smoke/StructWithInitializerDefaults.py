@@ -16,10 +16,10 @@ class StructWithInitializerDefaults(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructWithInitializerDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructWithInitializerDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructWithInitializerDefaults(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructWithInitializerDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property

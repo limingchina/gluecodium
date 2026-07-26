@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,9 +17,8 @@ namespace py = pybind11;
 using CrossFileConstants = ::smoke::CrossFileConstants;
 
 void register_smoke_CrossFileConstants(py::module_& module) {
-    py::class_<CrossFileConstants>(module, "CrossFileConstants")
+    py::class_<CrossFileConstants>(module, "smoke_CrossFileConstants")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using NestingStruct = ::smoke::StructConstants::NestingStruct;
 
 void register_smoke_StructConstantsNestingStruct(py::module_& module) {
-    py::class_<NestingStruct>(module, "StructConstantsNestingStruct")
+    py::class_<NestingStruct>(module, "smoke_StructConstantsNestingStruct")
         .def_readwrite("struct_field", &NestingStruct::struct_field)
         .def(py::init<>())
-        .def(py::init<::smoke::StructConstants::SomeStruct(), py::arg("struct_field"))
+        .def(py::init<::smoke::StructConstants::SomeStruct>(), py::arg("struct_field"))
         ;
 }
 

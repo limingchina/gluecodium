@@ -14,7 +14,7 @@ import generated
 class ExternalInterfacesome_Enum(Enum):
     """"""
 
-    SOME_VALUE = generated.ExternalInterfacesome_Enum.some_Value
+    SOME_VALUE = generated.smoke_ExternalInterfacesome_Enum.some_Value
 
     @property
     def _native(self):

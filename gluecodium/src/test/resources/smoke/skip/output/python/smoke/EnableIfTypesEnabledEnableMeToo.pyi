@@ -13,10 +13,10 @@ class EnableIfTypesEnabledEnableMeToo(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.EnableIfTypesEnabledEnableMeToo):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_EnableIfTypesEnabledEnableMeToo):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnableIfTypesEnabledEnableMeToo(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_EnableIfTypesEnabledEnableMeToo(*[_unwrap(arg) for arg in args]))
 
 
     @property

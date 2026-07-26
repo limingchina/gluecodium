@@ -13,10 +13,10 @@ class StructsWithConstantsInterfaceMultiRoute(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructsWithConstantsInterfaceMultiRoute):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructsWithConstantsInterfaceMultiRoute):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsWithConstantsInterfaceMultiRoute(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructsWithConstantsInterfaceMultiRoute(*[_unwrap(arg) for arg in args]))
 
 
     @property

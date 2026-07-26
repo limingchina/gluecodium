@@ -12,10 +12,10 @@ class FieldConstructorWithComment(_NativeBase):
     """SomeStruct"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.FieldConstructorWithComment):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_FieldConstructorWithComment):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorWithComment(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_FieldConstructorWithComment(*[_unwrap(arg) for arg in args]))
 
     Some field
     @property

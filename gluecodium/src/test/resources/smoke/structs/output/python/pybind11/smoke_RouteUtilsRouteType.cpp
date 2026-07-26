@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using RouteType = ::smoke::RouteUtils::RouteType;
 
 void register_smoke_RouteUtilsRouteType(py::module_& module) {
-    py::enum_<RouteType>(module, "RouteUtilsRouteType")
+    py::enum_<RouteType>(module, "smoke_RouteUtilsRouteType")
         .value("NONE", RouteType::NONE)
         .value("CAR", RouteType::CAR)
         .value("PEDESTRIAN", RouteType::PEDESTRIAN)

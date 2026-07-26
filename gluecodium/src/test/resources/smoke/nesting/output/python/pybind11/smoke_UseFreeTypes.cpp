@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -22,7 +23,8 @@ using UseFreeTypes = ::smoke::UseFreeTypes;
 
 
 void register_smoke_UseFreeTypes(py::module_& module) {
-    py::class_<UseFreeTypes, std::shared_ptr<UseFreeTypes>>(module, "UseFreeTypes")
+    py::class_<UseFreeTypes, std::shared_ptr<UseFreeTypes>>(module, "smoke_UseFreeTypes")
+        .def("do_stuff", &UseFreeTypes::do_stuff, py::arg("point"), py::arg("mode"))
         ;
 }
 

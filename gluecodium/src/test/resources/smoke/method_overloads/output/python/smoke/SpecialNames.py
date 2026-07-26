@@ -36,6 +36,6 @@ class SpecialNames(_NativeBase):
     @staticmethod
     def make(result: str) -> SpecialNames:
         """"""
-        native_result = generated.SpecialNames.make(_unwrap(result, str))
+        native_result = generated.smoke_SpecialNames.make(_unwrap(result, str))
         return SpecialNames(native_result)
 

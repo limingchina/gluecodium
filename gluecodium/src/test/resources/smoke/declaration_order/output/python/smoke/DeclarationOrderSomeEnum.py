@@ -14,8 +14,8 @@ import generated
 class DeclarationOrderSomeEnum(Enum):
     """"""
 
-    FOO = generated.DeclarationOrderSomeEnum.FOO
-    BAR = generated.DeclarationOrderSomeEnum.BAR
+    FOO = generated.smoke_DeclarationOrderSomeEnum.FOO
+    BAR = generated.smoke_DeclarationOrderSomeEnum.BAR
 
     @property
     def _native(self):

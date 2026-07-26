@@ -14,10 +14,10 @@ class NullableCollectionsStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.NullableCollectionsStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_NullableCollectionsStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.NullableCollectionsStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_NullableCollectionsStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

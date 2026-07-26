@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class DeprecationComments(generated.DeprecationComments):
+class DeprecationComments(generated.smoke_DeprecationComments):
     """This is some very useful interface."""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class DeprecationComments(generated.DeprecationComments):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.DeprecationComments):
+        if native is not None and isinstance(native, generated.smoke_DeprecationComments):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,20 +29,20 @@ class DeprecationComments(generated.DeprecationComments):
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
-        return _wrap(generated.DeprecationComments.is_some_property.fget(self), bool)
+        return _wrap(generated.smoke_DeprecationComments.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.DeprecationComments.is_some_property.fset(self, _unwrap(value, bool))
+        generated.smoke_DeprecationComments.is_some_property.fset(self, _unwrap(value, bool))
 
     @property
     def property_but_not_accessors(self) -> str:
         """Describes the property but not accessors."""
-        return _wrap(generated.DeprecationComments.property_but_not_accessors.fget(self), str)
+        return _wrap(generated.smoke_DeprecationComments.property_but_not_accessors.fget(self), str)
 
     @property_but_not_accessors.setter
     def property_but_not_accessors(self, value: str):
-        generated.DeprecationComments.property_but_not_accessors.fset(self, _unwrap(value, str))
+        generated.smoke_DeprecationComments.property_but_not_accessors.fset(self, _unwrap(value, str))
 
     This is some very useful constant.
     VERY_USEFUL = True

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using ValidationErrorCode = ::smoke::ValidationUtils::ValidationErrorCode;
 
 void register_smoke_ValidationUtilsValidationErrorCode(py::module_& module) {
-    py::enum_<ValidationErrorCode>(module, "ValidationUtilsValidationErrorCode")
+    py::enum_<ValidationErrorCode>(module, "smoke_ValidationUtilsValidationErrorCode")
         .value("NONE", ValidationErrorCode::NONE)
         .value("VALIDATION_FAILED", ValidationErrorCode::VALIDATION_FAILED)
         ;

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using CommentsTableLinks = ::smoke::CommentsTableLinks;
 
 
 void register_smoke_CommentsTableLinks(py::module_& module) {
-    py::class_<CommentsTableLinks, std::shared_ptr<CommentsTableLinks>>(module, "CommentsTableLinks")
+    py::class_<CommentsTableLinks, std::shared_ptr<CommentsTableLinks>>(module, "smoke_CommentsTableLinks")
         ;
 }
 

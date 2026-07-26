@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using ExternalErrors = ::smoke::ErrorsInterface::ExternalErrors;
 
 void register_smoke_ErrorsInterfaceExternalErrors(py::module_& module) {
-    py::enum_<ExternalErrors>(module, "ErrorsInterfaceExternalErrors")
+    py::enum_<ExternalErrors>(module, "smoke_ErrorsInterfaceExternalErrors")
         .value("NONE", ExternalErrors::NONE)
         .value("BOOM", ExternalErrors::BOOM)
         .value("BUST", ExternalErrors::BUST)

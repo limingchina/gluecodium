@@ -16,10 +16,10 @@ class TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections(_Native
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections):
             super().__init__(args[0])
         else:
-            super().__init__(generated.TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections(*[_unwrap(arg) for arg in args]))
 
 
     @property

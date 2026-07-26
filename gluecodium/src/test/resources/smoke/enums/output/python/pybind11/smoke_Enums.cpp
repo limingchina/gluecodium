@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -22,7 +23,11 @@ using Enums = ::smoke::Enums;
 
 
 void register_smoke_Enums(py::module_& module) {
-    py::class_<Enums, std::shared_ptr<Enums>>(module, "Enums")
+    py::class_<Enums, std::shared_ptr<Enums>>(module, "smoke_Enums")
+        .def_static("method_with_enumeration", &Enums::method_with_enumeration, py::arg("input"))
+        .def_static("flip_enum_value", &Enums::flip_enum_value, py::arg("input"))
+        .def_static("extract_enum_from_struct", &Enums::extract_enum_from_struct, py::arg("input"))
+        .def_static("create_struct_with_enum_inside", &Enums::create_struct_with_enum_inside, py::arg("type"), py::arg("message"))
         ;
 }
 

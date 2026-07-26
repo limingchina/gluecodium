@@ -21,10 +21,10 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.PosDefaultStructWithCustomStructsFields):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_PosDefaultStructWithCustomStructsFields):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PosDefaultStructWithCustomStructsFields(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_PosDefaultStructWithCustomStructsFields(*[_unwrap(arg) for arg in args]))
 
 
     @property

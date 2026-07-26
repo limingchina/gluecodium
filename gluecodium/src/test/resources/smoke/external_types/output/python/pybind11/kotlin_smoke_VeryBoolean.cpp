@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,12 +17,10 @@ namespace py = pybind11;
 using VeryBoolean = ::kotlin_smoke::VeryBoolean;
 
 void register_kotlin_smoke_VeryBoolean(py::module_& module) {
-    py::class_<VeryBoolean>(module, "VeryBoolean")
+    py::class_<VeryBoolean>(module, "kotlin_smoke_VeryBoolean")
         .def_readwrite("value", &VeryBoolean::value)
         .def(py::init<>())
-        .def(py::init<bool(), py::arg("value"))
-        .def(py::init<bool>(py::arg("value")))
-
+        .def(py::init<bool>(), py::arg("value"))
         .def_static("make", &VeryBoolean::make, py::arg("value"))
         ;
 }

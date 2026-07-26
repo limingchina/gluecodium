@@ -10,9 +10,9 @@ import generated
 class EnumOptionSetComments(Enum):
     """"""
 
-    ONE = generated.EnumOptionSetComments.ONE
-    TWO = generated.EnumOptionSetComments.TWO
-    THREE = generated.EnumOptionSetComments.THREE
+    ONE = generated.smoke_EnumOptionSetComments.ONE
+    TWO = generated.smoke_EnumOptionSetComments.TWO
+    THREE = generated.smoke_EnumOptionSetComments.THREE
 
     @property
     def _native(self):

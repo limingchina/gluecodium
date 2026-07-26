@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,7 @@ using StructConstants = ::smoke::StructConstants;
 
 
 void register_smoke_StructConstants(py::module_& module) {
-    py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "StructConstants")
+    py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "smoke_StructConstants")
         ;
 }
 

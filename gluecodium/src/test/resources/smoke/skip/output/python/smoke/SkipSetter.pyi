@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class SkipSetter(generated.SkipSetter):
+class SkipSetter(generated.smoke_SkipSetter):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class SkipSetter(generated.SkipSetter):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.SkipSetter):
+        if native is not None and isinstance(native, generated.smoke_SkipSetter):
             super().__init__(native)
         else:
             super().__init__()
@@ -26,9 +26,9 @@ class SkipSetter(generated.SkipSetter):
     @property
     def foo(self) -> str:
         """"""
-        return _wrap(generated.SkipSetter.foo.fget(self), str)
+        return _wrap(generated.smoke_SkipSetter.foo.fget(self), str)
 
     @foo.setter
     def foo(self, value: str):
-        generated.SkipSetter.foo.fset(self, _unwrap(value, str))
+        generated.smoke_SkipSetter.foo.fset(self, _unwrap(value, str))
 

@@ -14,8 +14,8 @@ import generated
 class Enum4(Enum):
     """"""
 
-    ENABLED = generated.Enum4.ENABLED
-    DISABLED = generated.Enum4.DISABLED
+    ENABLED = generated.fire_Enum4.ENABLED
+    DISABLED = generated.fire_Enum4.DISABLED
 
     @property
     def _native(self):

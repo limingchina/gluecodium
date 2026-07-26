@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,13 +20,16 @@ namespace py = pybind11;
 using InternalEnumDefaults = ::smoke::InternalEnumDefaults;
 
 void register_smoke_InternalEnumDefaults(py::module_& module) {
-    py::class_<InternalEnumDefaults>(module, "InternalEnumDefaults")
+    py::class_<InternalEnumDefaults>(module, "smoke_InternalEnumDefaults")
         .def_readwrite("public_field", &InternalEnumDefaults::public_field)
         .def_readwrite("public_list_field", &InternalEnumDefaults::public_list_field)
         .def_readwrite("internal_field", &InternalEnumDefaults::internal_field)
         .def_readwrite("internal_list_field", &InternalEnumDefaults::internal_list_field)
         .def(py::init<>())
-        .def(py::init<::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >, ::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >(), py::arg("public_field"), py::arg("public_list_field"), py::arg("internal_field"), py::arg("internal_list_field"))
+        .def(py::init<::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >, ::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >>(), py::arg("public_field"), py::arg("public_list_field"), py::arg("internal_field"), py::arg("internal_list_field"))
+        .def(py::init<::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >, ::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >>(), py::arg("public_field"), py::arg("public_list_field"), py::arg("internal_field"), py::arg("internal_list_field"))
+        .def(py::init<::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >, ::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >>(), py::arg("public_field"), py::arg("public_list_field"), py::arg("internal_field"), py::arg("internal_list_field"))
+        .def(py::init<::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >, ::smoke::FooBarEnum, ::std::vector< ::smoke::FooBarEnum >>(), py::arg("public_field"), py::arg("public_list_field"), py::arg("internal_field"), py::arg("internal_list_field"))
         ;
 }
 

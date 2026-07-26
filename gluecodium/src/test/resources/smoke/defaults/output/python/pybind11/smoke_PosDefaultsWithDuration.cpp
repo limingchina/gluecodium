@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,11 +19,12 @@ namespace py = pybind11;
 using PosDefaultsWithDuration = ::smoke::PosDefaultsWithDuration;
 
 void register_smoke_PosDefaultsWithDuration(py::module_& module) {
-    py::class_<PosDefaultsWithDuration>(module, "PosDefaultsWithDuration")
+    py::class_<PosDefaultsWithDuration>(module, "smoke_PosDefaultsWithDuration")
         .def_readwrite("duration_field", &PosDefaultsWithDuration::duration_field)
         .def_readwrite("nanos_field", &PosDefaultsWithDuration::nanos_field)
         .def(py::init<>())
-        .def(py::init<::std::chrono::seconds, ::std::chrono::seconds(), py::arg("duration_field"), py::arg("nanos_field"))
+        .def(py::init<::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("duration_field"), py::arg("nanos_field"))
+        .def(py::init<::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("duration_field"), py::arg("nanos_field"))
         ;
 }
 

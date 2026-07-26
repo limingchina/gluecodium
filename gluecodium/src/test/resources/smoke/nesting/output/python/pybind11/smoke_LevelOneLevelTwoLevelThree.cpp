@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,7 +22,8 @@ using LevelThree = ::smoke::LevelOne::LevelTwo::LevelThree;
 
 
 void register_smoke_LevelOneLevelTwoLevelThree(py::module_& module) {
-    py::class_<LevelThree, std::shared_ptr<LevelThree>>(module, "LevelOneLevelTwoLevelThree")
+    py::class_<LevelThree, std::shared_ptr<LevelThree>>(module, "smoke_LevelOneLevelTwoLevelThree")
+        .def("foo", &LevelThree::foo, py::arg("input"))
         ;
 }
 

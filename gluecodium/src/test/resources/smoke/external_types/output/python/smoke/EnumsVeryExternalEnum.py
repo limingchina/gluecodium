@@ -14,8 +14,8 @@ import generated
 class EnumsVeryExternalEnum(Enum):
     """"""
 
-    FOO = generated.EnumsVeryExternalEnum.FOO
-    BAR = generated.EnumsVeryExternalEnum.BAR
+    FOO = generated.smoke_EnumsVeryExternalEnum.FOO
+    BAR = generated.smoke_EnumsVeryExternalEnum.BAR
 
     @property
     def _native(self):

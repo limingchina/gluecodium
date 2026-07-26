@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using KotlinInternalClass = ::smoke::KotlinInternalClass;
 
 
 void register_smoke_KotlinInternalClass(py::module_& module) {
-    py::class_<KotlinInternalClass, std::shared_ptr<KotlinInternalClass>>(module, "KotlinInternalClass")
+    py::class_<KotlinInternalClass, std::shared_ptr<KotlinInternalClass>>(module, "smoke_KotlinInternalClass")
         ;
 }
 

@@ -17,10 +17,10 @@ class FieldConstructorsNullableTypesStructWithParameters(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.FieldConstructorsNullableTypesStructWithParameters):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_FieldConstructorsNullableTypesStructWithParameters):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorsNullableTypesStructWithParameters(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_FieldConstructorsNullableTypesStructWithParameters(*[_unwrap(arg) for arg in args]))
 
 
     @property

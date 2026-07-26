@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,7 +22,7 @@ using LevelTwo = ::smoke::LevelOne::LevelTwo;
 
 
 void register_smoke_LevelOneLevelTwo(py::module_& module) {
-    py::class_<LevelTwo, std::shared_ptr<LevelTwo>>(module, "LevelOneLevelTwo")
+    py::class_<LevelTwo, std::shared_ptr<LevelTwo>>(module, "smoke_LevelOneLevelTwo")
         ;
 }
 

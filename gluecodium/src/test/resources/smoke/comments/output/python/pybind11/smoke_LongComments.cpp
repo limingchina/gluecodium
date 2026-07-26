@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using LongComments = ::smoke::LongComments;
 
 
 void register_smoke_LongComments(py::module_& module) {
-    py::class_<LongComments, std::shared_ptr<LongComments>>(module, "LongComments")
+    py::class_<LongComments, std::shared_ptr<LongComments>>(module, "smoke_LongComments")
+        .def("some_method_with_long_comment", &LongComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
         ;
 }
 

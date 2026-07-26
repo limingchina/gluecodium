@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class OuterStructInnerInterface(generated.OuterStructInnerInterface):
+class OuterStructInnerInterface(generated.smoke_OuterStructInnerInterface):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class OuterStructInnerInterface(generated.OuterStructInnerInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.OuterStructInnerInterface):
+        if native is not None and isinstance(native, generated.smoke_OuterStructInnerInterface):
             super().__init__(native)
         else:
             super().__init__()

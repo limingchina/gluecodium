@@ -21,6 +21,6 @@ class EnumsInTypeCollectionInterface(_NativeBase):
     @staticmethod
     def flip_enum_value(input: EnumsInTypeCollectionTCEnum) -> EnumsInTypeCollectionTCEnum:
         """"""
-        native_result = generated.EnumsInTypeCollectionInterface.flip_enum_value(_unwrap(input, EnumsInTypeCollectionTCEnum))
+        native_result = generated.smoke_EnumsInTypeCollectionInterface.flip_enum_value(_unwrap(input, EnumsInTypeCollectionTCEnum))
         return EnumsInTypeCollectionTCEnum(native_result)
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using StandaloneExternalEnum = ::smoke::StandaloneExternalEnum;
 
 void register_smoke_StandaloneExternalEnum(py::module_& module) {
-    py::enum_<StandaloneExternalEnum>(module, "StandaloneExternalEnum")
+    py::enum_<StandaloneExternalEnum>(module, "smoke_StandaloneExternalEnum")
         .value("FOO", StandaloneExternalEnum::foo)
         ;
 }

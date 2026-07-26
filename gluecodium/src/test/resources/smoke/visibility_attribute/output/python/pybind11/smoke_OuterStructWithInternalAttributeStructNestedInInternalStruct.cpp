@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using StructNestedInInternalStruct = ::smoke::OuterStructWithInternalAttribute::StructNestedInInternalStruct;
 
 void register_smoke_OuterStructWithInternalAttributeStructNestedInInternalStruct(py::module_& module) {
-    py::class_<StructNestedInInternalStruct>(module, "OuterStructWithInternalAttributeStructNestedInInternalStruct")
+    py::class_<StructNestedInInternalStruct>(module, "smoke_OuterStructWithInternalAttributeStructNestedInInternalStruct")
         .def_readwrite("some_field", &StructNestedInInternalStruct::some_field)
         .def(py::init<>())
-        .def(py::init<int32_t(), py::arg("some_field"))
+        .def(py::init<int32_t>(), py::arg("some_field"))
         ;
 }
 

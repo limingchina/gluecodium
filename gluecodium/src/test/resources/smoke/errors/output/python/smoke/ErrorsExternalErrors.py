@@ -14,9 +14,9 @@ import generated
 class ErrorsExternalErrors(Enum):
     """"""
 
-    NONE = generated.ErrorsExternalErrors.NONE
-    BOOM = generated.ErrorsExternalErrors.BOOM
-    BUST = generated.ErrorsExternalErrors.BUST
+    NONE = generated.smoke_ErrorsExternalErrors.NONE
+    BOOM = generated.smoke_ErrorsExternalErrors.BOOM
+    BUST = generated.smoke_ErrorsExternalErrors.BUST
 
     @property
     def _native(self):

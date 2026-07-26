@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using UnusedTopLevelEnum = ::smoke::UnusedTopLevelEnum;
 
 void register_smoke_UnusedTopLevelEnum(py::module_& module) {
-    py::enum_<UnusedTopLevelEnum>(module, "UnusedTopLevelEnum")
+    py::enum_<UnusedTopLevelEnum>(module, "smoke_UnusedTopLevelEnum")
         .value("DOESNT_WORK", UnusedTopLevelEnum::DOESNT_WORK)
         .value("CRASHED_ANYWAY", UnusedTopLevelEnum::CRASHED_ANYWAY)
         ;

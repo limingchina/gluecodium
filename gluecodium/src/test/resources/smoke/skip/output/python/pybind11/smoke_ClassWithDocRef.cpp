@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using ClassWithDocRef = ::smoke::ClassWithDocRef;
 
 
 void register_smoke_ClassWithDocRef(py::module_& module) {
-    py::class_<ClassWithDocRef, std::shared_ptr<ClassWithDocRef>>(module, "ClassWithDocRef")
+    py::class_<ClassWithDocRef, std::shared_ptr<ClassWithDocRef>>(module, "smoke_ClassWithDocRef")
         ;
 }
 

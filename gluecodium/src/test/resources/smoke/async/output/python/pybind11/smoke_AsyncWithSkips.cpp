@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,9 @@ using AsyncWithSkips = ::smoke::AsyncWithSkips;
 
 
 void register_smoke_AsyncWithSkips(py::module_& module) {
-    py::class_<AsyncWithSkips, std::shared_ptr<AsyncWithSkips>>(module, "AsyncWithSkips")
+    py::class_<AsyncWithSkips, std::shared_ptr<AsyncWithSkips>>(module, "smoke_AsyncWithSkips")
+        .def_static("make_shared_instance", py::overload_cast<const ::std::string&>(&AsyncWithSkips::make_shared_instance), py::arg("android_context"))
+        .def_static("make_shared_instance", py::overload_cast<>(&AsyncWithSkips::make_shared_instance))
         ;
 }
 

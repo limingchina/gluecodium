@@ -12,10 +12,10 @@ class DartInternalElementsSkipped(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DartInternalElementsSkipped):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DartInternalElementsSkipped):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartInternalElementsSkipped(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DartInternalElementsSkipped(*[_unwrap(arg) for arg in args]))
 
 
     @property

@@ -16,10 +16,10 @@ class PlatformNamesBasicStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.PlatformNamesBasicStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_PlatformNamesBasicStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.PlatformNamesBasicStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_PlatformNamesBasicStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -34,6 +34,6 @@ class PlatformNamesBasicStruct(_NativeBase):
     @staticmethod
     def make(basic_parameter: str) -> PlatformNamesBasicStruct:
         """"""
-        native_result = generated.PlatformNamesBasicStruct.make(_unwrap(basic_parameter, str))
+        native_result = generated.smoke_PlatformNamesBasicStruct.make(_unwrap(basic_parameter, str))
         return PlatformNamesBasicStruct(native_result)
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -29,7 +30,7 @@ public:
 };
 
 void register_smoke_MyParentInterface(py::module_& module) {
-    py::class_<MyParentInterface, std::shared_ptr<MyParentInterface>, MyParentInterfaceTrampoline>(module, "MyParentInterface")
+    py::class_<MyParentInterface, std::shared_ptr<MyParentInterface>, MyParentInterfaceTrampoline>(module, "smoke_MyParentInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

@@ -10,10 +10,10 @@ import generated
 class EnumWithAccessibleValues(Enum):
     """"""
 
-    FOO = generated.EnumWithAccessibleValues.FOO
-    BAR = generated.EnumWithAccessibleValues.BAR
-    BAZ = generated.EnumWithAccessibleValues.BAZ
-    FOO_ALIAS = generated.EnumWithAccessibleValues.FOO_ALIAS
+    FOO = generated.smoke_EnumWithAccessibleValues.FOO
+    BAR = generated.smoke_EnumWithAccessibleValues.BAR
+    BAZ = generated.smoke_EnumWithAccessibleValues.BAZ
+    FOO_ALIAS = generated.smoke_EnumWithAccessibleValues.FOO_ALIAS
 
     @property
     def _native(self):

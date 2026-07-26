@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,9 +22,8 @@ using fooInterface = ::smoke::fooInterface;
 
 
 void register_smoke_PlatformNamesInterface(py::module_& module) {
-    py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "PlatformNamesInterface")
-        .def(py::init<::std::string>(py::arg("basic_parameter")))
-
+    py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "smoke_PlatformNamesInterface")
+        .def("basic_method", &fooInterface::FooMethod, py::arg("basic_parameter"))
         .def_static("create", &fooInterface::make, py::arg("basic_parameter"))
         .def_property("basic_property", py::overload_cast<>(&fooInterface::GET_FOO_PROPERTY, py::const_), py::overload_cast<const uint32_t>(&fooInterface::SET_FOO_PROPERTY))
         ;

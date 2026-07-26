@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ namespace py = pybind11;
 using SkipFieldConstructorsClash = ::smoke::SkipFieldConstructorsClash;
 
 void register_smoke_SkipFieldConstructorsClash(py::module_& module) {
-    py::class_<SkipFieldConstructorsClash>(module, "SkipFieldConstructorsClash")
+    py::class_<SkipFieldConstructorsClash>(module, "smoke_SkipFieldConstructorsClash")
         .def_readwrite("param", &SkipFieldConstructorsClash::param)
         .def(py::init<>())
         ;

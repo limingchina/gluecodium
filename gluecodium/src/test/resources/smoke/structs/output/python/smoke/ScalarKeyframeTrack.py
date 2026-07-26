@@ -17,10 +17,10 @@ class ScalarKeyframeTrack(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.ScalarKeyframeTrack):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_ScalarKeyframeTrack):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ScalarKeyframeTrack(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_ScalarKeyframeTrack(*[_unwrap(arg) for arg in args]))
 
 
     @property

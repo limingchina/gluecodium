@@ -17,10 +17,10 @@ class MutableStructImmutableFieldsDefault(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.MutableStructImmutableFieldsDefault):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_MutableStructImmutableFieldsDefault):
             super().__init__(args[0])
         else:
-            super().__init__(generated.MutableStructImmutableFieldsDefault(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_MutableStructImmutableFieldsDefault(*[_unwrap(arg) for arg in args]))
 
 
     @property

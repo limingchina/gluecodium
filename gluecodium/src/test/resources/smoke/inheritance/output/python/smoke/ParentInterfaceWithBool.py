@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class ParentInterfaceWithBool(generated.ParentInterfaceWithBool):
+class ParentInterfaceWithBool(generated.smoke_ParentInterfaceWithBool):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class ParentInterfaceWithBool(generated.ParentInterfaceWithBool):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.ParentInterfaceWithBool):
+        if native is not None and isinstance(native, generated.smoke_ParentInterfaceWithBool):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,5 +29,5 @@ class ParentInterfaceWithBool(generated.ParentInterfaceWithBool):
 
     def root_method(self, input1: bool):
         """"""
-        return _wrap(generated.ParentInterfaceWithBool.root_method(self, _unwrap(input1, bool)), None)
+        return _wrap(generated.smoke_ParentInterfaceWithBool.root_method(self, _unwrap(input1, bool)), None)
 

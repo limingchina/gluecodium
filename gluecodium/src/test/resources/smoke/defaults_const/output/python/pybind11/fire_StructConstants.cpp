@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using StructConstants = ::fire::StructConstants;
 
 
 void register_fire_StructConstants(py::module_& module) {
-    py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "StructConstants")
+    py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "fire_StructConstants")
         ;
 }
 

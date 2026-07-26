@@ -2,12 +2,13 @@
 
 from smoke.SpecialNamesInterfaceCallback import SpecialNamesInterfaceCallback
 import typing
+from typing import Callable
 
 
 import generated
 
 
-class SpecialNamesInterface(generated.SpecialNamesInterface):
+class SpecialNamesInterface(generated.smoke_SpecialNamesInterface):
     """"""
 
     def __init__(self, native=None):
@@ -18,11 +19,11 @@ class SpecialNamesInterface(generated.SpecialNamesInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.SpecialNamesInterface):
+        if native is not None and isinstance(native, generated.smoke_SpecialNamesInterface):
             super().__init__(native)
         else:
             super().__init__()
         self._native = self
 
-    def dispatch(self, callback: SpecialNamesInterfaceCallback): ...
+    def dispatch(self, callback: Callable[[], None]): ...
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,9 +18,8 @@ namespace py = pybind11;
 using DeclarationOrderWithFunctions = ::smoke::DeclarationOrderWithFunctions;
 
 void register_smoke_DeclarationOrderWithFunctions(py::module_& module) {
-    py::class_<DeclarationOrderWithFunctions>(module, "DeclarationOrderWithFunctions")
+    py::class_<DeclarationOrderWithFunctions>(module, "smoke_DeclarationOrderWithFunctions")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

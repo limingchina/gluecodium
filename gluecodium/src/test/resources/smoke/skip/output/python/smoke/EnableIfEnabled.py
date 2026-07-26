@@ -20,35 +20,35 @@ class EnableIfEnabled(_NativeBase):
     @staticmethod
     def enable_if_unquoted():
         """"""
-        generated.EnableIfEnabled.enable_if_unquoted()
+        generated.smoke_EnableIfEnabled.enable_if_unquoted()
 
     @staticmethod
     def enable_if_unquoted_list():
         """"""
-        generated.EnableIfEnabled.enable_if_unquoted_list()
+        generated.smoke_EnableIfEnabled.enable_if_unquoted_list()
 
     @staticmethod
     def enable_if_quoted():
         """"""
-        generated.EnableIfEnabled.enable_if_quoted()
+        generated.smoke_EnableIfEnabled.enable_if_quoted()
 
     @staticmethod
     def enable_if_quoted_list():
         """"""
-        generated.EnableIfEnabled.enable_if_quoted_list()
+        generated.smoke_EnableIfEnabled.enable_if_quoted_list()
 
     @staticmethod
     def enable_if_tagged():
         """"""
-        generated.EnableIfEnabled.enable_if_tagged()
+        generated.smoke_EnableIfEnabled.enable_if_tagged()
 
     @staticmethod
     def enable_if_tagged_list():
         """"""
-        generated.EnableIfEnabled.enable_if_tagged_list()
+        generated.smoke_EnableIfEnabled.enable_if_tagged_list()
 
     @staticmethod
     def enable_if_mixed_list():
         """"""
-        generated.EnableIfEnabled.enable_if_mixed_list()
+        generated.smoke_EnableIfEnabled.enable_if_mixed_list()
 

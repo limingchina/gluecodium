@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,8 @@ using NestedReferences = ::smoke::NestedReferences;
 
 
 void register_smoke_NestedReferences(py::module_& module) {
-    py::class_<NestedReferences, std::shared_ptr<NestedReferences>>(module, "NestedReferences")
+    py::class_<NestedReferences, std::shared_ptr<NestedReferences>>(module, "smoke_NestedReferences")
+        .def("inside_out", &NestedReferences::inside_out, py::arg("struct1"), py::arg("struct2"))
         ;
 }
 

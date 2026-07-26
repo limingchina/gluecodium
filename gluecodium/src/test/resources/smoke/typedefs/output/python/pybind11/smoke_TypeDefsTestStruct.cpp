@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using TestStruct = ::smoke::TypeDefs::TestStruct;
 
 void register_smoke_TypeDefsTestStruct(py::module_& module) {
-    py::class_<TestStruct>(module, "TypeDefsTestStruct")
+    py::class_<TestStruct>(module, "smoke_TypeDefsTestStruct")
         .def_readwrite("something", &TestStruct::something)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("something"))
+        .def(py::init<::std::string>(), py::arg("something"))
         ;
 }
 

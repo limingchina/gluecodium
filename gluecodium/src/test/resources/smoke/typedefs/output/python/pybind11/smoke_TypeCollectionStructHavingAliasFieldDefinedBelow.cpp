@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using StructHavingAliasFieldDefinedBelow = ::smoke::TypeCollection::StructHavingAliasFieldDefinedBelow;
 
 void register_smoke_TypeCollectionStructHavingAliasFieldDefinedBelow(py::module_& module) {
-    py::class_<StructHavingAliasFieldDefinedBelow>(module, "TypeCollectionStructHavingAliasFieldDefinedBelow")
+    py::class_<StructHavingAliasFieldDefinedBelow>(module, "smoke_TypeCollectionStructHavingAliasFieldDefinedBelow")
         .def_readwrite("field", &StructHavingAliasFieldDefinedBelow::field)
         .def(py::init<>())
-        .def(py::init<uint64_t(), py::arg("field"))
+        .def(py::init<uint64_t>(), py::arg("field"))
         ;
 }
 

@@ -25,7 +25,7 @@ class PlatformNamesInterface(_NativeBase):
     @staticmethod
     def create(basic_parameter: str) -> PlatformNamesInterface:
         """"""
-        native_result = generated.PlatformNamesInterface.create(_unwrap(basic_parameter, str))
+        native_result = generated.smoke_PlatformNamesInterface.create(_unwrap(basic_parameter, str))
         return PlatformNamesInterface(native_result)
 
     @property

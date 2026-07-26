@@ -17,10 +17,10 @@ class DateDefaultsAliased(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DateDefaultsAliased):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DateDefaultsAliased):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DateDefaultsAliased(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DateDefaultsAliased(*[_unwrap(arg) for arg in args]))
 
 
     @property

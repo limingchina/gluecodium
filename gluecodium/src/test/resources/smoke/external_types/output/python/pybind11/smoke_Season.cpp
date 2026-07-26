@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using Season = ::smoke::Season;
 
 void register_smoke_Season(py::module_& module) {
-    py::enum_<Season>(module, "Season")
+    py::enum_<Season>(module, "smoke_Season")
         .value("WINTER", Season::WINTER)
         .value("SPRING", Season::SPRING)
         .value("SUMMER", Season::SUMMER)

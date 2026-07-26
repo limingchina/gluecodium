@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,10 +19,9 @@ using NoCacheClass = ::smoke::NoCacheClass;
 
 
 void register_smoke_NoCacheClass(py::module_& module) {
-    py::class_<NoCacheClass, std::shared_ptr<NoCacheClass>>(module, "NoCacheClass")
-        .def(py::init<>())
-
+    py::class_<NoCacheClass, std::shared_ptr<NoCacheClass>>(module, "smoke_NoCacheClass")
         .def_static("make", &NoCacheClass::make)
+        .def("foo", &NoCacheClass::foo)
         ;
 }
 

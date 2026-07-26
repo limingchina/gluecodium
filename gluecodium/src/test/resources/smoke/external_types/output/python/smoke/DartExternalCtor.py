@@ -16,10 +16,10 @@ class DartExternalCtor(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DartExternalCtor):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DartExternalCtor):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartExternalCtor(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DartExternalCtor(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -34,6 +34,6 @@ class DartExternalCtor(_NativeBase):
     @staticmethod
     def make(field: str) -> DartExternalCtor:
         """"""
-        native_result = generated.DartExternalCtor.make(_unwrap(field, str))
+        native_result = generated.smoke_DartExternalCtor.make(_unwrap(field, str))
         return DartExternalCtor(native_result)
 

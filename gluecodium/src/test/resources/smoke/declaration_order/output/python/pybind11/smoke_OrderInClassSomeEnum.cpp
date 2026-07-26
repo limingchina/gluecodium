@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SomeEnum = ::smoke::OrderInClass::SomeEnum;
 
 void register_smoke_OrderInClassSomeEnum(py::module_& module) {
-    py::enum_<SomeEnum>(module, "OrderInClassSomeEnum")
+    py::enum_<SomeEnum>(module, "smoke_OrderInClassSomeEnum")
         .value("FOO", SomeEnum::FOO)
         .value("BAR", SomeEnum::BAR)
         ;

@@ -16,10 +16,10 @@ class FieldConstructorWithDeprecationOnly(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.FieldConstructorWithDeprecationOnly):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_FieldConstructorWithDeprecationOnly):
             super().__init__(args[0])
         else:
-            super().__init__(generated.FieldConstructorWithDeprecationOnly(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_FieldConstructorWithDeprecationOnly(*[_unwrap(arg) for arg in args]))
 
 
     @property

@@ -14,8 +14,8 @@ import generated
 class ValidationUtilsValidationErrorCode(Enum):
     """"""
 
-    NONE = generated.ValidationUtilsValidationErrorCode.NONE
-    VALIDATION_FAILED = generated.ValidationUtilsValidationErrorCode.VALIDATION_FAILED
+    NONE = generated.smoke_ValidationUtilsValidationErrorCode.NONE
+    VALIDATION_FAILED = generated.smoke_ValidationUtilsValidationErrorCode.VALIDATION_FAILED
 
     @property
     def _native(self):

@@ -14,8 +14,8 @@ import generated
 class SkipEnumeratorAutoTag(Enum):
     """"""
 
-    ONE = generated.SkipEnumeratorAutoTag.ONE
-    THREE = generated.SkipEnumeratorAutoTag.THREE
+    ONE = generated.smoke_SkipEnumeratorAutoTag.ONE
+    THREE = generated.smoke_SkipEnumeratorAutoTag.THREE
 
     @property
     def _native(self):

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using SkipMixed = ::smoke::SkipMixed;
 
 
 void register_smoke_SkipMixed(py::module_& module) {
-    py::class_<SkipMixed, std::shared_ptr<SkipMixed>>(module, "SkipMixed")
+    py::class_<SkipMixed, std::shared_ptr<SkipMixed>>(module, "smoke_SkipMixed")
         ;
 }
 

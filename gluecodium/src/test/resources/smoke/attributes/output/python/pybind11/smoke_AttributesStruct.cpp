@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,11 @@ namespace py = pybind11;
 using AttributesStruct = ::smoke::AttributesStruct;
 
 void register_smoke_AttributesStruct(py::module_& module) {
-    py::class_<AttributesStruct>(module, "AttributesStruct")
+    py::class_<AttributesStruct>(module, "smoke_AttributesStruct")
         .def_readwrite("field", &AttributesStruct::field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("field"))
+        .def(py::init<::std::string>(), py::arg("field"))
+        .def("very_fun", &AttributesStruct::very_fun, py::arg("param"))
         ;
 }
 

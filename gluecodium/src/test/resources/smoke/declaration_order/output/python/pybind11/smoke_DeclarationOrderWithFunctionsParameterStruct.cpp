@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using ParameterStruct = ::smoke::DeclarationOrderWithFunctions::ParameterStruct;
 
 void register_smoke_DeclarationOrderWithFunctionsParameterStruct(py::module_& module) {
-    py::class_<ParameterStruct>(module, "DeclarationOrderWithFunctionsParameterStruct")
+    py::class_<ParameterStruct>(module, "smoke_DeclarationOrderWithFunctionsParameterStruct")
         .def_readwrite("some_field", &ParameterStruct::some_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("some_field"))
+        .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 }
 

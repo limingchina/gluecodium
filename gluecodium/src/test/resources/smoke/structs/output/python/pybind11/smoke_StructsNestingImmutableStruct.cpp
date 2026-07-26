@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,9 +17,9 @@ namespace py = pybind11;
 using NestingImmutableStruct = ::smoke::Structs::NestingImmutableStruct;
 
 void register_smoke_StructsNestingImmutableStruct(py::module_& module) {
-    py::class_<NestingImmutableStruct>(module, "StructsNestingImmutableStruct")
+    py::class_<NestingImmutableStruct>(module, "smoke_StructsNestingImmutableStruct")
         .def_readonly("struct_field", &NestingImmutableStruct::struct_field)
-        .def(py::init<::smoke::Structs::AllTypesStruct(), py::arg("struct_field"))
+        .def(py::init<::smoke::Structs::AllTypesStruct>(), py::arg("struct_field"))
         ;
 }
 

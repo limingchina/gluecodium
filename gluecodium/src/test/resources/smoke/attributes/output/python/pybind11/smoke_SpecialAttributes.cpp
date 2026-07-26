@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,9 @@ using SpecialAttributes = ::smoke::SpecialAttributes;
 
 
 void register_smoke_SpecialAttributes(py::module_& module) {
-    py::class_<SpecialAttributes, std::shared_ptr<SpecialAttributes>>(module, "SpecialAttributes")
+    py::class_<SpecialAttributes, std::shared_ptr<SpecialAttributes>>(module, "smoke_SpecialAttributes")
+        .def("with_escaping", &SpecialAttributes::with_escaping)
+        .def("with_line_break", &SpecialAttributes::with_line_break)
         ;
 }
 

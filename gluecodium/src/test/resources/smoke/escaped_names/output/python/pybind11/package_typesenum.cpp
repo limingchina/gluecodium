@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using Enum = ::package::Types::Enum;
 
 void register_package_typesenum(py::module_& module) {
-    py::enum_<Enum>(module, "typesenum")
+    py::enum_<Enum>(module, "package_typesenum")
         .value("NA_N", Enum::NA_N)
         ;
 }

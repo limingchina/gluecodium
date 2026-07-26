@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using JavaInternalClass = ::smoke::JavaInternalClass;
 
 
 void register_smoke_JavaInternalClass(py::module_& module) {
-    py::class_<JavaInternalClass, std::shared_ptr<JavaInternalClass>>(module, "JavaInternalClass")
+    py::class_<JavaInternalClass, std::shared_ptr<JavaInternalClass>>(module, "smoke_JavaInternalClass")
         ;
 }
 

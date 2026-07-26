@@ -14,8 +14,8 @@ import generated
 class FreeEnum(Enum):
     """"""
 
-    FOO = generated.FreeEnum.FOO
-    BAR = generated.FreeEnum.BAR
+    FOO = generated.smoke_FreeEnum.FOO
+    BAR = generated.smoke_FreeEnum.BAR
 
     @property
     def _native(self):

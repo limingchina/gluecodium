@@ -16,10 +16,10 @@ class CommentsTypeCollectionTypeCollectionStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.CommentsTypeCollectionTypeCollectionStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_CommentsTypeCollectionTypeCollectionStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.CommentsTypeCollectionTypeCollectionStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_CommentsTypeCollectionTypeCollectionStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

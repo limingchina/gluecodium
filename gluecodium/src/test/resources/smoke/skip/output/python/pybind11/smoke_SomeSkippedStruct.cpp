@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,10 +20,10 @@ namespace py = pybind11;
 using SomeSkippedStruct = ::smoke::SomeSkippedStruct;
 
 void register_smoke_SomeSkippedStruct(py::module_& module) {
-    py::class_<SomeSkippedStruct>(module, "SomeSkippedStruct")
+    py::class_<SomeSkippedStruct>(module, "smoke_SomeSkippedStruct")
         .def_readwrite("field", &SomeSkippedStruct::field)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::smoke::SomeSkippedEnum >(), py::arg("field"))
+        .def(py::init<::std::vector< ::smoke::SomeSkippedEnum >>(), py::arg("field"))
         ;
 }
 

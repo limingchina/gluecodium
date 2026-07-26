@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class SimpleInterface(generated.SimpleInterface):
+class SimpleInterface(generated.smoke_SimpleInterface):
     """"""
 
     def __init__(self, native=None):
@@ -17,7 +17,7 @@ class SimpleInterface(generated.SimpleInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.SimpleInterface):
+        if native is not None and isinstance(native, generated.smoke_SimpleInterface):
             super().__init__(native)
         else:
             super().__init__()

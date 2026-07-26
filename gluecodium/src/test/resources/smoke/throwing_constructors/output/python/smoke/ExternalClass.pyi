@@ -9,7 +9,7 @@ import typing
 import generated
 
 
-class ExternalClass(generated.ExternalClass):
+class ExternalClass(generated.smoke_ExternalClass):
     """"""
 
     def __init__(self, native=None):
@@ -19,7 +19,7 @@ class ExternalClass(generated.ExternalClass):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ExternalClass):
+        if native is not None and isinstance(native, generated.smoke_ExternalClass):
             super().__init__(native)
         else:
             super().__init__()

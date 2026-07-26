@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class InnerClassForwardDeclarationsInnerClass1(generated.InnerClassForwardDeclarationsInnerClass1):
+class InnerClassForwardDeclarationsInnerClass1(generated.smoke_forward_InnerClassForwardDeclarationsInnerClass1):
     """"""
 
     def __init__(self, native=None):
@@ -16,7 +16,7 @@ class InnerClassForwardDeclarationsInnerClass1(generated.InnerClassForwardDeclar
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.InnerClassForwardDeclarationsInnerClass1):
+        if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarationsInnerClass1):
             super().__init__(native)
         else:
             super().__init__()

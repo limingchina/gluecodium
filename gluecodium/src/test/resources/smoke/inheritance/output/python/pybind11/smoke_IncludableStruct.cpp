@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using IncludableStruct = ::smoke::IncludableStruct;
 
 void register_smoke_IncludableStruct(py::module_& module) {
-    py::class_<IncludableStruct>(module, "IncludableStruct")
+    py::class_<IncludableStruct>(module, "smoke_IncludableStruct")
         .def_readwrite("field", &IncludableStruct::field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("field"))
+        .def(py::init<::std::string>(), py::arg("field"))
         ;
 }
 

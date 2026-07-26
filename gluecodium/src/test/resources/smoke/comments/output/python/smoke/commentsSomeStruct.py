@@ -16,10 +16,10 @@ class commentsSomeStruct(_NativeBase):
     """This is some very useful struct."""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.commentsSomeStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_commentsSomeStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.commentsSomeStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_commentsSomeStruct(*[_unwrap(arg) for arg in args]))
 
     How useful this struct is
     remains to be seen
@@ -50,5 +50,5 @@ remains to be seen"""
     @staticmethod
     def some_static_struct_method():
         """This is some static struct method that does nothing."""
-        generated.commentsSomeStruct.some_static_struct_method()
+        generated.smoke_commentsSomeStruct.some_static_struct_method()
 

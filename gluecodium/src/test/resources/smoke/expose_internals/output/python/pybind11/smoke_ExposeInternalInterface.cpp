@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -29,7 +30,7 @@ public:
 };
 
 void register_smoke_ExposeInternalInterface(py::module_& module) {
-    py::class_<ExposeInternalInterface, std::shared_ptr<ExposeInternalInterface>, ExposeInternalInterfaceTrampoline>(module, "ExposeInternalInterface")
+    py::class_<ExposeInternalInterface, std::shared_ptr<ExposeInternalInterface>, ExposeInternalInterfaceTrampoline>(module, "smoke_ExposeInternalInterface")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

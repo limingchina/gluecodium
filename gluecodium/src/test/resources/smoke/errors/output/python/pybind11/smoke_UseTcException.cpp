@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using UseTcException = ::smoke::UseTcException;
 
 
 void register_smoke_UseTcException(py::module_& module) {
-    py::class_<UseTcException, std::shared_ptr<UseTcException>>(module, "UseTcException")
+    py::class_<UseTcException, std::shared_ptr<UseTcException>>(module, "smoke_UseTcException")
+        .def("do_nothing", &UseTcException::do_nothing)
         ;
 }
 

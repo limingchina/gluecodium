@@ -16,10 +16,10 @@ class LocalesLocaleStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.LocalesLocaleStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_LocalesLocaleStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.LocalesLocaleStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_LocalesLocaleStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

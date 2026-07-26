@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,11 +18,12 @@ namespace py = pybind11;
 using ConstantDefaults = ::smoke::ConstantDefaults;
 
 void register_smoke_ConstantDefaults(py::module_& module) {
-    py::class_<ConstantDefaults>(module, "ConstantDefaults")
+    py::class_<ConstantDefaults>(module, "smoke_ConstantDefaults")
         .def_readwrite("field1", &ConstantDefaults::field1)
         .def_readwrite("field2", &ConstantDefaults::field2)
         .def(py::init<>())
-        .def(py::init<::fire::SomeStruct, ::fire::SomeStruct(), py::arg("field1"), py::arg("field2"))
+        .def(py::init<::fire::SomeStruct, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
+        .def(py::init<::fire::SomeStruct, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;
 }
 

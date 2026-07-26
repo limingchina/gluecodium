@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using ExampleErrorCode = ::namerules::NameRules::ExampleErrorCode;
 
 void register_namerules_NameRulesExampleErrorCode(py::module_& module) {
-    py::enum_<ExampleErrorCode>(module, "NameRulesExampleErrorCode")
+    py::enum_<ExampleErrorCode>(module, "namerules_NameRulesExampleErrorCode")
         .value("NONE", ExampleErrorCode::NONE)
         .value("FATAL", ExampleErrorCode::FATAL)
         ;

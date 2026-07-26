@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -29,10 +30,11 @@ namespace py = pybind11;
 using OuterStruct = ::smoke::OuterStruct;
 
 void register_smoke_OuterStruct(py::module_& module) {
-    py::class_<OuterStruct>(module, "OuterStruct")
+    py::class_<OuterStruct>(module, "smoke_OuterStruct")
         .def_readwrite("field", &OuterStruct::field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("field"))
+        .def(py::init<::std::string>(), py::arg("field"))
+        .def("do_nothing", &OuterStruct::do_nothing)
         ;
 }
 

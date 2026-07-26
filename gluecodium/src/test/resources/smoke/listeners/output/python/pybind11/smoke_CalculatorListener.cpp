@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -90,7 +91,7 @@ public:
 };
 
 void register_smoke_CalculatorListener(py::module_& module) {
-    py::class_<CalculatorListener, std::shared_ptr<CalculatorListener>, CalculatorListenerTrampoline>(module, "CalculatorListener")
+    py::class_<CalculatorListener, std::shared_ptr<CalculatorListener>, CalculatorListenerTrampoline>(module, "smoke_CalculatorListener")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -103,6 +104,24 @@ void register_smoke_CalculatorListener(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("on_calculation_result", [](CalculatorListener& self, const double calculation_result) {
+            return self.on_calculation_result(calculation_result);
+        }, py::arg("calculation_result"))
+        .def("on_calculation_result_const", [](CalculatorListener& self, const double calculation_result) {
+            return self.on_calculation_result_const(calculation_result);
+        }, py::arg("calculation_result"))
+        .def("on_calculation_result_struct", [](CalculatorListener& self, const ::smoke::CalculatorListener::ResultStruct& calculation_result) {
+            return self.on_calculation_result_struct(calculation_result);
+        }, py::arg("calculation_result"))
+                .def("on_calculation_result_array", [](CalculatorListener& self, py::handle calculation_result) {
+                        self.on_calculation_result_array(gluecodium::python::from_python_regular<::std::vector< double >>(calculation_result));
+                }, py::arg("calculation_result"))
+                .def("on_calculation_result_map", [](CalculatorListener& self, py::handle calculation_results) {
+                        self.on_calculation_result_map(gluecodium::python::from_python_regular<::std::unordered_map< ::std::string, double >>(calculation_results));
+                }, py::arg("calculation_results"))
+        .def("on_calculation_result_instance", [](CalculatorListener& self, const ::std::shared_ptr< ::smoke::CalculationResult >& calculation_result) {
+            return self.on_calculation_result_instance(calculation_result);
+        }, py::arg("calculation_result"))
         ;
 }
 

@@ -10,7 +10,7 @@ from smoke.InterfaceWithLambda import InterfaceWithLambda
 import generated
 
 
-class ChildClassWithLambda(generated.ChildClassWithLambda):
+class ChildClassWithLambda(generated.smoke_ChildClassWithLambda):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class ChildClassWithLambda(generated.ChildClassWithLambda):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassWithLambda):
+        if native is not None and isinstance(native, generated.smoke_ChildClassWithLambda):
             super().__init__(native)
         else:
             super().__init__()

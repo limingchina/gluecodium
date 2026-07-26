@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class ChildClassFromInterface(generated.ChildClassFromInterface):
+class ChildClassFromInterface(generated.smoke_ChildClassFromInterface):
     """"""
 
     def __init__(self, native=None):
@@ -16,7 +16,7 @@ class ChildClassFromInterface(generated.ChildClassFromInterface):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassFromInterface):
+        if native is not None and isinstance(native, generated.smoke_ChildClassFromInterface):
             super().__init__(native)
         else:
             super().__init__()

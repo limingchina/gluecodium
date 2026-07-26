@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,7 @@ using JavaInternalProperty = ::smoke::JavaInternalProperty;
 
 
 void register_smoke_JavaInternalProperty(py::module_& module) {
-    py::class_<JavaInternalProperty, std::shared_ptr<JavaInternalProperty>>(module, "JavaInternalProperty")
+    py::class_<JavaInternalProperty, std::shared_ptr<JavaInternalProperty>>(module, "smoke_JavaInternalProperty")
         .def_property("app_context", py::overload_cast<>(&JavaInternalProperty::get_app_context, py::const_), py::overload_cast<const std::optional< ::std::string >&>(&JavaInternalProperty::set_app_context))
         ;
 }

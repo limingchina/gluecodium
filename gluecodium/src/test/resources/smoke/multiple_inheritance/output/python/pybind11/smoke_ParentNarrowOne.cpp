@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -54,7 +55,7 @@ public:
 };
 
 void register_smoke_ParentNarrowOne(py::module_& module) {
-    py::class_<ParentNarrowOne, std::shared_ptr<ParentNarrowOne>, ParentNarrowOneTrampoline>(module, "ParentNarrowOne")
+    py::class_<ParentNarrowOne, std::shared_ptr<ParentNarrowOne>, ParentNarrowOneTrampoline>(module, "smoke_ParentNarrowOne")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -67,6 +68,9 @@ void register_smoke_ParentNarrowOne(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("parent_function_one", [](ParentNarrowOne& self) {
+            return self.parent_function_one();
+        })
         .def_property("parent_property_one", [](const ParentNarrowOne& self) {
             return self.get_parent_property_one();
         }, [](ParentNarrowOne& self, const ::std::string& value) {

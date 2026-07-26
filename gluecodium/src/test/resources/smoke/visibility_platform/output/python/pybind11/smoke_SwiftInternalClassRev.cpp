@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using SwiftInternalClassRev = ::smoke::SwiftInternalClassRev;
 
 
 void register_smoke_SwiftInternalClassRev(py::module_& module) {
-    py::class_<SwiftInternalClassRev, std::shared_ptr<SwiftInternalClassRev>>(module, "SwiftInternalClassRev")
+    py::class_<SwiftInternalClassRev, std::shared_ptr<SwiftInternalClassRev>>(module, "smoke_SwiftInternalClassRev")
         ;
 }
 

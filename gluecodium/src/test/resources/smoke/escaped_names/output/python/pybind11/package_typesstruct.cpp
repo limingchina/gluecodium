@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using Struct = ::package::Types::Struct;
 
 void register_package_typesstruct(py::module_& module) {
-    py::class_<Struct>(module, "typesstruct")
+    py::class_<Struct>(module, "package_typesstruct")
         .def_readwrite("null", &Struct::null)
         .def(py::init<>())
-        .def(py::init<::package::Types::Enum(), py::arg("null"))
+        .def(py::init<::package::Types::Enum>(), py::arg("null"))
         ;
 }
 

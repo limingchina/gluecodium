@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class PlatformInternalInterface(generated.PlatformInternalInterface):
+class PlatformInternalInterface(generated.smoke_PlatformInternalInterface):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class PlatformInternalInterface(generated.PlatformInternalInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.PlatformInternalInterface):
+        if native is not None and isinstance(native, generated.smoke_PlatformInternalInterface):
             super().__init__(native)
         else:
             super().__init__()

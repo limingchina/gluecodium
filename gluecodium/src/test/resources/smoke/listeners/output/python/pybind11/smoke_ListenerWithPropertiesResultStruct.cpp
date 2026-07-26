@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using ResultStruct = ::smoke::ListenerWithProperties::ResultStruct;
 
 void register_smoke_ListenerWithPropertiesResultStruct(py::module_& module) {
-    py::class_<ResultStruct>(module, "ListenerWithPropertiesResultStruct")
+    py::class_<ResultStruct>(module, "smoke_ListenerWithPropertiesResultStruct")
         .def_readwrite("result", &ResultStruct::result)
         .def(py::init<>())
-        .def(py::init<double(), py::arg("result"))
+        .def(py::init<double>(), py::arg("result"))
         ;
 }
 

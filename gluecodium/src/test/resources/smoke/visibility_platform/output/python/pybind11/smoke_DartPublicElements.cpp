@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,11 @@ namespace py = pybind11;
 using DartPublicElements = ::smoke::DartPublicElements;
 
 void register_smoke_DartPublicElements(py::module_& module) {
-    py::class_<DartPublicElements>(module, "DartPublicElements")
+    py::class_<DartPublicElements>(module, "smoke_DartPublicElements")
         .def_readwrite("string_field", &DartPublicElements::string_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("string_field"))
+        .def(py::init<::std::string>(), py::arg("string_field"))
+        .def("foo", &DartPublicElements::foo)
         ;
 }
 

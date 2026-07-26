@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,13 +18,16 @@ namespace py = pybind11;
 using Rectangle = ::smoke::Rectangle;
 
 void register_smoke_Rectangle(py::module_& module) {
-    py::class_<Rectangle>(module, "Rectangle")
+    py::class_<Rectangle>(module, "smoke_Rectangle")
         .def_readwrite("left", &Rectangle::left)
         .def_readwrite("top", &Rectangle::top)
         .def_readwrite("width", &Rectangle::width)
         .def_readwrite("height", &Rectangle::height)
         .def(py::init<>())
-        .def(py::init<int32_t, int32_t, int32_t, int32_t(), py::arg("left"), py::arg("top"), py::arg("width"), py::arg("height"))
+        .def(py::init<int32_t, int32_t, int32_t, int32_t>(), py::arg("left"), py::arg("top"), py::arg("width"), py::arg("height"))
+        .def(py::init<int32_t, int32_t, int32_t, int32_t>(), py::arg("left"), py::arg("top"), py::arg("width"), py::arg("height"))
+        .def(py::init<int32_t, int32_t, int32_t, int32_t>(), py::arg("left"), py::arg("top"), py::arg("width"), py::arg("height"))
+        .def(py::init<int32_t, int32_t, int32_t, int32_t>(), py::arg("left"), py::arg("top"), py::arg("width"), py::arg("height"))
         ;
 }
 

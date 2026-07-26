@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using Persistence = ::smoke::Persistence;
 
 void register_smoke_Persistence(py::module_& module) {
-    py::enum_<Persistence>(module, "Persistence")
+    py::enum_<Persistence>(module, "smoke_Persistence")
         .value("NONE", Persistence::NONE)
         .value("FOR_SESSION", Persistence::FOR_SESSION)
         .value("PERMANENT", Persistence::PERMANENT)

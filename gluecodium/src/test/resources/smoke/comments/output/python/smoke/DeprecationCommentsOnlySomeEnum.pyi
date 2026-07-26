@@ -10,7 +10,7 @@ import generated
 class DeprecationCommentsOnlySomeEnum(Enum):
     """"""
 
-    USELESS = generated.DeprecationCommentsOnlySomeEnum.USELESS
+    USELESS = generated.smoke_DeprecationCommentsOnlySomeEnum.USELESS
 
     @property
     def _native(self):

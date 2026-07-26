@@ -22,34 +22,34 @@ class TypeDefs(_NativeBase):
     @staticmethod
     def method_with_primitive_type_def(input: float) -> float:
         """"""
-        return generated.TypeDefs.method_with_primitive_type_def(_unwrap(input, float))
+        return generated.smoke_TypeDefs.method_with_primitive_type_def(_unwrap(input, float))
 
     @staticmethod
     def method_with_complex_type_def(input: list[TypeDefsTestStruct]) -> list[TypeDefsTestStruct]:
         """"""
-        return _wrap(generated.TypeDefs.method_with_complex_type_def(_unwrap(input, list[TypeDefsTestStruct])), list[TypeDefsTestStruct])
+        return _wrap(generated.smoke_TypeDefs.method_with_complex_type_def(_unwrap(input, list[TypeDefsTestStruct])), list[TypeDefsTestStruct])
 
     @staticmethod
     def return_nested_int_type_def(input: float) -> float:
         """"""
-        return generated.TypeDefs.return_nested_int_type_def(_unwrap(input, float))
+        return generated.smoke_TypeDefs.return_nested_int_type_def(_unwrap(input, float))
 
     @staticmethod
     def return_test_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
         """"""
-        native_result = generated.TypeDefs.return_test_struct_type_def(_unwrap(input, TypeDefsTestStruct))
+        native_result = generated.smoke_TypeDefs.return_test_struct_type_def(_unwrap(input, TypeDefsTestStruct))
         return TypeDefsTestStruct(native_result)
 
     @staticmethod
     def return_nested_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
         """"""
-        native_result = generated.TypeDefs.return_nested_struct_type_def(_unwrap(input, TypeDefsTestStruct))
+        native_result = generated.smoke_TypeDefs.return_nested_struct_type_def(_unwrap(input, TypeDefsTestStruct))
         return TypeDefsTestStruct(native_result)
 
     @staticmethod
     def return_type_def_point_from_type_collection(input: TypeCollectionPoint) -> TypeCollectionPoint:
         """"""
-        native_result = generated.TypeDefs.return_type_def_point_from_type_collection(_unwrap(input, TypeCollectionPoint))
+        native_result = generated.smoke_TypeDefs.return_type_def_point_from_type_collection(_unwrap(input, TypeCollectionPoint))
         return TypeCollectionPoint(native_result)
 
     @property

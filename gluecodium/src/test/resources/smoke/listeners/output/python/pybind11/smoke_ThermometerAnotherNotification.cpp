@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -13,7 +14,7 @@ namespace py = pybind11;
 
 
 void register_smoke_ThermometerAnotherNotification(py::module_& module) {
-    static py::exception<::std::error_code> exc(module, "ThermometerAnotherNotification");
+    static py::exception<::std::error_code> exc(module, "smoke_ThermometerAnotherNotification");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);

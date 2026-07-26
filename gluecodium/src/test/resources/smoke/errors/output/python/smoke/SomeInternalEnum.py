@@ -14,10 +14,10 @@ import generated
 class SomeInternalEnum(Enum):
     """"""
 
-    ONE = generated.SomeInternalEnum.ONE
-    TWO = generated.SomeInternalEnum.TWO
-    THREE = generated.SomeInternalEnum.THREE
-    SINGLE = generated.SomeInternalEnum.SINGLE
+    ONE = generated.smoke_SomeInternalEnum.ONE
+    TWO = generated.smoke_SomeInternalEnum.TWO
+    THREE = generated.smoke_SomeInternalEnum.THREE
+    SINGLE = generated.smoke_SomeInternalEnum.SINGLE
 
     @property
     def _native(self):

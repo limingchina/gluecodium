@@ -14,7 +14,7 @@ import generated
 class AsyncErrorCode(Enum):
     """"""
 
-    VALUE1 = generated.AsyncErrorCode.VALUE1
+    VALUE1 = generated.smoke_AsyncErrorCode.VALUE1
 
     @property
     def _native(self):

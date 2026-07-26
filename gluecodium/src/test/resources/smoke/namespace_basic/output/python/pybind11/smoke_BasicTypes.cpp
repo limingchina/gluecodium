@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,9 +18,8 @@ namespace py = pybind11;
 using BasicTypes = ::root::space::smoke::BasicTypes;
 
 void register_smoke_BasicTypes(py::module_& module) {
-    py::class_<BasicTypes>(module, "BasicTypes")
+    py::class_<BasicTypes>(module, "smoke_BasicTypes")
         .def(py::init<>())
-        .def(py::init<(), )
         ;
 }
 

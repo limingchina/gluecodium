@@ -21,5 +21,5 @@ class Enums(_NativeBase):
     @staticmethod
     def method_with_external_enum(input: EnumsExternal_Enum):
         """"""
-        generated.Enums.method_with_external_enum(_unwrap(input, EnumsExternal_Enum))
+        generated.smoke_Enums.method_with_external_enum(_unwrap(input, EnumsExternal_Enum))
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,12 +18,10 @@ namespace py = pybind11;
 using PublicStructWithInternalConstructors = ::smoke::PublicStructWithInternalConstructors;
 
 void register_smoke_PublicStructWithInternalConstructors(py::module_& module) {
-    py::class_<PublicStructWithInternalConstructors>(module, "PublicStructWithInternalConstructors")
+    py::class_<PublicStructWithInternalConstructors>(module, "smoke_PublicStructWithInternalConstructors")
         .def_readwrite("some_var", &PublicStructWithInternalConstructors::some_var)
         .def(py::init<>())
-        .def(py::init<int32_t(), py::arg("some_var"))
-        .def(py::init<>())
-
+        .def(py::init<int32_t>(), py::arg("some_var"))
         .def_static("make", &PublicStructWithInternalConstructors::make)
         ;
 }

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using EnumOptionSetComments = ::smoke::EnumOptionSetComments;
 
 void register_smoke_EnumOptionSetComments(py::module_& module) {
-    py::enum_<EnumOptionSetComments>(module, "EnumOptionSetComments")
+    py::enum_<EnumOptionSetComments>(module, "smoke_EnumOptionSetComments")
         .value("ONE", EnumOptionSetComments::ONE)
         .value("TWO", EnumOptionSetComments::TWO)
         .value("THREE", EnumOptionSetComments::THREE)

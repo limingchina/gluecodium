@@ -10,9 +10,9 @@ import generated
 class ErrorsInterfaceExternalErrors(Enum):
     """"""
 
-    NONE = generated.ErrorsInterfaceExternalErrors.NONE
-    BOOM = generated.ErrorsInterfaceExternalErrors.BOOM
-    BUST = generated.ErrorsInterfaceExternalErrors.BUST
+    NONE = generated.smoke_ErrorsInterfaceExternalErrors.NONE
+    BOOM = generated.smoke_ErrorsInterfaceExternalErrors.BOOM
+    BUST = generated.smoke_ErrorsInterfaceExternalErrors.BUST
 
     @property
     def _native(self):

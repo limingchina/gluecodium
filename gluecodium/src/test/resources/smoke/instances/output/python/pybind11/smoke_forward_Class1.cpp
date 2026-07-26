@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using Class1 = ::smoke::forward::Class1;
 
 
 void register_smoke_forward_Class1(py::module_& module) {
-    py::class_<Class1, std::shared_ptr<Class1>>(module, "Class1")
+    py::class_<Class1, std::shared_ptr<Class1>>(module, "smoke_forward_Class1")
         ;
 }
 

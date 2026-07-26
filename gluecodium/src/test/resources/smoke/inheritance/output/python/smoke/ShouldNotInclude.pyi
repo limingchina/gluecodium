@@ -12,10 +12,10 @@ class ShouldNotInclude(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.ShouldNotInclude):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_ShouldNotInclude):
             super().__init__(args[0])
         else:
-            super().__init__(generated.ShouldNotInclude(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_ShouldNotInclude(*[_unwrap(arg) for arg in args]))
 
 
     @property

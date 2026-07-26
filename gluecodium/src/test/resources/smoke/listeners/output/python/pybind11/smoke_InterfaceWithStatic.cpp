@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -53,7 +54,7 @@ public:
 };
 
 void register_smoke_InterfaceWithStatic(py::module_& module) {
-    py::class_<InterfaceWithStatic, std::shared_ptr<InterfaceWithStatic>, InterfaceWithStaticTrampoline>(module, "InterfaceWithStatic")
+    py::class_<InterfaceWithStatic, std::shared_ptr<InterfaceWithStatic>, InterfaceWithStaticTrampoline>(module, "smoke_InterfaceWithStatic")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -66,6 +67,10 @@ void register_smoke_InterfaceWithStatic(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("regular_function", [](InterfaceWithStatic& self) {
+            return self.regular_function();
+        })
+        .def_static("static_function", &InterfaceWithStatic::static_function)
         .def_property("regular_property", [](const InterfaceWithStatic& self) {
             return self.get_regular_property();
         }, [](InterfaceWithStatic& self, const ::std::string& value) {

@@ -20,6 +20,6 @@ class CtorLinksSingleCtorWithOneArgument(_NativeBase):
     @staticmethod
     def create(arg: int) -> CtorLinksSingleCtorWithOneArgument:
         """"""
-        native_result = generated.CtorLinksSingleCtorWithOneArgument.create(_unwrap(arg, int))
+        native_result = generated.smoke_CtorLinksSingleCtorWithOneArgument.create(_unwrap(arg, int))
         return CtorLinksSingleCtorWithOneArgument(native_result)
 

@@ -22,7 +22,7 @@ class ExternalClassInternalOne(_NativeBase):
     @staticmethod
     def create(*args, **kwargs) -> ExternalClassInternalOne:
         """"""
-        native_result = generated.ExternalClassInternalOne.create(*[_unwrap(a) for a in args])
+        native_result = generated.smoke_ExternalClassInternalOne.create(*[_unwrap(a) for a in args])
         return ExternalClassInternalOne(native_result)
 
 

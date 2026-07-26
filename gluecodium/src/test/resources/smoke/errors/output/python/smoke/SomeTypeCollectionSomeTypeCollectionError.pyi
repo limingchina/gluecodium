@@ -10,8 +10,8 @@ import generated
 class SomeTypeCollectionSomeTypeCollectionError(Enum):
     """"""
 
-    ERROR_A = generated.SomeTypeCollectionSomeTypeCollectionError.ERROR_A
-    ERROR_B = generated.SomeTypeCollectionSomeTypeCollectionError.ERROR_B
+    ERROR_A = generated.smoke_SomeTypeCollectionSomeTypeCollectionError.ERROR_A
+    ERROR_B = generated.smoke_SomeTypeCollectionSomeTypeCollectionError.ERROR_B
 
     @property
     def _native(self):

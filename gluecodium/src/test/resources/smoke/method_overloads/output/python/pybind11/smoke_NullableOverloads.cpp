@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,9 @@ using NullableOverloads = ::smoke::NullableOverloads;
 
 
 void register_smoke_NullableOverloads(py::module_& module) {
-    py::class_<NullableOverloads, std::shared_ptr<NullableOverloads>>(module, "NullableOverloads")
+    py::class_<NullableOverloads, std::shared_ptr<NullableOverloads>>(module, "smoke_NullableOverloads")
+        .def("foo", py::overload_cast<const ::std::string&>(&NullableOverloads::foo), py::arg("input"))
+        .def("foo", py::overload_cast<const std::optional< ::std::string >&>(&NullableOverloads::foo), py::arg("input"))
         ;
 }
 

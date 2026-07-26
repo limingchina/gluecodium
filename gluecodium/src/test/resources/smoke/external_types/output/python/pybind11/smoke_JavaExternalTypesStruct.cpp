@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -21,13 +22,17 @@ namespace py = pybind11;
 using JavaExternalTypesStruct = ::smoke::JavaExternalTypesStruct;
 
 void register_smoke_JavaExternalTypesStruct(py::module_& module) {
-    py::class_<JavaExternalTypesStruct>(module, "JavaExternalTypesStruct")
+    py::class_<JavaExternalTypesStruct>(module, "smoke_JavaExternalTypesStruct")
         .def_readonly("currency", &JavaExternalTypesStruct::currency)
         .def_readwrite("time_zone", &JavaExternalTypesStruct::time_zone)
         .def_readwrite("month", &JavaExternalTypesStruct::month)
         .def_readwrite("color", &JavaExternalTypesStruct::color)
         .def_readwrite("season", &JavaExternalTypesStruct::season)
-        .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
+        .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
+        .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
+        .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
+        .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
+        .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
         ;
 }
 

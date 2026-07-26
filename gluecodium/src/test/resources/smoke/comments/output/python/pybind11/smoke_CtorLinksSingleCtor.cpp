@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,9 +19,7 @@ using SingleCtor = ::smoke::CtorLinks::SingleCtor;
 
 
 void register_smoke_CtorLinksSingleCtor(py::module_& module) {
-    py::class_<SingleCtor, std::shared_ptr<SingleCtor>>(module, "CtorLinksSingleCtor")
-        .def(py::init<>())
-
+    py::class_<SingleCtor, std::shared_ptr<SingleCtor>>(module, "smoke_CtorLinksSingleCtor")
         .def_static("create", &SingleCtor::create)
         ;
 }

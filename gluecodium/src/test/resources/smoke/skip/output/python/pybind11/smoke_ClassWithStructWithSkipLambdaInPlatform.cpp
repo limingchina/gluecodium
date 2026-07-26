@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,7 @@ using ClassWithStructWithSkipLambdaInPlatform = ::smoke::ClassWithStructWithSkip
 
 
 void register_smoke_ClassWithStructWithSkipLambdaInPlatform(py::module_& module) {
-    py::class_<ClassWithStructWithSkipLambdaInPlatform, std::shared_ptr<ClassWithStructWithSkipLambdaInPlatform>>(module, "ClassWithStructWithSkipLambdaInPlatform")
+    py::class_<ClassWithStructWithSkipLambdaInPlatform, std::shared_ptr<ClassWithStructWithSkipLambdaInPlatform>>(module, "smoke_ClassWithStructWithSkipLambdaInPlatform")
         ;
 }
 

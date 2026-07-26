@@ -14,8 +14,8 @@ import generated
 class NameRulesExampleErrorCode(Enum):
     """"""
 
-    NONE = generated.NameRulesExampleErrorCode.NONE
-    FATAL = generated.NameRulesExampleErrorCode.FATAL
+    NONE = generated.namerules_NameRulesExampleErrorCode.NONE
+    FATAL = generated.namerules_NameRulesExampleErrorCode.FATAL
 
     @property
     def _native(self):

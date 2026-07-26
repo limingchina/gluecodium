@@ -7,7 +7,7 @@ import typing
 import generated
 
 
-class Weakling(generated.Weakling):
+class Weakling(generated.smoke_Weakling):
     """"""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class Weakling(generated.Weakling):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.Weakling):
+        if native is not None and isinstance(native, generated.smoke_Weakling):
             super().__init__(native)
         else:
             super().__init__()
@@ -27,9 +27,9 @@ class Weakling(generated.Weakling):
     @property
     def listener(self):
         """"""
-        return _wrap(generated.Weakling.listener.fget(self), Optional[ListenerInterface])
+        return _wrap(generated.smoke_Weakling.listener.fget(self), Optional[ListenerInterface])
 
     @listener.setter
     def listener(self, value):
-        generated.Weakling.listener.fset(self, _unwrap(value, Optional[ListenerInterface]))
+        generated.smoke_Weakling.listener.fset(self, _unwrap(value, Optional[ListenerInterface]))
 

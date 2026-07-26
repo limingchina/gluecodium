@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -23,7 +24,7 @@ using StructsQualifiedType = ::fire::StructsQualifiedType;
 
 
 void register_fire_StructsQualifiedType(py::module_& module) {
-    py::class_<StructsQualifiedType, std::shared_ptr<StructsQualifiedType>>(module, "StructsQualifiedType")
+    py::class_<StructsQualifiedType, std::shared_ptr<StructsQualifiedType>>(module, "fire_StructsQualifiedType")
         ;
 }
 

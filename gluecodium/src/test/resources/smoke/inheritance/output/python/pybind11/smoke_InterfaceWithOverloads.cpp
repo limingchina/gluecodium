@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -48,7 +49,7 @@ public:
 };
 
 void register_smoke_InterfaceWithOverloads(py::module_& module) {
-    py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "InterfaceWithOverloads")
+    py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "smoke_InterfaceWithOverloads")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -61,6 +62,12 @@ void register_smoke_InterfaceWithOverloads(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("parent_method", [](InterfaceWithOverloads& self) {
+            return self.parent_method();
+        })
+        .def("parent_method", [](InterfaceWithOverloads& self, const ::std::string& input) {
+            return self.parent_method(input);
+        }, py::arg("input"))
         ;
 }
 

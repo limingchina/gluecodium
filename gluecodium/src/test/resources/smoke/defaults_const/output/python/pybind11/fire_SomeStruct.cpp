@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using SomeStruct = ::fire::SomeStruct;
 
 void register_fire_SomeStruct(py::module_& module) {
-    py::class_<SomeStruct>(module, "SomeStruct")
+    py::class_<SomeStruct>(module, "fire_SomeStruct")
         .def_readwrite("int_field", &SomeStruct::int_field)
         .def(py::init<>())
-        .def(py::init<int32_t(), py::arg("int_field"))
+        .def(py::init<int32_t>(), py::arg("int_field"))
         ;
 }
 

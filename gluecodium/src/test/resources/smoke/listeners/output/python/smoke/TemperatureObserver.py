@@ -11,7 +11,7 @@ from smoke.Thermometer import Thermometer
 import generated
 
 
-class TemperatureObserver(generated.TemperatureObserver):
+class TemperatureObserver(generated.smoke_TemperatureObserver):
     """Observer interface for monitoring changes in thermometer (\"Observer of subject\")."""
 
     def __init__(self, native=None):
@@ -22,7 +22,7 @@ class TemperatureObserver(generated.TemperatureObserver):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.TemperatureObserver):
+        if native is not None and isinstance(native, generated.smoke_TemperatureObserver):
             super().__init__(native)
         else:
             super().__init__()
@@ -30,5 +30,5 @@ class TemperatureObserver(generated.TemperatureObserver):
 
     def on_temperature_update(self, thermometer: Thermometer):
         """"""
-        return _wrap(generated.TemperatureObserver.on_temperature_update(self, _unwrap(thermometer, Thermometer)), None)
+        return _wrap(generated.smoke_TemperatureObserver.on_temperature_update(self, _unwrap(thermometer, Thermometer)), None)
 

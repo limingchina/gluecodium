@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -25,13 +26,16 @@ namespace py = pybind11;
 using StructWithInitializerDefaults = ::smoke::StructWithInitializerDefaults;
 
 void register_smoke_StructWithInitializerDefaults(py::module_& module) {
-    py::class_<StructWithInitializerDefaults>(module, "StructWithInitializerDefaults")
+    py::class_<StructWithInitializerDefaults>(module, "smoke_StructWithInitializerDefaults")
         .def_readwrite("ints_field", &StructWithInitializerDefaults::ints_field)
         .def_readwrite("floats_field", &StructWithInitializerDefaults::floats_field)
         .def_readwrite("set_type_field", &StructWithInitializerDefaults::set_type_field)
         .def_readwrite("map_field", &StructWithInitializerDefaults::map_field)
         .def(py::init<>())
-        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
+        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
+        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
+        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
+        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
         ;
 }
 

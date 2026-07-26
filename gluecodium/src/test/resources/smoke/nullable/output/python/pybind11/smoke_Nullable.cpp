@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -26,7 +27,23 @@ using Nullable = ::smoke::Nullable;
 
 
 void register_smoke_Nullable(py::module_& module) {
-    py::class_<Nullable, std::shared_ptr<Nullable>>(module, "Nullable")
+    py::class_<Nullable, std::shared_ptr<Nullable>>(module, "smoke_Nullable")
+        .def("method_with_string", &Nullable::method_with_string, py::arg("input"))
+        .def("method_with_boolean", &Nullable::method_with_boolean, py::arg("input"))
+        .def("method_with_double", &Nullable::method_with_double, py::arg("input"))
+        .def("method_with_int", &Nullable::method_with_int, py::arg("input"))
+        .def("method_with_some_struct", &Nullable::method_with_some_struct, py::arg("input"))
+        .def("method_with_some_enum", &Nullable::method_with_some_enum, py::arg("input"))
+                .def("method_with_some_array", [](Nullable& self, py::handle input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.method_with_some_array(gluecodium::python::from_python_regular<std::optional< ::std::vector< ::std::string > >>(input)));
+                }, py::arg("input"))
+                .def("method_with_inline_array", [](Nullable& self, py::handle input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.method_with_inline_array(gluecodium::python::from_python_regular<std::optional< ::std::vector< ::std::string > >>(input)));
+                }, py::arg("input"))
+                .def("method_with_some_map", [](Nullable& self, py::handle input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.method_with_some_map(gluecodium::python::from_python_regular<std::optional< ::std::unordered_map< int64_t, ::std::string > >>(input)));
+                }, py::arg("input"))
+        .def("method_with_instance", &Nullable::method_with_instance, py::arg("input"))
         .def_property("string_property", py::overload_cast<>(&Nullable::get_string_property, py::const_), py::overload_cast<const std::optional< ::std::string >&>(&Nullable::set_string_property))
         .def_property("is_bool_property", py::overload_cast<>(&Nullable::is_bool_property, py::const_), py::overload_cast<const std::optional< bool >&>(&Nullable::set_bool_property))
         .def_property("double_property", py::overload_cast<>(&Nullable::get_double_property, py::const_), py::overload_cast<const std::optional< double >&>(&Nullable::set_double_property))

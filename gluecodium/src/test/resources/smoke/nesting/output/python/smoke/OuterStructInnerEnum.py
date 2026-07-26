@@ -14,8 +14,8 @@ import generated
 class OuterStructInnerEnum(Enum):
     """"""
 
-    FOO = generated.OuterStructInnerEnum.FOO
-    BAR = generated.OuterStructInnerEnum.BAR
+    FOO = generated.smoke_OuterStructInnerEnum.FOO
+    BAR = generated.smoke_OuterStructInnerEnum.BAR
 
     @property
     def _native(self):

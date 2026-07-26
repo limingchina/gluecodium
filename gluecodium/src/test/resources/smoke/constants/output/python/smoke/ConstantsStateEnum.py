@@ -14,8 +14,8 @@ import generated
 class ConstantsStateEnum(Enum):
     """"""
 
-    OFF = generated.ConstantsStateEnum.OFF
-    ON = generated.ConstantsStateEnum.ON
+    OFF = generated.smoke_ConstantsStateEnum.OFF
+    ON = generated.smoke_ConstantsStateEnum.ON
 
     @property
     def _native(self):

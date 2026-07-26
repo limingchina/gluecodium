@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using Month = ::smoke::Month;
 
 void register_smoke_Month(py::module_& module) {
-    py::enum_<Month>(module, "Month")
+    py::enum_<Month>(module, "smoke_Month")
         .value("JANUARY", Month::JANUARY)
         .value("FEBRUARY", Month::FEBRUARY)
         .value("MARCH", Month::MARCH)

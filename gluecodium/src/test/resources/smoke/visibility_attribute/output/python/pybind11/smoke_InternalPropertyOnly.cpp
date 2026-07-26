@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using InternalPropertyOnly = ::smoke::InternalPropertyOnly;
 
 
 void register_smoke_InternalPropertyOnly(py::module_& module) {
-    py::class_<InternalPropertyOnly, std::shared_ptr<InternalPropertyOnly>>(module, "InternalPropertyOnly")
+    py::class_<InternalPropertyOnly, std::shared_ptr<InternalPropertyOnly>>(module, "smoke_InternalPropertyOnly")
         .def_property("foo", py::overload_cast<>(&InternalPropertyOnly::get_foo, py::const_), py::overload_cast<const ::std::string&>(&InternalPropertyOnly::set_foo))
         ;
 }

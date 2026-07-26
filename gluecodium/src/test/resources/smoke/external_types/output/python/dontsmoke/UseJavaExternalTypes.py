@@ -26,36 +26,36 @@ class UseJavaExternalTypes(_NativeBase):
     @staticmethod
     def currency_round_trip(input: Currency) -> Currency:
         """"""
-        native_result = generated.UseJavaExternalTypes.currency_round_trip(_unwrap(input, Currency))
+        native_result = generated.dontsmoke_UseJavaExternalTypes.currency_round_trip(_unwrap(input, Currency))
         return Currency(native_result)
 
     @staticmethod
     def time_zone_round_trip(input: TimeZone) -> TimeZone:
         """"""
-        native_result = generated.UseJavaExternalTypes.time_zone_round_trip(_unwrap(input, TimeZone))
+        native_result = generated.dontsmoke_UseJavaExternalTypes.time_zone_round_trip(_unwrap(input, TimeZone))
         return TimeZone(native_result)
 
     @staticmethod
     def month_round_trip(input: Month) -> Month:
         """"""
-        native_result = generated.UseJavaExternalTypes.month_round_trip(_unwrap(input, Month))
+        native_result = generated.dontsmoke_UseJavaExternalTypes.month_round_trip(_unwrap(input, Month))
         return Month(native_result)
 
     @staticmethod
     def color_round_trip(input: SystemColor) -> SystemColor:
         """"""
-        native_result = generated.UseJavaExternalTypes.color_round_trip(_unwrap(input, SystemColor))
+        native_result = generated.dontsmoke_UseJavaExternalTypes.color_round_trip(_unwrap(input, SystemColor))
         return SystemColor(native_result)
 
     @staticmethod
     def season_round_trip(input: Season) -> Season:
         """"""
-        native_result = generated.UseJavaExternalTypes.season_round_trip(_unwrap(input, Season))
+        native_result = generated.dontsmoke_UseJavaExternalTypes.season_round_trip(_unwrap(input, Season))
         return Season(native_result)
 
     @staticmethod
     def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
         """"""
-        native_result = generated.UseJavaExternalTypes.struct_round_trip(_unwrap(input, JavaExternalTypesStruct))
+        native_result = generated.dontsmoke_UseJavaExternalTypes.struct_round_trip(_unwrap(input, JavaExternalTypesStruct))
         return JavaExternalTypesStruct(native_result)
 

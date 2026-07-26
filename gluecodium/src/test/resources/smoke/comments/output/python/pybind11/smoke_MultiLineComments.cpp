@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,8 @@ using MultiLineComments = ::smoke::MultiLineComments;
 
 
 void register_smoke_MultiLineComments(py::module_& module) {
-    py::class_<MultiLineComments, std::shared_ptr<MultiLineComments>>(module, "MultiLineComments")
+    py::class_<MultiLineComments, std::shared_ptr<MultiLineComments>>(module, "smoke_MultiLineComments")
+        .def("some_method_with_long_comment", &MultiLineComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
         ;
 }
 

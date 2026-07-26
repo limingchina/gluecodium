@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using PosDefaultStructWithFieldUsingImmutableStruct = ::smoke::PosDefaultStructWithFieldUsingImmutableStruct;
 
 void register_smoke_PosDefaultStructWithFieldUsingImmutableStruct(py::module_& module) {
-    py::class_<PosDefaultStructWithFieldUsingImmutableStruct>(module, "PosDefaultStructWithFieldUsingImmutableStruct")
+    py::class_<PosDefaultStructWithFieldUsingImmutableStruct>(module, "smoke_PosDefaultStructWithFieldUsingImmutableStruct")
         .def_readonly("some_field1", &PosDefaultStructWithFieldUsingImmutableStruct::some_field1)
         .def(py::init<>())
-        .def(py::init<::smoke::ImmutableStructWithDefaults(), py::arg("some_field1"))
+        .def(py::init<::smoke::ImmutableStructWithDefaults>(), py::arg("some_field1"))
         ;
 }
 

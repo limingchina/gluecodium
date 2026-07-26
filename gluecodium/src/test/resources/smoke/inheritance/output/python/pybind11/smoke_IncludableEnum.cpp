@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using IncludableEnum = ::smoke::IncludableEnum;
 
 void register_smoke_IncludableEnum(py::module_& module) {
-    py::enum_<IncludableEnum>(module, "IncludableEnum")
+    py::enum_<IncludableEnum>(module, "smoke_IncludableEnum")
         .value("FOO", IncludableEnum::FOO)
         ;
 }

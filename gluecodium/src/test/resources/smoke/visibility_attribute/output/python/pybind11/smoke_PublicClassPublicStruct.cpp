@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using PublicStruct = ::smoke::PublicClass::PublicStruct;
 
 void register_smoke_PublicClassPublicStruct(py::module_& module) {
-    py::class_<PublicStruct>(module, "PublicClassPublicStruct")
+    py::class_<PublicStruct>(module, "smoke_PublicClassPublicStruct")
         .def_readwrite("internal_field", &PublicStruct::internal_field)
         .def(py::init<>())
-        .def(py::init<::smoke::PublicClass::InternalStruct(), py::arg("internal_field"))
+        .def(py::init<::smoke::PublicClass::InternalStruct>(), py::arg("internal_field"))
         ;
 }
 

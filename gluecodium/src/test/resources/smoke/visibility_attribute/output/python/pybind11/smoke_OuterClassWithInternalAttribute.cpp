@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,7 @@ using OuterClassWithInternalAttribute = ::smoke::OuterClassWithInternalAttribute
 
 
 void register_smoke_OuterClassWithInternalAttribute(py::module_& module) {
-    py::class_<OuterClassWithInternalAttribute, std::shared_ptr<OuterClassWithInternalAttribute>>(module, "OuterClassWithInternalAttribute")
+    py::class_<OuterClassWithInternalAttribute, std::shared_ptr<OuterClassWithInternalAttribute>>(module, "smoke_OuterClassWithInternalAttribute")
         ;
 }
 

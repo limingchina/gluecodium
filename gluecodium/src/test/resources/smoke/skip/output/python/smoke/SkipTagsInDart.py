@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class SkipTagsInDart(generated.SkipTagsInDart):
+class SkipTagsInDart(generated.smoke_SkipTagsInDart):
     """"""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class SkipTagsInDart(generated.SkipTagsInDart):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.SkipTagsInDart):
+        if native is not None and isinstance(native, generated.smoke_SkipTagsInDart):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,13 +29,13 @@ class SkipTagsInDart(generated.SkipTagsInDart):
 
     def skip_tagged(self):
         """"""
-        return _wrap(generated.SkipTagsInDart.skip_tagged(self), None)
+        return _wrap(generated.smoke_SkipTagsInDart.skip_tagged(self), None)
 
     def dont_skip_tagged(self):
         """"""
-        return _wrap(generated.SkipTagsInDart.dont_skip_tagged(self), None)
+        return _wrap(generated.smoke_SkipTagsInDart.dont_skip_tagged(self), None)
 
     def skip_tagged_list(self):
         """"""
-        return _wrap(generated.SkipTagsInDart.skip_tagged_list(self), None)
+        return _wrap(generated.smoke_SkipTagsInDart.skip_tagged_list(self), None)
 

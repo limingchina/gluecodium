@@ -12,7 +12,7 @@ from smoke.ParentNarrowTwo import ParentNarrowTwo
 import generated
 
 
-class FirstParentIsNarrowInterface(generated.FirstParentIsNarrowInterface):
+class FirstParentIsNarrowInterface(generated.smoke_FirstParentIsNarrowInterface):
     """"""
 
     def __init__(self, native=None):
@@ -23,7 +23,7 @@ class FirstParentIsNarrowInterface(generated.FirstParentIsNarrowInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.FirstParentIsNarrowInterface):
+        if native is not None and isinstance(native, generated.smoke_FirstParentIsNarrowInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -31,14 +31,14 @@ class FirstParentIsNarrowInterface(generated.FirstParentIsNarrowInterface):
 
     def child_function(self):
         """"""
-        return _wrap(generated.FirstParentIsNarrowInterface.child_function(self), None)
+        return _wrap(generated.smoke_FirstParentIsNarrowInterface.child_function(self), None)
 
     @property
     def child_property(self) -> str:
         """"""
-        return _wrap(generated.FirstParentIsNarrowInterface.child_property.fget(self), str)
+        return _wrap(generated.smoke_FirstParentIsNarrowInterface.child_property.fget(self), str)
 
     @child_property.setter
     def child_property(self, value: str):
-        generated.FirstParentIsNarrowInterface.child_property.fset(self, _unwrap(value, str))
+        generated.smoke_FirstParentIsNarrowInterface.child_property.fset(self, _unwrap(value, str))
 

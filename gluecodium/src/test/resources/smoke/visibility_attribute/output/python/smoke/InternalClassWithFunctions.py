@@ -24,7 +24,7 @@ class InternalClassWithFunctions(_NativeBase):
     @staticmethod
     def make(*args, **kwargs) -> InternalClassWithFunctions:
         """"""
-        native_result = generated.InternalClassWithFunctions.make(*[_unwrap(a) for a in args])
+        native_result = generated.smoke_InternalClassWithFunctions.make(*[_unwrap(a) for a in args])
         return InternalClassWithFunctions(native_result)
 
 

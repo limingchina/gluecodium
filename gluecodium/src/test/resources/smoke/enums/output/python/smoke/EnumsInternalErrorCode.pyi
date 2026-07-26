@@ -10,8 +10,8 @@ import generated
 class EnumsInternalErrorCode(Enum):
     """"""
 
-    ERROR_NONE = generated.EnumsInternalErrorCode.ERROR_NONE
-    ERROR_FATAL = generated.EnumsInternalErrorCode.ERROR_FATAL
+    ERROR_NONE = generated.smoke_EnumsInternalErrorCode.ERROR_NONE
+    ERROR_FATAL = generated.smoke_EnumsInternalErrorCode.ERROR_FATAL
 
     @property
     def _native(self):

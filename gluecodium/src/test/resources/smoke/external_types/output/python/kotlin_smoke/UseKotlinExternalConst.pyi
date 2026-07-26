@@ -13,10 +13,10 @@ class UseKotlinExternalConst(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.UseKotlinExternalConst):
+        if len(args) == 1 and isinstance(args[0], generated.kotlin_smoke_UseKotlinExternalConst):
             super().__init__(args[0])
         else:
-            super().__init__(generated.UseKotlinExternalConst(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.kotlin_smoke_UseKotlinExternalConst(*[_unwrap(arg) for arg in args]))
 
 
     @property

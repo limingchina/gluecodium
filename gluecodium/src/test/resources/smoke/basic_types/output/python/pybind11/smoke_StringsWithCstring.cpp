@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,7 +19,9 @@ using StringsWithCstring = ::smoke::StringsWithCstring;
 
 
 void register_smoke_StringsWithCstring(py::module_& module) {
-    py::class_<StringsWithCstring, std::shared_ptr<StringsWithCstring>>(module, "StringsWithCstring")
+    py::class_<StringsWithCstring, std::shared_ptr<StringsWithCstring>>(module, "smoke_StringsWithCstring")
+        .def_static("return_input_string_type", py::overload_cast<const char*>(&StringsWithCstring::return_input_string), py::arg("input_string"))
+        .def_static("return_input_string", py::overload_cast<const ::std::string&>(&StringsWithCstring::return_input_string), py::arg("input_string"))
         ;
 }
 

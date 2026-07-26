@@ -14,7 +14,7 @@ from smoke.ParentClassWithImports import ParentClassWithImports
 import generated
 
 
-class ChildClassWithImports(generated.ChildClassWithImports):
+class ChildClassWithImports(generated.smoke_ChildClassWithImports):
     """"""
 
     def __init__(self, native=None):
@@ -24,7 +24,7 @@ class ChildClassWithImports(generated.ChildClassWithImports):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassWithImports):
+        if native is not None and isinstance(native, generated.smoke_ChildClassWithImports):
             super().__init__(native)
         else:
             super().__init__()

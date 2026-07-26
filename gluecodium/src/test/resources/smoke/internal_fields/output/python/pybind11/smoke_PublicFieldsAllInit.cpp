@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,11 +18,12 @@ namespace py = pybind11;
 using PublicFieldsAllInit = ::smoke::PublicFieldsAllInit;
 
 void register_smoke_PublicFieldsAllInit(py::module_& module) {
-    py::class_<PublicFieldsAllInit>(module, "PublicFieldsAllInit")
+    py::class_<PublicFieldsAllInit>(module, "smoke_PublicFieldsAllInit")
         .def_readwrite("public_field", &PublicFieldsAllInit::public_field)
         .def_readwrite("internal_field", &PublicFieldsAllInit::internal_field)
         .def(py::init<>())
-        .def(py::init<::std::string, ::std::string(), py::arg("public_field"), py::arg("internal_field"))
+        .def(py::init<::std::string, ::std::string>(), py::arg("public_field"), py::arg("internal_field"))
+        .def(py::init<::std::string, ::std::string>(), py::arg("public_field"), py::arg("internal_field"))
         ;
 }
 

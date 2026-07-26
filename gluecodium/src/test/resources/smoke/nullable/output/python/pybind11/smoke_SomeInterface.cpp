@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using SomeInterface = ::smoke::SomeInterface;
 
 
 void register_smoke_SomeInterface(py::module_& module) {
-    py::class_<SomeInterface, std::shared_ptr<SomeInterface>>(module, "SomeInterface")
+    py::class_<SomeInterface, std::shared_ptr<SomeInterface>>(module, "smoke_SomeInterface")
         ;
 }
 

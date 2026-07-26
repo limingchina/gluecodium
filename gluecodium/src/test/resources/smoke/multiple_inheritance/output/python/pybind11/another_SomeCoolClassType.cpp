@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,8 @@ using SomeCoolClassType = ::another::SomeCoolClassType;
 
 
 void register_another_SomeCoolClassType(py::module_& module) {
-    py::class_<SomeCoolClassType, std::shared_ptr<SomeCoolClassType>>(module, "SomeCoolClassType")
+    py::class_<SomeCoolClassType, std::shared_ptr<SomeCoolClassType>>(module, "another_SomeCoolClassType")
+        .def("do_important_stuff", &SomeCoolClassType::do_important_stuff)
         ;
 }
 

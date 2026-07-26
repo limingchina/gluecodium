@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using OuterStructWithFieldConstructor = ::smoke::OuterStructWithFieldConstructor;
 
 void register_smoke_OuterStructWithFieldConstructor(py::module_& module) {
-    py::class_<OuterStructWithFieldConstructor>(module, "OuterStructWithFieldConstructor")
+    py::class_<OuterStructWithFieldConstructor>(module, "smoke_OuterStructWithFieldConstructor")
         .def_readwrite("outer_struct_field", &OuterStructWithFieldConstructor::outer_struct_field)
         .def(py::init<>())
-        .def(py::init<::smoke::OuterStructWithFieldConstructor::InnerStructWithDefaults(), py::arg("outer_struct_field"))
+        .def(py::init<::smoke::OuterStructWithFieldConstructor::InnerStructWithDefaults>(), py::arg("outer_struct_field"))
         ;
 }
 

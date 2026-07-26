@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -40,7 +41,7 @@ public:
 };
 
 void register_smoke_TemperatureObserver(py::module_& module) {
-    py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "TemperatureObserver")
+    py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "smoke_TemperatureObserver")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -53,6 +54,9 @@ void register_smoke_TemperatureObserver(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("on_temperature_update", [](TemperatureObserver& self, const ::std::shared_ptr< ::smoke::Thermometer >& thermometer) {
+            return self.on_temperature_update(thermometer);
+        }, py::arg("thermometer"))
         ;
 }
 

@@ -13,10 +13,10 @@ class EnumDefaultsAliasEnum(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.EnumDefaultsAliasEnum):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_EnumDefaultsAliasEnum):
             super().__init__(args[0])
         else:
-            super().__init__(generated.EnumDefaultsAliasEnum(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_EnumDefaultsAliasEnum(*[_unwrap(arg) for arg in args]))
 
 
     @property

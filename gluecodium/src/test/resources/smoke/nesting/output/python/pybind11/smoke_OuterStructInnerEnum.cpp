@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using InnerEnum = ::smoke::OuterStruct::InnerEnum;
 
 void register_smoke_OuterStructInnerEnum(py::module_& module) {
-    py::enum_<InnerEnum>(module, "OuterStructInnerEnum")
+    py::enum_<InnerEnum>(module, "smoke_OuterStructInnerEnum")
         .value("FOO", InnerEnum::FOO)
         .value("BAR", InnerEnum::BAR)
         ;

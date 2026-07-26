@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using ErrorEnum = ::smoke::ExternalClass::ErrorEnum;
 
 void register_smoke_ExternalClassErrorEnum(py::module_& module) {
-    py::enum_<ErrorEnum>(module, "ExternalClassErrorEnum")
+    py::enum_<ErrorEnum>(module, "smoke_ExternalClassErrorEnum")
         .value("NONE", ErrorEnum::NONE)
         .value("CRASHED", ErrorEnum::CRASHED)
         ;

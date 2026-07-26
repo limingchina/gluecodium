@@ -6,7 +6,7 @@ import typing
 import generated
 
 
-class InternalClassInherits(generated.InternalClassInherits):
+class InternalClassInherits(generated.smoke_InternalClassInherits):
     """"""
 
     def __init__(self, native=None):
@@ -16,7 +16,7 @@ class InternalClassInherits(generated.InternalClassInherits):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.InternalClassInherits):
+        if native is not None and isinstance(native, generated.smoke_InternalClassInherits):
             super().__init__(native)
         else:
             super().__init__()

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using WrappedEnum = ::smoke::EnumDefaults::WrappedEnum;
 
 void register_smoke_EnumDefaultsWrappedEnum(py::module_& module) {
-    py::class_<WrappedEnum>(module, "EnumDefaultsWrappedEnum")
+    py::class_<WrappedEnum>(module, "smoke_EnumDefaultsWrappedEnum")
         .def_readwrite("struct_field", &WrappedEnum::struct_field)
         .def(py::init<>())
-        .def(py::init<::smoke::EnumWrapper(), py::arg("struct_field"))
+        .def(py::init<::smoke::EnumWrapper>(), py::arg("struct_field"))
         ;
 }
 

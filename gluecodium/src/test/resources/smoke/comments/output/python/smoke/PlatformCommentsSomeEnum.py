@@ -14,8 +14,8 @@ import generated
 class PlatformCommentsSomeEnum(Enum):
     """"""
 
-    USELESS = generated.PlatformCommentsSomeEnum.USELESS
-    USEFUL = generated.PlatformCommentsSomeEnum.USEFUL
+    USELESS = generated.smoke_PlatformCommentsSomeEnum.USELESS
+    USEFUL = generated.smoke_PlatformCommentsSomeEnum.USEFUL
 
     @property
     def _native(self):

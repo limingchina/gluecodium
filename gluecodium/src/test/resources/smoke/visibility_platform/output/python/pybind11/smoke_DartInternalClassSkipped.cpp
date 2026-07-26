@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ using DartInternalClassSkipped = ::smoke::DartInternalClassSkipped;
 
 
 void register_smoke_DartInternalClassSkipped(py::module_& module) {
-    py::class_<DartInternalClassSkipped, std::shared_ptr<DartInternalClassSkipped>>(module, "DartInternalClassSkipped")
+    py::class_<DartInternalClassSkipped, std::shared_ptr<DartInternalClassSkipped>>(module, "smoke_DartInternalClassSkipped")
         ;
 }
 

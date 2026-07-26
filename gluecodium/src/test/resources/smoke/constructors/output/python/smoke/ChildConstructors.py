@@ -12,7 +12,7 @@ from smoke.ConstructorsErrorEnum import ConstructorsErrorEnum
 import generated
 
 
-class ChildConstructors(generated.ChildConstructors):
+class ChildConstructors(generated.smoke_ChildConstructors):
     """"""
 
     def __init__(self, native=None):
@@ -22,7 +22,7 @@ class ChildConstructors(generated.ChildConstructors):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildConstructors):
+        if native is not None and isinstance(native, generated.smoke_ChildConstructors):
             super().__init__(native)
         else:
             super().__init__()
@@ -31,7 +31,7 @@ class ChildConstructors(generated.ChildConstructors):
     @staticmethod
     def create(*args, **kwargs) -> ChildConstructors:
         """"""
-        native_result = generated.ChildConstructors.create(*[_unwrap(a) for a in args])
+        native_result = generated.smoke_ChildConstructors.create(*[_unwrap(a) for a in args])
         return ChildConstructors(native_result)
 
 

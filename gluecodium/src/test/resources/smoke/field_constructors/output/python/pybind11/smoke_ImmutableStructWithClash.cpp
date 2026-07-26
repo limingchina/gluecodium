@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -18,12 +19,12 @@ namespace py = pybind11;
 using ImmutableStructWithClash = ::smoke::ImmutableStructWithClash;
 
 void register_smoke_ImmutableStructWithClash(py::module_& module) {
-    py::class_<ImmutableStructWithClash>(module, "ImmutableStructWithClash")
+    py::class_<ImmutableStructWithClash>(module, "smoke_ImmutableStructWithClash")
         .def_readonly("string_field", &ImmutableStructWithClash::string_field)
         .def_readonly("int_field", &ImmutableStructWithClash::int_field)
         .def_readonly("bool_field", &ImmutableStructWithClash::bool_field)
         .def(py::init<>())
-        .def(py::init<bool, int32_t, ::std::string(), py::arg("bool_field"), py::arg("int_field"), py::arg("string_field"))
+        .def(py::init<bool, int32_t, ::std::string>(), py::arg("bool_field"), py::arg("int_field"), py::arg("string_field"))
         ;
 }
 

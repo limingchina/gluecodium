@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,8 @@ using BasicForwardDeclarations = ::root::space::smoke::BasicForwardDeclarations;
 
 
 void register_smoke_BasicForwardDeclarations(py::module_& module) {
-    py::class_<BasicForwardDeclarations, std::shared_ptr<BasicForwardDeclarations>>(module, "BasicForwardDeclarations")
+    py::class_<BasicForwardDeclarations, std::shared_ptr<BasicForwardDeclarations>>(module, "smoke_BasicForwardDeclarations")
+        .def("use_basic", &BasicForwardDeclarations::use_basic)
         ;
 }
 

@@ -17,10 +17,10 @@ class UseEnumOptionSet(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.UseEnumOptionSet):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_UseEnumOptionSet):
             super().__init__(args[0])
         else:
-            super().__init__(generated.UseEnumOptionSet(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_UseEnumOptionSet(*[_unwrap(arg) for arg in args]))
 
 
     @property
@@ -55,5 +55,5 @@ class UseEnumOptionSet(_NativeBase):
     @staticmethod
     def round_trip(input: set[EnumOptionSet]) -> set[EnumOptionSet]:
         """"""
-        return _wrap(generated.UseEnumOptionSet.round_trip(_unwrap(input, set[EnumOptionSet])), set[EnumOptionSet])
+        return _wrap(generated.smoke_UseEnumOptionSet.round_trip(_unwrap(input, set[EnumOptionSet])), set[EnumOptionSet])
 

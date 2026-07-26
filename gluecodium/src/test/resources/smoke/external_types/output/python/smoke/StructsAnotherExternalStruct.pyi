@@ -12,10 +12,10 @@ class StructsAnotherExternalStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructsAnotherExternalStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructsAnotherExternalStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsAnotherExternalStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructsAnotherExternalStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

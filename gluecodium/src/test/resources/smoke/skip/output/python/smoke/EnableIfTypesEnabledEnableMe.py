@@ -14,7 +14,7 @@ import generated
 class EnableIfTypesEnabledEnableMe(Enum):
     """"""
 
-    NOPE = generated.EnableIfTypesEnabledEnableMe.NOPE
+    NOPE = generated.smoke_EnableIfTypesEnabledEnableMe.NOPE
 
     @property
     def _native(self):

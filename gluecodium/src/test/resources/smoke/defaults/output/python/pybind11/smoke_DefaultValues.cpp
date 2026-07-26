@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -26,7 +27,8 @@ using DefaultValues = ::smoke::DefaultValues;
 
 
 void register_smoke_DefaultValues(py::module_& module) {
-    py::class_<DefaultValues, std::shared_ptr<DefaultValues>>(module, "DefaultValues")
+    py::class_<DefaultValues, std::shared_ptr<DefaultValues>>(module, "smoke_DefaultValues")
+        .def_static("process_struct_with_defaults", &DefaultValues::process_struct_with_defaults, py::arg("input"))
         ;
 }
 

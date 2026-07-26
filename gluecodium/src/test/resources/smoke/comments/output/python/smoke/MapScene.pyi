@@ -2,6 +2,7 @@
 
 from smoke.MapSceneLoadSceneCallback import MapSceneLoadSceneCallback
 import typing
+from typing import Callable
 
 from _native_base import _NativeBase
 
@@ -15,8 +16,8 @@ class MapScene(_NativeBase):
         super().__init__(native)
 
     @typing.overload
-    def load_scene(self, map_scheme: int, callback: Optional[MapSceneLoadSceneCallback]): ...
+    def load_scene(self, map_scheme: int, callback: Optional[Callable[[Optional[str]], None]]): ...
 
     @typing.overload
-    def load_scene(self, configuration_file: str, callback: Optional[MapSceneLoadSceneCallback]): ...
+    def load_scene(self, configuration_file: str, callback: Optional[Callable[[Optional[str]], None]]): ...
 

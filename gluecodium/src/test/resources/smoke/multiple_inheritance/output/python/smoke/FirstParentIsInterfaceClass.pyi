@@ -8,7 +8,7 @@ import typing
 import generated
 
 
-class FirstParentIsInterfaceClass(generated.FirstParentIsInterfaceClass):
+class FirstParentIsInterfaceClass(generated.smoke_FirstParentIsInterfaceClass):
     """"""
 
     def __init__(self, native=None):
@@ -18,7 +18,7 @@ class FirstParentIsInterfaceClass(generated.FirstParentIsInterfaceClass):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.FirstParentIsInterfaceClass):
+        if native is not None and isinstance(native, generated.smoke_FirstParentIsInterfaceClass):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,9 +29,9 @@ class FirstParentIsInterfaceClass(generated.FirstParentIsInterfaceClass):
     @property
     def child_property(self) -> str:
         """"""
-        return _wrap(generated.FirstParentIsInterfaceClass.child_property.fget(self), str)
+        return _wrap(generated.smoke_FirstParentIsInterfaceClass.child_property.fget(self), str)
 
     @child_property.setter
     def child_property(self, value: str):
-        generated.FirstParentIsInterfaceClass.child_property.fset(self, _unwrap(value, str))
+        generated.smoke_FirstParentIsInterfaceClass.child_property.fset(self, _unwrap(value, str))
 

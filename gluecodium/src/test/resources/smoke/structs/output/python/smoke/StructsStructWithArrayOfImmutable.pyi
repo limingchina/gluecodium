@@ -13,10 +13,10 @@ class StructsStructWithArrayOfImmutable(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.StructsStructWithArrayOfImmutable):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_StructsStructWithArrayOfImmutable):
             super().__init__(args[0])
         else:
-            super().__init__(generated.StructsStructWithArrayOfImmutable(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_StructsStructWithArrayOfImmutable(*[_unwrap(arg) for arg in args]))
 
 
     @property

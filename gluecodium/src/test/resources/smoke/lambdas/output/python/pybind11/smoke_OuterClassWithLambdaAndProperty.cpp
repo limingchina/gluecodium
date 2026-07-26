@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,7 @@ using OuterClassWithLambdaAndProperty = ::smoke::OuterClassWithLambdaAndProperty
 
 
 void register_smoke_OuterClassWithLambdaAndProperty(py::module_& module) {
-    py::class_<OuterClassWithLambdaAndProperty, std::shared_ptr<OuterClassWithLambdaAndProperty>>(module, "OuterClassWithLambdaAndProperty")
+    py::class_<OuterClassWithLambdaAndProperty, std::shared_ptr<OuterClassWithLambdaAndProperty>>(module, "smoke_OuterClassWithLambdaAndProperty")
         .def_property("some_integer", py::overload_cast<>(&OuterClassWithLambdaAndProperty::get_some_integer, py::const_), py::overload_cast<const int32_t>(&OuterClassWithLambdaAndProperty::set_some_integer))
         .def_static("another_integer", &OuterClassWithLambdaAndProperty::get_another_integer)
         .def_static("another_integer_set", &OuterClassWithLambdaAndProperty::set_another_integer)

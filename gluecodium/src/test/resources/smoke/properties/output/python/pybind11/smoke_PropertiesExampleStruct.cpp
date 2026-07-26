@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using ExampleStruct = ::smoke::Properties::ExampleStruct;
 
 void register_smoke_PropertiesExampleStruct(py::module_& module) {
-    py::class_<ExampleStruct>(module, "PropertiesExampleStruct")
+    py::class_<ExampleStruct>(module, "smoke_PropertiesExampleStruct")
         .def_readwrite("value", &ExampleStruct::value)
         .def(py::init<>())
-        .def(py::init<double(), py::arg("value"))
+        .def(py::init<double>(), py::arg("value"))
         ;
 }
 

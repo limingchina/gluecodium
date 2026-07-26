@@ -19,10 +19,10 @@ class OuterStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.OuterStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_OuterStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.OuterStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_OuterStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

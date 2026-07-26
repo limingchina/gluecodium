@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using some_Enum = ::fire::Baz::some_Enum;
 
 void register_smoke_ExternalClasssome_Enum(py::module_& module) {
-    py::enum_<some_Enum>(module, "ExternalClasssome_Enum")
+    py::enum_<some_Enum>(module, "smoke_ExternalClasssome_Enum")
         .value("SOME_VALUE", some_Enum::some_Value)
         ;
 }

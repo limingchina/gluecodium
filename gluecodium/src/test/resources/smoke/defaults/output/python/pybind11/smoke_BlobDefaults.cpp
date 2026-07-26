@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,11 +20,12 @@ namespace py = pybind11;
 using BlobDefaults = ::smoke::BlobDefaults;
 
 void register_smoke_BlobDefaults(py::module_& module) {
-    py::class_<BlobDefaults>(module, "BlobDefaults")
+    py::class_<BlobDefaults>(module, "smoke_BlobDefaults")
         .def_readwrite("empty_list", &BlobDefaults::empty_list)
         .def_readwrite("dead_beef", &BlobDefaults::dead_beef)
         .def(py::init<>())
-        .def(py::init<::std::shared_ptr< ::std::vector< uint8_t > >, ::std::shared_ptr< ::std::vector< uint8_t > >(), py::arg("empty_list"), py::arg("dead_beef"))
+        .def(py::init<::std::shared_ptr< ::std::vector< uint8_t > >, ::std::shared_ptr< ::std::vector< uint8_t > >>(), py::arg("empty_list"), py::arg("dead_beef"))
+        .def(py::init<::std::shared_ptr< ::std::vector< uint8_t > >, ::std::shared_ptr< ::std::vector< uint8_t > >>(), py::arg("empty_list"), py::arg("dead_beef"))
         ;
 }
 

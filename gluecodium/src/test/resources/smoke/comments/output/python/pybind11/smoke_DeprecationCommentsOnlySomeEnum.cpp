@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using SomeEnum = ::smoke::DeprecationCommentsOnly::SomeEnum;
 
 void register_smoke_DeprecationCommentsOnlySomeEnum(py::module_& module) {
-    py::enum_<SomeEnum>(module, "DeprecationCommentsOnlySomeEnum")
+    py::enum_<SomeEnum>(module, "smoke_DeprecationCommentsOnlySomeEnum")
         .value("USELESS", SomeEnum::USELESS)
         ;
 }

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,10 +18,10 @@ namespace py = pybind11;
 using UnusedTopLevelPoint = ::smoke::UnusedTopLevelPoint;
 
 void register_smoke_UnusedTopLevelPoint(py::module_& module) {
-    py::class_<UnusedTopLevelPoint>(module, "UnusedTopLevelPoint")
+    py::class_<UnusedTopLevelPoint>(module, "smoke_UnusedTopLevelPoint")
         .def_readwrite("foo", &UnusedTopLevelPoint::foo)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("foo"))
+        .def(py::init<::std::string>(), py::arg("foo"))
         ;
 }
 

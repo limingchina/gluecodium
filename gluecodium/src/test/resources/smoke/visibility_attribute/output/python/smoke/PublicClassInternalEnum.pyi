@@ -10,8 +10,8 @@ import generated
 class PublicClassInternalEnum(Enum):
     """"""
 
-    FOO = generated.PublicClassInternalEnum.FOO
-    BAR = generated.PublicClassInternalEnum.BAR
+    FOO = generated.smoke_PublicClassInternalEnum.FOO
+    BAR = generated.smoke_PublicClassInternalEnum.BAR
 
     @property
     def _native(self):

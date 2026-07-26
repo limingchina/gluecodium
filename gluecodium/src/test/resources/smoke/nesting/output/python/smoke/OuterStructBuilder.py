@@ -21,7 +21,7 @@ class OuterStructBuilder(_NativeBase):
     @staticmethod
     def create() -> OuterStructBuilder:
         """"""
-        native_result = generated.OuterStructBuilder.create()
+        native_result = generated.smoke_OuterStructBuilder.create()
         return OuterStructBuilder(native_result)
 
     def field(self, value: str) -> OuterStructBuilder:

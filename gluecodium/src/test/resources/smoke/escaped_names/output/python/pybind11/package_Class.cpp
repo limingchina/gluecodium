@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -56,7 +57,7 @@ public:
 };
 
 void register_package_Class(py::module_& module) {
-    py::class_<Class, ::package::Interface, std::shared_ptr<Class>, ClassTrampoline>(module, "Class")
+    py::class_<Class, ::package::Interface, std::shared_ptr<Class>, ClassTrampoline>(module, "package_Class")
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
@@ -67,9 +68,10 @@ void register_package_Class(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
-        .def(py::init<>())
-
         .def_static("constructor", &Class::constructor)
+                .def("fun", [](Class& self, py::handle double) {
+                        return self.fun(gluecodium::python::from_python_regular<::std::vector< ::package::Types::Struct >>(double));
+                }, py::arg("double"))
         .def_property("property", py::overload_cast<>(&Class::get_property, py::const_), py::overload_cast<const ::package::Types::Enum>(&Class::set_property))
         ;
 }

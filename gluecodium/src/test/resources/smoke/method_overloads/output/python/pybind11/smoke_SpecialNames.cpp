@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,9 +20,11 @@ using SpecialNames = ::smoke::SpecialNames;
 
 
 void register_smoke_SpecialNames(py::module_& module) {
-    py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(module, "SpecialNames")
-        .def(py::init<::std::string>(py::arg("result")))
-
+    py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(module, "smoke_SpecialNames")
+        .def("create", &SpecialNames::create)
+        .def("release", &SpecialNames::release)
+        .def("create_proxy", &SpecialNames::create_proxy)
+        .def("_uppercase", &SpecialNames::_uppercase)
         .def_static("make", &SpecialNames::make, py::arg("result"))
         ;
 }

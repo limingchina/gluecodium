@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -68,7 +69,7 @@ public:
 };
 
 void register_smoke_DeprecationComments(py::module_& module) {
-    py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "DeprecationComments")
+    py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "smoke_DeprecationComments")
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -81,6 +82,9 @@ void register_smoke_DeprecationComments(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("some_method_with_all_comments", [](DeprecationComments& self, const ::std::string& input) {
+            return self.some_method_with_all_comments(input);
+        }, py::arg("input"))
         .def_property("is_some_property", [](const DeprecationComments& self) {
             return self.is_some_property();
         }, [](DeprecationComments& self, const bool value) {

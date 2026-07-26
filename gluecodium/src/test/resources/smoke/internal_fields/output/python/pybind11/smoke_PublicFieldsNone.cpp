@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,10 +17,10 @@ namespace py = pybind11;
 using PublicFieldsNone = ::smoke::PublicFieldsNone;
 
 void register_smoke_PublicFieldsNone(py::module_& module) {
-    py::class_<PublicFieldsNone>(module, "PublicFieldsNone")
+    py::class_<PublicFieldsNone>(module, "smoke_PublicFieldsNone")
         .def_readwrite("internal_field", &PublicFieldsNone::internal_field)
         .def(py::init<>())
-        .def(py::init<::std::string(), py::arg("internal_field"))
+        .def(py::init<::std::string>(), py::arg("internal_field"))
         ;
 }
 

@@ -16,10 +16,10 @@ class BasicTypesSomeStruct(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.BasicTypesSomeStruct):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_BasicTypesSomeStruct):
             super().__init__(args[0])
         else:
-            super().__init__(generated.BasicTypesSomeStruct(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_BasicTypesSomeStruct(*[_unwrap(arg) for arg in args]))
 
 
     @property

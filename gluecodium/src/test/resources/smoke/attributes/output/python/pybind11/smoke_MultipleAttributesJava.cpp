@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,12 @@ using MultipleAttributesJava = ::smoke::MultipleAttributesJava;
 
 
 void register_smoke_MultipleAttributesJava(py::module_& module) {
-    py::class_<MultipleAttributesJava, std::shared_ptr<MultipleAttributesJava>>(module, "MultipleAttributesJava")
+    py::class_<MultipleAttributesJava, std::shared_ptr<MultipleAttributesJava>>(module, "smoke_MultipleAttributesJava")
+        .def("no_lists2", &MultipleAttributesJava::no_lists2)
+        .def("no_lists3", &MultipleAttributesJava::no_lists3)
+        .def("list_first", &MultipleAttributesJava::list_first)
+        .def("list_second", &MultipleAttributesJava::list_second)
+        .def("two_lists", &MultipleAttributesJava::two_lists)
         ;
 }
 

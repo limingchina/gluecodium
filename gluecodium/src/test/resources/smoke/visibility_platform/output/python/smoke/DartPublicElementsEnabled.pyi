@@ -12,10 +12,10 @@ class DartPublicElementsEnabled(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.DartPublicElementsEnabled):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_DartPublicElementsEnabled):
             super().__init__(args[0])
         else:
-            super().__init__(generated.DartPublicElementsEnabled(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_DartPublicElementsEnabled(*[_unwrap(arg) for arg in args]))
 
 
     @property

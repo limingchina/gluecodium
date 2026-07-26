@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,7 @@ using LambdasDeclarationOrder = ::smoke::LambdasDeclarationOrder;
 
 
 void register_smoke_LambdasDeclarationOrder(py::module_& module) {
-    py::class_<LambdasDeclarationOrder, std::shared_ptr<LambdasDeclarationOrder>>(module, "LambdasDeclarationOrder")
+    py::class_<LambdasDeclarationOrder, std::shared_ptr<LambdasDeclarationOrder>>(module, "smoke_LambdasDeclarationOrder")
         ;
 }
 

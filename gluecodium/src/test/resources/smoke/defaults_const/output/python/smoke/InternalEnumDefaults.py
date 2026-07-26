@@ -17,10 +17,10 @@ class InternalEnumDefaults(_NativeBase):
     """"""
 
     def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.InternalEnumDefaults):
+        if len(args) == 1 and isinstance(args[0], generated.smoke_InternalEnumDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.InternalEnumDefaults(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_InternalEnumDefaults(*[_unwrap(arg) for arg in args]))
 
 
     @property

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,7 @@ using StructsWithMethodsInterface = ::smoke::StructsWithMethodsInterface;
 
 
 void register_smoke_StructsWithMethodsInterface(py::module_& module) {
-    py::class_<StructsWithMethodsInterface, std::shared_ptr<StructsWithMethodsInterface>>(module, "StructsWithMethodsInterface")
+    py::class_<StructsWithMethodsInterface, std::shared_ptr<StructsWithMethodsInterface>>(module, "smoke_StructsWithMethodsInterface")
         ;
 }
 

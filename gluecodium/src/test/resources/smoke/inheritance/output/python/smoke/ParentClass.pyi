@@ -5,7 +5,7 @@ import typing
 import generated
 
 
-class ParentClass(generated.ParentClass):
+class ParentClass(generated.smoke_ParentClass):
     """"""
 
     def __init__(self, native=None):
@@ -15,7 +15,7 @@ class ParentClass(generated.ParentClass):
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ParentClass):
+        if native is not None and isinstance(native, generated.smoke_ParentClass):
             super().__init__(native)
         else:
             super().__init__()
@@ -26,9 +26,9 @@ class ParentClass(generated.ParentClass):
     @property
     def root_property(self) -> str:
         """"""
-        return _wrap(generated.ParentClass.root_property.fget(self), str)
+        return _wrap(generated.smoke_ParentClass.root_property.fget(self), str)
 
     @root_property.setter
     def root_property(self, value: str):
-        generated.ParentClass.root_property.fset(self, _unwrap(value, str))
+        generated.smoke_ParentClass.root_property.fset(self, _unwrap(value, str))
 

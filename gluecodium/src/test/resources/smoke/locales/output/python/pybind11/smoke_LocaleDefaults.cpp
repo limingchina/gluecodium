@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -17,7 +18,7 @@ namespace py = pybind11;
 using LocaleDefaults = ::smoke::LocaleDefaults;
 
 void register_smoke_LocaleDefaults(py::module_& module) {
-    py::class_<LocaleDefaults>(module, "LocaleDefaults")
+    py::class_<LocaleDefaults>(module, "smoke_LocaleDefaults")
         .def_readwrite("english", &LocaleDefaults::english)
         .def_readwrite("lat_am_spanish", &LocaleDefaults::lat_am_spanish)
         .def_readwrite("romansh_sursilvan", &LocaleDefaults::romansh_sursilvan)
@@ -25,7 +26,12 @@ void register_smoke_LocaleDefaults(py::module_& module) {
         .def_readwrite("traditional_chinese_taiwan", &LocaleDefaults::traditional_chinese_taiwan)
         .def_readwrite("zuerich_german", &LocaleDefaults::zuerich_german)
         .def(py::init<>())
-        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
+        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
+        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
+        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
+        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
+        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
+        .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
         ;
 }
 

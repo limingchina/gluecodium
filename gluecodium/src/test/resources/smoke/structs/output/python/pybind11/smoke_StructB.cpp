@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,10 +20,10 @@ namespace py = pybind11;
 using StructB = ::smoke::StructB;
 
 void register_smoke_StructB(py::module_& module) {
-    py::class_<StructB>(module, "StructB")
+    py::class_<StructB>(module, "smoke_StructB")
         .def_readwrite("field", &StructB::field)
         .def(py::init<>())
-        .def(py::init<::std::vector< ::smoke::StructA >(), py::arg("field"))
+        .def(py::init<::std::vector< ::smoke::StructA >>(), py::arg("field"))
         ;
 }
 

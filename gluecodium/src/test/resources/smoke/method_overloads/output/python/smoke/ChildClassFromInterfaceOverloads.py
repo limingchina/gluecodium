@@ -10,7 +10,7 @@ from smoke.ParentInterface import ParentInterface
 import generated
 
 
-class ChildClassFromInterfaceOverloads(generated.ChildClassFromInterfaceOverloads):
+class ChildClassFromInterfaceOverloads(generated.smoke_ChildClassFromInterfaceOverloads):
     """"""
 
     def __init__(self, native=None):
@@ -20,7 +20,7 @@ class ChildClassFromInterfaceOverloads(generated.ChildClassFromInterfaceOverload
         # a factory), adopt it via the generated adoption constructor; otherwise construct a
         # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
         # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.ChildClassFromInterfaceOverloads):
+        if native is not None and isinstance(native, generated.smoke_ChildClassFromInterfaceOverloads):
             super().__init__(native)
         else:
             super().__init__()
@@ -28,11 +28,11 @@ class ChildClassFromInterfaceOverloads(generated.ChildClassFromInterfaceOverload
 
     def foo(*args, **kwargs):
         """"""
-        return _wrap(generated.ChildClassFromInterfaceOverloads.foo(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(*args, **kwargs):
         """"""
-        return _wrap(generated.ChildClassFromInterfaceOverloads.bar(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -16,7 +17,7 @@ namespace py = pybind11;
 using EnumWithAlias = ::smoke::EnumWithAlias;
 
 void register_smoke_EnumWithAlias(py::module_& module) {
-    py::enum_<EnumWithAlias>(module, "EnumWithAlias")
+    py::enum_<EnumWithAlias>(module, "smoke_EnumWithAlias")
         .value("ONE", EnumWithAlias::ONE)
         .value("TWO", EnumWithAlias::TWO)
         .value("THREE", EnumWithAlias::THREE)

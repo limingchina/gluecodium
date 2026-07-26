@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -102,7 +103,7 @@ public:
 };
 
 void register_smoke_FirstParentIsNarrowInterface(py::module_& module) {
-    py::class_<FirstParentIsNarrowInterface, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowInterface>, FirstParentIsNarrowInterfaceTrampoline>(module, "FirstParentIsNarrowInterface", py::multiple_inheritance())
+    py::class_<FirstParentIsNarrowInterface, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowInterface>, FirstParentIsNarrowInterfaceTrampoline>(module, "smoke_FirstParentIsNarrowInterface", py::multiple_inheritance())
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -115,10 +116,19 @@ void register_smoke_FirstParentIsNarrowInterface(py::module_& module) {
             self->m_impl = native;
             return self;
         }))
+        .def("child_function", [](FirstParentIsNarrowInterface& self) {
+            return self.child_function();
+        })
         .def_property("child_property", [](const FirstParentIsNarrowInterface& self) {
             return self.get_child_property();
         }, [](FirstParentIsNarrowInterface& self, const ::std::string& value) {
             self.set_child_property(value);
+        })
+        .def("parent_function_one", [](FirstParentIsNarrowInterface& self) {
+            return self.parent_function_one();
+        })
+        .def("parent_function_two", [](FirstParentIsNarrowInterface& self) {
+            return self.parent_function_two();
         })
         .def_property("parent_property_one", [](const FirstParentIsNarrowInterface& self) {
             return self.get_parent_property_one();

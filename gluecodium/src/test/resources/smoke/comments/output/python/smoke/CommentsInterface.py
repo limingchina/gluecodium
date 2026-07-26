@@ -10,7 +10,7 @@ from typing import Optional
 import generated
 
 
-class CommentsInterface(generated.CommentsInterface):
+class CommentsInterface(generated.smoke_CommentsInterface):
     """This is some very useful interface."""
 
     def __init__(self, native=None):
@@ -21,7 +21,7 @@ class CommentsInterface(generated.CommentsInterface):
         # aliases the wrapper itself so the rest of the generated code can reach the
         # native object uniformly (e.g. when passing this interface back into a C++
         # call site).
-        if native is not None and isinstance(native, generated.CommentsInterface):
+        if native is not None and isinstance(native, generated.smoke_CommentsInterface):
             super().__init__(native)
         else:
             super().__init__()
@@ -29,52 +29,52 @@ class CommentsInterface(generated.CommentsInterface):
 
     def some_method_with_all_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return _wrap(generated.CommentsInterface.some_method_with_all_comments(self, _unwrap(input, str)), bool)
+        return _wrap(generated.smoke_CommentsInterface.some_method_with_all_comments(self, _unwrap(input, str)), bool)
 
     def some_method_with_input_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return _wrap(generated.CommentsInterface.some_method_with_input_comments(self, _unwrap(input, str)), bool)
+        return _wrap(generated.smoke_CommentsInterface.some_method_with_input_comments(self, _unwrap(input, str)), bool)
 
     def some_method_with_output_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return _wrap(generated.CommentsInterface.some_method_with_output_comments(self, _unwrap(input, str)), bool)
+        return _wrap(generated.smoke_CommentsInterface.some_method_with_output_comments(self, _unwrap(input, str)), bool)
 
     def some_method_with_no_comments(self, input: str) -> bool:
         """This is some very useful method that measures the usefulness of its input."""
-        return _wrap(generated.CommentsInterface.some_method_with_no_comments(self, _unwrap(input, str)), bool)
+        return _wrap(generated.smoke_CommentsInterface.some_method_with_no_comments(self, _unwrap(input, str)), bool)
 
     def some_method_without_return_type_with_all_comments(self, input: str):
         """This is some very useful method that does not measure the usefulness of its input."""
-        return _wrap(generated.CommentsInterface.some_method_without_return_type_with_all_comments(self, _unwrap(input, str)), None)
+        return _wrap(generated.smoke_CommentsInterface.some_method_without_return_type_with_all_comments(self, _unwrap(input, str)), None)
 
     def some_method_without_return_type_with_no_comments(self, input: str):
         """This is some very useful method that does not measure the usefulness of its input."""
-        return _wrap(generated.CommentsInterface.some_method_without_return_type_with_no_comments(self, _unwrap(input, str)), None)
+        return _wrap(generated.smoke_CommentsInterface.some_method_without_return_type_with_no_comments(self, _unwrap(input, str)), None)
 
     def some_method_without_input_parameters_with_all_comments(self) -> bool:
         """This is some very useful method that measures the usefulness of something."""
-        return _wrap(generated.CommentsInterface.some_method_without_input_parameters_with_all_comments(self), bool)
+        return _wrap(generated.smoke_CommentsInterface.some_method_without_input_parameters_with_all_comments(self), bool)
 
     def some_method_without_input_parameters_with_no_comments(self) -> bool:
         """This is some very useful method that measures the usefulness of something."""
-        return _wrap(generated.CommentsInterface.some_method_without_input_parameters_with_no_comments(self), bool)
+        return _wrap(generated.smoke_CommentsInterface.some_method_without_input_parameters_with_no_comments(self), bool)
 
     def some_method_with_nothing(self):
         """"""
-        return _wrap(generated.CommentsInterface.some_method_with_nothing(self), None)
+        return _wrap(generated.smoke_CommentsInterface.some_method_with_nothing(self), None)
 
     def some_method_without_return_type_or_input_parameters(self):
         """This is some very useful method that does nothing."""
-        return _wrap(generated.CommentsInterface.some_method_without_return_type_or_input_parameters(self), None)
+        return _wrap(generated.smoke_CommentsInterface.some_method_without_return_type_or_input_parameters(self), None)
 
     @property
     def is_some_property(self) -> bool:
         """Some very useful property."""
-        return _wrap(generated.CommentsInterface.is_some_property.fget(self), bool)
+        return _wrap(generated.smoke_CommentsInterface.is_some_property.fget(self), bool)
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
-        generated.CommentsInterface.is_some_property.fset(self, _unwrap(value, bool))
+        generated.smoke_CommentsInterface.is_some_property.fset(self, _unwrap(value, bool))
 
     This is some very useful constant.
     VERY_USEFUL = True

@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
 #include "_wrapper_cache.h"
@@ -19,7 +20,8 @@ using UnicodeComments = ::smoke::UnicodeComments;
 
 
 void register_smoke_UnicodeComments(py::module_& module) {
-    py::class_<UnicodeComments, std::shared_ptr<UnicodeComments>>(module, "UnicodeComments")
+    py::class_<UnicodeComments, std::shared_ptr<UnicodeComments>>(module, "smoke_UnicodeComments")
+        .def("some_method_with_all_comments", &UnicodeComments::some_method_with_all_comments, py::arg("input"))
         ;
 }
 
