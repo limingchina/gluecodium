@@ -18,39 +18,27 @@
 """Constant mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.Constants import (
-    INT_CONSTANT,
-    UINT_CONSTANT,
-    FLOAT_CONSTANT,
-    DOUBLE_CONSTANT,
-    STRING_CONSTANT,
-    FLOAT_NAN,
-    FLOAT_INFINITY,
-    FLOAT_NEGATIVE_INFINITY,
-    DOUBLE_NAN,
-    DOUBLE_INFINITY,
-    DOUBLE_NEGATIVE_INFINITY,
-)
-from test.ConstantsSkipCpp import BOOL_CONSTANT
+from test.Constants import Constants
+from test.ConstantsSkipCpp import ConstantsSkipCpp
 
 import pytest
 
 
 class TestConstants:
     def test_int_constant(self):
-        assert INT_CONSTANT == -11
+        assert Constants.INT_CONSTANT == -11
 
     def test_uint_constant(self):
-        assert UINT_CONSTANT == 4294967295
+        assert Constants.UINT_CONSTANT == 4294967295
 
     def test_float_constant(self):
-        assert FLOAT_CONSTANT == pytest.approx(2.71)
+        assert Constants.FLOAT_CONSTANT == pytest.approx(2.71)
 
     def test_double_constant(self):
-        assert DOUBLE_CONSTANT == pytest.approx(-3.14)
+        assert Constants.DOUBLE_CONSTANT == pytest.approx(-3.14)
 
     def test_string_constant(self):
-        assert STRING_CONSTANT == "Foo bar"
+        assert Constants.STRING_CONSTANT == "Foo bar"
 
     def test_bool_constant(self):
-        assert BOOL_CONSTANT is True
+        assert ConstantsSkipCpp.BOOL_CONSTANT is True
