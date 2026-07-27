@@ -891,3 +891,59 @@ The Python generator uses deferred imports to avoid circular import issues. When
 
 The file-based module path logic (`resolveFileReferenceName()`) that was introduced in the abandoned grouping attempt has been removed; `resolveReferenceName()` now always uses element-based paths, which are correct for per-type organization.
 - [ ] Documentation is complete, including usage guide and type mapping table
+
+---
+
+## 8. Open Questions for Future Architecture Discussion
+
+### Q1: Should struct constructor keyword arguments use camelCase (LIMEIDL names) or snake_case (Python convention)?
+
+**Status:** Open — workaround implemented, needs architecture decision.
+
+**Background:** The Python naming rules (`namerules/python.properties`) convert all LIMEIDL field names from camelCase to `lower_snake_case` (e.g., `int8Field` → `int8_field`). This conversion is applied consistently to:
+- Struct property accessors: `struct.int8_field` (snake_case)
+- pybind11 constructor argument names: `py::arg("int8_field")` (snake_case)
+- Method names: `immutable_struct_round_trip` (snake_case)
+
+However, the functional tests (e.g., `structs_immutable_test.py`) construct immutable structs with **camelCase keyword arguments** matching the original LIMEIDL field names:
+
+```python
+# Constructor kwargs use camelCase (LIMEIDL names):
+struct = AllTypesImmutableStruct(int8Field=42, pointField=point, ...)
+
+# Property access uses snake_case (Python convention):
+assert struct.int8_field == 42
+assert struct.point_field.x == 1.0
+```
+
+This creates an **inconsistency within the same test**: camelCase for kwargs, snake_case for property access. The test author naturally used the LIMEIDL field names (the "source of truth") for keyword arguments, while correctly using snake_case for property access.
+
+**Current workaround:** A `_to_snake_case()` helper was added to `_native_base.py` and used in `PythonStruct.mustache`'s `__init__` to convert camelCase kwarg keys to snake_case before forwarding to the pybind11 native constructor. This makes **both** camelCase and snake_case kwargs work (the conversion is idempotent for already-snake_case names).
+
+**Alternatives to consider:**
+
+1. **Keep the `_to_snake_case` conversion (current approach):**
+   - Pro: Users can use LIMEIDL field names directly — the LIMEIDL is the API contract.
+   - Pro: Both naming conventions work transparently.
+   - Con: Introduces a runtime conversion overhead (regex) in every struct constructor call.
+   - Con: Accepting two naming conventions may be confusing — which is the "official" one?
+
+2. **Require snake_case kwargs only (remove the conversion):**
+   - Pro: Consistent with Python naming conventions everywhere.
+   - Pro: No runtime overhead.
+   - Con: Users must know the Python naming rules when constructing structs — they can't just copy field names from the LIMEIDL source.
+   - Con: Breaking change for any code that uses camelCase kwargs (currently only tests, but could affect generated code).
+
+3. **Register pybind11 constructor args with both names:**
+   - Pro: No runtime conversion needed — pybind11 handles name matching natively.
+   - Con: pybind11's `py::arg()` only supports one name per argument; would need multiple constructor overloads or `py::arg_v()` with no_default.
+   - Con: More complex C++ binding code.
+
+4. **Generate a field-name mapping dict per struct type:**
+   - Pro: Exact, correct conversion (no regex guessing).
+   - Con: Adds generated code overhead per struct.
+   - Con: More complex template logic.
+
+**Observation from other language tests:** The Dart test for the same feature uses **positional arguments** (not kwargs): `Struct(-1, 2, -3, 4, ...)`, avoiding the naming issue entirely. Java/Kotlin/Swift tests also use positional args or named parameters that match their own naming conventions. Only the Python test uses keyword arguments, which is where the mismatch surfaces.
+
+**Recommendation for future discussion:** This should be decided as part of the API stability guarantee for the Python binding. If the binding is not yet released, option 2 (snake_case only) is the cleanest. If backward compatibility matters, option 1 (keep the conversion) is the safest.

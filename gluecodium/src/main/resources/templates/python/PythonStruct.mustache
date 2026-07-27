@@ -28,11 +28,14 @@ import {{nativeModule}}
 class {{resolveName}}(_NativeBase):
     """{{resolveName comment}}"""
 
-    def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], {{nativeModule}}.{{typeName}}):
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1 and not kwargs and isinstance(args[0], {{nativeModule}}.{{typeName}}):
             super().__init__(args[0])
         else:
-            super().__init__({{nativeModule}}.{{typeName}}(*[_unwrap(arg) for arg in args]))
+            super().__init__({{nativeModule}}.{{typeName}}(
+                *[_unwrap(arg) for arg in args],
+                **{_to_snake_case(k): _unwrap(v) for k, v in kwargs.items()}
+            ))
 {{#ifPredicate "isEquatable"}}
 
     def __eq__(self, other: object) -> bool:
