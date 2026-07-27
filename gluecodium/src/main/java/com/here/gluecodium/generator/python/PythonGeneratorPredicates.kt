@@ -316,17 +316,25 @@ internal class PythonGeneratorPredicates(
             // its factory return types - an unresolvable circular import. `PythonField` uses
             // this predicate to emit a local (deferred) import instead of a module-level one.
             "isAncestorField" to { limeElement: Any -> limeElement is LimeField && isFieldTypeAncestor(limeElement) },
-            // Whether a function's return type is one of the *ancestors* of its own container
-            // (e.g. a nested class `Builder.build()` returning its enclosing struct `OuterStruct`).
-            // Mirrors `isAncestorField` but for method/function return types, which produce the
-            // same circular-import problem once nested types are flattened into top-level modules.
+            // Whether a function's return type creates a circular import with its own container.
+            // This happens in two patterns:
+            // 1. The return type is an *ancestor* of the container (e.g. a nested class
+            //    `Builder.build()` returning its enclosing struct `OuterStruct`).
+            // 2. The return type is a *descendant* of the container (e.g.
+            //    `InstanceInStruct.createInStruct()` returning the nested struct `SelfHolder`).
+            // In both cases, nested types are flattened into separate top-level Python modules
+            // that would import each other at module level — an unresolvable circular import.
+            // `PythonFunction.mustache` uses this predicate to emit a local (deferred) import
+            // inside the method body instead.
             "isAncestorReturnType" to { limeElement: Any ->
-                limeElement is com.here.gluecodium.model.lime.LimeFunction && isTypeAncestor(limeElement.returnType.typeRef)
+                val func = limeElement as? com.here.gluecodium.model.lime.LimeFunction
+                func != null && isCircularTypeRef(func, func.returnType.typeRef)
             },
-            // Whether a property's type is one of the *ancestors* of its own container. Mirrors
-            // `isAncestorField` / `isAncestorReturnType` but for property types.
+            // Whether a property's type creates a circular import with its own container.
+            // Mirrors `isAncestorField` / `isAncestorReturnType` but for property types.
             "isAncestorProperty" to { limeElement: Any ->
-                limeElement is com.here.gluecodium.model.lime.LimeProperty && isTypeAncestor(limeElement.typeRef)
+                val prop = limeElement as? com.here.gluecodium.model.lime.LimeProperty
+                prop != null && isCircularTypeRef(prop, prop.typeRef)
             },
             // Whether the element lives inside a non-empty namespace (i.e. its LimePath head is not
             // empty). Used by the pybind11 file template to emit `using` aliases so the generated
@@ -478,15 +486,58 @@ internal class PythonGeneratorPredicates(
         }
     }
 
-    private fun isTypeAncestor(limeTypeRef: LimeTypeRef): Boolean {
-        val typeName = (limeTypeRef.type.actualType as? LimeNamedElement)?.fullName ?: return false
-        // Walk up from the type reference's container to find any ancestor matching the referenced
-        // type. Use `tailParents` (which terminates once the tail is exhausted) instead of a manual
+    private fun isCircularTypeRef(
+        element: LimeNamedElement,
+        typeRef: LimeTypeRef,
+    ): Boolean {
+        val referencedType = typeRef.type.actualType as? LimeNamedElement ?: return false
+        val container = limeReferenceMap[element.path.parent.toString()] as? LimeNamedElement ?: return false
+        // A circular import arises when the referenced type is a descendant of the element's
+        // container (e.g. InstanceInStruct.createInStruct() -> SelfHolder, where SelfHolder
+        // is a nested struct of InstanceInStruct). This is only a circular import when the
+        // descendant type has a member that references an ancestor (e.g. SelfHolder has a
+        // field `mySelf: InstanceInStruct`). Without such a back-reference, the descendant's
+        // module does not import the container's module, so there is no cycle.
+        //
+        // The reverse direction (return type is an ANCESTOR of the container, e.g.
+        // Builder.build() -> OuterStruct) does NOT need a deferred import here: the
+        // `childModulePaths` mechanism in PythonGenerator.kt already detects when a child
+        // module imports the parent and removes the parent's module-level import of the
+        // child, breaking the cycle. The child can then safely import the parent at module
+        // level because the parent no longer imports the child at module level.
+        return isAncestorOf(container, referencedType) && hasAncestorReference(referencedType)
+    }
+
+    // Checks whether `descendant` has any member (field or property) whose type is an
+    // ancestor of `descendant` itself. This is a proxy for "the descendant's module imports
+    // the container's module", which is what creates the circular import in the DESCENDANT
+    // direction.
+    private fun hasAncestorReference(descendant: LimeNamedElement): Boolean {
+        return when (descendant) {
+            is LimeStruct -> descendant.fields.any { field ->
+                val fieldType = field.typeRef.type.actualType as? LimeNamedElement
+                fieldType != null && isAncestorOf(fieldType, descendant)
+            }
+            is com.here.gluecodium.model.lime.LimeContainerWithInheritance ->
+                descendant.properties.any { prop ->
+                    val propType = prop.typeRef.type.actualType as? LimeNamedElement
+                    propType != null && isAncestorOf(propType, descendant)
+                }
+            else -> false
+        }
+    }
+
+    private fun isAncestorOf(
+        ancestor: LimeNamedElement,
+        descendant: LimeNamedElement,
+    ): Boolean {
+        // Walk up from the descendant's path to find any ancestor matching the referenced type.
+        // Use `tailParents` (which terminates once the tail is exhausted) instead of a manual
         // `parent` walk: `LimePath.parent` is idempotent for an empty tail, so a hand-rolled
-        // `while (currentKey != null)` loop would never terminate when no ancestor matches, causing
-        // the generator to spin indefinitely on deeply nested types.
-        return limeTypeRef.type.path.parent.tailParents.any {
-            (limeReferenceMap[it.toString()] as? LimeNamedElement)?.fullName == typeName
+        // `while (currentKey != null)` loop would never terminate when no ancestor matches,
+        // causing the generator to spin indefinitely on deeply nested types.
+        return descendant.path.tailParents.any {
+            (limeReferenceMap[it.toString()] as? LimeNamedElement)?.fullName == ancestor.fullName
         }
     }
 
