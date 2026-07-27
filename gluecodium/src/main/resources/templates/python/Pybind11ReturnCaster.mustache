@@ -85,16 +85,37 @@ struct type_caster<std::shared_ptr<std::vector<uint8_t>>> {
     }
 };
 
+// Helper trait: detects whether Error has a callable `message()` method.
+template <typename Error, typename = void>
+struct HasMessageMethod : std::false_type {};
+
+template <typename Error>
+struct HasMessageMethod<Error, std::void_t<decltype(std::declval<Error>().message())>>
+    : std::true_type {};
+
 // Traits to stringify an error of arbitrary type.
 template <typename Error, typename = void>
 struct ReturnErrorToString {
     static std::string convert(const Error&) { return "unknown error"; }
 };
 
+// Specialization for types with a `message()` method (e.g. std::error_code).
 template <typename Error>
 struct ReturnErrorToString<
     Error, std::void_t<decltype(std::declval<Error>().message())>> {
     static std::string convert(const Error& e) { return e.message(); }
+};
+
+// Specialization for types with a `message` data member (e.g. Payload struct).
+// Only matches when `message` is NOT a callable method (the method case is
+// handled by the specialization above). This ensures struct error types with
+// a `message` field produce the actual error message instead of "unknown error".
+template <typename Error>
+struct ReturnErrorToString<
+    Error, std::enable_if_t<
+        !HasMessageMethod<Error>::value &&
+        std::is_convertible_v<decltype(std::declval<Error>().message), std::string>>> {
+    static std::string convert(const Error& e) { return e.message; }
 };
 
 template <>
