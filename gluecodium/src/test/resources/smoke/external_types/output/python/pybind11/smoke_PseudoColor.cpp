@@ -27,6 +27,8 @@ void register_smoke_PseudoColor(py::module_& module) {
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def("__eq__", [](const PseudoColor& lhs, const PseudoColor& rhs) { return lhs == rhs; })
+        .def("__hash__", [](const PseudoColor& self) { return gluecodium::hash<PseudoColor>{}(self); })
         ;
 }
 

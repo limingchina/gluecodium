@@ -11,11 +11,14 @@ import generated
 class PublicClassPublicStructWithInternalDefaults(_NativeBase):
     """"""
 
-    def __init__(self, *args):
-        if len(args) == 1 and isinstance(args[0], generated.smoke_PublicClassPublicStructWithInternalDefaults):
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PublicClassPublicStructWithInternalDefaults):
             super().__init__(args[0])
         else:
-            super().__init__(generated.smoke_PublicClassPublicStructWithInternalDefaults(*[_unwrap(arg) for arg in args]))
+            super().__init__(generated.smoke_PublicClassPublicStructWithInternalDefaults(
+                *[_unwrap(arg) for arg in args],
+                **{k: _unwrap(v) for k, v in kwargs.items()}
+            ))
 
 
     @property

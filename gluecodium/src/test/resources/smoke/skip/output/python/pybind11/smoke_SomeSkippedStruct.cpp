@@ -24,6 +24,8 @@ void register_smoke_SomeSkippedStruct(py::module_& module) {
         .def_readwrite("field", &SomeSkippedStruct::field)
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::SomeSkippedEnum >>(), py::arg("field"))
+        .def("__eq__", [](const SomeSkippedStruct& lhs, const SomeSkippedStruct& rhs) { return lhs == rhs; })
+        .def("__hash__", [](const SomeSkippedStruct& self) { return gluecodium::hash<SomeSkippedStruct>{}(self); })
         ;
 }
 

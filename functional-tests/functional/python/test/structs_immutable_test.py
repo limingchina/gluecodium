@@ -17,14 +17,13 @@
 
 """Struct immutability tests for the Python (pybind11) bindings."""
 
-import functional
+from test.PlainDataStructuresImmutable import PlainDataStructuresImmutable
 from test.PlainDataStructuresImmutableAllTypesImmutableStruct import (
     PlainDataStructuresImmutableAllTypesImmutableStruct as AllTypesImmutableStruct,
 )
 from test.PlainDataStructuresImmutableNestingImmutableStruct import (
     PlainDataStructuresImmutableNestingImmutableStruct as NestingImmutableStruct,
 )
-from test.PlainDataStructuresImmutable import PlainDataStructuresImmutable
 from test.PlainDataStructuresImmutablePoint import PlainDataStructuresImmutablePoint as Point
 from test.PlainDataStructuresImmutableStructWithArrayOfImmutable import (
     PlainDataStructuresImmutableStructWithArrayOfImmutable as StructWithArrayOfImmutable,
@@ -37,19 +36,19 @@ class TestStructsImmutable:
     def test_create_all_types_immutable_struct(self):
         point = Point(1.0, 2.0)
         struct = AllTypesImmutableStruct(
-            int8Field=0,
-            uint8Field=0,
-            int16Field=0,
-            uint16Field=0,
-            int32Field=0,
-            uint32Field=0,
-            int64Field=0,
-            uint64Field=0,
-            floatField=0.0,
-            doubleField=0.0,
-            stringField="",
-            booleanField=False,
-            pointField=point,
+            int8_field=0,
+            uint8_field=0,
+            int16_field=0,
+            uint16_field=0,
+            int32_field=0,
+            uint32_field=0,
+            int64_field=0,
+            uint64_field=0,
+            float_field=0.0,
+            double_field=0.0,
+            string_field="",
+            boolean_field=False,
+            point_field=point,
         )
 
         assert struct.int8_field == 0
@@ -59,21 +58,21 @@ class TestStructsImmutable:
     def test_nesting_immutable_struct(self):
         point = Point(1.0, 2.0)
         all_types = AllTypesImmutableStruct(
-            int8Field=1,
-            uint8Field=2,
-            int16Field=3,
-            uint16Field=4,
-            int32Field=5,
-            uint32Field=6,
-            int64Field=7,
-            uint64Field=8,
-            floatField=9.0,
-            doubleField=10.0,
-            stringField="test",
-            booleanField=True,
-            pointField=point,
+            int8_field=1,
+            uint8_field=2,
+            int16_field=3,
+            uint16_field=4,
+            int32_field=5,
+            uint32_field=6,
+            int64_field=7,
+            uint64_field=8,
+            float_field=9.0,
+            double_field=10.0,
+            string_field="test",
+            boolean_field=True,
+            point_field=point,
         )
-        nesting = NestingImmutableStruct(structField=all_types)
+        nesting = NestingImmutableStruct(struct_field=all_types)
 
         assert nesting.struct_field.int8_field == 1
         assert nesting.struct_field.point_field.x == 1.0
@@ -81,19 +80,19 @@ class TestStructsImmutable:
     def test_immutable_struct_field_is_readonly(self):
         point = Point(1.0, 2.0)
         struct = AllTypesImmutableStruct(
-            int8Field=0,
-            uint8Field=0,
-            int16Field=0,
-            uint16Field=0,
-            int32Field=0,
-            uint32Field=0,
-            int64Field=0,
-            uint64Field=0,
-            floatField=0.0,
-            doubleField=0.0,
-            stringField="",
-            booleanField=False,
-            pointField=point,
+            int8_field=0,
+            uint8_field=0,
+            int16_field=0,
+            uint16_field=0,
+            int32_field=0,
+            uint32_field=0,
+            int64_field=0,
+            uint64_field=0,
+            float_field=0.0,
+            double_field=0.0,
+            string_field="",
+            boolean_field=False,
+            point_field=point,
         )
 
         with pytest.raises(AttributeError):
@@ -102,19 +101,19 @@ class TestStructsImmutable:
     def test_immutable_struct_round_trip(self):
         point = Point(1.0, 2.0)
         struct = AllTypesImmutableStruct(
-            int8Field=42,
-            uint8Field=255,
-            int16Field=1000,
-            uint16Field=2000,
-            int32Field=3000,
-            uint32Field=4000,
-            int64Field=5000,
-            uint64Field=6000,
-            floatField=3.14,
-            doubleField=2.718,
-            stringField="hello",
-            booleanField=True,
-            pointField=point,
+            int8_field=42,
+            uint8_field=255,
+            int16_field=1000,
+            uint16_field=2000,
+            int32_field=3000,
+            uint32_field=4000,
+            int64_field=5000,
+            uint64_field=6000,
+            float_field=3.14,
+            double_field=2.718,
+            string_field="hello",
+            boolean_field=True,
+            point_field=point,
         )
 
         result = PlainDataStructuresImmutable.immutable_struct_round_trip(struct)

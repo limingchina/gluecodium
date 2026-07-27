@@ -22,6 +22,8 @@ void register_smoke_SerializableEquatableStruct(py::module_& module) {
         .def_readwrite("foo_field", &SerializableEquatableStruct::foo_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
+        .def("__eq__", [](const SerializableEquatableStruct& lhs, const SerializableEquatableStruct& rhs) { return lhs == rhs; })
+        .def("__hash__", [](const SerializableEquatableStruct& self) { return gluecodium::hash<SerializableEquatableStruct>{}(self); })
         ;
 }
 
