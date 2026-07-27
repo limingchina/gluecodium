@@ -34,7 +34,7 @@ class {{resolveName}}(_NativeBase):
         else:
             super().__init__({{nativeModule}}.{{typeName}}(
                 *[_unwrap(arg) for arg in args],
-                **{_to_snake_case(k): _unwrap(v) for k, v in kwargs.items()}
+                **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 {{#ifPredicate "isEquatable"}}
 

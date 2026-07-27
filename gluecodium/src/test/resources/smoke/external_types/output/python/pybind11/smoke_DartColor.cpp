@@ -28,6 +28,8 @@ void register_smoke_DartColor(py::module_& module) {
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def("__eq__", [](const DartColor& lhs, const DartColor& rhs) { return lhs == rhs; })
+        .def("__hash__", [](const DartColor& self) { return gluecodium::hash<DartColor>{}(self); })
         ;
 }
 

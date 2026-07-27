@@ -27,6 +27,8 @@ void register_smoke_SystemColor(py::module_& module) {
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
+        .def("__eq__", [](const SystemColor& lhs, const SystemColor& rhs) { return lhs == rhs; })
+        .def("__hash__", [](const SystemColor& self) { return gluecodium::hash<SystemColor>{}(self); })
         ;
 }
 

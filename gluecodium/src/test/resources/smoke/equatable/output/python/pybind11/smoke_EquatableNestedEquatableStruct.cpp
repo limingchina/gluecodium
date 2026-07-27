@@ -22,6 +22,8 @@ void register_smoke_EquatableNestedEquatableStruct(py::module_& module) {
         .def_readwrite("foo_field", &NestedEquatableStruct::foo_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
+        .def("__eq__", [](const NestedEquatableStruct& lhs, const NestedEquatableStruct& rhs) { return lhs == rhs; })
+        .def("__hash__", [](const NestedEquatableStruct& self) { return gluecodium::hash<NestedEquatableStruct>{}(self); })
         ;
 }
 
