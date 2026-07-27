@@ -1,129 +1,36 @@
 #!/bin/bash
 #
-# Test harness for the Python detection logic in build-python-functional.
-# Extracts the detection functions and runs them under various scenarios.
+# Copyright (C) 2016-2025 HERE Europe B.V.
 #
-# IMPORTANT: We do NOT use `set -u` here because the real script doesn't either
-# (it uses #!/bin/bash -e). Using `set -u` would cause false failures with
-# unset GLUECODIUM_PYTHON.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# License-Filename: LICENSE
+
+# Test harness for the Python detection logic in python-env.sh.
+# Runs detect_python() under various scenarios to verify correctness.
+#
+# Usage:  ./scripts/test_python_detection.sh
 
 set -eo pipefail
 
 PASS=0
 FAIL=0
-SCRIPT_DIR="/Volumes/APFS/Work/gluecodium/functional-tests/scripts"
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# ── Extract the detection functions from build-python-functional ────────────
+# Source the shared detection logic
 . "${SCRIPT_DIR}/inc.functions"
-
-# These are set by the arg parser in the real script; we set them manually.
-PYTHON_BIN_OVERRIDE=""
-GLUECODIUM_PYTHON="${GLUECODIUM_PYTHON:-}"
-
-_validate_python() {
-    local py="$1"
-    [[ -x "$py" ]] || return 1
-    local version
-    version=$("$py" -c 'import sys; print(f"{sys.version_info[0]}.{sys.version_info[1]}")' 2>/dev/null) || return 1
-    local major minor
-    major=${version%%.*}
-    minor=${version#*.}
-    [[ "$major" -eq 3 && "$minor" -ge 8 ]] || return 1
-    "$py" -c 'import pybind11' 2>/dev/null || return 1
-    "$py" -m pybind11 --cmakedir >/dev/null 2>&1 || return 1
-    return 0
-}
-
-detect_python() {
-    local candidate
-    local candidates=()
-
-    # 1. Explicit override via CLI or env var
-    if [[ -n "${PYTHON_BIN_OVERRIDE}" ]]; then
-        if _validate_python "${PYTHON_BIN_OVERRIDE}"; then
-            echo "${PYTHON_BIN_OVERRIDE}"
-            return 0
-        fi
-        cat >&2 <<ERROR
-
-ERROR: The Python interpreter specified via --python does not meet requirements:
-  ${PYTHON_BIN_OVERRIDE}
-
-It must be Python 3.8+ with pybind11 installed (pip install pybind11).
-ERROR
-        return 1
-    elif [[ -n "${GLUECODIUM_PYTHON:-}" ]]; then
-        if _validate_python "${GLUECODIUM_PYTHON}"; then
-            echo "${GLUECODIUM_PYTHON}"
-            return 0
-        fi
-        cat >&2 <<ERROR
-
-ERROR: The Python interpreter specified via GLUECODIUM_PYTHON does not meet requirements:
-  ${GLUECODIUM_PYTHON}
-
-It must be Python 3.8+ with pybind11 installed (pip install pybind11).
-ERROR
-        return 1
-    fi
-
-    # 2. Auto-detection: python3 on PATH
-    local path_python
-    path_python=$(command -v python3 2>/dev/null || true)
-    [[ -n "$path_python" ]] && candidates+=("$path_python")
-
-    # 3. Common conda / miniconda / anaconda paths
-    local conda_bases=(
-        "$HOME/miniconda3/bin/python3"
-        "$HOME/miniconda/bin/python3"
-        "$HOME/anaconda3/bin/python3"
-        "$HOME/anaconda/bin/python3"
-        "/opt/miniconda3/bin/python3"
-        "/opt/anaconda3/bin/python3"
-        "/usr/local/miniconda3/bin/python3"
-        "/usr/local/anaconda3/bin/python3"
-    )
-    for c in "${conda_bases[@]}"; do
-        [[ -x "$c" ]] && candidates+=("$c")
-    done
-
-    # 4. Homebrew Python (macOS)
-    local brew_bases=(
-        "/opt/homebrew/bin/python3"
-        "/usr/local/bin/python3"
-    )
-    for c in "${brew_bases[@]}"; do
-        [[ -x "$c" ]] && candidates+=("$c")
-    done
-
-    # 5. System Python
-    [[ -x "/usr/bin/python3" ]] && candidates+=("/usr/bin/python3")
-
-    # De-duplicate while preserving order
-    local seen=""
-    local unique=()
-    for c in "${candidates[@]}"; do
-        local real
-        real=$(readlink -f "$c" 2>/dev/null || echo "$c")
-        if [[ " $seen " != *" $real "* ]]; then
-            seen="$seen $real"
-            unique+=("$c")
-        fi
-    done
-
-    for candidate in "${unique[@]}"; do
-        if _validate_python "$candidate"; then
-            echo "$candidate"
-            return 0
-        fi
-    done
-
-    cat >&2 <<'ERROR'
-
-ERROR: No suitable Python 3.8+ interpreter with pybind11 was found.
-ERROR
-    return 1
-}
+. "${SCRIPT_DIR}/python-env.sh"
 
 # ── Test helpers ────────────────────────────────────────────────────────────
 
@@ -215,7 +122,6 @@ assert_fail "override -> non-existent path"
 
 echo ""
 echo "=== Test 4: --python override with Python missing pybind11 ==="
-# Use /usr/bin/python3 which typically doesn't have pybind11
 if [[ -x "$SYSTEM_PYTHON" ]] && ! _validate_python "$SYSTEM_PYTHON"; then
     PYTHON_BIN_OVERRIDE="$SYSTEM_PYTHON"
     assert_fail "override -> python without pybind11"

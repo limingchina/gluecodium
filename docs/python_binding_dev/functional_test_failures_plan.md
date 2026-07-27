@@ -526,13 +526,13 @@ first.
 
 ## 6. Testing Strategy
 
-> **Python environment**: `build-python-functional` now auto-detects a Python 3.8+
-> interpreter with pybind11 installed. It probes `python3` on `PATH`, common conda /
-> miniconda / anaconda paths, Homebrew Python, and system Python, picking the first
-> candidate that passes all checks (version ≥ 3.8, can import pybind11, can report its
-> CMake directory). To override the auto-detection, pass `--python /path/to/python3` or
-> set the `GLUECODIUM_PYTHON` environment variable. The script exports the detected
-> interpreter's directory to `PATH` so that build and test use the same interpreter,
+> **Python environment**: Both `build-python-functional` and `run-python-tests` share
+> Python detection logic via `scripts/python-env.sh`. It auto-detects a Python 3.8+
+> interpreter with pybind11 installed by probing `python3` on `PATH`, common conda /
+> miniconda / anaconda paths, Homebrew Python, and system Python — picking the first
+> candidate that passes all checks. To override, pass `--python /path/to/python3` or
+> set the `GLUECODIUM_PYTHON` environment variable. The detected interpreter's bin
+> directory is prepended to `PATH` so that build and test always use the same Python,
 > ensuring the pybind11 extension module's SOABI suffix matches.
 
 For each task (run from the project root `gluecodium/`):
@@ -548,13 +548,12 @@ For each task (run from the project root `gluecodium/`):
    interpreter and pins it via `-DPython_EXECUTABLE`, so no manual `PATH` prefix is needed.
 4. **Run a specific test file** (for iterative debugging):
    ```bash
-   cd functional-tests/build-python/functional/python && \
-     PYTHONPATH="../" \
-     python3 -m pytest tests/<feature>_test.py -v
+   cd functional-tests && ./scripts/run-python-tests tests/<feature>_test.py -v
    ```
-   `PYTHONPATH="../"` resolves to `build-python/functional/`, which contains both the
-   compiled extension module (`functional.cpython-*.so`) and the generated `test`
-   wrapper package (`test/__init__.py`).
+   This uses the same auto-detection to find the correct Python interpreter, sets
+   `PYTHONPATH` to the build output directory, and forwards extra args (e.g. `-v`,
+   `-k`, `--tb=short`) to pytest. Supports test-level targeting too:
+   `tests/equatable_test.py::test_struct_equality`.
 5. **Run smoke tests** to ensure no regressions in generated output:
    ```bash
    ./gradlew test
@@ -562,9 +561,7 @@ For each task (run from the project root `gluecodium/`):
    These are Java/JUnit unit tests that compare generated code against reference files.
 6. **Run all enabled Python functional tests** to check for cross-feature regressions:
    ```bash
-   cd functional-tests/build-python/functional/python && \
-     PYTHONPATH="../" \
-     python3 -m pytest -v
+   cd functional-tests && ./scripts/run-python-tests
    ```
 
 ---
