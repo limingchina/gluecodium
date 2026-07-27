@@ -19,26 +19,27 @@
 
 import functional
 from test.EquatableClass import EquatableClass
-from test.Equatable import Equatable
+from test.EquatableClassAnotherEquatableStruct import EquatableClassAnotherEquatableStruct
+from test.EquatableEquatableStruct import EquatableEquatableStruct
 
 import pytest
 
 
 class TestEquatable:
     def test_are_equal(self):
-        a = EquatableClass()
-        b = EquatableClass()
+        a = EquatableClassAnotherEquatableStruct(0, "")
+        b = EquatableClassAnotherEquatableStruct(0, "")
 
         assert EquatableClass.are_equal(a, b) is True
 
     def test_not_equal(self):
-        a = EquatableClass()
-        b = EquatableClass()
+        a = EquatableClassAnotherEquatableStruct(0, "")
+        b = EquatableClassAnotherEquatableStruct(1, "")
 
-        assert EquatableClass.are_equal(a, b) is True
+        assert EquatableClass.are_equal(a, b) is False
 
     def test_struct_equality(self):
-        a = Equatable()
-        b = Equatable()
+        a = EquatableEquatableStruct()
+        b = EquatableEquatableStruct()
 
         assert a == b
