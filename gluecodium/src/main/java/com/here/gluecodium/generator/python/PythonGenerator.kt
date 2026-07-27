@@ -297,6 +297,7 @@ internal class PythonGenerator : Generator {
                 "moduleName" to pythonModule,
                 "includes" to includes,
                 "internalNamespace" to internalNamespace,
+                "internalNamespaceStr" to internalNamespace.joinToString("::"),
                 // Whether a `using <alias> = <fullName>;` alias is needed. The alias brings the C++
                 // type into the global namespace so `py::class_<alias>`/`py::enum_<alias>` can use the
                 // short name. It is only needed when the short name differs from `fullName`; for

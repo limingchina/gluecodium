@@ -33,6 +33,16 @@ class {{resolveName}}(_NativeBase):
             super().__init__(args[0])
         else:
             super().__init__({{nativeModule}}.{{typeName}}(*[_unwrap(arg) for arg in args]))
+{{#ifPredicate "isEquatable"}}
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, type(self)):
+            return False
+        return self._native == other._native
+
+    def __hash__(self) -> int:
+        return hash(self._native)
+{{/ifPredicate}}
 {{#fields}}
 
 {{>python/PythonField}}{{/fields}}

@@ -20,6 +20,10 @@
   !}}
 {{! Python struct type stub. }}
 class {{resolveName}}:
+{{#ifPredicate "isEquatable"}}
+    def __eq__(self, other: object) -> bool: ...
+    def __hash__(self) -> int: ...
+{{/ifPredicate}}
 {{#fields}}
 
 {{>python/PythonStubField}}{{/fields}}
