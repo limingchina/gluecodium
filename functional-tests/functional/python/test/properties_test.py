@@ -25,12 +25,12 @@ import pytest
 
 class TestProperties:
     def test_readonly_attribute(self):
-        attributes = Attributes()
+        attributes = Attributes.create()
 
         assert attributes.readonly_attribute is not None
 
     def test_readwrite_attribute(self):
-        attributes = Attributes()
+        attributes = Attributes.create()
         attributes.built_in_type_attribute = 42
 
         assert attributes.built_in_type_attribute == 42
