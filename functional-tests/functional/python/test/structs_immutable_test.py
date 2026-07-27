@@ -24,6 +24,7 @@ from test.PlainDataStructuresImmutableAllTypesImmutableStruct import (
 from test.PlainDataStructuresImmutableNestingImmutableStruct import (
     PlainDataStructuresImmutableNestingImmutableStruct as NestingImmutableStruct,
 )
+from test.PlainDataStructuresImmutable import PlainDataStructuresImmutable
 from test.PlainDataStructuresImmutablePoint import PlainDataStructuresImmutablePoint as Point
 from test.PlainDataStructuresImmutableStructWithArrayOfImmutable import (
     PlainDataStructuresImmutableStructWithArrayOfImmutable as StructWithArrayOfImmutable,
@@ -116,7 +117,7 @@ class TestStructsImmutable:
             pointField=point,
         )
 
-        result = functional.PlainDataStructuresImmutable.immutableStructRoundTrip(struct)
+        result = PlainDataStructuresImmutable.immutable_struct_round_trip(struct)
 
         assert result.int8_field == 42
         assert result.string_field == "hello"
