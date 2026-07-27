@@ -526,24 +526,45 @@ first.
 
 ## 6. Testing Strategy
 
-For each task:
+> **Python environment**: `build-python-functional` now auto-detects a Python 3.8+
+> interpreter with pybind11 installed. It probes `python3` on `PATH`, common conda /
+> miniconda / anaconda paths, Homebrew Python, and system Python, picking the first
+> candidate that passes all checks (version ≥ 3.8, can import pybind11, can report its
+> CMake directory). To override the auto-detection, pass `--python /path/to/python3` or
+> set the `GLUECODIUM_PYTHON` environment variable. The script exports the detected
+> interpreter's directory to `PATH` so that build and test use the same interpreter,
+> ensuring the pybind11 extension module's SOABI suffix matches.
+
+For each task (run from the project root `gluecodium/`):
 
 1. **Edit the generator template/source** (and test files for Task A).
 2. **Force regeneration**: Touch a `.lime` input or `rm -rf functional-tests/build-python/functional/gluecodium` (see the stale-generated-code gotcha in AGENTS.md).
-3. **Rebuild**: `cd functional-tests && ./scripts/build-python-functional --publish`
-4. **Run the specific test file**:
+3. **Rebuild** (from `functional-tests/`):
    ```bash
-   cd build-python/functional/python
-   PYTHONPATH=".../build-python/functional" python3 -m pytest tests/<feature>_test.py -v
+   cd functional-tests && ./scripts/build-python-functional --publish
    ```
-5. **Run smoke tests** to ensure no regressions:
+   This runs `publishToMavenLocal`, CMake configure/build, and CTest (which includes the
+   full Python test suite) in one shot. The build script auto-detects the Python
+   interpreter and pins it via `-DPython_EXECUTABLE`, so no manual `PATH` prefix is needed.
+4. **Run a specific test file** (for iterative debugging):
+   ```bash
+   cd functional-tests/build-python/functional/python && \
+     PYTHONPATH="../" \
+     python3 -m pytest tests/<feature>_test.py -v
+   ```
+   `PYTHONPATH="../"` resolves to `build-python/functional/`, which contains both the
+   compiled extension module (`functional.cpython-*.so`) and the generated `test`
+   wrapper package (`test/__init__.py`).
+5. **Run smoke tests** to ensure no regressions in generated output:
    ```bash
    ./gradlew test
    ```
+   These are Java/JUnit unit tests that compare generated code against reference files.
 6. **Run all enabled Python functional tests** to check for cross-feature regressions:
    ```bash
-   cd build-python/functional/python
-   PYTHONPATH=".../build-python/functional" python3 -m pytest -v
+   cd functional-tests/build-python/functional/python && \
+     PYTHONPATH="../" \
+     python3 -m pytest -v
    ```
 
 ---
