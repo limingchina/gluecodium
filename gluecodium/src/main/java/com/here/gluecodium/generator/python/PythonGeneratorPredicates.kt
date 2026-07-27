@@ -134,6 +134,13 @@ internal class PythonGeneratorPredicates(
                 limeElement is com.here.gluecodium.model.lime.LimeEnumeration &&
                     limeElement.fullName in standaloneEnums
             },
+            // Whether a struct (or class) has the @Equatable attribute. When true,
+            // PythonStruct.mustache emits __eq__ and __hash__ methods that delegate
+            // to the C++ operator== and std::hash via the native pybind11 object.
+            "isEquatable" to { limeElement: Any ->
+                limeElement is LimeNamedElement &&
+                    limeElement.attributes.have(com.here.gluecodium.model.lime.LimeAttributeType.EQUATABLE)
+            },
             "isOverloaded" to { limeFunction: Any ->
                 limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
                     signatureResolver.isOverloaded(limeFunction)
