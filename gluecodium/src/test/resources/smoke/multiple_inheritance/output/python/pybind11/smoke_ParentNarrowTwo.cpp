@@ -56,6 +56,9 @@ public:
 
 void register_smoke_ParentNarrowTwo(py::module_& module) {
     py::class_<ParentNarrowTwo, std::shared_ptr<ParentNarrowTwo>, ParentNarrowTwoTrampoline>(module, "smoke_ParentNarrowTwo")
+        .def("__gluecodium_id__", [](const ParentNarrowTwo& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

@@ -19,6 +19,9 @@ using FooChecker = ::smoke::ClassInStruct::FooChecker;
 
 void register_smoke_ClassInStructFooChecker(py::module_& module) {
     py::class_<FooChecker, std::shared_ptr<FooChecker>>(module, "smoke_ClassInStructFooChecker")
+        .def("__gluecodium_id__", [](const FooChecker& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

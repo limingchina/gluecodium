@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -48,5 +48,5 @@ class JavaDeprecatedPosDefaultsCustom(_NativeBase):
     def custom() -> JavaDeprecatedPosDefaultsCustom:
         """"""
         native_result = generated.smoke_JavaDeprecatedPosDefaultsCustom.custom()
-        return JavaDeprecatedPosDefaultsCustom(native_result)
+        return _get_or_create_wrapper(native_result, JavaDeprecatedPosDefaultsCustom)
 

@@ -27,6 +27,9 @@ using Thermometer = ::smoke::Thermometer;
 
 void register_smoke_Thermometer(py::module_& module) {
     py::class_<Thermometer, std::shared_ptr<Thermometer>>(module, "smoke_Thermometer")
+        .def("__gluecodium_id__", [](const Thermometer& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("make_with_duration", [](const ::std::chrono::seconds interval, const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& observers) {
                 return Thermometer::make_with_duration(interval, observers);
             }, py::arg("interval"), py::arg("observers"))

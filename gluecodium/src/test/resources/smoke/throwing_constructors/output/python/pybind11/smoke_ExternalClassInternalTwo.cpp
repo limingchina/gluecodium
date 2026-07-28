@@ -20,6 +20,9 @@ using InternalTwo = ::smoke::ExternalClass::InternalTwo;
 
 void register_smoke_ExternalClassInternalTwo(py::module_& module) {
     py::class_<InternalTwo, std::shared_ptr<InternalTwo>>(module, "smoke_ExternalClassInternalTwo")
+        .def("__gluecodium_id__", [](const InternalTwo& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("create", &InternalTwo::create)
         ;
 }

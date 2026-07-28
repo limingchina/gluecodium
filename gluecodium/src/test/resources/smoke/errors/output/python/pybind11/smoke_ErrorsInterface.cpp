@@ -60,6 +60,9 @@ public:
 
 void register_smoke_ErrorsInterface(py::module_& module) {
     py::class_<ErrorsInterface, std::shared_ptr<ErrorsInterface>, ErrorsInterfaceTrampoline>(module, "smoke_ErrorsInterface")
+        .def("__gluecodium_id__", [](const ErrorsInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

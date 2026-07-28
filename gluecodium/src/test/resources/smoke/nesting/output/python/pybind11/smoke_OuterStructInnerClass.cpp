@@ -22,6 +22,9 @@ using InnerClass = ::smoke::OuterStruct::InnerClass;
 
 void register_smoke_OuterStructInnerClass(py::module_& module) {
     py::class_<InnerClass, std::shared_ptr<InnerClass>>(module, "smoke_OuterStructInnerClass")
+        .def("__gluecodium_id__", [](const InnerClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
                 .def("foo_bar", [](InnerClass& self) -> py::object {
                         return gluecodium::python::to_python_regular(self.foo_bar());
                 })

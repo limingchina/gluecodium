@@ -19,6 +19,9 @@ using ExposeClass = ::smoke::ExposeClass;
 
 void register_smoke_ExposeClass(py::module_& module) {
     py::class_<ExposeClass, std::shared_ptr<ExposeClass>>(module, "smoke_ExposeClass")
+        .def("__gluecodium_id__", [](const ExposeClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

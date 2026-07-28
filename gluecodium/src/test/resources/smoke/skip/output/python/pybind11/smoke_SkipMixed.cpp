@@ -19,6 +19,9 @@ using SkipMixed = ::smoke::SkipMixed;
 
 void register_smoke_SkipMixed(py::module_& module) {
     py::class_<SkipMixed, std::shared_ptr<SkipMixed>>(module, "smoke_SkipMixed")
+        .def("__gluecodium_id__", [](const SkipMixed& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

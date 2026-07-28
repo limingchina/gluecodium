@@ -19,6 +19,9 @@ using SomeInterface = ::smoke::SomeInterface;
 
 void register_smoke_SomeInterface(py::module_& module) {
     py::class_<SomeInterface, std::shared_ptr<SomeInterface>>(module, "smoke_SomeInterface")
+        .def("__gluecodium_id__", [](const SomeInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

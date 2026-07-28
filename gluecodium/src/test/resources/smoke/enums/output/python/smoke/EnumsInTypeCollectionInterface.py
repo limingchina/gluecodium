@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.EnumsInTypeCollectionTCEnum import EnumsInTypeCollectionTCEnum
@@ -22,5 +22,5 @@ class EnumsInTypeCollectionInterface(_NativeBase):
     def flip_enum_value(input: EnumsInTypeCollectionTCEnum) -> EnumsInTypeCollectionTCEnum:
         """"""
         native_result = generated.smoke_EnumsInTypeCollectionInterface.flip_enum_value(_unwrap(input, EnumsInTypeCollectionTCEnum))
-        return EnumsInTypeCollectionTCEnum(native_result)
+        return _get_or_create_wrapper(native_result, EnumsInTypeCollectionTCEnum)
 

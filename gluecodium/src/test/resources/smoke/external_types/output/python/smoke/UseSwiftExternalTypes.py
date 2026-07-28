@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.DateInterval import DateInterval
@@ -25,23 +25,23 @@ class UseSwiftExternalTypes(_NativeBase):
     def date_interval_round_trip(input: DateInterval) -> DateInterval:
         """"""
         native_result = generated.smoke_UseSwiftExternalTypes.date_interval_round_trip(_unwrap(input, DateInterval))
-        return DateInterval(native_result)
+        return _get_or_create_wrapper(native_result, DateInterval)
 
     @staticmethod
     def persistence_round_trip(input: Persistence) -> Persistence:
         """"""
         native_result = generated.smoke_UseSwiftExternalTypes.persistence_round_trip(_unwrap(input, Persistence))
-        return Persistence(native_result)
+        return _get_or_create_wrapper(native_result, Persistence)
 
     @staticmethod
     def color_round_trip(input: PseudoColor) -> PseudoColor:
         """"""
         native_result = generated.smoke_UseSwiftExternalTypes.color_round_trip(_unwrap(input, PseudoColor))
-        return PseudoColor(native_result)
+        return _get_or_create_wrapper(native_result, PseudoColor)
 
     @staticmethod
     def season_round_trip(input: SwiftSeason) -> SwiftSeason:
         """"""
         native_result = generated.smoke_UseSwiftExternalTypes.season_round_trip(_unwrap(input, SwiftSeason))
-        return SwiftSeason(native_result)
+        return _get_or_create_wrapper(native_result, SwiftSeason)
 

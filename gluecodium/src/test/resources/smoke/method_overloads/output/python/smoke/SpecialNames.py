@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -37,5 +37,5 @@ class SpecialNames(_NativeBase):
     def make(result: str) -> SpecialNames:
         """"""
         native_result = generated.smoke_SpecialNames.make(_unwrap(result, str))
-        return SpecialNames(native_result)
+        return _get_or_create_wrapper(native_result, SpecialNames)
 

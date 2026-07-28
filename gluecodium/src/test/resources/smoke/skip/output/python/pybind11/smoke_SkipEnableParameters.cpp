@@ -20,6 +20,9 @@ using SkipEnableParameters = ::smoke::SkipEnableParameters;
 
 void register_smoke_SkipEnableParameters(py::module_& module) {
     py::class_<SkipEnableParameters, std::shared_ptr<SkipEnableParameters>>(module, "smoke_SkipEnableParameters")
+        .def("__gluecodium_id__", [](const SkipEnableParameters& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("do_something", &SkipEnableParameters::do_something, py::arg("input"))
         ;
 }

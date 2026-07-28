@@ -21,6 +21,9 @@ using NestedReferences = ::smoke::NestedReferences;
 
 void register_smoke_NestedReferences(py::module_& module) {
     py::class_<NestedReferences, std::shared_ptr<NestedReferences>>(module, "smoke_NestedReferences")
+        .def("__gluecodium_id__", [](const NestedReferences& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("inside_out", &NestedReferences::inside_out, py::arg("struct1"), py::arg("struct2"))
         ;
 }

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.ParentWithCustomConstructor import ParentWithCustomConstructor
@@ -30,5 +30,5 @@ class ChildWithCustomConstructor(generated.smoke_ChildWithCustomConstructor):
     def make() -> ChildWithCustomConstructor:
         """"""
         native_result = generated.smoke_ChildWithCustomConstructor.make()
-        return ChildWithCustomConstructor(native_result)
+        return _get_or_create_wrapper(native_result, ChildWithCustomConstructor)
 

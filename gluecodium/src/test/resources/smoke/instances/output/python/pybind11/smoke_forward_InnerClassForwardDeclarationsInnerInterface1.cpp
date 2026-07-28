@@ -31,6 +31,9 @@ public:
 
 void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface1(py::module_& module) {
     py::class_<InnerInterface1, std::shared_ptr<InnerInterface1>, InnerClassForwardDeclarationsInnerInterface1Trampoline>(module, "smoke_forward_InnerClassForwardDeclarationsInnerInterface1")
+        .def("__gluecodium_id__", [](const InnerInterface1& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

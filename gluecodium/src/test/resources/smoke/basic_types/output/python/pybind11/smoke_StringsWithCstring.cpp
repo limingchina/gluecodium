@@ -20,6 +20,9 @@ using StringsWithCstring = ::smoke::StringsWithCstring;
 
 void register_smoke_StringsWithCstring(py::module_& module) {
     py::class_<StringsWithCstring, std::shared_ptr<StringsWithCstring>>(module, "smoke_StringsWithCstring")
+        .def("__gluecodium_id__", [](const StringsWithCstring& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("return_input_string_type", py::overload_cast<const char*>(&StringsWithCstring::return_input_string), py::arg("input_string"))
         .def_static("return_input_string", py::overload_cast<const ::std::string&>(&StringsWithCstring::return_input_string), py::arg("input_string"))
         ;

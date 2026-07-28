@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -21,11 +21,11 @@ class SkippedOverloads(_NativeBase):
     def make() -> SkippedOverloads:
         """"""
         native_result = generated.smoke_SkippedOverloads.make()
-        return SkippedOverloads(native_result)
+        return _get_or_create_wrapper(native_result, SkippedOverloads)
 
     @staticmethod
     def make_for_dart(input: str) -> SkippedOverloads:
         """"""
         native_result = generated.smoke_SkippedOverloads.make_for_dart(_unwrap(input, str))
-        return SkippedOverloads(native_result)
+        return _get_or_create_wrapper(native_result, SkippedOverloads)
 

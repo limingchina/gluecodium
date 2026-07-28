@@ -28,7 +28,7 @@
 {{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
 {{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
 {{#ifPredicate this "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}
-{{/ifPredicate}}        return {{resolveName returnType}}(native_result)
+{{/ifPredicate}}        return _get_or_create_wrapper(native_result, {{resolveName returnType}})
 {{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isWrapperType"}}{{#ifPredicate returnType.typeRef "isCollectionType"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args]), {{resolveName returnType}})
 {{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isCollectionType"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
 {{/unlessPredicate}}{{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}{{#ifPredicate model "needsTrampoline"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(self, *[_unwrap(a) for a in args]), {{resolveName returnType}})
@@ -39,7 +39,7 @@
 {{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}_unwrap({{resolveName}}, {{resolveName typeRef}}){{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}_unwrap({{resolveName}}, {{resolveName typeRef}}){{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{#ifPredicate this "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}
-{{/ifPredicate}}        return {{resolveName returnType}}(native_result)
+{{/ifPredicate}}        return _get_or_create_wrapper(native_result, {{resolveName returnType}})
 {{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isWrapperType"}}{{#ifPredicate returnType.typeRef "isCollectionType"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}_unwrap({{resolveName}}, {{resolveName typeRef}}){{#if iter.hasNext}}, {{/if}}{{/parameters}}), {{resolveName returnType}})
 {{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isCollectionType"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}_unwrap({{resolveName}}, {{resolveName typeRef}}){{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/unlessPredicate}}{{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}{{#ifPredicate model "isInterface"}}{{#ifPredicate model "needsTrampoline"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(self{{#if parameters}}, {{/if}}{{#parameters}}_unwrap({{resolveName}}, {{resolveName typeRef}}){{#if iter.hasNext}}, {{/if}}{{/parameters}}), {{resolveName returnType}})

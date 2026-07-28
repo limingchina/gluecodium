@@ -19,6 +19,9 @@ using EnableIfEnabled = ::smoke::EnableIfEnabled;
 
 void register_smoke_EnableIfEnabled(py::module_& module) {
     py::class_<EnableIfEnabled, std::shared_ptr<EnableIfEnabled>>(module, "smoke_EnableIfEnabled")
+        .def("__gluecodium_id__", [](const EnableIfEnabled& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("enable_if_unquoted", &EnableIfEnabled::enable_if_unquoted)
         .def_static("enable_if_unquoted_list", &EnableIfEnabled::enable_if_unquoted_list)
         .def_static("enable_if_quoted", &EnableIfEnabled::enable_if_quoted)

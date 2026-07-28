@@ -83,6 +83,9 @@ public:
 
 void register_smoke_ChildClassWithIncludes(py::module_& module) {
     py::class_<ChildClassWithIncludes, ::smoke::ParentInterfaceWithIncludes, std::shared_ptr<ChildClassWithIncludes>, ChildClassWithIncludesTrampoline>(module, "smoke_ChildClassWithIncludes")
+        .def("__gluecodium_id__", [](const ChildClassWithIncludes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

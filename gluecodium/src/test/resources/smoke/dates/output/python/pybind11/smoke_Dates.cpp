@@ -29,6 +29,9 @@ using Dates = ::smoke::Dates;
 
 void register_smoke_Dates(py::module_& module) {
     py::class_<Dates, std::shared_ptr<Dates>>(module, "smoke_Dates")
+        .def("__gluecodium_id__", [](const Dates& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("date_method", &Dates::date_method, py::arg("input"))
         .def("nullable_date_method", &Dates::nullable_date_method, py::arg("input"))
         .def_property("date_property", py::overload_cast<>(&Dates::get_date_property, py::const_), py::overload_cast<const ::std::chrono::system_clock::time_point&>(&Dates::set_date_property))

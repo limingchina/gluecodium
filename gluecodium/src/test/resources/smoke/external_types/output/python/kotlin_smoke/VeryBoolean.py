@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -38,5 +38,5 @@ class VeryBoolean(_NativeBase):
     def make(value: bool) -> VeryBoolean:
         """"""
         native_result = generated.kotlin_smoke_VeryBoolean.make(_unwrap(value, bool))
-        return VeryBoolean(native_result)
+        return _get_or_create_wrapper(native_result, VeryBoolean)
 

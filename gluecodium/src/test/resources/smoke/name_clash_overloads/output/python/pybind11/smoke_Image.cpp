@@ -19,6 +19,9 @@ using Image = ::smoke::Image;
 
 void register_smoke_Image(py::module_& module) {
     py::class_<Image, std::shared_ptr<Image>>(module, "smoke_Image")
+        .def("__gluecodium_id__", [](const Image& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

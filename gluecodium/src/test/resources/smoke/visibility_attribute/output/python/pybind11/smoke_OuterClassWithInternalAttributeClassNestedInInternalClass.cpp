@@ -19,6 +19,9 @@ using ClassNestedInInternalClass = ::smoke::OuterClassWithInternalAttribute::Cla
 
 void register_smoke_OuterClassWithInternalAttributeClassNestedInInternalClass(py::module_& module) {
     py::class_<ClassNestedInInternalClass, std::shared_ptr<ClassNestedInInternalClass>>(module, "smoke_OuterClassWithInternalAttributeClassNestedInInternalClass")
+        .def("__gluecodium_id__", [](const ClassNestedInInternalClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

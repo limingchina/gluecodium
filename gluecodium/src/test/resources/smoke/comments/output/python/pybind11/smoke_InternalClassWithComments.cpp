@@ -19,6 +19,9 @@ using InternalClassWithComments = ::smoke::InternalClassWithComments;
 
 void register_smoke_InternalClassWithComments(py::module_& module) {
     py::class_<InternalClassWithComments, std::shared_ptr<InternalClassWithComments>>(module, "smoke_InternalClassWithComments")
+        .def("__gluecodium_id__", [](const InternalClassWithComments& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("do_nothing", &InternalClassWithComments::do_nothing)
         ;
 }

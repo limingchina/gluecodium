@@ -65,6 +65,9 @@ public:
 
 void register_smoke_ForwardDeclarationBug(py::module_& module) {
     py::class_<ForwardDeclarationBug, ::smoke::ParentClass, std::shared_ptr<ForwardDeclarationBug>, ForwardDeclarationBugTrampoline>(module, "smoke_ForwardDeclarationBug")
+        .def("__gluecodium_id__", [](const ForwardDeclarationBug& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

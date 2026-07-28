@@ -21,6 +21,9 @@ using SkipOverloadsInDart = ::smoke::SkipOverloadsInDart;
 
 void register_smoke_SkipOverloadsInDart(py::module_& module) {
     py::class_<SkipOverloadsInDart, std::shared_ptr<SkipOverloadsInDart>>(module, "smoke_SkipOverloadsInDart")
+        .def("__gluecodium_id__", [](const SkipOverloadsInDart& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("make", py::overload_cast<>(SkipOverloadsInDart::make))
         .def_static("make", py::overload_cast<const ::std::string&>(SkipOverloadsInDart::make), py::arg("input"))
         ;

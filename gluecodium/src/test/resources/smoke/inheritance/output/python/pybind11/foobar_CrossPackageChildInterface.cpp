@@ -55,6 +55,9 @@ public:
 
 void register_foobar_CrossPackageChildInterface(py::module_& module) {
     py::class_<CrossPackageChildInterface, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildInterface>, CrossPackageChildInterfaceTrampoline>(module, "foobar_CrossPackageChildInterface")
+        .def("__gluecodium_id__", [](const CrossPackageChildInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

@@ -19,6 +19,9 @@ using IncludableClass = ::smoke::IncludableClass;
 
 void register_smoke_IncludableClass(py::module_& module) {
     py::class_<IncludableClass, std::shared_ptr<IncludableClass>>(module, "smoke_IncludableClass")
+        .def("__gluecodium_id__", [](const IncludableClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

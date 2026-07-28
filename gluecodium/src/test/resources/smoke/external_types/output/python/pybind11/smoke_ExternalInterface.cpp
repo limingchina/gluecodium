@@ -21,6 +21,9 @@ using ExternalInterface = ::smoke::ExternalInterface;
 
 void register_smoke_ExternalInterface(py::module_& module) {
     py::class_<ExternalInterface, std::shared_ptr<ExternalInterface>>(module, "smoke_ExternalInterface")
+        .def("__gluecodium_id__", [](const ExternalInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

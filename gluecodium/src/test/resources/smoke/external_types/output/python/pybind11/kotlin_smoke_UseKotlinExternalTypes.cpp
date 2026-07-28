@@ -26,6 +26,9 @@ using UseKotlinExternalTypes = ::kotlin_smoke::UseKotlinExternalTypes;
 
 void register_kotlin_smoke_UseKotlinExternalTypes(py::module_& module) {
     py::class_<UseKotlinExternalTypes, std::shared_ptr<UseKotlinExternalTypes>>(module, "kotlin_smoke_UseKotlinExternalTypes")
+        .def("__gluecodium_id__", [](const UseKotlinExternalTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("currency_round_trip", &UseKotlinExternalTypes::currency_round_trip, py::arg("input"))
         .def_static("time_zone_round_trip", &UseKotlinExternalTypes::time_zone_round_trip, py::arg("input"))
         .def_static("month_round_trip", &UseKotlinExternalTypes::month_round_trip, py::arg("input"))

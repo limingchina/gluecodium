@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.StructsAllTypesStruct import StructsAllTypesStruct
@@ -26,23 +26,23 @@ class Structs(_NativeBase):
     def swap_point_coordinates(input: StructsPoint) -> StructsPoint:
         """"""
         native_result = generated.smoke_Structs.swap_point_coordinates(_unwrap(input, StructsPoint))
-        return StructsPoint(native_result)
+        return _get_or_create_wrapper(native_result, StructsPoint)
 
     @staticmethod
     def return_all_types_struct(input: StructsAllTypesStruct) -> StructsAllTypesStruct:
         """"""
         native_result = generated.smoke_Structs.return_all_types_struct(_unwrap(input, StructsAllTypesStruct))
-        return StructsAllTypesStruct(native_result)
+        return _get_or_create_wrapper(native_result, StructsAllTypesStruct)
 
     @staticmethod
     def create_point(x: float, y: float) -> TypeCollectionPoint:
         """"""
         native_result = generated.smoke_Structs.create_point(_unwrap(x, float), _unwrap(y, float))
-        return TypeCollectionPoint(native_result)
+        return _get_or_create_wrapper(native_result, TypeCollectionPoint)
 
     @staticmethod
     def modify_all_types_struct(input: TypeCollectionAllTypesStruct) -> TypeCollectionAllTypesStruct:
         """"""
         native_result = generated.smoke_Structs.modify_all_types_struct(_unwrap(input, TypeCollectionAllTypesStruct))
-        return TypeCollectionAllTypesStruct(native_result)
+        return _get_or_create_wrapper(native_result, TypeCollectionAllTypesStruct)
 

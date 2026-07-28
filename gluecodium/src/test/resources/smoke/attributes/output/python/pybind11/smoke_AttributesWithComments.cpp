@@ -20,6 +20,9 @@ using AttributesWithComments = ::smoke::AttributesWithComments;
 
 void register_smoke_AttributesWithComments(py::module_& module) {
     py::class_<AttributesWithComments, std::shared_ptr<AttributesWithComments>>(module, "smoke_AttributesWithComments")
+        .def("__gluecodium_id__", [](const AttributesWithComments& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("very_fun", &AttributesWithComments::very_fun)
         .def_property("prop", py::overload_cast<>(&AttributesWithComments::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithComments::set_prop))
         ;

@@ -24,6 +24,9 @@ using UseFreeTypes = ::smoke::UseFreeTypes;
 
 void register_smoke_UseFreeTypes(py::module_& module) {
     py::class_<UseFreeTypes, std::shared_ptr<UseFreeTypes>>(module, "smoke_UseFreeTypes")
+        .def("__gluecodium_id__", [](const UseFreeTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("do_stuff", &UseFreeTypes::do_stuff, py::arg("point"), py::arg("mode"))
         ;
 }

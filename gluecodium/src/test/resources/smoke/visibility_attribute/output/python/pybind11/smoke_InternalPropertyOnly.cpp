@@ -19,6 +19,9 @@ using InternalPropertyOnly = ::smoke::InternalPropertyOnly;
 
 void register_smoke_InternalPropertyOnly(py::module_& module) {
     py::class_<InternalPropertyOnly, std::shared_ptr<InternalPropertyOnly>>(module, "smoke_InternalPropertyOnly")
+        .def("__gluecodium_id__", [](const InternalPropertyOnly& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_property("foo", py::overload_cast<>(&InternalPropertyOnly::get_foo, py::const_), py::overload_cast<const ::std::string&>(&InternalPropertyOnly::set_foo))
         ;
 }

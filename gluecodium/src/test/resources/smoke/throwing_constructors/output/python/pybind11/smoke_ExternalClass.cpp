@@ -32,6 +32,9 @@ public:
 
 void register_smoke_ExternalClass(py::module_& module) {
     py::class_<ExternalClass, std::shared_ptr<ExternalClass>, ExternalClassTrampoline>(module, "smoke_ExternalClass")
+        .def("__gluecodium_id__", [](const ExternalClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

@@ -25,6 +25,9 @@ using UseJavaExternalTypes = ::dontsmoke::UseJavaExternalTypes;
 
 void register_dontsmoke_UseJavaExternalTypes(py::module_& module) {
     py::class_<UseJavaExternalTypes, std::shared_ptr<UseJavaExternalTypes>>(module, "dontsmoke_UseJavaExternalTypes")
+        .def("__gluecodium_id__", [](const UseJavaExternalTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("currency_round_trip", &UseJavaExternalTypes::currency_round_trip, py::arg("input"))
         .def_static("time_zone_round_trip", &UseJavaExternalTypes::time_zone_round_trip, py::arg("input"))
         .def_static("month_round_trip", &UseJavaExternalTypes::month_round_trip, py::arg("input"))

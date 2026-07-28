@@ -113,6 +113,9 @@ public:
 
 void register_smoke_FirstParentIsInterfaceInterface(py::module_& module) {
     py::class_<FirstParentIsInterfaceInterface, ::smoke::ParentInterface, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsInterfaceInterface>, FirstParentIsInterfaceInterfaceTrampoline>(module, "smoke_FirstParentIsInterfaceInterface", py::multiple_inheritance())
+        .def("__gluecodium_id__", [](const FirstParentIsInterfaceInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

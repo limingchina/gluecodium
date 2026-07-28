@@ -19,6 +19,9 @@ using CommentsMarkdown = ::smoke::CommentsMarkdown;
 
 void register_smoke_CommentsMarkdown(py::module_& module) {
     py::class_<CommentsMarkdown, std::shared_ptr<CommentsMarkdown>>(module, "smoke_CommentsMarkdown")
+        .def("__gluecodium_id__", [](const CommentsMarkdown& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

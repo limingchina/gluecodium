@@ -19,6 +19,9 @@ using InternalClass = ::smoke::InternalClass;
 
 void register_smoke_InternalClass(py::module_& module) {
     py::class_<InternalClass, std::shared_ptr<InternalClass>>(module, "smoke_InternalClass")
+        .def("__gluecodium_id__", [](const InternalClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("foo_bar", &InternalClass::foo_bar)
         ;
 }

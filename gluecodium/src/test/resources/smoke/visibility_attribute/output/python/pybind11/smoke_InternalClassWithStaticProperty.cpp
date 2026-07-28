@@ -19,6 +19,9 @@ using InternalClassWithStaticProperty = ::smoke::InternalClassWithStaticProperty
 
 void register_smoke_InternalClassWithStaticProperty(py::module_& module) {
     py::class_<InternalClassWithStaticProperty, std::shared_ptr<InternalClassWithStaticProperty>>(module, "smoke_InternalClassWithStaticProperty")
+        .def("__gluecodium_id__", [](const InternalClassWithStaticProperty& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("foo_bar", &InternalClassWithStaticProperty::get_foo_bar)
         .def_static("foo_bar_set", &InternalClassWithStaticProperty::set_foo_bar)
         ;

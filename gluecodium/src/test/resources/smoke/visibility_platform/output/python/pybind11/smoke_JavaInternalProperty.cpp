@@ -21,6 +21,9 @@ using JavaInternalProperty = ::smoke::JavaInternalProperty;
 
 void register_smoke_JavaInternalProperty(py::module_& module) {
     py::class_<JavaInternalProperty, std::shared_ptr<JavaInternalProperty>>(module, "smoke_JavaInternalProperty")
+        .def("__gluecodium_id__", [](const JavaInternalProperty& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_property("app_context", py::overload_cast<>(&JavaInternalProperty::get_app_context, py::const_), py::overload_cast<const std::optional< ::std::string >&>(&JavaInternalProperty::set_app_context))
         ;
 }

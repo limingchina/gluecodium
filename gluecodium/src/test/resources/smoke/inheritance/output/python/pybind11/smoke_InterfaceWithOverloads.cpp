@@ -50,6 +50,9 @@ public:
 
 void register_smoke_InterfaceWithOverloads(py::module_& module) {
     py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "smoke_InterfaceWithOverloads")
+        .def("__gluecodium_id__", [](const InterfaceWithOverloads& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

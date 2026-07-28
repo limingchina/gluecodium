@@ -20,6 +20,9 @@ using SkipFunctions = ::smoke::SkipFunctions;
 
 void register_smoke_SkipFunctions(py::module_& module) {
     py::class_<SkipFunctions, std::shared_ptr<SkipFunctions>>(module, "smoke_SkipFunctions")
+        .def("__gluecodium_id__", [](const SkipFunctions& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("not_in_java", &SkipFunctions::not_in_java, py::arg("input"))
         .def_static("not_in_swift", &SkipFunctions::not_in_swift, py::arg("input"))
         .def_static("not_in_dart", &SkipFunctions::not_in_dart, py::arg("input"))

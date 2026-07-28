@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -21,5 +21,5 @@ class CtorLinksSingleCtorWithTwoArgument(_NativeBase):
     def create(arg: int, arg2: str) -> CtorLinksSingleCtorWithTwoArgument:
         """"""
         native_result = generated.smoke_CtorLinksSingleCtorWithTwoArgument.create(_unwrap(arg, int), _unwrap(arg2, str))
-        return CtorLinksSingleCtorWithTwoArgument(native_result)
+        return _get_or_create_wrapper(native_result, CtorLinksSingleCtorWithTwoArgument)
 

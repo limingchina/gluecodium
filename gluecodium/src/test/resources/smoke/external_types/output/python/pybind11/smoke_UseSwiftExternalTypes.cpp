@@ -23,6 +23,9 @@ using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
 
 void register_smoke_UseSwiftExternalTypes(py::module_& module) {
     py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "smoke_UseSwiftExternalTypes")
+        .def("__gluecodium_id__", [](const UseSwiftExternalTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
         .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
         .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))

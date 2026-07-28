@@ -20,6 +20,9 @@ using OuterClass = ::smoke::OuterClass;
 
 void register_smoke_OuterClass(py::module_& module) {
     py::class_<OuterClass, std::shared_ptr<OuterClass>>(module, "smoke_OuterClass")
+        .def("__gluecodium_id__", [](const OuterClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("foo", &OuterClass::foo, py::arg("input"))
         ;
 }

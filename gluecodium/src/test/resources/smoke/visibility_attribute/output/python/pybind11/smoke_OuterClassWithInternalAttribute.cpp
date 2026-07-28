@@ -21,6 +21,9 @@ using OuterClassWithInternalAttribute = ::smoke::OuterClassWithInternalAttribute
 
 void register_smoke_OuterClassWithInternalAttribute(py::module_& module) {
     py::class_<OuterClassWithInternalAttribute, std::shared_ptr<OuterClassWithInternalAttribute>>(module, "smoke_OuterClassWithInternalAttribute")
+        .def("__gluecodium_id__", [](const OuterClassWithInternalAttribute& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

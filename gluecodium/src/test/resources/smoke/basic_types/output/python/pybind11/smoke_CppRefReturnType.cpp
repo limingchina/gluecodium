@@ -22,6 +22,9 @@ using CppRefReturnType = ::smoke::CppRefReturnType;
 
 void register_smoke_CppRefReturnType(py::module_& module) {
     py::class_<CppRefReturnType, std::shared_ptr<CppRefReturnType>>(module, "smoke_CppRefReturnType")
+        .def("__gluecodium_id__", [](const CppRefReturnType& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("void_ref", &CppRefReturnType::void_ref)
         .def_static("bool_ref", &CppRefReturnType::bool_ref)
         .def_static("string_ref", &CppRefReturnType::string_ref)

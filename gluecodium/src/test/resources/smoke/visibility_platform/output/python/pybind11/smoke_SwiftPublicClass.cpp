@@ -19,6 +19,9 @@ using SwiftPublicClass = ::smoke::SwiftPublicClass;
 
 void register_smoke_SwiftPublicClass(py::module_& module) {
     py::class_<SwiftPublicClass, std::shared_ptr<SwiftPublicClass>>(module, "smoke_SwiftPublicClass")
+        .def("__gluecodium_id__", [](const SwiftPublicClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

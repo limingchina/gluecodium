@@ -19,6 +19,9 @@ using Class2 = ::smoke::forward::Class2;
 
 void register_smoke_forward_Class2(py::module_& module) {
     py::class_<Class2, std::shared_ptr<Class2>>(module, "smoke_forward_Class2")
+        .def("__gluecodium_id__", [](const Class2& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

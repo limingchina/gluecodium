@@ -21,6 +21,9 @@ using SpecialNames = ::smoke::SpecialNames;
 
 void register_smoke_SpecialNames(py::module_& module) {
     py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(module, "smoke_SpecialNames")
+        .def("__gluecodium_id__", [](const SpecialNames& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("create", &SpecialNames::create)
         .def("release", &SpecialNames::release)
         .def("create_proxy", &SpecialNames::create_proxy)

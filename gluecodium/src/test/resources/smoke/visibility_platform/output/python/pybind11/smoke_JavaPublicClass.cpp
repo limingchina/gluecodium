@@ -19,6 +19,9 @@ using JavaPublicClass = ::smoke::JavaPublicClass;
 
 void register_smoke_JavaPublicClass(py::module_& module) {
     py::class_<JavaPublicClass, std::shared_ptr<JavaPublicClass>>(module, "smoke_JavaPublicClass")
+        .def("__gluecodium_id__", [](const JavaPublicClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

@@ -20,6 +20,9 @@ using InnerClassForwardDeclarations = ::smoke::forward::InnerClassForwardDeclara
 
 void register_smoke_forward_InnerClassForwardDeclarations(py::module_& module) {
     py::class_<InnerClassForwardDeclarations, std::shared_ptr<InnerClassForwardDeclarations>>(module, "smoke_forward_InnerClassForwardDeclarations")
+        .def("__gluecodium_id__", [](const InnerClassForwardDeclarations& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

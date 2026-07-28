@@ -25,6 +25,9 @@ using Properties = ::smoke::Properties;
 
 void register_smoke_Properties(py::module_& module) {
     py::class_<Properties, std::shared_ptr<Properties>>(module, "smoke_Properties")
+        .def("__gluecodium_id__", [](const Properties& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_property("built_in_type_property", py::overload_cast<>(&Properties::get_built_in_type_property, py::const_), py::overload_cast<const uint32_t>(&Properties::set_built_in_type_property))
         .def_property_readonly("readonly_property", py::overload_cast<>(&Properties::get_readonly_property, py::const_))
         .def_property("struct_property", py::overload_cast<>(&Properties::get_struct_property, py::const_), py::overload_cast<const ::smoke::Properties::ExampleStruct&>(&Properties::set_struct_property))

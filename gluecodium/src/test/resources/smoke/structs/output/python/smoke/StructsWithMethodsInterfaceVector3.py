@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.ValidationUtilsValidation import ValidationUtilsValidation
@@ -73,6 +73,6 @@ class StructsWithMethodsInterfaceVector3(_NativeBase):
     def create(*args, **kwargs) -> StructsWithMethodsInterfaceVector3:
         """"""
         native_result = generated.smoke_StructsWithMethodsInterfaceVector3.create(*[_unwrap(a) for a in args])
-        return StructsWithMethodsInterfaceVector3(native_result)
+        return _get_or_create_wrapper(native_result, StructsWithMethodsInterfaceVector3)
 
 

@@ -19,6 +19,9 @@ using PointerEquatableClass = ::smoke::PointerEquatableClass;
 
 void register_smoke_PointerEquatableClass(py::module_& module) {
     py::class_<PointerEquatableClass, std::shared_ptr<PointerEquatableClass>>(module, "smoke_PointerEquatableClass")
+        .def("__gluecodium_id__", [](const PointerEquatableClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

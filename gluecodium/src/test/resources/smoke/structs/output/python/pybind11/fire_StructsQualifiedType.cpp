@@ -25,6 +25,9 @@ using StructsQualifiedType = ::fire::StructsQualifiedType;
 
 void register_fire_StructsQualifiedType(py::module_& module) {
     py::class_<StructsQualifiedType, std::shared_ptr<StructsQualifiedType>>(module, "fire_StructsQualifiedType")
+        .def("__gluecodium_id__", [](const StructsQualifiedType& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

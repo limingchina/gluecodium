@@ -23,6 +23,9 @@ using LevelOne = ::smoke::LevelOne;
 
 void register_smoke_LevelOne(py::module_& module) {
     py::class_<LevelOne, std::shared_ptr<LevelOne>>(module, "smoke_LevelOne")
+        .def("__gluecodium_id__", [](const LevelOne& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

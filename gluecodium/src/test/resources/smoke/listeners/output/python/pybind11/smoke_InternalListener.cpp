@@ -40,6 +40,9 @@ public:
 
 void register_smoke_InternalListener(py::module_& module) {
     py::class_<InternalListener, std::shared_ptr<InternalListener>, InternalListenerTrampoline>(module, "smoke_InternalListener")
+        .def("__gluecodium_id__", [](const InternalListener& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

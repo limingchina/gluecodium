@@ -21,6 +21,9 @@ using StructsWithMethodsInterface = ::smoke::StructsWithMethodsInterface;
 
 void register_smoke_StructsWithMethodsInterface(py::module_& module) {
     py::class_<StructsWithMethodsInterface, std::shared_ptr<StructsWithMethodsInterface>>(module, "smoke_StructsWithMethodsInterface")
+        .def("__gluecodium_id__", [](const StructsWithMethodsInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

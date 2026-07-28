@@ -20,6 +20,9 @@ using UnderscorePackage = ::smoke_off::UnderscorePackage;
 
 void register_smoke_off_UnderscorePackage(py::module_& module) {
     py::class_<UnderscorePackage, std::shared_ptr<UnderscorePackage>>(module, "smoke_off_UnderscorePackage")
+        .def("__gluecodium_id__", [](const UnderscorePackage& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"))
         ;
 }
