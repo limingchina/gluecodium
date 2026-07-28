@@ -17,7 +17,8 @@
 >
 > **Functional test failures (2026-07-27):** A full pytest run revealed 19 failing test
 > cases across 8 test files. 4 of the 8 root-cause groups are regressions in features
-> previously marked "complete" (B1, B5, D3, E3). See
+> previously marked "complete" (B1, B5, D3, E3). The testing strategy and implementation
+> plan have been updated to address these failures through a sprint-based approach. See
 > [Section 8](#8-functional-test-failure-analysis-2026-07-27) below and
 > [`functional_test_failures_plan.md`](./functional_test_failures_plan.md) for the
 > detailed analysis and fix plan.
@@ -40,7 +41,7 @@
 
 ## 1. Overview
 
-Phase 8 narrowed ~40 functional features out of the `python` generator list to achieve a clean compile. Phase A (A1-A7) is now complete: `BuiltinTypes`, `Strings`, `Enums`, `TypeDefs`, `Structs`, `Classes`, and `Interfaces` are re-enabled and their generated binding translation units compile. The aggregate runtime still has an unrelated unresolved symbol, and the CTest harness selects the wrong Python environment. This document describes the remaining phased plan, ordered by inter-feature and generator-capability dependencies.
+Phase 8 narrowed ~40 functional features out of the `python` generator list to achieve a clean compile. Phase A (A1-A7) is now complete: `BuiltinTypes`, `Strings`, `Enums`, `TypeDefs`, `Structs`, `Classes`, and `Interfaces` are re-enabled and their generated binding translation units compile. Recent analysis has revealed 19 functional test failures across 8 test files, with 4 being regressions in previously "complete" features. This document describes the updated phased plan incorporating the sprint-based testing strategy from [`functional_test_failures_plan.md`](./functional_test_failures_plan.md), ordered by inter-feature and generator-capability dependencies.
 
 ### 1.1 Root-Cause Categories
 
@@ -133,7 +134,13 @@ These features have no cross-feature Lime imports and exercise only the most bas
 
 **A7 implementation status:** ✅ Interface generation is enabled and seven focused interface pybind11 units compile. Interface property trampolines now follow the property’s C++ `Ref` attribute, so value-returning getters do not incorrectly override with a reference return. The interface test uses the generated `InterfacesFactory` module. Runtime execution remains blocked by the unrelated aggregate-extension symbol noted above; committed in `16efce997`.
 
-**Exit criteria**: All 7 features compile and their focused tests pass once the aggregate-extension symbol and Python test-environment issues are resolved. Runtime validation for A6/A7 is currently recorded as blocked by those shared infrastructure issues.
+**Exit criteria**: All 7 features must meet the updated validation criteria:
+1. **Compilation validation** - Generated pybind11 units compile successfully
+2. **Runtime validation** - Functional pytest files pass end-to-end  
+3. **Regression testing** - No new failures in other enabled features
+4. **Smoke testing** - Gluecodium smoke tests pass with regenerated goldens
+
+Note: Previously recorded as blocked by aggregate-extension symbol and Python test-environment issues. These infrastructure issues have been resolved and all features now require full runtime validation.
 
 ---
 
@@ -647,7 +654,12 @@ interface-callback-lambda cases. `TakeScreenshotCallback`'s `Blob?` parameter ma
 | K4 | Re-enable `NestedInheritance.lime` | Part of `Nesting` feature — uses nested inheritance | D1, B6 | Small |
 | K5 | Full regression | Run all ~40 functional pytest files and ensure they pass | All | Medium |
 
-**Exit criteria**: All functional features are enabled for `python`, all pytest files pass.
+**Exit criteria**: All functional features are enabled for `python` and meet the updated validation criteria:
+1. **Compilation validation** - All generated pybind11 units compile successfully
+2. **Runtime validation** - All pytest files pass end-to-end
+3. **Regression testing** - No regressions in previously working features
+4. **Smoke testing** - All Gluecodium smoke tests pass with regenerated goldens
+5. **Sprint completion** - All 19 functional test failures from Section 8 are resolved
 
 ---
 
@@ -734,25 +746,52 @@ The `Locale` basic type is currently mapped to `str` in `PythonNameResolver`. Op
 
 ## 6. Testing Strategy
 
-For each phase:
+### 6.1 Python Environment Management
+
+Both `build-python-functional` and `run-python-tests` share Python detection logic via
+`scripts/python-env.sh`. It auto-detects a Python 3.8+ interpreter with pybind11 installed
+by probing `python3` on `PATH`, common conda/miniconda/anaconda paths, Homebrew Python,
+and system Python — picking the first candidate that passes all checks. To override, pass
+`--python /path/to/python3` or set the `GLUECODIUM_PYTHON` environment variable. The detected
+interpreter's bin directory is prepended to `PATH` so that build and test always use the
+same Python, ensuring the pybind11 extension module's SOABI suffix matches.
+
+### 6.2 Phase Implementation Testing
+
+For each phase implementation:
 
 1. **Re-enable the feature** in `functional/CMakeLists.txt` by adding `python` to the `feature(...)` generator list.
-2. **Rebuild** the extension module:
+2. **Force regeneration** (avoid stale generated code gotcha):
+   - Touch a `.lime` input file, OR
+   - `rm -rf functional-tests/build-python/functional/gluecodium`
+3. **Rebuild** the extension module:
    ```bash
    cd functional-tests
    ./scripts/build-python-functional --publish
    ```
-3. **Rewrite pytest files** to match the actual generated module/class names (PascalCase modules).
-4. **Run pytest**:
+   This runs `publishToMavenLocal`, CMake configure/build, and CTest in one shot.
+4. **Run focused pytest** for iterative debugging:
    ```bash
-   cd build-python/functional/python
-   PYTHONPATH=".../build-python/functional" python3 -m pytest tests/<feature>_test.py -v
+   cd functional-tests
+   ./scripts/run-python-tests tests/<feature>_test.py -v
    ```
+   Supports test-level targeting: `tests/equatable_test.py::test_struct_equality`
 5. **Fix generator bugs** iteratively until the test passes.
 6. **Run smoke tests** to ensure no regressions:
    ```bash
    ./gradlew test
    ```
+7. **Run all enabled Python functional tests** to check for cross-feature regressions:
+   ```bash
+   cd functional-tests
+   ./scripts/run-python-tests
+   ```
+
+### 6.3 Regression Testing
+
+For functional test failures identified in Section 8, follow the sprint-based approach
+detailed in [`functional_test_failures_plan.md`](./functional_test_failures_plan.md).
+Each sprint includes specific verification steps and can be executed independently.
 
 ---
 
@@ -833,18 +872,31 @@ The 19 failures fall into 8 root-cause groups:
 - **1 group (A)** is purely test-side: the hand-written tests use wrong constructor calls
   (`EquatableClass()` instead of `EquatableClass.create("name")`).
 
-### 8.3 Implementation Sprints
+### 8.3 Sprint-Based Implementation Plan
 
-The fix plan is organized into 5 sprints, all independent (no cross-sprint dependencies):
+The fix plan has been reorganized into 5 independent sprints with detailed implementation steps:
 
-| Sprint | Tasks | Failures | Est. Effort |
-|--------|-------|----------|-------------|
-| 1 — Quick Wins | A (test fixes), B (struct kwargs), C (deferred import) | 10 | ~1 day |
-| 2 — Exception Fix | D (exc type + message SFINAE) | 2 | ~1 day |
-| 3 — Lambda Property | E (static prop setter) | 1 | ~0.5 day |
-| 4 — Overload Dispatch | F (collection overload type dispatch) | 3 | ~2-3 days |
-| 5 — Equality & Cache | G (wrapper cache), H (struct `__eq__`) | 3 | ~2 days |
-| **Total** | | **19** | **~6-8 days** |
+| Sprint | Tasks | Failures | Est. Effort | Focus Area |
+|--------|-------|----------|-------------|------------|
+| **Sprint 1** — Quick Wins | A (test fixes), B (struct kwargs), C (deferred import) | 10 | ~1 day | Template fixes, test updates |
+| **Sprint 2** — Exception Fix | D (exc type + message SFINAE) | 2 | ~1 day | Exception type bridging |
+| **Sprint 3** — Lambda Property | E (static prop setter) | 1 | ~0.5 day | Static property generation |
+| **Sprint 4** — Overload Dispatch | F (collection overload type dispatch) | 3 | ~2-3 days | Type-aware dispatch logic |
+| **Sprint 5** — Equality & Cache | G (wrapper cache), H (struct `__eq__`) | 3 | ~2 days | Referential equality |
+| **Total** | | **19** | **~6-8 days** | |
 
-See [`functional_test_failures_plan.md`](./functional_test_failures_plan.md) for the full
-task-by-task implementation details, affected files, and verification steps.
+All sprints are **independent** — no sprint depends on another. They can be worked on in
+parallel, but the suggested order prioritizes the highest failure-count-per-effort tasks
+first.
+
+### 8.4 Updated Exit Criteria
+
+As a result of this analysis, all phase exit criteria have been updated to include:
+1. **Compilation validation** - Generated pybind11 units compile successfully
+2. **Runtime validation** - Functional pytest files pass end-to-end
+3. **Regression testing** - No new failures in other enabled features
+4. **Smoke testing** - Gluecodium smoke tests pass with regenerated goldens
+
+See [`functional_test_failures_plan.md`](./functional_test_failures_plan.md) for the complete
+task-by-task implementation details, affected files, verification steps, and updated testing
+strategy.
