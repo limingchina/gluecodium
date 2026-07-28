@@ -32,3 +32,7 @@ class OuterClassWithLambdaAndProperty(_NativeBase):
         """"""
         return _wrap(generated.smoke_OuterClassWithLambdaAndProperty.another_integer(), int)
 
+    @staticmethod
+    def another_integer_set(value: int):
+        generated.smoke_OuterClassWithLambdaAndProperty.another_integer_set(_unwrap(value, int))
+
