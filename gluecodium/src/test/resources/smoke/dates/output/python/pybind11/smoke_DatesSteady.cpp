@@ -29,8 +29,8 @@ void register_smoke_DatesSteady(py::module_& module) {
     py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(module, "smoke_DatesSteady")
         .def("date_method", &DatesSteady::date_method, py::arg("input"))
         .def("nullable_date_method", &DatesSteady::nullable_date_method, py::arg("input"))
-                .def("date_list_method", [](DatesSteady& self, py::handle input) -> py::object {
-                        return gluecodium::python::to_python_regular(self.date_list_method(gluecodium::python::from_python_regular<::std::vector< std::chrono::steady_clock::time_point >>(input)));
+                .def("date_list_method", [](DatesSteady& self, const ::std::vector< std::chrono::steady_clock::time_point >& input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.date_list_method(input));
                 }, py::arg("input"))
         ;
 }

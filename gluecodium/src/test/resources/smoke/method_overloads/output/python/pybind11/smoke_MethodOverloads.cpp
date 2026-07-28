@@ -28,16 +28,16 @@ void register_smoke_MethodOverloads(py::module_& module) {
         .def("is_boolean", py::overload_cast<const ::std::string&>(&MethodOverloads::is_boolean), py::arg("input"))
         .def("is_boolean", py::overload_cast<const ::smoke::MethodOverloads::Point&>(&MethodOverloads::is_boolean), py::arg("input"))
         .def("is_boolean", py::overload_cast<const bool, const int8_t, const ::std::string&, const ::smoke::MethodOverloads::Point&>(&MethodOverloads::is_boolean), py::arg("input1"), py::arg("input2"), py::arg("input3"), py::arg("input4"))
-                .def("is_boolean", [](MethodOverloads& self, py::handle input) {
-                        return self.is_boolean(gluecodium::python::from_python_regular<::std::vector< ::std::string >>(input));
+                .def("is_boolean", [](MethodOverloads& self, const ::std::vector< ::std::string >& input) {
+                        return self.is_boolean(input);
                 }, py::arg("input"))
-                .def("is_boolean", [](MethodOverloads& self, py::handle input) {
-                        return self.is_boolean(gluecodium::python::from_python_regular<::std::vector< int8_t >>(input));
+                .def("is_boolean", [](MethodOverloads& self, const ::std::vector< int8_t >& input) {
+                        return self.is_boolean(input);
                 }, py::arg("input"))
         .def("is_boolean", py::overload_cast<>(&MethodOverloads::is_boolean))
         .def("is_float", py::overload_cast<const ::std::string&>(&MethodOverloads::is_float), py::arg("input"))
-                .def("is_float", [](MethodOverloads& self, py::handle input) {
-                        return self.is_float(gluecodium::python::from_python_regular<::std::vector< int8_t >>(input));
+                .def("is_float", [](MethodOverloads& self, const ::std::vector< int8_t >& input) {
+                        return self.is_float(input);
                 }, py::arg("input"))
         ;
 }

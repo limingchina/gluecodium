@@ -34,14 +34,14 @@ void register_smoke_Nullable(py::module_& module) {
         .def("method_with_int", &Nullable::method_with_int, py::arg("input"))
         .def("method_with_some_struct", &Nullable::method_with_some_struct, py::arg("input"))
         .def("method_with_some_enum", &Nullable::method_with_some_enum, py::arg("input"))
-                .def("method_with_some_array", [](Nullable& self, py::handle input) -> py::object {
-                        return gluecodium::python::to_python_regular(self.method_with_some_array(gluecodium::python::from_python_regular<std::optional< ::std::vector< ::std::string > >>(input)));
+                .def("method_with_some_array", [](Nullable& self, const std::optional< ::std::vector< ::std::string > >& input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.method_with_some_array(input));
                 }, py::arg("input"))
-                .def("method_with_inline_array", [](Nullable& self, py::handle input) -> py::object {
-                        return gluecodium::python::to_python_regular(self.method_with_inline_array(gluecodium::python::from_python_regular<std::optional< ::std::vector< ::std::string > >>(input)));
+                .def("method_with_inline_array", [](Nullable& self, const std::optional< ::std::vector< ::std::string > >& input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.method_with_inline_array(input));
                 }, py::arg("input"))
-                .def("method_with_some_map", [](Nullable& self, py::handle input) -> py::object {
-                        return gluecodium::python::to_python_regular(self.method_with_some_map(gluecodium::python::from_python_regular<std::optional< ::std::unordered_map< int64_t, ::std::string > >>(input)));
+                .def("method_with_some_map", [](Nullable& self, const std::optional< ::std::unordered_map< int64_t, ::std::string > >& input) -> py::object {
+                        return gluecodium::python::to_python_regular(self.method_with_some_map(input));
                 }, py::arg("input"))
         .def("method_with_instance", &Nullable::method_with_instance, py::arg("input"))
         .def_property("string_property", py::overload_cast<>(&Nullable::get_string_property, py::const_), py::overload_cast<const std::optional< ::std::string >&>(&Nullable::set_string_property))

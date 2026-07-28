@@ -23,8 +23,8 @@ using KotlinMethodOverloads = ::smoke::KotlinMethodOverloads;
 void register_smoke_KotlinMethodOverloads(py::module_& module) {
     py::class_<KotlinMethodOverloads, std::shared_ptr<KotlinMethodOverloads>>(module, "smoke_KotlinMethodOverloads")
         .def("one", &KotlinMethodOverloads::one, py::arg("input"))
-                .def("two", [](KotlinMethodOverloads& self, py::handle input) {
-                        self.two(gluecodium::python::from_python_regular<::std::vector< ::std::string >>(input));
+                .def("two", [](KotlinMethodOverloads& self, const ::std::vector< ::std::string >& input) {
+                        self.two(input);
                 }, py::arg("input"))
         ;
 }

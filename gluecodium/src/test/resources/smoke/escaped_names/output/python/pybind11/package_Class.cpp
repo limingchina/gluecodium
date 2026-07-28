@@ -69,8 +69,8 @@ void register_package_Class(py::module_& module) {
             return self;
         }))
         .def_static("constructor", &Class::constructor)
-                .def("fun", [](Class& self, py::handle double) {
-                        return self.fun(gluecodium::python::from_python_regular<::std::vector< ::package::Types::Struct >>(double));
+                .def("fun", [](Class& self, const ::std::vector< ::package::Types::Struct >& double) {
+                        return self.fun(double);
                 }, py::arg("double"))
         .def_property("property", py::overload_cast<>(&Class::get_property, py::const_), py::overload_cast<const ::package::Types::Enum>(&Class::set_property))
         ;
