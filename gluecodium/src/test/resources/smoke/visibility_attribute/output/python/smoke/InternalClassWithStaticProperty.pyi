@@ -19,3 +19,7 @@ class InternalClassWithStaticProperty(_NativeBase):
         """"""
         return _wrap(generated.smoke_InternalClassWithStaticProperty.foo_bar(), str)
 
+    @staticmethod
+    def foo_bar_set(value: str):
+        generated.smoke_InternalClassWithStaticProperty.foo_bar_set(_unwrap(value, str))
+

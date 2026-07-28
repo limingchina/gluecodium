@@ -37,3 +37,7 @@ class InternalInterface(generated.smoke_InternalInterface):
         """"""
         return _wrap(generated.smoke_InternalInterface.some_property_of_internal_interface(), str)
 
+    @staticmethod
+    def some_property_of_internal_interface_set(value: str):
+        generated.smoke_InternalInterface.some_property_of_internal_interface_set(_unwrap(value, str))
+

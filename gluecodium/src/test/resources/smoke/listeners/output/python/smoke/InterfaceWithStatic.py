@@ -51,3 +51,7 @@ class InterfaceWithStatic(generated.smoke_InterfaceWithStatic):
         """"""
         return _wrap(generated.smoke_InterfaceWithStatic.static_property(), str)
 
+    @staticmethod
+    def static_property_set(value: str):
+        generated.smoke_InterfaceWithStatic.static_property_set(_unwrap(value, str))
+

@@ -24,6 +24,13 @@
     def {{resolveName}}(){{#unless typeRef.isNullable}} -> {{resolveName typeRef}}{{/unless}}:
 {{#if comment}}        """{{resolveName comment}}"""
 {{/if}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(), {{resolveName typeRef}})
+{{#ifPredicate "hasSetter"}}
+
+    @staticmethod
+    def {{resolveName}}_set(value{{#unless typeRef.isNullable}}: {{resolveName typeRef}}{{/unless}}):
+{{#if setterComment}}        """{{resolveName setterComment}}"""
+{{/if}}        {{nativeModule}}.{{typeName}}.{{resolveName}}_set(_unwrap(value, {{resolveName typeRef}}))
+{{/ifPredicate}}
 {{/if}}{{#unless isStatic}}    @property
     def {{resolveName}}(self){{#unless typeRef.isNullable}} -> {{resolveName typeRef}}{{/unless}}:
 {{#if comment}}        """{{resolveName comment}}"""
