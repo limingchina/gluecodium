@@ -49,8 +49,8 @@ void register_smoke_Constructors(py::module_& module) {
         .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(Constructors::create), py::arg("other"))
         .def_static("create", py::overload_cast<const ::std::string&, const uint64_t>(Constructors::create), py::arg("foo"), py::arg("bar"))
         .def_static("create", py::overload_cast<const ::std::string&>(Constructors::create), py::arg("input"))
-        .def_static("create", [](py::handle input) {
-                return Constructors::create(gluecodium::python::from_python_regular<::std::vector< double >>(input));
+        .def_static("create", [](const ::std::vector< double >& input) {
+                return Constructors::create(input);
             }, py::arg("input"))
         .def_static("create", py::overload_cast<const uint64_t>(Constructors::create), py::arg("input"))
         ;

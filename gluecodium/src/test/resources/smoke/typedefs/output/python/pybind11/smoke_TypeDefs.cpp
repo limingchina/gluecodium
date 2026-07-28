@@ -24,8 +24,8 @@ using TypeDefs = ::smoke::TypeDefs;
 void register_smoke_TypeDefs(py::module_& module) {
     py::class_<TypeDefs, std::shared_ptr<TypeDefs>>(module, "smoke_TypeDefs")
         .def_static("method_with_primitive_type_def", &TypeDefs::method_with_primitive_type_def, py::arg("input"))
-                .def_static("method_with_complex_type_def", [](py::handle input) -> py::object {
-                        return gluecodium::python::to_python_regular(TypeDefs::method_with_complex_type_def(gluecodium::python::from_python_regular<::std::vector< ::smoke::TypeDefs::TestStruct >>(input)));
+                .def_static("method_with_complex_type_def", [](const ::std::vector< ::smoke::TypeDefs::TestStruct >& input) -> py::object {
+                        return gluecodium::python::to_python_regular(TypeDefs::method_with_complex_type_def(input));
                 }, py::arg("input"))
         .def_static("return_nested_int_type_def", &TypeDefs::return_nested_int_type_def, py::arg("input"))
         .def_static("return_test_struct_type_def", &TypeDefs::return_test_struct_type_def, py::arg("input"))

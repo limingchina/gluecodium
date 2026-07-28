@@ -23,8 +23,8 @@ using SwiftMethodOverloads = ::smoke::SwiftMethodOverloads;
 void register_smoke_SwiftMethodOverloads(py::module_& module) {
     py::class_<SwiftMethodOverloads, std::shared_ptr<SwiftMethodOverloads>>(module, "smoke_SwiftMethodOverloads")
         .def("one", &SwiftMethodOverloads::one, py::arg("input"))
-                .def("two", [](SwiftMethodOverloads& self, py::handle input) {
-                        self.two(gluecodium::python::from_python_regular<::std::vector< ::std::string >>(input));
+                .def("two", [](SwiftMethodOverloads& self, const ::std::vector< ::std::string >& input) {
+                        self.two(input);
                 }, py::arg("input"))
         ;
 }

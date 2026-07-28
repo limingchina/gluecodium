@@ -23,8 +23,8 @@ using JavaMethodOverloads = ::smoke::JavaMethodOverloads;
 void register_smoke_JavaMethodOverloads(py::module_& module) {
     py::class_<JavaMethodOverloads, std::shared_ptr<JavaMethodOverloads>>(module, "smoke_JavaMethodOverloads")
         .def("one", &JavaMethodOverloads::one, py::arg("input"))
-                .def("two", [](JavaMethodOverloads& self, py::handle input) {
-                        self.two(gluecodium::python::from_python_regular<::std::vector< ::std::string >>(input));
+                .def("two", [](JavaMethodOverloads& self, const ::std::vector< ::std::string >& input) {
+                        self.two(input);
                 }, py::arg("input"))
         ;
 }
