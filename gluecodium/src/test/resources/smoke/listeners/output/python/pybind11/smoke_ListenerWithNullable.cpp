@@ -121,6 +121,9 @@ public:
 
 void register_smoke_ListenerWithNullable(py::module_& module) {
     py::class_<ListenerWithNullable, std::shared_ptr<ListenerWithNullable>, ListenerWithNullableTrampoline>(module, "smoke_ListenerWithNullable")
+        .def("__gluecodium_id__", [](const ListenerWithNullable& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

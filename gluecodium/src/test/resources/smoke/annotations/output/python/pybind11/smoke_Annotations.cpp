@@ -21,6 +21,9 @@ using Annotations = ::smoke::Annotations;
 
 void register_smoke_Annotations(py::module_& module) {
     py::class_<Annotations, std::shared_ptr<Annotations>>(module, "smoke_Annotations")
+        .def("__gluecodium_id__", [](const Annotations& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("test_optional", &Annotations::test_optional, py::arg("self"))
         ;
 }

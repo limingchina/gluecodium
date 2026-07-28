@@ -20,6 +20,9 @@ using PlatformComments = ::smoke::PlatformComments;
 
 void register_smoke_PlatformComments(py::module_& module) {
     py::class_<PlatformComments, std::shared_ptr<PlatformComments>>(module, "smoke_PlatformComments")
+        .def("__gluecodium_id__", [](const PlatformComments& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("do_nothing", &PlatformComments::do_nothing)
         .def("do_magic", &PlatformComments::do_magic)
         .def("some_method_with_all_comments", &PlatformComments::some_method_with_all_comments, py::arg("input"))

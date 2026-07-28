@@ -19,6 +19,9 @@ using InnerInternalClazz = ::smoke::OuterPublicClazz::InnerInternalClazz;
 
 void register_smoke_OuterPublicClazzInnerInternalClazz(py::module_& module) {
     py::class_<InnerInternalClazz, std::shared_ptr<InnerInternalClazz>>(module, "smoke_OuterPublicClazzInnerInternalClazz")
+        .def("__gluecodium_id__", [](const InnerInternalClazz& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("some_function", &InnerInternalClazz::some_function)
         ;
 }

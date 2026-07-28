@@ -73,6 +73,9 @@ public:
 
 void register_smoke_GrandChildInterface(py::module_& module) {
     py::class_<GrandChildInterface, ::smoke::ChildInterface, std::shared_ptr<GrandChildInterface>, GrandChildInterfaceTrampoline>(module, "smoke_GrandChildInterface")
+        .def("__gluecodium_id__", [](const GrandChildInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

@@ -19,6 +19,9 @@ using ConstantsInterface = ::smoke::ConstantsInterface;
 
 void register_smoke_ConstantsInterface(py::module_& module) {
     py::class_<ConstantsInterface, std::shared_ptr<ConstantsInterface>>(module, "smoke_ConstantsInterface")
+        .def("__gluecodium_id__", [](const ConstantsInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

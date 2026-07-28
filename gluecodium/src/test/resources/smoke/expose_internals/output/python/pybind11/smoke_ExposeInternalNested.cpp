@@ -19,6 +19,9 @@ using ExposeInternalNested = ::smoke::ExposeInternalNested;
 
 void register_smoke_ExposeInternalNested(py::module_& module) {
     py::class_<ExposeInternalNested, std::shared_ptr<ExposeInternalNested>>(module, "smoke_ExposeInternalNested")
+        .def("__gluecodium_id__", [](const ExposeInternalNested& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

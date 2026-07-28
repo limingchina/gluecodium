@@ -19,6 +19,9 @@ using StructConstants = ::fire::StructConstants;
 
 void register_fire_StructConstants(py::module_& module) {
     py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "fire_StructConstants")
+        .def("__gluecodium_id__", [](const StructConstants& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

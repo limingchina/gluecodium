@@ -23,6 +23,9 @@ using LevelThree = ::smoke::LevelOne::LevelTwo::LevelThree;
 
 void register_smoke_LevelOneLevelTwoLevelThree(py::module_& module) {
     py::class_<LevelThree, std::shared_ptr<LevelThree>>(module, "smoke_LevelOneLevelTwoLevelThree")
+        .def("__gluecodium_id__", [](const LevelThree& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("foo", &LevelThree::foo, py::arg("input"))
         ;
 }

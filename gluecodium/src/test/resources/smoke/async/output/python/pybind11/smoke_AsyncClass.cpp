@@ -21,6 +21,9 @@ using AsyncClass = ::smoke::AsyncClass;
 
 void register_smoke_AsyncClass(py::module_& module) {
     py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "smoke_AsyncClass")
+        .def("__gluecodium_id__", [](const AsyncClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("async_void", &AsyncClass::async_void, py::arg("input"))
         .def("async_void_throws", &AsyncClass::async_void_throws, py::arg("input"))
         .def("async_int", &AsyncClass::async_int, py::arg("input"))

@@ -20,6 +20,9 @@ using UseTcException = ::smoke::UseTcException;
 
 void register_smoke_UseTcException(py::module_& module) {
     py::class_<UseTcException, std::shared_ptr<UseTcException>>(module, "smoke_UseTcException")
+        .def("__gluecodium_id__", [](const UseTcException& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("do_nothing", &UseTcException::do_nothing)
         ;
 }

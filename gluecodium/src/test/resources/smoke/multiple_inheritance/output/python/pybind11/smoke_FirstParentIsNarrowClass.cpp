@@ -103,6 +103,9 @@ public:
 
 void register_smoke_FirstParentIsNarrowClass(py::module_& module) {
     py::class_<FirstParentIsNarrowClass, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowClass>, FirstParentIsNarrowClassTrampoline>(module, "smoke_FirstParentIsNarrowClass", py::multiple_inheritance())
+        .def("__gluecodium_id__", [](const FirstParentIsNarrowClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

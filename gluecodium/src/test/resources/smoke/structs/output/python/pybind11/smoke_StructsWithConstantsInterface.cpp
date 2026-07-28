@@ -23,6 +23,9 @@ using StructsWithConstantsInterface = ::smoke::StructsWithConstantsInterface;
 
 void register_smoke_StructsWithConstantsInterface(py::module_& module) {
     py::class_<StructsWithConstantsInterface, std::shared_ptr<StructsWithConstantsInterface>>(module, "smoke_StructsWithConstantsInterface")
+        .def("__gluecodium_id__", [](const StructsWithConstantsInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

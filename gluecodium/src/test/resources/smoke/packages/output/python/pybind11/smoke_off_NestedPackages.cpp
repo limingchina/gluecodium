@@ -20,6 +20,9 @@ using NestedPackages = ::smoke::off::NestedPackages;
 
 void register_smoke_off_NestedPackages(py::module_& module) {
     py::class_<NestedPackages, std::shared_ptr<NestedPackages>>(module, "smoke_off_NestedPackages")
+        .def("__gluecodium_id__", [](const NestedPackages& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("basic_method", &NestedPackages::basic_method, py::arg("input"))
         ;
 }

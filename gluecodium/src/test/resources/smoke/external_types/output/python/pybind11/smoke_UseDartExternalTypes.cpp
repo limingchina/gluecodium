@@ -23,6 +23,9 @@ using UseDartExternalTypes = ::smoke::UseDartExternalTypes;
 
 void register_smoke_UseDartExternalTypes(py::module_& module) {
     py::class_<UseDartExternalTypes, std::shared_ptr<UseDartExternalTypes>>(module, "smoke_UseDartExternalTypes")
+        .def("__gluecodium_id__", [](const UseDartExternalTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("rectangle_round_trip", &UseDartExternalTypes::rectangle_round_trip, py::arg("input"))
         .def_static("compression_state_round_trip", &UseDartExternalTypes::compression_state_round_trip, py::arg("input"))
         .def_static("color_round_trip", &UseDartExternalTypes::color_round_trip, py::arg("input"))

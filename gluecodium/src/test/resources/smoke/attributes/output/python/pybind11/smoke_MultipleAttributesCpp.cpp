@@ -19,6 +19,9 @@ using MultipleAttributesCpp = ::smoke::MultipleAttributesCpp;
 
 void register_smoke_MultipleAttributesCpp(py::module_& module) {
     py::class_<MultipleAttributesCpp, std::shared_ptr<MultipleAttributesCpp>>(module, "smoke_MultipleAttributesCpp")
+        .def("__gluecodium_id__", [](const MultipleAttributesCpp& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("no_lists2", &MultipleAttributesCpp::no_lists2)
         .def("no_lists3", &MultipleAttributesCpp::no_lists3)
         .def("list_first", &MultipleAttributesCpp::list_first)

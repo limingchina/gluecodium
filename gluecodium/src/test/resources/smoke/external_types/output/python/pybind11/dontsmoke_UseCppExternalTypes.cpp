@@ -24,6 +24,9 @@ using UseCppExternalTypes = ::dontsmoke::UseCppExternalTypes;
 
 void register_dontsmoke_UseCppExternalTypes(py::module_& module) {
     py::class_<UseCppExternalTypes, std::shared_ptr<UseCppExternalTypes>>(module, "dontsmoke_UseCppExternalTypes")
+        .def("__gluecodium_id__", [](const UseCppExternalTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("use_struct", &UseCppExternalTypes::use_struct, py::arg("input"))
         .def_static("use_enum", &UseCppExternalTypes::use_enum, py::arg("input"))
         .def_static("use_class", &UseCppExternalTypes::use_class, py::arg("input"))

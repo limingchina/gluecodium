@@ -40,6 +40,9 @@ public:
 
 void register_smoke_NoCacheInterface(py::module_& module) {
     py::class_<NoCacheInterface, std::shared_ptr<NoCacheInterface>, NoCacheInterfaceTrampoline>(module, "smoke_NoCacheInterface")
+        .def("__gluecodium_id__", [](const NoCacheInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

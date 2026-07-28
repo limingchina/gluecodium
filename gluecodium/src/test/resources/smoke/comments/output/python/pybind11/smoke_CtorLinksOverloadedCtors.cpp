@@ -21,6 +21,9 @@ using OverloadedCtors = ::smoke::CtorLinks::OverloadedCtors;
 
 void register_smoke_CtorLinksOverloadedCtors(py::module_& module) {
     py::class_<OverloadedCtors, std::shared_ptr<OverloadedCtors>>(module, "smoke_CtorLinksOverloadedCtors")
+        .def("__gluecodium_id__", [](const OverloadedCtors& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("create", py::overload_cast<const ::std::string&>(OverloadedCtors::create), py::arg("input"))
         .def_static("create", py::overload_cast<const ::std::string&, const bool>(OverloadedCtors::create), py::arg("input"), py::arg("flag"))
         ;

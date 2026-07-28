@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.Constructors import Constructors
@@ -32,6 +32,6 @@ class ChildConstructors(generated.smoke_ChildConstructors):
     def create(*args, **kwargs) -> ChildConstructors:
         """"""
         native_result = generated.smoke_ChildConstructors.create(*[_unwrap(a) for a in args])
-        return ChildConstructors(native_result)
+        return _get_or_create_wrapper(native_result, ChildConstructors)
 
 

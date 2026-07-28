@@ -23,6 +23,9 @@ using LambdasWithStructuredTypes = ::smoke::LambdasWithStructuredTypes;
 
 void register_smoke_LambdasWithStructuredTypes(py::module_& module) {
     py::class_<LambdasWithStructuredTypes, std::shared_ptr<LambdasWithStructuredTypes>>(module, "smoke_LambdasWithStructuredTypes")
+        .def("__gluecodium_id__", [](const LambdasWithStructuredTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
                 .def("do_class_stuff", [](LambdasWithStructuredTypes& self, const ::std::function<void(const ::std::shared_ptr< ::smoke::LambdasInterface >&)>& callback) {
                         self.do_class_stuff(callback);
                 }, py::arg("callback"))

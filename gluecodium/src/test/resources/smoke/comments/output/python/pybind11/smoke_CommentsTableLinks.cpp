@@ -19,6 +19,9 @@ using CommentsTableLinks = ::smoke::CommentsTableLinks;
 
 void register_smoke_CommentsTableLinks(py::module_& module) {
     py::class_<CommentsTableLinks, std::shared_ptr<CommentsTableLinks>>(module, "smoke_CommentsTableLinks")
+        .def("__gluecodium_id__", [](const CommentsTableLinks& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

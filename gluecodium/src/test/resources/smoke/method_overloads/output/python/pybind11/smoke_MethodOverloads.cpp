@@ -23,6 +23,9 @@ using MethodOverloads = ::smoke::MethodOverloads;
 
 void register_smoke_MethodOverloads(py::module_& module) {
     py::class_<MethodOverloads, std::shared_ptr<MethodOverloads>>(module, "smoke_MethodOverloads")
+        .def("__gluecodium_id__", [](const MethodOverloads& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("is_boolean", py::overload_cast<const bool>(&MethodOverloads::is_boolean), py::arg("input"))
         .def("is_boolean", py::overload_cast<const int8_t>(&MethodOverloads::is_boolean), py::arg("input"))
         .def("is_boolean", py::overload_cast<const ::std::string&>(&MethodOverloads::is_boolean), py::arg("input"))

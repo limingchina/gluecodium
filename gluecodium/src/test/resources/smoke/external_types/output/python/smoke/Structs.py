@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.StructsAnotherExternalStruct import StructsAnotherExternalStruct
@@ -23,11 +23,11 @@ class Structs(_NativeBase):
     def get_external_struct() -> StructsExternalStruct:
         """"""
         native_result = generated.smoke_Structs.get_external_struct()
-        return StructsExternalStruct(native_result)
+        return _get_or_create_wrapper(native_result, StructsExternalStruct)
 
     @staticmethod
     def get_another_external_struct() -> StructsAnotherExternalStruct:
         """"""
         native_result = generated.smoke_Structs.get_another_external_struct()
-        return StructsAnotherExternalStruct(native_result)
+        return _get_or_create_wrapper(native_result, StructsAnotherExternalStruct)
 

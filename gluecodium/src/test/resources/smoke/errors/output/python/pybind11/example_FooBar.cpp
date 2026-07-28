@@ -21,6 +21,9 @@ using FooBar = ::example::FooBar;
 
 void register_example_FooBar(py::module_& module) {
     py::class_<FooBar, std::shared_ptr<FooBar>>(module, "example_FooBar")
+        .def("__gluecodium_id__", [](const FooBar& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("method_with_internal_error", &FooBar::method_with_internal_error)
         .def_static("method_with_type_collection_error", &FooBar::method_with_type_collection_error)
         ;

@@ -21,6 +21,9 @@ using LambdaComments = ::smoke::LambdaComments;
 
 void register_smoke_LambdaComments(py::module_& module) {
     py::class_<LambdaComments, std::shared_ptr<LambdaComments>>(module, "smoke_LambdaComments")
+        .def("__gluecodium_id__", [](const LambdaComments& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

@@ -114,6 +114,9 @@ public:
 
 void register_smoke_FirstParentIsInterfaceClass(py::module_& module) {
     py::class_<FirstParentIsInterfaceClass, ::smoke::ParentInterface, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsInterfaceClass>, FirstParentIsInterfaceClassTrampoline>(module, "smoke_FirstParentIsInterfaceClass", py::multiple_inheritance())
+        .def("__gluecodium_id__", [](const FirstParentIsInterfaceClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
         // real implementation instead of the pure-virtual stub. `init_alias` cannot be used

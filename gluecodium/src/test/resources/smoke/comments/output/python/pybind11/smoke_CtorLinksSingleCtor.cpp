@@ -20,6 +20,9 @@ using SingleCtor = ::smoke::CtorLinks::SingleCtor;
 
 void register_smoke_CtorLinksSingleCtor(py::module_& module) {
     py::class_<SingleCtor, std::shared_ptr<SingleCtor>>(module, "smoke_CtorLinksSingleCtor")
+        .def("__gluecodium_id__", [](const SingleCtor& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("create", &SingleCtor::create)
         ;
 }

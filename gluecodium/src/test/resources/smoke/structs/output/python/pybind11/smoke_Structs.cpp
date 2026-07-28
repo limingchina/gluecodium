@@ -26,6 +26,9 @@ using Structs = ::smoke::Structs;
 
 void register_smoke_Structs(py::module_& module) {
     py::class_<Structs, std::shared_ptr<Structs>>(module, "smoke_Structs")
+        .def("__gluecodium_id__", [](const Structs& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("swap_point_coordinates", &Structs::swap_point_coordinates, py::arg("input"))
         .def_static("return_all_types_struct", &Structs::return_all_types_struct, py::arg("input"))
         .def_static("create_point", &Structs::create_point, py::arg("x"), py::arg("y"))

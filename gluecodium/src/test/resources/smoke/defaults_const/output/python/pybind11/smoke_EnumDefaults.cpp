@@ -24,6 +24,9 @@ using EnumDefaults = ::smoke::EnumDefaults;
 
 void register_smoke_EnumDefaults(py::module_& module) {
     py::class_<EnumDefaults, std::shared_ptr<EnumDefaults>>(module, "smoke_EnumDefaults")
+        .def("__gluecodium_id__", [](const EnumDefaults& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

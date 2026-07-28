@@ -21,6 +21,9 @@ using SingleCtorWithOneArgument = ::smoke::CtorLinks::SingleCtorWithOneArgument;
 
 void register_smoke_CtorLinksSingleCtorWithOneArgument(py::module_& module) {
     py::class_<SingleCtorWithOneArgument, std::shared_ptr<SingleCtorWithOneArgument>>(module, "smoke_CtorLinksSingleCtorWithOneArgument")
+        .def("__gluecodium_id__", [](const SingleCtorWithOneArgument& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("create", &SingleCtorWithOneArgument::create, py::arg("arg"))
         ;
 }

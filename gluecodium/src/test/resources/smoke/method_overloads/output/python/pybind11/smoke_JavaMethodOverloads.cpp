@@ -22,6 +22,9 @@ using JavaMethodOverloads = ::smoke::JavaMethodOverloads;
 
 void register_smoke_JavaMethodOverloads(py::module_& module) {
     py::class_<JavaMethodOverloads, std::shared_ptr<JavaMethodOverloads>>(module, "smoke_JavaMethodOverloads")
+        .def("__gluecodium_id__", [](const JavaMethodOverloads& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("one", &JavaMethodOverloads::one, py::arg("input"))
                 .def("two", [](JavaMethodOverloads& self, const ::std::vector< ::std::string >& input) {
                         self.two(input);

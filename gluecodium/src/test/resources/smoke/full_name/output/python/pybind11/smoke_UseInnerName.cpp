@@ -20,6 +20,9 @@ using UseInnerName = ::smoke::UseInnerName;
 
 void register_smoke_UseInnerName(py::module_& module) {
     py::class_<UseInnerName, std::shared_ptr<UseInnerName>>(module, "smoke_UseInnerName")
+        .def("__gluecodium_id__", [](const UseInnerName& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("do_foo", &UseInnerName::do_foo)
         ;
 }

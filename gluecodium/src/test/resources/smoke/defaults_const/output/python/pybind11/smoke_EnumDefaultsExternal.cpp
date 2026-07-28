@@ -24,6 +24,9 @@ using EnumDefaultsExternal = ::smoke::EnumDefaultsExternal;
 
 void register_smoke_EnumDefaultsExternal(py::module_& module) {
     py::class_<EnumDefaultsExternal, std::shared_ptr<EnumDefaultsExternal>>(module, "smoke_EnumDefaultsExternal")
+        .def("__gluecodium_id__", [](const EnumDefaultsExternal& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

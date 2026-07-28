@@ -17,6 +17,9 @@ namespace py = pybind11;
 
 void register_smoke_ExternalWithNoFunctions(py::module_& module) {
     py::class_<::some::path::Bar, std::shared_ptr<::some::path::Bar>>(module, "smoke_ExternalWithNoFunctions")
+        .def("__gluecodium_id__", [](const ::some::path::Bar& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

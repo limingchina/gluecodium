@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.CppRefReturnTypeEnumBased import CppRefReturnTypeEnumBased
@@ -40,13 +40,13 @@ class CppRefReturnType(_NativeBase):
     def struct_ref() -> CppRefReturnTypeSomeStruct:
         """"""
         native_result = generated.smoke_CppRefReturnType.struct_ref()
-        return CppRefReturnTypeSomeStruct(native_result)
+        return _get_or_create_wrapper(native_result, CppRefReturnTypeSomeStruct)
 
     @staticmethod
     def class_ref() -> CppRefReturnType:
         """"""
         native_result = generated.smoke_CppRefReturnType.class_ref()
-        return CppRefReturnType(native_result)
+        return _get_or_create_wrapper(native_result, CppRefReturnType)
 
     @staticmethod
     def nullable_ref() -> Optional[str]:

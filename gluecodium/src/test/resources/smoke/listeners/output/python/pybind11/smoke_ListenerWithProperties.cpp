@@ -145,6 +145,9 @@ public:
 
 void register_smoke_ListenerWithProperties(py::module_& module) {
     py::class_<ListenerWithProperties, std::shared_ptr<ListenerWithProperties>, ListenerWithPropertiesTrampoline>(module, "smoke_ListenerWithProperties")
+        .def("__gluecodium_id__", [](const ListenerWithProperties& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

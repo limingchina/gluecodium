@@ -55,6 +55,9 @@ public:
 
 void register_smoke_InterfaceWithStatic(py::module_& module) {
     py::class_<InterfaceWithStatic, std::shared_ptr<InterfaceWithStatic>, InterfaceWithStaticTrampoline>(module, "smoke_InterfaceWithStatic")
+        .def("__gluecodium_id__", [](const InterfaceWithStatic& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

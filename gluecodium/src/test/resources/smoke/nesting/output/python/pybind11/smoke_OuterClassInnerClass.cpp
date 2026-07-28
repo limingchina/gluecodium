@@ -20,6 +20,9 @@ using InnerClass = ::smoke::OuterClass::InnerClass;
 
 void register_smoke_OuterClassInnerClass(py::module_& module) {
     py::class_<InnerClass, std::shared_ptr<InnerClass>>(module, "smoke_OuterClassInnerClass")
+        .def("__gluecodium_id__", [](const InnerClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("foo", &InnerClass::foo, py::arg("input"))
         ;
 }

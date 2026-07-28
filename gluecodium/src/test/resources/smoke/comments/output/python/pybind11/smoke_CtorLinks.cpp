@@ -22,6 +22,9 @@ using CtorLinks = ::smoke::CtorLinks;
 
 void register_smoke_CtorLinks(py::module_& module) {
     py::class_<CtorLinks, std::shared_ptr<CtorLinks>>(module, "smoke_CtorLinks")
+        .def("__gluecodium_id__", [](const CtorLinks& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

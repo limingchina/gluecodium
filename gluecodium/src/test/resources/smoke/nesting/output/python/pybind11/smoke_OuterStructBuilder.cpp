@@ -21,6 +21,9 @@ using Builder = ::smoke::OuterStruct::Builder;
 
 void register_smoke_OuterStructBuilder(py::module_& module) {
     py::class_<Builder, std::shared_ptr<Builder>>(module, "smoke_OuterStructBuilder")
+        .def("__gluecodium_id__", [](const Builder& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("create", &Builder::create)
         .def("field", &Builder::field, py::arg("value"))
         .def("build", &Builder::build)

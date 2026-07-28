@@ -19,6 +19,9 @@ using DartPublicClassSkipped = ::smoke::DartPublicClassSkipped;
 
 void register_smoke_DartPublicClassSkipped(py::module_& module) {
     py::class_<DartPublicClassSkipped, std::shared_ptr<DartPublicClassSkipped>>(module, "smoke_DartPublicClassSkipped")
+        .def("__gluecodium_id__", [](const DartPublicClassSkipped& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

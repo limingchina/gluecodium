@@ -29,6 +29,9 @@ using DurationMilliseconds = ::smoke::DurationMilliseconds;
 
 void register_smoke_DurationMilliseconds(py::module_& module) {
     py::class_<DurationMilliseconds, std::shared_ptr<DurationMilliseconds>>(module, "smoke_DurationMilliseconds")
+        .def("__gluecodium_id__", [](const DurationMilliseconds& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("duration_function", &DurationMilliseconds::duration_function, py::arg("input"))
         .def("nullable_duration_function", &DurationMilliseconds::nullable_duration_function, py::arg("input"))
         .def_property("duration_property", py::overload_cast<>(&DurationMilliseconds::get_duration_property, py::const_), py::overload_cast<const std::chrono::milliseconds>(&DurationMilliseconds::set_duration_property))

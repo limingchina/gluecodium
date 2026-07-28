@@ -41,6 +41,9 @@ public:
 
 void register_smoke_PlatformNamesListener(py::module_& module) {
     py::class_<fooListener, std::shared_ptr<fooListener>, PlatformNamesListenerTrampoline>(module, "smoke_PlatformNamesListener")
+        .def("__gluecodium_id__", [](const fooListener& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and

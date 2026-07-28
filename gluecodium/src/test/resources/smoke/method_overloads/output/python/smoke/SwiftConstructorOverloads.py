@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -21,11 +21,11 @@ class SwiftConstructorOverloads(_NativeBase):
     def make(input: str) -> SwiftConstructorOverloads:
         """"""
         native_result = generated.smoke_SwiftConstructorOverloads.make(_unwrap(input, str))
-        return SwiftConstructorOverloads(native_result)
+        return _get_or_create_wrapper(native_result, SwiftConstructorOverloads)
 
     @staticmethod
     def make_do(throughput: str) -> SwiftConstructorOverloads:
         """"""
         native_result = generated.smoke_SwiftConstructorOverloads.make_do(_unwrap(throughput, str))
-        return SwiftConstructorOverloads(native_result)
+        return _get_or_create_wrapper(native_result, SwiftConstructorOverloads)
 

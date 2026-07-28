@@ -21,6 +21,9 @@ using UnicodeComments = ::smoke::UnicodeComments;
 
 void register_smoke_UnicodeComments(py::module_& module) {
     py::class_<UnicodeComments, std::shared_ptr<UnicodeComments>>(module, "smoke_UnicodeComments")
+        .def("__gluecodium_id__", [](const UnicodeComments& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("some_method_with_all_comments", &UnicodeComments::some_method_with_all_comments, py::arg("input"))
         ;
 }

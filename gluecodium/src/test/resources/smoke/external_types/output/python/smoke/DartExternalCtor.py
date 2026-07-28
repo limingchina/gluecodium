@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -38,5 +38,5 @@ class DartExternalCtor(_NativeBase):
     def make(field: str) -> DartExternalCtor:
         """"""
         native_result = generated.smoke_DartExternalCtor.make(_unwrap(field, str))
-        return DartExternalCtor(native_result)
+        return _get_or_create_wrapper(native_result, DartExternalCtor)
 

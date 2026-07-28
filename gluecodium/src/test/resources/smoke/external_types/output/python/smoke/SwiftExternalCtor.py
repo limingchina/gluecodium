@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
@@ -38,5 +38,5 @@ class SwiftExternalCtor(_NativeBase):
     def make(field: str) -> SwiftExternalCtor:
         """"""
         native_result = generated.smoke_SwiftExternalCtor.make(_unwrap(field, str))
-        return SwiftExternalCtor(native_result)
+        return _get_or_create_wrapper(native_result, SwiftExternalCtor)
 

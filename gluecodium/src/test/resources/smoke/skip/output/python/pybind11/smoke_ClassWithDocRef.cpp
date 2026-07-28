@@ -19,6 +19,9 @@ using ClassWithDocRef = ::smoke::ClassWithDocRef;
 
 void register_smoke_ClassWithDocRef(py::module_& module) {
     py::class_<ClassWithDocRef, std::shared_ptr<ClassWithDocRef>>(module, "smoke_ClassWithDocRef")
+        .def("__gluecodium_id__", [](const ClassWithDocRef& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

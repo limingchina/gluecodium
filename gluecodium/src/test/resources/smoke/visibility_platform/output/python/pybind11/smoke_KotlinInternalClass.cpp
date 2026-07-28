@@ -19,6 +19,9 @@ using KotlinInternalClass = ::smoke::KotlinInternalClass;
 
 void register_smoke_KotlinInternalClass(py::module_& module) {
     py::class_<KotlinInternalClass, std::shared_ptr<KotlinInternalClass>>(module, "smoke_KotlinInternalClass")
+        .def("__gluecodium_id__", [](const KotlinInternalClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

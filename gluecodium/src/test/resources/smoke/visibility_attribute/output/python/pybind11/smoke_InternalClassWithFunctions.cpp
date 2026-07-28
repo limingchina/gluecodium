@@ -21,6 +21,9 @@ using InternalClassWithFunctions = ::smoke::InternalClassWithFunctions;
 
 void register_smoke_InternalClassWithFunctions(py::module_& module) {
     py::class_<InternalClassWithFunctions, std::shared_ptr<InternalClassWithFunctions>>(module, "smoke_InternalClassWithFunctions")
+        .def("__gluecodium_id__", [](const InternalClassWithFunctions& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def("foo_bar", &InternalClassWithFunctions::foo_bar)
         .def_static("make", py::overload_cast<>(InternalClassWithFunctions::make))
         .def_static("make", py::overload_cast<const ::std::string&>(InternalClassWithFunctions::make), py::arg("foo"))

@@ -19,6 +19,9 @@ using KotlinPublicClass = ::smoke::KotlinPublicClass;
 
 void register_smoke_KotlinPublicClass(py::module_& module) {
     py::class_<KotlinPublicClass, std::shared_ptr<KotlinPublicClass>>(module, "smoke_KotlinPublicClass")
+        .def("__gluecodium_id__", [](const KotlinPublicClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

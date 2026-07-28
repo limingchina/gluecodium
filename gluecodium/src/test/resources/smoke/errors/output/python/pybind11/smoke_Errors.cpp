@@ -22,6 +22,9 @@ using Errors = ::smoke::Errors;
 
 void register_smoke_Errors(py::module_& module) {
     py::class_<Errors, std::shared_ptr<Errors>>(module, "smoke_Errors")
+        .def("__gluecodium_id__", [](const Errors& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def_static("method_with_errors", &Errors::method_with_errors)
         .def_static("method_with_external_errors", &Errors::method_with_external_errors)
         .def_static("method_with_errors_and_return_value", &Errors::method_with_errors_and_return_value)

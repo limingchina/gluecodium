@@ -19,6 +19,9 @@ namespace py = pybind11;
 
 void register_smoke_ExternalClass(py::module_& module) {
     py::class_<::fire::Baz, std::shared_ptr<::fire::Baz>>(module, "smoke_ExternalClass")
+        .def("__gluecodium_id__", [](const ::fire::Baz& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

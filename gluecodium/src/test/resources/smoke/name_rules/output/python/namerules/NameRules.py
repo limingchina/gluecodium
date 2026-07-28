@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from namerules.NameRulesExample import NameRulesExample
@@ -24,7 +24,7 @@ class NameRules(_NativeBase):
     def create() -> NameRules:
         """"""
         native_result = generated.namerules_NameRules.create()
-        return NameRules(native_result)
+        return _get_or_create_wrapper(native_result, NameRules)
 
     def some_method(self, some_argument: NameRulesExampleStruct) -> float:
         """"""

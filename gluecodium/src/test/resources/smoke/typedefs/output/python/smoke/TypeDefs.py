@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 from smoke.TypeCollectionPoint import TypeCollectionPoint
@@ -38,19 +38,19 @@ class TypeDefs(_NativeBase):
     def return_test_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
         """"""
         native_result = generated.smoke_TypeDefs.return_test_struct_type_def(_unwrap(input, TypeDefsTestStruct))
-        return TypeDefsTestStruct(native_result)
+        return _get_or_create_wrapper(native_result, TypeDefsTestStruct)
 
     @staticmethod
     def return_nested_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
         """"""
         native_result = generated.smoke_TypeDefs.return_nested_struct_type_def(_unwrap(input, TypeDefsTestStruct))
-        return TypeDefsTestStruct(native_result)
+        return _get_or_create_wrapper(native_result, TypeDefsTestStruct)
 
     @staticmethod
     def return_type_def_point_from_type_collection(input: TypeCollectionPoint) -> TypeCollectionPoint:
         """"""
         native_result = generated.smoke_TypeDefs.return_type_def_point_from_type_collection(_unwrap(input, TypeCollectionPoint))
-        return TypeCollectionPoint(native_result)
+        return _get_or_create_wrapper(native_result, TypeCollectionPoint)
 
     @property
     def primitive_type_property(self) -> list[float]:

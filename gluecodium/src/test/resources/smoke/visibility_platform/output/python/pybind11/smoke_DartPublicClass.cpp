@@ -19,6 +19,9 @@ using DartPublicClass = ::smoke::DartPublicClass;
 
 void register_smoke_DartPublicClass(py::module_& module) {
     py::class_<DartPublicClass, std::shared_ptr<DartPublicClass>>(module, "smoke_DartPublicClass")
+        .def("__gluecodium_id__", [](const DartPublicClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         ;
 }
 

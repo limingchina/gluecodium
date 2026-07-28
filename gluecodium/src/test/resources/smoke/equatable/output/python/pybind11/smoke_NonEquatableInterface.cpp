@@ -31,6 +31,9 @@ public:
 
 void register_smoke_NonEquatableInterface(py::module_& module) {
     py::class_<NonEquatableInterface, std::shared_ptr<NonEquatableInterface>, NonEquatableInterfaceTrampoline>(module, "smoke_NonEquatableInterface")
+        .def("__gluecodium_id__", [](const NonEquatableInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
