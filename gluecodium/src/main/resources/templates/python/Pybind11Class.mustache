@@ -92,4 +92,9 @@ void register_{{registerName}}(py::module_& module) {
 {{/inheritedProperties}}
 {{/unless}}
         ;
+{{#unless external.cpp}}{{#properties}}
+{{#if isStatic}}{{#ifPredicate typeRef "isLambdaType"}}{{#ifPredicate "hasSetter"}}
+    py::module_::import("atexit").attr("register")(py::cpp_function([]() { {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}({}); }));
+{{/ifPredicate}}{{/ifPredicate}}{{/if}}
+{{/properties}}{{/unless}}
 }
