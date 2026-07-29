@@ -489,7 +489,12 @@ internal class PythonGenerator : Generator {
         when (limeElement) {
             is LimeLambda -> true
             is LimeTypeAlias -> containsLambda(limeElement.typeRef)
-            is LimeStruct -> limeElement.fields.any { containsLambda(it.typeRef) }
+            is LimeStruct ->
+                limeElement.fields.any { containsLambda(it.typeRef) } ||
+                limeElement.functions.any { function ->
+                    function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)
+                } ||
+                limeElement.properties.any { containsLambda(it.typeRef) }
             is com.here.gluecodium.model.lime.LimeContainer ->
                 limeElement.functions.any { function ->
                     function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)

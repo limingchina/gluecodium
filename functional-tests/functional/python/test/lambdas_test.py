@@ -17,7 +17,12 @@
 
 """Lambda (callback) tests for the Python (pybind11) bindings."""
 
+from typing import Callable, Optional
+
+
 from test.Lambdas import Lambdas
+from test.LambdasLambdaHolder import LambdasLambdaHolder
+from test.StructWithLambda import StructWithLambda
 
 
 class TestLambdas:
@@ -116,3 +121,24 @@ class TestLambdas:
         result = Lambdas.apply_nullable_confuser(confuser, None)
 
         assert result is None
+
+    # --- Lambda as struct field / nested lambda in struct ---
+
+    def test_cpp_lambda_in_struct(self):
+        holder = Lambdas.get_concatenator_in_struct(">.<")
+        result = holder.concatenator("foo", "bar")
+
+        assert result == "foo>.<bar"
+
+    def test_python_lambda_in_struct(self):
+        delimiter = ">.<"
+        concatenator = lambda first, second: f"{first}{delimiter}{second}"
+        holder = LambdasLambdaHolder(concatenator)
+        result = Lambdas.concatenate_in_struct("foo", "bar", holder)
+
+        assert result == "foo>.<bar"
+
+    def test_python_lambda_for_nested_struct_lambda(self):
+        result = StructWithLambda.invoke_callback(lambda arg: arg)
+
+        assert result == "some callback argument"
