@@ -17,7 +17,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using fooListener = ::smoke::fooListener;
 
-class PlatformNamesListenerTrampoline : public fooListener {
+class QuxListenerTrampoline : public fooListener {
 public:
     using fooListener::fooListener;
 
@@ -29,18 +29,18 @@ public:
     std::shared_ptr<fooListener> m_impl;
 
     void FooMethod(
-            const ::std::string& basic_parameter ) override {
+            const ::std::string& qux_parameter ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
-            m_impl->FooMethod(basic_parameter);
+            m_impl->FooMethod(qux_parameter);
             return;
         }
-        PYBIND11_OVERRIDE_PURE(void, fooListener, FooMethod, basic_parameter);
+        PYBIND11_OVERRIDE_PURE(void, fooListener, FooMethod, qux_parameter);
     }
 };
 
-void register_smoke_PlatformNamesListener(py::module_& module) {
-    py::class_<fooListener, std::shared_ptr<fooListener>, PlatformNamesListenerTrampoline>(module, "smoke_PlatformNamesListener")
+void register_smoke_QuxListener(py::module_& module) {
+    py::class_<fooListener, std::shared_ptr<fooListener>, QuxListenerTrampoline>(module, "smoke_QuxListener")
         .def("__gluecodium_id__", [](const fooListener& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -52,13 +52,13 @@ void register_smoke_PlatformNamesListener(py::module_& module) {
         // instance is a foreign (non-trampoline) implementation; instead we build a fresh
         // trampoline and store the impl directly.
         .def(py::init([](std::shared_ptr<fooListener> native) {
-            auto self = std::make_shared<PlatformNamesListenerTrampoline>();
+            auto self = std::make_shared<QuxListenerTrampoline>();
             self->m_impl = native;
             return self;
         }))
-        .def("basic_method", [](fooListener& self, const ::std::string& basic_parameter) {
-            return self.FooMethod(basic_parameter);
-        }, py::arg("basic_parameter"))
+        .def("qux_method", [](fooListener& self, const ::std::string& qux_parameter) {
+            return self.FooMethod(qux_parameter);
+        }, py::arg("qux_parameter"))
         ;
 }
 

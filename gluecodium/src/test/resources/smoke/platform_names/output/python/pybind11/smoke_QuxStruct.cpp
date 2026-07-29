@@ -15,11 +15,14 @@ namespace py = pybind11;
 #include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using fooTypes = ::smoke::fooTypes;
+using fooStruct = ::smoke::fooTypes::fooStruct;
 
-void register_smoke_PlatformNames(py::module_& module) {
-    py::class_<fooTypes>(module, "smoke_PlatformNames")
+void register_smoke_QuxStruct(py::module_& module) {
+    py::class_<fooStruct>(module, "smoke_QuxStruct")
+        .def_readwrite("qux_field", &fooStruct::FOO_FIELD)
         .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("qux_field"))
+        .def_static("qux_make", &fooStruct::FooCreate, py::arg("qux_parameter"))
         ;
 }
 

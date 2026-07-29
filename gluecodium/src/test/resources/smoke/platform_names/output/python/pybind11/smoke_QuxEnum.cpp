@@ -12,17 +12,13 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "smoke/fooTypes.h"
-#include "string"
 
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
-using fooStruct = ::smoke::fooTypes::fooStruct;
+using fooEnum = ::smoke::fooTypes::fooEnum;
 
-void register_smoke_PlatformNamesBasicStruct(py::module_& module) {
-    py::class_<fooStruct>(module, "smoke_PlatformNamesBasicStruct")
-        .def_readwrite("string_field", &fooStruct::FOO_FIELD)
-        .def(py::init<>())
-        .def(py::init<::std::string>(), py::arg("string_field"))
-        .def_static("make", &fooStruct::FooCreate, py::arg("basic_parameter"))
+void register_smoke_QuxEnum(py::module_& module) {
+    py::enum_<fooEnum>(module, "smoke_QuxEnum")
+        .value("QUX_ITEM", fooEnum::foo_item)
         ;
 }
 

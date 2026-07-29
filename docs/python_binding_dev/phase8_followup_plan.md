@@ -605,7 +605,7 @@ interface-callback-lambda cases. `TakeScreenshotCallback`'s `Blob?` parameter ma
 
 | Order | Feature | Lime Files | Key Gap | Deps | Effort |
 |-------|---------|------------|---------|------|--------|
-| H1 | `PlatformNames` | `PlatformNames.lime` | G10: `@Python(Name=...)` attribute — ensure name resolver respects Python platform name | A6 | Small |
+| H1 ✅ | `PlatformNames` | `PlatformNames.lime` | G10: `@Python(Name=...)` attribute — ensure name resolver respects Python platform name. **Done** — `@Python(Name=...)` attributes added to all elements (types, methods, fields, properties, constructors, parameters, enumerators); Python name resolver (`PythonNameRules`, `PythonNameResolver`, `Pybind11Helpers`) already had the infrastructure. Smoke test output regenerated; 15 functional test cases pass. | A6 | Small |
 | H2 | `Visibility` | `VisibilityAttribute.lime`, `VisibilityInternal.lime`, `VisibilityPlatform.lime`, `VisibilityPlatformReverse.lime`, `InternalFields.lime` | G9: `@Internal` filtering — skip internal elements in Python output, handle internal fields in structs, internal constructors, internal inheritance. **Depends on D1** for `InternalAttributeClassInherits` | D1 | Medium |
 | H3 | `UnderscorePackage` | `UnderscorePackage.lime`, `UseUnderscorePackage.lime` | G10: package name `test_off` → Python module path `test_off` (ensure no name mangling) | A6 | Small |
 | H4 | `CrossPackageNameClash` | `CrossPackageNameClashA.lime`, `CrossPackageNameClashB.lime`, `CrossPackageNameClashC.lime` | G10: same type name in different packages (`test.Alphabet`, `test.foo.Alphabet`, `test.bar.Alphabet`) — ensure Python import paths don't collide | A6 | Small |

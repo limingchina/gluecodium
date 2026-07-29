@@ -21,14 +21,14 @@ namespace py = pybind11;
 using fooInterface = ::smoke::fooInterface;
 
 
-void register_smoke_PlatformNamesInterface(py::module_& module) {
-    py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "smoke_PlatformNamesInterface")
+void register_smoke_QuxInterface(py::module_& module) {
+    py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "smoke_QuxInterface")
         .def("__gluecodium_id__", [](const fooInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def("basic_method", &fooInterface::FooMethod, py::arg("basic_parameter"))
-        .def_static("create", &fooInterface::make, py::arg("basic_parameter"))
-        .def_property("basic_property", py::overload_cast<>(&fooInterface::GET_FOO_PROPERTY, py::const_), py::overload_cast<const uint32_t>(&fooInterface::SET_FOO_PROPERTY))
+        .def("qux_method", &fooInterface::FooMethod, py::arg("qux_parameter"))
+        .def_static("qux_create", &fooInterface::make, py::arg("make_parameter"))
+        .def_property("qux_property", py::overload_cast<>(&fooInterface::GET_FOO_PROPERTY, py::const_), py::overload_cast<const uint32_t>(&fooInterface::SET_FOO_PROPERTY))
         ;
 }
 
