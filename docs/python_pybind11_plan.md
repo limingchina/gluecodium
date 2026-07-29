@@ -918,3 +918,21 @@ However, the functional tests (e.g., `structs_immutable_test.py`) originally con
 3. ~~Generate a field-name mapping dict per struct type~~ — adds generated code overhead per struct for no benefit.
 
 **Observation from other language tests:** The Dart test for the same feature uses **positional arguments** (not kwargs): `Struct(-1, 2, -3, 4, ...)`, avoiding the naming issue entirely. Java/Kotlin/Swift tests also use positional args or named parameters that match their own naming conventions. Only the Python test uses keyword arguments, which is where the mismatch surfaces.
+
+---
+
+## Appendix: Debugging Native Crashes
+
+For debugging segfaults, EXC_BAD_ACCESS, and aborts in the pybind11 extension
+module, see the dedicated document:
+
+**[`docs/python_binding_dev/debugging_native_crashes.md`](python_binding_dev/debugging_native_crashes.md)**
+
+It covers two workflows:
+- **AI Agent Workflow (tmux + LLDB)** — non-interactive debugging via shell
+  commands, for AI agents or headless environments.
+- **Manual Debugging Workflow** — interactive terminal debugging for human
+  developers.
+
+Plus common pybind11-specific debugging scenarios (segfaults on exit, SOABI
+mismatches, import-time crashes, trampoline issues).
