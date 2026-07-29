@@ -7,10 +7,10 @@ from enum import Enum
 import generated
 
 
-class PlatformNamesBasicEnum(Enum):
+class QuxEnum(Enum):
     """"""
 
-    BASIC_ITEM = generated.smoke_PlatformNamesBasicEnum.BASIC_ITEM
+    QUX_ITEM = generated.smoke_QuxEnum.QUX_ITEM
 
     @property
     def _native(self):
