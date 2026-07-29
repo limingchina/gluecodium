@@ -16,5 +16,5 @@ class ClassWithInternalLambda(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def invoke_internal_lambda(lambda: Callable[[str], bool], value: str) -> bool: ...
+    def invoke_internal_lambda(lambda_: Callable[[str], bool], value: str) -> bool: ...
 

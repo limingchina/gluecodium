@@ -20,7 +20,7 @@ class ClassWithInternalLambda(_NativeBase):
         super().__init__(native)
 
     @staticmethod
-    def invoke_internal_lambda(lambda: Callable[[str], bool], value: str) -> bool:
+    def invoke_internal_lambda(lambda_: Callable[[str], bool], value: str) -> bool:
         """"""
-        return generated.smoke_ClassWithInternalLambda.invoke_internal_lambda(_unwrap(lambda, Callable[[str], bool]), _unwrap(value, str))
+        return generated.smoke_ClassWithInternalLambda.invoke_internal_lambda(_unwrap(lambda_, Callable[[str], bool]), _unwrap(value, str))
 
