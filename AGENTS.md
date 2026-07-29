@@ -196,63 +196,15 @@ functional-tests/scripts/build-cpp-functional --publish
 
 # Dart functional tests
 functional-tests/scripts/build-dart-functional --publish
+
+# Python functional tests
+functional-tests/scripts/build-python-functional --publish
 ```
 
-#### ⚠️ Stale generated code after editing generator templates/sources
-
-The functional-test build scripts (e.g. `build-python-functional --publish`) run
-`publishToMavenLocal` first, then drive CMake, which shells out to Gradle to run
-Gluecodium and emit the generated `.cpp`/`.py` files. **The CMake custom command that
-invokes Gradle depends only on the LimeIDL inputs and the generated options/config file —
-it does NOT depend on the published Gluecodium jar.**
-
-Consequence: if you change a generator template (`gluecodium/src/main/resources/templates/**`)
-or generator Kotlin source, re-run `publishToMavenLocal`, and then rebuild **without any
-change to the `.lime` inputs**, CMake considers code generation "up-to-date" and skips the
-Gradle step. The previously generated (now stale) `.cpp`/`.py` files are left in place and
-compiled, so your template fix appears to have no effect (or you get confusing errors from
-old output).
-
-**How to force regeneration after a generator change:**
-- Touch/modify a relevant `.lime` input (e.g. re-save it), OR
-- Delete the generated output directory before rebuilding, e.g.
-  `rm -rf functional-tests/build-python/functional/gluecodium`, OR
-- Use `--buildGluecodium` (which sets `GLUECODIUM_PATH` to the local source tree) so the
-  build uses the working copy directly instead of the published jar — but note the same
-  up-to-date check still applies to the LimeIDL inputs, so a clean of the generated dir is
-  still required when only templates changed.
-
-Always verify the regenerated file actually reflects your change (check its timestamp and
-content) before concluding a fix failed.
-
-#### ⚠️ Python version must match between build and test (pybind11 / `.so` SOABI)
-
-The Python (pybind11) functional build compiles a CPython extension module
-(`functional.cpython-<SOABI>.so`) whose SOABI suffix is derived from the Python
-headers/libs that `find_package(Python ...)` resolves at CMake configure time
-(see `cmake/modules/gluecodium/Python.cmake`). The compiled `.so` can **only** be
-imported by the *same* Python version that built it — a 3.9 interpreter cannot load a
-`cpython-314` module, and vice versa.
-
-`build-python-functional` pins the interpreter explicitly so build and test always agree:
-
-```bash
--DPython_EXECUTABLE="$(which python3 || echo python3)"
-```
-
-Sometimes, one could specify a specify python environment to run the test. For example:
-
-```bash
-cd ./gluecodium/functional-tests && PATH="~/miniconda3/bin:$PATH" scripts/build-python-functional --
-```
-
-The pytest `add_test` in `functional-tests/functional/python/CMakeLists.txt` already runs
-under `Python::Interpreter` — the same imported target created by the build's
-`find_package(Python)` — so pinning the build interpreter automatically pins the test
-runner. **Do not create a local `.venv` and expect it to work**: unless it is the exact
-Python version used to build the extension, the editable install will fail to import the
-`.so`. If you change the pinned version, do a clean rebuild (`rm -rf functional-tests/build-python`)
-so the cache re-detects Python and the `.so` is recompiled with the matching SOABI.
+The Python functional tests have additional requirements (a Python 3.8+
+interpreter with pybind11). The build script auto-detects a suitable
+interpreter, but there are version-matching and override caveats — see
+[docs/internal/python_functional_tests.md](docs/internal/python_functional_tests.md) for details.
 
 ### Using CMake Toolchain
 
