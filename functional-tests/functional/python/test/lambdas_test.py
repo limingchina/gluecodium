@@ -21,6 +21,12 @@ from test.Lambdas import Lambdas
 
 
 class TestLambdas:
+    def setup_method(self):
+        Lambdas.reset_real_concatenator()
+
+    def teardown_method(self):
+        Lambdas.reset_real_concatenator()
+
     def test_concatenate(self):
         result = Lambdas.concatenate("a", "b", lambda first, second: f"{first}-{second}")
 
@@ -51,3 +57,62 @@ class TestLambdas:
         Lambdas.real_concatenator_set(lambda first, second: f"{first}:{second}")
 
         assert Lambdas.real_concatenator()("a", "b") == "a:b"
+
+    # --- G2: Nullable lambdas ---
+
+    def test_get_concatenator_or_null_with_value(self):
+        concatenator = Lambdas.get_concatenator_or_null(">.<")
+
+        assert concatenator is not None
+        assert concatenator("foo", "bar") == "foo>.<bar"
+
+    def test_get_concatenator_or_null_with_null(self):
+        result = Lambdas.get_concatenator_or_null(None)
+
+        assert result is None
+
+    def test_concatenate_or_not_with_callable(self):
+        result = Lambdas.concatenate_or_not("foo", "bar", lambda first, second: f"{first}>.<{second}")
+
+        assert result == "foo>.<bar"
+
+    def test_concatenate_or_not_with_null(self):
+        result = Lambdas.concatenate_or_not("foo", "bar", None)
+
+        assert result is None
+
+    def test_get_nullable_confuser_with_value(self):
+        confuser = Lambdas.get_nullable_confuser()
+
+        producer = confuser("foo")
+
+        assert producer is not None
+        assert producer() == "foo"
+
+    def test_get_nullable_confuser_with_null(self):
+        confuser = Lambdas.get_nullable_confuser()
+
+        result = confuser(None)
+
+        assert result is None
+
+    def test_apply_nullable_confuser_with_value(self):
+        def confuser(value):
+            if value is not None:
+                return lambda: value
+            return None
+
+        producer = Lambdas.apply_nullable_confuser(confuser, "foo")
+
+        assert producer is not None
+        assert producer() == "foo"
+
+    def test_apply_nullable_confuser_with_null(self):
+        def confuser(value):
+            if value is not None:
+                return lambda: value
+            return None
+
+        result = Lambdas.apply_nullable_confuser(confuser, None)
+
+        assert result is None
