@@ -338,7 +338,7 @@ feature(DartExternalTypes dart SOURCES
     input/lime/DartExternalTypes.lime
 )
 
-feature(UnderscorePackage cpp android android-kotlin swift dart SOURCES
+feature(UnderscorePackage cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/UseUnderscorePackage.cpp
 
     input/lime/UnderscorePackage.lime
@@ -671,6 +671,9 @@ elseif(python IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${_main_output}/python/test
                 "$<TARGET_FILE_DIR:${functional_python}>/test"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/test_off
+                "$<TARGET_FILE_DIR:${functional_python}>/test_off"
         COMMAND ${CMAKE_COMMAND} -E copy_directory
                 ${_main_output}/python/another
                 "$<TARGET_FILE_DIR:${functional_python}>/another"
