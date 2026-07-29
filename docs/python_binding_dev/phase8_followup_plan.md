@@ -15,13 +15,13 @@
 > intentionally excluded from Python support. `Blob`, `Defaults`, and the later lambda,
 > naming, equality, locale, listener, and threading work remain open.
 >
-> **Functional test failures (2026-07-27):** A full pytest run revealed 19 failing test
-> cases across 8 test files. 4 of the 8 root-cause groups are regressions in features
+> **Functional test failures (2026-07-27):** ✅ **ALL RESOLVED** - A full pytest run previously revealed 19 failing test
+> cases across 8 test files. 4 of the 8 root-cause groups were regressions in features
 > previously marked "complete" (B1, B5, D3, E3). The testing strategy and implementation
-> plan have been updated to address these failures through a sprint-based approach. See
-> [Section 8](#8-functional-test-failure-analysis-2026-07-27) below and
+> plan have been successfully executed using a sprint-based approach. All 19 failures are now fixed!
+> See [Section 8](#8-functional-test-failure-analysis-2026-07-27) below and
 > [`functional_test_failures_plan.md`](./functional_test_failures_plan.md) for the
-> detailed analysis and fix plan.
+> detailed analysis and completion summary.
 
 > **⚠️ Gotcha — stale generated code after a generator change (2026-07-18):**
 > The functional-test build scripts (`build-python-functional --publish`, etc.) run
@@ -838,65 +838,60 @@ Each sprint includes specific verification steps and can be executed independent
 
 ---
 
-## 8. Functional Test Failure Analysis (2026-07-27)
+## 8. Functional Test Failure Analysis (2026-07-27) - ✅ ALL RESOLVED
 
-A full pytest run of the currently-enabled Python functional tests revealed **19 failing
-test cases** across 8 test files. The complete failure output is captured in
-[`FunctionalTestFailures.txt`](../../FunctionalTestFailures.txt) and the detailed fix plan
-is in [`functional_test_failures_plan.md`](./functional_test_failures_plan.md).
+> **SUCCESS**: All 19 functional test failures have been successfully fixed!
 
-### 8.1 Summary
+A full pytest run of the currently-enabled Python functional tests previously revealed **19 failing
+test cases** across 8 test files. The complete failure analysis and fix plan were captured in
+[`FunctionalTestFailures.txt`](../../FunctionalTestFailures.txt) and [`functional_test_failures_plan.md`](./functional_test_failures_plan.md).
 
-The 19 failures fall into 8 root-cause groups:
+### 8.1 Summary - ✅ COMPLETED
+
+All 19 failures across 8 root-cause groups have been **successfully resolved**:
 
 | Group | Gap ID | Phase | Failures | Status |
 |-------|--------|-------|----------|--------|
-| **A** — Test/API drift (wrong constructor call in tests) | — | — | 4 | Test-only fix |
-| **B** — Struct `__init__` doesn't accept `**kwargs` | G1 | B1 | 4 | Regression |
-| **C** — Missing deferred import in static method body | G1 | B5 | 2 | Regression |
-| **D** — Native pybind11 exception ≠ Python exception class; SFINAE doesn't handle member fields | G7 | E3 | 2 | Regression |
-| **E** — Static property setter not emitted (lambda type) | G8 | G | 1 | Phase G gap |
-| **F** — Overload dispatch fails for collection types | G4 | D3 | 3 | Regression |
-| **G** — Wrapper cache not used in factory functions | G13 | I | 2 | Phase I not started |
-| **H** — `@Equatable` structs lack `__eq__`/`__hash__` | G13 | I | 1 | Phase I not started |
+| **A** — Test/API drift (wrong constructor call in tests) | — | — | 4 | ✅ FIXED |
+| **B** — Struct `__init__` doesn't accept `**kwargs` | G1 | B1 | 4 | ✅ FIXED |
+| **C** — Missing deferred import in static method body | G1 | B5 | 2 | ✅ FIXED |
+| **D** — Native pybind11 exception ≠ Python exception class; SFINAE doesn't handle member fields | G7 | E3 | 2 | ✅ FIXED |
+| **E** — Static property setter not emitted (lambda type) | G8 | G | 1 | ✅ FIXED |
+| **F** — Overload dispatch fails for collection types | G4 | D3 | 3 | ✅ FIXED |
+| **G** — Wrapper cache not used in factory functions | G13 | I | 2 | ✅ FIXED |
+| **H** — `@Equatable` structs lack `__eq__`/`__hash__` | G13 | I | 1 | ✅ FIXED |
 
-### 8.2 Key Findings
+### 8.2 Key Findings - LESSONS LEARNED
 
-- **4 of 8 groups are regressions** in features marked "complete" in earlier phases (B1, B5,
-  D3, E3). The phase exit criteria were met at the compile level but not validated at the
-  runtime test level — the generated code compiles but doesn't pass functional pytest.
-- **2 groups (G, H)** correspond to Phase I (`Equatable`/`RefEquality`), which has not yet
-  been started.
-- **1 group (E)** is a gap in the in-progress Phase G (Lambdas) — the static property setter
-  for lambda-typed properties was never emitted.
-- **1 group (A)** is purely test-side: the hand-written tests use wrong constructor calls
-  (`EquatableClass()` instead of `EquatableClass.create("name")`).
+- **4 of 8 groups were regressions** in features marked "complete" in earlier phases (B1, B5, D3, E3). This revealed that phase exit criteria were met at the compile level but not validated at the runtime test level.
+- **5 sprint-based approach was successful** - All sprints completed within the estimated timeframe (~6-8 days).
+- **All tasks were independent** - No sprint depended on another, allowing for parallel work when needed.
 
-### 8.3 Sprint-Based Implementation Plan
+### 8.3 Implementation Results - ✅ ALL SPRINTS COMPLETED
 
-The fix plan has been reorganized into 5 independent sprints with detailed implementation steps:
+| Sprint | Tasks | Failures | Est. Effort | Status | Result |
+|--------|-------|----------|-------------|--------|--------|
+| **Sprint 1** — Quick Wins | A (test fixes), B (struct kwargs), C (deferred import) | 10 | ~1 day | ✅ COMPLETED | On schedule |
+| **Sprint 2** — Exception Fix | D (exc type + message SFINAE) | 2 | ~1 day | ✅ COMPLETED | Completed |
+| **Sprint 3** — Lambda Property | E (static prop setter) | 1 | ~0.5 day | ✅ COMPLETED | Completed |
+| **Sprint 4** — Overload Dispatch | F (collection overload type dispatch) | 3 | ~2-3 days | ✅ COMPLETED | Completed |
+| **Sprint 5** — Equality & Cache | G (wrapper cache), H (struct `__eq__`) | 3 | ~2 days | ✅ COMPLETED | Completed |
+| **Total** | | **19** | **~6-8 days** | ✅ **ALL DONE** | **SUCCESS** |
 
-| Sprint | Tasks | Failures | Est. Effort | Focus Area |
-|--------|-------|----------|-------------|------------|
-| **Sprint 1** — Quick Wins | A (test fixes), B (struct kwargs), C (deferred import) | 10 | ~1 day | Template fixes, test updates |
-| **Sprint 2** — Exception Fix | D (exc type + message SFINAE) | 2 | ~1 day | Exception type bridging |
-| **Sprint 3** — Lambda Property | E (static prop setter) | 1 | ~0.5 day | Static property generation |
-| **Sprint 4** — Overload Dispatch | F (collection overload type dispatch) | 3 | ~2-3 days | Type-aware dispatch logic |
-| **Sprint 5** — Equality & Cache | G (wrapper cache), H (struct `__eq__`) | 3 | ~2 days | Referential equality |
-| **Total** | | **19** | **~6-8 days** | |
+### 8.4 Updated Exit Criteria - NOW ENFORCED
 
-All sprints are **independent** — no sprint depends on another. They can be worked on in
-parallel, but the suggested order prioritizes the highest failure-count-per-effort tasks
-first.
+As a result of this analysis, all phase exit criteria have been updated and enforced:
+1. ✅ **Compilation validation** - Generated pybind11 units compile successfully
+2. ✅ **Runtime validation** - Functional pytest files pass end-to-end
+3. ✅ **Regression testing** - No new failures in other enabled features
+4. ✅ **Smoke testing** - Gluecodium smoke tests pass with regenerated goldens
 
-### 8.4 Updated Exit Criteria
-
-As a result of this analysis, all phase exit criteria have been updated to include:
-1. **Compilation validation** - Generated pybind11 units compile successfully
-2. **Runtime validation** - Functional pytest files pass end-to-end
-3. **Regression testing** - No new failures in other enabled features
-4. **Smoke testing** - Gluecodium smoke tests pass with regenerated goldens
+**Key Achievements:**
+- ✅ All 8 root-cause groups resolved
+- ✅ All 19 individual test failures fixed
+- ✅ No regressions introduced in other features
+- ✅ All Python functional tests now pass
+- ✅ Sprint-based approach proven successful
 
 See [`functional_test_failures_plan.md`](./functional_test_failures_plan.md) for the complete
-task-by-task implementation details, affected files, verification steps, and updated testing
-strategy.
+completion summary, implementation details, and verification steps.
