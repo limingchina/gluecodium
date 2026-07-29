@@ -19,9 +19,17 @@
 
 from typing import Callable, Optional
 
-
+from test.CallOverloadedLambda import CallOverloadedLambda
+from test.ClassWithInternalLambda import ClassWithInternalLambda
 from test.Lambdas import Lambdas
+from test.LambdasDeclarationOrderSomeCallback import LambdasDeclarationOrderSomeCallback
+from test.LambdasDeclarationOrderSomeStruct import LambdasDeclarationOrderSomeStruct
+from test.LambdasInterface import LambdasInterface
+from test.LambdasInterfaceTakeScreenshotCallback import LambdasInterfaceTakeScreenshotCallback
 from test.LambdasLambdaHolder import LambdasLambdaHolder
+from test.LambdasWithStructuredTypesClassCallback import LambdasWithStructuredTypesClassCallback
+from test.LambdasWithStructuredTypesStructCallback import LambdasWithStructuredTypesStructCallback
+from test.SignatureClashLambda import SignatureClashLambda
 from test.StructWithLambda import StructWithLambda
 
 
@@ -142,3 +150,95 @@ class TestLambdas:
         result = StructWithLambda.invoke_callback(lambda arg: arg)
 
         assert result == "some callback argument"
+
+    # --- G4: Lambda on interface methods + lambda params/returns that are wrapper types ---
+
+    def test_lambdas_interface_subclass(self):
+        """LambdasInterface (an interface with a lambda-typed method) can be subclassed
+        and instantiated from Python — verifies the pybind11 trampoline is constructible."""
+        class _ScreenshotImpl(LambdasInterface):
+            def __init__(self):
+                super().__init__()
+                self.received_callback = None
+
+            def take_screenshot(self, callback):
+                self.received_callback = callback
+
+        impl = _ScreenshotImpl()
+        assert impl.received_callback is None
+
+    def test_lambdas_interface_take_screenshot_callback_type(self):
+        """The TakeScreenshotCallback type alias maps Blob? to Optional[bytes]."""
+        assert LambdasInterfaceTakeScreenshotCallback == Callable[[Optional[bytes]], None]
+
+    def test_lambdas_interface_take_screenshot_invocation(self):
+        """Calling take_screenshot on a Python subclass delivers the callback and it can
+        be invoked with bytes (Blob) and None (null Blob)."""
+        class _ScreenshotImpl(LambdasInterface):
+            def __init__(self):
+                super().__init__()
+                self.received_callback = None
+
+            def take_screenshot(self, callback):
+                self.received_callback = callback
+
+        impl = _ScreenshotImpl()
+        captured = []
+        test_callback = lambda blob: captured.append(blob)
+        impl.take_screenshot(test_callback)
+
+        assert impl.received_callback is test_callback
+
+        # The callback should accept bytes (Blob value) and None (null Blob)
+        impl.received_callback(b"\x01\x02\x03")
+        impl.received_callback(None)
+
+        assert captured == [b"\x01\x02\x03", None]
+
+    def test_lambdas_with_structured_types_callback_type_aliases(self):
+        """LambdasWithStructuredTypes defines lambdas whose parameter types are wrapper
+        types (interface and struct). Verify the generated type aliases are correct."""
+        assert LambdasWithStructuredTypesClassCallback == Callable[[LambdasInterface], None]
+        assert LambdasWithStructuredTypesStructCallback == Callable[[LambdasLambdaHolder], None]
+
+    # --- G5: @Overloaded lambda + composition regression ---
+
+    def test_invoke_overloaded_lambda(self):
+        """CallOverloadedLambda.invoke_overloaded_lambda exercises a @Overloaded lambda
+        type (Int -> String) passed from Python into C++ and back."""
+        result = CallOverloadedLambda.invoke_overloaded_lambda(lambda value: f"val={value}", 42)
+
+        assert result == "val=42"
+
+    # --- G6: @Internal lambda + doc comments (verification) ---
+
+    def test_invoke_internal_lambda(self):
+        """ClassWithInternalLambda.invoke_internal_lambda exercises an @Internal lambda
+        type (String -> Boolean) passed from Python into C++ and back.
+        Verifies @Internal filtering does not break the Python binding."""
+        result_true = ClassWithInternalLambda.invoke_internal_lambda(lambda value: len(value) > 3, "hello")
+        result_false = ClassWithInternalLambda.invoke_internal_lambda(lambda value: len(value) > 3, "hi")
+
+        assert result_true is True
+        assert result_false is False
+
+    # --- G7: LambdasDeclarationOrder + SignatureClashLambda regression ---
+
+    def test_declaration_order_struct(self):
+        """LambdasDeclarationOrder declares a lambda (SomeCallback) that references
+        SomeStruct *before* the struct is declared. Verify the generated struct is
+        usable and its field round-trips correctly."""
+        struct = LambdasDeclarationOrderSomeStruct()
+        struct.some_field = "order-test"
+
+        assert struct.some_field == "order-test"
+
+    def test_declaration_order_callback_type_alias(self):
+        """The SomeCallback type alias references SomeStruct (declared after the lambda).
+        Verify the generated type alias is correct."""
+        assert LambdasDeclarationOrderSomeCallback == Callable[[LambdasDeclarationOrderSomeStruct], None]
+
+    def test_signature_clash_lambda_type_alias(self):
+        """SignatureClashLambda is a top-level lambda () -> String with a name that
+        could clash with generated helper symbols. Verify it is a correct type alias."""
+        assert SignatureClashLambda == Callable[[], str]

@@ -39,7 +39,7 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
             ?: if (limeElement is LimeType && limeElement.path.hasParent) {
                 limeElement.path.tail.joinToString("")
             } else {
-                super.getName(limeElement)
+                sanitizeKeyword(super.getName(limeElement))
             }
 
     override fun getPropertyName(limeProperty: LimeProperty) = getPlatformName(limeProperty) ?: super.getPropertyName(limeProperty)
@@ -64,9 +64,27 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
 
     private fun getPlatformName(limeElement: LimeNamedElement?) = limeElement?.attributes?.get(PYTHON, NAME)
 
+    /**
+     * Appends an underscore to any Python hard keyword to avoid SyntaxError in generated code.
+     * LIME allows reserved keywords as identifiers via backtick-escaping (e.g. `lambda`),
+     * but Python's grammar treats them as unconditioned keywords that cannot be used as
+     * parameter or variable names.
+     */
+    private fun sanitizeKeyword(name: String) =
+        if (name in PYTHON_KEYWORDS) name + "_" else name
+
     companion object {
         val PYTHON_TARGET_DIRECTORY = "python" + File.separator
         val PYBIND11_TARGET_DIRECTORY = PYTHON_TARGET_DIRECTORY + "pybind11" + File.separator
         val MODULE_INIT_FILE = PYBIND11_TARGET_DIRECTORY + "_module_init.cpp"
+
+        /** Python 3 hard keywords that cannot be used as identifiers. */
+        private val PYTHON_KEYWORDS = setOf(
+            "False", "None", "True", "and", "as", "assert", "async", "await",
+            "break", "class", "continue", "def", "del", "elif", "else", "except",
+            "finally", "for", "from", "global", "if", "import", "in", "is",
+            "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try",
+            "while", "with", "yield",
+        )
     }
 }
