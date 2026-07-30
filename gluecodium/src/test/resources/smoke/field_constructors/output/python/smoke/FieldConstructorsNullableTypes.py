@@ -15,8 +15,6 @@ import generated
 
 
 class FieldConstructorsNullableTypes(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_FieldConstructorsNullableTypes):
             super().__init__(args[0])
@@ -26,10 +24,8 @@ class FieldConstructorsNullableTypes(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def nullable_field(self):
-        """"""
         return _wrap(self._native.nullable_field, Optional[FieldConstructorsNullableTypesStructWithParameters])
     @nullable_field.setter
     def nullable_field(self, value):

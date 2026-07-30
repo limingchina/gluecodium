@@ -13,14 +13,11 @@ import generated
 
 
 class NestedPackages(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def basic_method(input: NestedPackagesSomeStruct) -> NestedPackagesSomeStruct:
-        """"""
         native_result = generated.smoke_off_NestedPackages.basic_method(_unwrap(input, NestedPackagesSomeStruct))
         return _get_or_create_wrapper(native_result, NestedPackagesSomeStruct)
 

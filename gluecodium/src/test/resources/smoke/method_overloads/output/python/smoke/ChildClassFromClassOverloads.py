@@ -11,8 +11,6 @@ import generated
 
 
 class ChildClassFromClassOverloads(generated.smoke_ChildClassFromClassOverloads):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -27,12 +25,10 @@ class ChildClassFromClassOverloads(generated.smoke_ChildClassFromClassOverloads)
         self._native = self
 
     def foo(*args, **kwargs):
-        """"""
         return _wrap(generated.smoke_ChildClassFromClassOverloads.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(*args, **kwargs):
-        """"""
         return _wrap(generated.smoke_ChildClassFromClassOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 

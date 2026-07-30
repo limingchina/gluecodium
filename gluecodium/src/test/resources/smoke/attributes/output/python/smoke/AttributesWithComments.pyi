@@ -2,28 +2,23 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class AttributesWithComments(_NativeBase):
+class AttributesWithComments:
     """Class comment"""
 
-    def __init__(self, native):
-        super().__init__(native)
-
-    def very_fun(self): ...
+    def very_fun(self):
+        """Function comment"""
+        ...
 
     @property
     def prop(self) -> str:
         """Property comment"""
-        return _wrap(self._native.prop, str)
+        ...
 
     @prop.setter
-    def prop(self, value: str):
-        self._native.prop = _unwrap(value, str)
+    def prop(self, value: str) -> None:
+        """Setter comment"""
+        ...
 
-    Const comment
+    #: Const comment
     PI = False
 

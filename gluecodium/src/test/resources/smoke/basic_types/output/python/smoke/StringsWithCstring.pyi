@@ -2,20 +2,15 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class StringsWithCstring(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class StringsWithCstring:
 
     @staticmethod
-    def return_input_string_type(input_string: str) -> str: ...
+    def return_input_string_type(input_string: str) -> str:
+        """Method that takes a C string as input and returns an std::string it as output."""
+        ...
 
     @staticmethod
-    def return_input_string(input_string: str) -> str: ...
+    def return_input_string(input_string: str) -> str:
+        """Method that takes a C string as input and returns an std::string it as output."""
+        ...
 

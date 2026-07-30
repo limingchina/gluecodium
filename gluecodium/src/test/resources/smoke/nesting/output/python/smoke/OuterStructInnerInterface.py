@@ -11,8 +11,6 @@ import generated
 
 
 class OuterStructInnerInterface(generated.smoke_OuterStructInnerInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,6 +26,5 @@ class OuterStructInnerInterface(generated.smoke_OuterStructInnerInterface):
         self._native = self
 
     def bar_baz(self) -> dict[str, bytes]:
-        """"""
         return _wrap(generated.smoke_OuterStructInnerInterface.bar_baz(self), dict[str, bytes])
 

@@ -15,24 +15,19 @@ import generated
 
 
 class NameRules(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def create() -> NameRules:
-        """"""
         native_result = generated.namerules_NameRules.create()
         return _get_or_create_wrapper(native_result, NameRules)
 
     def some_method(self, some_argument: NameRulesExampleStruct) -> float:
-        """"""
         return _wrap(self._native.some_method(_unwrap(some_argument, NameRulesExampleStruct)), float)
 
     @property
     def int_property(self) -> int:
-        """"""
         return _wrap(self._native.int_property, int)
 
     @int_property.setter
@@ -41,7 +36,6 @@ class NameRules(_NativeBase):
 
     @property
     def is_boolean_property(self) -> bool:
-        """"""
         return _wrap(self._native.is_boolean_property, bool)
 
     @is_boolean_property.setter
@@ -50,7 +44,6 @@ class NameRules(_NativeBase):
 
     @property
     def struct_property(self) -> NameRulesExampleStruct:
-        """"""
         return _wrap(self._native.struct_property, NameRulesExampleStruct)
 
     @struct_property.setter

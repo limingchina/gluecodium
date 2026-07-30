@@ -406,7 +406,7 @@ feature(DeclarationOrder cpp android android-kotlin swift dart python SOURCES
     input/lime/StructsWithMethodsDeclarationOrder.lime
 )
 
-feature(Comments cpp android android-kotlin swift dart SOURCES
+feature(Comments cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Comments.cpp
 
     input/lime/Comments.lime

@@ -15,8 +15,6 @@ import generated
 
 
 class OrderInStructWithFunctions(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_OrderInStructWithFunctions):
             super().__init__(args[0])
@@ -26,10 +24,8 @@ class OrderInStructWithFunctions(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def some_field(self) -> str:
-        """"""
         return _wrap(self._native.some_field, str)
     @some_field.setter
     def some_field(self, value: str):
@@ -37,6 +33,5 @@ class OrderInStructWithFunctions(_NativeBase):
 
 
     def do_stuff(self, struct_foo: OrderInStructWithFunctionsNestedStruct) -> OrderInStructWithFunctionsSomeEnum:
-        """"""
         return _wrap(self._native.do_stuff(_unwrap(struct_foo, OrderInStructWithFunctionsNestedStruct)), OrderInStructWithFunctionsSomeEnum)
 

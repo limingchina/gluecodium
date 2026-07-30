@@ -2,43 +2,12 @@
 
 import typing
 
+class DartInternalElementsEnabled:
 
-from _native_base import _NativeBase
+    bool_field: bool
 
-import generated
+    string_field: str
 
-
-class DartInternalElementsEnabled(_NativeBase):
-    """"""
-
-    def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DartInternalElementsEnabled):
-            super().__init__(args[0])
-        else:
-            super().__init__(generated.smoke_DartInternalElementsEnabled(
-                *[_unwrap(arg) for arg in args],
-                **{k: _unwrap(v) for k, v in kwargs.items()}
-            ))
-
-
-    @property
-    def bool_field(self) -> bool:
-        """"""
-        return _wrap(self._native.bool_field, bool)
-    @bool_field.setter
-    def bool_field(self, value: bool):
-      self._native.bool_field = _unwrap(value, bool)
-
-
-
-    @property
-    def string_field(self) -> str:
-        """"""
-        return _wrap(self._native.string_field, str)
-    @string_field.setter
-    def string_field(self, value: str):
-      self._native.string_field = _unwrap(value, str)
-
-
-    def foo(self): ...
+    def foo(self):
+        ...
 

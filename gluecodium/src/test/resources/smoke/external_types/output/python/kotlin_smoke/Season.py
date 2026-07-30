@@ -12,7 +12,6 @@ import generated
 
 
 class Season(Enum):
-    """"""
 
     WINTER = generated.kotlin_smoke_Season.WINTER
     SPRING = generated.kotlin_smoke_Season.SPRING

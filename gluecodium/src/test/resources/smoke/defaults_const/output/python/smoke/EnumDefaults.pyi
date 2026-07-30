@@ -7,14 +7,5 @@ from fire.Enum4 import Enum4
 from smoke.EnumWrapper import EnumWrapper
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class EnumDefaults(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class EnumDefaults:
 

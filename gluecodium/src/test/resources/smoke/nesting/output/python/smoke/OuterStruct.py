@@ -16,8 +16,6 @@ import generated
 
 
 class OuterStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_OuterStruct):
             super().__init__(args[0])
@@ -27,10 +25,8 @@ class OuterStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def field(self) -> str:
-        """"""
         return _wrap(self._native.field, str)
     @field.setter
     def field(self, value: str):
@@ -38,6 +34,5 @@ class OuterStruct(_NativeBase):
 
 
     def do_nothing(self):
-        """"""
         return _wrap(self._native.do_nothing(), None)
 

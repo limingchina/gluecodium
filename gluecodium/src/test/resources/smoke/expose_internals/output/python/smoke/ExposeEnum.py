@@ -12,7 +12,6 @@ import generated
 
 
 class ExposeEnum(Enum):
-    """"""
 
     FOO = generated.smoke_ExposeEnum.FOO
 

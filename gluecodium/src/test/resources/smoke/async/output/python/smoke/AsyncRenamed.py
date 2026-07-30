@@ -12,12 +12,9 @@ import generated
 
 
 class AsyncRenamed(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def dispose(self):
-        """"""
         return _wrap(self._native.dispose(), None)
 

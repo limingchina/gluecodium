@@ -5,8 +5,7 @@ import typing
 
 class ThermometerAnotherNotification(Exception):
     """This error indicates other problems with notification of observers."""
+    message: str
 
-    def __init__(self, message: str):
-        super().__init__(message)
-        self.message = message
+    def __init__(self, message: str) -> None: ...
 

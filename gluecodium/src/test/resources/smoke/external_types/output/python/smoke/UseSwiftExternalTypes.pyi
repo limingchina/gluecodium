@@ -6,26 +6,21 @@ from smoke.PseudoColor import PseudoColor
 from smoke.SwiftSeason import SwiftSeason
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class UseSwiftExternalTypes(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class UseSwiftExternalTypes:
 
     @staticmethod
-    def date_interval_round_trip(input: DateInterval) -> DateInterval: ...
+    def date_interval_round_trip(input: DateInterval) -> DateInterval:
+        ...
 
     @staticmethod
-    def persistence_round_trip(input: Persistence) -> Persistence: ...
+    def persistence_round_trip(input: Persistence) -> Persistence:
+        ...
 
     @staticmethod
-    def color_round_trip(input: PseudoColor) -> PseudoColor: ...
+    def color_round_trip(input: PseudoColor) -> PseudoColor:
+        ...
 
     @staticmethod
-    def season_round_trip(input: SwiftSeason) -> SwiftSeason: ...
+    def season_round_trip(input: SwiftSeason) -> SwiftSeason:
+        ...
 

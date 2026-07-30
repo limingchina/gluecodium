@@ -7,5 +7,6 @@ from typing import Optional
 from typing import Callable
 
 
+#: 
 ExcludedCommentsOnlySomeLambda = Callable[[str, int], float]
 

@@ -13,8 +13,6 @@ import generated
 
 
 class UnusedTopLevelPoint(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_UnusedTopLevelPoint):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class UnusedTopLevelPoint(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def foo(self) -> str:
-        """"""
         return _wrap(self._native.foo, str)
     @foo.setter
     def foo(self, value: str):

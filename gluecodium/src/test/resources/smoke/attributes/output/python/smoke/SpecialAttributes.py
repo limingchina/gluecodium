@@ -12,16 +12,12 @@ import generated
 
 
 class SpecialAttributes(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def with_escaping(self):
-        """"""
         return _wrap(self._native.with_escaping(), None)
 
     def with_line_break(self):
-        """"""
         return _wrap(self._native.with_line_break(), None)
 

@@ -13,8 +13,6 @@ import generated
 
 
 class FirstParentIsInterfaceClass(generated.smoke_FirstParentIsInterfaceClass):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -29,12 +27,10 @@ class FirstParentIsInterfaceClass(generated.smoke_FirstParentIsInterfaceClass):
         self._native = self
 
     def child_function(self):
-        """"""
         return _wrap(generated.smoke_FirstParentIsInterfaceClass.child_function(self), None)
 
     @property
     def child_property(self) -> str:
-        """"""
         return _wrap(generated.smoke_FirstParentIsInterfaceClass.child_property.fget(self), str)
 
     @child_property.setter

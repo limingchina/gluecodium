@@ -2,20 +2,11 @@
 
 import typing
 
-from _native_base import _NativeBase
+class NullableOverloads:
 
-import generated
+    def foo(self, input: str):
+        ...
 
-
-class NullableOverloads(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    @typing.overload
-    def foo(self, input: str): ...
-
-    @typing.overload
-    def foo(self, input: Optional[str]): ...
+    def foo(self, input: Optional[str]):
+        ...
 

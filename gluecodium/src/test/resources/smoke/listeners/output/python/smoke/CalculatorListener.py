@@ -13,8 +13,6 @@ import generated
 
 
 class CalculatorListener(generated.smoke_CalculatorListener):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -30,26 +28,20 @@ class CalculatorListener(generated.smoke_CalculatorListener):
         self._native = self
 
     def on_calculation_result(self, calculation_result: float):
-        """"""
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result(self, _unwrap(calculation_result, float)), None)
 
     def on_calculation_result_const(self, calculation_result: float):
-        """"""
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_const(self, _unwrap(calculation_result, float)), None)
 
     def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct):
-        """"""
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_struct(self, _unwrap(calculation_result, CalculatorListenerResultStruct)), None)
 
     def on_calculation_result_array(self, calculation_result: list[float]):
-        """"""
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_array(self, _unwrap(calculation_result, list[float])), None)
 
     def on_calculation_result_map(self, calculation_results: dict[str, float]):
-        """"""
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_map(self, _unwrap(calculation_results, dict[str, float])), None)
 
     def on_calculation_result_instance(self, calculation_result: CalculationResult):
-        """"""
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_instance(self, _unwrap(calculation_result, CalculationResult)), None)
 

@@ -5,124 +5,115 @@ from smoke.NullableSomeStruct import NullableSomeStruct
 from smoke.SomeInterface import SomeInterface
 import typing
 
-from _native_base import _NativeBase
+class Nullable:
 
-import generated
+    def method_with_string(self, input: Optional[str]) -> Optional[str]:
+        ...
 
+    def method_with_boolean(self, input: Optional[bool]) -> Optional[bool]:
+        ...
 
-class Nullable(_NativeBase):
-    """"""
+    def method_with_double(self, input: Optional[float]) -> Optional[float]:
+        ...
 
-    def __init__(self, native):
-        super().__init__(native)
+    def method_with_int(self, input: Optional[int]) -> Optional[int]:
+        ...
 
-    def method_with_string(self, input: Optional[str]) -> Optional[str]: ...
+    def method_with_some_struct(self, input: Optional[NullableSomeStruct]) -> Optional[NullableSomeStruct]:
+        ...
 
-    def method_with_boolean(self, input: Optional[bool]) -> Optional[bool]: ...
+    def method_with_some_enum(self, input: Optional[NullableSomeEnum]) -> Optional[NullableSomeEnum]:
+        ...
 
-    def method_with_double(self, input: Optional[float]) -> Optional[float]: ...
+    def method_with_some_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
+        ...
 
-    def method_with_int(self, input: Optional[int]) -> Optional[int]: ...
+    def method_with_inline_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
+        ...
 
-    def method_with_some_struct(self, input: Optional[NullableSomeStruct]) -> Optional[NullableSomeStruct]: ...
+    def method_with_some_map(self, input: Optional[dict[int, str]]) -> Optional[dict[int, str]]:
+        ...
 
-    def method_with_some_enum(self, input: Optional[NullableSomeEnum]) -> Optional[NullableSomeEnum]: ...
-
-    def method_with_some_array(self, input: Optional[list[str]]) -> Optional[list[str]]: ...
-
-    def method_with_inline_array(self, input: Optional[list[str]]) -> Optional[list[str]]: ...
-
-    def method_with_some_map(self, input: Optional[dict[int, str]]) -> Optional[dict[int, str]]: ...
-
-    def method_with_instance(self, input: Optional[SomeInterface]) -> Optional[SomeInterface]: ...
+    def method_with_instance(self, input: Optional[SomeInterface]) -> Optional[SomeInterface]:
+        ...
 
     @property
     def string_property(self):
-        """"""
-        return _wrap(self._native.string_property, Optional[str])
+        ...
 
     @string_property.setter
-    def string_property(self, value):
-        self._native.string_property = _unwrap(value, Optional[str])
+    def string_property(self, value) -> None:
+        ...
 
     @property
     def is_bool_property(self):
-        """"""
-        return _wrap(self._native.is_bool_property, Optional[bool])
+        ...
 
     @is_bool_property.setter
-    def is_bool_property(self, value):
-        self._native.is_bool_property = _unwrap(value, Optional[bool])
+    def is_bool_property(self, value) -> None:
+        ...
 
     @property
     def double_property(self):
-        """"""
-        return _wrap(self._native.double_property, Optional[float])
+        ...
 
     @double_property.setter
-    def double_property(self, value):
-        self._native.double_property = _unwrap(value, Optional[float])
+    def double_property(self, value) -> None:
+        ...
 
     @property
     def int_property(self):
-        """"""
-        return _wrap(self._native.int_property, Optional[int])
+        ...
 
     @int_property.setter
-    def int_property(self, value):
-        self._native.int_property = _unwrap(value, Optional[int])
+    def int_property(self, value) -> None:
+        ...
 
     @property
     def struct_property(self):
-        """"""
-        return _wrap(self._native.struct_property, Optional[NullableSomeStruct])
+        ...
 
     @struct_property.setter
-    def struct_property(self, value):
-        self._native.struct_property = _unwrap(value, Optional[NullableSomeStruct])
+    def struct_property(self, value) -> None:
+        ...
 
     @property
     def enum_property(self):
-        """"""
-        return _wrap(self._native.enum_property, Optional[NullableSomeEnum])
+        ...
 
     @enum_property.setter
-    def enum_property(self, value):
-        self._native.enum_property = _unwrap(value, Optional[NullableSomeEnum])
+    def enum_property(self, value) -> None:
+        ...
 
     @property
     def array_property(self):
-        """"""
-        return _wrap(self._native.array_property, Optional[list[str]])
+        ...
 
     @array_property.setter
-    def array_property(self, value):
-        self._native.array_property = _unwrap(value, Optional[list[str]])
+    def array_property(self, value) -> None:
+        ...
 
     @property
     def inline_array_property(self):
-        """"""
-        return _wrap(self._native.inline_array_property, Optional[list[str]])
+        ...
 
     @inline_array_property.setter
-    def inline_array_property(self, value):
-        self._native.inline_array_property = _unwrap(value, Optional[list[str]])
+    def inline_array_property(self, value) -> None:
+        ...
 
     @property
     def map_property(self):
-        """"""
-        return _wrap(self._native.map_property, Optional[dict[int, str]])
+        ...
 
     @map_property.setter
-    def map_property(self, value):
-        self._native.map_property = _unwrap(value, Optional[dict[int, str]])
+    def map_property(self, value) -> None:
+        ...
 
     @property
     def instance_property(self):
-        """"""
-        return _wrap(self._native.instance_property, Optional[SomeInterface])
+        ...
 
     @instance_property.setter
-    def instance_property(self, value):
-        self._native.instance_property = _unwrap(value, Optional[SomeInterface])
+    def instance_property(self, value) -> None:
+        ...
 

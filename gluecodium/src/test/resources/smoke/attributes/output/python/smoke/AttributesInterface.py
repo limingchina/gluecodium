@@ -11,8 +11,6 @@ import generated
 
 
 class AttributesInterface(generated.smoke_AttributesInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,18 +26,15 @@ class AttributesInterface(generated.smoke_AttributesInterface):
         self._native = self
 
     def very_fun(self, param: str):
-        """"""
         return _wrap(generated.smoke_AttributesInterface.very_fun(self, _unwrap(param, str)), None)
 
     @property
     def prop(self) -> str:
-        """"""
         return _wrap(generated.smoke_AttributesInterface.prop.fget(self), str)
 
     @prop.setter
     def prop(self, value: str):
         generated.smoke_AttributesInterface.prop.fset(self, _unwrap(value, str))
-
 
     PI = False
 

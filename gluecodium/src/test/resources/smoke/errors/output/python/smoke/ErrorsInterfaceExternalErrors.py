@@ -12,7 +12,6 @@ import generated
 
 
 class ErrorsInterfaceExternalErrors(Enum):
-    """"""
 
     NONE = generated.smoke_ErrorsInterfaceExternalErrors.NONE
     BOOM = generated.smoke_ErrorsInterfaceExternalErrors.BOOM

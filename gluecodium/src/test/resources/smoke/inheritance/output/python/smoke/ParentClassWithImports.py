@@ -15,8 +15,6 @@ import generated
 
 
 class ParentClassWithImports(generated.smoke_ParentClassWithImports):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -31,12 +29,10 @@ class ParentClassWithImports(generated.smoke_ParentClassWithImports):
         self._native = self
 
     def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
-        """"""
         return _wrap(generated.smoke_ParentClassWithImports.root_method(self, _unwrap(input1, IncludableStruct), _unwrap(input2, IncludableEnum)), IncludableClass)
 
     @property
     def root_property(self) -> Callable[[int], None]:
-        """"""
         return _wrap(generated.smoke_ParentClassWithImports.root_property.fget(self), Callable[[int], None])
 
     @root_property.setter

@@ -12,7 +12,6 @@ import generated
 
 
 class LevelOneLevelTwoLevelThreeLevelFourEnum(Enum):
-    """"""
 
     NONE = generated.smoke_LevelOneLevelTwoLevelThreeLevelFourEnum.NONE
 

@@ -4,17 +4,10 @@ import typing
 
 from enum import Enum
 
-import generated
-
 
 class ErrorsInterfaceExternalErrors(Enum):
-    """"""
 
-    NONE = generated.smoke_ErrorsInterfaceExternalErrors.NONE
-    BOOM = generated.smoke_ErrorsInterfaceExternalErrors.BOOM
-    BUST = generated.smoke_ErrorsInterfaceExternalErrors.BUST
-
-    @property
-    def _native(self):
-        return self.value
+    NONE = 0
+    BOOM = 1
+    BUST = 2
 

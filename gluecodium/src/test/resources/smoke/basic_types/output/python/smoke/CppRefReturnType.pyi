@@ -6,50 +6,50 @@ from smoke.CppRefReturnTypeSomeStruct import CppRefReturnTypeSomeStruct
 from smoke.CppRefReturnTypeStructBased import CppRefReturnTypeStructBased
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class CppRefReturnType(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class CppRefReturnType:
 
     @staticmethod
-    def void_ref(): ...
+    def void_ref():
+        ...
 
     @staticmethod
-    def bool_ref() -> bool: ...
+    def bool_ref() -> bool:
+        ...
 
     @staticmethod
-    def string_ref() -> str: ...
+    def string_ref() -> str:
+        ...
 
     @staticmethod
-    def struct_ref() -> CppRefReturnTypeSomeStruct: ...
+    def struct_ref() -> CppRefReturnTypeSomeStruct:
+        ...
 
     @staticmethod
-    def class_ref() -> CppRefReturnType: ...
+    def class_ref() -> CppRefReturnType:
+        ...
 
     @staticmethod
-    def nullable_ref() -> Optional[str]: ...
+    def nullable_ref() -> Optional[str]:
+        ...
 
     @staticmethod
-    def throwing_enum_with_void(): ...
+    def throwing_enum_with_void():
+        ...
 
     @staticmethod
-    def throwing_enum_with_string() -> str: ...
+    def throwing_enum_with_string() -> str:
+        ...
 
     @staticmethod
-    def throwing_struct_with_void(): ...
+    def throwing_struct_with_void():
+        ...
 
     @staticmethod
-    def throwing_struct_with_string() -> str: ...
+    def throwing_struct_with_string() -> str:
+        ...
 
+    @property
+    def string_property(self) -> str:
+        ...
 
-    @staticmethod
-    def string_property() -> str:
-        """"""
-        return _wrap(generated.smoke_CppRefReturnType.string_property(), str)
 

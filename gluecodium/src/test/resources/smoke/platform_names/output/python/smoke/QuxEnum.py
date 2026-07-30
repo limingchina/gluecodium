@@ -12,7 +12,6 @@ import generated
 
 
 class QuxEnum(Enum):
-    """"""
 
     QUX_ITEM = generated.smoke_QuxEnum.QUX_ITEM
 

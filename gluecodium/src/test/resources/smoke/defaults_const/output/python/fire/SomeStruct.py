@@ -13,8 +13,6 @@ import generated
 
 
 class SomeStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.fire_SomeStruct):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class SomeStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def int_field(self) -> int:
-        """"""
         return _wrap(self._native.int_field, int)
     @int_field.setter
     def int_field(self, value: int):

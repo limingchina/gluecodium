@@ -12,7 +12,6 @@ import generated
 
 
 class SomethingEnum(Enum):
-    """"""
 
     REALLY_FIRST = generated.smoke_SomethingEnum.REALLY_FIRST
     EXPLICIT = generated.smoke_SomethingEnum.EXPLICIT

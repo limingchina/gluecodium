@@ -13,7 +13,6 @@ import generated
 
 class AttributesWithDeprecated(_NativeBase):
     """"""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -30,6 +29,6 @@ class AttributesWithDeprecated(_NativeBase):
     def prop(self, value: str):
         self._native.prop = _unwrap(value, str)
 
-
+    #: 
     PI = False
 

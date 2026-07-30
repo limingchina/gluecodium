@@ -5,26 +5,21 @@ from smoke.EnumsInternalErrorCode import EnumsInternalErrorCode
 from smoke.EnumsSimpleEnum import EnumsSimpleEnum
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class Enums(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class Enums:
 
     @staticmethod
-    def method_with_enumeration(input: EnumsSimpleEnum) -> EnumsSimpleEnum: ...
+    def method_with_enumeration(input: EnumsSimpleEnum) -> EnumsSimpleEnum:
+        ...
 
     @staticmethod
-    def flip_enum_value(input: EnumsInternalErrorCode) -> EnumsInternalErrorCode: ...
+    def flip_enum_value(input: EnumsInternalErrorCode) -> EnumsInternalErrorCode:
+        ...
 
     @staticmethod
-    def extract_enum_from_struct(input: EnumsErrorStruct) -> EnumsInternalErrorCode: ...
+    def extract_enum_from_struct(input: EnumsErrorStruct) -> EnumsInternalErrorCode:
+        ...
 
     @staticmethod
-    def create_struct_with_enum_inside(type: EnumsInternalErrorCode, message: str) -> EnumsErrorStruct: ...
+    def create_struct_with_enum_inside(type: EnumsInternalErrorCode, message: str) -> EnumsErrorStruct:
+        ...
 

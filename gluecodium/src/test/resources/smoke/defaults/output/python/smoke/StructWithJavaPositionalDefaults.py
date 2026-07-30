@@ -14,7 +14,6 @@ import generated
 
 class StructWithJavaPositionalDefaults(_NativeBase):
     """Foo Bar this is a comment"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructWithJavaPositionalDefaults):
             super().__init__(args[0])
@@ -24,7 +23,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    first init!
     @property
     def first_init_field(self) -> int:
         """first init!"""
@@ -34,7 +32,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
       self._native.first_init_field = _unwrap(value, int)
 
 
-    first free!
     @property
     def first_free_field(self) -> str:
         """first free!"""
@@ -44,7 +41,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
       self._native.first_free_field = _unwrap(value, str)
 
 
-    second init yeah!
     @property
     def second_init_field(self) -> float:
         """second init yeah!"""
@@ -54,7 +50,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
       self._native.second_init_field = _unwrap(value, float)
 
 
-    second free here!
     @property
     def second_free_field(self) -> bool:
         """second free here!"""
@@ -64,7 +59,6 @@ class StructWithJavaPositionalDefaults(_NativeBase):
       self._native.second_free_field = _unwrap(value, bool)
 
 
-    third should be last!
     @property
     def third_init_field(self) -> str:
         """third should be last!"""

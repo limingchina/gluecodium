@@ -13,8 +13,6 @@ import generated
 
 
 class LambdasDeclarationOrder(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 

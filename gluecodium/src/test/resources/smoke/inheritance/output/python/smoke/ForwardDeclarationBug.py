@@ -11,8 +11,6 @@ import generated
 
 
 class ForwardDeclarationBug(generated.smoke_ForwardDeclarationBug):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -27,6 +25,5 @@ class ForwardDeclarationBug(generated.smoke_ForwardDeclarationBug):
         self._native = self
 
     def foo(self, bar: ParentClass):
-        """"""
         return _wrap(generated.smoke_ForwardDeclarationBug.foo(self, _unwrap(bar, ParentClass)), None)
 

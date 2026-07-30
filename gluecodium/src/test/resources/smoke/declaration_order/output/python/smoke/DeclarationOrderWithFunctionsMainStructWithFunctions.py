@@ -18,8 +18,6 @@ import generated
 
 
 class DeclarationOrderWithFunctionsMainStructWithFunctions(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctionsMainStructWithFunctions):
             super().__init__(args[0])
@@ -29,10 +27,8 @@ class DeclarationOrderWithFunctionsMainStructWithFunctions(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def struct_field(self) -> DeclarationOrderWithFunctionsFieldStruct:
-        """"""
         return _wrap(self._native.struct_field, DeclarationOrderWithFunctionsFieldStruct)
     @struct_field.setter
     def struct_field(self, value: DeclarationOrderWithFunctionsFieldStruct):
@@ -40,14 +36,11 @@ class DeclarationOrderWithFunctionsMainStructWithFunctions(_NativeBase):
 
 
     def with_parameter(self, input: DeclarationOrderWithFunctionsParameterStruct):
-        """"""
         return _wrap(self._native.with_parameter(_unwrap(input, DeclarationOrderWithFunctionsParameterStruct)), None)
 
     def with_return(self) -> DeclarationOrderWithFunctionsReturnStruct:
-        """"""
         return _wrap(self._native.with_return(), DeclarationOrderWithFunctionsReturnStruct)
 
     def with_thrown(self):
-        """"""
         return _wrap(self._native.with_thrown(), None)
 

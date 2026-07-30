@@ -12,7 +12,6 @@ import generated
 
 
 class EnableIfTypesEnabledEnableMe(Enum):
-    """"""
 
     NOPE = generated.smoke_EnableIfTypesEnabledEnableMe.NOPE
 

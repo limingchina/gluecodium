@@ -15,8 +15,6 @@ import generated
 
 
 class DeclarationOrder(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrder):
             super().__init__(args[0])

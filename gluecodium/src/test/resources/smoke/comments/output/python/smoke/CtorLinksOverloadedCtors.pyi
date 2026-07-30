@@ -2,22 +2,14 @@
 
 import typing
 
-from _native_base import _NativeBase
+class CtorLinksOverloadedCtors:
 
-import generated
-
-
-class CtorLinksOverloadedCtors(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    @typing.overload
     @staticmethod
-    def create(input: str) -> CtorLinksOverloadedCtors: ...
+    def create(input: str) -> CtorLinksOverloadedCtors:
+        ...
 
-    @typing.overload
     @staticmethod
-    def create(input: str, flag: bool) -> CtorLinksOverloadedCtors: ...
+    def create(input: str, flag: bool) -> CtorLinksOverloadedCtors:
+        """"""
+        ...
 

@@ -2,18 +2,11 @@
 
 import typing
 
-from _native_base import _NativeBase
+class JavaMethodOverloads:
 
-import generated
+    def one(self, input: str):
+        ...
 
-
-class JavaMethodOverloads(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    def one(self, input: str): ...
-
-    def two(self, input: list[str]): ...
+    def two(self, input: list[str]):
+        ...
 

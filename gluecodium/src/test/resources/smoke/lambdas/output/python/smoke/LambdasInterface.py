@@ -13,8 +13,6 @@ import generated
 
 
 class LambdasInterface(generated.smoke_LambdasInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -30,6 +28,5 @@ class LambdasInterface(generated.smoke_LambdasInterface):
         self._native = self
 
     def take_screenshot(self, callback: Callable[[Optional[bytes]], None]):
-        """"""
         return _wrap(generated.smoke_LambdasInterface.take_screenshot(self, _unwrap(callback, Callable[[Optional[bytes]], None])), None)
 

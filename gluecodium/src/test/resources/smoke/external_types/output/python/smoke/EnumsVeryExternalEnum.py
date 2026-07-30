@@ -12,7 +12,6 @@ import generated
 
 
 class EnumsVeryExternalEnum(Enum):
-    """"""
 
     FOO = generated.smoke_EnumsVeryExternalEnum.FOO
     BAR = generated.smoke_EnumsVeryExternalEnum.BAR

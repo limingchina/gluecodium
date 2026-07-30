@@ -19,11 +19,10 @@
   !
   !}}
 {{! Python struct field (read/write property delegating to the native object). }}
-{{#if comment}}{{prefix comment "    "}}
-{{/if}}    @property
+    @property
     def {{resolveName}}(self){{#unless typeRef.isNullable}} -> {{resolveName typeRef}}{{/unless}}:
-{{#if comment}}        """{{resolveName comment}}"""
-{{/if}}{{#ifPredicate "isAncestorField"}}        from {{resolveName typeRef "" "ref"}} import {{resolveName typeRef}}
+{{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
+{{/ifPredicate}}{{#ifPredicate "isAncestorField"}}        from {{resolveName typeRef "" "ref"}} import {{resolveName typeRef}}
         return _wrap(self._native.{{resolveName}}, {{resolveName typeRef}})
 {{/ifPredicate}}{{#unlessPredicate "isAncestorField"}}{{#ifPredicate typeRef "isWrapperType"}}        return _wrap(self._native.{{resolveName}}, {{resolveName typeRef}})
 {{/ifPredicate}}{{#unlessPredicate typeRef "isWrapperType"}}        return _wrap(self._native.{{resolveName}}, {{resolveName typeRef}})

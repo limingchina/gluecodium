@@ -12,7 +12,6 @@ import generated
 
 
 class ListenersWithReturnValuesResultEnum(Enum):
-    """"""
 
     NONE = generated.smoke_ListenersWithReturnValuesResultEnum.NONE
     RESULT = generated.smoke_ListenersWithReturnValuesResultEnum.RESULT

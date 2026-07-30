@@ -14,8 +14,6 @@ import generated
 
 
 class ListenerWithProperties(generated.smoke_ListenerWithProperties):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -32,7 +30,6 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
 
     @property
     def message(self) -> str:
-        """"""
         return _wrap(generated.smoke_ListenerWithProperties.message.fget(self), str)
 
     @message.setter
@@ -41,7 +38,6 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
 
     @property
     def packed_message(self) -> CalculationResult:
-        """"""
         return _wrap(generated.smoke_ListenerWithProperties.packed_message.fget(self), CalculationResult)
 
     @packed_message.setter
@@ -50,7 +46,6 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
 
     @property
     def structured_message(self) -> ListenerWithPropertiesResultStruct:
-        """"""
         return _wrap(generated.smoke_ListenerWithProperties.structured_message.fget(self), ListenerWithPropertiesResultStruct)
 
     @structured_message.setter
@@ -59,7 +54,6 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
 
     @property
     def enumerated_message(self) -> ListenerWithPropertiesResultEnum:
-        """"""
         return _wrap(generated.smoke_ListenerWithProperties.enumerated_message.fget(self), ListenerWithPropertiesResultEnum)
 
     @enumerated_message.setter
@@ -68,7 +62,6 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
 
     @property
     def arrayed_message(self) -> list[str]:
-        """"""
         return _wrap(generated.smoke_ListenerWithProperties.arrayed_message.fget(self), list[str])
 
     @arrayed_message.setter
@@ -77,7 +70,6 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
 
     @property
     def mapped_message(self) -> dict[str, float]:
-        """"""
         return _wrap(generated.smoke_ListenerWithProperties.mapped_message.fget(self), dict[str, float])
 
     @mapped_message.setter
@@ -86,7 +78,6 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
 
     @property
     def buffered_message(self) -> bytes:
-        """"""
         return _wrap(generated.smoke_ListenerWithProperties.buffered_message.fget(self), bytes)
 
     @buffered_message.setter

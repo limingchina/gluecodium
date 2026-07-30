@@ -18,33 +18,26 @@ import generated
 
 
 class Errors(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def method_with_errors():
-        """"""
         generated.smoke_Errors.method_with_errors()
 
     @staticmethod
     def method_with_external_errors():
-        """"""
         generated.smoke_Errors.method_with_external_errors()
 
     @staticmethod
     def method_with_errors_and_return_value() -> str:
-        """"""
         return generated.smoke_Errors.method_with_errors_and_return_value()
 
     @staticmethod
     def method_with_payload_error():
-        """"""
         generated.smoke_Errors.method_with_payload_error()
 
     @staticmethod
     def method_with_payload_error_and_return_value() -> str:
-        """"""
         return generated.smoke_Errors.method_with_payload_error_and_return_value()
 

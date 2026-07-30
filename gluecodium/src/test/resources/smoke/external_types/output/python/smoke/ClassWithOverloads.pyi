@@ -2,25 +2,17 @@
 
 import typing
 
-from _native_base import _NativeBase
+class ClassWithOverloads:
 
-import generated
+    def one_overload_not_exposed(self) -> str:
+        ...
 
+    def all_overloads_exposed(self, input: str) -> str:
+        ...
 
-class ClassWithOverloads(_NativeBase):
-    """"""
+    def all_overloads_exposed(self, input_list: list[str]) -> str:
+        ...
 
-    def __init__(self, native):
-        super().__init__(native)
-
-    def one_overload_not_exposed(self) -> str: ...
-
-    @typing.overload
-    def all_overloads_exposed(self, input: str) -> str: ...
-
-    @typing.overload
-    def all_overloads_exposed(self, input_list: list[str]) -> str: ...
-
-    @typing.overload
-    def all_overloads_exposed(self, input_string: str, input_bool: bool) -> str: ...
+    def all_overloads_exposed(self, input_string: str, input_bool: bool) -> str:
+        ...
 

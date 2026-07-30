@@ -14,8 +14,6 @@ import generated
 
 
 class MixedCollectionsStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_MixedCollectionsStruct):
             super().__init__(args[0])
@@ -25,20 +23,16 @@ class MixedCollectionsStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def almost_dates(self) -> list[Optional[datetime.datetime]]:
-        """"""
         return _wrap(self._native.almost_dates, list[Optional[datetime.datetime]])
     @almost_dates.setter
     def almost_dates(self, value: list[Optional[datetime.datetime]]):
       self._native.almost_dates = _unwrap(value, list[Optional[datetime.datetime]])
 
 
-
     @property
     def dates(self) -> list[datetime.datetime]:
-        """"""
         return _wrap(self._native.dates, list[datetime.datetime])
     @dates.setter
     def dates(self, value: list[datetime.datetime]):

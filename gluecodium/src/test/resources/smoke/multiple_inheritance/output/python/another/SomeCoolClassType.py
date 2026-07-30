@@ -12,12 +12,9 @@ import generated
 
 
 class SomeCoolClassType(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def do_important_stuff(self):
-        """"""
         return _wrap(self._native.do_important_stuff(), None)
 

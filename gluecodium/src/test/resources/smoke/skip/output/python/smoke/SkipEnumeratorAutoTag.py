@@ -12,7 +12,6 @@ import generated
 
 
 class SkipEnumeratorAutoTag(Enum):
-    """"""
 
     ONE = generated.smoke_SkipEnumeratorAutoTag.ONE
     THREE = generated.smoke_SkipEnumeratorAutoTag.THREE

@@ -8,5 +8,6 @@ from typing import Callable
 
 from smoke.LambdasProducer import LambdasProducer
 
+#: Should confuse everyone thoroughly
 LambdasConfuser = Callable[[str], Callable[[], str]]
 

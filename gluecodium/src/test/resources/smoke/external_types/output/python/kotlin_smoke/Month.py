@@ -12,7 +12,6 @@ import generated
 
 
 class Month(Enum):
-    """"""
 
     JANUARY = generated.kotlin_smoke_Month.JANUARY
     FEBRUARY = generated.kotlin_smoke_Month.FEBRUARY

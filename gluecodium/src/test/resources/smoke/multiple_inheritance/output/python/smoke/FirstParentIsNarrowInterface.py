@@ -13,8 +13,6 @@ import generated
 
 
 class FirstParentIsNarrowInterface(generated.smoke_FirstParentIsNarrowInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -30,12 +28,10 @@ class FirstParentIsNarrowInterface(generated.smoke_FirstParentIsNarrowInterface)
         self._native = self
 
     def child_function(self):
-        """"""
         return _wrap(generated.smoke_FirstParentIsNarrowInterface.child_function(self), None)
 
     @property
     def child_property(self) -> str:
-        """"""
         return _wrap(generated.smoke_FirstParentIsNarrowInterface.child_property.fget(self), str)
 
     @child_property.setter

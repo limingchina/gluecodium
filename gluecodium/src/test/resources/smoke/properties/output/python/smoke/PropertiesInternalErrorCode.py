@@ -12,7 +12,6 @@ import generated
 
 
 class PropertiesInternalErrorCode(Enum):
-    """"""
 
     ERROR_NONE = generated.smoke_PropertiesInternalErrorCode.ERROR_NONE
     ERROR_FATAL = generated.smoke_PropertiesInternalErrorCode.ERROR_FATAL

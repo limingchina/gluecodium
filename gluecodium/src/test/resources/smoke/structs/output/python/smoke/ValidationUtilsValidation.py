@@ -8,7 +8,6 @@ from typing import Optional
 from smoke.ValidationUtilsValidationErrorCode import ValidationUtilsValidationErrorCode
 
 class ValidationUtilsValidation(Exception):
-    """"""
 
     def __init__(self, message: str):
         super().__init__(message)

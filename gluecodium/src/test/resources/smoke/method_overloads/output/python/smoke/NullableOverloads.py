@@ -12,13 +12,10 @@ import generated
 
 
 class NullableOverloads(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def foo(*args, **kwargs):
-        """"""
         return _wrap(self._native.foo(*[_unwrap(a) for a in args]), None)
 
 

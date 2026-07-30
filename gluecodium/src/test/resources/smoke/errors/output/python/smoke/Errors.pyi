@@ -8,29 +8,25 @@ from smoke.Payload import Payload
 from smoke.WithPayloadError import WithPayloadError
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class Errors(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class Errors:
 
     @staticmethod
-    def method_with_errors(): ...
+    def method_with_errors():
+        ...
 
     @staticmethod
-    def method_with_external_errors(): ...
+    def method_with_external_errors():
+        ...
 
     @staticmethod
-    def method_with_errors_and_return_value() -> str: ...
+    def method_with_errors_and_return_value() -> str:
+        ...
 
     @staticmethod
-    def method_with_payload_error(): ...
+    def method_with_payload_error():
+        ...
 
     @staticmethod
-    def method_with_payload_error_and_return_value() -> str: ...
+    def method_with_payload_error_and_return_value() -> str:
+        ...
 

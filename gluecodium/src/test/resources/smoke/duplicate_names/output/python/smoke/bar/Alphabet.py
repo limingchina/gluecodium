@@ -12,7 +12,6 @@ import generated
 
 
 class Alphabet(Enum):
-    """"""
 
     ALEPH = generated.smoke_bar_Alphabet.ALEPH
     BEIT = generated.smoke_bar_Alphabet.BEIT

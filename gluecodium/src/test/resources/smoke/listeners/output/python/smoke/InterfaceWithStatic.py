@@ -11,8 +11,6 @@ import generated
 
 
 class InterfaceWithStatic(generated.smoke_InterfaceWithStatic):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,27 +26,22 @@ class InterfaceWithStatic(generated.smoke_InterfaceWithStatic):
         self._native = self
 
     def regular_function(self) -> str:
-        """"""
         return _wrap(generated.smoke_InterfaceWithStatic.regular_function(self), str)
 
     @staticmethod
     def static_function() -> str:
-        """"""
         return generated.smoke_InterfaceWithStatic.static_function()
 
     @property
     def regular_property(self) -> str:
-        """"""
         return _wrap(generated.smoke_InterfaceWithStatic.regular_property.fget(self), str)
 
     @regular_property.setter
     def regular_property(self, value: str):
         generated.smoke_InterfaceWithStatic.regular_property.fset(self, _unwrap(value, str))
 
-
     @staticmethod
     def static_property() -> str:
-        """"""
         return _wrap(generated.smoke_InterfaceWithStatic.static_property(), str)
 
     @staticmethod

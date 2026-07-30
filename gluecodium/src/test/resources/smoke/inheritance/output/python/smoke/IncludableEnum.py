@@ -12,7 +12,6 @@ import generated
 
 
 class IncludableEnum(Enum):
-    """"""
 
     FOO = generated.smoke_IncludableEnum.FOO
 

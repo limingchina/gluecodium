@@ -12,7 +12,6 @@ import generated
 
 
 class AttributesEnum(Enum):
-    """"""
 
     NOPE = generated.smoke_AttributesEnum.NOPE
 

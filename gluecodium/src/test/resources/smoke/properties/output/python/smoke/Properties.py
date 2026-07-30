@@ -15,14 +15,11 @@ import generated
 
 
 class Properties(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @property
     def built_in_type_property(self) -> int:
-        """"""
         return _wrap(self._native.built_in_type_property, int)
 
     @built_in_type_property.setter
@@ -31,13 +28,11 @@ class Properties(_NativeBase):
 
     @property
     def readonly_property(self) -> float:
-        """"""
         return _wrap(self._native.readonly_property, float)
 
 
     @property
     def struct_property(self) -> PropertiesExampleStruct:
-        """"""
         return _wrap(self._native.struct_property, PropertiesExampleStruct)
 
     @struct_property.setter
@@ -46,7 +41,6 @@ class Properties(_NativeBase):
 
     @property
     def array_property(self) -> list[str]:
-        """"""
         return _wrap(self._native.array_property, list[str])
 
     @array_property.setter
@@ -55,7 +49,6 @@ class Properties(_NativeBase):
 
     @property
     def complex_type_property(self) -> PropertiesInternalErrorCode:
-        """"""
         return _wrap(self._native.complex_type_property, PropertiesInternalErrorCode)
 
     @complex_type_property.setter
@@ -64,7 +57,6 @@ class Properties(_NativeBase):
 
     @property
     def byte_buffer_property(self) -> bytes:
-        """"""
         return _wrap(self._native.byte_buffer_property, bytes)
 
     @byte_buffer_property.setter
@@ -73,7 +65,6 @@ class Properties(_NativeBase):
 
     @property
     def instance_property(self) -> PropertiesInterface:
-        """"""
         return _wrap(self._native.instance_property, PropertiesInterface)
 
     @instance_property.setter
@@ -82,26 +73,21 @@ class Properties(_NativeBase):
 
     @property
     def is_boolean_property(self) -> bool:
-        """"""
         return _wrap(self._native.is_boolean_property, bool)
 
     @is_boolean_property.setter
     def is_boolean_property(self, value: bool):
         self._native.is_boolean_property = _unwrap(value, bool)
 
-
     @staticmethod
     def static_property() -> str:
-        """"""
         return _wrap(generated.smoke_Properties.static_property(), str)
 
     @staticmethod
     def static_property_set(value: str):
         generated.smoke_Properties.static_property_set(_unwrap(value, str))
 
-
     @staticmethod
     def static_readonly_property() -> PropertiesExampleStruct:
-        """"""
         return _wrap(generated.smoke_Properties.static_readonly_property(), PropertiesExampleStruct)
 

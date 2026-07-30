@@ -12,8 +12,6 @@ import generated
 
 
 class GrandChildInterface(generated.smoke_GrandChildInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -29,6 +27,5 @@ class GrandChildInterface(generated.smoke_GrandChildInterface):
         self._native = self
 
     def grand_child_method(self):
-        """"""
         return _wrap(generated.smoke_GrandChildInterface.grand_child_method(self), None)
 

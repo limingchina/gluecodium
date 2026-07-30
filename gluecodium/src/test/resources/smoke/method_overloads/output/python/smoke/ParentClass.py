@@ -10,8 +10,6 @@ import generated
 
 
 class ParentClass(generated.smoke_ParentClass):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -26,15 +24,12 @@ class ParentClass(generated.smoke_ParentClass):
         self._native = self
 
     def foo(*args, **kwargs):
-        """"""
         return _wrap(generated.smoke_ParentClass.foo(self, *[_unwrap(a) for a in args]), None)
 
 
     def bar(self):
-        """"""
         return _wrap(generated.smoke_ParentClass.bar(self), None)
 
     def baz(self):
-        """"""
         return _wrap(generated.smoke_ParentClass.baz(self), None)
 

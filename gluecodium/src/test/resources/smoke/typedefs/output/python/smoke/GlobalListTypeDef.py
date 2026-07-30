@@ -6,5 +6,6 @@ from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
 
+#: This is some standalone list typedef.
 list[float] = list[float]
 

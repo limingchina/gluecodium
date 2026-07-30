@@ -14,8 +14,6 @@ import generated
 
 
 class SomeSkippedStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SomeSkippedStruct):
             super().__init__(args[0])
@@ -33,10 +31,8 @@ class SomeSkippedStruct(_NativeBase):
     def __hash__(self) -> int:
         return hash(self._native)
 
-
     @property
     def field(self) -> list[SomeSkippedEnum]:
-        """"""
         return _wrap(self._native.field, list[SomeSkippedEnum])
     @field.setter
     def field(self, value: list[SomeSkippedEnum]):

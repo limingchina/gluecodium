@@ -13,13 +13,10 @@ import generated
 
 
 class MethodOverloads(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def is_boolean(*args, **kwargs) -> bool:
-        """"""
         return _wrap(self._native.is_boolean(*[_unwrap(a) for a in args]), bool)
 
 
@@ -30,7 +27,6 @@ class MethodOverloads(_NativeBase):
 
 
     def is_float(*args, **kwargs) -> bool:
-        """"""
         return _wrap(self._native.is_float(*[_unwrap(a) for a in args]), bool)
 
 

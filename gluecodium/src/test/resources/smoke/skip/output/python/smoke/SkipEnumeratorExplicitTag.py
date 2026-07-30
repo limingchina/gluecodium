@@ -12,7 +12,6 @@ import generated
 
 
 class SkipEnumeratorExplicitTag(Enum):
-    """"""
 
     ZERO = generated.smoke_SkipEnumeratorExplicitTag.ZERO
     ONE = generated.smoke_SkipEnumeratorExplicitTag.ONE

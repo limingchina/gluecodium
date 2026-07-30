@@ -12,17 +12,13 @@ import generated
 
 
 class ClassWithOverloads(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def one_overload_not_exposed(self) -> str:
-        """"""
         return _wrap(self._native.one_overload_not_exposed(), str)
 
     def all_overloads_exposed(*args, **kwargs) -> str:
-        """"""
         return _wrap(self._native.all_overloads_exposed(*[_unwrap(a) for a in args]), str)
 
 

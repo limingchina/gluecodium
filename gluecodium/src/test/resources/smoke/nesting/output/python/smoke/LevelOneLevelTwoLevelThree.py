@@ -15,12 +15,9 @@ import generated
 
 
 class LevelOneLevelTwoLevelThree(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def foo(self, input: OuterClassInnerInterface) -> OuterInterfaceInnerClass:
-        """"""
         return _wrap(self._native.foo(_unwrap(input, OuterClassInnerInterface)), OuterInterfaceInnerClass)
 

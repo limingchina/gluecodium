@@ -12,7 +12,6 @@ import generated
 
 
 class AmbiguousEnum(Enum):
-    """"""
 
     DISABLED = generated.smoke_AmbiguousEnum.DISABLED
 

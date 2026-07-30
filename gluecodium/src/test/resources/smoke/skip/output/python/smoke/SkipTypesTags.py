@@ -13,8 +13,6 @@ import generated
 
 
 class SkipTypesTags(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypesTags):
             super().__init__(args[0])
@@ -23,7 +21,6 @@ class SkipTypesTags(_NativeBase):
                 *[_unwrap(arg) for arg in args],
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
-
 
     PLACE_HOLDER = True
 

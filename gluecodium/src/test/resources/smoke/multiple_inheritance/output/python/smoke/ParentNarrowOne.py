@@ -11,8 +11,6 @@ import generated
 
 
 class ParentNarrowOne(generated.smoke_ParentNarrowOne):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,12 +26,10 @@ class ParentNarrowOne(generated.smoke_ParentNarrowOne):
         self._native = self
 
     def parent_function_one(self):
-        """"""
         return _wrap(generated.smoke_ParentNarrowOne.parent_function_one(self), None)
 
     @property
     def parent_property_one(self) -> str:
-        """"""
         return _wrap(generated.smoke_ParentNarrowOne.parent_property_one.fget(self), str)
 
     @parent_property_one.setter

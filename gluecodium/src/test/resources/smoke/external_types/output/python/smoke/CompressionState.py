@@ -12,7 +12,6 @@ import generated
 
 
 class CompressionState(Enum):
-    """"""
 
     COMPRESSED = generated.smoke_CompressionState.COMPRESSED
     DECOMPRESSED = generated.smoke_CompressionState.DECOMPRESSED

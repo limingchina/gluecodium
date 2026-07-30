@@ -9,35 +9,33 @@ from kotlin_smoke.TimeZone import TimeZone
 from kotlin_smoke.VeryBoolean import VeryBoolean
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class UseKotlinExternalTypes(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class UseKotlinExternalTypes:
 
     @staticmethod
-    def currency_round_trip(input: Currency) -> Currency: ...
+    def currency_round_trip(input: Currency) -> Currency:
+        ...
 
     @staticmethod
-    def time_zone_round_trip(input: TimeZone) -> TimeZone: ...
+    def time_zone_round_trip(input: TimeZone) -> TimeZone:
+        ...
 
     @staticmethod
-    def month_round_trip(input: Month) -> Month: ...
+    def month_round_trip(input: Month) -> Month:
+        ...
 
     @staticmethod
-    def color_round_trip(input: SystemColor) -> SystemColor: ...
+    def color_round_trip(input: SystemColor) -> SystemColor:
+        ...
 
     @staticmethod
-    def season_round_trip(input: Season) -> Season: ...
+    def season_round_trip(input: Season) -> Season:
+        ...
 
     @staticmethod
-    def struct_round_trip(input: KotlinExternalTypesStruct) -> KotlinExternalTypesStruct: ...
+    def struct_round_trip(input: KotlinExternalTypesStruct) -> KotlinExternalTypesStruct:
+        ...
 
     @staticmethod
-    def very_boolean_unbox(input: VeryBoolean) -> bool: ...
+    def very_boolean_unbox(input: VeryBoolean) -> bool:
+        ...
 

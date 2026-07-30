@@ -23,6 +23,7 @@ from enum import Enum
 
 
 class {{resolveName}}(Enum):
-{{#enumerators}}
+{{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
+{{/ifPredicate}}{{#enumerators}}
 
     {{resolveName}} = {{iter.position}}{{/enumerators}}

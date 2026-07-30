@@ -17,8 +17,6 @@ import generated
 
 
 class ErrorsInterface(generated.smoke_ErrorsInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -34,27 +32,21 @@ class ErrorsInterface(generated.smoke_ErrorsInterface):
         self._native = self
 
     def method_with_errors(self):
-        """"""
         return _wrap(generated.smoke_ErrorsInterface.method_with_errors(self), None)
 
     def method_with_external_errors(self):
-        """"""
         return _wrap(generated.smoke_ErrorsInterface.method_with_external_errors(self), None)
 
     def method_with_errors_and_return_value(self) -> str:
-        """"""
         return _wrap(generated.smoke_ErrorsInterface.method_with_errors_and_return_value(self), str)
 
     @staticmethod
     def method_with_payload_error():
-        """"""
         generated.smoke_ErrorsInterface.method_with_payload_error()
 
     @staticmethod
     def method_with_payload_error_and_return_value() -> str:
-        """"""
         return generated.smoke_ErrorsInterface.method_with_payload_error_and_return_value()
-
 
     ERROR_MESSAGE = "Some error message constant"
 

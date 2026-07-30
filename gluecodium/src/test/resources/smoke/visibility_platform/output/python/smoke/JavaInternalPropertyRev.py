@@ -12,14 +12,11 @@ import generated
 
 
 class JavaInternalPropertyRev(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @property
     def app_context(self):
-        """"""
         return _wrap(self._native.app_context, Optional[str])
 
     @app_context.setter

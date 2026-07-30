@@ -12,7 +12,6 @@ import generated
 
 class DeprecationCommentsOnly(generated.smoke_DeprecationCommentsOnly):
     """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -40,6 +39,6 @@ class DeprecationCommentsOnly(generated.smoke_DeprecationCommentsOnly):
     def is_some_property(self, value: bool):
         generated.smoke_DeprecationCommentsOnly.is_some_property.fset(self, _unwrap(value, bool))
 
-
+    #: 
     VERY_USEFUL = True
 

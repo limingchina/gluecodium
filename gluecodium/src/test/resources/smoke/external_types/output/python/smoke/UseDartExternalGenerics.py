@@ -14,12 +14,9 @@ import generated
 
 
 class UseDartExternalGenerics(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def use_generics(self, list: list[Rectangle], set: set[CompressionState]) -> dict[CompressionState, Rectangle]:
-        """"""
         return _wrap(self._native.use_generics(_unwrap(list, list[Rectangle]), _unwrap(set, set[CompressionState])), dict[CompressionState, Rectangle])
 

@@ -7,26 +7,21 @@ from smoke.TypeCollectionAllTypesStruct import TypeCollectionAllTypesStruct
 from smoke.TypeCollectionPoint import TypeCollectionPoint
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class Structs(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class Structs:
 
     @staticmethod
-    def swap_point_coordinates(input: StructsPoint) -> StructsPoint: ...
+    def swap_point_coordinates(input: StructsPoint) -> StructsPoint:
+        ...
 
     @staticmethod
-    def return_all_types_struct(input: StructsAllTypesStruct) -> StructsAllTypesStruct: ...
+    def return_all_types_struct(input: StructsAllTypesStruct) -> StructsAllTypesStruct:
+        ...
 
     @staticmethod
-    def create_point(x: float, y: float) -> TypeCollectionPoint: ...
+    def create_point(x: float, y: float) -> TypeCollectionPoint:
+        ...
 
     @staticmethod
-    def modify_all_types_struct(input: TypeCollectionAllTypesStruct) -> TypeCollectionAllTypesStruct: ...
+    def modify_all_types_struct(input: TypeCollectionAllTypesStruct) -> TypeCollectionAllTypesStruct:
+        ...
 

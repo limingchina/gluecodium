@@ -13,8 +13,6 @@ import generated
 
 
 class CppRefReturnTypeStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CppRefReturnTypeStruct):
             super().__init__(args[0])
@@ -26,6 +24,5 @@ class CppRefReturnTypeStruct(_NativeBase):
 
     @staticmethod
     def string_ref() -> str:
-        """"""
         return generated.smoke_CppRefReturnTypeStruct.string_ref()
 

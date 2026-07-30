@@ -13,13 +13,10 @@ import generated
 
 
 class DurationOverloads(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def duration_function(*args, **kwargs) -> str:
-        """"""
         return _wrap(self._native.duration_function(*[_unwrap(a) for a in args]), str)
 
 

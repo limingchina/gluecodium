@@ -15,7 +15,6 @@ import generated
 
 class ExcludedCommentsOnly(_NativeBase):
     """"""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -36,6 +35,6 @@ class ExcludedCommentsOnly(_NativeBase):
     def is_some_property(self, value: bool):
         self._native.is_some_property = _unwrap(value, bool)
 
-
+    #: 
     VERY_USEFUL = True
 

@@ -12,7 +12,6 @@ import generated
 
 
 class OrderInStructWithFunctionsSomeEnum(Enum):
-    """"""
 
     FOO = generated.smoke_OrderInStructWithFunctionsSomeEnum.FOO
     BAR = generated.smoke_OrderInStructWithFunctionsSomeEnum.BAR

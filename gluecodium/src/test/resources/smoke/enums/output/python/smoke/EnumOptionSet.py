@@ -12,7 +12,6 @@ import generated
 
 
 class EnumOptionSet(Enum):
-    """"""
 
     ONE = generated.smoke_EnumOptionSet.ONE
     TWO = generated.smoke_EnumOptionSet.TWO

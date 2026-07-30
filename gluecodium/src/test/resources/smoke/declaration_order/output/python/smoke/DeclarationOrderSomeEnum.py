@@ -12,7 +12,6 @@ import generated
 
 
 class DeclarationOrderSomeEnum(Enum):
-    """"""
 
     FOO = generated.smoke_DeclarationOrderSomeEnum.FOO
     BAR = generated.smoke_DeclarationOrderSomeEnum.BAR

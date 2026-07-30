@@ -2,14 +2,5 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class SkipTagsOnly(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class SkipTagsOnly:
 

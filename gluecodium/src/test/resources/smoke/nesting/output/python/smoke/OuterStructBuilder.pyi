@@ -3,21 +3,15 @@
 from smoke.OuterStruct import OuterStruct
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class OuterStructBuilder(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class OuterStructBuilder:
 
     @staticmethod
-    def create() -> OuterStructBuilder: ...
+    def create() -> OuterStructBuilder:
+        ...
 
-    def field(self, value: str) -> OuterStructBuilder: ...
+    def field(self, value: str) -> OuterStructBuilder:
+        ...
 
-    def build(self) -> OuterStruct: ...
+    def build(self) -> OuterStruct:
+        ...
 

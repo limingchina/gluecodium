@@ -15,8 +15,6 @@ import generated
 
 
 class NullableCollectionsStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_NullableCollectionsStruct):
             super().__init__(args[0])
@@ -26,20 +24,16 @@ class NullableCollectionsStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def dates(self) -> list[Optional[datetime.datetime]]:
-        """"""
         return _wrap(self._native.dates, list[Optional[datetime.datetime]])
     @dates.setter
     def dates(self, value: list[Optional[datetime.datetime]]):
       self._native.dates = _unwrap(value, list[Optional[datetime.datetime]])
 
 
-
     @property
     def structs(self) -> dict[int, Optional[NullableSomeStruct]]:
-        """"""
         return _wrap(self._native.structs, dict[int, Optional[NullableSomeStruct]])
     @structs.setter
     def structs(self, value: dict[int, Optional[NullableSomeStruct]]):

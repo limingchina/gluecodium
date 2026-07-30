@@ -2,31 +2,9 @@
 
 import typing
 
-
-from _native_base import _NativeBase
-
-import generated
-
-
-class ExcludedCommentsOnlySomeStruct(_NativeBase):
+class ExcludedCommentsOnlySomeStruct:
     """"""
 
-    def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ExcludedCommentsOnlySomeStruct):
-            super().__init__(args[0])
-        else:
-            super().__init__(generated.smoke_ExcludedCommentsOnlySomeStruct(
-                *[_unwrap(arg) for arg in args],
-                **{k: _unwrap(v) for k, v in kwargs.items()}
-            ))
-
-
-    @property
-    def some_field(self) -> bool:
-        """"""
-        return _wrap(self._native.some_field, bool)
-    @some_field.setter
-    def some_field(self, value: bool):
-      self._native.some_field = _unwrap(value, bool)
-
+    #: 
+    some_field: bool
 

@@ -13,7 +13,6 @@ import generated
 
 class DeprecationComments(generated.smoke_DeprecationComments):
     """This is some very useful interface."""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -39,6 +38,7 @@ class DeprecationComments(generated.smoke_DeprecationComments):
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
+        """Sets some very useful property."""
         generated.smoke_DeprecationComments.is_some_property.fset(self, _unwrap(value, bool))
 
     @property
@@ -50,6 +50,6 @@ class DeprecationComments(generated.smoke_DeprecationComments):
     def property_but_not_accessors(self, value: str):
         generated.smoke_DeprecationComments.property_but_not_accessors.fset(self, _unwrap(value, str))
 
-    This is some very useful constant.
+    #: This is some very useful constant.
     VERY_USEFUL = True
 

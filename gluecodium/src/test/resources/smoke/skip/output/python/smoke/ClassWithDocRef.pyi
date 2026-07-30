@@ -2,14 +2,6 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class ClassWithDocRef(_NativeBase):
+class ClassWithDocRef:
     """[SkipEnableConstants.someConstant]"""
-
-    def __init__(self, native):
-        super().__init__(native)
 

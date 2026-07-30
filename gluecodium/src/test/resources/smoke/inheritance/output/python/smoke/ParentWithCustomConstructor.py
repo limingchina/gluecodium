@@ -10,8 +10,6 @@ import generated
 
 
 class ParentWithCustomConstructor(generated.smoke_ParentWithCustomConstructor):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -27,7 +25,6 @@ class ParentWithCustomConstructor(generated.smoke_ParentWithCustomConstructor):
 
     @staticmethod
     def create() -> ParentWithCustomConstructor:
-        """"""
         native_result = generated.smoke_ParentWithCustomConstructor.create()
         return _get_or_create_wrapper(native_result, ParentWithCustomConstructor)
 

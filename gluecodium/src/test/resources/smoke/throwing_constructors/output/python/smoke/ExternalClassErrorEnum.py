@@ -12,7 +12,6 @@ import generated
 
 
 class ExternalClassErrorEnum(Enum):
-    """"""
 
     NONE = generated.smoke_ExternalClassErrorEnum.NONE
     CRASHED = generated.smoke_ExternalClassErrorEnum.CRASHED

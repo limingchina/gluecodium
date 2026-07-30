@@ -12,7 +12,6 @@ import generated
 
 
 class EquatableSomeEnum(Enum):
-    """"""
 
     FOO = generated.smoke_EquatableSomeEnum.FOO
     BAR = generated.smoke_EquatableSomeEnum.BAR

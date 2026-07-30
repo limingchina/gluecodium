@@ -14,7 +14,6 @@ import generated
 
 class commentsSomeStruct(_NativeBase):
     """This is some very useful struct."""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_commentsSomeStruct):
             super().__init__(args[0])
@@ -24,8 +23,6 @@ class commentsSomeStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    How useful this struct is
-    remains to be seen
     @property
     def some_field(self) -> bool:
         """How useful this struct is
@@ -36,7 +33,6 @@ remains to be seen"""
       self._native.some_field = _unwrap(value, bool)
 
 
-    Can be `null`
     @property
     def nullable_field(self):
         """Can be `None`"""

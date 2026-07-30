@@ -14,8 +14,6 @@ import generated
 
 
 class StructA(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructA):
             super().__init__(args[0])
@@ -25,10 +23,8 @@ class StructA(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def field(self) -> list[StructB]:
-        """"""
         return _wrap(self._native.field, list[StructB])
     @field.setter
     def field(self, value: list[StructB]):

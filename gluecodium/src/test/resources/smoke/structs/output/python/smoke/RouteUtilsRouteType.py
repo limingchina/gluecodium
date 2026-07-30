@@ -12,7 +12,6 @@ import generated
 
 
 class RouteUtilsRouteType(Enum):
-    """"""
 
     NONE = generated.smoke_RouteUtilsRouteType.NONE
     CAR = generated.smoke_RouteUtilsRouteType.CAR

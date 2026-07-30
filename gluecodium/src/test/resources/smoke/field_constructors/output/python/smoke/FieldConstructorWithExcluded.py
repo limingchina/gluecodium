@@ -13,8 +13,6 @@ import generated
 
 
 class FieldConstructorWithExcluded(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_FieldConstructorWithExcluded):
             super().__init__(args[0])
@@ -24,7 +22,6 @@ class FieldConstructorWithExcluded(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    Some field
     @property
     def string_field(self) -> str:
         """Some field"""

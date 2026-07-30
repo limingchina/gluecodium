@@ -4,35 +4,9 @@ from smoke.TypesWithDefaultsImmutableStructWithCollections import TypesWithDefau
 from smoke.TypesWithDefaultsSomeImmutableStructWithDefaults import TypesWithDefaultsSomeImmutableStructWithDefaults
 import typing
 
+class TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct:
 
-from _native_base import _NativeBase
+    some_field1: TypesWithDefaultsSomeImmutableStructWithDefaults
 
-import generated
-
-
-class TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct(_NativeBase):
-    """"""
-
-    def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct):
-            super().__init__(args[0])
-        else:
-            super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct(
-                *[_unwrap(arg) for arg in args],
-                **{k: _unwrap(v) for k, v in kwargs.items()}
-            ))
-
-
-    @property
-    def some_field1(self) -> TypesWithDefaultsSomeImmutableStructWithDefaults:
-        """"""
-        return _wrap(self._native.some_field1, TypesWithDefaultsSomeImmutableStructWithDefaults)
-
-
-
-    @property
-    def some_field2(self) -> TypesWithDefaultsImmutableStructWithCollections:
-        """"""
-        return _wrap(self._native.some_field2, TypesWithDefaultsImmutableStructWithCollections)
-
+    some_field2: TypesWithDefaultsImmutableStructWithCollections
 

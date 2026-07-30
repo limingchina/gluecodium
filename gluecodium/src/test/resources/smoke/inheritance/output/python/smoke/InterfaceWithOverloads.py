@@ -11,8 +11,6 @@ import generated
 
 
 class InterfaceWithOverloads(generated.smoke_InterfaceWithOverloads):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,7 +26,6 @@ class InterfaceWithOverloads(generated.smoke_InterfaceWithOverloads):
         self._native = self
 
     def parent_method(*args, **kwargs):
-        """"""
         return _wrap(generated.smoke_InterfaceWithOverloads.parent_method(self, *[_unwrap(a) for a in args]), None)
 
 

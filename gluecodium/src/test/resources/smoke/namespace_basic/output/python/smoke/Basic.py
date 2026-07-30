@@ -12,13 +12,10 @@ import generated
 
 
 class Basic(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def basic_method(input_string: str) -> str:
-        """"""
         return generated.smoke_Basic.basic_method(_unwrap(input_string, str))
 

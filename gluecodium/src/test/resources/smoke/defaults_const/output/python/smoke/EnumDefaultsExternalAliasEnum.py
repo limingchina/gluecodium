@@ -14,8 +14,6 @@ import generated
 
 
 class EnumDefaultsExternalAliasEnum(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternalAliasEnum):
             super().__init__(args[0])
@@ -25,10 +23,8 @@ class EnumDefaultsExternalAliasEnum(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def enum_field(self) -> ExternalEnum3:
-        """"""
         return _wrap(self._native.enum_field, ExternalEnum3)
     @enum_field.setter
     def enum_field(self, value: ExternalEnum3):

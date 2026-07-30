@@ -12,7 +12,6 @@ import generated
 
 
 class CommentsTypeCollectionTypeCollectionEnum(Enum):
-    """"""
 
     ITEM = generated.smoke_CommentsTypeCollectionTypeCollectionEnum.ITEM
 

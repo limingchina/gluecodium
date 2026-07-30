@@ -16,12 +16,9 @@ import generated
 
 
 class UseFreeTypes(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def do_stuff(self, point: FreePoint, mode: FreeEnum) -> datetime.datetime:
-        """"""
         return _wrap(self._native.do_stuff(_unwrap(point, FreePoint), _unwrap(mode, FreeEnum)), datetime.datetime)
 

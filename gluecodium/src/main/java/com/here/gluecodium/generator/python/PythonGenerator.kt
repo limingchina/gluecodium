@@ -278,6 +278,7 @@ internal class PythonGenerator : Generator {
                 "nativeTypeName" to pythonNameResolver.resolveRegisterName(limeElement),
                 "usesCallable" to usesCallable(limeElement),
                 "contentTemplate" to selectPythonTemplate(limeElement),
+                "stubContentTemplate" to selectPythonStubTemplate(limeElement),
             )
         val content = TemplateEngine.render("python/PythonFile", templateData + ("isStub" to false), nameResolvers, predicates)
         val stubContent = TemplateEngine.render("python/PythonStub", templateData + ("isStub" to true), nameResolvers, predicates)
@@ -535,6 +536,18 @@ internal class PythonGenerator : Generator {
             is com.here.gluecodium.model.lime.LimeStruct -> "python/PythonStruct"
             is com.here.gluecodium.model.lime.LimeClass -> "python/PythonClass"
             is com.here.gluecodium.model.lime.LimeInterface -> "python/PythonInterface"
+            else -> null
+        }
+
+    private fun selectPythonStubTemplate(limeElement: LimeNamedElement) =
+        when (limeElement) {
+            is com.here.gluecodium.model.lime.LimeTypeAlias -> "python/PythonStubTypeAlias"
+            is com.here.gluecodium.model.lime.LimeException -> "python/PythonStubException"
+            is com.here.gluecodium.model.lime.LimeLambda -> "python/PythonStubLambda"
+            is com.here.gluecodium.model.lime.LimeEnumeration -> "python/PythonStubEnumeration"
+            is com.here.gluecodium.model.lime.LimeStruct -> "python/PythonStubStruct"
+            is com.here.gluecodium.model.lime.LimeClass -> "python/PythonStubClass"
+            is com.here.gluecodium.model.lime.LimeInterface -> "python/PythonStubInterface"
             else -> null
         }
 

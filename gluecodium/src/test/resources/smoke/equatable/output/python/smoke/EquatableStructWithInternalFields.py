@@ -13,8 +13,6 @@ import generated
 
 
 class EquatableStructWithInternalFields(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EquatableStructWithInternalFields):
             super().__init__(args[0])
@@ -32,10 +30,8 @@ class EquatableStructWithInternalFields(_NativeBase):
     def __hash__(self) -> int:
         return hash(self._native)
 
-
     @property
     def public_field(self) -> str:
-        """"""
         return _wrap(self._native.public_field, str)
     @public_field.setter
     def public_field(self, value: str):

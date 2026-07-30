@@ -13,8 +13,6 @@ import generated
 
 
 class TypeDefsTestStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeDefsTestStruct):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class TypeDefsTestStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def something(self) -> str:
-        """"""
         return _wrap(self._native.something, str)
     @something.setter
     def something(self, value: str):

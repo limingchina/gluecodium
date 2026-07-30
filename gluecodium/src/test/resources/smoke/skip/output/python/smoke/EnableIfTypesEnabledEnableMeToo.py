@@ -14,8 +14,6 @@ import generated
 
 
 class EnableIfTypesEnabledEnableMeToo(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnableIfTypesEnabledEnableMeToo):
             super().__init__(args[0])
@@ -25,10 +23,8 @@ class EnableIfTypesEnabledEnableMeToo(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def field(self) -> EnableIfTypesEnabledEnableMe:
-        """"""
         return _wrap(self._native.field, EnableIfTypesEnabledEnableMe)
     @field.setter
     def field(self, value: EnableIfTypesEnabledEnableMe):

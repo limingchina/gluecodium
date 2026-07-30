@@ -13,8 +13,6 @@ import generated
 
 
 class ExternalInterfacesome_Struct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ExternalInterfacesome_Struct):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class ExternalInterfacesome_Struct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def some_field(self) -> str:
-        """"""
         return _wrap(self._native.some_field, str)
     @some_field.setter
     def some_field(self, value: str):

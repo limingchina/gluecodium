@@ -14,14 +14,10 @@ import generated
 
 
 class StructConstants(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
-
     STRUCT_CONSTANT = {"bar Buzz", 1.41}
-
 
     NESTING_STRUCT_CONSTANT = {{"nonsense", -2.82}}
 

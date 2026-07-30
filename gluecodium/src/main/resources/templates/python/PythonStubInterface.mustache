@@ -20,9 +20,16 @@
   !}}
 {{! Python interface type stub. }}
 class {{resolveName}}:
-{{#functions}}
+{{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
+{{/ifPredicate}}{{#functions}}
 
 {{>python/PythonStubFunction}}{{/functions}}
 {{#properties}}
 
 {{>python/PythonStubProperty}}{{/properties}}
+{{#enumerations}}
+{{#unlessPredicate "isStandaloneEnum"}}
+{{>python/PythonStubEnumeration}}{{/unlessPredicate}}{{/enumerations}}
+{{#constants}}
+
+{{>python/PythonConstant}}{{/constants}}

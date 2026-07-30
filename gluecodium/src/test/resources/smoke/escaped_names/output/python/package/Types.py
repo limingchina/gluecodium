@@ -15,8 +15,6 @@ import generated
 
 
 class Types(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.package_Types):
             super().__init__(args[0])
@@ -25,7 +23,6 @@ class Types(_NativeBase):
                 *[_unwrap(arg) for arg in args],
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
-
 
     CONST = typesenum.NA_N
 

@@ -13,8 +13,6 @@ import generated
 
 
 class ParentWithClassReferences(generated.smoke_ParentWithClassReferences):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -30,12 +28,10 @@ class ParentWithClassReferences(generated.smoke_ParentWithClassReferences):
         self._native = self
 
     def class_function(self) -> ChildClassFromClass:
-        """"""
         return _wrap(generated.smoke_ParentWithClassReferences.class_function(self), ChildClassFromClass)
 
     @property
     def class_property(self) -> ParentClass:
-        """"""
         return _wrap(generated.smoke_ParentWithClassReferences.class_property.fget(self), ParentClass)
 
     @class_property.setter

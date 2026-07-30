@@ -26,8 +26,8 @@ import {{nativeModule}}
 
 
 class {{resolveName}}(_NativeBase):
-    """{{resolveName comment}}"""
-
+{{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
+{{/ifPredicate}}
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], {{nativeModule}}.{{typeName}}):
             super().__init__(args[0])

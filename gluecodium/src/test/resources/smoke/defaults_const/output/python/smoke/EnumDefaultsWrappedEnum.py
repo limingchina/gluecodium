@@ -15,8 +15,6 @@ import generated
 
 
 class EnumDefaultsWrappedEnum(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsWrappedEnum):
             super().__init__(args[0])
@@ -26,10 +24,8 @@ class EnumDefaultsWrappedEnum(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def struct_field(self) -> EnumWrapper:
-        """"""
         return _wrap(self._native.struct_field, EnumWrapper)
     @struct_field.setter
     def struct_field(self, value: EnumWrapper):

@@ -11,8 +11,6 @@ import generated
 
 
 class SkipProxy(generated.smoke_SkipProxy):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,24 +26,19 @@ class SkipProxy(generated.smoke_SkipProxy):
         self._native = self
 
     def not_in_java(self, input: str) -> str:
-        """"""
         return _wrap(generated.smoke_SkipProxy.not_in_java(self, _unwrap(input, str)), str)
 
     def not_in_swift(self, input: bool) -> bool:
-        """"""
         return _wrap(generated.smoke_SkipProxy.not_in_swift(self, _unwrap(input, bool)), bool)
 
     def not_in_dart(self, input: float) -> float:
-        """"""
         return _wrap(generated.smoke_SkipProxy.not_in_dart(self, _unwrap(input, float)), float)
 
     def not_in_kotlin(self, input: float) -> float:
-        """"""
         return _wrap(generated.smoke_SkipProxy.not_in_kotlin(self, _unwrap(input, float)), float)
 
     @property
     def skipped_in_java(self) -> str:
-        """"""
         return _wrap(generated.smoke_SkipProxy.skipped_in_java.fget(self), str)
 
     @skipped_in_java.setter
@@ -54,7 +47,6 @@ class SkipProxy(generated.smoke_SkipProxy):
 
     @property
     def is_skipped_in_swift(self) -> bool:
-        """"""
         return _wrap(generated.smoke_SkipProxy.is_skipped_in_swift.fget(self), bool)
 
     @is_skipped_in_swift.setter
@@ -63,7 +55,6 @@ class SkipProxy(generated.smoke_SkipProxy):
 
     @property
     def skipped_in_dart(self) -> float:
-        """"""
         return _wrap(generated.smoke_SkipProxy.skipped_in_dart.fget(self), float)
 
     @skipped_in_dart.setter
@@ -72,7 +63,6 @@ class SkipProxy(generated.smoke_SkipProxy):
 
     @property
     def skipped_in_kotlin(self) -> float:
-        """"""
         return _wrap(generated.smoke_SkipProxy.skipped_in_kotlin.fget(self), float)
 
     @skipped_in_kotlin.setter

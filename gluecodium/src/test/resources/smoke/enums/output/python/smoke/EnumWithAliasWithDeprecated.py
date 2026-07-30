@@ -12,7 +12,6 @@ import generated
 
 
 class EnumWithAliasWithDeprecated(Enum):
-    """"""
 
     ONE = generated.smoke_EnumWithAliasWithDeprecated.ONE
     TWO = generated.smoke_EnumWithAliasWithDeprecated.TWO
