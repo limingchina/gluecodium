@@ -2,35 +2,9 @@
 
 import typing
 
+class Currency:
 
-from _native_base import _NativeBase
+    currency_code: str
 
-import generated
-
-
-class Currency(_NativeBase):
-    """"""
-
-    def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Currency):
-            super().__init__(args[0])
-        else:
-            super().__init__(generated.smoke_Currency(
-                *[_unwrap(arg) for arg in args],
-                **{k: _unwrap(v) for k, v in kwargs.items()}
-            ))
-
-
-    @property
-    def currency_code(self) -> str:
-        """"""
-        return _wrap(self._native.currency_code, str)
-
-
-
-    @property
-    def numeric_code(self) -> int:
-        """"""
-        return _wrap(self._native.numeric_code, int)
-
+    numeric_code: int
 

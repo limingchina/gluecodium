@@ -12,7 +12,6 @@ import generated
 
 
 class SomeSkippedEnum(Enum):
-    """"""
 
     FOO = generated.smoke_SomeSkippedEnum.FOO
 

@@ -13,8 +13,6 @@ import generated
 
 
 class FieldConstructorsSkipAllFields(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_FieldConstructorsSkipAllFields):
             super().__init__(args[0])
@@ -24,17 +22,13 @@ class FieldConstructorsSkipAllFields(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def string_field(self) -> str:
-        """"""
         return _wrap(self._native.string_field, str)
-
 
 
     @property
     def int_field(self) -> int:
-        """"""
         return _wrap(self._native.int_field, int)
 
 

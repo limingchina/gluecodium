@@ -13,12 +13,9 @@ import generated
 
 
 class InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def bar(self, arg: InnerClassForwardDeclarationsInnerInterface2):
-        """"""
         return _wrap(self._native.bar(_unwrap(arg, InnerClassForwardDeclarationsInnerInterface2)), None)
 

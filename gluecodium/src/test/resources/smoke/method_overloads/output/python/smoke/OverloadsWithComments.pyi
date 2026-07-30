@@ -2,20 +2,12 @@
 
 import typing
 
-from _native_base import _NativeBase
+class OverloadsWithComments:
 
-import generated
+    def do_stuff(self):
+        ...
 
-
-class OverloadsWithComments(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    @typing.overload
-    def do_stuff(self): ...
-
-    @typing.overload
-    def do_stuff(self, stuff: str): ...
+    def do_stuff(self, stuff: str):
+        """[stuff]"""
+        ...
 

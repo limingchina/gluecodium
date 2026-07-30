@@ -13,8 +13,6 @@ import generated
 
 
 class ConstantsSkipCpp(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ConstantsSkipCpp):
             super().__init__(args[0])
@@ -24,9 +22,7 @@ class ConstantsSkipCpp(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     BOOL_CONSTANT = True
-
 
     INT_CONSTANT = -11
 

@@ -7,18 +7,11 @@ from smoke.LambdasWithStructuredTypesStructCallback import LambdasWithStructured
 import typing
 from typing import Callable
 
-from _native_base import _NativeBase
+class LambdasWithStructuredTypes:
 
-import generated
+    def do_class_stuff(self, callback: Callable[[LambdasInterface], None]):
+        ...
 
-
-class LambdasWithStructuredTypes(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    def do_class_stuff(self, callback: Callable[[LambdasInterface], None]): ...
-
-    def do_struct_stuff(self, callback: Callable[[LambdasDeclarationOrderSomeStruct], None]): ...
+    def do_struct_stuff(self, callback: Callable[[LambdasDeclarationOrderSomeStruct], None]):
+        ...
 

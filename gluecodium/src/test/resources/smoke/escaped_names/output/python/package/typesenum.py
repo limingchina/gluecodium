@@ -12,7 +12,6 @@ import generated
 
 
 class typesenum(Enum):
-    """"""
 
     NA_N = generated.package_typesenum.NA_N
 

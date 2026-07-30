@@ -12,8 +12,6 @@ import generated
 
 
 class Constructors(generated.smoke_Constructors):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -29,7 +27,6 @@ class Constructors(generated.smoke_Constructors):
 
     @staticmethod
     def create(*args, **kwargs) -> Constructors:
-        """"""
         native_result = generated.smoke_Constructors.create(*[_unwrap(a) for a in args])
         return _get_or_create_wrapper(native_result, Constructors)
 

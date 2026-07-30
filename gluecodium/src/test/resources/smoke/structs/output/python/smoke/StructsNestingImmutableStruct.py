@@ -14,8 +14,6 @@ import generated
 
 
 class StructsNestingImmutableStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsNestingImmutableStruct):
             super().__init__(args[0])
@@ -25,10 +23,8 @@ class StructsNestingImmutableStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def struct_field(self) -> StructsAllTypesStruct:
-        """"""
         return _wrap(self._native.struct_field, StructsAllTypesStruct)
 
 

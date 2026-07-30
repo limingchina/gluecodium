@@ -12,7 +12,6 @@ import generated
 
 
 class EnumOptionSetComments(Enum):
-    """"""
 
     ONE = generated.smoke_EnumOptionSetComments.ONE
     TWO = generated.smoke_EnumOptionSetComments.TWO

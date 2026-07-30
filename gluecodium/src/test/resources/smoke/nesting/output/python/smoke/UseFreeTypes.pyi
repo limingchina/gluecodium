@@ -6,16 +6,8 @@ from smoke.FreeError import FreeError
 from smoke.FreePoint import FreePoint
 import typing
 
-from _native_base import _NativeBase
+class UseFreeTypes:
 
-import generated
-
-
-class UseFreeTypes(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    def do_stuff(self, point: FreePoint, mode: FreeEnum) -> datetime.datetime: ...
+    def do_stuff(self, point: FreePoint, mode: FreeEnum) -> datetime.datetime:
+        ...
 

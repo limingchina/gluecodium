@@ -14,47 +14,38 @@ import generated
 
 
 class TypeDefs(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def method_with_primitive_type_def(input: float) -> float:
-        """"""
         return generated.smoke_TypeDefs.method_with_primitive_type_def(_unwrap(input, float))
 
     @staticmethod
     def method_with_complex_type_def(input: list[TypeDefsTestStruct]) -> list[TypeDefsTestStruct]:
-        """"""
         return _wrap(generated.smoke_TypeDefs.method_with_complex_type_def(_unwrap(input, list[TypeDefsTestStruct])), list[TypeDefsTestStruct])
 
     @staticmethod
     def return_nested_int_type_def(input: float) -> float:
-        """"""
         return generated.smoke_TypeDefs.return_nested_int_type_def(_unwrap(input, float))
 
     @staticmethod
     def return_test_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
-        """"""
         native_result = generated.smoke_TypeDefs.return_test_struct_type_def(_unwrap(input, TypeDefsTestStruct))
         return _get_or_create_wrapper(native_result, TypeDefsTestStruct)
 
     @staticmethod
     def return_nested_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
-        """"""
         native_result = generated.smoke_TypeDefs.return_nested_struct_type_def(_unwrap(input, TypeDefsTestStruct))
         return _get_or_create_wrapper(native_result, TypeDefsTestStruct)
 
     @staticmethod
     def return_type_def_point_from_type_collection(input: TypeCollectionPoint) -> TypeCollectionPoint:
-        """"""
         native_result = generated.smoke_TypeDefs.return_type_def_point_from_type_collection(_unwrap(input, TypeCollectionPoint))
         return _get_or_create_wrapper(native_result, TypeCollectionPoint)
 
     @property
     def primitive_type_property(self) -> list[float]:
-        """"""
         return _wrap(self._native.primitive_type_property, list[float])
 
     @primitive_type_property.setter

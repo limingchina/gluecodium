@@ -15,8 +15,6 @@ import generated
 
 
 class SimpleEquatableStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SimpleEquatableStruct):
             super().__init__(args[0])
@@ -34,40 +32,32 @@ class SimpleEquatableStruct(_NativeBase):
     def __hash__(self) -> int:
         return hash(self._native)
 
-
     @property
     def class_field(self) -> NonEquatableClass:
-        """"""
         return _wrap(self._native.class_field, NonEquatableClass)
     @class_field.setter
     def class_field(self, value: NonEquatableClass):
       self._native.class_field = _unwrap(value, NonEquatableClass)
 
 
-
     @property
     def interface_field(self) -> NonEquatableInterface:
-        """"""
         return _wrap(self._native.interface_field, NonEquatableInterface)
     @interface_field.setter
     def interface_field(self, value: NonEquatableInterface):
       self._native.interface_field = _unwrap(value, NonEquatableInterface)
 
 
-
     @property
     def nullable_class_field(self):
-        """"""
         return _wrap(self._native.nullable_class_field, Optional[NonEquatableClass])
     @nullable_class_field.setter
     def nullable_class_field(self, value):
       self._native.nullable_class_field = _unwrap(value, Optional[NonEquatableClass])
 
 
-
     @property
     def nullable_interface_field(self):
-        """"""
         return _wrap(self._native.nullable_interface_field, Optional[NonEquatableInterface])
     @nullable_interface_field.setter
     def nullable_interface_field(self, value):

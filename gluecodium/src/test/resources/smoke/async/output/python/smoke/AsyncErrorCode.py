@@ -12,7 +12,6 @@ import generated
 
 
 class AsyncErrorCode(Enum):
-    """"""
 
     VALUE1 = generated.smoke_AsyncErrorCode.VALUE1
 

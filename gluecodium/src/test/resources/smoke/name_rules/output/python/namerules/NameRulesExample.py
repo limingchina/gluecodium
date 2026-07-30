@@ -8,7 +8,6 @@ from typing import Optional
 from namerules.NameRulesExampleErrorCode import NameRulesExampleErrorCode
 
 class NameRulesExample(Exception):
-    """"""
 
     def __init__(self, message: str):
         super().__init__(message)

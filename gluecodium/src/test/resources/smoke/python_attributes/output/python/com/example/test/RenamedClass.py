@@ -12,12 +12,9 @@ import generated
 
 
 class RenamedClass(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def visible_method(self, param: int) -> str:
-        """"""
         return _wrap(self._native.visible_method(_unwrap(param, int)), str)
 

@@ -24,7 +24,7 @@
 {{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}: ...
 {{/if}}{{#unless isStub}}{{#ifPredicate this "isOverloaded"}}{{#ifPredicate this "isFirstOverload"}}{{#if isStatic}}    @staticmethod
 {{/if}}    def {{resolveName}}(*args, **kwargs){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
-{{#if comment}}        """{{resolveName comment}}"""
+{{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
 {{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
 {{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
 {{#ifPredicate this "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}
@@ -35,7 +35,7 @@
 {{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        return _wrap(self._native.{{resolveName}}(*[_unwrap(a) for a in args]), {{resolveName returnType}})
 {{/unlessPredicate}}{{/unless}}{{/ifPredicate}}{{/ifPredicate}}{{#unlessPredicate this "isOverloaded"}}{{#if isStatic}}    @staticmethod
 {{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
-{{#if comment}}        """{{resolveName comment}}"""
+{{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
 {{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}_unwrap({{resolveName}}, {{resolveName typeRef}}){{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}({{#parameters}}_unwrap({{resolveName}}, {{resolveName typeRef}}){{#if iter.hasNext}}, {{/if}}{{/parameters}})
 {{#ifPredicate this "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}

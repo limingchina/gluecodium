@@ -13,12 +13,9 @@ import generated
 
 
 class SkippedFunctionClass(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def do_foo(self, input: DontSmokeEnum):
-        """"""
         return _wrap(self._native.do_foo(_unwrap(input, DontSmokeEnum)), None)
 

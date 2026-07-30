@@ -3,34 +3,18 @@
 from smoke.ParentInterface import ParentInterface
 import typing
 
-import generated
+class ChildClassFromInterfaceOverloads(
+    ParentInterface):
 
+    def foo(self, input: str):
+        ...
 
-class ChildClassFromInterfaceOverloads(generated.smoke_ChildClassFromInterfaceOverloads):
-    """"""
+    def foo(self, input: float):
+        ...
 
-    def __init__(self, native=None):
-        # Subclass the native pybind11 type so a Python override of an inherited virtual
-        # method (from a parent interface or open base class) is dispatched through the
-        # generated trampoline. When `native` is an existing native instance (returned by
-        # a factory), adopt it via the generated adoption constructor; otherwise construct a
-        # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
-        # generated code can reach the native object uniformly.
-        if native is not None and isinstance(native, generated.smoke_ChildClassFromInterfaceOverloads):
-            super().__init__(native)
-        else:
-            super().__init__()
-        self._native = self
+    def bar(self, input: str):
+        ...
 
-    @typing.overload
-    def foo(self, input: str): ...
-
-    @typing.overload
-    def foo(self, input: float): ...
-
-    @typing.overload
-    def bar(self, input: str): ...
-
-    @typing.overload
-    def bar(self, input: float): ...
+    def bar(self, input: float):
+        ...
 

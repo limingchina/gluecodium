@@ -12,7 +12,6 @@ import generated
 
 
 class StructsFooBar(Enum):
-    """"""
 
     FOO = generated.smoke_StructsFooBar.FOO
     BAR = generated.smoke_StructsFooBar.BAR

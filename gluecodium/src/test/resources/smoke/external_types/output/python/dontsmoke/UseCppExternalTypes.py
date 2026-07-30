@@ -15,23 +15,18 @@ import generated
 
 
 class UseCppExternalTypes(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def use_struct(input: StructsAnotherExternalStruct):
-        """"""
         generated.dontsmoke_UseCppExternalTypes.use_struct(_unwrap(input, StructsAnotherExternalStruct))
 
     @staticmethod
     def use_enum(input: EnumsExternal_Enum):
-        """"""
         generated.dontsmoke_UseCppExternalTypes.use_enum(_unwrap(input, EnumsExternal_Enum))
 
     @staticmethod
     def use_class(input: ClassWithOverloads):
-        """"""
         generated.dontsmoke_UseCppExternalTypes.use_class(_unwrap(input, ClassWithOverloads))
 

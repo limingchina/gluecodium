@@ -12,7 +12,6 @@ import generated
 
 
 class EnumsSimpleEnum(Enum):
-    """"""
 
     FIRST = generated.smoke_EnumsSimpleEnum.FIRST
     SECOND = generated.smoke_EnumsSimpleEnum.SECOND

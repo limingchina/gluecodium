@@ -14,8 +14,6 @@ import generated
 
 
 class OuterStructInnerStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_OuterStructInnerStruct):
             super().__init__(args[0])
@@ -25,10 +23,8 @@ class OuterStructInnerStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def other_field(self) -> list[datetime.datetime]:
-        """"""
         return _wrap(self._native.other_field, list[datetime.datetime])
     @other_field.setter
     def other_field(self, value: list[datetime.datetime]):
@@ -36,6 +32,5 @@ class OuterStructInnerStruct(_NativeBase):
 
 
     def do_something(self):
-        """"""
         return _wrap(self._native.do_something(), None)
 

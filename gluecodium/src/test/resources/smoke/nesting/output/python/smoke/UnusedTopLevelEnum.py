@@ -12,7 +12,6 @@ import generated
 
 
 class UnusedTopLevelEnum(Enum):
-    """"""
 
     DOESNT_WORK = generated.smoke_UnusedTopLevelEnum.DOESNT_WORK
     CRASHED_ANYWAY = generated.smoke_UnusedTopLevelEnum.CRASHED_ANYWAY

@@ -15,8 +15,6 @@ import generated
 
 
 class StructsWithMethodsInterfaceVector3(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsWithMethodsInterfaceVector3):
             super().__init__(args[0])
@@ -26,30 +24,24 @@ class StructsWithMethodsInterfaceVector3(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def x(self) -> float:
-        """"""
         return _wrap(self._native.x, float)
     @x.setter
     def x(self, value: float):
       self._native.x = _unwrap(value, float)
 
 
-
     @property
     def y(self) -> float:
-        """"""
         return _wrap(self._native.y, float)
     @y.setter
     def y(self, value: float):
       self._native.y = _unwrap(value, float)
 
 
-
     @property
     def z(self) -> float:
-        """"""
         return _wrap(self._native.z, float)
     @z.setter
     def z(self, value: float):
@@ -57,21 +49,17 @@ class StructsWithMethodsInterfaceVector3(_NativeBase):
 
 
     def distance_to(self, other: StructsWithMethodsInterfaceVector3) -> float:
-        """"""
         return _wrap(self._native.distance_to(_unwrap(other, StructsWithMethodsInterfaceVector3)), float)
 
     def add(self, other: StructsWithMethodsInterfaceVector3) -> StructsWithMethodsInterfaceVector3:
-        """"""
         return _wrap(self._native.add(_unwrap(other, StructsWithMethodsInterfaceVector3)), StructsWithMethodsInterfaceVector3)
 
     @staticmethod
     def validate(x: float, y: float, z: float) -> bool:
-        """"""
         return generated.smoke_StructsWithMethodsInterfaceVector3.validate(_unwrap(x, float), _unwrap(y, float), _unwrap(z, float))
 
     @staticmethod
     def create(*args, **kwargs) -> StructsWithMethodsInterfaceVector3:
-        """"""
         native_result = generated.smoke_StructsWithMethodsInterfaceVector3.create(*[_unwrap(a) for a in args])
         return _get_or_create_wrapper(native_result, StructsWithMethodsInterfaceVector3)
 

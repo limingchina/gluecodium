@@ -13,7 +13,6 @@ import generated
 
 class AttributesWithComments(_NativeBase):
     """Class comment"""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -28,8 +27,9 @@ class AttributesWithComments(_NativeBase):
 
     @prop.setter
     def prop(self, value: str):
+        """Setter comment"""
         self._native.prop = _unwrap(value, str)
 
-    Const comment
+    #: Const comment
     PI = False
 

@@ -4,17 +4,9 @@ from smoke.ExternalClassConstructorExploded import ExternalClassConstructorExplo
 from smoke.ExternalClassErrorEnum import ExternalClassErrorEnum
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class ExternalClassInternalTwo(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class ExternalClassInternalTwo:
 
     @staticmethod
-    def create() -> ExternalClassInternalTwo: ...
+    def create() -> ExternalClassInternalTwo:
+        ...
 

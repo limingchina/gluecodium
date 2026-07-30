@@ -12,7 +12,6 @@ import generated
 
 
 class SerializationSomeEnum(Enum):
-    """"""
 
     FOO = generated.smoke_SerializationSomeEnum.FOO
     BAR = generated.smoke_SerializationSomeEnum.BAR

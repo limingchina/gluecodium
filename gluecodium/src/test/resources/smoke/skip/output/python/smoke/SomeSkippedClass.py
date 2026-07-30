@@ -13,12 +13,9 @@ import generated
 
 
 class SomeSkippedClass(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def do_foo(self) -> DontSmokeEnum:
-        """"""
         return _wrap(self._native.do_foo(), DontSmokeEnum)
 

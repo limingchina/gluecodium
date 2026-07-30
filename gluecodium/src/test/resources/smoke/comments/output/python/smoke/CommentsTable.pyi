@@ -2,12 +2,7 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class CommentsTable(_NativeBase):
+class CommentsTable:
     """Something lorem something ipsum.
 
 | Tables | Are | Cool |
@@ -15,7 +10,4 @@ class CommentsTable(_NativeBase):
 | col 1 is |  left-aligned | $1600 |
 | col 2 is |    centered   |   $12 |
 | col 3 is | right-aligned |    $1 |"""
-
-    def __init__(self, native):
-        super().__init__(native)
 

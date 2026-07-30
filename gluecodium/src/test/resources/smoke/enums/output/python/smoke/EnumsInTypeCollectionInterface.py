@@ -13,14 +13,11 @@ import generated
 
 
 class EnumsInTypeCollectionInterface(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def flip_enum_value(input: EnumsInTypeCollectionTCEnum) -> EnumsInTypeCollectionTCEnum:
-        """"""
         native_result = generated.smoke_EnumsInTypeCollectionInterface.flip_enum_value(_unwrap(input, EnumsInTypeCollectionTCEnum))
         return _get_or_create_wrapper(native_result, EnumsInTypeCollectionTCEnum)
 

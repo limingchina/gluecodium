@@ -11,8 +11,6 @@ import generated
 
 
 class OuterClassWithInheritanceInnerInterface(generated.smoke_OuterClassWithInheritanceInnerInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,6 +26,5 @@ class OuterClassWithInheritanceInnerInterface(generated.smoke_OuterClassWithInhe
         self._native = self
 
     def baz(self, input: str) -> str:
-        """"""
         return _wrap(generated.smoke_OuterClassWithInheritanceInnerInterface.baz(self, _unwrap(input, str)), str)
 

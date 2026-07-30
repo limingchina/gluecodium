@@ -12,7 +12,6 @@ import generated
 
 
 class Enum4(Enum):
-    """"""
 
     ENABLED = generated.fire_Enum4.ENABLED
     DISABLED = generated.fire_Enum4.DISABLED

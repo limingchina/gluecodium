@@ -11,8 +11,6 @@ import generated
 
 
 class ParentInterfaceWithBool(generated.smoke_ParentInterfaceWithBool):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,6 +26,5 @@ class ParentInterfaceWithBool(generated.smoke_ParentInterfaceWithBool):
         self._native = self
 
     def root_method(self, input1: bool):
-        """"""
         return _wrap(generated.smoke_ParentInterfaceWithBool.root_method(self, _unwrap(input1, bool)), None)
 

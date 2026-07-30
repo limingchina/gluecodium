@@ -8,7 +8,6 @@ from typing import Optional
 from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
 
 class ErrorsInternal(Exception):
-    """"""
 
     def __init__(self, message: str):
         super().__init__(message)

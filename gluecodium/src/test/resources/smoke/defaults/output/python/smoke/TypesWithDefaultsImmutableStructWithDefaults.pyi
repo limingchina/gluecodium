@@ -2,63 +2,17 @@
 
 import typing
 
+class TypesWithDefaultsImmutableStructWithDefaults:
 
-from _native_base import _NativeBase
+    int_field: int
 
-import generated
+    uint_field: int
 
+    float_field: float
 
-class TypesWithDefaultsImmutableStructWithDefaults(_NativeBase):
-    """"""
+    double_field: float
 
-    def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithDefaults):
-            super().__init__(args[0])
-        else:
-            super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithDefaults(
-                *[_unwrap(arg) for arg in args],
-                **{k: _unwrap(v) for k, v in kwargs.items()}
-            ))
+    bool_field: bool
 
-
-    @property
-    def int_field(self) -> int:
-        """"""
-        return _wrap(self._native.int_field, int)
-
-
-
-    @property
-    def uint_field(self) -> int:
-        """"""
-        return _wrap(self._native.uint_field, int)
-
-
-
-    @property
-    def float_field(self) -> float:
-        """"""
-        return _wrap(self._native.float_field, float)
-
-
-
-    @property
-    def double_field(self) -> float:
-        """"""
-        return _wrap(self._native.double_field, float)
-
-
-
-    @property
-    def bool_field(self) -> bool:
-        """"""
-        return _wrap(self._native.bool_field, bool)
-
-
-
-    @property
-    def string_field(self) -> str:
-        """"""
-        return _wrap(self._native.string_field, str)
-
+    string_field: str
 

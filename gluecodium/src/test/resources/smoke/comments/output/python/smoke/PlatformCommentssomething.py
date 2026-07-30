@@ -14,7 +14,6 @@ import generated
 
 class PlatformCommentssomething(_NativeBase):
     """This is a."""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PlatformCommentssomething):
             super().__init__(args[0])
@@ -24,10 +23,8 @@ class PlatformCommentssomething(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def nothing(self) -> str:
-        """"""
         return _wrap(self._native.nothing, str)
     @nothing.setter
     def nothing(self, value: str):

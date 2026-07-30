@@ -27,7 +27,8 @@ import {{nativeModule}}
 
 
 class {{resolveName}}(Enum):
-    """{{resolveName comment}}"""
+{{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
+{{/ifPredicate}}
 {{#ifPredicate "isStandaloneEnum"}}
 {{#enumerators}}
 

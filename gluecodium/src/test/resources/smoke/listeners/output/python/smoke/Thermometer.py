@@ -19,7 +19,6 @@ import generated
 class Thermometer(_NativeBase):
     """A class, which reads temperature and updates observers according to the given interval.
 \"Subject\" in observer design pattern."""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -55,7 +54,6 @@ class Thermometer(_NativeBase):
 
     @staticmethod
     def notify_observers(thermometer: Thermometer, some_observers: list[TemperatureObserver]):
-        """"""
         generated.smoke_Thermometer.notify_observers(_unwrap(thermometer, Thermometer), _unwrap(some_observers, list[TemperatureObserver]))
 
     @staticmethod
@@ -64,18 +62,14 @@ class Thermometer(_NativeBase):
         generated.smoke_Thermometer.throwing_notify_observers(_unwrap(thermometer, Thermometer), _unwrap(some_observers, list[TemperatureObserver]))
 
     def force_update(self):
-        """"""
         return _wrap(self._native.force_update(), None)
 
     def get_celsius(self) -> float:
-        """"""
         return _wrap(self._native.get_celsius(), float)
 
     def get_kelvin(self) -> float:
-        """"""
         return _wrap(self._native.get_kelvin(), float)
 
     def get_fahrenheit(self) -> float:
-        """"""
         return _wrap(self._native.get_fahrenheit(), float)
 

@@ -14,14 +14,11 @@ import generated
 
 
 class ExternalClassInternalTwo(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def create() -> ExternalClassInternalTwo:
-        """"""
         native_result = generated.smoke_ExternalClassInternalTwo.create()
         return _get_or_create_wrapper(native_result, ExternalClassInternalTwo)
 

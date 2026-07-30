@@ -24,8 +24,8 @@ import {{nativeModule}}
 
 
 class {{resolveName}}({{nativeModule}}.{{typeName}}):
-    """{{resolveName comment}}"""
-
+{{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
+{{/ifPredicate}}
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -61,8 +61,8 @@ class {{resolveName}}{{#if parents}}(
 {{#parents}}    {{resolveName}}{{#if iter.hasNext}},
 {{/if}}{{/parents}},
     _NativeBase):{{/if}}{{^parents}}(_NativeBase):{{/parents}}
-    """{{resolveName comment}}"""
-
+{{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
+{{/ifPredicate}}
     def __init__(self, native):
         super().__init__(native)
 {{#functions}}

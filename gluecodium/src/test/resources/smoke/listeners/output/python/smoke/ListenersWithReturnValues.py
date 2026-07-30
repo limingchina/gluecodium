@@ -14,8 +14,6 @@ import generated
 
 
 class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -31,30 +29,23 @@ class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
         self._native = self
 
     def fetch_data_double(self) -> float:
-        """"""
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_double(self), float)
 
     def fetch_data_string(self) -> str:
-        """"""
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_string(self), str)
 
     def fetch_data_struct(self) -> ListenersWithReturnValuesResultStruct:
-        """"""
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_struct(self), ListenersWithReturnValuesResultStruct)
 
     def fetch_data_enum(self) -> ListenersWithReturnValuesResultEnum:
-        """"""
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_enum(self), ListenersWithReturnValuesResultEnum)
 
     def fetch_data_array(self) -> list[float]:
-        """"""
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_array(self), list[float])
 
     def fetch_data_map(self) -> dict[str, float]:
-        """"""
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_map(self), dict[str, float])
 
     def fetch_data_instance(self) -> CalculationResult:
-        """"""
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_instance(self), CalculationResult)
 

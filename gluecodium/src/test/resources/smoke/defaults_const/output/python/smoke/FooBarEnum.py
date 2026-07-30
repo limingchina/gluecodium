@@ -12,7 +12,6 @@ import generated
 
 
 class FooBarEnum(Enum):
-    """"""
 
     FOO = generated.smoke_FooBarEnum.FOO
     BAR = generated.smoke_FooBarEnum.BAR

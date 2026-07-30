@@ -13,8 +13,6 @@ import generated
 
 
 class LocalesLocaleStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_LocalesLocaleStruct):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class LocalesLocaleStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def locale_field(self) -> str:
-        """"""
         return _wrap(self._native.locale_field, str)
     @locale_field.setter
     def locale_field(self, value: str):

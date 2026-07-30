@@ -12,16 +12,12 @@ import generated
 
 
 class JavaMethodOverloads(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def one(self, input: str):
-        """"""
         return _wrap(self._native.one(_unwrap(input, str)), None)
 
     def two(self, input: list[str]):
-        """"""
         return _wrap(self._native.two(_unwrap(input, list[str])), None)
 

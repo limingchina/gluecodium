@@ -14,7 +14,6 @@ import generated
 
 class CommentsInterfaceSomeStruct(_NativeBase):
     """This is some very useful struct."""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CommentsInterfaceSomeStruct):
             super().__init__(args[0])
@@ -24,7 +23,6 @@ class CommentsInterfaceSomeStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    How useful this struct is
     @property
     def some_field(self) -> bool:
         """How useful this struct is"""

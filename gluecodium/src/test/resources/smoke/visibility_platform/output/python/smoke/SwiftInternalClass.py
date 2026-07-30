@@ -12,8 +12,6 @@ import generated
 
 
 class SwiftInternalClass(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 

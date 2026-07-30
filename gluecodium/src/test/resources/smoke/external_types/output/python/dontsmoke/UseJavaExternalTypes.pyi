@@ -8,32 +8,29 @@ from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class UseJavaExternalTypes(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class UseJavaExternalTypes:
 
     @staticmethod
-    def currency_round_trip(input: Currency) -> Currency: ...
+    def currency_round_trip(input: Currency) -> Currency:
+        ...
 
     @staticmethod
-    def time_zone_round_trip(input: TimeZone) -> TimeZone: ...
+    def time_zone_round_trip(input: TimeZone) -> TimeZone:
+        ...
 
     @staticmethod
-    def month_round_trip(input: Month) -> Month: ...
+    def month_round_trip(input: Month) -> Month:
+        ...
 
     @staticmethod
-    def color_round_trip(input: SystemColor) -> SystemColor: ...
+    def color_round_trip(input: SystemColor) -> SystemColor:
+        ...
 
     @staticmethod
-    def season_round_trip(input: Season) -> Season: ...
+    def season_round_trip(input: Season) -> Season:
+        ...
 
     @staticmethod
-    def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct: ...
+    def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
+        ...
 

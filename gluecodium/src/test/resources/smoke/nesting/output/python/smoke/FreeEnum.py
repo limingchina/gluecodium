@@ -12,7 +12,6 @@ import generated
 
 
 class FreeEnum(Enum):
-    """"""
 
     FOO = generated.smoke_FreeEnum.FOO
     BAR = generated.smoke_FreeEnum.BAR

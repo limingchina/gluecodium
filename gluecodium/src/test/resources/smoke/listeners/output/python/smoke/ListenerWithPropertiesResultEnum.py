@@ -12,7 +12,6 @@ import generated
 
 
 class ListenerWithPropertiesResultEnum(Enum):
-    """"""
 
     NONE = generated.smoke_ListenerWithPropertiesResultEnum.NONE
     RESULT = generated.smoke_ListenerWithPropertiesResultEnum.RESULT

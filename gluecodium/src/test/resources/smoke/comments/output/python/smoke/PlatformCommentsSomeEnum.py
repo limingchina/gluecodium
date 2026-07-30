@@ -12,7 +12,6 @@ import generated
 
 
 class PlatformCommentsSomeEnum(Enum):
-    """"""
 
     USELESS = generated.smoke_PlatformCommentsSomeEnum.USELESS
     USEFUL = generated.smoke_PlatformCommentsSomeEnum.USEFUL

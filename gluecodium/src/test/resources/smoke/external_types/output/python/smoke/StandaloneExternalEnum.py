@@ -12,7 +12,6 @@ import generated
 
 
 class StandaloneExternalEnum(Enum):
-    """"""
 
     FOO = generated.smoke_StandaloneExternalEnum.FOO
 

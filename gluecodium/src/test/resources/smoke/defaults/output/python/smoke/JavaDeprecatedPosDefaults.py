@@ -14,7 +14,6 @@ import generated
 
 class JavaDeprecatedPosDefaults(_NativeBase):
     """Foo Bar this is a comment"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_JavaDeprecatedPosDefaults):
             super().__init__(args[0])
@@ -24,7 +23,6 @@ class JavaDeprecatedPosDefaults(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    first init!
     @property
     def first_init_field(self) -> int:
         """first init!"""
@@ -34,7 +32,6 @@ class JavaDeprecatedPosDefaults(_NativeBase):
       self._native.first_init_field = _unwrap(value, int)
 
 
-    first free!
     @property
     def first_free_field(self) -> str:
         """first free!"""

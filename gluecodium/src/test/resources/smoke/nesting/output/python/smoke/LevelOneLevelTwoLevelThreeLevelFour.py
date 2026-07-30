@@ -13,8 +13,6 @@ import generated
 
 
 class LevelOneLevelTwoLevelThreeLevelFour(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_LevelOneLevelTwoLevelThreeLevelFour):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class LevelOneLevelTwoLevelThreeLevelFour(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def string_field(self) -> str:
-        """"""
         return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
@@ -36,10 +32,8 @@ class LevelOneLevelTwoLevelThreeLevelFour(_NativeBase):
 
     @staticmethod
     def foo_factory() -> LevelOneLevelTwoLevelThreeLevelFour:
-        """"""
         native_result = generated.smoke_LevelOneLevelTwoLevelThreeLevelFour.foo_factory()
         return _get_or_create_wrapper(native_result, LevelOneLevelTwoLevelThreeLevelFour)
-
 
     FOO = False
 

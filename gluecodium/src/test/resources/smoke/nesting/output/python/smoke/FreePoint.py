@@ -14,8 +14,6 @@ import generated
 
 
 class FreePoint(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_FreePoint):
             super().__init__(args[0])
@@ -25,20 +23,16 @@ class FreePoint(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def x(self) -> float:
-        """"""
         return _wrap(self._native.x, float)
     @x.setter
     def x(self, value: float):
       self._native.x = _unwrap(value, float)
 
 
-
     @property
     def y(self) -> float:
-        """"""
         return _wrap(self._native.y, float)
     @y.setter
     def y(self, value: float):
@@ -46,9 +40,7 @@ class FreePoint(_NativeBase):
 
 
     def flip(self) -> FreePoint:
-        """"""
         return _wrap(self._native.flip(), FreePoint)
-
 
     A_BAR = FreeEnum.BAR
 

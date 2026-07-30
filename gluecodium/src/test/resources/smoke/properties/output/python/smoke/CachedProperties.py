@@ -12,20 +12,15 @@ import generated
 
 
 class CachedProperties(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @property
     def cached_property(self) -> list[str]:
-        """"""
         return _wrap(self._native.cached_property, list[str])
-
 
 
     @staticmethod
     def static_cached_property() -> bytes:
-        """"""
         return _wrap(generated.smoke_CachedProperties.static_cached_property(), bytes)
 

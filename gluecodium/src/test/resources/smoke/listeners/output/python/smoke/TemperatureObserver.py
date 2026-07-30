@@ -13,7 +13,6 @@ import generated
 
 class TemperatureObserver(generated.smoke_TemperatureObserver):
     """Observer interface for monitoring changes in thermometer (\"Observer of subject\")."""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -29,6 +28,5 @@ class TemperatureObserver(generated.smoke_TemperatureObserver):
         self._native = self
 
     def on_temperature_update(self, thermometer: Thermometer):
-        """"""
         return _wrap(generated.smoke_TemperatureObserver.on_temperature_update(self, _unwrap(thermometer, Thermometer)), None)
 

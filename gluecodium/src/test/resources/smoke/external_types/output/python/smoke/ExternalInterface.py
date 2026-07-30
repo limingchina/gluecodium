@@ -11,8 +11,6 @@ import generated
 
 
 class ExternalInterface(generated.smoke_ExternalInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,12 +26,10 @@ class ExternalInterface(generated.smoke_ExternalInterface):
         self._native = self
 
     def some_method(self, some_parameter: int):
-        """"""
         return _wrap(generated.smoke_ExternalInterface.some_method(self, _unwrap(some_parameter, int)), None)
 
     @property
     def some_property(self) -> str:
-        """"""
         return _wrap(generated.smoke_ExternalInterface.some_property.fget(self), str)
 
 

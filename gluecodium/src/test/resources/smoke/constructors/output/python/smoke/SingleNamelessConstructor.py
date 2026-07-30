@@ -12,14 +12,11 @@ import generated
 
 
 class SingleNamelessConstructor(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def create() -> SingleNamelessConstructor:
-        """"""
         native_result = generated.smoke_SingleNamelessConstructor.create()
         return _get_or_create_wrapper(native_result, SingleNamelessConstructor)
 

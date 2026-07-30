@@ -20,6 +20,7 @@
   !}}
 {{! Python exception type stub. }}
 class {{resolveName}}(Exception):
-    message: str
+{{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
+{{/ifPredicate}}    message: str
 
     def __init__(self, message: str) -> None: ...

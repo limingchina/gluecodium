@@ -14,8 +14,6 @@ import generated
 
 
 class PlatformComments(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -24,7 +22,6 @@ class PlatformComments(_NativeBase):
         return _wrap(self._native.do_nothing(), None)
 
     def do_magic(self):
-        """"""
         return _wrap(self._native.do_magic(), None)
 
     def some_method_with_all_comments(self, input: str) -> bool:

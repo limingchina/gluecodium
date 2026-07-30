@@ -15,7 +15,6 @@ import generated
 
 class ExcludedComments(_NativeBase):
     """This is some very useful class."""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -34,8 +33,9 @@ class ExcludedComments(_NativeBase):
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
+        """Sets some very useful property."""
         self._native.is_some_property = _unwrap(value, bool)
 
-    This is some very useful constant.
+    #: This is some very useful constant.
     VERY_USEFUL = True
 

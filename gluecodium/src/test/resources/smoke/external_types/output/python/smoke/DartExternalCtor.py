@@ -13,8 +13,6 @@ import generated
 
 
 class DartExternalCtor(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DartExternalCtor):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class DartExternalCtor(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def field(self) -> str:
-        """"""
         return _wrap(self._native.field, str)
     @field.setter
     def field(self, value: str):
@@ -36,7 +32,6 @@ class DartExternalCtor(_NativeBase):
 
     @staticmethod
     def make(field: str) -> DartExternalCtor:
-        """"""
         native_result = generated.smoke_DartExternalCtor.make(_unwrap(field, str))
         return _get_or_create_wrapper(native_result, DartExternalCtor)
 

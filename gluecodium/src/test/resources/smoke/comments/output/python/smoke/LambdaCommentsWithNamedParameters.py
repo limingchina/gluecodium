@@ -7,5 +7,6 @@ from typing import Optional
 from typing import Callable
 
 
+#: The first line of the doc.
 LambdaCommentsWithNamedParameters = Callable[[str], str]
 

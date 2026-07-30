@@ -3,16 +3,8 @@
 from smoke.forward.InnerClassForwardDeclarationsInnerClass2InnerInnerClass2 import InnerClassForwardDeclarationsInnerClass2InnerInnerClass2
 import typing
 
-from _native_base import _NativeBase
+class InnerClassForwardDeclarationsInnerClass2InnerInnerClass1:
 
-import generated
-
-
-class InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    def foo(self) -> InnerClassForwardDeclarationsInnerClass2InnerInnerClass2: ...
+    def foo(self) -> InnerClassForwardDeclarationsInnerClass2InnerInnerClass2:
+        ...
 

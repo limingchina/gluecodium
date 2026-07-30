@@ -12,7 +12,6 @@ import generated
 
 
 class SwiftSeason(Enum):
-    """"""
 
     WINTER = generated.smoke_SwiftSeason.WINTER
     SPRING = generated.smoke_SwiftSeason.SPRING

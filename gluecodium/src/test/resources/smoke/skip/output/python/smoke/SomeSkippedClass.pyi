@@ -3,16 +3,8 @@
 from dont.smoke.DontSmokeEnum import DontSmokeEnum
 import typing
 
-from _native_base import _NativeBase
+class SomeSkippedClass:
 
-import generated
-
-
-class SomeSkippedClass(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    def do_foo(self) -> DontSmokeEnum: ...
+    def do_foo(self) -> DontSmokeEnum:
+        ...
 

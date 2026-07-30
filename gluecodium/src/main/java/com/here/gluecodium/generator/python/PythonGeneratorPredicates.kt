@@ -88,6 +88,10 @@ internal class PythonGeneratorPredicates(
             "hasAnyComment" to { limeElement: Any ->
                 CommonGeneratorPredicates.hasAnyComment(limeElement, "Python")
             },
+            "hasSetterComment" to { limeElement: Any ->
+                val prop = limeElement as? LimeProperty
+                prop?.setter?.comment?.getFor("Python")?.isNotBlank() == true
+            },
             "isInterface" to { it is com.here.gluecodium.model.lime.LimeInterface },
             // Whether the container needs a pybind11 trampoline class so it can be subclassed from
             // Python. Mirrors Pybind11Helpers.needsTrampoline: interfaces always need one, and a

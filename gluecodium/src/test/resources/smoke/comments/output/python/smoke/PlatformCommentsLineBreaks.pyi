@@ -2,14 +2,6 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class PlatformCommentsLineBreaks(_NativeBase):
+class PlatformCommentsLineBreaks:
     """Text"""
-
-    def __init__(self, native):
-        super().__init__(native)
 

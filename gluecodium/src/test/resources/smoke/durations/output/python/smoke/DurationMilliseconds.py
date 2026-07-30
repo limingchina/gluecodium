@@ -13,22 +13,17 @@ import generated
 
 
 class DurationMilliseconds(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def duration_function(self, input: datetime.timedelta) -> datetime.timedelta:
-        """"""
         return _wrap(self._native.duration_function(_unwrap(input, datetime.timedelta)), datetime.timedelta)
 
     def nullable_duration_function(self, input: Optional[datetime.timedelta]) -> Optional[datetime.timedelta]:
-        """"""
         return _wrap(self._native.nullable_duration_function(_unwrap(input, Optional[datetime.timedelta])), Optional[datetime.timedelta])
 
     @property
     def duration_property(self) -> datetime.timedelta:
-        """"""
         return _wrap(self._native.duration_property, datetime.timedelta)
 
     @duration_property.setter

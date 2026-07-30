@@ -15,7 +15,6 @@ import generated
 
 class Comments(_NativeBase):
     """This is some very useful ."""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -52,7 +51,6 @@ class Comments(_NativeBase):
         return _wrap(self._native.some_method_without_input_parameters_with_no_comments(), bool)
 
     def some_method_with_nothing(self):
-        """"""
         return _wrap(self._native.some_method_with_nothing(), None)
 
     def some_method_without_return_type_or_input_parameters(self):
@@ -74,6 +72,7 @@ class Comments(_NativeBase):
 
     @is_some_property.setter
     def is_some_property(self, value: bool):
+        """Sets some very useful property."""
         self._native.is_some_property = _unwrap(value, bool)
 
     @property
@@ -89,8 +88,9 @@ class Comments(_NativeBase):
 
     @is_is_visible.setter
     def is_is_visible(self, value: bool):
+        """Sets the visibility flag that controls if [OnlyGetterProperty] should be visible on the screen."""
         self._native.is_is_visible = _unwrap(value, bool)
 
-    This is some very useful constant.
+    #: This is some very useful constant.
     VERY_USEFUL = True
 

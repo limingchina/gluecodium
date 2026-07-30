@@ -13,8 +13,6 @@ import generated
 
 
 class TypesWithDefaultsSomeImmutableStructWithDefaults(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsSomeImmutableStructWithDefaults):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class TypesWithDefaultsSomeImmutableStructWithDefaults(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def int_field(self) -> int:
-        """"""
         return _wrap(self._native.int_field, int)
 
 

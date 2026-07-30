@@ -11,8 +11,6 @@ import generated
 
 
 class SkipSetter(generated.smoke_SkipSetter):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -29,7 +27,6 @@ class SkipSetter(generated.smoke_SkipSetter):
 
     @property
     def foo(self) -> str:
-        """"""
         return _wrap(generated.smoke_SkipSetter.foo.fget(self), str)
 
 

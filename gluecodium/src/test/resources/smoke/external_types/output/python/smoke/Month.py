@@ -12,7 +12,6 @@ import generated
 
 
 class Month(Enum):
-    """"""
 
     JANUARY = generated.smoke_Month.JANUARY
     FEBRUARY = generated.smoke_Month.FEBRUARY

@@ -13,18 +13,14 @@ import generated
 
 
 class Calculator(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def register_listener(listener: CalculatorListener):
-        """"""
         generated.smoke_Calculator.register_listener(_unwrap(listener, CalculatorListener))
 
     @staticmethod
     def unregister_listener(listener: CalculatorListener):
-        """"""
         generated.smoke_Calculator.unregister_listener(_unwrap(listener, CalculatorListener))
 

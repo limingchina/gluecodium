@@ -14,8 +14,6 @@ import generated
 
 
 class TypeCollection(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollection):
             super().__init__(args[0])
@@ -24,7 +22,6 @@ class TypeCollection(_NativeBase):
                 *[_unwrap(arg) for arg in args],
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
-
 
     INVALID_STORAGE_ID = 0
 

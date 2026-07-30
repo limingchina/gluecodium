@@ -14,8 +14,6 @@ import generated
 
 
 class ScalarKeyframeTrack(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ScalarKeyframeTrack):
             super().__init__(args[0])
@@ -25,27 +23,21 @@ class ScalarKeyframeTrack(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def keyframes(self) -> list[ScalarKeyframe]:
-        """"""
         return _wrap(self._native.keyframes, list[ScalarKeyframe])
-
 
 
     @property
     def easing_function(self) -> str:
-        """"""
         return _wrap(self._native.easing_function, str)
     @easing_function.setter
     def easing_function(self, value: str):
       self._native.easing_function = _unwrap(value, str)
 
 
-
     @property
     def interpolation_mode(self) -> str:
-        """"""
         return _wrap(self._native.interpolation_mode, str)
     @interpolation_mode.setter
     def interpolation_mode(self, value: str):

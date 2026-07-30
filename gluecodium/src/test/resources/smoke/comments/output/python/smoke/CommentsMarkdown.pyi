@@ -2,12 +2,7 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class CommentsMarkdown(_NativeBase):
+class CommentsMarkdown:
     """First line.
 Second line.
 
@@ -32,7 +27,4 @@ Ordered list:
 ---
 
 [title](https://www.markdownguide.org/cheat-sheet/)"""
-
-    def __init__(self, native):
-        super().__init__(native)
 

@@ -19,22 +19,21 @@
   !
   !}}
 {{! Python property (getter + optional setter delegating to native). }}
-{{#if isStatic}}{{#if comment}}{{prefix comment ""}}
-{{/if}}    @staticmethod
+{{#if isStatic}}    @staticmethod
     def {{resolveName}}(){{#unless typeRef.isNullable}} -> {{resolveName typeRef}}{{/unless}}:
-{{#if comment}}        """{{resolveName comment}}"""
-{{/if}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(), {{resolveName typeRef}})
+{{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
+{{/ifPredicate}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(), {{resolveName typeRef}})
 {{#ifPredicate "hasSetter"}}
 
     @staticmethod
     def {{resolveName}}_set(value{{#unless typeRef.isNullable}}: {{resolveName typeRef}}{{/unless}}):
-{{#if setterComment}}        """{{resolveName setterComment}}"""
-{{/if}}        {{nativeModule}}.{{typeName}}.{{resolveName}}_set(_unwrap(value, {{resolveName typeRef}}))
+{{#ifPredicate this "hasSetterComment"}}        """{{resolveName setter.comment}}"""
+{{/ifPredicate}}        {{nativeModule}}.{{typeName}}.{{resolveName}}_set(_unwrap(value, {{resolveName typeRef}}))
 {{/ifPredicate}}
 {{/if}}{{#unless isStatic}}    @property
     def {{resolveName}}(self){{#unless typeRef.isNullable}} -> {{resolveName typeRef}}{{/unless}}:
-{{#if comment}}        """{{resolveName comment}}"""
-{{/if}}{{#ifPredicate "isAncestorProperty"}}        from {{resolveName typeRef "" "ref"}} import {{resolveName typeRef}}
+{{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
+{{/ifPredicate}}{{#ifPredicate "isAncestorProperty"}}        from {{resolveName typeRef "" "ref"}} import {{resolveName typeRef}}
 {{/ifPredicate}}{{#ifPredicate model "isInterface"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}.fget(self), {{resolveName typeRef}})
 {{/ifPredicate}}{{#unlessPredicate model "isInterface"}}{{#ifPredicate model "needsTrampoline"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}.fget(self), {{resolveName typeRef}})
 {{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        return _wrap(self._native.{{resolveName}}, {{resolveName typeRef}})
@@ -43,8 +42,8 @@
 {{#ifPredicate "hasSetter"}}
     @{{resolveName}}.setter
     def {{resolveName}}(self, value{{#unless typeRef.isNullable}}: {{resolveName typeRef}}{{/unless}}):
-{{#if setterComment}}        """{{resolveName setterComment}}"""
-{{/if}}{{#ifPredicate model "isInterface"}}        {{nativeModule}}.{{typeName}}.{{resolveName}}.fset(self, _unwrap(value, {{resolveName typeRef}}))
+{{#ifPredicate this "hasSetterComment"}}        """{{resolveName setter.comment}}"""
+{{/ifPredicate}}{{#ifPredicate model "isInterface"}}        {{nativeModule}}.{{typeName}}.{{resolveName}}.fset(self, _unwrap(value, {{resolveName typeRef}}))
 {{/ifPredicate}}{{#unlessPredicate model "isInterface"}}{{#ifPredicate model "needsTrampoline"}}        {{nativeModule}}.{{typeName}}.{{resolveName}}.fset(self, _unwrap(value, {{resolveName typeRef}}))
 {{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        self._native.{{resolveName}} = _unwrap(value, {{resolveName typeRef}})
 {{/unlessPredicate}}{{/unlessPredicate}}{{/ifPredicate}}

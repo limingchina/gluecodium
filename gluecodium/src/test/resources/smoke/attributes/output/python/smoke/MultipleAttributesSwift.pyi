@@ -2,24 +2,20 @@
 
 import typing
 
-from _native_base import _NativeBase
+class MultipleAttributesSwift:
 
-import generated
+    def no_lists2(self):
+        ...
 
+    def no_lists3(self):
+        ...
 
-class MultipleAttributesSwift(_NativeBase):
-    """"""
+    def list_first(self):
+        ...
 
-    def __init__(self, native):
-        super().__init__(native)
+    def list_second(self):
+        ...
 
-    def no_lists2(self): ...
-
-    def no_lists3(self): ...
-
-    def list_first(self): ...
-
-    def list_second(self): ...
-
-    def two_lists(self): ...
+    def two_lists(self):
+        ...
 

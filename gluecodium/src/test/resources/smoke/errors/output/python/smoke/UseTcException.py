@@ -14,12 +14,9 @@ import generated
 
 
 class UseTcException(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def do_nothing(self):
-        """"""
         return _wrap(self._native.do_nothing(), None)
 

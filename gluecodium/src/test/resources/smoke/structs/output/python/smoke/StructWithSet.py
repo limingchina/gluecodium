@@ -13,8 +13,6 @@ import generated
 
 
 class StructWithSet(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructWithSet):
             super().__init__(args[0])
@@ -32,10 +30,8 @@ class StructWithSet(_NativeBase):
     def __hash__(self) -> int:
         return hash(self._native)
 
-
     @property
     def field(self) -> set[StructWithSet]:
-        """"""
         return _wrap(self._native.field, set[StructWithSet])
     @field.setter
     def field(self, value: set[StructWithSet]):

@@ -13,8 +13,6 @@ import generated
 
 
 class DartInternalElementsSkipped(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DartInternalElementsSkipped):
             super().__init__(args[0])
@@ -24,20 +22,16 @@ class DartInternalElementsSkipped(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def bool_field(self) -> bool:
-        """"""
         return _wrap(self._native.bool_field, bool)
     @bool_field.setter
     def bool_field(self, value: bool):
       self._native.bool_field = _unwrap(value, bool)
 
 
-
     @property
     def string_field(self) -> str:
-        """"""
         return _wrap(self._native.string_field, str)
     @string_field.setter
     def string_field(self, value: str):
@@ -45,6 +39,5 @@ class DartInternalElementsSkipped(_NativeBase):
 
 
     def foo(self):
-        """"""
         return _wrap(self._native.foo(), None)
 

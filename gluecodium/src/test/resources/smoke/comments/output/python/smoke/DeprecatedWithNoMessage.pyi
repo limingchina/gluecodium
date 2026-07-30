@@ -2,31 +2,8 @@
 
 import typing
 
-
-from _native_base import _NativeBase
-
-import generated
-
-
-class DeprecatedWithNoMessage(_NativeBase):
+class DeprecatedWithNoMessage:
     """"""
 
-    def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeprecatedWithNoMessage):
-            super().__init__(args[0])
-        else:
-            super().__init__(generated.smoke_DeprecatedWithNoMessage(
-                *[_unwrap(arg) for arg in args],
-                **{k: _unwrap(v) for k, v in kwargs.items()}
-            ))
-
-
-    @property
-    def field(self) -> str:
-        """"""
-        return _wrap(self._native.field, str)
-    @field.setter
-    def field(self, value: str):
-      self._native.field = _unwrap(value, str)
-
+    field: str
 

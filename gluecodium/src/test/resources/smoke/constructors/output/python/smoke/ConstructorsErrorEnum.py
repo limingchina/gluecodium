@@ -12,7 +12,6 @@ import generated
 
 
 class ConstructorsErrorEnum(Enum):
-    """"""
 
     NONE = generated.smoke_ConstructorsErrorEnum.NONE
     CRASHED = generated.smoke_ConstructorsErrorEnum.CRASHED

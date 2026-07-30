@@ -12,7 +12,6 @@ import generated
 
 
 class EnumWithAccessibleValues(Enum):
-    """"""
 
     FOO = generated.smoke_EnumWithAccessibleValues.FOO
     BAR = generated.smoke_EnumWithAccessibleValues.BAR

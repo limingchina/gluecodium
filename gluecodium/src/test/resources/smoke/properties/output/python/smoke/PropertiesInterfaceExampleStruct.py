@@ -13,8 +13,6 @@ import generated
 
 
 class PropertiesInterfaceExampleStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PropertiesInterfaceExampleStruct):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class PropertiesInterfaceExampleStruct(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def value(self) -> float:
-        """"""
         return _wrap(self._native.value, float)
     @value.setter
     def value(self, value: float):

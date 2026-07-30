@@ -11,8 +11,6 @@ import generated
 
 
 class PlatformInternalInterface(generated.smoke_PlatformInternalInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an

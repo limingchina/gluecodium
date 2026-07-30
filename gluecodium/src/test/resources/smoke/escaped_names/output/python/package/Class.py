@@ -14,8 +14,6 @@ import generated
 
 
 class Class(generated.package_Class):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -31,17 +29,14 @@ class Class(generated.package_Class):
 
     @staticmethod
     def constructor() -> Class:
-        """"""
         native_result = generated.package_Class.constructor()
         return _get_or_create_wrapper(native_result, Class)
 
     def fun(self, double: list[typesstruct]) -> typesstruct:
-        """"""
         return _wrap(generated.package_Class.fun(self, _unwrap(double, list[typesstruct])), typesstruct)
 
     @property
     def property(self) -> typesenum:
-        """"""
         return _wrap(generated.package_Class.property.fget(self), typesenum)
 
     @property.setter

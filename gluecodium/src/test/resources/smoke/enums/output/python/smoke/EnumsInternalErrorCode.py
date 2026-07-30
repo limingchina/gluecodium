@@ -12,7 +12,6 @@ import generated
 
 
 class EnumsInternalErrorCode(Enum):
-    """"""
 
     ERROR_NONE = generated.smoke_EnumsInternalErrorCode.ERROR_NONE
     ERROR_FATAL = generated.smoke_EnumsInternalErrorCode.ERROR_FATAL

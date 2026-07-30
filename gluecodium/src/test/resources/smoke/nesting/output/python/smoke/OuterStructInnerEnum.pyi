@@ -4,16 +4,9 @@ import typing
 
 from enum import Enum
 
-import generated
-
 
 class OuterStructInnerEnum(Enum):
-    """"""
 
-    FOO = generated.smoke_OuterStructInnerEnum.FOO
-    BAR = generated.smoke_OuterStructInnerEnum.BAR
-
-    @property
-    def _native(self):
-        return self.value
+    FOO = 0
+    BAR = 1
 

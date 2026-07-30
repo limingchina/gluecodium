@@ -12,8 +12,6 @@ import generated
 
 
 class ParentInterface(generated.smoke_ParentInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -29,16 +27,13 @@ class ParentInterface(generated.smoke_ParentInterface):
         self._native = self
 
     def parent_function(self):
-        """"""
         return _wrap(generated.smoke_ParentInterface.parent_function(self), None)
 
     def some_function_that_uses_type_from_another_package(self, some_param: SomeCoolClassType):
-        """"""
         return _wrap(generated.smoke_ParentInterface.some_function_that_uses_type_from_another_package(self, _unwrap(some_param, SomeCoolClassType)), None)
 
     @property
     def parent_property(self) -> str:
-        """"""
         return _wrap(generated.smoke_ParentInterface.parent_property.fget(self), str)
 
     @parent_property.setter

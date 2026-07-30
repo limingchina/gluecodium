@@ -4,16 +4,9 @@ from smoke.commentsSomeEnum import commentsSomeEnum
 from smoke.commentsSomethingWrong import commentsSomethingWrong
 import typing
 
-from _native_base import _NativeBase
+class UnicodeComments:
 
-import generated
-
-
-class UnicodeComments(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    def some_method_with_all_comments(self, input: str) -> bool: ...
+    def some_method_with_all_comments(self, input: str) -> bool:
+        """Süßölgefäß"""
+        ...
 

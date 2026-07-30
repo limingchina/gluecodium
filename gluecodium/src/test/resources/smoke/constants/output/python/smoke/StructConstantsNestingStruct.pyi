@@ -3,31 +3,7 @@
 from smoke.StructConstantsSomeStruct import StructConstantsSomeStruct
 import typing
 
+class StructConstantsNestingStruct:
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class StructConstantsNestingStruct(_NativeBase):
-    """"""
-
-    def __init__(self, *args, **kwargs):
-        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructConstantsNestingStruct):
-            super().__init__(args[0])
-        else:
-            super().__init__(generated.smoke_StructConstantsNestingStruct(
-                *[_unwrap(arg) for arg in args],
-                **{k: _unwrap(v) for k, v in kwargs.items()}
-            ))
-
-
-    @property
-    def struct_field(self) -> StructConstantsSomeStruct:
-        """"""
-        return _wrap(self._native.struct_field, StructConstantsSomeStruct)
-    @struct_field.setter
-    def struct_field(self, value: StructConstantsSomeStruct):
-      self._native.struct_field = _unwrap(value, StructConstantsSomeStruct)
-
+    struct_field: StructConstantsSomeStruct
 

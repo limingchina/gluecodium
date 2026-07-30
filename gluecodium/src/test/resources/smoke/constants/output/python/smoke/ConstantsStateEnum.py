@@ -12,7 +12,6 @@ import generated
 
 
 class ConstantsStateEnum(Enum):
-    """"""
 
     OFF = generated.smoke_ConstantsStateEnum.OFF
     ON = generated.smoke_ConstantsStateEnum.ON

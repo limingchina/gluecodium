@@ -17,8 +17,6 @@ import generated
 
 
 class ParentInterfaceWithIncludes(generated.smoke_ParentInterfaceWithIncludes):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -34,16 +32,13 @@ class ParentInterfaceWithIncludes(generated.smoke_ParentInterfaceWithIncludes):
         self._native = self
 
     def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
-        """"""
         return _wrap(generated.smoke_ParentInterfaceWithIncludes.root_method(self, _unwrap(input1, IncludableStruct), _unwrap(input2, IncludableEnum)), IncludableClass)
 
     def not_in_java(self) -> ShouldNotInclude:
-        """"""
         return _wrap(generated.smoke_ParentInterfaceWithIncludes.not_in_java(self), ShouldNotInclude)
 
     @property
     def root_property(self) -> Callable[[int], None]:
-        """"""
         return _wrap(generated.smoke_ParentInterfaceWithIncludes.root_property.fget(self), Callable[[int], None])
 
     @root_property.setter
@@ -52,7 +47,6 @@ class ParentInterfaceWithIncludes(generated.smoke_ParentInterfaceWithIncludes):
 
     @property
     def not_in_java_property(self) -> ShouldNotInclude:
-        """"""
         return _wrap(generated.smoke_ParentInterfaceWithIncludes.not_in_java_property.fget(self), ShouldNotInclude)
 
     @not_in_java_property.setter

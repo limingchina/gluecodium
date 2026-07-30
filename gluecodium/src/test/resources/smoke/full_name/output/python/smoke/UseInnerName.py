@@ -13,12 +13,9 @@ import generated
 
 
 class UseInnerName(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def do_foo(self) -> OuterNameInnerName:
-        """"""
         return _wrap(self._native.do_foo(), OuterNameInnerName)
 

@@ -12,7 +12,6 @@ import generated
 
 
 class FieldConstructorsNullableTypesFoodType(Enum):
-    """"""
 
     VEGETABLES = generated.smoke_FieldConstructorsNullableTypesFoodType.VEGETABLES
     FRUITS = generated.smoke_FieldConstructorsNullableTypesFoodType.FRUITS

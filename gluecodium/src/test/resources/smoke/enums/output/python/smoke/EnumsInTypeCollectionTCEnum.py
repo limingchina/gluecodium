@@ -12,7 +12,6 @@ import generated
 
 
 class EnumsInTypeCollectionTCEnum(Enum):
-    """"""
 
     FIRST = generated.smoke_EnumsInTypeCollectionTCEnum.FIRST
     SECOND = generated.smoke_EnumsInTypeCollectionTCEnum.SECOND

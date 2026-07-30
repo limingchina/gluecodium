@@ -12,7 +12,6 @@ import generated
 
 
 class SomeTypeCollectionSomeTypeCollectionError(Enum):
-    """"""
 
     ERROR_A = generated.smoke_SomeTypeCollectionSomeTypeCollectionError.ERROR_A
     ERROR_B = generated.smoke_SomeTypeCollectionSomeTypeCollectionError.ERROR_B

@@ -3,29 +3,15 @@
 from fire.SomeStruct import SomeStruct
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class StructConstants(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
+class StructConstants:
 
     DUMMY = {42}
 
-
     DUMMY2 = {11}
-
 
     DUMMY3 = StructConstants.DUMMY2
 
-
     DUMMY4 = {-1}
-
 
     DUMMY4 = {-2}
 

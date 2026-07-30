@@ -12,7 +12,6 @@ import generated
 
 
 class CppRefReturnTypeInternalError(Enum):
-    """"""
 
     FOO = generated.smoke_CppRefReturnTypeInternalError.FOO
     BAR = generated.smoke_CppRefReturnTypeInternalError.BAR

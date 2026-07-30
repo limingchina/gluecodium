@@ -15,8 +15,6 @@ import generated
 
 
 class TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct):
             super().__init__(args[0])
@@ -26,17 +24,13 @@ class TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(_Nat
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def some_field1(self):
-        """"""
         return _wrap(self._native.some_field1, Optional[TypesWithDefaultsSomeImmutableStructWithDefaults])
-
 
 
     @property
     def some_field2(self):
-        """"""
         return _wrap(self._native.some_field2, Optional[TypesWithDefaultsImmutableStructWithCollections])
 
 

@@ -14,13 +14,10 @@ import generated
 
 
 class ClassWithInternalLambda(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def invoke_internal_lambda(lambda_: Callable[[str], bool], value: str) -> bool:
-        """"""
         return generated.smoke_ClassWithInternalLambda.invoke_internal_lambda(_unwrap(lambda_, Callable[[str], bool]), _unwrap(value, str))
 

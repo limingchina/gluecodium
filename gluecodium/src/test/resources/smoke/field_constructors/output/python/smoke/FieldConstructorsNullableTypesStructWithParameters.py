@@ -14,8 +14,6 @@ import generated
 
 
 class FieldConstructorsNullableTypesStructWithParameters(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_FieldConstructorsNullableTypesStructWithParameters):
             super().__init__(args[0])
@@ -25,10 +23,8 @@ class FieldConstructorsNullableTypesStructWithParameters(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def food_type(self) -> FieldConstructorsNullableTypesFoodType:
-        """"""
         return _wrap(self._native.food_type, FieldConstructorsNullableTypesFoodType)
     @food_type.setter
     def food_type(self, value: FieldConstructorsNullableTypesFoodType):

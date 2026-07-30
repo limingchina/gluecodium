@@ -2,20 +2,13 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class SkippedOverloads(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class SkippedOverloads:
 
     @staticmethod
-    def make() -> SkippedOverloads: ...
+    def make() -> SkippedOverloads:
+        ...
 
     @staticmethod
-    def make_for_dart(input: str) -> SkippedOverloads: ...
+    def make_for_dart(input: str) -> SkippedOverloads:
+        ...
 

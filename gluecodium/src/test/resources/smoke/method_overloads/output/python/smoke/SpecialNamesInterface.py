@@ -13,8 +13,6 @@ import generated
 
 
 class SpecialNamesInterface(generated.smoke_SpecialNamesInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -30,6 +28,5 @@ class SpecialNamesInterface(generated.smoke_SpecialNamesInterface):
         self._native = self
 
     def dispatch(self, callback: Callable[[], None]):
-        """"""
         return _wrap(generated.smoke_SpecialNamesInterface.dispatch(self, _unwrap(callback, Callable[[], None])), None)
 

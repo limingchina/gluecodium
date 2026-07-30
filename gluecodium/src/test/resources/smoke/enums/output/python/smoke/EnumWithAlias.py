@@ -12,7 +12,6 @@ import generated
 
 
 class EnumWithAlias(Enum):
-    """"""
 
     ONE = generated.smoke_EnumWithAlias.ONE
     TWO = generated.smoke_EnumWithAlias.TWO

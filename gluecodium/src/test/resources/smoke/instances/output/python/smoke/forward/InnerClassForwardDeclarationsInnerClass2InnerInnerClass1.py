@@ -13,12 +13,9 @@ import generated
 
 
 class InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def foo(self) -> InnerClassForwardDeclarationsInnerClass2InnerInnerClass2:
-        """"""
         return _wrap(self._native.foo(), InnerClassForwardDeclarationsInnerClass2InnerInnerClass2)
 

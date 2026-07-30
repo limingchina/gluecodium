@@ -13,8 +13,6 @@ import generated
 
 
 class StructWithMap(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructWithMap):
             super().__init__(args[0])
@@ -24,10 +22,8 @@ class StructWithMap(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def field(self) -> dict[str, StructWithMap]:
-        """"""
         return _wrap(self._native.field, dict[str, StructWithMap])
     @field.setter
     def field(self, value: dict[str, StructWithMap]):

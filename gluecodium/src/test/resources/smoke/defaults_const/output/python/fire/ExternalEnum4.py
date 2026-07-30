@@ -12,7 +12,6 @@ import generated
 
 
 class ExternalEnum4(Enum):
-    """"""
 
     ENABLED = generated.fire_ExternalEnum4.ENABLED
     DISABLED = generated.fire_ExternalEnum4.DISABLED

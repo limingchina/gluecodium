@@ -2,17 +2,9 @@
 
 import typing
 
-from _native_base import _NativeBase
-
-import generated
-
-
-class Basic(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
+class Basic:
 
     @staticmethod
-    def basic_method(input_string: str) -> str: ...
+    def basic_method(input_string: str) -> str:
+        ...
 

@@ -12,7 +12,6 @@ import generated
 
 
 class DartSeason(Enum):
-    """"""
 
     WINTER = generated.smoke_DartSeason.WINTER
     SPRING = generated.smoke_DartSeason.SPRING

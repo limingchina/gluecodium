@@ -12,7 +12,6 @@ import generated
 
 
 class OuterStructInnerEnum(Enum):
-    """"""
 
     FOO = generated.smoke_OuterStructInnerEnum.FOO
     BAR = generated.smoke_OuterStructInnerEnum.BAR

@@ -3,20 +3,11 @@
 import datetime
 import typing
 
-from _native_base import _NativeBase
+class DurationOverloads:
 
-import generated
+    def duration_function(self, input: datetime.timedelta) -> str:
+        ...
 
-
-class DurationOverloads(_NativeBase):
-    """"""
-
-    def __init__(self, native):
-        super().__init__(native)
-
-    @typing.overload
-    def duration_function(self, input: datetime.timedelta) -> str: ...
-
-    @typing.overload
-    def duration_function(self, input: str) -> str: ...
+    def duration_function(self, input: str) -> str:
+        ...
 

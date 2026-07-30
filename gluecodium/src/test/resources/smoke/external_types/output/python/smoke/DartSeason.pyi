@@ -4,18 +4,11 @@ import typing
 
 from enum import Enum
 
-import generated
-
 
 class DartSeason(Enum):
-    """"""
 
-    WINTER = generated.smoke_DartSeason.WINTER
-    SPRING = generated.smoke_DartSeason.SPRING
-    SUMMER = generated.smoke_DartSeason.SUMMER
-    AUTUMN = generated.smoke_DartSeason.AUTUMN
-
-    @property
-    def _native(self):
-        return self.value
+    WINTER = 0
+    SPRING = 1
+    SUMMER = 2
+    AUTUMN = 3
 

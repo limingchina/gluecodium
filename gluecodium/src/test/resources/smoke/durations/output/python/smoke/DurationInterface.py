@@ -12,8 +12,6 @@ import generated
 
 
 class DurationInterface(generated.smoke_DurationInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -29,6 +27,5 @@ class DurationInterface(generated.smoke_DurationInterface):
         self._native = self
 
     def duration_function(self, input: datetime.timedelta) -> str:
-        """"""
         return _wrap(generated.smoke_DurationInterface.duration_function(self, _unwrap(input, datetime.timedelta)), str)
 

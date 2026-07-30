@@ -11,8 +11,6 @@ import generated
 
 
 class SimpleInterface(generated.smoke_SimpleInterface):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -28,10 +26,8 @@ class SimpleInterface(generated.smoke_SimpleInterface):
         self._native = self
 
     def get_string_value(self) -> str:
-        """"""
         return _wrap(generated.smoke_SimpleInterface.get_string_value(self), str)
 
     def use_simple_interface(self, input: SimpleInterface) -> SimpleInterface:
-        """"""
         return _wrap(generated.smoke_SimpleInterface.use_simple_interface(self, _unwrap(input, SimpleInterface)), SimpleInterface)
 

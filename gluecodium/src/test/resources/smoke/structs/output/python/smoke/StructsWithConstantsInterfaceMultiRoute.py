@@ -14,8 +14,6 @@ import generated
 
 
 class StructsWithConstantsInterfaceMultiRoute(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsWithConstantsInterfaceMultiRoute):
             super().__init__(args[0])
@@ -25,29 +23,23 @@ class StructsWithConstantsInterfaceMultiRoute(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     @property
     def descriptions(self) -> list[str]:
-        """"""
         return _wrap(self._native.descriptions, list[str])
     @descriptions.setter
     def descriptions(self, value: list[str]):
       self._native.descriptions = _unwrap(value, list[str])
 
 
-
     @property
     def type(self) -> RouteUtilsRouteType:
-        """"""
         return _wrap(self._native.type, RouteUtilsRouteType)
     @type.setter
     def type(self, value: RouteUtilsRouteType):
       self._native.type = _unwrap(value, RouteUtilsRouteType)
 
 
-
     DEFAULT_DESCRIPTION = "Foo"
-
 
     DEFAULT_TYPE = RouteUtilsRouteType.NONE
 

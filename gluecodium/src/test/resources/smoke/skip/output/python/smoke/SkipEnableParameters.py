@@ -12,12 +12,9 @@ import generated
 
 
 class SkipEnableParameters(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def do_something(self, input: str):
-        """"""
         return _wrap(self._native.do_something(_unwrap(input, str)), None)
 

@@ -14,20 +14,16 @@ import generated
 
 
 class Structs(_NativeBase):
-    """"""
-
     def __init__(self, native):
         super().__init__(native)
 
     @staticmethod
     def get_external_struct() -> StructsExternalStruct:
-        """"""
         native_result = generated.smoke_Structs.get_external_struct()
         return _get_or_create_wrapper(native_result, StructsExternalStruct)
 
     @staticmethod
     def get_another_external_struct() -> StructsAnotherExternalStruct:
-        """"""
         native_result = generated.smoke_Structs.get_another_external_struct()
         return _get_or_create_wrapper(native_result, StructsAnotherExternalStruct)
 

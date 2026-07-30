@@ -12,8 +12,6 @@ import generated
 
 
 class FirstParentIsNarrowClass(generated.smoke_FirstParentIsNarrowClass):
-    """"""
-
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
@@ -28,12 +26,10 @@ class FirstParentIsNarrowClass(generated.smoke_FirstParentIsNarrowClass):
         self._native = self
 
     def child_function(self):
-        """"""
         return _wrap(generated.smoke_FirstParentIsNarrowClass.child_function(self), None)
 
     @property
     def child_property(self) -> str:
-        """"""
         return _wrap(generated.smoke_FirstParentIsNarrowClass.child_property.fget(self), str)
 
     @child_property.setter

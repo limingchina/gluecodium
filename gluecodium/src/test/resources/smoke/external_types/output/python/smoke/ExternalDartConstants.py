@@ -14,8 +14,6 @@ import generated
 
 
 class ExternalDartConstants(_NativeBase):
-    """"""
-
     def __init__(self, *args, **kwargs):
         if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ExternalDartConstants):
             super().__init__(args[0])
@@ -25,9 +23,7 @@ class ExternalDartConstants(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
     SMALL = {0, 0, 1, 1}
-
 
     BIG = {0, 0, 10, 10}
 
