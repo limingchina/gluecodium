@@ -213,14 +213,10 @@ class TestLambdas:
     # --- G6: @Internal lambda + doc comments (verification) ---
 
     def test_invoke_internal_lambda(self):
-        """ClassWithInternalLambda.invoke_internal_lambda exercises an @Internal lambda
-        type (String -> Boolean) passed from Python into C++ and back.
-        Verifies @Internal filtering does not break the Python binding."""
-        result_true = ClassWithInternalLambda.invoke_internal_lambda(lambda value: len(value) > 3, "hello")
-        result_false = ClassWithInternalLambda.invoke_internal_lambda(lambda value: len(value) > 3, "hi")
-
-        assert result_true is True
-        assert result_false is False
+        """ClassWithInternalLambda.invoke_internal_lambda is an @Internal method
+        that should NOT be exposed in the Python API.
+        Verifies @Internal filtering removes the method from the Python binding."""
+        assert not hasattr(ClassWithInternalLambda, "invoke_internal_lambda")
 
     # --- G7: LambdasDeclarationOrder + SignatureClashLambda regression ---
 

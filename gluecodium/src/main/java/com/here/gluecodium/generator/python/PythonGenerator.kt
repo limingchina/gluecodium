@@ -23,6 +23,7 @@ import com.here.gluecodium.cli.GluecodiumExecutionException
 import com.here.gluecodium.common.LimeLogger
 import com.here.gluecodium.common.LimeModelFilter
 import com.here.gluecodium.common.LimeModelSkipPredicates
+import com.here.gluecodium.generator.common.CommonGeneratorPredicates
 import com.here.gluecodium.generator.common.GeneratedFile
 import com.here.gluecodium.generator.common.Generator
 import com.here.gluecodium.generator.common.GeneratorOptions
@@ -38,6 +39,7 @@ import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
 import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
+import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeGenericType
@@ -117,9 +119,16 @@ internal class PythonGenerator : Generator {
                 LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = true) &&
                     !isCppSkipped(it)
             }
+        // Filter the model for the actual Python output. Unlike the pybind11 model, this one
+        // also drops @Internal elements: Python has no concept of "internal" visibility, so
+        // internal elements are suppressed entirely from the Python wrapper (no Python class,
+        // no method/property/field). They remain in the pybind11 model above so the C++-facing
+        // trampoline can still override every pure-virtual member (including internal ones)
+        // to remain a valid concrete C++ type.
         val pythonFilteredModel =
             LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false)
+                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false) &&
+                    !CommonGeneratorPredicates.isInternal(it, PYTHON)
             }
 
         pythonNameResolver =
@@ -152,11 +161,18 @@ internal class PythonGenerator : Generator {
                 "C++" to pybind11NameResolver,
             )
         val pythonTypes = getPythonTypes(pythonFilteredModel.topElements)
-        val pybind11Types = getPythonTypes(pybind11FilteredModel.topElements)
+        // Filter out internal types from pybind11 file generation. Internal types are kept in
+        // the pybind11FilteredModel (for reference resolution and trampoline), but no pybind11
+        // binding file should be generated for them. This includes types nested inside an
+        // internal container (e.g. `OuterClassWithInternalAttribute.StructNestedInInternalClass`).
+        val pybind11Types =
+            getPythonTypes(pybind11FilteredModel.topElements)
+                .filter { !isInternalOrNestedInternal(it, pybind11FilteredModel.referenceMap) }
         val predicates =
             PythonGeneratorPredicates(
                 limeOverloadsValidatorSignatureResolver(pybind11FilteredModel),
                 pythonFilteredModel.referenceMap,
+                pybind11FilteredModel.referenceMap,
                 pybind11NameResolver,
                 pythonNameResolver,
                 pythonTypes.filterIsInstance<LimeEnumeration>().map { it.fullName }.toSet(),
@@ -375,6 +391,7 @@ internal class PythonGenerator : Generator {
         val allBoundTypes =
             getPythonTypes(pybind11FilteredModel.topElements)
                 .filter { it !is com.here.gluecodium.model.lime.LimeTypeAlias && it !is com.here.gluecodium.model.lime.LimeLambda }
+                .filter { !isInternalOrNestedInternal(it, pybind11FilteredModel.referenceMap) }
         val typeNameToParents =
             allBoundTypes.associate { type ->
                 val parents =
@@ -491,10 +508,10 @@ internal class PythonGenerator : Generator {
             is LimeTypeAlias -> containsLambda(limeElement.typeRef)
             is LimeStruct ->
                 limeElement.fields.any { containsLambda(it.typeRef) } ||
-                limeElement.functions.any { function ->
-                    function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)
-                } ||
-                limeElement.properties.any { containsLambda(it.typeRef) }
+                    limeElement.functions.any { function ->
+                        function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)
+                    } ||
+                    limeElement.properties.any { containsLambda(it.typeRef) }
             is com.here.gluecodium.model.lime.LimeContainer ->
                 limeElement.functions.any { function ->
                     function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)
@@ -546,6 +563,27 @@ internal class PythonGenerator : Generator {
     private fun isCppSkipped(element: LimeNamedElement) =
         (element is LimeFieldConstructor || element is LimeConstant) &&
             element.attributes.have(LimeAttributeType.CPP, SKIP)
+
+    /**
+     * Checks whether a type is `@Internal` for Python, or is nested (directly or transitively)
+     * inside a container that is `@Internal` for Python. The latter check walks the parent chain
+     * via the reference map because [LimeTypeHelper.getAllTypes] flattens nested types into
+     * top-level entries whose own `@Internal` attribute may not be set even though their
+     * enclosing container is internal.
+     *
+     * Uses [LimePath.tailParents] (a finite list) instead of `generateSequence(..., { it.parent })`
+     * because `LimePath.parent` is idempotent for an empty tail — calling `.parent` on a root
+     * path returns the same path, so `generateSequence` would loop forever.
+     */
+    private fun isInternalOrNestedInternal(
+        element: LimeNamedElement,
+        referenceMap: Map<String, LimeElement>,
+    ): Boolean {
+        if (CommonGeneratorPredicates.isInternal(element, PYTHON)) return true
+        return element.path.tailParents
+            .mapNotNull { referenceMap[it.toString()] as? LimeNamedElement }
+            .any { CommonGeneratorPredicates.isInternal(it, PYTHON) }
+    }
 
     companion object {
         private val logger = Logger.getLogger(PythonGenerator::class.java.name)

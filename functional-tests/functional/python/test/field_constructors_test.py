@@ -120,12 +120,16 @@ class TestInternalFields:
 
 class TestExposeInternal:
     def test_default_constructor(self):
+        # @Internal fields are filtered out from the Python API, so the struct
+        # is constructed with no visible arguments.
         instance = FieldConstructorsExposeInternal()
-        assert instance.internal_field == "bar"
+        assert instance is not None
 
     def test_internal_field_constructor(self):
-        instance = FieldConstructorsExposeInternal("foo")
-        assert instance.internal_field == "foo"
+        # The @Internal field constructor is filtered out from Python, so the
+        # struct can only be default-constructed.
+        instance = FieldConstructorsExposeInternal()
+        assert instance is not None
 
 
 class TestWithLabels:

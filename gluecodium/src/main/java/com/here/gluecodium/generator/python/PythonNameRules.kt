@@ -70,8 +70,7 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
      * but Python's grammar treats them as unconditioned keywords that cannot be used as
      * parameter or variable names.
      */
-    private fun sanitizeKeyword(name: String) =
-        if (name in PYTHON_KEYWORDS) name + "_" else name
+    private fun sanitizeKeyword(name: String) = if (name in PYTHON_KEYWORDS) name + "_" else name
 
     companion object {
         val PYTHON_TARGET_DIRECTORY = "python" + File.separator
@@ -79,12 +78,13 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
         val MODULE_INIT_FILE = PYBIND11_TARGET_DIRECTORY + "_module_init.cpp"
 
         /** Python 3 hard keywords that cannot be used as identifiers. */
-        private val PYTHON_KEYWORDS = setOf(
-            "False", "None", "True", "and", "as", "assert", "async", "await",
-            "break", "class", "continue", "def", "del", "elif", "else", "except",
-            "finally", "for", "from", "global", "if", "import", "in", "is",
-            "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try",
-            "while", "with", "yield",
-        )
+        private val PYTHON_KEYWORDS =
+            setOf(
+                "False", "None", "True", "and", "as", "assert", "async", "await",
+                "break", "class", "continue", "def", "del", "elif", "else", "except",
+                "finally", "for", "from", "global", "if", "import", "in", "is",
+                "lambda", "nonlocal", "not", "or", "pass", "raise", "return", "try",
+                "while", "with", "yield",
+            )
     }
 }
