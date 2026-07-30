@@ -40,6 +40,10 @@ import com.here.gluecodium.model.lime.LimeTypeRef
 internal class PythonGeneratorPredicates(
     private val signatureResolver: LimeSignatureResolver,
     private val limeReferenceMap: Map<String, LimeElement>,
+    // The pybind11-filtered reference map (retains @Internal elements). Used by
+    // `isNestedInternal` so it can walk up the parent chain even when an internal
+    // ancestor has been filtered out of the python-filtered `limeReferenceMap`.
+    private val pybind11ReferenceMap: Map<String, LimeElement>,
     private val pybind11NameResolver: Pybind11NameResolver,
     private val pythonNameResolver: PythonNameResolver,
     private val standaloneEnums: Set<String>,
@@ -127,7 +131,7 @@ internal class PythonGeneratorPredicates(
             "isNestedInternal" to { limeElement: Any ->
                 limeElement is LimeNamedElement &&
                     generateSequence(limeElement) {
-                        limeReferenceMap[it.path.parent.toString()] as? LimeNamedElement
+                        pybind11ReferenceMap[it.path.parent.toString()] as? LimeNamedElement
                     }.any { CommonGeneratorPredicates.isInternal(it, PYTHON) }
             },
             "isStandaloneEnum" to { limeElement: Any ->
@@ -455,12 +459,28 @@ internal class PythonGeneratorPredicates(
                     else -> limeElement.uninitializedFields.size < limeElement.fields.size
                 }
             },
+            // Whether a struct has any @Internal fields (regardless of default value).
+            // Used by the struct init template to decide whether to use a lambda-based
+            // constructor for the all-fields case.
+            "hasInternalFields" to { limeElement: Any ->
+                limeElement is LimeStruct &&
+                    limeElement.fields.any { CommonGeneratorPredicates.isInternal(it, PYTHON) }
+            },
+            // Whether a struct has any @Internal fields that are also uninitialized (no default
+            // value). When true, the pybind11 struct init template must use a lambda-based
+            // constructor that default-constructs those internal fields instead of exposing
+            // them as constructor parameters.
+            "hasInternalUninitializedFields" to { limeElement: Any ->
+                limeElement is LimeStruct &&
+                    limeElement.uninitializedFields.any { CommonGeneratorPredicates.isInternal(it, PYTHON) }
+            },
             // Whether a struct needs a `py::init<...>()` taking every field. True when the struct
             // has no explicit field constructors (so the implicit all-fields constructor is the
             // only one) or, for immutable structs, when no all-fields field constructor is declared.
             "needsAllFieldsConstructor" to { limeElement: Any ->
                 when {
                     limeElement !is com.here.gluecodium.model.lime.LimeStruct -> false
+                    limeElement.fields.isEmpty() -> false
                     limeElement.fieldConstructors.isEmpty() -> true
                     com.here.gluecodium.generator.common.CommonGeneratorPredicates
                         .hasImmutableFields(limeElement) -> limeElement.allFieldsConstructor == null
@@ -514,10 +534,11 @@ internal class PythonGeneratorPredicates(
     // direction.
     private fun hasAncestorReference(descendant: LimeNamedElement): Boolean {
         return when (descendant) {
-            is LimeStruct -> descendant.fields.any { field ->
-                val fieldType = field.typeRef.type.actualType as? LimeNamedElement
-                fieldType != null && isAncestorOf(fieldType, descendant)
-            }
+            is LimeStruct ->
+                descendant.fields.any { field ->
+                    val fieldType = field.typeRef.type.actualType as? LimeNamedElement
+                    fieldType != null && isAncestorOf(fieldType, descendant)
+                }
             is com.here.gluecodium.model.lime.LimeContainerWithInheritance ->
                 descendant.properties.any { prop ->
                     val propType = prop.typeRef.type.actualType as? LimeNamedElement

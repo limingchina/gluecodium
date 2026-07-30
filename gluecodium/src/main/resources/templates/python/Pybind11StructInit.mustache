@@ -19,16 +19,33 @@
   !
   !}}
 {{! pybind11 struct constructors (py::init). Emitted by the struct binding. }}
+{{! Internal (@Internal) fields are filtered out from constructor signatures so they
+    are not exposed to Python users. When a struct has internal fields that are also
+    uninitialized (no default value), a lambda-based constructor is used to call the
+    C++ constructor with default-constructed values for those internal fields, since
+    the C++ constructor signature includes them but pybind11 must not expose them. }}
 {{#ifPredicate model "hasDefaultConstructor"}}
         .def(py::init<>())
 {{/ifPredicate}}
 {{#ifPredicate model "hasPartialDefaults"}}
-        .def(py::init<{{#uninitializedFields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/uninitializedFields}}>(){{#uninitializedFields}}, py::arg("{{resolveName}}"){{/uninitializedFields}})
+{{#ifPredicate model "hasInternalUninitializedFields"}}
+        .def(py::init([]({{#filter uninitializedFields predicate="isPublic"}}{{#this}}const {{resolveName typeRef "Pybind11"}}& {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}) {
+            return {{resolveName model "Pybind11"}}({{#uninitializedFields}}{{#ifPredicate "isSkippedForPython"}}{{resolveName typeRef "Pybind11"}}{}{{/ifPredicate}}{{#unlessPredicate "isSkippedForPython"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/uninitializedFields}});
+        }){{#filter uninitializedFields predicate="isPublic"}}{{#this}}, py::arg("{{resolveName}}"){{/this}}{{/filter}})
+{{/ifPredicate}}
+{{#unlessPredicate model "hasInternalUninitializedFields"}}
+        .def(py::init<{{#filter uninitializedFields predicate="isPublic"}}{{#this}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}>(){{#filter uninitializedFields predicate="isPublic"}}{{#this}}, py::arg("{{resolveName}}"){{/this}}{{/filter}})
+{{/unlessPredicate}}
 {{/ifPredicate}}
 {{#ifPredicate model "needsAllFieldsConstructor"}}
-{{#fields}}
+{{#ifPredicate model "hasInternalFields"}}
+        .def(py::init([]({{#filter fields predicate="isPublic"}}{{#this}}const {{resolveName typeRef "Pybind11"}}& {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}) {
+            return {{resolveName model "Pybind11"}}({{#fields}}{{#ifPredicate "isSkippedForPython"}}{{resolveName typeRef "Pybind11"}}{}{{/ifPredicate}}{{#unlessPredicate "isSkippedForPython"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/fields}});
+        }){{#filter fields predicate="isPublic"}}{{#this}}, py::arg("{{resolveName}}"){{/this}}{{/filter}})
+{{/ifPredicate}}
+{{#unlessPredicate model "hasInternalFields"}}
         .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}>(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
-{{/fields}}
+{{/unlessPredicate}}
 {{/ifPredicate}}
 {{#fieldConstructors}}
 {{#ifPredicate "isEmptyFieldConstructor"}}
