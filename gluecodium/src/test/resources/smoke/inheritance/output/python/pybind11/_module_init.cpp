@@ -36,8 +36,6 @@ void register_smoke_GrandChildInterface(pybind11::module_& module);
 void register_smoke_IncludableClass(pybind11::module_& module);
 void register_smoke_IncludableEnum(pybind11::module_& module);
 void register_smoke_IncludableStruct(pybind11::module_& module);
-void register_smoke_InternalParent(pybind11::module_& module);
-void register_smoke_InternalChild(pybind11::module_& module);
 void register_smoke_ShouldNotInclude(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
@@ -72,7 +70,5 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_IncludableClass(m);
     register_smoke_IncludableEnum(m);
     register_smoke_IncludableStruct(m);
-    register_smoke_InternalParent(m);
-    register_smoke_InternalChild(m);
     register_smoke_ShouldNotInclude(m);
 }

@@ -24,7 +24,6 @@ void register_smoke_FieldConstructorsSkipCpp(py::module_& module) {
         .def_readwrite("int_field", &FieldConstructorsSkipCpp::int_field)
         .def(py::init<>())
         .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
-        .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
         ;
 }
 

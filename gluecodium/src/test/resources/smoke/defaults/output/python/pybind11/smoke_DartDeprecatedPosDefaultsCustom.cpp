@@ -25,7 +25,6 @@ void register_smoke_DartDeprecatedPosDefaultsCustom(py::module_& module) {
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
-        .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         .def_static("custom", &DartDeprecatedPosDefaultsCustom::custom)
         ;
 }

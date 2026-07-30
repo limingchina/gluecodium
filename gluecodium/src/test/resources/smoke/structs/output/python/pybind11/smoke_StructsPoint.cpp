@@ -22,7 +22,6 @@ void register_smoke_StructsPoint(py::module_& module) {
         .def_readwrite("y", &Point::y)
         .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
-        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
         .def_static("from_polar", &Point::from_polar, py::arg("phi"), py::arg("r"))
         ;
 }

@@ -25,8 +25,6 @@ void register_smoke_DeprecatedFields(py::module_& module) {
         .def(py::init<>())
         .def(py::init<::std::string, ::std::string>(), py::arg("normal_field1"), py::arg("normal_field2"))
         .def(py::init<::std::string, ::std::string, ::std::string>(), py::arg("normal_field1"), py::arg("deprecated_field"), py::arg("normal_field2"))
-        .def(py::init<::std::string, ::std::string, ::std::string>(), py::arg("normal_field1"), py::arg("deprecated_field"), py::arg("normal_field2"))
-        .def(py::init<::std::string, ::std::string, ::std::string>(), py::arg("normal_field1"), py::arg("deprecated_field"), py::arg("normal_field2"))
         ;
 }
 

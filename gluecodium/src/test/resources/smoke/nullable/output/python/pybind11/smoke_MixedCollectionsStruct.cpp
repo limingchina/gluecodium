@@ -27,7 +27,6 @@ void register_smoke_MixedCollectionsStruct(py::module_& module) {
         .def_readwrite("dates", &MixedCollectionsStruct::dates)
         .def(py::init<>())
         .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("almost_dates"), py::arg("dates"))
-        .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("almost_dates"), py::arg("dates"))
         ;
 }
 

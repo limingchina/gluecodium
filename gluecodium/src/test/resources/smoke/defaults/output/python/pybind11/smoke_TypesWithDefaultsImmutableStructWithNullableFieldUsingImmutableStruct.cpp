@@ -23,7 +23,6 @@ void register_smoke_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmuta
         .def_readonly("some_field2", &ImmutableStructWithNullableFieldUsingImmutableStruct::some_field2)
         .def(py::init<>())
         .def(py::init<std::optional< ::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults >, std::optional< ::smoke::TypesWithDefaults::ImmutableStructWithCollections >>(), py::arg("some_field1"), py::arg("some_field2"))
-        .def(py::init<std::optional< ::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults >, std::optional< ::smoke::TypesWithDefaults::ImmutableStructWithCollections >>(), py::arg("some_field1"), py::arg("some_field2"))
         ;
 }
 

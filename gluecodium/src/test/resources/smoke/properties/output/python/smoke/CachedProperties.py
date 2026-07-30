@@ -23,21 +23,9 @@ class CachedProperties(_NativeBase):
         return _wrap(self._native.cached_property, list[str])
 
 
-    @property
-    def internal_cached_property(self) -> list[str]:
-        """"""
-        return _wrap(self._native.internal_cached_property, list[str])
-
-
 
     @staticmethod
     def static_cached_property() -> bytes:
         """"""
         return _wrap(generated.smoke_CachedProperties.static_cached_property(), bytes)
-
-
-    @staticmethod
-    def internal_static_cached_property() -> bytes:
-        """"""
-        return _wrap(generated.smoke_CachedProperties.internal_static_cached_property(), bytes)
 

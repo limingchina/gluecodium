@@ -22,7 +22,6 @@ void register_smoke_StructsLine(py::module_& module) {
         .def_readwrite("b", &Line::b)
         .def(py::init<>())
         .def(py::init<::smoke::Structs::Point, ::smoke::Structs::Point>(), py::arg("a"), py::arg("b"))
-        .def(py::init<::smoke::Structs::Point, ::smoke::Structs::Point>(), py::arg("a"), py::arg("b"))
         ;
 }
 

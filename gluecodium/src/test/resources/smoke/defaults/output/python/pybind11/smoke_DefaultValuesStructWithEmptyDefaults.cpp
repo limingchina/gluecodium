@@ -33,10 +33,6 @@ void register_smoke_DefaultValuesStructWithEmptyDefaults(py::module_& module) {
         .def_readwrite("set_type_field", &StructWithEmptyDefaults::set_type_field)
         .def(py::init<>())
         .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_map< uint32_t, ::std::string >, ::smoke::DefaultValues::StructWithDefaults, ::std::unordered_set< ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("map_field"), py::arg("struct_field"), py::arg("set_type_field"))
-        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_map< uint32_t, ::std::string >, ::smoke::DefaultValues::StructWithDefaults, ::std::unordered_set< ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("map_field"), py::arg("struct_field"), py::arg("set_type_field"))
-        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_map< uint32_t, ::std::string >, ::smoke::DefaultValues::StructWithDefaults, ::std::unordered_set< ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("map_field"), py::arg("struct_field"), py::arg("set_type_field"))
-        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_map< uint32_t, ::std::string >, ::smoke::DefaultValues::StructWithDefaults, ::std::unordered_set< ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("map_field"), py::arg("struct_field"), py::arg("set_type_field"))
-        .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_map< uint32_t, ::std::string >, ::smoke::DefaultValues::StructWithDefaults, ::std::unordered_set< ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("map_field"), py::arg("struct_field"), py::arg("set_type_field"))
         ;
 }
 

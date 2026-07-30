@@ -10,7 +10,6 @@
 // `void register_<Name>(pybind11::module_&)` from its own translation unit; this module entry
 // point aggregates them into a single CPython extension module. The `pybind11::` prefix is used
 // here because the `py` namespace alias is introduced further below (after these declarations).
-void register_smoke_DartInternalClassWithInternalTypedef(pybind11::module_& module);
 void register_smoke_SomeDartClassThatUsesInternal(pybind11::module_& module);
 void register_smoke_SomeDartStructWithTypedefField(pybind11::module_& module);
 void register_smoke_TypeCollection(pybind11::module_& module);
@@ -26,7 +25,6 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
-    register_smoke_DartInternalClassWithInternalTypedef(m);
     register_smoke_SomeDartClassThatUsesInternal(m);
     register_smoke_SomeDartStructWithTypedefField(m);
     register_smoke_TypeCollection(m);

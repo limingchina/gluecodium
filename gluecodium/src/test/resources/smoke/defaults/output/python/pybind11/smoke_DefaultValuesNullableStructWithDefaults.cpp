@@ -28,10 +28,6 @@ void register_smoke_DefaultValuesNullableStructWithDefaults(py::module_& module)
         .def_readwrite("string_field", &NullableStructWithDefaults::string_field)
         .def(py::init<>())
         .def(py::init<std::optional< int32_t >, std::optional< uint32_t >, std::optional< float >, std::optional< bool >, std::optional< ::std::string >>(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<std::optional< int32_t >, std::optional< uint32_t >, std::optional< float >, std::optional< bool >, std::optional< ::std::string >>(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<std::optional< int32_t >, std::optional< uint32_t >, std::optional< float >, std::optional< bool >, std::optional< ::std::string >>(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<std::optional< int32_t >, std::optional< uint32_t >, std::optional< float >, std::optional< bool >, std::optional< ::std::string >>(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<std::optional< int32_t >, std::optional< uint32_t >, std::optional< float >, std::optional< bool >, std::optional< ::std::string >>(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("bool_field"), py::arg("string_field"))
         ;
 }
 

@@ -5,7 +5,6 @@ from __future__ import annotations
 from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
-from smoke.PublicClassInternalStruct import PublicClassInternalStruct
 
 
 from _native_base import _NativeBase
@@ -24,14 +23,4 @@ class PublicClassPublicStruct(_NativeBase):
                 *[_unwrap(arg) for arg in args],
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
-
-
-    @property
-    def internal_field(self) -> PublicClassInternalStruct:
-        """"""
-        return _wrap(self._native.internal_field, PublicClassInternalStruct)
-    @internal_field.setter
-    def internal_field(self, value: PublicClassInternalStruct):
-      self._native.internal_field = _unwrap(value, PublicClassInternalStruct)
-
 

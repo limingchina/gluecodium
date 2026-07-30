@@ -22,7 +22,6 @@ void register_smoke_TypeCollectionLine(py::module_& module) {
         .def_readwrite("b", &Line::b)
         .def(py::init<>())
         .def(py::init<::smoke::TypeCollection::Point, ::smoke::TypeCollection::Point>(), py::arg("a"), py::arg("b"))
-        .def(py::init<::smoke::TypeCollection::Point, ::smoke::TypeCollection::Point>(), py::arg("a"), py::arg("b"))
         ;
 }
 

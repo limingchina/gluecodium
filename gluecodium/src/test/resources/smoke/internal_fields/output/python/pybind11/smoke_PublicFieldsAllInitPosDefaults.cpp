@@ -20,10 +20,10 @@ using PublicFieldsAllInitPosDefaults = ::smoke::PublicFieldsAllInitPosDefaults;
 void register_smoke_PublicFieldsAllInitPosDefaults(py::module_& module) {
     py::class_<PublicFieldsAllInitPosDefaults>(module, "smoke_PublicFieldsAllInitPosDefaults")
         .def_readwrite("public_field", &PublicFieldsAllInitPosDefaults::public_field)
-        .def_readwrite("internal_field", &PublicFieldsAllInitPosDefaults::internal_field)
         .def(py::init<>())
-        .def(py::init<::std::string, ::std::string>(), py::arg("public_field"), py::arg("internal_field"))
-        .def(py::init<::std::string, ::std::string>(), py::arg("public_field"), py::arg("internal_field"))
+        .def(py::init([](const ::std::string& public_field) {
+            return PublicFieldsAllInitPosDefaults(public_field, ::std::string{});
+        }), py::arg("public_field"))
         ;
 }
 

@@ -19,11 +19,10 @@ using DartPublicElementsSkipped = ::smoke::DartPublicElementsSkipped;
 void register_smoke_DartPublicElementsSkipped(py::module_& module) {
     py::class_<DartPublicElementsSkipped>(module, "smoke_DartPublicElementsSkipped")
         .def_readwrite("bool_field", &DartPublicElementsSkipped::bool_field)
-        .def_readwrite("string_field", &DartPublicElementsSkipped::string_field)
         .def(py::init<>())
-        .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
-        .def("foo", &DartPublicElementsSkipped::foo)
+        .def(py::init([](const bool& bool_field) {
+            return DartPublicElementsSkipped(bool_field, ::std::string{});
+        }), py::arg("bool_field"))
         ;
 }
 

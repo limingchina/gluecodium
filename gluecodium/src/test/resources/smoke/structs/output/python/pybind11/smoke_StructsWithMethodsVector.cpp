@@ -24,7 +24,6 @@ void register_smoke_StructsWithMethodsVector(py::module_& module) {
         .def_readwrite("y", &Vector::y)
         .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
-        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
         .def("distance_to", &Vector::distance_to, py::arg("other"))
         .def("add", &Vector::add, py::arg("other"))
         .def_static("validate", &Vector::validate, py::arg("x"), py::arg("y"))

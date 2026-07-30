@@ -22,7 +22,6 @@ void register_smoke_FreePoint(py::module_& module) {
         .def_readwrite("y", &FreePoint::y)
         .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
-        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
         .def("flip", &FreePoint::flip)
         ;
 }

@@ -44,7 +44,6 @@ void register_smoke_ExcludedCommentsOnlySomethingWrong(pybind11::module_& module
 void register_smoke_ExcludedCommentsSomeEnum(pybind11::module_& module);
 void register_smoke_ExcludedCommentsSomeStruct(pybind11::module_& module);
 void register_smoke_ExcludedCommentsSomethingWrong(pybind11::module_& module);
-void register_smoke_InternalClassWithComments(pybind11::module_& module);
 void register_smoke_LambdaComments(pybind11::module_& module);
 void register_smoke_LongComments(pybind11::module_& module);
 void register_smoke_MapScene(pybind11::module_& module);
@@ -99,7 +98,6 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_ExcludedCommentsSomeEnum(m);
     register_smoke_ExcludedCommentsSomeStruct(m);
     register_smoke_ExcludedCommentsSomethingWrong(m);
-    register_smoke_InternalClassWithComments(m);
     register_smoke_LambdaComments(m);
     register_smoke_LongComments(m);
     register_smoke_MapScene(m);

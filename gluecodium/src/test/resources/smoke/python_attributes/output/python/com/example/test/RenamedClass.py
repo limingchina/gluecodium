@@ -17,10 +17,6 @@ class RenamedClass(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def internal_method(self) -> str:
-        """"""
-        return _wrap(self._native.internal_method(), str)
-
     def visible_method(self, param: int) -> str:
         """"""
         return _wrap(self._native.visible_method(_unwrap(param, int)), str)

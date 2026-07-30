@@ -30,10 +30,6 @@ void register_smoke_DeclarationOrderMainStruct(py::module_& module) {
         .def_readwrite("enum_field", &MainStruct::enum_field)
         .def(py::init<>())
         .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::DeclarationOrder::NestedStruct, int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::DeclarationOrder::NestedStruct > >, ::smoke::DeclarationOrder::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
         ;
 }
 

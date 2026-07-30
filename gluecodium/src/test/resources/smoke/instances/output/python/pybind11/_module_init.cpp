@@ -21,7 +21,6 @@ void register_smoke_forward_InnerClassForwardDeclarationsInnerClass1(pybind11::m
 void register_smoke_forward_InnerClassForwardDeclarationsInnerClass2(pybind11::module_& module);
 void register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(pybind11::module_& module);
 void register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(pybind11::module_& module);
-void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface1(pybind11::module_& module);
 void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface2(pybind11::module_& module);
 void register_smoke_forward_InnerClassForwardDeclarationsInnerInterface3(pybind11::module_& module);
 void register_smoke_forward_UseForward(pybind11::module_& module);
@@ -43,7 +42,6 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_forward_InnerClassForwardDeclarationsInnerClass2(m);
     register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1(m);
     register_smoke_forward_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2(m);
-    register_smoke_forward_InnerClassForwardDeclarationsInnerInterface1(m);
     register_smoke_forward_InnerClassForwardDeclarationsInnerInterface2(m);
     register_smoke_forward_InnerClassForwardDeclarationsInnerInterface3(m);
     register_smoke_forward_UseForward(m);

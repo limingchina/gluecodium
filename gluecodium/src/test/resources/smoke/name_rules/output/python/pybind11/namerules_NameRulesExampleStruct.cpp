@@ -25,7 +25,6 @@ void register_namerules_NameRulesExampleStruct(py::module_& module) {
         .def_readwrite("int_value", &ExampleStruct::m_int_value)
         .def(py::init<>())
         .def(py::init<double, ::std::vector< int64_t >>(), py::arg("value"), py::arg("int_value"))
-        .def(py::init<double, ::std::vector< int64_t >>(), py::arg("value"), py::arg("int_value"))
         ;
 }
 

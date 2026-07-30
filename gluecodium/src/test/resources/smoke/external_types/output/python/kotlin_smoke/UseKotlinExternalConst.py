@@ -5,7 +5,6 @@ from __future__ import annotations
 from _native_base import _unwrap, _wrap, _get_or_create_wrapper
 from typing import Optional
 
-from kotlin_smoke.VeryBoolean import VeryBoolean
 
 
 from _native_base import _NativeBase
@@ -34,7 +33,4 @@ class UseKotlinExternalConst(_NativeBase):
     def string_field(self, value: str):
       self._native.string_field = _unwrap(value, str)
 
-
-
-    DEFAULT_TRUTH = {true}
 

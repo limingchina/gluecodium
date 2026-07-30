@@ -20,13 +20,14 @@ using PublicStructWithNonDefaultInternalField = ::smoke::PublicStructWithNonDefa
 void register_smoke_PublicStructWithNonDefaultInternalField(py::module_& module) {
     py::class_<PublicStructWithNonDefaultInternalField>(module, "smoke_PublicStructWithNonDefaultInternalField")
         .def_readwrite("defaulted_field", &PublicStructWithNonDefaultInternalField::defaulted_field)
-        .def_readwrite("internal_field", &PublicStructWithNonDefaultInternalField::internal_field)
         .def_readwrite("public_field", &PublicStructWithNonDefaultInternalField::public_field)
         .def(py::init<>())
-        .def(py::init<::std::string, bool>(), py::arg("internal_field"), py::arg("public_field"))
-        .def(py::init<int32_t, ::std::string, bool>(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
-        .def(py::init<int32_t, ::std::string, bool>(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
-        .def(py::init<int32_t, ::std::string, bool>(), py::arg("defaulted_field"), py::arg("internal_field"), py::arg("public_field"))
+        .def(py::init([](const bool& public_field) {
+            return PublicStructWithNonDefaultInternalField(::std::string{}, public_field);
+        }), py::arg("public_field"))
+        .def(py::init([](const int32_t& defaulted_field, const bool& public_field) {
+            return PublicStructWithNonDefaultInternalField(defaulted_field, ::std::string{}, public_field);
+        }), py::arg("defaulted_field"), py::arg("public_field"))
         ;
 }
 

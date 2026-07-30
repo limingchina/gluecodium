@@ -26,11 +26,6 @@ void register_smoke_DefaultValuesStructWithSpecialDefaults(py::module_& module) 
         .def_readwrite("double_negative_infinity_field", &StructWithSpecialDefaults::double_negative_infinity_field)
         .def(py::init<>())
         .def(py::init<float, float, float, double, double, double>(), py::arg("float_nan_field"), py::arg("float_infinity_field"), py::arg("float_negative_infinity_field"), py::arg("double_nan_field"), py::arg("double_infinity_field"), py::arg("double_negative_infinity_field"))
-        .def(py::init<float, float, float, double, double, double>(), py::arg("float_nan_field"), py::arg("float_infinity_field"), py::arg("float_negative_infinity_field"), py::arg("double_nan_field"), py::arg("double_infinity_field"), py::arg("double_negative_infinity_field"))
-        .def(py::init<float, float, float, double, double, double>(), py::arg("float_nan_field"), py::arg("float_infinity_field"), py::arg("float_negative_infinity_field"), py::arg("double_nan_field"), py::arg("double_infinity_field"), py::arg("double_negative_infinity_field"))
-        .def(py::init<float, float, float, double, double, double>(), py::arg("float_nan_field"), py::arg("float_infinity_field"), py::arg("float_negative_infinity_field"), py::arg("double_nan_field"), py::arg("double_infinity_field"), py::arg("double_negative_infinity_field"))
-        .def(py::init<float, float, float, double, double, double>(), py::arg("float_nan_field"), py::arg("float_infinity_field"), py::arg("float_negative_infinity_field"), py::arg("double_nan_field"), py::arg("double_infinity_field"), py::arg("double_negative_infinity_field"))
-        .def(py::init<float, float, float, double, double, double>(), py::arg("float_nan_field"), py::arg("float_infinity_field"), py::arg("float_negative_infinity_field"), py::arg("double_nan_field"), py::arg("double_infinity_field"), py::arg("double_negative_infinity_field"))
         ;
 }
 

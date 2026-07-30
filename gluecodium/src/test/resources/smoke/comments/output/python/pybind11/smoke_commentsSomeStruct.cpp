@@ -25,7 +25,6 @@ void register_smoke_commentsSomeStruct(py::module_& module) {
         .def(py::init<>())
         .def(py::init<bool>(), py::arg("some_field"))
         .def(py::init<bool, std::optional< ::std::string >>(), py::arg("some_field"), py::arg("nullable_field"))
-        .def(py::init<bool, std::optional< ::std::string >>(), py::arg("some_field"), py::arg("nullable_field"))
         .def("some_struct_method", &SomeStruct::some_struct_method)
         .def_static("some_static_struct_method", &SomeStruct::some_static_struct_method)
         ;

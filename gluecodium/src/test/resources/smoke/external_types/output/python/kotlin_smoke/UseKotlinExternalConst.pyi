@@ -1,6 +1,5 @@
 
 
-from kotlin_smoke.VeryBoolean import VeryBoolean
 import typing
 
 
@@ -30,7 +29,4 @@ class UseKotlinExternalConst(_NativeBase):
     def string_field(self, value: str):
       self._native.string_field = _unwrap(value, str)
 
-
-
-    DEFAULT_TRUTH = {true}
 

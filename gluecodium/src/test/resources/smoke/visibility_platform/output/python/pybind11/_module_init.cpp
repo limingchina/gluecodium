@@ -18,9 +18,6 @@ void register_smoke_DartInternalElements(pybind11::module_& module);
 void register_smoke_DartInternalElementsEnabled(pybind11::module_& module);
 void register_smoke_DartInternalElementsRev(pybind11::module_& module);
 void register_smoke_DartInternalElementsSkipped(pybind11::module_& module);
-void register_smoke_DartPublicClass(pybind11::module_& module);
-void register_smoke_DartPublicClassEnabled(pybind11::module_& module);
-void register_smoke_DartPublicClassSkipped(pybind11::module_& module);
 void register_smoke_DartPublicElements(pybind11::module_& module);
 void register_smoke_DartPublicElementsEnabled(pybind11::module_& module);
 void register_smoke_DartPublicElementsSkipped(pybind11::module_& module);
@@ -28,15 +25,12 @@ void register_smoke_JavaInternalClass(pybind11::module_& module);
 void register_smoke_JavaInternalClassRev(pybind11::module_& module);
 void register_smoke_JavaInternalProperty(pybind11::module_& module);
 void register_smoke_JavaInternalPropertyRev(pybind11::module_& module);
-void register_smoke_JavaPublicClass(pybind11::module_& module);
 void register_smoke_JavaSwiftInternalClass(pybind11::module_& module);
 void register_smoke_KotlinInternalClass(pybind11::module_& module);
 void register_smoke_KotlinInternalClassRev(pybind11::module_& module);
-void register_smoke_KotlinPublicClass(pybind11::module_& module);
 void register_smoke_PlatformInternalInterface(pybind11::module_& module);
 void register_smoke_SwiftInternalClass(pybind11::module_& module);
 void register_smoke_SwiftInternalClassRev(pybind11::module_& module);
-void register_smoke_SwiftPublicClass(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -52,9 +46,6 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_DartInternalElementsEnabled(m);
     register_smoke_DartInternalElementsRev(m);
     register_smoke_DartInternalElementsSkipped(m);
-    register_smoke_DartPublicClass(m);
-    register_smoke_DartPublicClassEnabled(m);
-    register_smoke_DartPublicClassSkipped(m);
     register_smoke_DartPublicElements(m);
     register_smoke_DartPublicElementsEnabled(m);
     register_smoke_DartPublicElementsSkipped(m);
@@ -62,13 +53,10 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_JavaInternalClassRev(m);
     register_smoke_JavaInternalProperty(m);
     register_smoke_JavaInternalPropertyRev(m);
-    register_smoke_JavaPublicClass(m);
     register_smoke_JavaSwiftInternalClass(m);
     register_smoke_KotlinInternalClass(m);
     register_smoke_KotlinInternalClassRev(m);
-    register_smoke_KotlinPublicClass(m);
     register_smoke_PlatformInternalInterface(m);
     register_smoke_SwiftInternalClass(m);
     register_smoke_SwiftInternalClassRev(m);
-    register_smoke_SwiftPublicClass(m);
 }

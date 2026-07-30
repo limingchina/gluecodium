@@ -1,6 +1,5 @@
 
 
-from smoke.JavaExternalCtor import JavaExternalCtor
 import typing
 
 
@@ -30,7 +29,4 @@ class UseJavaExternalConst(_NativeBase):
     def string_field(self, value: str):
       self._native.string_field = _unwrap(value, str)
 
-
-
-    DEFAULT_TRUTH = {"foo"}
 

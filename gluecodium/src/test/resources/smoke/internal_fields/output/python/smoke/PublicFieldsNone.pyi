@@ -20,13 +20,3 @@ class PublicFieldsNone(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
-    @property
-    def internal_field(self) -> str:
-        """"""
-        return _wrap(self._native.internal_field, str)
-    @internal_field.setter
-    def internal_field(self, value: str):
-      self._native.internal_field = _unwrap(value, str)
-
-

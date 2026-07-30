@@ -24,7 +24,6 @@ void register_smoke_StructsWithConstantsRoute(py::module_& module) {
         .def_readwrite("type", &Route::type)
         .def(py::init<>())
         .def(py::init<::std::string, ::smoke::RouteUtils::RouteType>(), py::arg("description"), py::arg("type"))
-        .def(py::init<::std::string, ::smoke::RouteUtils::RouteType>(), py::arg("description"), py::arg("type"))
         ;
 }
 

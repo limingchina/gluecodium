@@ -26,7 +26,6 @@ void register_smoke_StructsWithConstantsInterfaceMultiRoute(py::module_& module)
         .def_readwrite("type", &MultiRoute::type)
         .def(py::init<>())
         .def(py::init<::std::vector< ::std::string >, ::smoke::RouteUtils::RouteType>(), py::arg("descriptions"), py::arg("type"))
-        .def(py::init<::std::vector< ::std::string >, ::smoke::RouteUtils::RouteType>(), py::arg("descriptions"), py::arg("type"))
         ;
 }
 

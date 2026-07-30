@@ -29,10 +29,6 @@ void register_kotlin_smoke_KotlinExternalTypesStruct(py::module_& module) {
         .def_readwrite("color", &KotlinExternalTypesStruct::color)
         .def_readwrite("season", &KotlinExternalTypesStruct::season)
         .def(py::init<::kotlin_smoke::Currency, ::kotlin_smoke::TimeZone, ::kotlin_smoke::Month, ::kotlin_smoke::SystemColor, ::kotlin_smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
-        .def(py::init<::kotlin_smoke::Currency, ::kotlin_smoke::TimeZone, ::kotlin_smoke::Month, ::kotlin_smoke::SystemColor, ::kotlin_smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
-        .def(py::init<::kotlin_smoke::Currency, ::kotlin_smoke::TimeZone, ::kotlin_smoke::Month, ::kotlin_smoke::SystemColor, ::kotlin_smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
-        .def(py::init<::kotlin_smoke::Currency, ::kotlin_smoke::TimeZone, ::kotlin_smoke::Month, ::kotlin_smoke::SystemColor, ::kotlin_smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
-        .def(py::init<::kotlin_smoke::Currency, ::kotlin_smoke::TimeZone, ::kotlin_smoke::Month, ::kotlin_smoke::SystemColor, ::kotlin_smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
         ;
 }
 

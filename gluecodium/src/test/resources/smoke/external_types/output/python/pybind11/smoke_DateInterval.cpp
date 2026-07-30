@@ -24,7 +24,6 @@ void register_smoke_DateInterval(py::module_& module) {
         .def_readwrite("end", &DateInterval::end)
         .def(py::init<>())
         .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("start"), py::arg("end"))
-        .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("start"), py::arg("end"))
         ;
 }
 

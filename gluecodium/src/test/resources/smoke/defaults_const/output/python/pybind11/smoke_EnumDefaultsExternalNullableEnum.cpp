@@ -24,7 +24,6 @@ void register_smoke_EnumDefaultsExternalNullableEnum(py::module_& module) {
         .def_readwrite("enum_field2", &NullableEnum::enum_field2)
         .def(py::init<>())
         .def(py::init<std::optional< foo::AlienEnum2 >, std::optional< foo::AlienEnum2 >>(), py::arg("enum_field1"), py::arg("enum_field2"))
-        .def(py::init<std::optional< foo::AlienEnum2 >, std::optional< foo::AlienEnum2 >>(), py::arg("enum_field1"), py::arg("enum_field2"))
         ;
 }
 
