@@ -23,7 +23,6 @@ void register_smoke_DartInternalElementsSkipped(py::module_& module) {
         .def_readwrite("string_field", &DartInternalElementsSkipped::string_field)
         .def(py::init<>())
         .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
         .def("foo", &DartInternalElementsSkipped::foo)
         ;
 }

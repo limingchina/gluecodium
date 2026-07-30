@@ -1,6 +1,5 @@
 
 
-from smoke.forward.InnerClassForwardDeclarationsInnerInterface1 import InnerClassForwardDeclarationsInnerInterface1
 import typing
 
 import generated
@@ -21,6 +20,4 @@ class InnerClassForwardDeclarationsInnerClass1(generated.smoke_forward_InnerClas
         else:
             super().__init__()
         self._native = self
-
-    def get_inner_interface(self) -> InnerClassForwardDeclarationsInnerInterface1: ...
 

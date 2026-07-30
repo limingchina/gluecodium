@@ -51,7 +51,6 @@ void register_smoke_forward_InnerClassForwardDeclarationsInnerClass1(py::module_
             self->m_impl = native;
             return self;
         }))
-        .def("get_inner_interface", &InnerClass1::get_inner_interface)
         ;
 }
 

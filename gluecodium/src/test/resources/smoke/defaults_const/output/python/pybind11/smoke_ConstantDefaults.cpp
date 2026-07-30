@@ -23,7 +23,6 @@ void register_smoke_ConstantDefaults(py::module_& module) {
         .def_readwrite("field2", &ConstantDefaults::field2)
         .def(py::init<>())
         .def(py::init<::fire::SomeStruct, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
-        .def(py::init<::fire::SomeStruct, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;
 }
 

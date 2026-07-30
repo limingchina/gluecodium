@@ -24,7 +24,6 @@ void register_smoke_Payload(py::module_& module) {
         .def_readwrite("message", &Payload::message)
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string>(), py::arg("error_code"), py::arg("message"))
-        .def(py::init<int32_t, ::std::string>(), py::arg("error_code"), py::arg("message"))
         ;
 }
 

@@ -25,9 +25,6 @@ void register_smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndField
         .def_readonly("another_field", &ImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct::another_field)
         .def(py::init<>())
         .def(py::init<::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults, ::smoke::TypesWithDefaults::ImmutableStructWithCollections, int32_t, int32_t>(), py::arg("some_field1"), py::arg("some_field2"), py::arg("some_field"), py::arg("another_field"))
-        .def(py::init<::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults, ::smoke::TypesWithDefaults::ImmutableStructWithCollections, int32_t, int32_t>(), py::arg("some_field1"), py::arg("some_field2"), py::arg("some_field"), py::arg("another_field"))
-        .def(py::init<::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults, ::smoke::TypesWithDefaults::ImmutableStructWithCollections, int32_t, int32_t>(), py::arg("some_field1"), py::arg("some_field2"), py::arg("some_field"), py::arg("another_field"))
-        .def(py::init<::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults, ::smoke::TypesWithDefaults::ImmutableStructWithCollections, int32_t, int32_t>(), py::arg("some_field1"), py::arg("some_field2"), py::arg("some_field"), py::arg("another_field"))
         .def(py::init<int32_t, int32_t>(), py::arg("some_field"), py::arg("another_field"))
         ;
 }

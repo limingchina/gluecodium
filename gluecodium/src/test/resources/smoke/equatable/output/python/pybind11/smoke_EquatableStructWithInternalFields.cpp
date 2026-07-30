@@ -20,16 +20,10 @@ using EquatableStructWithInternalFields = ::smoke::EquatableStructWithInternalFi
 void register_smoke_EquatableStructWithInternalFields(py::module_& module) {
     py::class_<EquatableStructWithInternalFields>(module, "smoke_EquatableStructWithInternalFields")
         .def_readwrite("public_field", &EquatableStructWithInternalFields::public_field)
-        .def_readwrite("internal_field", &EquatableStructWithInternalFields::internal_field)
-        .def_readwrite("internal_list_field", &EquatableStructWithInternalFields::internal_list_field)
-        .def_readwrite("internal_map_field", &EquatableStructWithInternalFields::internal_map_field)
-        .def_readwrite("internal_set_field", &EquatableStructWithInternalFields::internal_set_field)
         .def(py::init<>())
-        .def(py::init<::std::string, ::std::string, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("public_field"), py::arg("internal_field"), py::arg("internal_list_field"), py::arg("internal_map_field"), py::arg("internal_set_field"))
-        .def(py::init<::std::string, ::std::string, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("public_field"), py::arg("internal_field"), py::arg("internal_list_field"), py::arg("internal_map_field"), py::arg("internal_set_field"))
-        .def(py::init<::std::string, ::std::string, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("public_field"), py::arg("internal_field"), py::arg("internal_list_field"), py::arg("internal_map_field"), py::arg("internal_set_field"))
-        .def(py::init<::std::string, ::std::string, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("public_field"), py::arg("internal_field"), py::arg("internal_list_field"), py::arg("internal_map_field"), py::arg("internal_set_field"))
-        .def(py::init<::std::string, ::std::string, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("public_field"), py::arg("internal_field"), py::arg("internal_list_field"), py::arg("internal_map_field"), py::arg("internal_set_field"))
+        .def(py::init([](const ::std::string& public_field) {
+            return EquatableStructWithInternalFields(public_field, ::std::string{}, ::std::vector< ::std::string >{}, ::std::unordered_map< ::std::string, ::std::string >{}, ::std::unordered_set< ::std::string >{});
+        }), py::arg("public_field"))
         .def("__eq__", [](const EquatableStructWithInternalFields& lhs, const EquatableStructWithInternalFields& rhs) { return lhs == rhs; })
         .def("__hash__", [](const EquatableStructWithInternalFields& self) { return gluecodium::hash<EquatableStructWithInternalFields>{}(self); })
         ;

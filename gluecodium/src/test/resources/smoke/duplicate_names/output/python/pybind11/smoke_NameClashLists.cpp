@@ -26,7 +26,6 @@ void register_smoke_NameClashLists(py::module_& module) {
         .def_readwrite("field_b", &NameClashLists::field_b)
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::Alphabet >, ::std::vector< ::smoke::foo::Alphabet >>(), py::arg("field_a"), py::arg("field_b"))
-        .def(py::init<::std::vector< ::smoke::Alphabet >, ::std::vector< ::smoke::foo::Alphabet >>(), py::arg("field_a"), py::arg("field_b"))
         ;
 }
 

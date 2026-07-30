@@ -30,10 +30,6 @@ void register_smoke_OrderInClassMainStruct(py::module_& module) {
         .def_readwrite("enum_field", &MainStruct::enum_field)
         .def(py::init<>())
         .def(py::init<::smoke::OrderInClass::NestedStruct, int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct > >, ::smoke::OrderInClass::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::OrderInClass::NestedStruct, int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct > >, ::smoke::OrderInClass::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::OrderInClass::NestedStruct, int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct > >, ::smoke::OrderInClass::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::OrderInClass::NestedStruct, int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct > >, ::smoke::OrderInClass::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::OrderInClass::NestedStruct, int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct > >, ::smoke::OrderInClass::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
         ;
 }
 

@@ -25,7 +25,6 @@ void register_smoke_JavaDeprecatedPosDefaultsCustom(py::module_& module) {
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("first_free_field"))
         .def(py::init<int32_t, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"))
-        .def(py::init<int32_t, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"))
         .def_static("custom", &JavaDeprecatedPosDefaultsCustom::custom)
         ;
 }

@@ -27,8 +27,6 @@ void register_smoke_ScalarKeyframeTrack(py::module_& module) {
         .def_readwrite("interpolation_mode", &ScalarKeyframeTrack::interpolation_mode)
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::ScalarKeyframe >, ::std::string, ::std::string>(), py::arg("keyframes"), py::arg("easing_function"), py::arg("interpolation_mode"))
-        .def(py::init<::std::vector< ::smoke::ScalarKeyframe >, ::std::string, ::std::string>(), py::arg("keyframes"), py::arg("easing_function"), py::arg("interpolation_mode"))
-        .def(py::init<::std::vector< ::smoke::ScalarKeyframe >, ::std::string, ::std::string>(), py::arg("keyframes"), py::arg("easing_function"), py::arg("interpolation_mode"))
         ;
 }
 

@@ -26,7 +26,6 @@ void register_smoke_DatesSteadyDateStruct(py::module_& module) {
         .def(py::init<>())
         .def(py::init<std::chrono::steady_clock::time_point>(), py::arg("date_field"))
         .def(py::init<std::chrono::steady_clock::time_point, std::optional< std::chrono::steady_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))
-        .def(py::init<std::chrono::steady_clock::time_point, std::optional< std::chrono::steady_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))
         ;
 }
 

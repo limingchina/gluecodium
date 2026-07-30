@@ -24,7 +24,6 @@ void register_smoke_LearnToReadAgain(py::module_& module) {
         .def_readwrite("field_c", &LearnToReadAgain::field_c)
         .def(py::init<>())
         .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet>(), py::arg("field_b"), py::arg("field_c"))
-        .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet>(), py::arg("field_b"), py::arg("field_c"))
         ;
 }
 

@@ -13,7 +13,5 @@ class RenamedClass(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def internal_method(self) -> str: ...
-
     def visible_method(self, param: int) -> str: ...
 

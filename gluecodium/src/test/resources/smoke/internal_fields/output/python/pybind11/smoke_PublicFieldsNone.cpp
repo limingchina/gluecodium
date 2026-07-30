@@ -18,9 +18,10 @@ using PublicFieldsNone = ::smoke::PublicFieldsNone;
 
 void register_smoke_PublicFieldsNone(py::module_& module) {
     py::class_<PublicFieldsNone>(module, "smoke_PublicFieldsNone")
-        .def_readwrite("internal_field", &PublicFieldsNone::internal_field)
         .def(py::init<>())
-        .def(py::init<::std::string>(), py::arg("internal_field"))
+        .def(py::init([]() {
+            return PublicFieldsNone(::std::string{});
+        }))
         ;
 }
 

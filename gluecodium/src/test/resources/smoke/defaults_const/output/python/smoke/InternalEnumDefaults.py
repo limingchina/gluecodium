@@ -45,23 +45,3 @@ class InternalEnumDefaults(_NativeBase):
       self._native.public_list_field = _unwrap(value, list[FooBarEnum])
 
 
-
-    @property
-    def internal_field(self) -> FooBarEnum:
-        """"""
-        return _wrap(self._native.internal_field, FooBarEnum)
-    @internal_field.setter
-    def internal_field(self, value: FooBarEnum):
-      self._native.internal_field = _unwrap(value, FooBarEnum)
-
-
-
-    @property
-    def internal_list_field(self) -> list[FooBarEnum]:
-        """"""
-        return _wrap(self._native.internal_list_field, list[FooBarEnum])
-    @internal_list_field.setter
-    def internal_list_field(self, value: list[FooBarEnum]):
-      self._native.internal_list_field = _unwrap(value, list[FooBarEnum])
-
-

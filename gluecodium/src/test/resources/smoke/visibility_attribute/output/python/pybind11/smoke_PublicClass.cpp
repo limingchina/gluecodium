@@ -27,8 +27,6 @@ void register_smoke_PublicClass(py::module_& module) {
         .def("__gluecodium_id__", [](const PublicClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def("internal_method", &PublicClass::internal_method, py::arg("input"))
-        .def_property("internal_struct_property", py::overload_cast<>(&PublicClass::get_internal_struct_property, py::const_), py::overload_cast<const ::smoke::PublicClass::InternalStruct&>(&PublicClass::set_internal_struct_property))
         ;
 }
 

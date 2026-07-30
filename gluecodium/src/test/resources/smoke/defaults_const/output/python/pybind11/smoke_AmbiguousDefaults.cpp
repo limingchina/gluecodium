@@ -24,7 +24,6 @@ void register_smoke_AmbiguousDefaults(py::module_& module) {
         .def_readwrite("field2", &AmbiguousDefaults::field2)
         .def(py::init<>())
         .def(py::init<::fire::AmbiguousEnum, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
-        .def(py::init<::fire::AmbiguousEnum, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;
 }
 

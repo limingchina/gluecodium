@@ -24,8 +24,6 @@ void register_smoke_MutableStructImmutableFields(py::module_& module) {
         .def_readwrite("int_field", &MutableStructImmutableFields::int_field)
         .def_readwrite("bool_field", &MutableStructImmutableFields::bool_field)
         .def(py::init<::smoke::ImmutableStructNoClash, int32_t, bool>(), py::arg("struct_field"), py::arg("int_field"), py::arg("bool_field"))
-        .def(py::init<::smoke::ImmutableStructNoClash, int32_t, bool>(), py::arg("struct_field"), py::arg("int_field"), py::arg("bool_field"))
-        .def(py::init<::smoke::ImmutableStructNoClash, int32_t, bool>(), py::arg("struct_field"), py::arg("int_field"), py::arg("bool_field"))
         .def(py::init<>())
         ;
 }

@@ -23,7 +23,6 @@ void register_smoke_OrderInStruct(py::module_& module) {
         .def_readwrite("enum_field", &OrderInStruct::enum_field)
         .def(py::init<>())
         .def(py::init<::smoke::OrderInStruct::NestedStruct, ::smoke::OrderInStruct::SomeEnum>(), py::arg("struct_field"), py::arg("enum_field"))
-        .def(py::init<::smoke::OrderInStruct::NestedStruct, ::smoke::OrderInStruct::SomeEnum>(), py::arg("struct_field"), py::arg("enum_field"))
         ;
 }
 

@@ -31,8 +31,6 @@ void register_smoke_StructWithNullableCollectionDefaults(py::module_& module) {
         .def_readwrite("nullable_set_field", &StructWithNullableCollectionDefaults::nullable_set_field)
         .def(py::init<>())
         .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
-        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
-        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
         ;
 }
 

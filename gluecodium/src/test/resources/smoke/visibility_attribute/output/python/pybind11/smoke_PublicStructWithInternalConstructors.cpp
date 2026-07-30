@@ -22,7 +22,6 @@ void register_smoke_PublicStructWithInternalConstructors(py::module_& module) {
         .def_readwrite("some_var", &PublicStructWithInternalConstructors::some_var)
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("some_var"))
-        .def_static("make", &PublicStructWithInternalConstructors::make)
         ;
 }
 

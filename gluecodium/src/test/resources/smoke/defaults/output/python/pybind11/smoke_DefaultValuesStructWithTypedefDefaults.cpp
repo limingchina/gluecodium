@@ -25,8 +25,6 @@ void register_smoke_DefaultValuesStructWithTypedefDefaults(py::module_& module) 
         .def_readwrite("string_field", &StructWithTypedefDefaults::string_field)
         .def(py::init<>())
         .def(py::init<int64_t, bool, ::std::string>(), py::arg("long_field"), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<int64_t, bool, ::std::string>(), py::arg("long_field"), py::arg("bool_field"), py::arg("string_field"))
-        .def(py::init<int64_t, bool, ::std::string>(), py::arg("long_field"), py::arg("bool_field"), py::arg("string_field"))
         ;
 }
 

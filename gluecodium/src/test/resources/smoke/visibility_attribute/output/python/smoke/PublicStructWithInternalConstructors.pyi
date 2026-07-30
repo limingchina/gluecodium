@@ -30,6 +30,3 @@ class PublicStructWithInternalConstructors(_NativeBase):
       self._native.some_var = _unwrap(value, int)
 
 
-    @staticmethod
-    def make() -> PublicStructWithInternalConstructors: ...
-

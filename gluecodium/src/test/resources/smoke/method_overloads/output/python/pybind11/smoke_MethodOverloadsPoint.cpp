@@ -22,7 +22,6 @@ void register_smoke_MethodOverloadsPoint(py::module_& module) {
         .def_readwrite("y", &Point::y)
         .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
-        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
         ;
 }
 

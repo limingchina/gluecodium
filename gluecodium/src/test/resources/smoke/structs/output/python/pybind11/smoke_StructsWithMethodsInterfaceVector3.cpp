@@ -25,8 +25,6 @@ void register_smoke_StructsWithMethodsInterfaceVector3(py::module_& module) {
         .def_readwrite("z", &Vector3::z)
         .def(py::init<>())
         .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
-        .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
-        .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
         .def("distance_to", &Vector3::distance_to, py::arg("other"))
         .def("add", &Vector3::add, py::arg("other"))
         .def_static("validate", &Vector3::validate, py::arg("x"), py::arg("y"), py::arg("z"))

@@ -18,10 +18,10 @@ using DartPublicElements = ::smoke::DartPublicElements;
 
 void register_smoke_DartPublicElements(py::module_& module) {
     py::class_<DartPublicElements>(module, "smoke_DartPublicElements")
-        .def_readwrite("string_field", &DartPublicElements::string_field)
         .def(py::init<>())
-        .def(py::init<::std::string>(), py::arg("string_field"))
-        .def("foo", &DartPublicElements::foo)
+        .def(py::init([]() {
+            return DartPublicElements(::std::string{});
+        }))
         ;
 }
 

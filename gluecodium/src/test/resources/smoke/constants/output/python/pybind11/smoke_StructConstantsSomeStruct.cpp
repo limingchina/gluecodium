@@ -23,7 +23,6 @@ void register_smoke_StructConstantsSomeStruct(py::module_& module) {
         .def_readwrite("float_field", &SomeStruct::float_field)
         .def(py::init<>())
         .def(py::init<::std::string, float>(), py::arg("string_field"), py::arg("float_field"))
-        .def(py::init<::std::string, float>(), py::arg("string_field"), py::arg("float_field"))
         ;
 }
 

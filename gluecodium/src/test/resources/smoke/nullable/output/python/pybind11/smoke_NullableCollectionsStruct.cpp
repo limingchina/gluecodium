@@ -31,7 +31,6 @@ void register_smoke_NullableCollectionsStruct(py::module_& module) {
         .def_readwrite("structs", &NullableCollectionsStruct::structs)
         .def(py::init<>())
         .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::unordered_map< int32_t, std::optional< ::smoke::Nullable::SomeStruct > >>(), py::arg("dates"), py::arg("structs"))
-        .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::unordered_map< int32_t, std::optional< ::smoke::Nullable::SomeStruct > >>(), py::arg("dates"), py::arg("structs"))
         ;
 }
 

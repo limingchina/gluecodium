@@ -24,7 +24,6 @@ void register_smoke_PosDefaultsWithDuration(py::module_& module) {
         .def_readwrite("nanos_field", &PosDefaultsWithDuration::nanos_field)
         .def(py::init<>())
         .def(py::init<::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("duration_field"), py::arg("nanos_field"))
-        .def(py::init<::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("duration_field"), py::arg("nanos_field"))
         ;
 }
 

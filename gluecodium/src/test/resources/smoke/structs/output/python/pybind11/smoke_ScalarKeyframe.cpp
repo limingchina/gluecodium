@@ -22,7 +22,6 @@ void register_smoke_ScalarKeyframe(py::module_& module) {
         .def_readonly("value", &ScalarKeyframe::value)
         .def_readonly("offset_in_ms", &ScalarKeyframe::offset_in_ms)
         .def(py::init<double, int32_t>(), py::arg("value"), py::arg("offset_in_ms"))
-        .def(py::init<double, int32_t>(), py::arg("value"), py::arg("offset_in_ms"))
         ;
 }
 

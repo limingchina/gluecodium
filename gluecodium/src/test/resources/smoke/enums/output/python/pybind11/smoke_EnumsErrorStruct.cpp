@@ -23,7 +23,6 @@ void register_smoke_EnumsErrorStruct(py::module_& module) {
         .def_readwrite("message", &ErrorStruct::message)
         .def(py::init<>())
         .def(py::init<::smoke::Enums::InternalErrorCode, ::std::string>(), py::arg("type"), py::arg("message"))
-        .def(py::init<::smoke::Enums::InternalErrorCode, ::std::string>(), py::arg("type"), py::arg("message"))
         ;
 }
 

@@ -24,7 +24,6 @@ void register_com_example_test_RenamedClass(py::module_& module) {
         .def("__gluecodium_id__", [](const MyClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def("internal_method", &MyClass::internal_method)
         .def("visible_method", &MyClass::visible_method, py::arg("param"))
         ;
 }

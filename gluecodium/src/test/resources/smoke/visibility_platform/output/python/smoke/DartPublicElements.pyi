@@ -20,15 +20,3 @@ class DartPublicElements(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-
-    @property
-    def string_field(self) -> str:
-        """"""
-        return _wrap(self._native.string_field, str)
-    @string_field.setter
-    def string_field(self, value: str):
-      self._native.string_field = _unwrap(value, str)
-
-
-    def foo(self): ...
-

@@ -26,7 +26,6 @@ void register_smoke_SomeDartClassThatUsesInternal(py::module_& module) {
         .def("__gluecodium_id__", [](const SomeDartClassThatUsesInternal& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def("add_entity", &SomeDartClassThatUsesInternal::add_entity, py::arg("entity"))
         ;
 }
 

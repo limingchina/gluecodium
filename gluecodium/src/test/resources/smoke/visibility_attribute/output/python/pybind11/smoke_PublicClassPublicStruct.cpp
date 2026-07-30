@@ -18,9 +18,10 @@ using PublicStruct = ::smoke::PublicClass::PublicStruct;
 
 void register_smoke_PublicClassPublicStruct(py::module_& module) {
     py::class_<PublicStruct>(module, "smoke_PublicClassPublicStruct")
-        .def_readwrite("internal_field", &PublicStruct::internal_field)
         .def(py::init<>())
-        .def(py::init<::smoke::PublicClass::InternalStruct>(), py::arg("internal_field"))
+        .def(py::init([]() {
+            return PublicStruct(::smoke::PublicClass::InternalStruct{});
+        }))
         ;
 }
 

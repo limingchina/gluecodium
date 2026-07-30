@@ -15,7 +15,6 @@ void register_smoke_Calculator(pybind11::module_& module);
 void register_smoke_CalculatorListener(pybind11::module_& module);
 void register_smoke_CalculatorListenerResultStruct(pybind11::module_& module);
 void register_smoke_InterfaceWithStatic(pybind11::module_& module);
-void register_smoke_InternalListener(pybind11::module_& module);
 void register_smoke_ListenerInterface(pybind11::module_& module);
 void register_smoke_ListenerWithNullable(pybind11::module_& module);
 void register_smoke_ListenerWithProperties(pybind11::module_& module);
@@ -42,7 +41,6 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_CalculatorListener(m);
     register_smoke_CalculatorListenerResultStruct(m);
     register_smoke_InterfaceWithStatic(m);
-    register_smoke_InternalListener(m);
     register_smoke_ListenerInterface(m);
     register_smoke_ListenerWithNullable(m);
     register_smoke_ListenerWithProperties(m);
