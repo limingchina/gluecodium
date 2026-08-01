@@ -1,8 +1,8 @@
 
 
-from smoke.ExcludedCommentsOnlySomeEnum import ExcludedCommentsOnlySomeEnum
-from smoke.ExcludedCommentsOnlySomethingWrong import ExcludedCommentsOnlySomethingWrong
+from enum import Enum
 import typing
+from typing import Callable
 
 class ExcludedCommentsOnly:
     """"""
@@ -26,4 +26,37 @@ class ExcludedCommentsOnly:
 
     #: 
     VERY_USEFUL = True
+
+    class SomeStruct:
+        """"""
+    
+        #: 
+        some_field: bool
+    
+    
+    
+    class SomeEnum(Enum):
+        """"""
+    
+        USELESS = 0
+    
+    
+    
+    #: 
+    bool = bool
+    
+    
+    
+    #: 
+    SomeLambda = Callable[[str, int], float]
+    
+    
+    
+    class SomethingWrongError(Exception):
+        """"""
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
 

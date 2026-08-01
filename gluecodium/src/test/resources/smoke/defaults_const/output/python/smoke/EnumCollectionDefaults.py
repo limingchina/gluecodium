@@ -2,19 +2,15 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from fire.Enum1 import Enum1
 from fire.Enum2 import Enum2
 from fire.Enum3 import Enum3
 from fire.Enum4 import Enum4
-
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class EnumCollectionDefaults(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -48,5 +44,6 @@ class EnumCollectionDefaults(_NativeBase):
     @map_field.setter
     def map_field(self, value: dict[Enum3, Enum4]):
       self._native.map_field = _unwrap(value, dict[Enum3, Enum4])
+
 
 

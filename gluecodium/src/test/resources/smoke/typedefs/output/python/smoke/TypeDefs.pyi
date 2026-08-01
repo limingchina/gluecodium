@@ -1,7 +1,7 @@
 
 
-from smoke.TypeCollectionPoint import TypeCollectionPoint
-from smoke.TypeDefsTestStruct import TypeDefsTestStruct
+from smoke.TypeCollection import TypeCollection
+from enum import Enum
 import typing
 
 class TypeDefs:
@@ -11,7 +11,7 @@ class TypeDefs:
         ...
 
     @staticmethod
-    def method_with_complex_type_def(input: list[TypeDefsTestStruct]) -> list[TypeDefsTestStruct]:
+    def method_with_complex_type_def(input: list[TypeDefs.TestStruct]) -> list[TypeDefs.TestStruct]:
         ...
 
     @staticmethod
@@ -19,15 +19,15 @@ class TypeDefs:
         ...
 
     @staticmethod
-    def return_test_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
+    def return_test_struct_type_def(input: TypeDefs.TestStruct) -> TypeDefs.TestStruct:
         ...
 
     @staticmethod
-    def return_nested_struct_type_def(input: TypeDefsTestStruct) -> TypeDefsTestStruct:
+    def return_nested_struct_type_def(input: TypeDefs.TestStruct) -> TypeDefs.TestStruct:
         ...
 
     @staticmethod
-    def return_type_def_point_from_type_collection(input: TypeCollectionPoint) -> TypeCollectionPoint:
+    def return_type_def_point_from_type_collection(input: TypeCollection.Point) -> TypeCollection.Point:
         ...
 
     @property
@@ -37,4 +37,40 @@ class TypeDefs:
     @primitive_type_property.setter
     def primitive_type_property(self, value: list[float]) -> None:
         ...
+
+    class StructHavingAliasFieldDefinedBelow:
+    
+        field: float
+    
+    
+    
+    class TestStruct:
+    
+        something: str
+    
+    
+    
+    float = float
+    
+    
+    
+    float = float
+    
+    
+    
+    list[TypeDefs.TestStruct] = list[TypeDefs.TestStruct]
+    
+    
+    
+    list[TypeDefs.TestStruct] = list[TypeDefs.TestStruct]
+    
+    
+    
+    TypeDefs.TestStruct = TypeDefs.TestStruct
+    
+    
+    
+    TypeDefs.TestStruct = TypeDefs.TestStruct
+    
+    
 

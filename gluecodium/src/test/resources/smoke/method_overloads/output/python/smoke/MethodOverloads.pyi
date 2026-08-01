@@ -1,6 +1,6 @@
 
 
-from smoke.MethodOverloadsPoint import MethodOverloadsPoint
+from enum import Enum
 import typing
 
 class MethodOverloads:
@@ -14,10 +14,10 @@ class MethodOverloads:
     def is_boolean(self, input: str) -> bool:
         ...
 
-    def is_boolean(self, input: MethodOverloadsPoint) -> bool:
+    def is_boolean(self, input: MethodOverloads.Point) -> bool:
         ...
 
-    def is_boolean(self, input1: bool, input2: int, input3: str, input4: MethodOverloadsPoint) -> bool:
+    def is_boolean(self, input1: bool, input2: int, input3: str, input4: MethodOverloads.Point) -> bool:
         ...
 
     def is_boolean(self, input: list[str]) -> bool:
@@ -34,4 +34,20 @@ class MethodOverloads:
 
     def is_float(self, input: list[int]) -> bool:
         ...
+
+    class Point:
+    
+        x: float
+    
+        y: float
+    
+    
+    
+    list[str] = list[str]
+    
+    
+    
+    list[int] = list[int]
+    
+    
 

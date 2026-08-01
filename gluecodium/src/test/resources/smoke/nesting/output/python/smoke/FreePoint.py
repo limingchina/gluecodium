@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.FreeEnum import FreeEnum
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.FreeEnum import FreeEnum
 
 class FreePoint(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -43,4 +39,5 @@ class FreePoint(_NativeBase):
         return _wrap(self._native.flip(), FreePoint)
 
     A_BAR = FreeEnum.BAR
+
 

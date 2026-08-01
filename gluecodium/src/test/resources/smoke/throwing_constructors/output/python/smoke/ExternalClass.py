@@ -2,14 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ExternalClassConstructorExploded import ExternalClassConstructorExploded
-from smoke.ExternalClassErrorEnum import ExternalClassErrorEnum
-from smoke.ExternalClassInternalOne import ExternalClassInternalOne
-from smoke.ExternalClassInternalTwo import ExternalClassInternalTwo
-
 import generated
 
 
@@ -31,4 +26,42 @@ class ExternalClass(generated.smoke_ExternalClass):
     def create() -> ExternalClass:
         native_result = generated.smoke_ExternalClass.create()
         return _get_or_create_wrapper(native_result, ExternalClass)
+
+    class InternalOne(_NativeBase):
+        def __init__(self, native):
+            super().__init__(native)
+    
+        @staticmethod
+        def create(*args, **kwargs) -> ExternalClass.InternalOne:
+            native_result = generated.smoke_ExternalClassInternalOne.create(*[_unwrap(a) for a in args])
+            return _get_or_create_wrapper(native_result, ExternalClass.InternalOne)
+    
+    
+    
+    
+    class InternalTwo(_NativeBase):
+        def __init__(self, native):
+            super().__init__(native)
+    
+        @staticmethod
+        def create() -> ExternalClass.InternalTwo:
+            native_result = generated.smoke_ExternalClassInternalTwo.create()
+            return _get_or_create_wrapper(native_result, ExternalClass.InternalTwo)
+    
+    
+    
+    class ErrorEnum(Enum):
+    
+        NONE = 0
+        CRASHED = 1
+    
+    
+    
+    class ConstructorExplodedError(Exception):
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
 

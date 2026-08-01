@@ -1,6 +1,8 @@
 
 
+from enum import Enum
 import typing
+from typing import Callable
 
 class OuterClassWithLambdaAndProperty:
 
@@ -19,4 +21,8 @@ class OuterClassWithLambdaAndProperty:
     @another_integer.setter
     def another_integer(self, value: int) -> None:
         ...
+
+    SomeInternalLambda = Callable[[int], int]
+    
+    
 

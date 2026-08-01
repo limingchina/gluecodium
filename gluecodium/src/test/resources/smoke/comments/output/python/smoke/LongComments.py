@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -16,11 +13,11 @@ class LongComments(_NativeBase):
 This is a placeholder, which has multiple lines. Here we have continuation of the first line.
 But this should be rendered in line below.
 This too!"""
-
     def __init__(self, native):
         super().__init__(native)
 
     def some_method_with_long_comment(self, input: str, ratio: float) -> float:
         """This is very important method. It has very important parameters. It has side effects."""
         return _wrap(self._native.some_method_with_long_comment(_unwrap(input, str), _unwrap(ratio, float)), float)
+
 

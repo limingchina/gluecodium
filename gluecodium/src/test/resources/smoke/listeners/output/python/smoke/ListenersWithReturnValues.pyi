@@ -1,8 +1,7 @@
 
 
 from smoke.CalculationResult import CalculationResult
-from smoke.ListenersWithReturnValuesResultEnum import ListenersWithReturnValuesResultEnum
-from smoke.ListenersWithReturnValuesResultStruct import ListenersWithReturnValuesResultStruct
+from enum import Enum
 import typing
 
 class ListenersWithReturnValues:
@@ -13,10 +12,10 @@ class ListenersWithReturnValues:
     def fetch_data_string(self) -> str:
         ...
 
-    def fetch_data_struct(self) -> ListenersWithReturnValuesResultStruct:
+    def fetch_data_struct(self) -> ListenersWithReturnValues.ResultStruct:
         ...
 
-    def fetch_data_enum(self) -> ListenersWithReturnValuesResultEnum:
+    def fetch_data_enum(self) -> ListenersWithReturnValues.ResultEnum:
         ...
 
     def fetch_data_array(self) -> list[float]:
@@ -27,4 +26,21 @@ class ListenersWithReturnValues:
 
     def fetch_data_instance(self) -> CalculationResult:
         ...
+
+    class ResultStruct:
+    
+        result: float
+    
+    
+    
+    class ResultEnum(Enum):
+    
+        NONE = 0
+        RESULT = 1
+    
+    
+    
+    dict[str, float] = dict[str, float]
+    
+    
 

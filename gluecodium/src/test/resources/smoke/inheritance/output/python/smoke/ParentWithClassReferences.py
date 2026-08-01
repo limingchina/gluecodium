@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.ChildClassFromClass import ChildClassFromClass
 from smoke.ParentClass import ParentClass
-
-
-import generated
-
 
 class ParentWithClassReferences(generated.smoke_ParentWithClassReferences):
     def __init__(self, native=None):
@@ -37,4 +35,5 @@ class ParentWithClassReferences(generated.smoke_ParentWithClassReferences):
     @class_property.setter
     def class_property(self, value: ParentClass):
         generated.smoke_ParentWithClassReferences.class_property.fset(self, _unwrap(value, ParentClass))
+
 

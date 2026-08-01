@@ -7,6 +7,7 @@ from kotlin_smoke.Season import Season
 from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
 from kotlin_smoke.VeryBoolean import VeryBoolean
+from enum import Enum
 import typing
 
 class UseKotlinExternalTypes:
@@ -38,4 +39,5 @@ class UseKotlinExternalTypes:
     @staticmethod
     def very_boolean_unbox(input: VeryBoolean) -> bool:
         ...
+
 

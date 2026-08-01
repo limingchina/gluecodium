@@ -1,6 +1,7 @@
 
 
 from another.SomeCoolClassType import SomeCoolClassType
+from enum import Enum
 import typing
 
 class ParentInterface:
@@ -18,4 +19,5 @@ class ParentInterface:
     @parent_property.setter
     def parent_property(self, value: str) -> None:
         ...
+
 

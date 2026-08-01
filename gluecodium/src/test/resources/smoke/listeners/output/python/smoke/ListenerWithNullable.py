@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
 import generated
 
 
@@ -54,5 +52,6 @@ class ListenerWithNullable(generated.smoke_ListenerWithNullable):
 
     def method_with_float(self, input: Optional[float]) -> Optional[float]:
         return _wrap(generated.smoke_ListenerWithNullable.method_with_float(self, _unwrap(input, Optional[float])), Optional[float])
+
 
 

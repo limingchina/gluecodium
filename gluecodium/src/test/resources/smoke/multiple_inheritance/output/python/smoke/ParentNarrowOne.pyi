@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class ParentNarrowOne:
@@ -14,4 +15,5 @@ class ParentNarrowOne:
     @parent_property_one.setter
     def parent_property_one(self, value: str) -> None:
         ...
+
 

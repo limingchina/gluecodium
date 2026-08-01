@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.CalculationResult import CalculationResult
-from smoke.CalculatorListenerResultStruct import CalculatorListenerResultStruct
-
-
 import generated
 
+from smoke.CalculationResult import CalculationResult
 
 class CalculatorListener(generated.smoke_CalculatorListener):
     def __init__(self, native=None):
@@ -33,8 +30,8 @@ class CalculatorListener(generated.smoke_CalculatorListener):
     def on_calculation_result_const(self, calculation_result: float):
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_const(self, _unwrap(calculation_result, float)), None)
 
-    def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct):
-        return _wrap(generated.smoke_CalculatorListener.on_calculation_result_struct(self, _unwrap(calculation_result, CalculatorListenerResultStruct)), None)
+    def on_calculation_result_struct(self, calculation_result: CalculatorListener.ResultStruct):
+        return _wrap(generated.smoke_CalculatorListener.on_calculation_result_struct(self, _unwrap(calculation_result, CalculatorListener.ResultStruct)), None)
 
     def on_calculation_result_array(self, calculation_result: list[float]):
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_array(self, _unwrap(calculation_result, list[float])), None)
@@ -44,4 +41,28 @@ class CalculatorListener(generated.smoke_CalculatorListener):
 
     def on_calculation_result_instance(self, calculation_result: CalculationResult):
         return _wrap(generated.smoke_CalculatorListener.on_calculation_result_instance(self, _unwrap(calculation_result, CalculationResult)), None)
+
+    class ResultStruct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CalculatorListenerResultStruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.smoke_CalculatorListenerResultStruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def result(self) -> float:
+            return _wrap(self._native.result, float)
+        @result.setter
+        def result(self, value: float):
+          self._native.result = _unwrap(value, float)
+    
+    
+    
+    
+    dict[str, float] = dict[str, float]
+    
+    
 

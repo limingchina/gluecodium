@@ -1,6 +1,7 @@
 
 
 import datetime
+from enum import Enum
 import typing
 
 class DurationSeconds:
@@ -18,4 +19,30 @@ class DurationSeconds:
     @duration_property.setter
     def duration_property(self, value: datetime.timedelta) -> None:
         ...
+
+    class DurationStruct:
+    
+        duration_field: datetime.timedelta
+    
+    
+    
+    datetime.timedelta = datetime.timedelta
+    
+    
+    
+    list[datetime.timedelta] = list[datetime.timedelta]
+    
+    
+    
+    set[datetime.timedelta] = set[datetime.timedelta]
+    
+    
+    
+    dict[str, datetime.timedelta] = dict[str, datetime.timedelta]
+    
+    
+    
+    dict[datetime.timedelta, str] = dict[datetime.timedelta, str]
+    
+    
 

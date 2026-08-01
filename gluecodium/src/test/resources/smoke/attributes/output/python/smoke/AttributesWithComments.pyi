@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class AttributesWithComments:
@@ -21,4 +22,11 @@ class AttributesWithComments:
 
     #: Const comment
     PI = False
+
+    class SomeStruct:
+    
+        #: Field comment
+        field: str
+    
+    
 

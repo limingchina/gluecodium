@@ -15,5 +15,5 @@ namespace py = pybind11;
 #include "functional"
 
 
-// InterfaceWithLambdaFooBar is a std::function, handled inline where used.
+// FooBar is a std::function, handled inline where used.
 

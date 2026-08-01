@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class MultipleAttributesDart:
@@ -18,4 +19,5 @@ class MultipleAttributesDart:
 
     def two_lists(self):
         ...
+
 

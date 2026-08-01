@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -39,5 +35,6 @@ class JavaDeprecatedPosDefaults(_NativeBase):
     @first_free_field.setter
     def first_free_field(self, value: str):
       self._native.first_free_field = _unwrap(value, str)
+
 
 

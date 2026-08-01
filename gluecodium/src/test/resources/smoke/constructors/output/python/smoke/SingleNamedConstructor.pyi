@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SingleNamedConstructor:
@@ -7,4 +8,5 @@ class SingleNamedConstructor:
     @staticmethod
     def create() -> SingleNamedConstructor:
         ...
+
 

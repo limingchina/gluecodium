@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SwiftConstructorOverloads:
@@ -11,4 +12,5 @@ class SwiftConstructorOverloads:
     @staticmethod
     def make_do(throughput: str) -> SwiftConstructorOverloads:
         ...
+
 

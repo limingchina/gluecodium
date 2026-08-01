@@ -2,6 +2,7 @@
 
 from smoke.NonEquatableClass import NonEquatableClass
 from smoke.NonEquatableInterface import NonEquatableInterface
+from enum import Enum
 import typing
 
 class SimpleEquatableStruct:
@@ -15,4 +16,5 @@ class SimpleEquatableStruct:
     nullable_class_field: Optional[NonEquatableClass]
 
     nullable_interface_field: Optional[NonEquatableInterface]
+
 

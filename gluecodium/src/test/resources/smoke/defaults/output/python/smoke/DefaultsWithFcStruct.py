@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.FcStruct import FcStruct
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.FcStruct import FcStruct
 
 class DefaultsWithFcStruct(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -29,5 +25,6 @@ class DefaultsWithFcStruct(_NativeBase):
     @struct_field.setter
     def struct_field(self, value: FcStruct):
       self._native.struct_field = _unwrap(value, FcStruct)
+
 
 

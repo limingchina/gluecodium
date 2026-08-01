@@ -1,6 +1,7 @@
 
 
 from smoke.SomethingEnum import SomethingEnum
+from enum import Enum
 import typing
 
 class StructWithPosEnums:
@@ -12,4 +13,5 @@ class StructWithPosEnums:
     last_field: SomethingEnum
 
     FIRST_CONSTANT = SomethingEnum.REALLY_FIRST
+
 

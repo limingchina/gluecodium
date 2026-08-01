@@ -2,18 +2,15 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.CompressionState import CompressionState
 from smoke.DartColor import DartColor
 from smoke.DartSeason import DartSeason
 from smoke.Rectangle import Rectangle
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class UseDartExternalTypes(_NativeBase):
     def __init__(self, native):
@@ -38,4 +35,5 @@ class UseDartExternalTypes(_NativeBase):
     def season_round_trip(input: DartSeason) -> DartSeason:
         native_result = generated.smoke_UseDartExternalTypes.season_round_trip(_unwrap(input, DartSeason))
         return _get_or_create_wrapper(native_result, DartSeason)
+
 

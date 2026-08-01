@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithOverloads:
@@ -14,4 +15,5 @@ class StructWithOverloads:
 
     def overloaded_method(self, input_string: str, input_bool: bool) -> str:
         ...
+
 

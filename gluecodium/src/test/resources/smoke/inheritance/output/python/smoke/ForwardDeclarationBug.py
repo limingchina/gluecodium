@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ParentClass import ParentClass
-
 import generated
 
+from smoke.ParentClass import ParentClass
 
 class ForwardDeclarationBug(generated.smoke_ForwardDeclarationBug):
     def __init__(self, native=None):
@@ -26,4 +25,5 @@ class ForwardDeclarationBug(generated.smoke_ForwardDeclarationBug):
 
     def foo(self, bar: ParentClass):
         return _wrap(generated.smoke_ForwardDeclarationBug.foo(self, _unwrap(bar, ParentClass)), None)
+
 

@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
 import generated
 
 
@@ -27,4 +25,5 @@ class ParentInterfaceWithBool(generated.smoke_ParentInterfaceWithBool):
 
     def root_method(self, input1: bool):
         return _wrap(generated.smoke_ParentInterfaceWithBool.root_method(self, _unwrap(input1, bool)), None)
+
 

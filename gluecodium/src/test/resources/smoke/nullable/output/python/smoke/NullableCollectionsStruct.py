@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-import datetime
-from smoke.NullableSomeStruct import NullableSomeStruct
-
-
-from _native_base import _NativeBase
-
 import generated
 
+import datetime
+from smoke.Nullable import Nullable
 
 class NullableCollectionsStruct(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -33,10 +29,11 @@ class NullableCollectionsStruct(_NativeBase):
 
 
     @property
-    def structs(self) -> dict[int, Optional[NullableSomeStruct]]:
-        return _wrap(self._native.structs, dict[int, Optional[NullableSomeStruct]])
+    def structs(self) -> dict[int, Optional[Nullable.SomeStruct]]:
+        return _wrap(self._native.structs, dict[int, Optional[Nullable.SomeStruct]])
     @structs.setter
-    def structs(self, value: dict[int, Optional[NullableSomeStruct]]):
-      self._native.structs = _unwrap(value, dict[int, Optional[NullableSomeStruct]])
+    def structs(self, value: dict[int, Optional[Nullable.SomeStruct]]):
+      self._native.structs = _unwrap(value, dict[int, Optional[Nullable.SomeStruct]])
+
 
 

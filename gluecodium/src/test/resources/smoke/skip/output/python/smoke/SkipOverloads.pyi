@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SkipOverloads:
@@ -9,4 +10,5 @@ class SkipOverloads:
     def do_foo(self, input: float):
         """"""
         ...
+
 

@@ -2,14 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.ParentNarrowOne import ParentNarrowOne
 from smoke.ParentNarrowTwo import ParentNarrowTwo
-
-import generated
-
 
 class FirstParentIsNarrowClass(generated.smoke_FirstParentIsNarrowClass):
     def __init__(self, native=None):
@@ -35,4 +34,5 @@ class FirstParentIsNarrowClass(generated.smoke_FirstParentIsNarrowClass):
     @child_property.setter
     def child_property(self, value: str):
         generated.smoke_FirstParentIsNarrowClass.child_property.fset(self, _unwrap(value, str))
+
 

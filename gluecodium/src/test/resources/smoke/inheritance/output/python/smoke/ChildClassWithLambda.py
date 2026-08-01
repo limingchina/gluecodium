@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.InterfaceWithLambda import InterfaceWithLambda
-
 import generated
 
+from smoke.InterfaceWithLambda import InterfaceWithLambda
 
 class ChildClassWithLambda(generated.smoke_ChildClassWithLambda):
     def __init__(self, native=None):
@@ -23,4 +22,5 @@ class ChildClassWithLambda(generated.smoke_ChildClassWithLambda):
         else:
             super().__init__()
         self._native = self
+
 

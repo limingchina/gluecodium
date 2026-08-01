@@ -1,25 +1,49 @@
 
 
-from smoke.EnumsErrorStruct import EnumsErrorStruct
-from smoke.EnumsInternalErrorCode import EnumsInternalErrorCode
-from smoke.EnumsSimpleEnum import EnumsSimpleEnum
+from enum import Enum
 import typing
 
 class Enums:
 
     @staticmethod
-    def method_with_enumeration(input: EnumsSimpleEnum) -> EnumsSimpleEnum:
+    def method_with_enumeration(input: Enums.SimpleEnum) -> Enums.SimpleEnum:
         ...
 
     @staticmethod
-    def flip_enum_value(input: EnumsInternalErrorCode) -> EnumsInternalErrorCode:
+    def flip_enum_value(input: Enums.InternalErrorCode) -> Enums.InternalErrorCode:
         ...
 
     @staticmethod
-    def extract_enum_from_struct(input: EnumsErrorStruct) -> EnumsInternalErrorCode:
+    def extract_enum_from_struct(input: Enums.ErrorStruct) -> Enums.InternalErrorCode:
         ...
 
     @staticmethod
-    def create_struct_with_enum_inside(type: EnumsInternalErrorCode, message: str) -> EnumsErrorStruct:
+    def create_struct_with_enum_inside(type: Enums.InternalErrorCode, message: str) -> Enums.ErrorStruct:
         ...
+
+    class ErrorStruct:
+    
+        type: Enums.InternalErrorCode
+    
+        message: str
+    
+    
+    
+    class SimpleEnum(Enum):
+    
+        FIRST = 0
+        SECOND = 1
+    
+    
+    
+    class InternalErrorCode(Enum):
+    
+        ERROR_NONE = 0
+        ERROR_FATAL = 1
+    
+    
+    
+    dict[Enums.SimpleEnum, int] = dict[Enums.SimpleEnum, int]
+    
+    
 

@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class JavaDeprecatedPosDefaultsCustom:
@@ -14,4 +15,5 @@ class JavaDeprecatedPosDefaultsCustom:
     @staticmethod
     def custom() -> JavaDeprecatedPosDefaultsCustom:
         ...
+
 

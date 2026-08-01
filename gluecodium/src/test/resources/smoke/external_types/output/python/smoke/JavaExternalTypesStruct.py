@@ -2,20 +2,16 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.Currency import Currency
 from smoke.Month import Month
 from smoke.Season import Season
 from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
-
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class JavaExternalTypesStruct(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -62,5 +58,6 @@ class JavaExternalTypesStruct(_NativeBase):
     @season.setter
     def season(self, value: Season):
       self._native.season = _unwrap(value, Season)
+
 
 

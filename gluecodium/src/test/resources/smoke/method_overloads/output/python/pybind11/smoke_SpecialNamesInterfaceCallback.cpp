@@ -15,5 +15,5 @@ namespace py = pybind11;
 #include "functional"
 
 
-// SpecialNamesInterfaceCallback is a std::function, handled inline where used.
+// Callback is a std::function, handled inline where used.
 

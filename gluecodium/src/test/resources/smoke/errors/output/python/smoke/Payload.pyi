@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class Payload:
@@ -7,4 +8,5 @@ class Payload:
     error_code: int
 
     message: str
+
 

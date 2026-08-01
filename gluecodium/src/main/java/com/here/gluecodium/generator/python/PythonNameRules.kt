@@ -36,11 +36,24 @@ import java.io.File
 class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
     override fun getName(limeElement: LimeElement) =
         getPlatformName(limeElement as? LimeNamedElement)
-            ?: if (limeElement is LimeType && limeElement.path.hasParent) {
+            ?: sanitizeKeyword(super.getName(limeElement))
+
+    /**
+     * Returns the flattened (concatenated) name for pybind11 registration identifiers.
+     * Nested types like `Outer.Inner` become `OuterInner` so the resulting C++ function name
+     * (e.g. `register_pkg_OuterInner`) is a valid, dot-free identifier. This preserves
+     * backward compatibility with the per-type pybind11 binding files.
+     */
+    fun getFlattenedName(limeElement: LimeNamedElement): String {
+        val platformName = getPlatformName(limeElement)
+        if (platformName != null) return sanitizeKeyword(platformName)
+        return sanitizeKeyword(
+            if (limeElement is LimeType && limeElement.path.hasParent)
                 limeElement.path.tail.joinToString("")
-            } else {
-                sanitizeKeyword(super.getName(limeElement))
-            }
+            else
+                super.getName(limeElement)
+        )
+    }
 
     override fun getPropertyName(limeProperty: LimeProperty) = getPlatformName(limeProperty) ?: super.getPropertyName(limeProperty)
 
@@ -53,7 +66,7 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
     /** Resolve the output path of a generated pybind11 C++ binding file for the given element. */
     fun getPybind11FileName(limeElement: LimeNamedElement): String {
         val packagePath = limeElement.path.head.joinToString("_")
-        return PYBIND11_TARGET_DIRECTORY + packagePath + "_" + getName(limeElement) + ".cpp"
+        return PYBIND11_TARGET_DIRECTORY + packagePath + "_" + getFlattenedName(limeElement) + ".cpp"
     }
 
     /** Resolve the output path of a generated Python type-stub (`.pyi`) file for the element. */

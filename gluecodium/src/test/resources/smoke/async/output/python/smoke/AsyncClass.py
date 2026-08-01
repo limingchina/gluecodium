@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.AsyncError import AsyncError
 from smoke.AsyncErrorCode import AsyncErrorCode
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class AsyncClass(_NativeBase):
     def __init__(self, native):
@@ -32,4 +29,5 @@ class AsyncClass(_NativeBase):
     @staticmethod
     def async_static(input: bool):
         generated.smoke_AsyncClass.async_static(_unwrap(input, bool))
+
 

@@ -1,21 +1,23 @@
 
 
 from smoke.ClassWithOverloads import ClassWithOverloads
-from smoke.EnumsExternal_Enum import EnumsExternal_Enum
-from smoke.StructsAnotherExternalStruct import StructsAnotherExternalStruct
+from smoke.Enums import Enums
+from smoke.Structs import Structs
+from enum import Enum
 import typing
 
 class UseCppExternalTypes:
 
     @staticmethod
-    def use_struct(input: StructsAnotherExternalStruct):
+    def use_struct(input: Structs.AnotherExternalStruct):
         ...
 
     @staticmethod
-    def use_enum(input: EnumsExternal_Enum):
+    def use_enum(input: Enums.ExternalEnum):
         ...
 
     @staticmethod
     def use_class(input: ClassWithOverloads):
         ...
+
 

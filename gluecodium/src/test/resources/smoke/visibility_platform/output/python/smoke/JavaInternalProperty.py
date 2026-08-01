@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -22,4 +19,5 @@ class JavaInternalProperty(_NativeBase):
     @app_context.setter
     def app_context(self, value):
         self._native.app_context = _unwrap(value, Optional[str])
+
 

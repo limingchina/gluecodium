@@ -6,6 +6,7 @@ from smoke.Month import Month
 from smoke.Season import Season
 from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
+from enum import Enum
 import typing
 
 class UseJavaExternalTypes:
@@ -33,4 +34,5 @@ class UseJavaExternalTypes:
     @staticmethod
     def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
         ...
+
 

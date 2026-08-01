@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class LongComments:
@@ -11,4 +12,5 @@ This too!"""
     def some_method_with_long_comment(self, input: str, ratio: float) -> float:
         """This is very important method. It has very important parameters. It has side effects."""
         ...
+
 

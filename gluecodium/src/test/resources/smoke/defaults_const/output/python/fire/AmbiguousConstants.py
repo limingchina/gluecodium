@@ -2,19 +2,17 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from fire.SomeStruct import SomeStruct
-
-from _native_base import _NativeBase
-
 import generated
 
+from fire.SomeStruct import SomeStruct
 
 class AmbiguousConstants(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
     DUMMY = {42}
+
 

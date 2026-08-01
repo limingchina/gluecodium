@@ -2,20 +2,61 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.CtorLinksOverloadedCtors import CtorLinksOverloadedCtors
-from smoke.CtorLinksSingleCtor import CtorLinksSingleCtor
-from smoke.CtorLinksSingleCtorWithOneArgument import CtorLinksSingleCtorWithOneArgument
-from smoke.CtorLinksSingleCtorWithTwoArgument import CtorLinksSingleCtorWithTwoArgument
-
-from _native_base import _NativeBase
-
 import generated
 
 
 class CtorLinks(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
+
+    class SingleCtor(_NativeBase):
+        """This class has just one constructor [create]."""
+        def __init__(self, native):
+            super().__init__(native)
+    
+        @staticmethod
+        def create() -> CtorLinks.SingleCtor:
+            native_result = generated.smoke_CtorLinksSingleCtor.create()
+            return _get_or_create_wrapper(native_result, CtorLinks.SingleCtor)
+    
+    
+    
+    class SingleCtorWithOneArgument(_NativeBase):
+        """This class has just one constructor with one argument [create(Int)]."""
+        def __init__(self, native):
+            super().__init__(native)
+    
+        @staticmethod
+        def create(arg: int) -> CtorLinks.SingleCtorWithOneArgument:
+            native_result = generated.smoke_CtorLinksSingleCtorWithOneArgument.create(_unwrap(arg, int))
+            return _get_or_create_wrapper(native_result, CtorLinks.SingleCtorWithOneArgument)
+    
+    
+    
+    class SingleCtorWithTwoArgument(_NativeBase):
+        """This class has just one constructor with two argument [create(Int, String)]."""
+        def __init__(self, native):
+            super().__init__(native)
+    
+        @staticmethod
+        def create(arg: int, arg2: str) -> CtorLinks.SingleCtorWithTwoArgument:
+            native_result = generated.smoke_CtorLinksSingleCtorWithTwoArgument.create(_unwrap(arg, int), _unwrap(arg2, str))
+            return _get_or_create_wrapper(native_result, CtorLinks.SingleCtorWithTwoArgument)
+    
+    
+    
+    class OverloadedCtors(_NativeBase):
+        def __init__(self, native):
+            super().__init__(native)
+    
+        @staticmethod
+        def create(*args, **kwargs) -> CtorLinks.OverloadedCtors:
+            native_result = generated.smoke_CtorLinksOverloadedCtors.create(*[_unwrap(a) for a in args])
+            return _get_or_create_wrapper(native_result, CtorLinks.OverloadedCtors)
+    
+    
+    
 

@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -61,5 +57,6 @@ class StructWithKotlinPositionalDefaults(_NativeBase):
     @third_init_field.setter
     def third_init_field(self, value: str):
       self._native.third_init_field = _unwrap(value, str)
+
 
 

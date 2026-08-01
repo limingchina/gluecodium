@@ -1,9 +1,7 @@
 
 
-import typing
-
 from enum import Enum
-
+import typing
 
 class EnumWithAccessibleValues(Enum):
 
@@ -11,4 +9,5 @@ class EnumWithAccessibleValues(Enum):
     BAR = 1
     BAZ = 2
     FOO_ALIAS = 3
+
 

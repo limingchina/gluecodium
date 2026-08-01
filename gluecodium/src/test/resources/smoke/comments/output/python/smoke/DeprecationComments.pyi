@@ -1,6 +1,6 @@
 
 
-from smoke.DeprecationCommentsSomeEnum import DeprecationCommentsSomeEnum
+from enum import Enum
 import typing
 
 class DeprecationComments:
@@ -31,4 +31,32 @@ class DeprecationComments:
 
     #: This is some very useful constant.
     VERY_USEFUL = True
+
+    class SomeStruct:
+        """This is some very useful struct."""
+    
+        #: How useful this struct is.
+        some_field: bool
+    
+    
+    
+    class SomeEnum(Enum):
+        """This is some very useful enum."""
+    
+        USELESS = 0
+    
+    
+    
+    #: This is some very useful typedef.
+    bool = bool
+    
+    
+    
+    class SomethingWrongError(Exception):
+        """"""
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
 

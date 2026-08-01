@@ -1,9 +1,6 @@
 
 
-from smoke.CppRefReturnTypeEnumBased import CppRefReturnTypeEnumBased
-from smoke.CppRefReturnTypeInternalError import CppRefReturnTypeInternalError
-from smoke.CppRefReturnTypeSomeStruct import CppRefReturnTypeSomeStruct
-from smoke.CppRefReturnTypeStructBased import CppRefReturnTypeStructBased
+from enum import Enum
 import typing
 
 class CppRefReturnType:
@@ -21,7 +18,7 @@ class CppRefReturnType:
         ...
 
     @staticmethod
-    def struct_ref() -> CppRefReturnTypeSomeStruct:
+    def struct_ref() -> CppRefReturnType.SomeStruct:
         ...
 
     @staticmethod
@@ -52,4 +49,31 @@ class CppRefReturnType:
     def string_property(self) -> str:
         ...
 
+
+    class SomeStruct:
+    
+        field: str
+    
+    
+    
+    class InternalError(Enum):
+    
+        FOO = 0
+        BAR = 1
+    
+    
+    
+    class EnumBasedError(Exception):
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
+    
+    class StructBasedError(Exception):
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
 

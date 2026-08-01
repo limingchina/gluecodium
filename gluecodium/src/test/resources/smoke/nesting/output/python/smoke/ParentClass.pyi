@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class ParentClass:
@@ -14,4 +15,5 @@ class ParentClass:
     @parent_property.setter
     def parent_property(self, value: str) -> None:
         ...
+
 

@@ -116,9 +116,24 @@ internal class PythonImportResolver(
     }
 
     private fun createImport(limeElement: LimeNamedElement): PythonImport {
+        val topLevel = findTopLevelElement(limeElement)
         val modulePath =
-            (limeElement.path.head + nameResolver.resolveName(limeElement))
+            (topLevel.path.head + nameResolver.resolveName(topLevel))
                 .joinToString(".")
-        return PythonImport(modulePath, nameResolver.resolveName(limeElement))
+        return PythonImport(modulePath, nameResolver.resolveName(topLevel))
+    }
+
+    /**
+     * Finds the top-level (non-nested) ancestor of the given element by walking up the
+     * parent chain via the reference map. Returns the element itself if it has no parent.
+     */
+    private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {
+        var current = element
+        while (current.path.hasParent) {
+            val parent = limeReferenceMap[current.path.parent.toString()] as? LimeNamedElement
+                ?: return current
+            current = parent
+        }
+        return current
     }
 }

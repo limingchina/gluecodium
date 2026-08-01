@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class PublicFieldsMixedInit:
@@ -7,4 +8,5 @@ class PublicFieldsMixedInit:
     public_field1: str
 
     public_field2: str
+
 

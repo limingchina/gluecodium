@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithCollectionDefaults:
@@ -15,4 +16,5 @@ class StructWithCollectionDefaults:
     map_field: dict[str, str]
 
     set_field: set[str]
+
 

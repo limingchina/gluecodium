@@ -1,6 +1,7 @@
 
 
 from smoke.ImmutableStructNoClash import ImmutableStructNoClash
+from enum import Enum
 import typing
 
 class MutableStructImmutableFields:
@@ -10,4 +11,5 @@ class MutableStructImmutableFields:
     int_field: int
 
     bool_field: bool
+
 

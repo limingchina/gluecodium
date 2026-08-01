@@ -19,5 +19,6 @@
   !
   !}}
 {{! Python lambda / callback type stub: a typing.Callable alias. }}
-{{#ifPredicate this "hasAnyComment"}}#: {{resolveName comment}}
+{{#model}}{{#ifPredicate this "hasAnyComment"}}#: {{resolveName comment}}
 {{/ifPredicate}}{{resolveName}} = Callable[[{{#parameters}}{{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}], {{resolveName returnType}}]
+{{{nestedTypes}}}{{/model}}

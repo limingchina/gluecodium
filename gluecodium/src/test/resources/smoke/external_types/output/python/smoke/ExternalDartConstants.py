@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.Rectangle import Rectangle
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.Rectangle import Rectangle
 
 class ExternalDartConstants(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -26,4 +22,5 @@ class ExternalDartConstants(_NativeBase):
     SMALL = {0, 0, 1, 1}
 
     BIG = {0, 0, 10, 10}
+
 

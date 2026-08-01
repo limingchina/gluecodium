@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-from _native_base import _NativeBase
-
+from typing import Callable
 import generated
 
 
@@ -30,4 +28,8 @@ class OuterClassWithLambdaAndProperty(_NativeBase):
     @staticmethod
     def another_integer_set(value: int):
         generated.smoke_OuterClassWithLambdaAndProperty.another_integer_set(_unwrap(value, int))
+
+    SomeInternalLambda = Callable[[int], int]
+    
+    
 

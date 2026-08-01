@@ -323,7 +323,10 @@ internal class PythonGeneratorPredicates(
             // `InstanceInStruct`'s own module needs `from ...SelfHolder import SelfHolder` for
             // its factory return types - an unresolvable circular import. `PythonField` uses
             // this predicate to emit a local (deferred) import instead of a module-level one.
-            "isAncestorField" to { limeElement: Any -> limeElement is LimeField && isFieldTypeAncestor(limeElement) },
+            // With one-file-per-top-element, nested types and their ancestors share the same
+            // Python module, so deferred (local) imports for ancestor references are no longer
+            // needed. Kept as a no-op (always false) for minimal template disruption.
+            "isAncestorField" to { _ -> false },
             // Whether a function's return type creates a circular import with its own container.
             // This happens in two patterns:
             // 1. The return type is an *ancestor* of the container (e.g. a nested class
@@ -334,16 +337,14 @@ internal class PythonGeneratorPredicates(
             // that would import each other at module level — an unresolvable circular import.
             // `PythonFunction.mustache` uses this predicate to emit a local (deferred) import
             // inside the method body instead.
-            "isAncestorReturnType" to { limeElement: Any ->
-                val func = limeElement as? com.here.gluecodium.model.lime.LimeFunction
-                func != null && isCircularTypeRef(func, func.returnType.typeRef)
-            },
+            // With one-file-per-top-element, deferred imports for circular type references
+            // are no longer needed. Kept as a no-op (always false) for minimal template disruption.
+            "isAncestorReturnType" to { _ -> false },
             // Whether a property's type creates a circular import with its own container.
             // Mirrors `isAncestorField` / `isAncestorReturnType` but for property types.
-            "isAncestorProperty" to { limeElement: Any ->
-                val prop = limeElement as? com.here.gluecodium.model.lime.LimeProperty
-                prop != null && isCircularTypeRef(prop, prop.typeRef)
-            },
+            // With one-file-per-top-element, deferred imports for circular type references
+            // are no longer needed. Kept as a no-op (always false) for minimal template disruption.
+            "isAncestorProperty" to { _ -> false },
             // Whether the element lives inside a non-empty namespace (i.e. its LimePath head is not
             // empty). Used by the pybind11 file template to emit `using` aliases so the generated
             // code can refer to the C++ type by its short name.

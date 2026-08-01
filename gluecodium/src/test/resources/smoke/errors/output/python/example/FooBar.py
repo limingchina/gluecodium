@@ -2,18 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ErrorsInternal import ErrorsInternal
-from smoke.ErrorsInternalErrorCode import ErrorsInternalErrorCode
-from smoke.SomeTypeCollectionSome import SomeTypeCollectionSome
-from smoke.SomeTypeCollectionSomeTypeCollectionError import SomeTypeCollectionSomeTypeCollectionError
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.Errors import Errors
+from smoke.SomeTypeCollection import SomeTypeCollection
 
 class FooBar(_NativeBase):
     def __init__(self, native):
@@ -26,4 +21,5 @@ class FooBar(_NativeBase):
     @staticmethod
     def method_with_type_collection_error():
         generated.example_FooBar.method_with_type_collection_error()
+
 

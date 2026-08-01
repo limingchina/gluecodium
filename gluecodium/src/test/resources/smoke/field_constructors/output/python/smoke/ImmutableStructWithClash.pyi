@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class ImmutableStructWithClash:
@@ -9,4 +10,5 @@ class ImmutableStructWithClash:
     int_field: int
 
     bool_field: bool
+
 

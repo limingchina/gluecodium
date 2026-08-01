@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class MultipleAttributesKotlin:
@@ -18,4 +19,5 @@ class MultipleAttributesKotlin:
 
     def two_lists(self):
         ...
+
 

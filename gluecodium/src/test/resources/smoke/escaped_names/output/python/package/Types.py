@@ -2,15 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from package.typesenum import typesenum
-from package.typesstruct import typesstruct
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -24,5 +18,43 @@ class Types(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    CONST = typesenum.NA_N
+    CONST = Enum.NA_N
+
+    class Struct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.package_typesstruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.package_typesstruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def null(self) -> Types.Enum:
+            return _wrap(self._native.null, Types.Enum)
+        @null.setter
+        def null(self, value: Types.Enum):
+          self._native.null = _unwrap(value, Types.Enum)
+    
+    
+    
+    
+    class Enum(Enum):
+    
+        NA_N = 0
+    
+    
+    
+    list[Types.Struct] = list[Types.Struct]
+    
+    
+    
+    class ExceptionError(Exception):
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
 

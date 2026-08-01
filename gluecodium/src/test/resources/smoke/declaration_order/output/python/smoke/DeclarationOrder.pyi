@@ -1,8 +1,46 @@
 
 
-from smoke.DeclarationOrderNestedStruct import DeclarationOrderNestedStruct
-from smoke.DeclarationOrderSomeEnum import DeclarationOrderSomeEnum
+from enum import Enum
 import typing
 
 class DeclarationOrder:
+
+    class MainStruct:
+    
+        struct_field: DeclarationOrder.NestedStruct
+    
+        type_def_field: int
+    
+        struct_array_field: list[DeclarationOrder.NestedStruct]
+    
+        map_field: dict[int, list[DeclarationOrder.NestedStruct]]
+    
+        enum_field: DeclarationOrder.SomeEnum
+    
+    
+    
+    class NestedStruct:
+    
+        some_field: str
+    
+    
+    
+    class SomeEnum(Enum):
+    
+        FOO = 0
+        BAR = 1
+    
+    
+    
+    int = int
+    
+    
+    
+    dict[int, list[DeclarationOrder.NestedStruct]] = dict[int, list[DeclarationOrder.NestedStruct]]
+    
+    
+    
+    list[DeclarationOrder.NestedStruct] = list[DeclarationOrder.NestedStruct]
+    
+    
 

@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithSet:
@@ -7,4 +8,5 @@ class StructWithSet:
     def __hash__(self) -> int: ...
 
     field: set[StructWithSet]
+
 

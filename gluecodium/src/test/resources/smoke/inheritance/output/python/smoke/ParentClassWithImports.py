@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
 from typing import Callable
+import generated
 
 from smoke.IncludableClass import IncludableClass
 from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
 from smoke.IncludableStruct import IncludableStruct
-
-import generated
-
 
 class ParentClassWithImports(generated.smoke_ParentClassWithImports):
     def __init__(self, native=None):
@@ -38,4 +37,5 @@ class ParentClassWithImports(generated.smoke_ParentClassWithImports):
     @root_property.setter
     def root_property(self, value: Callable[[int], None]):
         generated.smoke_ParentClassWithImports.root_property.fset(self, _unwrap(value, Callable[[int], None]))
+
 

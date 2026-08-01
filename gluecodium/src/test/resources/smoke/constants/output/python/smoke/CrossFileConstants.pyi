@@ -1,9 +1,11 @@
 
 
-from smoke.ConstantsStateEnum import ConstantsStateEnum
+from smoke.Constants import Constants
+from enum import Enum
 import typing
 
 class CrossFileConstants:
 
-    FOO_BAR = ConstantsStateEnum.ON
+    FOO_BAR = StateEnum.ON
+
 

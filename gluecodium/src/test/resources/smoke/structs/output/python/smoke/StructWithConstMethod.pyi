@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithConstMethod:
@@ -8,4 +9,5 @@ class StructWithConstMethod:
 
     def double_const(self) -> float:
         ...
+
 

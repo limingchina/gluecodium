@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ListenerInterface import ListenerInterface
-
-
 import generated
 
+from smoke.ListenerInterface import ListenerInterface
 
 class Weakling(generated.smoke_Weakling):
     def __init__(self, native=None):
@@ -33,4 +31,5 @@ class Weakling(generated.smoke_Weakling):
     @listener.setter
     def listener(self, value):
         generated.smoke_Weakling.listener.fset(self, _unwrap(value, Optional[ListenerInterface]))
+
 

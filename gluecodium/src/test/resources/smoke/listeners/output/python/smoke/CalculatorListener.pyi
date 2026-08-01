@@ -1,7 +1,7 @@
 
 
 from smoke.CalculationResult import CalculationResult
-from smoke.CalculatorListenerResultStruct import CalculatorListenerResultStruct
+from enum import Enum
 import typing
 
 class CalculatorListener:
@@ -12,7 +12,7 @@ class CalculatorListener:
     def on_calculation_result_const(self, calculation_result: float):
         ...
 
-    def on_calculation_result_struct(self, calculation_result: CalculatorListenerResultStruct):
+    def on_calculation_result_struct(self, calculation_result: CalculatorListener.ResultStruct):
         ...
 
     def on_calculation_result_array(self, calculation_result: list[float]):
@@ -23,4 +23,14 @@ class CalculatorListener:
 
     def on_calculation_result_instance(self, calculation_result: CalculationResult):
         ...
+
+    class ResultStruct:
+    
+        result: float
+    
+    
+    
+    dict[str, float] = dict[str, float]
+    
+    
 

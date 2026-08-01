@@ -1,6 +1,7 @@
 
 
 from smoke.CalculatorListener import CalculatorListener
+from enum import Enum
 import typing
 
 class Calculator:
@@ -12,4 +13,5 @@ class Calculator:
     @staticmethod
     def unregister_listener(listener: CalculatorListener):
         ...
+
 

@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class AttributesClass:
@@ -16,4 +17,5 @@ class AttributesClass:
         ...
 
     PI = False
+
 

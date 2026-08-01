@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -43,4 +39,5 @@ class DartDeprecatedPosDefaultsCustom(_NativeBase):
     def custom() -> DartDeprecatedPosDefaultsCustom:
         native_result = generated.smoke_DartDeprecatedPosDefaultsCustom.custom()
         return _get_or_create_wrapper(native_result, DartDeprecatedPosDefaultsCustom)
+
 

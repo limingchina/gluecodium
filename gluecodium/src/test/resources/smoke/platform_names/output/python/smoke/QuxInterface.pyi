@@ -1,11 +1,12 @@
 
 
-from smoke.QuxStruct import QuxStruct
+from smoke.QuxTypes import QuxTypes
+from enum import Enum
 import typing
 
 class QuxInterface:
 
-    def qux_method(self, qux_parameter: str) -> QuxStruct:
+    def qux_method(self, qux_parameter: str) -> QuxTypes.QuxStruct:
         ...
 
     @staticmethod
@@ -19,4 +20,5 @@ class QuxInterface:
     @qux_property.setter
     def qux_property(self, value: int) -> None:
         ...
+
 

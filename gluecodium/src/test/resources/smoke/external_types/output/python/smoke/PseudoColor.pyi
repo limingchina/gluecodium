@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class PseudoColor:
@@ -13,4 +14,5 @@ class PseudoColor:
     blue: float
 
     alpha: float
+
 

@@ -17,5 +17,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// MapSceneLoadSceneCallback is a std::function, handled inline where used.
+// LoadSceneCallback is a std::function, handled inline where used.
 

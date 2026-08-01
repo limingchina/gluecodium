@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.SimpleInterface import SimpleInterface
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.SimpleInterface import SimpleInterface
 
 class StructWithInterface(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -29,5 +25,6 @@ class StructWithInterface(_NativeBase):
     @interface_instance.setter
     def interface_instance(self, value: SimpleInterface):
       self._native.interface_instance = _unwrap(value, SimpleInterface)
+
 
 

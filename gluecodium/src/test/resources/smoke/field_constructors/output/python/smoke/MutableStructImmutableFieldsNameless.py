@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ImmutableNamelessCtor import ImmutableNamelessCtor
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.ImmutableNamelessCtor import ImmutableNamelessCtor
 
 class MutableStructImmutableFieldsNameless(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -45,5 +41,6 @@ class MutableStructImmutableFieldsNameless(_NativeBase):
     @bool_field.setter
     def bool_field(self, value: bool):
       self._native.bool_field = _unwrap(value, bool)
+
 
 

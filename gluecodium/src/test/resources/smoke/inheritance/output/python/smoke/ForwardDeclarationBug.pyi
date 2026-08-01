@@ -1,6 +1,7 @@
 
 
 from smoke.ParentClass import ParentClass
+from enum import Enum
 import typing
 
 class ForwardDeclarationBug(
@@ -8,4 +9,5 @@ class ForwardDeclarationBug(
 
     def foo(self, bar: ParentClass):
         ...
+
 

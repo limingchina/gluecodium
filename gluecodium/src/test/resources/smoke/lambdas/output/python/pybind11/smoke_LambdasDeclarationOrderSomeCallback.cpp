@@ -15,5 +15,5 @@ namespace py = pybind11;
 #include "functional"
 
 
-// LambdasDeclarationOrderSomeCallback is a std::function, handled inline where used.
+// SomeCallback is a std::function, handled inline where used.
 

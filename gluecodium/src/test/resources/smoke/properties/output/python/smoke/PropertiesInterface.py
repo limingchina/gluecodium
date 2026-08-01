@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.PropertiesInterfaceExampleStruct import PropertiesInterfaceExampleStruct
-
-
 import generated
 
 
@@ -27,10 +24,30 @@ class PropertiesInterface(generated.smoke_PropertiesInterface):
         self._native = self
 
     @property
-    def struct_property(self) -> PropertiesInterfaceExampleStruct:
-        return _wrap(generated.smoke_PropertiesInterface.struct_property.fget(self), PropertiesInterfaceExampleStruct)
+    def struct_property(self) -> PropertiesInterface.ExampleStruct:
+        return _wrap(generated.smoke_PropertiesInterface.struct_property.fget(self), PropertiesInterface.ExampleStruct)
 
     @struct_property.setter
-    def struct_property(self, value: PropertiesInterfaceExampleStruct):
-        generated.smoke_PropertiesInterface.struct_property.fset(self, _unwrap(value, PropertiesInterfaceExampleStruct))
+    def struct_property(self, value: PropertiesInterface.ExampleStruct):
+        generated.smoke_PropertiesInterface.struct_property.fset(self, _unwrap(value, PropertiesInterface.ExampleStruct))
+
+    class ExampleStruct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PropertiesInterfaceExampleStruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.smoke_PropertiesInterfaceExampleStruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def value(self) -> float:
+            return _wrap(self._native.value, float)
+        @value.setter
+        def value(self, value: float):
+          self._native.value = _unwrap(value, float)
+    
+    
+    
 

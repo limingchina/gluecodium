@@ -18,12 +18,10 @@
   ! License-Filename: LICENSE
   !
   !}}
-{{! Python enumeration type stub. }}
-from enum import Enum
-
-
-class {{resolveName}}(Enum):
+{{! Python enumeration type stub. `from enum import Enum` is at the file level. }}
+{{#model}}class {{resolveName}}(Enum):
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}{{#enumerators}}
 
     {{resolveName}} = {{iter.position}}{{/enumerators}}
+{{{nestedTypes}}}{{/model}}

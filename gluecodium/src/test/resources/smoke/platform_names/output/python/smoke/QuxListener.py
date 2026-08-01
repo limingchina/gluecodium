@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
 import generated
 
 
@@ -27,4 +25,5 @@ class QuxListener(generated.smoke_QuxListener):
 
     def qux_method(self, qux_parameter: str):
         return _wrap(generated.smoke_QuxListener.qux_method(self, _unwrap(qux_parameter, str)), None)
+
 

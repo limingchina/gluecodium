@@ -17,5 +17,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// commentsSomeLambda is a std::function, handled inline where used.
+// SomeLambda is a std::function, handled inline where used.
 

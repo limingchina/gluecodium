@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class InterfaceWithStatic:
@@ -26,4 +27,5 @@ class InterfaceWithStatic:
     @static_property.setter
     def static_property(self, value: str) -> None:
         ...
+
 

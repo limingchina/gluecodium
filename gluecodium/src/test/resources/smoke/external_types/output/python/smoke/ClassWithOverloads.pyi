@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class ClassWithOverloads:
@@ -15,4 +16,5 @@ class ClassWithOverloads:
 
     def all_overloads_exposed(self, input_string: str, input_bool: bool) -> str:
         ...
+
 

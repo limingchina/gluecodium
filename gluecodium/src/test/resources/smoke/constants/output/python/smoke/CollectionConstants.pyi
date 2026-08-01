@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class CollectionConstants:
@@ -11,4 +12,5 @@ class CollectionConstants:
     MAP_CONSTANT = ["foo": "bar"]
 
     MIXED_CONSTANT = [["foo"]: ["bar"]]
+
 

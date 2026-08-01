@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class EquatableStructWithAccessors:
@@ -7,4 +8,5 @@ class EquatableStructWithAccessors:
     def __hash__(self) -> int: ...
 
     foo_field: str
+
 

@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.InterfaceWithOverloads import InterfaceWithOverloads
-
 import generated
 
+from smoke.InterfaceWithOverloads import InterfaceWithOverloads
 
 class ChildClassNameClash(generated.smoke_ChildClassNameClash):
     def __init__(self, native=None):
@@ -23,4 +22,5 @@ class ChildClassNameClash(generated.smoke_ChildClassNameClash):
         else:
             super().__init__()
         self._native = self
+
 

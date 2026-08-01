@@ -2,20 +2,16 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.ImmutableStructWithDefaults import ImmutableStructWithDefaults
 from smoke.PosDefaultStructWithFieldUsingImmutableStruct import PosDefaultStructWithFieldUsingImmutableStruct
 from smoke.SomeMutableCustomStructWithDefaults import SomeMutableCustomStructWithDefaults
 from smoke.StructWithAllDefaults import StructWithAllDefaults
 from smoke.StructWithNullableCollectionDefaults import StructWithNullableCollectionDefaults
-
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class PosDefaultStructWithCustomStructsFields(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -138,5 +134,6 @@ class PosDefaultStructWithCustomStructsFields(_NativeBase):
     @non_const_ctor_field7.setter
     def non_const_ctor_field7(self, value):
       self._native.non_const_ctor_field7 = _unwrap(value, Optional[bytes])
+
 
 

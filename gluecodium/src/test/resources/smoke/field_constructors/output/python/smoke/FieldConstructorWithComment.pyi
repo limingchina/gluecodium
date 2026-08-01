@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class FieldConstructorWithComment:
@@ -7,4 +8,5 @@ class FieldConstructorWithComment:
 
     #: Some field
     string_field: str
+
 

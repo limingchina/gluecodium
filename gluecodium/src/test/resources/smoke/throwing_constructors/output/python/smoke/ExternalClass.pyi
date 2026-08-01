@@ -1,9 +1,6 @@
 
 
-from smoke.ExternalClassConstructorExploded import ExternalClassConstructorExploded
-from smoke.ExternalClassErrorEnum import ExternalClassErrorEnum
-from smoke.ExternalClassInternalOne import ExternalClassInternalOne
-from smoke.ExternalClassInternalTwo import ExternalClassInternalTwo
+from enum import Enum
 import typing
 
 class ExternalClass:
@@ -11,4 +8,38 @@ class ExternalClass:
     @staticmethod
     def create() -> ExternalClass:
         ...
+
+    class InternalOne:
+    
+        @staticmethod
+        def create() -> ExternalClass.InternalOne:
+            ...
+    
+        @staticmethod
+        def create(value: int) -> ExternalClass.InternalOne:
+            ...
+    
+    
+    
+    class InternalTwo:
+    
+        @staticmethod
+        def create() -> ExternalClass.InternalTwo:
+            ...
+    
+    
+    
+    class ErrorEnum(Enum):
+    
+        NONE = 0
+        CRASHED = 1
+    
+    
+    
+    class ConstructorExplodedError(Exception):
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
 

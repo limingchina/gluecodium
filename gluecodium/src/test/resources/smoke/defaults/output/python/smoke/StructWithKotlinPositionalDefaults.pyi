@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithKotlinPositionalDefaults:
@@ -14,4 +15,5 @@ class StructWithKotlinPositionalDefaults:
     second_free_field: bool
 
     third_init_field: str
+
 

@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.CalculationResult import CalculationResult
-from smoke.ListenerWithPropertiesResultEnum import ListenerWithPropertiesResultEnum
-from smoke.ListenerWithPropertiesResultStruct import ListenerWithPropertiesResultStruct
-
-
 import generated
 
+from smoke.CalculationResult import CalculationResult
 
 class ListenerWithProperties(generated.smoke_ListenerWithProperties):
     def __init__(self, native=None):
@@ -45,20 +41,20 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
         generated.smoke_ListenerWithProperties.packed_message.fset(self, _unwrap(value, CalculationResult))
 
     @property
-    def structured_message(self) -> ListenerWithPropertiesResultStruct:
-        return _wrap(generated.smoke_ListenerWithProperties.structured_message.fget(self), ListenerWithPropertiesResultStruct)
+    def structured_message(self) -> ListenerWithProperties.ResultStruct:
+        return _wrap(generated.smoke_ListenerWithProperties.structured_message.fget(self), ListenerWithProperties.ResultStruct)
 
     @structured_message.setter
-    def structured_message(self, value: ListenerWithPropertiesResultStruct):
-        generated.smoke_ListenerWithProperties.structured_message.fset(self, _unwrap(value, ListenerWithPropertiesResultStruct))
+    def structured_message(self, value: ListenerWithProperties.ResultStruct):
+        generated.smoke_ListenerWithProperties.structured_message.fset(self, _unwrap(value, ListenerWithProperties.ResultStruct))
 
     @property
-    def enumerated_message(self) -> ListenerWithPropertiesResultEnum:
-        return _wrap(generated.smoke_ListenerWithProperties.enumerated_message.fget(self), ListenerWithPropertiesResultEnum)
+    def enumerated_message(self) -> ListenerWithProperties.ResultEnum:
+        return _wrap(generated.smoke_ListenerWithProperties.enumerated_message.fget(self), ListenerWithProperties.ResultEnum)
 
     @enumerated_message.setter
-    def enumerated_message(self, value: ListenerWithPropertiesResultEnum):
-        generated.smoke_ListenerWithProperties.enumerated_message.fset(self, _unwrap(value, ListenerWithPropertiesResultEnum))
+    def enumerated_message(self, value: ListenerWithProperties.ResultEnum):
+        generated.smoke_ListenerWithProperties.enumerated_message.fset(self, _unwrap(value, ListenerWithProperties.ResultEnum))
 
     @property
     def arrayed_message(self) -> list[str]:
@@ -83,4 +79,35 @@ class ListenerWithProperties(generated.smoke_ListenerWithProperties):
     @buffered_message.setter
     def buffered_message(self, value: bytes):
         generated.smoke_ListenerWithProperties.buffered_message.fset(self, _unwrap(value, bytes))
+
+    class ResultStruct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ListenerWithPropertiesResultStruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.smoke_ListenerWithPropertiesResultStruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def result(self) -> float:
+            return _wrap(self._native.result, float)
+        @result.setter
+        def result(self, value: float):
+          self._native.result = _unwrap(value, float)
+    
+    
+    
+    
+    class ResultEnum(Enum):
+    
+        NONE = 0
+        RESULT = 1
+    
+    
+    
+    dict[str, float] = dict[str, float]
+    
+    
 

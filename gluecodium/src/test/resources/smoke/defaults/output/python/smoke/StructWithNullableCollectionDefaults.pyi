@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithNullableCollectionDefaults:
@@ -9,4 +10,5 @@ class StructWithNullableCollectionDefaults:
     nullable_map_field: Optional[dict[str, str]]
 
     nullable_set_field: Optional[set[str]]
+
 

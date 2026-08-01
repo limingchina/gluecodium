@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class BasicTypes:
@@ -51,4 +52,5 @@ class BasicTypes:
     @staticmethod
     def ulong_function(input: int) -> int:
         ...
+
 

@@ -18,11 +18,8 @@
   ! License-Filename: LICENSE
   !
   !}}
-{{! Python class: thin wrapper around the native C++ object exposed via pybind11. }}
-{{#ifPredicate model "needsTrampoline"}}
-import {{nativeModule}}
-
-
+{{! Python class: thin wrapper around the native C++ object exposed via pybind11. Imports are at the file level. }}
+{{#model}}{{#ifPredicate model "needsTrampoline"}}
 class {{resolveName}}({{nativeModule}}.{{typeName}}):
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}
@@ -44,19 +41,12 @@ class {{resolveName}}({{nativeModule}}.{{typeName}}):
 {{#properties}}
 
 {{>python/PythonProperty}}{{/properties}}
-{{#enumerations}}
-{{#unlessPredicate "isStandaloneEnum"}}
-{{>python/PythonEnumeration}}{{/unlessPredicate}}{{/enumerations}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
+{{{nestedTypes}}}
 {{/ifPredicate}}
 {{#unlessPredicate model "needsTrampoline"}}
-from _native_base import _NativeBase
-
-import {{nativeModule}}
-
-
 class {{resolveName}}{{#if parents}}(
 {{#parents}}    {{resolveName}}{{#if iter.hasNext}},
 {{/if}}{{/parents}},
@@ -71,10 +61,8 @@ class {{resolveName}}{{#if parents}}(
 {{#properties}}
 
 {{>python/PythonProperty}}{{/properties}}
-{{#enumerations}}
-{{#unlessPredicate "isStandaloneEnum"}}
-{{>python/PythonEnumeration}}{{/unlessPredicate}}{{/enumerations}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
-{{/unlessPredicate}}
+{{{nestedTypes}}}
+{{/unlessPredicate}}{{/model}}

@@ -19,5 +19,5 @@ namespace py = pybind11;
 #include "vector"
 
 
-// LambdasInterfaceTakeScreenshotCallback is a std::function, handled inline where used.
+// TakeScreenshotCallback is a std::function, handled inline where used.
 

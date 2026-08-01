@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ScalarKeyframe import ScalarKeyframe
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.ScalarKeyframe import ScalarKeyframe
 
 class ScalarKeyframeTrack(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -42,5 +38,6 @@ class ScalarKeyframeTrack(_NativeBase):
     @interpolation_mode.setter
     def interpolation_mode(self, value: str):
       self._native.interpolation_mode = _unwrap(value, str)
+
 
 

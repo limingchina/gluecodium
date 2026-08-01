@@ -1,8 +1,7 @@
 
 
 from smoke.Constructors import Constructors
-from smoke.ConstructorsConstructorExploded import ConstructorsConstructorExploded
-from smoke.ConstructorsErrorEnum import ConstructorsErrorEnum
+from enum import Enum
 import typing
 
 class ChildConstructors(
@@ -15,4 +14,5 @@ class ChildConstructors(
     @staticmethod
     def create(other: Constructors) -> ChildConstructors:
         ...
+
 

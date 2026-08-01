@@ -17,5 +17,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// LambdasNullableConfuser is a std::function, handled inline where used.
+// NullableConfuser is a std::function, handled inline where used.
 

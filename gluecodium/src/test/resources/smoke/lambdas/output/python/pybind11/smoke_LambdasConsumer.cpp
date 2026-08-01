@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// LambdasConsumer is a std::function, handled inline where used.
+// Consumer is a std::function, handled inline where used.
 

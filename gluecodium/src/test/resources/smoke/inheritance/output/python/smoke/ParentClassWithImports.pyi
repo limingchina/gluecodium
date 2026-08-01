@@ -4,6 +4,7 @@ from smoke.IncludableClass import IncludableClass
 from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
 from smoke.IncludableStruct import IncludableStruct
+from enum import Enum
 import typing
 from typing import Callable
 
@@ -19,4 +20,5 @@ class ParentClassWithImports:
     @root_property.setter
     def root_property(self, value: Callable[[int], None]) -> None:
         ...
+
 

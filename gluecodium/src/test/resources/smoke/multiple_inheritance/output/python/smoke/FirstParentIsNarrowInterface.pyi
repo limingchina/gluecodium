@@ -2,6 +2,7 @@
 
 from smoke.ParentNarrowOne import ParentNarrowOne
 from smoke.ParentNarrowTwo import ParentNarrowTwo
+from enum import Enum
 import typing
 
 class FirstParentIsNarrowInterface:
@@ -16,4 +17,5 @@ class FirstParentIsNarrowInterface:
     @child_property.setter
     def child_property(self, value: str) -> None:
         ...
+
 

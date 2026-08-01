@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.SkipProxy import SkipProxy
-
-
 import generated
 
+from smoke.SkipProxy import SkipProxy
 
 class InheritFromSkipped(generated.smoke_InheritFromSkipped):
     def __init__(self, native=None):
@@ -25,4 +23,5 @@ class InheritFromSkipped(generated.smoke_InheritFromSkipped):
         else:
             super().__init__()
         self._native = self
+
 

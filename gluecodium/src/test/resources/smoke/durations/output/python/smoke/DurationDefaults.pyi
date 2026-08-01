@@ -1,6 +1,7 @@
 
 
 import datetime
+from enum import Enum
 import typing
 
 class DurationDefaults:
@@ -18,4 +19,5 @@ class DurationDefaults:
     microz: datetime.timedelta
 
     nanoz: datetime.timedelta
+
 

@@ -1,6 +1,6 @@
 
 
-from smoke.ConstantsInterfaceStateEnum import ConstantsInterfaceStateEnum
+from enum import Enum
 import typing
 
 class ConstantsInterface:
@@ -17,5 +17,12 @@ class ConstantsInterface:
 
     STRING_CONSTANT = "Foo bar"
 
-    ENUM_CONSTANT = ConstantsInterfaceStateEnum.ON
+    ENUM_CONSTANT = StateEnum.ON
+
+    class StateEnum(Enum):
+    
+        OFF = 0
+        ON = 1
+    
+    
 

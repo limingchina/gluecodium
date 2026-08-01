@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.NonEquatableClass import NonEquatableClass
 from smoke.NonEquatableInterface import NonEquatableInterface
-
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class SimpleEquatableStruct(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -62,5 +58,6 @@ class SimpleEquatableStruct(_NativeBase):
     @nullable_interface_field.setter
     def nullable_interface_field(self, value):
       self._native.nullable_interface_field = _unwrap(value, Optional[NonEquatableInterface])
+
 
 

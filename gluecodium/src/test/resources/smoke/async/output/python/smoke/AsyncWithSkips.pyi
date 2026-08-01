@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class AsyncWithSkips:
@@ -11,4 +12,5 @@ class AsyncWithSkips:
     @staticmethod
     def make_shared_instance():
         ...
+
 

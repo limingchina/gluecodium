@@ -2,19 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ErrorsInterfaceExternal import ErrorsInterfaceExternal
-from smoke.ErrorsInterfaceExternalErrors import ErrorsInterfaceExternalErrors
-from smoke.ErrorsInterfaceInternal import ErrorsInterfaceInternal
-from smoke.ErrorsInterfaceInternalError import ErrorsInterfaceInternalError
-from smoke.Payload import Payload
-from smoke.WithPayloadError import WithPayloadError
-
-
 import generated
 
+from smoke.Payload import Payload
+from smoke.WithPayloadError import WithPayloadError
 
 class ErrorsInterface(generated.smoke_ErrorsInterface):
     def __init__(self, native=None):
@@ -49,4 +43,35 @@ class ErrorsInterface(generated.smoke_ErrorsInterface):
         return generated.smoke_ErrorsInterface.method_with_payload_error_and_return_value()
 
     ERROR_MESSAGE = "Some error message constant"
+
+    class InternalError(Enum):
+    
+        ERROR_NONE = 0
+        ERROR_FATAL = 1
+    
+    
+    
+    class ExternalErrors(Enum):
+    
+        NONE = 0
+        BOOM = 1
+        BUST = 2
+    
+    
+    
+    class InternalError(Exception):
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
+    
+    class ExternalError(Exception):
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
 

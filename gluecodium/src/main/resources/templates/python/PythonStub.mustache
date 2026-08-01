@@ -42,10 +42,9 @@
 {{#importedName}}from {{modulePath}} import {{importedName}}
 {{/importedName}}{{^importedName}}import {{modulePath}}
 {{/importedName}}{{/imports}}
+from enum import Enum
 import typing
 {{#usesCallable}}from typing import Callable
 {{/usesCallable}}
 
-{{#model}}
-{{include stubContentTemplate}}
-{{/model}}
+{{{stubContent}}}

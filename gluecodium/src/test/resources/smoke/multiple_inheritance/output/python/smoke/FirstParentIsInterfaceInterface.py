@@ -2,16 +2,14 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from another.SomeCoolClassType import SomeCoolClassType
 from smoke.ParentInterface import ParentInterface
 from smoke.ParentNarrowOne import ParentNarrowOne
-
-
-import generated
-
 
 class FirstParentIsInterfaceInterface(generated.smoke_FirstParentIsInterfaceInterface):
     def __init__(self, native=None):
@@ -38,4 +36,5 @@ class FirstParentIsInterfaceInterface(generated.smoke_FirstParentIsInterfaceInte
     @child_property.setter
     def child_property(self, value: str):
         generated.smoke_FirstParentIsInterfaceInterface.child_property.fset(self, _unwrap(value, str))
+
 

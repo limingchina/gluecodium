@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class JavaExternalCtor:
@@ -9,4 +10,5 @@ class JavaExternalCtor:
     @staticmethod
     def make(field: str) -> JavaExternalCtor:
         ...
+
 

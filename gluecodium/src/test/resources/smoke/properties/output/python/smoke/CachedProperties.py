@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -23,4 +20,5 @@ class CachedProperties(_NativeBase):
     @staticmethod
     def static_cached_property() -> bytes:
         return _wrap(generated.smoke_CachedProperties.static_cached_property(), bytes)
+
 

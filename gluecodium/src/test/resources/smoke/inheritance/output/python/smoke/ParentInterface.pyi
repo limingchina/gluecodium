@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class ParentInterface:
@@ -14,4 +15,5 @@ class ParentInterface:
     @root_property.setter
     def root_property(self, value: str) -> None:
         ...
+
 

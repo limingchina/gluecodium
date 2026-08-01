@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class KotlinMethodOverloads:
@@ -9,4 +10,5 @@ class KotlinMethodOverloads:
 
     def two(self, input: list[str]):
         ...
+
 

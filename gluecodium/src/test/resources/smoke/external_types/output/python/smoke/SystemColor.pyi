@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SystemColor:
@@ -13,4 +14,5 @@ class SystemColor:
     blue: float
 
     alpha: float
+
 

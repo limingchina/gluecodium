@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class ParentClass:
@@ -15,4 +16,5 @@ class ParentClass:
 
     def baz(self):
         ...
+
 

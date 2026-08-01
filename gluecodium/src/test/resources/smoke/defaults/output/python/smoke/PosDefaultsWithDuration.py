@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-import datetime
-
-
-from _native_base import _NativeBase
-
 import generated
 
+import datetime
 
 class PosDefaultsWithDuration(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -37,5 +33,6 @@ class PosDefaultsWithDuration(_NativeBase):
     @nanos_field.setter
     def nanos_field(self, value: datetime.timedelta):
       self._native.nanos_field = _unwrap(value, datetime.timedelta)
+
 
 

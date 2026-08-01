@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class DartDeprecatedPosDefaultsCustom:
@@ -12,4 +13,5 @@ class DartDeprecatedPosDefaultsCustom:
     @staticmethod
     def custom() -> DartDeprecatedPosDefaultsCustom:
         ...
+
 

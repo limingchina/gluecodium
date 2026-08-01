@@ -16,7 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MyNestedImplementation = ::smoke::MyOuterClass::MyNestedImplementation;
 
-class MyOuterClassMyNestedImplementationTrampoline : public MyNestedImplementation {
+class MyNestedImplementationTrampoline : public MyNestedImplementation {
 public:
     using MyNestedImplementation::MyNestedImplementation;
 
@@ -29,7 +29,7 @@ public:
 };
 
 void register_smoke_MyOuterClassMyNestedImplementation(py::module_& module) {
-    py::class_<MyNestedImplementation, ::smoke::MyParentInterface, std::shared_ptr<MyNestedImplementation>, MyOuterClassMyNestedImplementationTrampoline>(module, "smoke_MyOuterClassMyNestedImplementation")
+    py::class_<MyNestedImplementation, ::smoke::MyParentInterface, std::shared_ptr<MyNestedImplementation>, MyNestedImplementationTrampoline>(module, "smoke_MyOuterClassMyNestedImplementation")
         .def("__gluecodium_id__", [](const MyNestedImplementation& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -39,7 +39,7 @@ void register_smoke_MyOuterClassMyNestedImplementation(py::module_& module) {
         // here because the returned instance is a foreign (non-trampoline) implementation;
         // instead we build a fresh trampoline and store the impl directly.
         .def(py::init([](std::shared_ptr<MyNestedImplementation> native) {
-            auto self = std::make_shared<MyOuterClassMyNestedImplementationTrampoline>();
+            auto self = std::make_shared<MyNestedImplementationTrampoline>();
             self->m_impl = native;
             return self;
         }))

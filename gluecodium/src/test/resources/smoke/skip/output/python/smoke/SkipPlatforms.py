@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -30,4 +27,5 @@ class SkipPlatforms(_NativeBase):
     @staticmethod
     def not_in_kotlin(input: float) -> float:
         return generated.smoke_SkipPlatforms.not_in_kotlin(_unwrap(input, float))
+
 

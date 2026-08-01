@@ -1,6 +1,7 @@
 
 
 import datetime
+from enum import Enum
 import typing
 
 class DateDefaults:
@@ -12,4 +13,5 @@ class DateDefaults:
     before_epoch: datetime.datetime
 
     exactly_epoch: datetime.datetime
+
 

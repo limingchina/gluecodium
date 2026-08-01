@@ -2,6 +2,7 @@
 
 from smoke.ChildClassFromClass import ChildClassFromClass
 from smoke.ParentClass import ParentClass
+from enum import Enum
 import typing
 
 class ParentWithClassReferences:
@@ -16,4 +17,5 @@ class ParentWithClassReferences:
     @class_property.setter
     def class_property(self, value: ParentClass) -> None:
         ...
+
 
