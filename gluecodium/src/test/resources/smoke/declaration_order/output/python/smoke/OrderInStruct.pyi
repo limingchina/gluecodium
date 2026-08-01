@@ -1,12 +1,24 @@
 
 
-from smoke.OrderInStructNestedStruct import OrderInStructNestedStruct
-from smoke.OrderInStructSomeEnum import OrderInStructSomeEnum
+from enum import Enum
 import typing
 
 class OrderInStruct:
 
-    struct_field: OrderInStructNestedStruct
+    struct_field: OrderInStruct.NestedStruct
 
-    enum_field: OrderInStructSomeEnum
+    enum_field: OrderInStruct.SomeEnum
+
+    class NestedStruct:
+    
+        some_field: str
+    
+    
+    
+    class SomeEnum(Enum):
+    
+        FOO = 0
+        BAR = 1
+    
+    
 

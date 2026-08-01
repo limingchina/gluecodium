@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class MultipleAttributesSwift:
@@ -18,4 +19,5 @@ class MultipleAttributesSwift:
 
     def two_lists(self):
         ...
+
 

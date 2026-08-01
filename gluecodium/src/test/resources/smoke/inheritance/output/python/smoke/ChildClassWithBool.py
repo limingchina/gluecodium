@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ParentInterfaceWithBool import ParentInterfaceWithBool
-
 import generated
 
+from smoke.ParentInterfaceWithBool import ParentInterfaceWithBool
 
 class ChildClassWithBool(generated.smoke_ChildClassWithBool):
     def __init__(self, native=None):
@@ -23,4 +22,5 @@ class ChildClassWithBool(generated.smoke_ChildClassWithBool):
         else:
             super().__init__()
         self._native = self
+
 

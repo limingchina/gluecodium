@@ -17,5 +17,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// LambdasIndexer is a std::function, handled inline where used.
+// Indexer is a std::function, handled inline where used.
 

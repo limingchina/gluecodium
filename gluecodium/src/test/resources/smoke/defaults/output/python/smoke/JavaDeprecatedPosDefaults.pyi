@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class JavaDeprecatedPosDefaults:
@@ -10,4 +11,5 @@ class JavaDeprecatedPosDefaults:
 
     #: first free!
     first_free_field: str
+
 

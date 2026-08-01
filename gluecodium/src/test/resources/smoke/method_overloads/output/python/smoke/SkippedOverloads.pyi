@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SkippedOverloads:
@@ -11,4 +12,5 @@ class SkippedOverloads:
     @staticmethod
     def make_for_dart(input: str) -> SkippedOverloads:
         ...
+
 

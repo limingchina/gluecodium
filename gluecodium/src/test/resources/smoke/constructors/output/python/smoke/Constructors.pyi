@@ -1,7 +1,6 @@
 
 
-from smoke.ConstructorsConstructorExploded import ConstructorsConstructorExploded
-from smoke.ConstructorsErrorEnum import ConstructorsErrorEnum
+from enum import Enum
 import typing
 
 class Constructors:
@@ -29,4 +28,18 @@ class Constructors:
     @staticmethod
     def create(input: int) -> Constructors:
         ...
+
+    class ErrorEnum(Enum):
+    
+        NONE = 0
+        CRASHED = 1
+    
+    
+    
+    class ConstructorExplodedError(Exception):
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
 

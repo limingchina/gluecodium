@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -44,5 +40,6 @@ class SomeMutableCustomStructWithDefaults(_NativeBase):
     @list_field.setter
     def list_field(self, value: list[int]):
       self._native.list_field = _unwrap(value, list[int])
+
 
 

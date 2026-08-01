@@ -2,14 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ValidationUtilsValidationErrorCode import ValidationUtilsValidationErrorCode
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -22,4 +17,19 @@ class ValidationUtils(_NativeBase):
                 *[_unwrap(arg) for arg in args],
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
+
+    class ValidationErrorCode(Enum):
+    
+        NONE = 0
+        VALIDATION_FAILED = 1
+    
+    
+    
+    class ValidationError(Exception):
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
 

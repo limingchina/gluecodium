@@ -4,6 +4,7 @@ from smoke.CompressionState import CompressionState
 from smoke.DartColor import DartColor
 from smoke.DartSeason import DartSeason
 from smoke.Rectangle import Rectangle
+from enum import Enum
 import typing
 
 class UseDartExternalTypes:
@@ -23,4 +24,5 @@ class UseDartExternalTypes:
     @staticmethod
     def season_round_trip(input: DartSeason) -> DartSeason:
         ...
+
 

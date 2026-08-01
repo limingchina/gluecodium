@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from fire.SomeStruct import SomeStruct
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from fire.SomeStruct import SomeStruct
 
 class ConstantDefaults(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -37,5 +33,6 @@ class ConstantDefaults(_NativeBase):
     @field2.setter
     def field2(self, value: SomeStruct):
       self._native.field2 = _unwrap(value, SomeStruct)
+
 
 

@@ -2,9 +2,7 @@
 
 import datetime
 from smoke.TemperatureObserver import TemperatureObserver
-from smoke.ThermometerAnotherNotification import ThermometerAnotherNotification
-from smoke.ThermometerNotification import ThermometerNotification
-from smoke.ThermometerSomeThermometerErrorCode import ThermometerSomeThermometerErrorCode
+from enum import Enum
 import typing
 
 class Thermometer:
@@ -56,4 +54,29 @@ class Thermometer:
 
     def get_fahrenheit(self) -> float:
         ...
+
+    class SomeThermometerErrorCode(Enum):
+        """Some error code for thermometer."""
+    
+        ERROR_NONE = 0
+        ERROR_FATAL = 1
+    
+    
+    
+    class NotificationError(Exception):
+        """This error indicates problems with notification of observers.
+    May be thrown if observers cannot be notified."""
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
+    
+    class AnotherNotificationError(Exception):
+        """This error indicates other problems with notification of observers."""
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
 

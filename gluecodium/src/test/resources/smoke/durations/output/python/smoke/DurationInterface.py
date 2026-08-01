@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-import datetime
-
-
 import generated
 
+import datetime
 
 class DurationInterface(generated.smoke_DurationInterface):
     def __init__(self, native=None):
@@ -28,4 +26,5 @@ class DurationInterface(generated.smoke_DurationInterface):
 
     def duration_function(self, input: datetime.timedelta) -> str:
         return _wrap(generated.smoke_DurationInterface.duration_function(self, _unwrap(input, datetime.timedelta)), str)
+
 

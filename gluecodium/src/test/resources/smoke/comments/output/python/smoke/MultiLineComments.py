@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -25,7 +22,6 @@ And now comes a list:
 * escaping
 
 ```Some example code;```"""
-
     def __init__(self, native):
         super().__init__(native)
 
@@ -34,4 +30,5 @@ And now comes a list:
 It has very important parameters.
 It has side effects."""
         return _wrap(self._native.some_method_with_long_comment(_unwrap(input, str), _unwrap(ratio, float)), float)
+
 

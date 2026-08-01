@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from kotlin_smoke.Currency import Currency
 from kotlin_smoke.KotlinExternalTypesStruct import KotlinExternalTypesStruct
@@ -12,11 +14,6 @@ from kotlin_smoke.Season import Season
 from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
 from kotlin_smoke.VeryBoolean import VeryBoolean
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class UseKotlinExternalTypes(_NativeBase):
     def __init__(self, native):
@@ -55,4 +52,5 @@ class UseKotlinExternalTypes(_NativeBase):
     @staticmethod
     def very_boolean_unbox(input: VeryBoolean) -> bool:
         return generated.kotlin_smoke_UseKotlinExternalTypes.very_boolean_unbox(_unwrap(input, VeryBoolean))
+
 

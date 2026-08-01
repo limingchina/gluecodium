@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class Rectangle:
@@ -11,4 +12,5 @@ class Rectangle:
     width: int
 
     height: int
+
 

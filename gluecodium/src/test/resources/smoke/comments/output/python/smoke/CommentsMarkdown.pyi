@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class CommentsMarkdown:
@@ -27,4 +28,5 @@ Ordered list:
 ---
 
 [title](https://www.markdownguide.org/cheat-sheet/)"""
+
 

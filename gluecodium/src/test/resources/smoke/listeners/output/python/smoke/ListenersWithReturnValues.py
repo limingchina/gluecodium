@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.CalculationResult import CalculationResult
-from smoke.ListenersWithReturnValuesResultEnum import ListenersWithReturnValuesResultEnum
-from smoke.ListenersWithReturnValuesResultStruct import ListenersWithReturnValuesResultStruct
-
-
 import generated
 
+from smoke.CalculationResult import CalculationResult
 
 class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
     def __init__(self, native=None):
@@ -34,11 +30,11 @@ class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
     def fetch_data_string(self) -> str:
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_string(self), str)
 
-    def fetch_data_struct(self) -> ListenersWithReturnValuesResultStruct:
-        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_struct(self), ListenersWithReturnValuesResultStruct)
+    def fetch_data_struct(self) -> ListenersWithReturnValues.ResultStruct:
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_struct(self), ListenersWithReturnValues.ResultStruct)
 
-    def fetch_data_enum(self) -> ListenersWithReturnValuesResultEnum:
-        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_enum(self), ListenersWithReturnValuesResultEnum)
+    def fetch_data_enum(self) -> ListenersWithReturnValues.ResultEnum:
+        return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_enum(self), ListenersWithReturnValues.ResultEnum)
 
     def fetch_data_array(self) -> list[float]:
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_array(self), list[float])
@@ -48,4 +44,35 @@ class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
 
     def fetch_data_instance(self) -> CalculationResult:
         return _wrap(generated.smoke_ListenersWithReturnValues.fetch_data_instance(self), CalculationResult)
+
+    class ResultStruct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ListenersWithReturnValuesResultStruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.smoke_ListenersWithReturnValuesResultStruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def result(self) -> float:
+            return _wrap(self._native.result, float)
+        @result.setter
+        def result(self, value: float):
+          self._native.result = _unwrap(value, float)
+    
+    
+    
+    
+    class ResultEnum(Enum):
+    
+        NONE = 0
+        RESULT = 1
+    
+    
+    
+    dict[str, float] = dict[str, float]
+    
+    
 

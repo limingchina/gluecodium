@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class DartInternalElementsSkipped:
@@ -10,4 +11,5 @@ class DartInternalElementsSkipped:
 
     def foo(self):
         ...
+
 

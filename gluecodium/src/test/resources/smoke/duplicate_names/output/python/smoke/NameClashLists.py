@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.Alphabet import Alphabet
 from smoke.foo.Alphabet import Alphabet
-
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class NameClashLists(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -38,5 +34,6 @@ class NameClashLists(_NativeBase):
     @field_b.setter
     def field_b(self, value: list[Alphabet]):
       self._native.field_b = _unwrap(value, list[Alphabet])
+
 
 

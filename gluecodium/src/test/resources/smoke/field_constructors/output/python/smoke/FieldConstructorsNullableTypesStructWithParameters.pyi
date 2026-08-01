@@ -1,9 +1,0 @@
-
-
-from smoke.FieldConstructorsNullableTypesFoodType import FieldConstructorsNullableTypesFoodType
-import typing
-
-class FieldConstructorsNullableTypesStructWithParameters:
-
-    food_type: FieldConstructorsNullableTypesFoodType
-

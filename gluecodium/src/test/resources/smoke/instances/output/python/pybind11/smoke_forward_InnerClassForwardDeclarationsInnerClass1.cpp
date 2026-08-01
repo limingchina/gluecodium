@@ -16,7 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InnerClass1 = ::smoke::forward::InnerClassForwardDeclarations::InnerClass1;
 
-class InnerClassForwardDeclarationsInnerClass1Trampoline : public InnerClass1 {
+class InnerClass1Trampoline : public InnerClass1 {
 public:
     using InnerClass1::InnerClass1;
 
@@ -37,7 +37,7 @@ public:
 };
 
 void register_smoke_forward_InnerClassForwardDeclarationsInnerClass1(py::module_& module) {
-    py::class_<InnerClass1, std::shared_ptr<InnerClass1>, InnerClassForwardDeclarationsInnerClass1Trampoline>(module, "smoke_forward_InnerClassForwardDeclarationsInnerClass1")
+    py::class_<InnerClass1, std::shared_ptr<InnerClass1>, InnerClass1Trampoline>(module, "smoke_forward_InnerClassForwardDeclarationsInnerClass1")
         .def("__gluecodium_id__", [](const InnerClass1& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -47,7 +47,7 @@ void register_smoke_forward_InnerClassForwardDeclarationsInnerClass1(py::module_
         // here because the returned instance is a foreign (non-trampoline) implementation;
         // instead we build a fresh trampoline and store the impl directly.
         .def(py::init([](std::shared_ptr<InnerClass1> native) {
-            auto self = std::make_shared<InnerClassForwardDeclarationsInnerClass1Trampoline>();
+            auto self = std::make_shared<InnerClass1Trampoline>();
             self->m_impl = native;
             return self;
         }))

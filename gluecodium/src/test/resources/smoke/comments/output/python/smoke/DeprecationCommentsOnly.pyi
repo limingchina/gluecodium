@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class DeprecationCommentsOnly:
@@ -20,4 +21,24 @@ class DeprecationCommentsOnly:
 
     #: 
     VERY_USEFUL = True
+
+    class SomeStruct:
+        """"""
+    
+        #: 
+        some_field: bool
+    
+    
+    
+    class SomeEnum(Enum):
+        """"""
+    
+        USELESS = 0
+    
+    
+    
+    #: 
+    bool = bool
+    
+    
 

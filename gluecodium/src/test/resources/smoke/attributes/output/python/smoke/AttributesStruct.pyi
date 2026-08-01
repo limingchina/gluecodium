@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class AttributesStruct:
@@ -10,4 +11,5 @@ class AttributesStruct:
         ...
 
     PI = False
+
 

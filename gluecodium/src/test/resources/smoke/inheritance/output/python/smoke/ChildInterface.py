@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ParentInterface import ParentInterface
-
-
 import generated
 
+from smoke.ParentInterface import ParentInterface
 
 class ChildInterface(generated.smoke_ChildInterface):
     def __init__(self, native=None):
@@ -28,4 +26,5 @@ class ChildInterface(generated.smoke_ChildInterface):
 
     def child_method(self):
         return _wrap(generated.smoke_ChildInterface.child_method(self), None)
+
 

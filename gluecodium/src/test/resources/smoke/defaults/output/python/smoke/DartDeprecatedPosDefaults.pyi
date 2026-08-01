@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class DartDeprecatedPosDefaults:
@@ -8,4 +9,5 @@ class DartDeprecatedPosDefaults:
     int_field: int
 
     string_field: str
+
 

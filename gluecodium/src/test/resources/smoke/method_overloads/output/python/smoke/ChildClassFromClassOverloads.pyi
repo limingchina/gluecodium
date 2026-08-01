@@ -1,6 +1,7 @@
 
 
 from smoke.ParentClass import ParentClass
+from enum import Enum
 import typing
 
 class ChildClassFromClassOverloads(
@@ -17,4 +18,5 @@ class ChildClassFromClassOverloads(
 
     def bar(self, input: float):
         ...
+
 

@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class FieldConstructorsInternal:
@@ -7,4 +8,5 @@ class FieldConstructorsInternal:
     public_field: str
 
     internal_field: float
+
 

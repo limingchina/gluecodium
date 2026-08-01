@@ -19,6 +19,7 @@
   !
   !}}
 {{! Python exception class. }}
+{{#model}}
 class {{resolveName}}(Exception):
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}
@@ -26,3 +27,5 @@ class {{resolveName}}(Exception):
     def __init__(self, message: str):
         super().__init__(message)
         self.message = message
+{{{nestedTypes}}}
+{{/model}}

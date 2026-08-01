@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
 import generated
 
 
@@ -35,4 +33,5 @@ class ParentInterface(generated.smoke_ParentInterface):
     @root_property.setter
     def root_property(self, value: str):
         generated.smoke_ParentInterface.root_property.fset(self, _unwrap(value, str))
+
 

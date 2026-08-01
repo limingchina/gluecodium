@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class VeryBoolean:
@@ -9,4 +10,5 @@ class VeryBoolean:
     @staticmethod
     def make(value: bool) -> VeryBoolean:
         ...
+
 

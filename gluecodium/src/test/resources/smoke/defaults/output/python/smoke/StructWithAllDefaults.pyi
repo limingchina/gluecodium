@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithAllDefaults:
@@ -7,4 +8,5 @@ class StructWithAllDefaults:
     int_field: int
 
     string_field: str
+
 

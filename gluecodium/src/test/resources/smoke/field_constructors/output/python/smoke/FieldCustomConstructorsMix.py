@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -50,4 +46,5 @@ class FieldCustomConstructorsMix(_NativeBase):
     def create_me(int_value: int, dummy: float) -> FieldCustomConstructorsMix:
         native_result = generated.smoke_FieldCustomConstructorsMix.create_me(_unwrap(int_value, int), _unwrap(dummy, float))
         return _get_or_create_wrapper(native_result, FieldCustomConstructorsMix)
+
 

@@ -1,6 +1,6 @@
 
 
-from smoke.MapSceneLoadSceneCallback import MapSceneLoadSceneCallback
+from enum import Enum
 import typing
 from typing import Callable
 
@@ -12,4 +12,8 @@ class MapScene:
 
     def load_scene(self, configuration_file: str, callback: Optional[Callable[[Optional[str]], None]]):
         ...
+
+    LoadSceneCallback = Callable[[Optional[str]], None]
+    
+    
 

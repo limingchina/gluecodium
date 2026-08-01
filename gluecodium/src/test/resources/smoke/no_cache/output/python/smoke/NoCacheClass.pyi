@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class NoCacheClass:
@@ -10,4 +11,5 @@ class NoCacheClass:
 
     def foo(self):
         ...
+
 

@@ -2,17 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.PropertiesExampleStruct import PropertiesExampleStruct
-from smoke.PropertiesInterface import PropertiesInterface
-from smoke.PropertiesInternalErrorCode import PropertiesInternalErrorCode
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.PropertiesInterface import PropertiesInterface
 
 class Properties(_NativeBase):
     def __init__(self, native):
@@ -32,12 +27,12 @@ class Properties(_NativeBase):
 
 
     @property
-    def struct_property(self) -> PropertiesExampleStruct:
-        return _wrap(self._native.struct_property, PropertiesExampleStruct)
+    def struct_property(self) -> Properties.ExampleStruct:
+        return _wrap(self._native.struct_property, Properties.ExampleStruct)
 
     @struct_property.setter
-    def struct_property(self, value: PropertiesExampleStruct):
-        self._native.struct_property = _unwrap(value, PropertiesExampleStruct)
+    def struct_property(self, value: Properties.ExampleStruct):
+        self._native.struct_property = _unwrap(value, Properties.ExampleStruct)
 
     @property
     def array_property(self) -> list[str]:
@@ -48,12 +43,12 @@ class Properties(_NativeBase):
         self._native.array_property = _unwrap(value, list[str])
 
     @property
-    def complex_type_property(self) -> PropertiesInternalErrorCode:
-        return _wrap(self._native.complex_type_property, PropertiesInternalErrorCode)
+    def complex_type_property(self) -> Properties.InternalErrorCode:
+        return _wrap(self._native.complex_type_property, Properties.InternalErrorCode)
 
     @complex_type_property.setter
-    def complex_type_property(self, value: PropertiesInternalErrorCode):
-        self._native.complex_type_property = _unwrap(value, PropertiesInternalErrorCode)
+    def complex_type_property(self, value: Properties.InternalErrorCode):
+        self._native.complex_type_property = _unwrap(value, Properties.InternalErrorCode)
 
     @property
     def byte_buffer_property(self) -> bytes:
@@ -88,6 +83,33 @@ class Properties(_NativeBase):
         generated.smoke_Properties.static_property_set(_unwrap(value, str))
 
     @staticmethod
-    def static_readonly_property() -> PropertiesExampleStruct:
-        return _wrap(generated.smoke_Properties.static_readonly_property(), PropertiesExampleStruct)
+    def static_readonly_property() -> Properties.ExampleStruct:
+        return _wrap(generated.smoke_Properties.static_readonly_property(), Properties.ExampleStruct)
+
+    class ExampleStruct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PropertiesExampleStruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.smoke_PropertiesExampleStruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def value(self) -> float:
+            return _wrap(self._native.value, float)
+        @value.setter
+        def value(self, value: float):
+          self._native.value = _unwrap(value, float)
+    
+    
+    
+    
+    class InternalErrorCode(Enum):
+    
+        ERROR_NONE = 0
+        ERROR_FATAL = 1
+    
+    
 

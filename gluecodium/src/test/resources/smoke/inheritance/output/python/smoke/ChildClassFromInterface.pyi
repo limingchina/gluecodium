@@ -1,6 +1,7 @@
 
 
 from smoke.ParentInterface import ParentInterface
+from enum import Enum
 import typing
 
 class ChildClassFromInterface(
@@ -8,4 +9,5 @@ class ChildClassFromInterface(
 
     def child_class_method(self):
         ...
+
 

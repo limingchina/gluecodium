@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
 import generated
 
 
@@ -27,5 +25,6 @@ class InterfaceWithOverloads(generated.smoke_InterfaceWithOverloads):
 
     def parent_method(*args, **kwargs):
         return _wrap(generated.smoke_InterfaceWithOverloads.parent_method(self, *[_unwrap(a) for a in args]), None)
+
 
 

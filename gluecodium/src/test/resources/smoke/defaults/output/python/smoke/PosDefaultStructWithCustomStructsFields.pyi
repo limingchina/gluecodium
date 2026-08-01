@@ -5,6 +5,7 @@ from smoke.PosDefaultStructWithFieldUsingImmutableStruct import PosDefaultStruct
 from smoke.SomeMutableCustomStructWithDefaults import SomeMutableCustomStructWithDefaults
 from smoke.StructWithAllDefaults import StructWithAllDefaults
 from smoke.StructWithNullableCollectionDefaults import StructWithNullableCollectionDefaults
+from enum import Enum
 import typing
 
 class PosDefaultStructWithCustomStructsFields:
@@ -40,4 +41,5 @@ class PosDefaultStructWithCustomStructsFields:
     non_const_ctor_field6: bytes
 
     non_const_ctor_field7: Optional[bytes]
+
 

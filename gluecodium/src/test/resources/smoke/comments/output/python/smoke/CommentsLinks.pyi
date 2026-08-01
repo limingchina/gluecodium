@@ -1,8 +1,7 @@
 
 
-from smoke.commentsSomeEnum import commentsSomeEnum
-from smoke.commentsSomeStruct import commentsSomeStruct
-from smoke.commentsSomethingWrong import commentsSomethingWrong
+from smoke.Comments import Comments
+from enum import Enum
 import typing
 
 class CommentsLinks:
@@ -14,7 +13,7 @@ Weblinks are not modified like this [example1], [example2](http://www.example.co
 
 [example1]: http://example.com/1"""
 
-    def random_method(self, input_parameter: commentsSomeEnum) -> commentsSomeEnum:
+    def random_method(self, input_parameter: Comments.SomeEnum) -> Comments.SomeEnum:
         """Link types:
 * constant: [comments.VeryUseful]
 * struct: [comments.SomeStruct]
@@ -54,4 +53,12 @@ Not working for Swift:
 * this one: [random_method(String, Boolean)]
 * ambiguous one: [random_method]"""
         ...
+
+    class RandomStruct:
+        """Links also work in:"""
+    
+        #: Some random field [comments.SomeStruct]
+        random_field: Comments.SomeStruct
+    
+    
 

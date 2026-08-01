@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ParentClass import ParentClass
-
 import generated
 
+from smoke.ParentClass import ParentClass
 
 class ChildClassFromClass(generated.smoke_ChildClassFromClass):
     def __init__(self, native=None):
@@ -26,4 +25,5 @@ class ChildClassFromClass(generated.smoke_ChildClassFromClass):
 
     def child_class_method(self):
         return _wrap(generated.smoke_ChildClassFromClass.child_class_method(self), None)
+
 

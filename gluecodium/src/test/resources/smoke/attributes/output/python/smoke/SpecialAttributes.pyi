@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SpecialAttributes:
@@ -9,4 +10,5 @@ class SpecialAttributes:
 
     def with_line_break(self):
         ...
+
 

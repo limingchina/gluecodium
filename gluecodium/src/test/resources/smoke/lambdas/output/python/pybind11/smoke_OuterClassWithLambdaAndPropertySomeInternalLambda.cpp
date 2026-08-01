@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "functional"
 
 
-// OuterClassWithLambdaAndPropertySomeInternalLambda is a std::function, handled inline where used.
+// SomeInternalLambda is a std::function, handled inline where used.
 

@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ConstantsInterfaceStateEnum import ConstantsInterfaceStateEnum
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -28,5 +24,12 @@ class ConstantsInterface(_NativeBase):
 
     STRING_CONSTANT = "Foo bar"
 
-    ENUM_CONSTANT = ConstantsInterfaceStateEnum.ON
+    ENUM_CONSTANT = StateEnum.ON
+
+    class StateEnum(Enum):
+    
+        OFF = 0
+        ON = 1
+    
+    
 

@@ -17,5 +17,5 @@ namespace py = pybind11;
 #include "memory"
 
 
-// LambdasWithStructuredTypesClassCallback is a std::function, handled inline where used.
+// ClassCallback is a std::function, handled inline where used.
 

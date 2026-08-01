@@ -19,5 +19,7 @@
   !
   !}}
 {{! Python type alias: re-export the underlying Python type. }}
-{{#ifPredicate this "hasAnyComment"}}#: {{resolveName comment}}
+{{#model}}{{#ifPredicate this "hasAnyComment"}}#: {{resolveName comment}}
 {{/ifPredicate}}{{resolveName}} = {{resolveName typeRef}}
+{{{nestedTypes}}}
+{{/model}}

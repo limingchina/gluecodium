@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class InterfaceWithOverloads:
@@ -9,4 +10,5 @@ class InterfaceWithOverloads:
 
     def parent_method(self, input: str):
         ...
+
 

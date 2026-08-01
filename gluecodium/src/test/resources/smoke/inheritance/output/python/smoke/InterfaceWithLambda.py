@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
+from typing import Callable
 import generated
 
 
@@ -24,4 +23,8 @@ class InterfaceWithLambda(generated.smoke_InterfaceWithLambda):
         else:
             super().__init__()
         self._native = self
+
+    FooBar = Callable[[], None]
+    
+    
 

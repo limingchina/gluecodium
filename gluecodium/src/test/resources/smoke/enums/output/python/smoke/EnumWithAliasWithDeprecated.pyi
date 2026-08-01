@@ -1,9 +1,7 @@
 
 
-import typing
-
 from enum import Enum
-
+import typing
 
 class EnumWithAliasWithDeprecated(Enum):
 
@@ -11,4 +9,5 @@ class EnumWithAliasWithDeprecated(Enum):
     TWO = 1
     THREE = 2
     FIRST = 3
+
 

@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class JavaMethodOverloads:
@@ -9,4 +10,5 @@ class JavaMethodOverloads:
 
     def two(self, input: list[str]):
         ...
+
 

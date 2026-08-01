@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SkipFunctions:
@@ -19,4 +20,5 @@ class SkipFunctions:
     @staticmethod
     def not_in_kotlin(input: str) -> str:
         ...
+
 

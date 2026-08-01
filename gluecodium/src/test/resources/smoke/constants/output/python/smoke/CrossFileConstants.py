@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ConstantsStateEnum import ConstantsStateEnum
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.Constants import Constants
 
 class CrossFileConstants(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -23,5 +19,6 @@ class CrossFileConstants(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    FOO_BAR = ConstantsStateEnum.ON
+    FOO_BAR = StateEnum.ON
+
 

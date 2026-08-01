@@ -2,15 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from namerules.NameRulesExample import NameRulesExample
-from namerules.NameRulesExampleErrorCode import NameRulesExampleErrorCode
-from namerules.NameRulesExampleStruct import NameRulesExampleStruct
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -23,8 +17,8 @@ class NameRules(_NativeBase):
         native_result = generated.namerules_NameRules.create()
         return _get_or_create_wrapper(native_result, NameRules)
 
-    def some_method(self, some_argument: NameRulesExampleStruct) -> float:
-        return _wrap(self._native.some_method(_unwrap(some_argument, NameRulesExampleStruct)), float)
+    def some_method(self, some_argument: NameRules.ExampleStruct) -> float:
+        return _wrap(self._native.some_method(_unwrap(some_argument, NameRules.ExampleStruct)), float)
 
     @property
     def int_property(self) -> int:
@@ -43,10 +37,57 @@ class NameRules(_NativeBase):
         self._native.is_boolean_property = _unwrap(value, bool)
 
     @property
-    def struct_property(self) -> NameRulesExampleStruct:
-        return _wrap(self._native.struct_property, NameRulesExampleStruct)
+    def struct_property(self) -> NameRules.ExampleStruct:
+        return _wrap(self._native.struct_property, NameRules.ExampleStruct)
 
     @struct_property.setter
-    def struct_property(self, value: NameRulesExampleStruct):
-        self._native.struct_property = _unwrap(value, NameRulesExampleStruct)
+    def struct_property(self, value: NameRules.ExampleStruct):
+        self._native.struct_property = _unwrap(value, NameRules.ExampleStruct)
+
+    class ExampleStruct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.namerules_NameRulesExampleStruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.namerules_NameRulesExampleStruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def value(self) -> float:
+            return _wrap(self._native.value, float)
+        @value.setter
+        def value(self, value: float):
+          self._native.value = _unwrap(value, float)
+    
+    
+        @property
+        def int_value(self) -> list[int]:
+            return _wrap(self._native.int_value, list[int])
+        @int_value.setter
+        def int_value(self, value: list[int]):
+          self._native.int_value = _unwrap(value, list[int])
+    
+    
+    
+    
+    class ExampleErrorCode(Enum):
+    
+        NONE = 0
+        FATAL = 1
+    
+    
+    
+    list[str] = list[str]
+    
+    
+    
+    class ExampleError(Exception):
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
 

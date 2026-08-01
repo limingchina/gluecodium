@@ -1,6 +1,0 @@
-
-
-import typing
-
-class InterfaceInInterfaceFooChecker:
-

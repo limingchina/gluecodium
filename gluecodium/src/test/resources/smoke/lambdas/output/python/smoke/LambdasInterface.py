@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
 from typing import Callable
-
-from smoke.LambdasInterfaceTakeScreenshotCallback import LambdasInterfaceTakeScreenshotCallback
-
-
 import generated
 
 
@@ -29,4 +26,8 @@ class LambdasInterface(generated.smoke_LambdasInterface):
 
     def take_screenshot(self, callback: Callable[[Optional[bytes]], None]):
         return _wrap(generated.smoke_LambdasInterface.take_screenshot(self, _unwrap(callback, Callable[[Optional[bytes]], None])), None)
+
+    TakeScreenshotCallback = Callable[[Optional[bytes]], None]
+    
+    
 

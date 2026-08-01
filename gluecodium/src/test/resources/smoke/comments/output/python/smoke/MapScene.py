@@ -2,14 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
 from typing import Callable
-
-from smoke.MapSceneLoadSceneCallback import MapSceneLoadSceneCallback
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -21,4 +17,8 @@ class MapScene(_NativeBase):
     def load_scene(*args, **kwargs):
         return _wrap(self._native.load_scene(*[_unwrap(a) for a in args]), None)
 
+
+    LoadSceneCallback = Callable[[Optional[str]], None]
+    
+    
 

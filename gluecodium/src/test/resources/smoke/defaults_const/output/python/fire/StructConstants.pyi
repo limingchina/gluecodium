@@ -1,6 +1,7 @@
 
 
 from fire.SomeStruct import SomeStruct
+from enum import Enum
 import typing
 
 class StructConstants:
@@ -14,4 +15,5 @@ class StructConstants:
     DUMMY4 = {-1}
 
     DUMMY4 = {-2}
+
 

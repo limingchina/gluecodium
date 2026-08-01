@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from fire.Enum4 import Enum4
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from fire.Enum4 import Enum4
 
 class EnumWrapper(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -29,5 +25,6 @@ class EnumWrapper(_NativeBase):
     @enum_field.setter
     def enum_field(self, value: Enum4):
       self._native.enum_field = _unwrap(value, Enum4)
+
 
 

@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SpecialNames:
@@ -19,4 +20,5 @@ class SpecialNames:
     @staticmethod
     def make(result: str) -> SpecialNames:
         ...
+
 

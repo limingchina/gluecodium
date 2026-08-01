@@ -19,7 +19,7 @@
   !
   !}}
 {{! Python struct type stub. }}
-class {{resolveName}}:
+{{#model}}class {{resolveName}}:
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}{{#ifPredicate "isEquatable"}}
     def __eq__(self, other: object) -> bool: ...
@@ -34,9 +34,7 @@ class {{resolveName}}:
 {{#properties}}
 
 {{>python/PythonStubProperty}}{{/properties}}
-{{#enumerations}}
-{{#unlessPredicate "isStandaloneEnum"}}
-{{>python/PythonStubEnumeration}}{{/unlessPredicate}}{{/enumerations}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
+{{{nestedTypes}}}{{/model}}

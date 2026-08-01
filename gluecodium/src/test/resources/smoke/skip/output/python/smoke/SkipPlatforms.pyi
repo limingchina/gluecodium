@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SkipPlatforms:
@@ -19,4 +20,5 @@ class SkipPlatforms:
     @staticmethod
     def not_in_kotlin(input: float) -> float:
         ...
+
 

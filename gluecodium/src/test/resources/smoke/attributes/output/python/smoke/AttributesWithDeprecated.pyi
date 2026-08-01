@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class AttributesWithDeprecated:
@@ -20,4 +21,11 @@ class AttributesWithDeprecated:
 
     #: 
     PI = False
+
+    class SomeStruct:
+    
+        #: 
+        field: str
+    
+    
 

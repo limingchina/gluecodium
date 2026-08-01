@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
 from typing import Callable
-
-from smoke.SpecialNamesInterfaceCallback import SpecialNamesInterfaceCallback
-
-
 import generated
 
 
@@ -29,4 +26,8 @@ class SpecialNamesInterface(generated.smoke_SpecialNamesInterface):
 
     def dispatch(self, callback: Callable[[], None]):
         return _wrap(generated.smoke_SpecialNamesInterface.dispatch(self, _unwrap(callback, Callable[[], None])), None)
+
+    Callback = Callable[[], None]
+    
+    
 

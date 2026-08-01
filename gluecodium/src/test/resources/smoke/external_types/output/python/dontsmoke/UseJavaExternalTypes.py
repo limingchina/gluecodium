@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.Currency import Currency
 from smoke.JavaExternalTypesStruct import JavaExternalTypesStruct
@@ -11,11 +13,6 @@ from smoke.Month import Month
 from smoke.Season import Season
 from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class UseJavaExternalTypes(_NativeBase):
     def __init__(self, native):
@@ -50,4 +47,5 @@ class UseJavaExternalTypes(_NativeBase):
     def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
         native_result = generated.dontsmoke_UseJavaExternalTypes.struct_round_trip(_unwrap(input, JavaExternalTypesStruct))
         return _get_or_create_wrapper(native_result, JavaExternalTypesStruct)
+
 

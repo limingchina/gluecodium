@@ -1,6 +1,7 @@
 
 
 from smoke.SomeSkippedEnum import SomeSkippedEnum
+from enum import Enum
 import typing
 
 class SomeSkippedStruct:
@@ -8,4 +9,5 @@ class SomeSkippedStruct:
     def __hash__(self) -> int: ...
 
     field: list[SomeSkippedEnum]
+
 

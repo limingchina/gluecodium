@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class FieldConstructorsPartialDefaults:
@@ -9,4 +10,5 @@ class FieldConstructorsPartialDefaults:
     int_field: int
 
     bool_field: bool
+
 

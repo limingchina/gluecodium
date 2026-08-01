@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class ParentWithCustomConstructor:
@@ -7,4 +8,5 @@ class ParentWithCustomConstructor:
     @staticmethod
     def create() -> ParentWithCustomConstructor:
         ...
+
 

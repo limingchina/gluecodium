@@ -2,18 +2,15 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.DateInterval import DateInterval
 from smoke.Persistence import Persistence
 from smoke.PseudoColor import PseudoColor
 from smoke.SwiftSeason import SwiftSeason
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class UseSwiftExternalTypes(_NativeBase):
     def __init__(self, native):
@@ -38,4 +35,5 @@ class UseSwiftExternalTypes(_NativeBase):
     def season_round_trip(input: SwiftSeason) -> SwiftSeason:
         native_result = generated.smoke_UseSwiftExternalTypes.season_round_trip(_unwrap(input, SwiftSeason))
         return _get_or_create_wrapper(native_result, SwiftSeason)
+
 

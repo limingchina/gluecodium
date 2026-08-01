@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.StructA import StructA
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.StructA import StructA
 
 class StructB(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -29,5 +25,6 @@ class StructB(_NativeBase):
     @field.setter
     def field(self, value: list[StructA]):
       self._native.field = _unwrap(value, list[StructA])
+
 
 

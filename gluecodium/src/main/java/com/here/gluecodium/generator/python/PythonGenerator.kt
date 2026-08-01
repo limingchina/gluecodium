@@ -72,18 +72,9 @@ internal class PythonGenerator : Generator {
     private lateinit var activeTags: Set<String>
     private var overloadsWerror: Boolean = false
 
-    private val pythonImportsCollector by lazy {
-        GenericImportsCollector(
-            PythonImportResolver(limeReferenceMap, pythonNameResolver),
-            collectTypeRefImports = true,
-            collectValueImports = true,
-            parentTypeFilter = { true },
-            collectTypeAliasImports = true,
-        )
-    }
-
     private lateinit var limeReferenceMap: Map<String, com.here.gluecodium.model.lime.LimeElement>
     private lateinit var pythonNameResolver: PythonNameResolver
+    private lateinit var pythonImportsCollector: GenericImportsCollector<PythonImport>
     private lateinit var pybind11NameResolver: Pybind11NameResolver
     private lateinit var cppNameCache: CppNameCache
 
@@ -101,7 +92,6 @@ internal class PythonGenerator : Generator {
     }
 
     override fun generate(limeModel: LimeModel): List<GeneratedFile> {
-        limeReferenceMap = limeModel.referenceMap
         val limeLogger = LimeLogger(logger, limeModel.fileNameMap)
 
         // Filter the model: keep elements that are not skipped for Python. The first pass retains
@@ -134,6 +124,24 @@ internal class PythonGenerator : Generator {
         pythonNameResolver =
             PythonNameResolver(pybind11FilteredModel.referenceMap, nameRules, limeLogger, commentsProcessor)
 
+        // Use the pybind11-filtered reference map (which retains @Internal elements) for import
+        // resolution. The filtered map contains all parent elements registered by
+        // LimeModelFilter.remap(), while the original model's map may not have top-level
+        // container entries needed by findTopLevelElement() in PythonImportResolver.
+        limeReferenceMap = pybind11FilteredModel.referenceMap
+
+        // Create the imports collector fresh each time generate() is called. The Generator
+        // instance is reused across smoke tests via ServiceLoader, so a lazy delegate would
+        // capture the first test's reference map and never update.
+        pythonImportsCollector =
+            GenericImportsCollector(
+                PythonImportResolver(limeReferenceMap, pythonNameResolver),
+                collectTypeRefImports = true,
+                collectValueImports = true,
+                parentTypeFilter = { true },
+                collectTypeAliasImports = true,
+            )
+
         cppNameCache = CppNameCache(rootNamespace, pybind11FilteredModel.referenceMap, cppNameRules)
         pybind11NameResolver =
             Pybind11NameResolver(
@@ -160,7 +168,6 @@ internal class PythonGenerator : Generator {
                 // in `cpp/CppReturnType.mustache`, which already emits that wrapper.
                 "C++" to pybind11NameResolver,
             )
-        val pythonTypes = getPythonTypes(pythonFilteredModel.topElements)
         // Filter out internal types from pybind11 file generation. Internal types are kept in
         // the pybind11FilteredModel (for reference resolution and trampoline), but no pybind11
         // binding file should be generated for them. This includes types nested inside an
@@ -168,6 +175,13 @@ internal class PythonGenerator : Generator {
         val pybind11Types =
             getPythonTypes(pybind11FilteredModel.topElements)
                 .filter { !isInternalOrNestedInternal(it, pybind11FilteredModel.referenceMap) }
+        // Only top-level enums are "standalone" (have their own Python module). Nested enums
+        // are rendered inside their parent class/struct and use the simple integer-enum format.
+        val standaloneEnumNames =
+            pythonFilteredModel.topElements
+                .filterIsInstance<LimeEnumeration>()
+                .map { it.fullName }
+                .toSet()
         val predicates =
             PythonGeneratorPredicates(
                 limeOverloadsValidatorSignatureResolver(pybind11FilteredModel),
@@ -175,7 +189,7 @@ internal class PythonGenerator : Generator {
                 pybind11FilteredModel.referenceMap,
                 pybind11NameResolver,
                 pythonNameResolver,
-                pythonTypes.filterIsInstance<LimeEnumeration>().map { it.fullName }.toSet(),
+                standaloneEnumNames,
                 internalNamespace,
             )
 
@@ -187,7 +201,7 @@ internal class PythonGenerator : Generator {
             )
 
         val pythonFiles =
-            pythonTypes.flatMap {
+            pythonFilteredModel.topElements.flatMap {
                 generatePythonFile(it, nameResolvers, predicates.predicates)
             }
         val pybind11Files =
@@ -212,73 +226,23 @@ internal class PythonGenerator : Generator {
         // `Greeter`) would otherwise emit `from ...Greeter import Greeter` inside Greeter.py,
         // which is a circular import and breaks direct importability of the wrapper.
         val selfModulePath = (limeElement.path.head + pythonNameResolver.resolveName(limeElement)).joinToString(".")
-        // Types that are an ancestor of the current element's own container (e.g. a nested struct
-        // field pointing back to its enclosing class, or a nested class `build()` returning its
-        // enclosing struct) are imported locally inside the property getter / function body instead
-        // (see PythonField.mustache / PythonFunction.mustache), to avoid an unresolvable circular
-        // import between the two flattened top-level modules.
-        val ancestorModulePaths =
-            when (limeElement) {
-                is com.here.gluecodium.model.lime.LimeStruct ->
-                    limeElement.fields
-                        .filter { predicates["isAncestorField"]?.invoke(it) == true }
-                        .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
-                is com.here.gluecodium.model.lime.LimeClass ->
-                    (
-                        limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
-                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
-                            limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
-                                .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
-                    )
-                is com.here.gluecodium.model.lime.LimeInterface ->
-                    (
-                        limeElement.functions.filter { predicates["isAncestorReturnType"]?.invoke(it) == true }
-                            .mapNotNull { pythonNameResolver.resolveReferenceName(it.returnType.typeRef) } +
-                            limeElement.properties.filter { predicates["isAncestorProperty"]?.invoke(it) == true }
-                                .mapNotNull { pythonNameResolver.resolveReferenceName(it.typeRef) }
-                    )
-                else -> emptyList()
-            }.toSet()
-        // A parent type must not import a nested child at module level if doing so would create
-        // a circular import. Each nested type is generated as its own module, so a parent that
-        // references a child (e.g. `Enums.flipEnumValue` returns the nested `EnumsInternalError`)
-        // legitimately needs a cross-module import — that is *not* circular, because the child
-        // does not import the parent. A cycle only arises when the child also imports the parent
-        // (e.g. `OuterStructBuilder.build()` returns `OuterStruct`, so `OuterStructBuilder`
-        // imports `OuterStruct`; if `OuterStruct` then imported `OuterStructBuilder` we would get
-        // `OuterStruct` <-> `OuterStructBuilder`). We therefore exclude from the parent's imports
-        // only those child module paths that themselves import the parent.
-        val childModulePaths =
-            LimeTypeHelper.getAllTypes(limeElement)
-                .filter { it != limeElement && it.path.allParents.contains(limeElement.path) }
-                .mapNotNull { child ->
-                    pythonNameResolver.resolveReferenceName(child)?.let { childModulePath ->
-                        childModulePath to
-                            pythonImportsCollector.collectImports(child)
-                                .any { it.modulePath == selfModulePath }
-                    }
-                }
-                .filter { it.second }
-                .map { it.first }
-                .toSet()
         val imports =
             pythonImportsCollector.collectImports(limeElement)
                 .filterNot { it.modulePath == selfModulePath }
-                .filterNot { it.modulePath in ancestorModulePaths }
-                .filterNot { it.modulePath in childModulePaths }
                 .distinct()
                 .sorted()
+
+        val contentBody = generateTypeBody(limeElement, nameResolvers, predicates, isStub = false)
+        val stubBody = generateTypeBody(limeElement, nameResolvers, predicates, isStub = true)
+
         val templateData =
             mapOf(
-                "model" to limeElement,
                 "imports" to imports,
                 "moduleName" to pythonModule,
                 "nativeModule" to pythonModule,
-                "typeName" to pythonNameResolver.resolveRegisterName(limeElement),
-                "nativeTypeName" to pythonNameResolver.resolveRegisterName(limeElement),
-                "usesCallable" to usesCallable(limeElement),
-                "contentTemplate" to selectPythonTemplate(limeElement),
-                "stubContentTemplate" to selectPythonStubTemplate(limeElement),
+                "usesCallable" to usesCallableForFile(limeElement),
+                "content" to contentBody,
+                "stubContent" to stubBody,
             )
         val content = TemplateEngine.render("python/PythonFile", templateData + ("isStub" to false), nameResolvers, predicates)
         val stubContent = TemplateEngine.render("python/PythonStub", templateData + ("isStub" to true), nameResolvers, predicates)
@@ -286,6 +250,65 @@ internal class PythonGenerator : Generator {
             GeneratedFile(content, nameRules.getPythonFileName(limeElement)),
             GeneratedFile(stubContent, nameRules.getPythonStubFileName(limeElement)),
         )
+    }
+
+    /**
+     * Recursively generates the Python class/struct/enum/etc. body for a LIME element, including
+     * all nested types rendered as physically nested Python class definitions with proper
+     * indentation. The result is a pre-rendered string injected into the file-level template
+     * via `{{{content}}}` or `{{{stubContent}}}`.
+     *
+     * @param isStub if true, renders the type-stub (.pyi) template; otherwise the implementation (.py) template.
+     */
+    private fun generateTypeBody(
+        element: LimeNamedElement,
+        nameResolvers: Map<String, NameResolver>,
+        predicates: Map<String, (Any) -> Boolean>,
+        isStub: Boolean,
+    ): String {
+        // 1. Recursively generate nested type bodies and indent them.
+        val nestedTypesStr = generateNestedTypeBodies(element, nameResolvers, predicates, isStub)
+
+        // 2. Render THIS type's template.
+        val templateName =
+            (if (isStub) selectPythonStubTemplate(element) else selectPythonTemplate(element))
+                ?: return ""
+        val templateData =
+            mapOf(
+                "model" to element,
+                "nativeModule" to pythonModule,
+                "typeName" to pythonNameResolver.resolveRegisterName(element),
+                "nativeTypeName" to pythonNameResolver.resolveRegisterName(element),
+                "nestedTypes" to nestedTypesStr,
+                "isStub" to isStub,
+            )
+        return TemplateEngine.render(templateName, templateData, nameResolvers, predicates)
+    }
+
+    /**
+     * Generates the nested type bodies for a container element, recursively rendering each nested
+     * type and indenting the combined result by one Python indentation level (4 spaces). Returns
+     * an empty string if the element has no nested types or is not a container.
+     */
+    private fun generateNestedTypeBodies(
+        element: LimeNamedElement,
+        nameResolvers: Map<String, NameResolver>,
+        predicates: Map<String, (Any) -> Boolean>,
+        isStub: Boolean,
+    ): String {
+        val container = element as? com.here.gluecodium.model.lime.LimeContainer ?: return ""
+        val nestedTypes =
+            container.structs + container.classes + container.interfaces +
+                container.enumerations + container.typeAliases + container.lambdas + container.exceptions
+        if (nestedTypes.isEmpty()) return ""
+
+        val nestedBodies =
+            nestedTypes
+                .map { generateTypeBody(it, nameResolvers, predicates, isStub) }
+                .filter { it.isNotBlank() }
+        if (nestedBodies.isEmpty()) return ""
+
+        return "\n" + nestedBodies.joinToString("\n\n").prependIndent("    ")
     }
 
     private fun generatePybind11File(
@@ -484,24 +507,14 @@ internal class PythonGenerator : Generator {
                             it is com.here.gluecodium.model.lime.LimeLambda
                     }.filter { it != topType }
         }.distinctBy { it.fullName }
-            .let { types ->
-                val duplicateFileNames =
-                    types.groupingBy { nameRules.getPythonFileName(it) }
-                        .eachCount()
-                        .filterValues { it > 1 }
-                        .keys
-                types.filter {
-                    (
-                        it !is LimeEnumeration &&
-                            it !is com.here.gluecodium.model.lime.LimeStruct &&
-                            it !is com.here.gluecodium.model.lime.LimeClass &&
-                            it !is com.here.gluecodium.model.lime.LimeInterface &&
-                            it !is com.here.gluecodium.model.lime.LimeException &&
-                            it !is com.here.gluecodium.model.lime.LimeLambda
-                    ) ||
-                        nameRules.getPythonFileName(it) !in duplicateFileNames
-                }
-            }
+
+    /**
+     * Checks whether any type in the element's type tree (including nested types) uses a
+     * Callable/lambda type, so the file-level `from typing import Callable` import can be
+     * emitted when needed.
+     */
+    private fun usesCallableForFile(limeElement: LimeNamedElement): Boolean =
+        LimeTypeHelper.getAllTypes(limeElement).any { usesCallable(it) }
 
     private fun usesCallable(limeElement: LimeNamedElement): Boolean =
         when (limeElement) {

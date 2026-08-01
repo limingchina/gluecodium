@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SkipProxy:
@@ -47,4 +48,5 @@ class SkipProxy:
     @skipped_in_kotlin.setter
     def skipped_in_kotlin(self, value: float) -> None:
         ...
+
 

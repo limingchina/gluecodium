@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// LambdaCommentsMixedDocNameParameters is a std::function, handled inline where used.
+// MixedDocNameParameters is a std::function, handled inline where used.
 

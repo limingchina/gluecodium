@@ -1,8 +1,7 @@
 
 
-from smoke.NullableSomeEnum import NullableSomeEnum
-from smoke.NullableSomeStruct import NullableSomeStruct
 from smoke.SomeInterface import SomeInterface
+from enum import Enum
 import typing
 
 class Nullable:
@@ -19,10 +18,10 @@ class Nullable:
     def method_with_int(self, input: Optional[int]) -> Optional[int]:
         ...
 
-    def method_with_some_struct(self, input: Optional[NullableSomeStruct]) -> Optional[NullableSomeStruct]:
+    def method_with_some_struct(self, input: Optional[Nullable.SomeStruct]) -> Optional[Nullable.SomeStruct]:
         ...
 
-    def method_with_some_enum(self, input: Optional[NullableSomeEnum]) -> Optional[NullableSomeEnum]:
+    def method_with_some_enum(self, input: Optional[Nullable.SomeEnum]) -> Optional[Nullable.SomeEnum]:
         ...
 
     def method_with_some_array(self, input: Optional[list[str]]) -> Optional[list[str]]:
@@ -116,4 +115,67 @@ class Nullable:
     @instance_property.setter
     def instance_property(self, value) -> None:
         ...
+
+    class SomeStruct:
+    
+        string_field: str
+    
+    
+    
+    class NullableStruct:
+    
+        string_field: Optional[str]
+    
+        bool_field: Optional[bool]
+    
+        double_field: Optional[float]
+    
+        struct_field: Optional[Nullable.SomeStruct]
+    
+        enum_field: Optional[Nullable.SomeEnum]
+    
+        array_field: Optional[list[str]]
+    
+        inline_array_field: Optional[list[str]]
+    
+        map_field: Optional[dict[int, str]]
+    
+        instance_field: Optional[SomeInterface]
+    
+    
+    
+    class NullableIntsStruct:
+    
+        int8_field: Optional[int]
+    
+        int16_field: Optional[int]
+    
+        int32_field: Optional[int]
+    
+        int64_field: Optional[int]
+    
+        uint8_field: Optional[int]
+    
+        uint16_field: Optional[int]
+    
+        uint32_field: Optional[int]
+    
+        uint64_field: Optional[int]
+    
+    
+    
+    class SomeEnum(Enum):
+    
+        ON = 0
+        OFF = 1
+    
+    
+    
+    list[str] = list[str]
+    
+    
+    
+    dict[int, str] = dict[int, str]
+    
+    
 

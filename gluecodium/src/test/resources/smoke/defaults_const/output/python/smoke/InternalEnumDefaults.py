@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.FooBarEnum import FooBarEnum
-
-
-from _native_base import _NativeBase
-
 import generated
 
+from smoke.FooBarEnum import FooBarEnum
 
 class InternalEnumDefaults(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -37,5 +33,6 @@ class InternalEnumDefaults(_NativeBase):
     @public_list_field.setter
     def public_list_field(self, value: list[FooBarEnum]):
       self._native.public_list_field = _unwrap(value, list[FooBarEnum])
+
 
 

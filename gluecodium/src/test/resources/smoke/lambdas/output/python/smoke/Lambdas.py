@@ -2,16 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
 from typing import Callable
-
-from smoke.LambdasConfuser import LambdasConfuser
-from smoke.LambdasIndexer import LambdasIndexer
-from smoke.LambdasProducer import LambdasProducer
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -25,4 +19,25 @@ class Lambdas(_NativeBase):
     @staticmethod
     def fuse(items: list[str], callback: Callable[[str, float], int]) -> dict[int, str]:
         return _wrap(generated.smoke_Lambdas.fuse(_unwrap(items, list[str]), _unwrap(callback, Callable[[str, float], int])), dict[int, str])
+
+    Producer = Callable[[], str]
+    
+    
+    
+    #: Should confuse everyone thoroughly
+    Confuser = Callable[[str], Callable[[], str]]
+    
+    
+    
+    Consumer = Callable[[str], None]
+    
+    
+    
+    Indexer = Callable[[str, float], int]
+    
+    
+    
+    NullableConfuser = Callable[[Optional[str]], Optional[Callable[[], str]]]
+    
+    
 

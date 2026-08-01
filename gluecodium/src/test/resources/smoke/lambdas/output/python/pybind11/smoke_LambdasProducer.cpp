@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// LambdasProducer is a std::function, handled inline where used.
+// Producer is a std::function, handled inline where used.
 

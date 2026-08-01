@@ -2,17 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from fire.AmbiguousEnum import AmbiguousEnum
 from fire.SomeStruct import SomeStruct
-
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class AmbiguousDefaults(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -38,5 +34,6 @@ class AmbiguousDefaults(_NativeBase):
     @field2.setter
     def field2(self, value: SomeStruct):
       self._native.field2 = _unwrap(value, SomeStruct)
+
 
 

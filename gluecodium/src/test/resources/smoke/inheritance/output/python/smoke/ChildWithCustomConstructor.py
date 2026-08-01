@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ParentWithCustomConstructor import ParentWithCustomConstructor
-
 import generated
 
+from smoke.ParentWithCustomConstructor import ParentWithCustomConstructor
 
 class ChildWithCustomConstructor(generated.smoke_ChildWithCustomConstructor):
     def __init__(self, native=None):
@@ -28,4 +27,5 @@ class ChildWithCustomConstructor(generated.smoke_ChildWithCustomConstructor):
     def make() -> ChildWithCustomConstructor:
         native_result = generated.smoke_ChildWithCustomConstructor.make()
         return _get_or_create_wrapper(native_result, ChildWithCustomConstructor)
+
 

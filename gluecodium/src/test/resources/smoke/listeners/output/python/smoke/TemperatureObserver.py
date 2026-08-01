@@ -2,14 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.Thermometer import Thermometer
-
-
 import generated
 
+from smoke.Thermometer import Thermometer
 
 class TemperatureObserver(generated.smoke_TemperatureObserver):
     """Observer interface for monitoring changes in thermometer (\"Observer of subject\")."""
@@ -29,4 +27,5 @@ class TemperatureObserver(generated.smoke_TemperatureObserver):
 
     def on_temperature_update(self, thermometer: Thermometer):
         return _wrap(generated.smoke_TemperatureObserver.on_temperature_update(self, _unwrap(thermometer, Thermometer)), None)
+
 

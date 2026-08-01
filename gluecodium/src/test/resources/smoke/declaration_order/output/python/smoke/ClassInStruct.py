@@ -2,14 +2,10 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from smoke.ClassInStructFooChecker import ClassInStructFooChecker
-
-
-from _native_base import _NativeBase
-
+from typing import Callable
 import generated
 
 
@@ -22,4 +18,14 @@ class ClassInStruct(_NativeBase):
                 *[_unwrap(arg) for arg in args],
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
+
+    class FooChecker(_NativeBase):
+        def __init__(self, native):
+            super().__init__(native)
+    
+    
+    
+    SomeLambda = Callable[[ClassInStruct.FooChecker], None]
+    
+    
 

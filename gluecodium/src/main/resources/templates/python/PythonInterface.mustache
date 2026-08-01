@@ -18,11 +18,8 @@
   ! License-Filename: LICENSE
   !
   !}}
-{{! Python interface: subclass of the native pybind11 type so the trampoline binds to the Python instance. }}
-
-import {{nativeModule}}
-
-
+{{! Python interface: subclass of the native pybind11 type so the trampoline binds to the Python instance. Imports are at the file level. }}
+{{#model}}
 class {{resolveName}}({{nativeModule}}.{{typeName}}):
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}
@@ -45,9 +42,8 @@ class {{resolveName}}({{nativeModule}}.{{typeName}}):
 {{#properties}}
 
 {{>python/PythonProperty}}{{/properties}}
-{{#enumerations}}
-{{#unlessPredicate "isStandaloneEnum"}}
-{{>python/PythonEnumeration}}{{/unlessPredicate}}{{/enumerations}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
+{{{nestedTypes}}}
+{{/model}}

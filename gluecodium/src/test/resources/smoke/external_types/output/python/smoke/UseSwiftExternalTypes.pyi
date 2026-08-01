@@ -4,6 +4,7 @@ from smoke.DateInterval import DateInterval
 from smoke.Persistence import Persistence
 from smoke.PseudoColor import PseudoColor
 from smoke.SwiftSeason import SwiftSeason
+from enum import Enum
 import typing
 
 class UseSwiftExternalTypes:
@@ -23,4 +24,5 @@ class UseSwiftExternalTypes:
     @staticmethod
     def season_round_trip(input: SwiftSeason) -> SwiftSeason:
         ...
+
 

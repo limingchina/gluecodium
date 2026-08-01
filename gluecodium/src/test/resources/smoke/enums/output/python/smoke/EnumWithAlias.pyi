@@ -1,9 +1,7 @@
 
 
-import typing
-
 from enum import Enum
-
+import typing
 
 class EnumWithAlias(Enum):
 
@@ -12,4 +10,5 @@ class EnumWithAlias(Enum):
     THREE = 2
     FIRST = 3
     THE_BEST = 4
+
 

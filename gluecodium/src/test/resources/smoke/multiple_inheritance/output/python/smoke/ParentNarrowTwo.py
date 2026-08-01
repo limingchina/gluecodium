@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
 import generated
 
 
@@ -35,4 +33,5 @@ class ParentNarrowTwo(generated.smoke_ParentNarrowTwo):
     @parent_property_two.setter
     def parent_property_two(self, value: str):
         generated.smoke_ParentNarrowTwo.parent_property_two.fset(self, _unwrap(value, str))
+
 

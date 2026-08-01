@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// LambdaCommentsNoCommentsNoNamedParams is a std::function, handled inline where used.
+// NoCommentsNoNamedParams is a std::function, handled inline where used.
 

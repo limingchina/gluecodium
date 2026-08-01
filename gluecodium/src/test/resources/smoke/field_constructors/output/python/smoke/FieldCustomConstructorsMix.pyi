@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class FieldCustomConstructorsMix:
@@ -13,4 +14,5 @@ class FieldCustomConstructorsMix:
     @staticmethod
     def create_me(int_value: int, dummy: float) -> FieldCustomConstructorsMix:
         ...
+
 

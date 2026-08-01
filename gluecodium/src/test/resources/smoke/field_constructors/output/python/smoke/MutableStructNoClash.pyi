@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class MutableStructNoClash:
@@ -9,4 +10,5 @@ class MutableStructNoClash:
     int_field: int
 
     bool_field: bool
+
 

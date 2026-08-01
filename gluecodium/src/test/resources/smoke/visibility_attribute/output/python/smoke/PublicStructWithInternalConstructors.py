@@ -2,13 +2,9 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-
-
-from _native_base import _NativeBase
-
 import generated
 
 
@@ -28,5 +24,6 @@ class PublicStructWithInternalConstructors(_NativeBase):
     @some_var.setter
     def some_var(self, value: int):
       self._native.some_var = _unwrap(value, int)
+
 
 

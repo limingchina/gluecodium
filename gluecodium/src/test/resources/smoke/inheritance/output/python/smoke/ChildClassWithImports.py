@@ -2,17 +2,16 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from smoke.IncludableClass import IncludableClass
 from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
 from smoke.IncludableStruct import IncludableStruct
 from smoke.ParentClassWithImports import ParentClassWithImports
-
-import generated
-
 
 class ChildClassWithImports(generated.smoke_ChildClassWithImports):
     def __init__(self, native=None):
@@ -27,4 +26,5 @@ class ChildClassWithImports(generated.smoke_ChildClassWithImports):
         else:
             super().__init__()
         self._native = self
+
 

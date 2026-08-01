@@ -19,7 +19,7 @@
   !
   !}}
 {{! Python class type stub. }}
-class {{resolveName}}{{#if parents}}(
+{{#model}}class {{resolveName}}{{#if parents}}(
 {{#parents}}    {{resolveName}}{{#if iter.hasNext}},
 {{/if}}{{/parents}}
 ){{/if}}:
@@ -30,9 +30,7 @@ class {{resolveName}}{{#if parents}}(
 {{#properties}}
 
 {{>python/PythonStubProperty}}{{/properties}}
-{{#enumerations}}
-{{#unlessPredicate "isStandaloneEnum"}}
-{{>python/PythonStubEnumeration}}{{/unlessPredicate}}{{/enumerations}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
+{{{nestedTypes}}}{{/model}}

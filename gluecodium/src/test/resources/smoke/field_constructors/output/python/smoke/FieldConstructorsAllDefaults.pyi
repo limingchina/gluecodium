@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class FieldConstructorsAllDefaults:
@@ -9,4 +10,5 @@ class FieldConstructorsAllDefaults:
     int_field: int
 
     bool_field: bool
+
 

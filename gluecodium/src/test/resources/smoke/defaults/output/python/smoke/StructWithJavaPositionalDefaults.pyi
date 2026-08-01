@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class StructWithJavaPositionalDefaults:
@@ -19,4 +20,5 @@ class StructWithJavaPositionalDefaults:
 
     #: third should be last!
     third_init_field: str
+
 

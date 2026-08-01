@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class EquatableStructWithInternalFields:
@@ -7,4 +8,5 @@ class EquatableStructWithInternalFields:
     def __hash__(self) -> int: ...
 
     public_field: str
+
 

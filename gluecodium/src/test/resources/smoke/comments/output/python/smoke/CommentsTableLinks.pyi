@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class CommentsTableLinks:
@@ -10,4 +11,5 @@ class CommentsTableLinks:
 | col 1 is |  [CommentsTable] | $1600 |
 | col 2 is |[comments.SomeEnum]|   $12 |
 | col 3 is |[comments.SomeEnum.USEFUL]|    $1 |"""
+
 

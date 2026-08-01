@@ -1,8 +1,7 @@
 
 
 from smoke.CalculationResult import CalculationResult
-from smoke.ListenerWithPropertiesResultEnum import ListenerWithPropertiesResultEnum
-from smoke.ListenerWithPropertiesResultStruct import ListenerWithPropertiesResultStruct
+from enum import Enum
 import typing
 
 class ListenerWithProperties:
@@ -24,19 +23,19 @@ class ListenerWithProperties:
         ...
 
     @property
-    def structured_message(self) -> ListenerWithPropertiesResultStruct:
+    def structured_message(self) -> ListenerWithProperties.ResultStruct:
         ...
 
     @structured_message.setter
-    def structured_message(self, value: ListenerWithPropertiesResultStruct) -> None:
+    def structured_message(self, value: ListenerWithProperties.ResultStruct) -> None:
         ...
 
     @property
-    def enumerated_message(self) -> ListenerWithPropertiesResultEnum:
+    def enumerated_message(self) -> ListenerWithProperties.ResultEnum:
         ...
 
     @enumerated_message.setter
-    def enumerated_message(self, value: ListenerWithPropertiesResultEnum) -> None:
+    def enumerated_message(self, value: ListenerWithProperties.ResultEnum) -> None:
         ...
 
     @property
@@ -62,4 +61,21 @@ class ListenerWithProperties:
     @buffered_message.setter
     def buffered_message(self, value: bytes) -> None:
         ...
+
+    class ResultStruct:
+    
+        result: float
+    
+    
+    
+    class ResultEnum(Enum):
+    
+        NONE = 0
+        RESULT = 1
+    
+    
+    
+    dict[str, float] = dict[str, float]
+    
+    
 

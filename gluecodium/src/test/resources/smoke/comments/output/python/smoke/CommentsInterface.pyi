@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class CommentsInterface:
@@ -56,4 +57,25 @@ class CommentsInterface:
 
     #: This is some very useful constant.
     VERY_USEFUL = True
+
+    class SomeStruct:
+        """This is some very useful struct."""
+    
+        #: How useful this struct is
+        some_field: bool
+    
+    
+    
+    class SomeEnum(Enum):
+        """This is some very useful enum."""
+    
+        USELESS = 0
+        USEFUL = 1
+    
+    
+    
+    #: This is some very useful typedef.
+    bool = bool
+    
+    
 

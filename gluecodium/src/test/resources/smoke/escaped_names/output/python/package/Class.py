@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-from package.Interface import Interface
-from package.typesenum import typesenum
-from package.typesexception import typesexception
-from package.typesstruct import typesstruct
-
 import generated
 
+from package.Interface import Interface
+from package.Types import Types
 
 class Class(generated.package_Class):
     def __init__(self, native=None):
@@ -32,14 +29,15 @@ class Class(generated.package_Class):
         native_result = generated.package_Class.constructor()
         return _get_or_create_wrapper(native_result, Class)
 
-    def fun(self, double: list[typesstruct]) -> typesstruct:
-        return _wrap(generated.package_Class.fun(self, _unwrap(double, list[typesstruct])), typesstruct)
+    def fun(self, double: list[Types.Struct]) -> Types.Struct:
+        return _wrap(generated.package_Class.fun(self, _unwrap(double, list[Types.Struct])), Types.Struct)
 
     @property
-    def property(self) -> typesenum:
-        return _wrap(generated.package_Class.property.fget(self), typesenum)
+    def property(self) -> Types.Enum:
+        return _wrap(generated.package_Class.property.fget(self), Types.Enum)
 
     @property.setter
-    def property(self, value: typesenum):
-        generated.package_Class.property.fset(self, _unwrap(value, typesenum))
+    def property(self, value: Types.Enum):
+        generated.package_Class.property.fset(self, _unwrap(value, Types.Enum))
+
 

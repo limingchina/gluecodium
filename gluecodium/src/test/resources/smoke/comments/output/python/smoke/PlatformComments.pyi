@@ -1,7 +1,6 @@
 
 
-from smoke.PlatformCommentsSomeEnum import PlatformCommentsSomeEnum
-from smoke.PlatformCommentsSomethingWrong import PlatformCommentsSomethingWrong
+from enum import Enum
 import typing
 
 class PlatformComments:
@@ -20,4 +19,26 @@ class PlatformComments:
     def some_deprecated_method(self):
         """"""
         ...
+
+    class Something:
+        """This is a."""
+    
+        nothing: str
+    
+    
+    
+    class SomeEnum(Enum):
+    
+        USELESS = 0
+        USEFUL = 1
+    
+    
+    
+    class SomethingWrongError(Exception):
+        """An  when something goes wrong."""
+        message: str
+    
+        def __init__(self, message: str) -> None: ...
+    
+    
 

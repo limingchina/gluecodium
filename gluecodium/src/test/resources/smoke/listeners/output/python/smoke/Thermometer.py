@@ -2,19 +2,13 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 import datetime
 from smoke.TemperatureObserver import TemperatureObserver
-from smoke.ThermometerAnotherNotification import ThermometerAnotherNotification
-from smoke.ThermometerNotification import ThermometerNotification
-from smoke.ThermometerSomeThermometerErrorCode import ThermometerSomeThermometerErrorCode
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class Thermometer(_NativeBase):
     """A class, which reads temperature and updates observers according to the given interval.
@@ -72,4 +66,31 @@ class Thermometer(_NativeBase):
 
     def get_fahrenheit(self) -> float:
         return _wrap(self._native.get_fahrenheit(), float)
+
+    class SomeThermometerErrorCode(Enum):
+        """Some error code for thermometer."""
+    
+        ERROR_NONE = 0
+        ERROR_FATAL = 1
+    
+    
+    
+    class NotificationError(Exception):
+        """This error indicates problems with notification of observers.
+    May be thrown if observers cannot be notified."""
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
+    
+    class AnotherNotificationError(Exception):
+        """This error indicates other problems with notification of observers."""
+    
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+    
+    
 

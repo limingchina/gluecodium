@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SomeMutableCustomStructWithDefaults:
@@ -9,4 +10,5 @@ class SomeMutableCustomStructWithDefaults:
     string_field: str
 
     list_field: list[int]
+
 

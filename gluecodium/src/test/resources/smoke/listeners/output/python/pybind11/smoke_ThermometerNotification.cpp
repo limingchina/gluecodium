@@ -19,7 +19,7 @@ void register_smoke_ThermometerNotification(py::module_& module) {
     // the Python class (not a separate native py::exception type). This ensures
     // pytest.raises() catches them correctly.
     static py::object py_exc =
-        py::module_::import("smoke.ThermometerNotification").attr("ThermometerNotification");
+        py::module_::import("smoke.Thermometer").attr("NotificationError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);

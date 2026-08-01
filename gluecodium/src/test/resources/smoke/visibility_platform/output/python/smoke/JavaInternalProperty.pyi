@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class JavaInternalProperty:
@@ -11,4 +12,5 @@ class JavaInternalProperty:
     @app_context.setter
     def app_context(self, value) -> None:
         ...
+
 

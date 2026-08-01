@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// LambdaCommentsWithNoDocsForParameters is a std::function, handled inline where used.
+// WithNoDocsForParameters is a std::function, handled inline where used.
 

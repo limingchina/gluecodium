@@ -33,6 +33,7 @@ import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimePath
 import com.here.gluecodium.model.lime.LimeReturnType
 import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeType
@@ -64,10 +65,14 @@ internal class PythonNameResolver(
             is LimeBasicType -> resolveBasicType(element)
             is LimeReturnType -> resolvePythonType(element.typeRef, requiresHashable)
             is LimeTypeRef -> {
+                val actualType = element.type.actualType
                 val typeName =
-                    (element.type.actualType as? LimeLambda)
+                    (actualType as? LimeLambda)
                         ?.let(::resolveLambdaType)
-                        ?: resolvePythonType(element.type, requiresHashable)
+                        ?: if (actualType.path.hasParent)
+                            resolveQualifiedTypeName(actualType)
+                        else
+                            resolvePythonType(actualType, requiresHashable)
                 if (element.isNullable) "Optional[" + typeName + "]" else typeName
             }
             is LimeList -> {
@@ -138,7 +143,50 @@ internal class PythonNameResolver(
                 else -> return null
             }
         val namedType = limeType as? LimeNamedElement ?: return null
-        return (namedType.path.head + resolveName(namedType)).joinToString(".")
+        val topLevel = findTopLevelElement(namedType)
+        return (topLevel.path.head + nameRules.getName(topLevel)).joinToString(".")
+    }
+
+    /**
+     * Resolves the fully-qualified Python name for a type, including parent qualifiers for
+     * nested types (e.g. `Outer.Inner` for a type nested inside `Outer`). Top-level types
+     * resolve to their short name. This is used for type references (annotations, _wrap()
+     * arguments) where the full attribute path is needed to access the type at runtime.
+     */
+    private fun resolveQualifiedTypeName(limeType: LimeType): String {
+        if (!limeType.path.hasParent) return nameRules.getName(limeType)
+        // Walk the path tail, looking up each ancestor in the reference map and resolving
+        // its (short) name. This produces a dotted qualified name like `Outer.Inner`.
+        val head = limeType.path.head
+        val tail = limeType.path.tail
+        val sb = StringBuilder()
+        var currentFullPath: String? = null
+        for (component in tail) {
+            currentFullPath =
+                if (currentFullPath == null)
+                    if (head.isNotEmpty()) head.joinToString(".") + "." + component else component
+                else
+                    "$currentFullPath.$component"
+            val element = limeReferenceMap[currentFullPath] as? LimeNamedElement
+            val name = if (element != null) nameRules.getName(element) else component
+            if (sb.isNotEmpty()) sb.append(".")
+            sb.append(name)
+        }
+        return sb.toString()
+    }
+
+    /**
+     * Finds the top-level (non-nested) ancestor of the given element by walking up the
+     * parent chain via the reference map. Returns the element itself if it has no parent.
+     */
+    private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {
+        var current = element
+        while (current.path.hasParent) {
+            val parent = limeReferenceMap[current.path.parent.toString()] as? LimeNamedElement
+                ?: return current
+            current = parent
+        }
+        return current
     }
 
     private fun resolveValue(limeValue: LimeValue): String =
@@ -179,7 +227,7 @@ internal class PythonNameResolver(
      * `fire.StructConstants`) do not collide at link time.
      */
     fun resolveRegisterName(limeElement: LimeNamedElement): String {
-        val name = resolveName(limeElement)
+        val name = nameRules.getFlattenedName(limeElement)
         val packagePath = limeElement.path.head.joinToString("_")
         return if (packagePath.isNotEmpty()) "${packagePath}_$name" else name
     }

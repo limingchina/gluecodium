@@ -16,7 +16,7 @@ namespace py = pybind11;
 // Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FooChecker = ::smoke::InterfaceInInterface::FooChecker;
 
-class InterfaceInInterfaceFooCheckerTrampoline : public FooChecker {
+class FooCheckerTrampoline : public FooChecker {
 public:
     using FooChecker::FooChecker;
 
@@ -30,7 +30,7 @@ public:
 };
 
 void register_smoke_InterfaceInInterfaceFooChecker(py::module_& module) {
-    py::class_<FooChecker, std::shared_ptr<FooChecker>, InterfaceInInterfaceFooCheckerTrampoline>(module, "smoke_InterfaceInInterfaceFooChecker")
+    py::class_<FooChecker, std::shared_ptr<FooChecker>, FooCheckerTrampoline>(module, "smoke_InterfaceInInterfaceFooChecker")
         .def("__gluecodium_id__", [](const FooChecker& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -42,7 +42,7 @@ void register_smoke_InterfaceInInterfaceFooChecker(py::module_& module) {
         // instance is a foreign (non-trampoline) implementation; instead we build a fresh
         // trampoline and store the impl directly.
         .def(py::init([](std::shared_ptr<FooChecker> native) {
-            auto self = std::make_shared<InterfaceInInterfaceFooCheckerTrampoline>();
+            auto self = std::make_shared<FooCheckerTrampoline>();
             self->m_impl = native;
             return self;
         }))

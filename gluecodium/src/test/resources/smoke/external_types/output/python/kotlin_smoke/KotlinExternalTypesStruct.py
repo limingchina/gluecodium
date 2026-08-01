@@ -2,20 +2,16 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
+import generated
 
 from kotlin_smoke.Currency import Currency
 from kotlin_smoke.Month import Month
 from kotlin_smoke.Season import Season
 from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
-
-
-from _native_base import _NativeBase
-
-import generated
-
 
 class KotlinExternalTypesStruct(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -62,5 +58,6 @@ class KotlinExternalTypesStruct(_NativeBase):
     @season.setter
     def season(self, value: Season):
       self._native.season = _unwrap(value, Season)
+
 
 

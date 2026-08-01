@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "memory"
 
 
-// ClassInStructSomeLambda is a std::function, handled inline where used.
+// SomeLambda is a std::function, handled inline where used.
 

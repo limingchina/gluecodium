@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class SimpleInterface:
@@ -9,4 +10,5 @@ class SimpleInterface:
 
     def use_simple_interface(self, input: SimpleInterface) -> SimpleInterface:
         ...
+
 

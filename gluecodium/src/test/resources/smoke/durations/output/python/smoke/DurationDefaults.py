@@ -2,16 +2,12 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
-
-import datetime
-
-
-from _native_base import _NativeBase
-
 import generated
 
+import datetime
 
 class DurationDefaults(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -77,5 +73,6 @@ class DurationDefaults(_NativeBase):
     @nanoz.setter
     def nanoz(self, value: datetime.timedelta):
       self._native.nanoz = _unwrap(value, datetime.timedelta)
+
 
 

@@ -18,14 +18,8 @@
   ! License-Filename: LICENSE
   !
   !}}
-{{! Python enumeration. }}
-{{#ifPredicate "isStandaloneEnum"}}from enum import Enum
-
-import {{nativeModule}}
-{{/ifPredicate}}{{#unlessPredicate "isStandaloneEnum"}}from enum import Enum
-{{/unlessPredicate}}
-
-
+{{! Python enumeration. Imports are at the file level. }}
+{{#model}}
 class {{resolveName}}(Enum):
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}
@@ -38,9 +32,10 @@ class {{resolveName}}(Enum):
 
     {{resolveName}} = {{iter.position}}{{/enumerators}}
 {{/unlessPredicate}}
-
 {{#ifPredicate "isStandaloneEnum"}}
+
     @property
     def _native(self):
         return self.value
 {{/ifPredicate}}
+{{{nestedTypes}}}{{/model}}

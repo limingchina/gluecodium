@@ -1,5 +1,6 @@
 
 
+from enum import Enum
 import typing
 
 class MultiLineComments:
@@ -22,4 +23,5 @@ And now comes a list:
 It has very important parameters.
 It has side effects."""
         ...
+
 

@@ -1,6 +1,7 @@
 
 
 from smoke.ParentClass import ParentClass
+from enum import Enum
 import typing
 
 class ChildClassFromClass(
@@ -8,4 +9,5 @@ class ChildClassFromClass(
 
     def child_class_method(self):
         ...
+
 

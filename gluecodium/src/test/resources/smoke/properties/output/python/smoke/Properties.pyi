@@ -1,8 +1,7 @@
 
 
-from smoke.PropertiesExampleStruct import PropertiesExampleStruct
 from smoke.PropertiesInterface import PropertiesInterface
-from smoke.PropertiesInternalErrorCode import PropertiesInternalErrorCode
+from enum import Enum
 import typing
 
 class Properties:
@@ -21,11 +20,11 @@ class Properties:
 
 
     @property
-    def struct_property(self) -> PropertiesExampleStruct:
+    def struct_property(self) -> Properties.ExampleStruct:
         ...
 
     @struct_property.setter
-    def struct_property(self, value: PropertiesExampleStruct) -> None:
+    def struct_property(self, value: Properties.ExampleStruct) -> None:
         ...
 
     @property
@@ -37,11 +36,11 @@ class Properties:
         ...
 
     @property
-    def complex_type_property(self) -> PropertiesInternalErrorCode:
+    def complex_type_property(self) -> Properties.InternalErrorCode:
         ...
 
     @complex_type_property.setter
-    def complex_type_property(self, value: PropertiesInternalErrorCode) -> None:
+    def complex_type_property(self, value: Properties.InternalErrorCode) -> None:
         ...
 
     @property
@@ -77,7 +76,20 @@ class Properties:
         ...
 
     @property
-    def static_readonly_property(self) -> PropertiesExampleStruct:
+    def static_readonly_property(self) -> Properties.ExampleStruct:
         ...
 
+
+    class ExampleStruct:
+    
+        value: float
+    
+    
+    
+    class InternalErrorCode(Enum):
+    
+        ERROR_NONE = 0
+        ERROR_FATAL = 1
+    
+    
 

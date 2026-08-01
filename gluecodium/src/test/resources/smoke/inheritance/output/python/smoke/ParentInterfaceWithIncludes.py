@@ -2,19 +2,17 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
 from typing import Optional
 from typing import Callable
+import generated
 
 from smoke.IncludableClass import IncludableClass
 from smoke.IncludableEnum import IncludableEnum
 from smoke.IncludableLambda import IncludableLambda
 from smoke.IncludableStruct import IncludableStruct
 from smoke.ShouldNotInclude import ShouldNotInclude
-
-
-import generated
-
 
 class ParentInterfaceWithIncludes(generated.smoke_ParentInterfaceWithIncludes):
     def __init__(self, native=None):
@@ -52,4 +50,5 @@ class ParentInterfaceWithIncludes(generated.smoke_ParentInterfaceWithIncludes):
     @not_in_java_property.setter
     def not_in_java_property(self, value: ShouldNotInclude):
         generated.smoke_ParentInterfaceWithIncludes.not_in_java_property.fset(self, _unwrap(value, ShouldNotInclude))
+
 

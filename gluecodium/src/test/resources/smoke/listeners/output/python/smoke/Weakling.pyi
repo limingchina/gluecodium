@@ -1,6 +1,7 @@
 
 
 from smoke.ListenerInterface import ListenerInterface
+from enum import Enum
 import typing
 
 class Weakling:
@@ -12,4 +13,5 @@ class Weakling:
     @listener.setter
     def listener(self, value) -> None:
         ...
+
 
