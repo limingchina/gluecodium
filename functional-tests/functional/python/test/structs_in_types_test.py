@@ -18,16 +18,16 @@
 """Struct-in-type-collection mapping tests for the Python (pybind11) bindings."""
 
 import functional
+from test.TypeCollection import TypeCollection
 from test.PlainDataStructuresFromTypeCollection import (
     PlainDataStructuresFromTypeCollection,
 )
-from test.TypeCollectionColor import TypeCollectionColor as Color
-from test.TypeCollectionColoredLine import TypeCollectionColoredLine as ColoredLine
-from test.TypeCollectionLine import TypeCollectionLine as Line
-from test.TypeCollectionPoint import TypeCollectionPoint as Point
-from test.TypeCollectionAllTypesStruct import (
-    TypeCollectionAllTypesStruct as AllTypesStruct,
-)
+
+Color = TypeCollection.Color
+ColoredLine = TypeCollection.ColoredLine
+Line = TypeCollection.Line
+Point = TypeCollection.Point
+AllTypesStruct = TypeCollection.AllTypesStruct
 
 import pytest
 

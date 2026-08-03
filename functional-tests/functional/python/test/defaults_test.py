@@ -18,7 +18,9 @@
 """Default value mapping tests for the Python (pybind11) bindings."""
 
 import functional
-from test.Defaults import Defaults, DefaultsStructWithDefaults
+from test.Defaults import Defaults
+
+DefaultsStructWithDefaults = Defaults.StructWithDefaults
 
 import pytest
 

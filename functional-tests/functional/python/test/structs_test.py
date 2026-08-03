@@ -19,10 +19,11 @@
 
 import functional
 from test.PlainDataStructures import PlainDataStructures
-from test.PlainDataStructuresColor import PlainDataStructuresColor as Color
-from test.PlainDataStructuresColoredLine import PlainDataStructuresColoredLine as ColoredLine
-from test.PlainDataStructuresLine import PlainDataStructuresLine as Line
-from test.PlainDataStructuresPoint import PlainDataStructuresPoint as Point
+
+Color = PlainDataStructures.Color
+ColoredLine = PlainDataStructures.ColoredLine
+Line = PlainDataStructures.Line
+Point = PlainDataStructures.Point
 
 import pytest
 

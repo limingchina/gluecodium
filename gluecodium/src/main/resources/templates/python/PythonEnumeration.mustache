@@ -23,19 +23,11 @@
 class {{resolveName}}(Enum):
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}
-{{#ifPredicate "isStandaloneEnum"}}
 {{#enumerators}}
 
     {{resolveName}} = {{nativeModule}}.{{nativeTypeName}}.{{resolveName}}{{/enumerators}}
-{{/ifPredicate}}{{#unlessPredicate "isStandaloneEnum"}}
-{{#enumerators}}
-
-    {{resolveName}} = {{iter.position}}{{/enumerators}}
-{{/unlessPredicate}}
-{{#ifPredicate "isStandaloneEnum"}}
 
     @property
     def _native(self):
         return self.value
-{{/ifPredicate}}
 {{{nestedTypes}}}{{/model}}

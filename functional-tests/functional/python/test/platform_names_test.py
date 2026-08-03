@@ -23,11 +23,12 @@ attribute, ensuring the Python name resolver respects platform-specific naming.
 """
 
 import functional
-from test.QuxEnum import QuxEnum
+from test.QuxTypes import QuxTypes
 from test.QuxInterface import QuxInterface
 from test.QuxListener import QuxListener
-from test.QuxStruct import QuxStruct
-from test.QuxTypes import QuxTypes
+
+QuxStruct = QuxTypes.QuxStruct
+QuxEnum = QuxTypes.QuxEnum
 
 import pytest
 

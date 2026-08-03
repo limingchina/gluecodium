@@ -29,9 +29,6 @@ from test.FieldConstructorsWithLabels import FieldConstructorsWithLabels
 from test.FieldConstructorsParameterDefaults import FieldConstructorsParameterDefaults
 from test.FieldCustomConstructorsMix import FieldCustomConstructorsMix
 from test.OuterStructWithFieldConstructor import OuterStructWithFieldConstructor
-from test.OuterStructWithFieldConstructorInnerStructWithDefaults import (
-    OuterStructWithFieldConstructorInnerStructWithDefaults as InnerStructWithDefaults,
-)
 from test.ImmutableNamelessCtor import ImmutableNamelessCtor
 from test.ImmutableDefaultCtor import ImmutableDefaultCtor
 from test.MutableStructImmutableFields import MutableStructImmutableFields
@@ -182,7 +179,7 @@ class TestCustomConstructorsMix:
 
 class TestNesting:
     def test_field_constructor_with_inner_struct(self):
-        inner = InnerStructWithDefaults()
+        inner = OuterStructWithFieldConstructor.InnerStructWithDefaults()
         instance = OuterStructWithFieldConstructor(inner)
         assert instance.outer_struct_field.inner_struct_field == 1.0
 

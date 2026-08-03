@@ -22,13 +22,16 @@ from typing import Callable, Optional
 from test.CallOverloadedLambda import CallOverloadedLambda
 from test.ClassWithInternalLambda import ClassWithInternalLambda
 from test.Lambdas import Lambdas
-from test.LambdasDeclarationOrderSomeCallback import LambdasDeclarationOrderSomeCallback
-from test.LambdasDeclarationOrderSomeStruct import LambdasDeclarationOrderSomeStruct
+from test.LambdasDeclarationOrder import LambdasDeclarationOrder
 from test.LambdasInterface import LambdasInterface
-from test.LambdasInterfaceTakeScreenshotCallback import LambdasInterfaceTakeScreenshotCallback
-from test.LambdasLambdaHolder import LambdasLambdaHolder
-from test.LambdasWithStructuredTypesClassCallback import LambdasWithStructuredTypesClassCallback
-from test.LambdasWithStructuredTypesStructCallback import LambdasWithStructuredTypesStructCallback
+from test.LambdasWithStructuredTypes import LambdasWithStructuredTypes
+
+TakeScreenshotCallback = LambdasInterface.TakeScreenshotCallback
+LambdaHolder = Lambdas.LambdaHolder
+ClassCallback = LambdasWithStructuredTypes.ClassCallback
+StructCallback = LambdasWithStructuredTypes.StructCallback
+SomeCallback = LambdasDeclarationOrder.SomeCallback
+SomeStruct = LambdasDeclarationOrder.SomeStruct
 from test.SignatureClashLambda import SignatureClashLambda
 from test.StructWithLambda import StructWithLambda
 
@@ -141,7 +144,7 @@ class TestLambdas:
     def test_python_lambda_in_struct(self):
         delimiter = ">.<"
         concatenator = lambda first, second: f"{first}{delimiter}{second}"
-        holder = LambdasLambdaHolder(concatenator)
+        holder = LambdaHolder(concatenator)
         result = Lambdas.concatenate_in_struct("foo", "bar", holder)
 
         assert result == "foo>.<bar"
@@ -169,7 +172,7 @@ class TestLambdas:
 
     def test_lambdas_interface_take_screenshot_callback_type(self):
         """The TakeScreenshotCallback type alias maps Blob? to Optional[bytes]."""
-        assert LambdasInterfaceTakeScreenshotCallback == Callable[[Optional[bytes]], None]
+        assert TakeScreenshotCallback == Callable[[Optional[bytes]], None]
 
     def test_lambdas_interface_take_screenshot_invocation(self):
         """Calling take_screenshot on a Python subclass delivers the callback and it can
@@ -198,8 +201,8 @@ class TestLambdas:
     def test_lambdas_with_structured_types_callback_type_aliases(self):
         """LambdasWithStructuredTypes defines lambdas whose parameter types are wrapper
         types (interface and struct). Verify the generated type aliases are correct."""
-        assert LambdasWithStructuredTypesClassCallback == Callable[[LambdasInterface], None]
-        assert LambdasWithStructuredTypesStructCallback == Callable[[LambdasLambdaHolder], None]
+        assert ClassCallback == Callable[[LambdasInterface], None]
+        assert StructCallback == Callable[[LambdaHolder], None]
 
     # --- G5: @Overloaded lambda + composition regression ---
 
@@ -224,7 +227,7 @@ class TestLambdas:
         """LambdasDeclarationOrder declares a lambda (SomeCallback) that references
         SomeStruct *before* the struct is declared. Verify the generated struct is
         usable and its field round-trips correctly."""
-        struct = LambdasDeclarationOrderSomeStruct()
+        struct = SomeStruct()
         struct.some_field = "order-test"
 
         assert struct.some_field == "order-test"
@@ -232,7 +235,7 @@ class TestLambdas:
     def test_declaration_order_callback_type_alias(self):
         """The SomeCallback type alias references SomeStruct (declared after the lambda).
         Verify the generated type alias is correct."""
-        assert LambdasDeclarationOrderSomeCallback == Callable[[LambdasDeclarationOrderSomeStruct], None]
+        assert SomeCallback == Callable[[SomeStruct], None]
 
     def test_signature_clash_lambda_type_alias(self):
         """SignatureClashLambda is a top-level lambda () -> String with a name that
