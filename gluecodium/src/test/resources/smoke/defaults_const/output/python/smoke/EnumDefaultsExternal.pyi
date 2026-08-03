@@ -36,7 +36,7 @@ class EnumDefaultsExternal:
     
     
     
-    ExternalEnum3 = ExternalEnum3
+    EnumAlias = ExternalEnum3
     
     
 

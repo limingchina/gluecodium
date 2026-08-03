@@ -171,11 +171,11 @@ class Nullable:
     
     
     
-    list[str] = list[str]
+    SomeArray = list[str]
     
     
     
-    dict[int, str] = dict[int, str]
+    SomeMap = dict[int, str]
     
     
 

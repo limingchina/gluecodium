@@ -32,15 +32,15 @@ class OrderInClass:
     
     
     
-    int = int
+    SomeTypeDef = int
     
     
     
-    dict[int, list[OrderInClass.NestedStruct]] = dict[int, list[OrderInClass.NestedStruct]]
+    ErrorCodeToMessageMap = dict[int, list[NestedStruct]]
     
     
     
-    list[OrderInClass.NestedStruct] = list[OrderInClass.NestedStruct]
+    NestedStructArray = list[NestedStruct]
     
     
 

@@ -53,7 +53,7 @@ class TypeCollection:
     
     
     
-    TypeCollection.Point = TypeCollection.Point
+    PointTypedef = Point
     
     
 

@@ -18,8 +18,6 @@ class CommentsTypeCollection(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    TYPE_COLLECTION_CONSTANT = True
-
     class TypeCollectionStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CommentsTypeCollectionTypeCollectionStruct):
@@ -42,11 +40,17 @@ class CommentsTypeCollection(_NativeBase):
     
     class TypeCollectionEnum(Enum):
     
-        ITEM = 0
+        ITEM = generated.smoke_CommentsTypeCollectionTypeCollectionEnum.ITEM
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    bool = bool
+    TypeCollectionTypedef = bool
     
     
+
+    TYPE_COLLECTION_CONSTANT = True
 

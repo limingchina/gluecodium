@@ -12,10 +12,6 @@ class StructConstants(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    STRUCT_CONSTANT = {"bar Buzz", 1.41}
-
-    NESTING_STRUCT_CONSTANT = {{"nonsense", -2.82}}
-
     class SomeStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructConstantsSomeStruct):
@@ -63,4 +59,8 @@ class StructConstants(_NativeBase):
     
     
     
+
+    STRUCT_CONSTANT = {"bar Buzz", 1.41}
+
+    NESTING_STRUCT_CONSTANT = {{"nonsense", -2.82}}
 

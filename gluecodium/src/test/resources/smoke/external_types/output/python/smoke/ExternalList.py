@@ -9,6 +9,6 @@ import generated
 
 from smoke.PseudoColor import PseudoColor
 
-list[PseudoColor] = list[PseudoColor]
+ExternalList = list[PseudoColor]
 
 

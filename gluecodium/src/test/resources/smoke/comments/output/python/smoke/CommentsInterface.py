@@ -73,9 +73,6 @@ class CommentsInterface(generated.smoke_CommentsInterface):
         """Sets some very useful property."""
         generated.smoke_CommentsInterface.is_some_property.fset(self, _unwrap(value, bool))
 
-    #: This is some very useful constant.
-    VERY_USEFUL = True
-
     class SomeStruct(_NativeBase):
         """This is some very useful struct."""
         def __init__(self, *args, **kwargs):
@@ -101,13 +98,20 @@ class CommentsInterface(generated.smoke_CommentsInterface):
     class SomeEnum(Enum):
         """This is some very useful enum."""
     
-        USELESS = 0
-        USEFUL = 1
+        USELESS = generated.smoke_CommentsInterfaceSomeEnum.USELESS
+        USEFUL = generated.smoke_CommentsInterfaceSomeEnum.USEFUL
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
     #: This is some very useful typedef.
-    bool = bool
+    Usefulness = bool
     
     
+
+    #: This is some very useful constant.
+    VERY_USEFUL = True
 

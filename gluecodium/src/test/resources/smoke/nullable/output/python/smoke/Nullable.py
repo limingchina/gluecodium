@@ -305,16 +305,20 @@ class Nullable(_NativeBase):
     
     class SomeEnum(Enum):
     
-        ON = 0
-        OFF = 1
+        ON = generated.smoke_NullableSomeEnum.ON
+        OFF = generated.smoke_NullableSomeEnum.OFF
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    list[str] = list[str]
+    SomeArray = list[str]
     
     
     
-    dict[int, str] = dict[int, str]
+    SomeMap = dict[int, str]
     
     
 

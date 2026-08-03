@@ -36,16 +36,24 @@ class Errors(_NativeBase):
 
     class InternalErrorCode(Enum):
     
-        ERROR_NONE = 0
-        ERROR_FATAL = 1
+        ERROR_NONE = generated.smoke_ErrorsInternalErrorCode.ERROR_NONE
+        ERROR_FATAL = generated.smoke_ErrorsInternalErrorCode.ERROR_FATAL
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
     class ExternalErrors(Enum):
     
-        NONE = 0
-        BOOM = 1
-        BUST = 2
+        NONE = generated.smoke_ErrorsExternalErrors.NONE
+        BOOM = generated.smoke_ErrorsExternalErrors.BOOM
+        BUST = generated.smoke_ErrorsExternalErrors.BUST
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     

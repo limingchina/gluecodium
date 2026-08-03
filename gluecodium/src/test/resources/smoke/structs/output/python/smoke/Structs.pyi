@@ -128,7 +128,7 @@ class Structs:
     
     
     
-    list[Structs.AllTypesStruct] = list[Structs.AllTypesStruct]
+    ArrayOfImmutable = list[AllTypesStruct]
     
     
 

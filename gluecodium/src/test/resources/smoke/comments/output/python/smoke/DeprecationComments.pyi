@@ -29,9 +29,6 @@ class DeprecationComments:
     def property_but_not_accessors(self, value: str) -> None:
         ...
 
-    #: This is some very useful constant.
-    VERY_USEFUL = True
-
     class SomeStruct:
         """This is some very useful struct."""
     
@@ -47,11 +44,6 @@ class DeprecationComments:
     
     
     
-    #: This is some very useful typedef.
-    bool = bool
-    
-    
-    
     class SomethingWrongError(Exception):
         """"""
         message: str
@@ -59,4 +51,12 @@ class DeprecationComments:
         def __init__(self, message: str) -> None: ...
     
     
+    
+    #: This is some very useful typedef.
+    Usefulness = bool
+    
+    
+
+    #: This is some very useful constant.
+    VERY_USEFUL = True
 

@@ -26,23 +26,23 @@ class DurationSeconds:
     
     
     
-    datetime.timedelta = datetime.timedelta
+    DurationTypeAlias = datetime.timedelta
     
     
     
-    list[datetime.timedelta] = list[datetime.timedelta]
+    DurationList = list[datetime.timedelta]
     
     
     
-    set[datetime.timedelta] = set[datetime.timedelta]
+    DurationSet = set[datetime.timedelta]
     
     
     
-    dict[str, datetime.timedelta] = dict[str, datetime.timedelta]
+    DurationMap = dict[str, datetime.timedelta]
     
     
     
-    dict[datetime.timedelta, str] = dict[datetime.timedelta, str]
+    DurationKeyMap = dict[datetime.timedelta, str]
     
     
 

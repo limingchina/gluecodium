@@ -21,7 +21,7 @@ class QuxTypes:
     
     
     
-    float = float
+    QuxTypedef = float
     
     
 

@@ -53,7 +53,11 @@ class ExternalInterface(generated.smoke_ExternalInterface):
     
     class SomeEnum(Enum):
     
-        SOME_VALUE = 0
+        SOME_VALUE = generated.smoke_ExternalInterfacesome_Enum.SOME_VALUE
+    
+        @property
+        def _native(self):
+            return self.value
     
     
 

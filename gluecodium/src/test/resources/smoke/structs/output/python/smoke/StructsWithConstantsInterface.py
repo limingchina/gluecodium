@@ -39,10 +39,10 @@ class StructsWithConstantsInterface(_NativeBase):
           self._native.type = _unwrap(value, RouteUtils.RouteType)
     
     
+    
         DEFAULT_DESCRIPTION = "Foo"
     
-        DEFAULT_TYPE = RouteType.NONE
-    
+        DEFAULT_TYPE = RouteUtils.RouteType.NONE
     
     
     class StructWithConstantsOnly(_NativeBase):
@@ -55,7 +55,7 @@ class StructsWithConstantsInterface(_NativeBase):
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
     
-        DEFAULT_DESCRIPTION = "Foo"
     
+        DEFAULT_DESCRIPTION = "Foo"
     
 

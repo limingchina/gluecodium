@@ -105,7 +105,7 @@ class EnumDefaults(_NativeBase):
     
     
     
-    Enum3 = Enum3
+    EnumAlias = Enum3
     
     
 

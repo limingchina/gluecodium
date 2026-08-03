@@ -5,10 +5,6 @@ import typing
 
 class StructConstants:
 
-    STRUCT_CONSTANT = {"bar Buzz", 1.41}
-
-    NESTING_STRUCT_CONSTANT = {{"nonsense", -2.82}}
-
     class SomeStruct:
     
         string_field: str
@@ -22,4 +18,8 @@ class StructConstants:
         struct_field: StructConstants.SomeStruct
     
     
+
+    STRUCT_CONSTANT = {"bar Buzz", 1.41}
+
+    NESTING_STRUCT_CONSTANT = {{"nonsense", -2.82}}
 

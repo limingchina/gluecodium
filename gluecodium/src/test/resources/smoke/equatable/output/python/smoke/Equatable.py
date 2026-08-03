@@ -240,12 +240,16 @@ class Equatable(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_EquatableSomeEnum.FOO
+        BAR = generated.smoke_EquatableSomeEnum.BAR
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    dict[int, str] = dict[int, str]
+    ErrorCodeToMessageMap = dict[int, str]
     
     
 

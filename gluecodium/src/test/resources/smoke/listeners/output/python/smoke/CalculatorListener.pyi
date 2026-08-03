@@ -30,7 +30,7 @@ class CalculatorListener:
     
     
     
-    dict[str, float] = dict[str, float]
+    NamedCalculationResults = dict[str, float]
     
     
 

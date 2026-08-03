@@ -20,8 +20,12 @@ class EnumsInTypeCollection(_NativeBase):
 
     class TCEnum(Enum):
     
-        FIRST = 0
-        SECOND = 1
+        FIRST = generated.smoke_EnumsInTypeCollectionTCEnum.FIRST
+        SECOND = generated.smoke_EnumsInTypeCollectionTCEnum.SECOND
+    
+        @property
+        def _native(self):
+            return self.value
     
     
 

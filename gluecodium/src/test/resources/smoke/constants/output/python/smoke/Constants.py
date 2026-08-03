@@ -18,6 +18,17 @@ class Constants(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
+    class StateEnum(Enum):
+    
+        OFF = generated.smoke_ConstantsStateEnum.OFF
+        ON = generated.smoke_ConstantsStateEnum.ON
+    
+        @property
+        def _native(self):
+            return self.value
+    
+    
+
     BOOL_CONSTANT = True
 
     INT_CONSTANT = -11
@@ -31,11 +42,4 @@ class Constants(_NativeBase):
     STRING_CONSTANT = "Foo bar"
 
     ENUM_CONSTANT = StateEnum.ON
-
-    class StateEnum(Enum):
-    
-        OFF = 0
-        ON = 1
-    
-    
 

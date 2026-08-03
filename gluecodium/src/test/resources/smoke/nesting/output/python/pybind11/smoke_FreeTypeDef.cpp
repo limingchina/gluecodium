@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "chrono"
 
 
-// datetime.datetime is a type alias, no binding needed.
+// FreeTypeDef is a type alias, no binding needed.
 

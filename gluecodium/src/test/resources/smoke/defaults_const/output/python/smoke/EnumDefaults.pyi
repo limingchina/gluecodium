@@ -36,7 +36,7 @@ class EnumDefaults:
     
     
     
-    Enum3 = Enum3
+    EnumAlias = Enum3
     
     
 

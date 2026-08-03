@@ -198,7 +198,7 @@ class TypeCollection(_NativeBase):
     
     
     
-    TypeCollection.Point = TypeCollection.Point
+    PointTypedef = Point
     
     
 

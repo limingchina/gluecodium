@@ -22,23 +22,23 @@ class Locales:
     
     
     
-    str = str
+    LocaleTypeDef = str
     
     
     
-    list[str] = list[str]
+    LocaleArray = list[str]
     
     
     
-    dict[str, str] = dict[str, str]
+    LocaleMap = dict[str, str]
     
     
     
-    set[str] = set[str]
+    LocaleSet = set[str]
     
     
     
-    dict[str, str] = dict[str, str]
+    LocaleKeyMap = dict[str, str]
     
     
 

@@ -26,11 +26,11 @@ class StructsQualifiedType:
     
     
     
-    list[Structs.Point] = list[Structs.Point]
+    TypeCollectionPointsArray = list[Structs.Point]
     
     
     
-    list[Structs.Point] = list[Structs.Point]
+    InterfacePointsArray = list[Structs.Point]
     
     
 

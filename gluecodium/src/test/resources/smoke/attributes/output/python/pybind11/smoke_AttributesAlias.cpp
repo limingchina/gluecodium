@@ -15,5 +15,5 @@ namespace py = pybind11;
 #include "string"
 
 
-// str is a type alias, no binding needed.
+// AttributesAlias is a type alias, no binding needed.
 

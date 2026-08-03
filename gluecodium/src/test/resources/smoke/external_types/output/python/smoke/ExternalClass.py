@@ -42,7 +42,11 @@ class ExternalClass(_NativeBase):
     
     class SomeEnum(Enum):
     
-        SOME_VALUE = 0
+        SOME_VALUE = generated.smoke_ExternalClasssome_Enum.SOME_VALUE
+    
+        @property
+        def _native(self):
+            return self.value
     
     
 

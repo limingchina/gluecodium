@@ -50,8 +50,12 @@ class PlatformComments(_NativeBase):
     
     class SomeEnum(Enum):
     
-        USELESS = 0
-        USEFUL = 1
+        USELESS = generated.smoke_PlatformCommentsSomeEnum.USELESS
+        USEFUL = generated.smoke_PlatformCommentsSomeEnum.USEFUL
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     

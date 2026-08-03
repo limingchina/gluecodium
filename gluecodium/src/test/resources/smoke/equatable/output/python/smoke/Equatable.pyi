@@ -70,7 +70,7 @@ class Equatable:
     
     
     
-    dict[int, str] = dict[int, str]
+    ErrorCodeToMessageMap = dict[int, str]
     
     
 

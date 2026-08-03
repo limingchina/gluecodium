@@ -6,6 +6,6 @@ import typing
 
 class CrossFileConstants:
 
-    FOO_BAR = StateEnum.ON
 
+    FOO_BAR = Constants.StateEnum.ON
 

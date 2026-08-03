@@ -1,5 +1,32 @@
 # Refactoring Plan: One Top-Level LIME Element → One Python Output File
 
+## Status
+
+| Phase | Description | Status | Commit |
+|---|---|---|---|
+| G11 | Doc comment preservation for Python bindings | ✅ Completed | `762d0c50a` |
+| Phase 1 | Python wrapper files (`.py` and `.pyi`) — one file per top-level element with nested types | ✅ Completed | `21fc0d1f5` |
+| Phase 2 | Pybind11 binding files (`.cpp`) — Option A (per-type files, flattened registration names) | ✅ Completed | `21fc0d1f5` |
+| Phase 3 | Smoke test reference updates | ✅ Completed | (this commit) |
+| Phase 4 | Functional test updates — nested type access (Parent.Child) | ✅ Completed | `54fb6da6d` |
+
+### Additional fixes applied during Phase 3
+
+- **`PythonStubField.mustache`**: Fixed non-deterministic `LimeField@hashCode` in generated `.pyi` field comments. The template was using `{{prefix this ...}}` which called `toString()` on the `LimeField` Java object. Changed to `{{#resolveName comment}}{{prefix this ...}}{{/resolveName}}` to properly resolve the comment text, matching the pattern used by Swift and C++ generators.
+
+### Additional generator fixes applied during Phase 4
+
+- **`PythonNameResolver.kt`**: Added `resolvePybind11AttrChain()` for nested exception class access from C++; added `resolveShortTypeRef()`/`resolvePythonTypeShort()` with context-aware short name resolution; added `isSameTopLevel()` helper; added thread-local context tracking for constant values referencing nested enums; handled `LimeTypeAlias` in `resolvePythonType()`.
+- **`PythonGenerator.kt`**: Reordered nested types (structs/classes/interfaces/enums/exceptions first, then typeAliases/lambdas last) to avoid forward-reference `NameError`s; passed `typeRefShortName` and `parameterTypes` template variables; set/clear name resolver context around type body rendering.
+- **Template fixes**: `Pybind11Exception` uses `pybind11AttrChain` for nested exception classes; `PythonEnumeration` unified standalone and nested enum handling; `PythonClass`/`PythonStruct`/`PythonInterface` + stubs move constants after `nestedTypes`; `PythonLambda`/`PythonTypeAlias` + stubs use short names via `typeRefShortName`.
+
+### Remaining work
+
+- **Phase 2 Option B** (one pybind11 file per top element with nested scopes) is deferred as a follow-up. The current Option A approach (per-type `.cpp` files with flattened registration names) is functional and passes all tests.
+- **Predicate cleanup**: `isAncestorField`, `isAncestorReturnType`, `isAncestorProperty` predicates are still present but could be simplified or removed in a future cleanup pass since circular imports between parent and child modules no longer occur with the one-file-per-top-element design.
+
+---
+
 ## Background
 
 Currently the Python generator **flattens** every nested type into a separate top-level module. For example, `InnerClassForwardDeclarations.InnerClass2.InnerInnerClass1` (defined in [InnerClassForwardDeclarations.lime](../../gluecodium/src/test/resources/smoke/instances/input/InnerClassForwardDeclarations.lime)) generates a standalone file `InnerClassForwardDeclarationsInnerClass2InnerInnerClass1.py`.
@@ -428,9 +455,9 @@ This requires significant template rework — the current `Pybind11Class.mustach
 
 ---
 
-### Phase 3: Smoke test reference updates
+### Phase 3: Smoke test reference updates ✅
 
-After the generator and template changes, regenerate smoke test references:
+Smoke test references were regenerated using:
 
 ```bash
 DUMP_ACTUAL_DIR=$(pwd)/gluecodium/src/test/resources/smoke ./gradlew :gluecodium:test
@@ -500,9 +527,9 @@ class InnerClassForwardDeclarations(_NativeBase):
                 ...
 ```
 
-### Phase 4: Functional test updates
+### Phase 4: Functional test updates ✅
 
-Update functional test Python files that import nested types:
+Updated functional test Python files that import nested types:
 
 **Before:**
 ```python
@@ -595,8 +622,8 @@ pybind11 registration names must be valid C++ identifiers (no dots). The Python 
 
 ## Validation Steps
 
-1. **Unit tests:** `./gradlew :gluecodium:test` — smoke tests compare generated output against reference files.
-2. **Regenerate references:** `DUMP_ACTUAL_DIR=$(pwd)/gluecodium/src/test/resources/smoke ./gradlew :gluecodium:test`
-3. **Inspect output:** Manually verify `InnerClassForwardDeclarations.py` has nested classes with correct indentation.
-4. **Functional tests:** `functional-tests/scripts/build-python-functional --publish` (after Phase 3 updates).
+1. ✅ **Unit tests:** `./gradlew :gluecodium:test` — all 294 smoke tests pass (0 failed, 54 skipped for non-Python generators).
+2. ✅ **Regenerate references:** `DUMP_ACTUAL_DIR=$(pwd)/gluecodium/src/test/resources/smoke ./gradlew :gluecodium:test` — 139 reference files updated.
+3. ✅ **Inspect output:** Generated `.py` files contain nested classes with correct indentation.
+4. ✅ **Functional tests:** `functional-tests/scripts/build-python-functional --publish` — 252 passed, 0 failed, 1 skipped.
 5. **Python import test:** `python3 -c "from smoke.forward.InnerClassForwardDeclarations import InnerClassForwardDeclarations; print(InnerClassForwardDeclarations.InnerClass2.InnerInnerClass1)"`

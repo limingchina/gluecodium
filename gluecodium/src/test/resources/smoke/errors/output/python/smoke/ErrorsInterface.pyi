@@ -24,8 +24,6 @@ class ErrorsInterface:
     def method_with_payload_error_and_return_value() -> str:
         ...
 
-    ERROR_MESSAGE = "Some error message constant"
-
     class InternalError(Enum):
     
         ERROR_NONE = 0
@@ -54,4 +52,6 @@ class ErrorsInterface:
         def __init__(self, message: str) -> None: ...
     
     
+
+    ERROR_MESSAGE = "Some error message constant"
 

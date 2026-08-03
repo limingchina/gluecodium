@@ -54,11 +54,11 @@ class Serialization:
     
     
     
-    list[Serialization.NestedSerializableStruct] = list[Serialization.NestedSerializableStruct]
+    NestedStructArray = list[NestedSerializableStruct]
     
     
     
-    dict[int, str] = dict[int, str]
+    ErrorCodeToMessageMap = dict[int, str]
     
     
 

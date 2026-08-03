@@ -45,9 +45,9 @@ class StructsWithConstants(_NativeBase):
           self._native.type = _unwrap(value, RouteUtils.RouteType)
     
     
+    
         DEFAULT_DESCRIPTION = "Nonsense"
     
-        DEFAULT_TYPE = RouteType.EQUESTRIAN
-    
+        DEFAULT_TYPE = RouteUtils.RouteType.EQUESTRIAN
     
 

@@ -32,15 +32,15 @@ class DeclarationOrder:
     
     
     
-    int = int
+    SomeTypeDef = int
     
     
     
-    dict[int, list[DeclarationOrder.NestedStruct]] = dict[int, list[DeclarationOrder.NestedStruct]]
+    ErrorCodeToMessageMap = dict[int, list[NestedStruct]]
     
     
     
-    list[DeclarationOrder.NestedStruct] = list[DeclarationOrder.NestedStruct]
+    NestedStructArray = list[NestedStruct]
     
     
 

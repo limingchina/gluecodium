@@ -50,15 +50,15 @@ class DatesSteady(_NativeBase):
     
     
     
-    datetime.datetime = datetime.datetime
+    MonotonicDate = datetime.datetime
     
     
     
-    list[datetime.datetime] = list[datetime.datetime]
+    DateList = list[datetime.datetime]
     
     
     
-    dict[datetime.datetime, str] = dict[datetime.datetime, str]
+    DateMap = dict[datetime.datetime, str]
     
     
 

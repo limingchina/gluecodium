@@ -102,16 +102,12 @@ class OuterStruct(_NativeBase):
     
     class InnerEnum(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_OuterStructInnerEnum.FOO
+        BAR = generated.smoke_OuterStructInnerEnum.BAR
     
-    
-    
-    OuterStruct.InnerEnum = OuterStruct.InnerEnum
-    
-    
-    
-    InnerLambda = Callable[[], None]
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -120,6 +116,14 @@ class OuterStruct(_NativeBase):
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
+    
+    
+    
+    TypeAlias = InnerEnum
+    
+    
+    
+    InnerLambda = Callable[[], None]
     
     
 

@@ -16,5 +16,5 @@ namespace py = pybind11;
 #include "vector"
 
 
-// list[float] is a type alias, no binding needed.
+// GlobalListTypeDef is a type alias, no binding needed.
 

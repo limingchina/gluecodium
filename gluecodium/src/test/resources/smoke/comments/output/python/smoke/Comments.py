@@ -87,9 +87,6 @@ class Comments(_NativeBase):
         """Sets the visibility flag that controls if [OnlyGetterProperty] should be visible on the screen."""
         self._native.is_is_visible = _unwrap(value, bool)
 
-    #: This is some very useful constant.
-    VERY_USEFUL = True
-
     class SomeStruct(_NativeBase):
         """This is some very useful struct."""
         def __init__(self, *args, **kwargs):
@@ -134,18 +131,12 @@ class Comments(_NativeBase):
     class SomeEnum(Enum):
         """This is some very useful enum."""
     
-        USELESS = 0
-        USEFUL = 1
+        USELESS = generated.smoke_commentsSomeEnum.USELESS
+        USEFUL = generated.smoke_commentsSomeEnum.USEFUL
     
-    
-    
-    #: This is some very useful typedef.
-    bool = bool
-    
-    
-    
-    #: This is some very useful lambda that does it.
-    SomeLambda = Callable[[str, int], float]
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -157,4 +148,17 @@ class Comments(_NativeBase):
             self.message = message
     
     
+    
+    #: This is some very useful typedef.
+    Usefulness = bool
+    
+    
+    
+    #: This is some very useful lambda that does it.
+    SomeLambda = Callable[[str, int], float]
+    
+    
+
+    #: This is some very useful constant.
+    VERY_USEFUL = True
 

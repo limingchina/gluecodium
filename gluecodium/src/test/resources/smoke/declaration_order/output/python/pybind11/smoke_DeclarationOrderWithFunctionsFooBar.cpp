@@ -20,7 +20,7 @@ void register_smoke_DeclarationOrderWithFunctionsFooBar(py::module_& module) {
     // the Python class (not a separate native py::exception type). This ensures
     // pytest.raises() catches them correctly.
     static py::object py_exc =
-        py::module_::import("smoke.DeclarationOrderWithFunctions").attr("FooBarError");
+        py::module_::import("smoke.DeclarationOrderWithFunctions").attr("DeclarationOrderWithFunctions").attr("FooBarError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);

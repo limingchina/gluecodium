@@ -19,5 +19,5 @@ namespace py = pybind11;
 #include "unordered_map"
 
 
-// dict[Persistence, PseudoColor] is a type alias, no binding needed.
+// ExternalMap is a type alias, no binding needed.
 

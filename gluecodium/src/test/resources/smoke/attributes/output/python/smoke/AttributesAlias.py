@@ -8,6 +8,6 @@ from typing import Optional
 import generated
 
 
-str = str
+AttributesAlias = str
 
 

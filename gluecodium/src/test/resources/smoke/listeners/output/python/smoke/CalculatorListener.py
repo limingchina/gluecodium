@@ -62,7 +62,7 @@ class CalculatorListener(generated.smoke_CalculatorListener):
     
     
     
-    dict[str, float] = dict[str, float]
+    NamedCalculationResults = dict[str, float]
     
     
 

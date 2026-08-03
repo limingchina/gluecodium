@@ -180,16 +180,20 @@ class Serialization(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_SerializationSomeEnum.FOO
+        BAR = generated.smoke_SerializationSomeEnum.BAR
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    list[Serialization.NestedSerializableStruct] = list[Serialization.NestedSerializableStruct]
+    NestedStructArray = list[NestedSerializableStruct]
     
     
     
-    dict[int, str] = dict[int, str]
+    ErrorCodeToMessageMap = dict[int, str]
     
     
 

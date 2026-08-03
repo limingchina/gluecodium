@@ -92,20 +92,24 @@ class DeclarationOrder(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_DeclarationOrderSomeEnum.FOO
+        BAR = generated.smoke_DeclarationOrderSomeEnum.BAR
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    int = int
+    SomeTypeDef = int
     
     
     
-    dict[int, list[DeclarationOrder.NestedStruct]] = dict[int, list[DeclarationOrder.NestedStruct]]
+    ErrorCodeToMessageMap = dict[int, list[NestedStruct]]
     
     
     
-    list[DeclarationOrder.NestedStruct] = list[DeclarationOrder.NestedStruct]
+    NestedStructArray = list[NestedStruct]
     
     
 

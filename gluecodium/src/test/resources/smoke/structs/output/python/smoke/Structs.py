@@ -319,12 +319,16 @@ class Structs(_NativeBase):
     
     class FooBar(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_StructsFooBar.FOO
+        BAR = generated.smoke_StructsFooBar.BAR
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    list[Structs.AllTypesStruct] = list[Structs.AllTypesStruct]
+    ArrayOfImmutable = list[AllTypesStruct]
     
     
 

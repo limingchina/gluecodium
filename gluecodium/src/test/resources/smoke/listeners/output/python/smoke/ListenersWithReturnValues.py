@@ -67,12 +67,16 @@ class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
     
     class ResultEnum(Enum):
     
-        NONE = 0
-        RESULT = 1
+        NONE = generated.smoke_ListenersWithReturnValuesResultEnum.NONE
+        RESULT = generated.smoke_ListenersWithReturnValuesResultEnum.RESULT
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    dict[str, float] = dict[str, float]
+    StringToDouble = dict[str, float]
     
     
 

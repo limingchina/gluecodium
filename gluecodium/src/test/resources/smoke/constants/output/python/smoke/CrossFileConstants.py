@@ -19,6 +19,6 @@ class CrossFileConstants(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    FOO_BAR = StateEnum.ON
 
+    FOO_BAR = Constants.StateEnum.ON
 
