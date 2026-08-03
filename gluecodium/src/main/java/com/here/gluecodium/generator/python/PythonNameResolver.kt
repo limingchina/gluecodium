@@ -56,6 +56,22 @@ internal class PythonNameResolver(
 ) : ReferenceMapBasedResolver(limeReferenceMap), NameResolver {
     override fun resolveName(element: Any): String = resolvePythonType(element)
 
+    /**
+     * Thread-local context element used during template rendering to resolve constant values
+     * that reference nested types. Set by the generator before rendering a class/struct body
+     * and cleared afterwards. When set, [resolveValue] uses the short name for same-top-level
+     * references and the qualified name for cross-file references.
+     */
+    private val currentContext: ThreadLocal<LimeNamedElement?> = ThreadLocal()
+
+    fun setContext(element: LimeNamedElement?) {
+        currentContext.set(element)
+    }
+
+    fun clearContext() {
+        currentContext.set(null)
+    }
+
     private fun resolvePythonType(
         element: Any,
         requiresHashable: Boolean = false,
@@ -69,7 +85,9 @@ internal class PythonNameResolver(
                 val typeName =
                     (actualType as? LimeLambda)
                         ?.let(::resolveLambdaType)
-                        ?: if (actualType.path.hasParent)
+                        ?: if (actualType is LimeTypeAlias)
+                            resolvePythonType(actualType.typeRef, requiresHashable)
+                        else if (actualType.path.hasParent)
                             resolveQualifiedTypeName(actualType)
                         else
                             resolvePythonType(actualType, requiresHashable)
@@ -92,7 +110,6 @@ internal class PythonNameResolver(
                     "dict[" + keyType + ", " + valueType + "]"
                 }
             }
-            is LimeTypeAlias -> resolvePythonType(element.typeRef, requiresHashable)
             is LimeType -> nameRules.getName(element)
             is LimeNamedElement -> getPlatformName(element) ?: nameRules.getName(element)
             is LimeValue -> resolveValue(element)
@@ -201,7 +218,16 @@ internal class PythonNameResolver(
             is LimeValue.Constant -> {
                 val limeElement = limeValue.valueRef.element
                 val parentElement = getParentElement(limeElement)
-                "${resolveName(parentElement)}.${resolveName(limeElement)}"
+                val parentName = if (parentElement is LimeType && parentElement.path.hasParent) {
+                    val ctx = currentContext.get()
+                    if (ctx != null && isSameTopLevel(parentElement, ctx))
+                        nameRules.getName(parentElement)
+                    else
+                        resolveQualifiedTypeName(parentElement)
+                } else {
+                    resolveName(parentElement)
+                }
+                "$parentName.${resolveName(limeElement)}"
             }
             is LimeValue.Literal -> {
                 val actualType = limeValue.typeRef.type.actualType
@@ -230,6 +256,92 @@ internal class PythonNameResolver(
         val name = nameRules.getFlattenedName(limeElement)
         val packagePath = limeElement.path.head.joinToString("_")
         return if (packagePath.isNotEmpty()) "${packagePath}_$name" else name
+    }
+
+    /**
+     * Resolves a chain of pybind11 `.attr("...")` calls to access a (possibly nested) Python class
+     * from C++ via an imported module. For a top-level type, this produces:
+     * `.attr("TypeName")`
+     * For a nested type, this produces:
+     * `.attr("ParentName").attr("ChildName")...`
+     *
+     * Used by the Pybind11Exception template to locate the Python exception class at runtime.
+     */
+    fun resolvePybind11AttrChain(limeElement: LimeNamedElement): String {
+        val qualifiedName = resolveQualifiedTypeName(limeElement as? LimeType
+            ?: throw GluecodiumExecutionException("Expected LimeType, got ${limeElement.javaClass.name}"))
+        return qualifiedName.split(".").joinToString("") { ".attr(\"$it\")" }
+    }
+
+    /**
+     * Resolves the type expression for a type alias or lambda *definition* (the right-hand
+     * side of `Name = <type>`), using **short** (unqualified) names for nested types that
+     * belong to the same top-level element as [contextElement]. Types from other top-level
+     * elements use their fully-qualified name (e.g. `Outer.Inner`).
+     *
+     * Inside a class body, the class name itself is not yet defined, so qualified names like
+     * `Outer.Inner` fail with `NameError` at runtime. Using the short name `Inner` works
+     * because it resolves to the local class-body scope (as long as the referenced type is
+     * defined earlier in the body — ensured by reordering in `generateNestedTypeBodies`).
+     */
+    fun resolveShortTypeRef(typeRef: LimeTypeRef, contextElement: LimeNamedElement? = null): String =
+        resolvePythonTypeShort(typeRef, contextElement = contextElement)
+
+    private fun resolvePythonTypeShort(
+        element: Any,
+        requiresHashable: Boolean = false,
+        contextElement: LimeNamedElement? = null,
+    ): String =
+        when (element) {
+            is LimeBasicType -> resolveBasicType(element)
+            is LimeReturnType -> resolvePythonTypeShort(element.typeRef, requiresHashable, contextElement)
+            is LimeTypeRef -> {
+                val actualType = element.type.actualType
+                val typeName =
+                    (actualType as? LimeLambda)
+                        ?.let(::resolveLambdaType)
+                        ?: if (actualType is LimeTypeAlias)
+                            resolvePythonTypeShort(actualType.typeRef, requiresHashable, contextElement)
+                        else if (isSameTopLevel(actualType, contextElement))
+                            nameRules.getName(actualType)
+                        else if (actualType.path.hasParent)
+                            resolveQualifiedTypeName(actualType)
+                        else
+                            resolvePythonTypeShort(actualType, requiresHashable, contextElement)
+                if (element.isNullable) "Optional[" + typeName + "]" else typeName
+            }
+            is LimeList -> {
+                val elementType = resolvePythonTypeShort(element.elementType, requiresHashable, contextElement)
+                if (requiresHashable) "tuple[" + elementType + ", ...]" else "list[" + elementType + "]"
+            }
+            is LimeSet -> {
+                val elementType = resolvePythonTypeShort(element.elementType, true, contextElement)
+                if (requiresHashable) "frozenset[" + elementType + "]" else "set[" + elementType + "]"
+            }
+            is LimeMap -> {
+                val keyType = resolvePythonTypeShort(element.keyType, true, contextElement)
+                val valueType = resolvePythonTypeShort(element.valueType, requiresHashable, contextElement)
+                if (requiresHashable) {
+                    "frozenset[tuple[" + keyType + ", " + valueType + "]]"
+                } else {
+                    "dict[" + keyType + ", " + valueType + "]"
+                }
+            }
+            is LimeTypeAlias -> resolvePythonTypeShort(element.typeRef, requiresHashable, contextElement)
+            is LimeType -> nameRules.getName(element)
+            is LimeNamedElement -> getPlatformName(element) ?: nameRules.getName(element)
+            else -> resolvePythonType(element, requiresHashable)
+        }
+
+    /**
+     * Returns true if [type] and [context] belong to the same top-level LIME element
+     * (i.e. they share the same top-level ancestor in the path hierarchy).
+     */
+    private fun isSameTopLevel(type: LimeType, context: LimeNamedElement?): Boolean {
+        if (context == null) return false
+        val typeTop = findTopLevelElement(type as LimeNamedElement)
+        val contextTop = findTopLevelElement(context)
+        return typeTop.path.toString() == contextTop.path.toString()
     }
 
     private fun getPlatformName(limeElement: LimeNamedElement): String? = limeElement.attributes.get(PYTHON, NAME)

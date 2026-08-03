@@ -19,18 +19,16 @@
 
 import functional
 from test.Vector import Vector
+from test.RouteUtils import RouteUtils
 from test.StructWithConstMethod import StructWithConstMethod
-from test.StructsWithMethodsInterface import (
-    StructsWithMethodsInterfaceVector3 as Vector3,
-)
-from test.StructsWithMethodsInterfaceStructWithStaticMethodsOnly import (
-    StructsWithMethodsInterfaceStructWithStaticMethodsOnly as InterfaceStaticMethodsOnly,
-)
+from test.StructsWithMethodsInterface import StructsWithMethodsInterface
 from test.SimpleRoute import SimpleRoute
-from test.StructsWithConstantsInterfaceMultiRoute import (
-    StructsWithConstantsInterfaceMultiRoute as MultiRoute,
-)
-from test.RouteUtilsRouteType import RouteUtilsRouteType
+from test.StructsWithConstantsInterface import StructsWithConstantsInterface
+
+Vector3 = StructsWithMethodsInterface.Vector3
+InterfaceStaticMethodsOnly = StructsWithMethodsInterface.StructWithStaticMethodsOnly
+MultiRoute = StructsWithConstantsInterface.MultiRoute
+RouteType = RouteUtils.RouteType
 
 import pytest
 
@@ -111,7 +109,7 @@ class TestStructsWithConstants:
         assert SimpleRoute.DEFAULT_DESCRIPTION == "Nonsense"
 
     def test_simple_route_default_type(self):
-        assert SimpleRoute.DEFAULT_TYPE == RouteUtilsRouteType.EQUESTRIAN
+        assert SimpleRoute.DEFAULT_TYPE == RouteType.EQUESTRIAN
 
     def test_simple_route_get_default_description(self):
         assert SimpleRoute.get_default_description() == "Nonsense"
@@ -120,7 +118,7 @@ class TestStructsWithConstants:
         assert MultiRoute.DEFAULT_DESCRIPTION == "Foo"
 
     def test_multi_route_default_type(self):
-        assert MultiRoute.DEFAULT_TYPE == RouteUtilsRouteType.NONE
+        assert MultiRoute.DEFAULT_TYPE == RouteType.NONE
 
     def test_multi_route_get_default_description(self):
         assert MultiRoute.get_default_description() == "Foo"

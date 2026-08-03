@@ -19,9 +19,10 @@
 
 import functional
 from test.MethodOverloads import MethodOverloads
-from test.MethodOverloadsPoint import MethodOverloadsPoint
 from test.ConstructorOverloads import ConstructorOverloads
 from test.StructConstructorOverloads import StructConstructorOverloads
+
+MethodOverloadsPoint = MethodOverloads.Point
 
 import pytest
 

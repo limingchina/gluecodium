@@ -20,8 +20,9 @@
 import functional
 from test.Enums import Enums
 from test.EnumsTypeCollectionMethods import EnumsTypeCollectionMethods
-from test.EnumsInternalError import EnumsInternalError as InternalError
 from test.InternalErrorTypeCollection import InternalErrorTypeCollection
+
+InternalError = Enums.InternalError
 
 import pytest
 

@@ -20,15 +20,13 @@ for the Python (pybind11) bindings."""
 
 import functional
 from test.InstanceInStruct import InstanceInStruct
-from test.InstanceInStructSelfHolder import InstanceInStructSelfHolder
-from test.InstanceInStructNotNullSelfHolder import InstanceInStructNotNullSelfHolder
 
 import pytest
 
 
 class TestInstanceInStruct:
     def test_assign_instance_to_struct(self):
-        holder = InstanceInStructSelfHolder(InstanceInStruct.create())
+        holder = InstanceInStruct.SelfHolder(InstanceInStruct.create())
         holder.my_self.set_string_value("Hello")
 
         assert holder.my_self.get_string_value() == "Hello"
@@ -42,5 +40,5 @@ class TestInstanceInStruct:
     def test_instance_in_not_null_struct(self):
         holder = InstanceInStruct.create_in_not_null_struct()
 
-        assert isinstance(holder, InstanceInStructNotNullSelfHolder)
+        assert isinstance(holder, InstanceInStruct.NotNullSelfHolder)
         assert holder.my_self is not None

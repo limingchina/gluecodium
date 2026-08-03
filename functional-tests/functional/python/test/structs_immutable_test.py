@@ -18,16 +18,11 @@
 """Struct immutability tests for the Python (pybind11) bindings."""
 
 from test.PlainDataStructuresImmutable import PlainDataStructuresImmutable
-from test.PlainDataStructuresImmutableAllTypesImmutableStruct import (
-    PlainDataStructuresImmutableAllTypesImmutableStruct as AllTypesImmutableStruct,
-)
-from test.PlainDataStructuresImmutableNestingImmutableStruct import (
-    PlainDataStructuresImmutableNestingImmutableStruct as NestingImmutableStruct,
-)
-from test.PlainDataStructuresImmutablePoint import PlainDataStructuresImmutablePoint as Point
-from test.PlainDataStructuresImmutableStructWithArrayOfImmutable import (
-    PlainDataStructuresImmutableStructWithArrayOfImmutable as StructWithArrayOfImmutable,
-)
+
+AllTypesImmutableStruct = PlainDataStructuresImmutable.AllTypesImmutableStruct
+NestingImmutableStruct = PlainDataStructuresImmutable.NestingImmutableStruct
+Point = PlainDataStructuresImmutable.Point
+StructWithArrayOfImmutable = PlainDataStructuresImmutable.StructWithArrayOfImmutable
 
 import pytest
 

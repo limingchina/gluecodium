@@ -273,6 +273,10 @@ internal class PythonGenerator : Generator {
         val templateName =
             (if (isStub) selectPythonStubTemplate(element) else selectPythonTemplate(element))
                 ?: return ""
+        // Set context so resolveValue can distinguish same-top-level vs cross-file
+        // references when resolving constant values (e.g. StateEnum.ON vs RouteUtils.RouteType.EQUESTRIAN).
+        pythonNameResolver.setContext(element)
+        try {
         val templateData =
             mapOf(
                 "model" to element,
@@ -281,8 +285,26 @@ internal class PythonGenerator : Generator {
                 "nativeTypeName" to pythonNameResolver.resolveRegisterName(element),
                 "nestedTypes" to nestedTypesStr,
                 "isStub" to isStub,
+            ) + (
+                if (element is com.here.gluecodium.model.lime.LimeTypeAlias) {
+                    mapOf("typeRefShortName" to pythonNameResolver.resolveShortTypeRef(element.typeRef, element))
+                } else if (element is com.here.gluecodium.model.lime.LimeLambda) {
+                    val fn = element.asFunction()
+                    mapOf(
+                        "typeRefShortName" to pythonNameResolver.resolveShortTypeRef(fn.returnType.typeRef, element),
+                        "parameterTypes" to fn.parameters.joinToString(", ") {
+                            pythonNameResolver.resolveShortTypeRef(it.typeRef, element)
+                        },
+                    )
+                } else {
+                    emptyMap()
+                }
             )
-        return TemplateEngine.render(templateName, templateData, nameResolvers, predicates)
+        val result = TemplateEngine.render(templateName, templateData, nameResolvers, predicates)
+        return result
+        } finally {
+            pythonNameResolver.clearContext()
+        }
     }
 
     /**
@@ -297,9 +319,14 @@ internal class PythonGenerator : Generator {
         isStub: Boolean,
     ): String {
         val container = element as? com.here.gluecodium.model.lime.LimeContainer ?: return ""
+        // Reorder: structs, classes, interfaces, enumerations, and exceptions first,
+        // then typeAliases and lambdas last. This ensures that types referenced by
+        // type aliases and lambdas are already defined when the alias is evaluated
+        // (avoiding forward-reference NameErrors at runtime inside the class body).
         val nestedTypes =
             container.structs + container.classes + container.interfaces +
-                container.enumerations + container.typeAliases + container.lambdas + container.exceptions
+                container.enumerations + container.exceptions +
+                container.typeAliases + container.lambdas
         if (nestedTypes.isEmpty()) return ""
 
         val nestedBodies =
@@ -376,6 +403,11 @@ internal class PythonGenerator : Generator {
                         ?.map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
                         .orEmpty(),
                 "contentTemplate" to selectPybind11Template(limeElement),
+                // For exceptions: the chain of `.attr("...")` calls to access the Python
+                // exception class from C++ via the imported module. This handles nested
+                // types (e.g. `.attr("Outer").attr("Inner")`) correctly after the
+                // one-file-per-top-element refactoring.
+                "pybind11AttrChain" to pythonNameResolver.resolvePybind11AttrChain(limeElement),
             )
         val content = TemplateEngine.render("python/Pybind11File", templateData, nameResolvers, predicates)
         return listOf(GeneratedFile(content, nameRules.getPybind11FileName(limeElement)))

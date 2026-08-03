@@ -41,10 +41,10 @@ class {{resolveName}}({{nativeModule}}.{{typeName}}):
 {{#properties}}
 
 {{>python/PythonProperty}}{{/properties}}
+{{{nestedTypes}}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
-{{{nestedTypes}}}
 {{/ifPredicate}}
 {{#unlessPredicate model "needsTrampoline"}}
 class {{resolveName}}{{#if parents}}(
@@ -61,8 +61,8 @@ class {{resolveName}}{{#if parents}}(
 {{#properties}}
 
 {{>python/PythonProperty}}{{/properties}}
+{{{nestedTypes}}}
 {{#constants}}
 
 {{>python/PythonConstant}}{{/constants}}
-{{{nestedTypes}}}
 {{/unlessPredicate}}{{/model}}
