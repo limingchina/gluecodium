@@ -90,10 +90,10 @@ class Comments(_NativeBase):
     class SomeStruct(_NativeBase):
         """This is some very useful struct."""
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_commentsSomeStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Comments.SomeStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_commentsSomeStruct(
+                super().__init__(generated.smoke_Comments.SomeStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -124,15 +124,15 @@ class Comments(_NativeBase):
         @staticmethod
         def some_static_struct_method():
             """This is some static struct method that does nothing."""
-            generated.smoke_commentsSomeStruct.some_static_struct_method()
+            generated.smoke_Comments.SomeStruct.some_static_struct_method()
     
     
     
     class SomeEnum(Enum):
         """This is some very useful enum."""
     
-        USELESS = generated.smoke_commentsSomeEnum.USELESS
-        USEFUL = generated.smoke_commentsSomeEnum.USEFUL
+        USELESS = generated.smoke_Comments.SomeEnum.USELESS
+        USEFUL = generated.smoke_Comments.SomeEnum.USEFUL
     
         @property
         def _native(self):

@@ -17,12 +17,12 @@ namespace py = pybind11;
 #include "memory"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using fooInterface = ::smoke::fooInterface;
 
 
+
 void register_smoke_QuxInterface(py::module_& module) {
-    py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "smoke_QuxInterface")
+auto cls_QuxInterface = py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "smoke_QuxInterface")
         .def("__gluecodium_id__", [](const fooInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -30,5 +30,6 @@ void register_smoke_QuxInterface(py::module_& module) {
         .def_static("qux_create", &fooInterface::make, py::arg("make_parameter"))
         .def_property("qux_property", py::overload_cast<>(&fooInterface::GET_FOO_PROPERTY, py::const_), py::overload_cast<const uint32_t>(&fooInterface::SET_FOO_PROPERTY))
         ;
-}
 
+
+}

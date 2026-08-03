@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "kotlin_smoke/UseKotlinExternalConst.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseKotlinExternalConst = ::kotlin_smoke::UseKotlinExternalConst;
 
+
+
 void register_kotlin_smoke_UseKotlinExternalConst(py::module_& module) {
-    py::class_<UseKotlinExternalConst>(module, "kotlin_smoke_UseKotlinExternalConst")
+auto cls_UseKotlinExternalConst = py::class_<UseKotlinExternalConst>(module, "kotlin_smoke_UseKotlinExternalConst")
         .def_readwrite("string_field", &UseKotlinExternalConst::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

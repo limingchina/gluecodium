@@ -13,7 +13,7 @@ class MyOuterClass(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    class MyNestedImplementation(generated.smoke_MyOuterClassMyNestedImplementation):
+    class MyNestedImplementation(generated.smoke_MyOuterClass.MyNestedImplementation):
         def __init__(self, native=None):
             # Subclass the native pybind11 type so a Python override of an inherited virtual
             # method (from a parent interface or open base class) is dispatched through the
@@ -21,7 +21,7 @@ class MyOuterClass(_NativeBase):
             # a factory), adopt it via the generated adoption constructor; otherwise construct a
             # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
             # generated code can reach the native object uniformly.
-            if native is not None and isinstance(native, generated.smoke_MyOuterClassMyNestedImplementation):
+            if native is not None and isinstance(native, generated.smoke_MyOuterClass.MyNestedImplementation):
                 super().__init__(native)
             else:
                 super().__init__()

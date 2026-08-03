@@ -13,14 +13,16 @@
 namespace py = pybind11;
 #include "smoke/EnumOptionSet.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumOptionSet = ::smoke::EnumOptionSet;
 
+
+
 void register_smoke_EnumOptionSet(py::module_& module) {
-    py::enum_<EnumOptionSet>(module, "smoke_EnumOptionSet")
+auto cls_EnumOptionSet = py::enum_<EnumOptionSet>(module, "smoke_EnumOptionSet")
         .value("ONE", EnumOptionSet::ONE)
         .value("TWO", EnumOptionSet::TWO)
         .value("THREE", EnumOptionSet::THREE)
         ;
-}
 
+
+}

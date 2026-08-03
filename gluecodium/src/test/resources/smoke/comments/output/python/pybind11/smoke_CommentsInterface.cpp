@@ -14,8 +14,9 @@ namespace py = pybind11;
 #include "smoke/CommentsInterface.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CommentsInterface = ::smoke::CommentsInterface;
+using SomeStruct = ::smoke::CommentsInterface::SomeStruct;
+using SomeEnum = ::smoke::CommentsInterface::SomeEnum;
 
 class CommentsInterfaceTrampoline : public CommentsInterface {
 public:
@@ -129,8 +130,10 @@ public:
     }
 };
 
+
+
 void register_smoke_CommentsInterface(py::module_& module) {
-    py::class_<CommentsInterface, std::shared_ptr<CommentsInterface>, CommentsInterfaceTrampoline>(module, "smoke_CommentsInterface")
+auto cls_CommentsInterface = py::class_<CommentsInterface, std::shared_ptr<CommentsInterface>, CommentsInterfaceTrampoline>(module, "smoke_CommentsInterface")
         .def("__gluecodium_id__", [](const CommentsInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -182,5 +185,17 @@ void register_smoke_CommentsInterface(py::module_& module) {
             self.set_some_property(value);
         })
         ;
-}
 
+auto cls_CommentsInterfaceSomeStruct = py::class_<SomeStruct>(cls_CommentsInterface, "SomeStruct")
+        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def(py::init<>())
+        .def(py::init<bool>(), py::arg("some_field"))
+        ;
+
+auto cls_CommentsInterfaceSomeEnum = py::enum_<SomeEnum>(cls_CommentsInterface, "SomeEnum")
+        .value("USELESS", SomeEnum::USELESS)
+        .value("USEFUL", SomeEnum::USEFUL)
+        ;
+
+
+}

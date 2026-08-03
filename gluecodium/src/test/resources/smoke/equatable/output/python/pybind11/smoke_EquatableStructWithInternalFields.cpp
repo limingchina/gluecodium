@@ -14,11 +14,12 @@ namespace py = pybind11;
 #include "smoke/EquatableStructWithInternalFields.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EquatableStructWithInternalFields = ::smoke::EquatableStructWithInternalFields;
 
+
+
 void register_smoke_EquatableStructWithInternalFields(py::module_& module) {
-    py::class_<EquatableStructWithInternalFields>(module, "smoke_EquatableStructWithInternalFields")
+auto cls_EquatableStructWithInternalFields = py::class_<EquatableStructWithInternalFields>(module, "smoke_EquatableStructWithInternalFields")
         .def_readwrite("public_field", &EquatableStructWithInternalFields::public_field)
         .def(py::init<>())
         .def(py::init([](const ::std::string& public_field) {
@@ -27,5 +28,6 @@ void register_smoke_EquatableStructWithInternalFields(py::module_& module) {
         .def("__eq__", [](const EquatableStructWithInternalFields& lhs, const EquatableStructWithInternalFields& rhs) { return lhs == rhs; })
         .def("__hash__", [](const EquatableStructWithInternalFields& self) { return gluecodium::hash<EquatableStructWithInternalFields>{}(self); })
         ;
-}
 
+
+}

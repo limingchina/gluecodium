@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "package/Interface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Interface = ::package::Interface;
 
 class InterfaceTrampoline : public Interface {
@@ -29,8 +28,10 @@ public:
 
 };
 
+
+
 void register_package_Interface(py::module_& module) {
-    py::class_<Interface, std::shared_ptr<Interface>, InterfaceTrampoline>(module, "package_Interface")
+auto cls_Interface = py::class_<Interface, std::shared_ptr<Interface>, InterfaceTrampoline>(module, "package_Interface")
         .def("__gluecodium_id__", [](const Interface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -47,5 +48,6 @@ void register_package_Interface(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

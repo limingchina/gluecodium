@@ -21,8 +21,9 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ListenerWithProperties = ::smoke::ListenerWithProperties;
+using ResultStruct = ::smoke::ListenerWithProperties::ResultStruct;
+using ResultEnum = ::smoke::ListenerWithProperties::ResultEnum;
 
 class ListenerWithPropertiesTrampoline : public ListenerWithProperties {
 public:
@@ -143,8 +144,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ListenerWithProperties(py::module_& module) {
-    py::class_<ListenerWithProperties, std::shared_ptr<ListenerWithProperties>, ListenerWithPropertiesTrampoline>(module, "smoke_ListenerWithProperties")
+auto cls_ListenerWithProperties = py::class_<ListenerWithProperties, std::shared_ptr<ListenerWithProperties>, ListenerWithPropertiesTrampoline>(module, "smoke_ListenerWithProperties")
         .def("__gluecodium_id__", [](const ListenerWithProperties& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -196,5 +199,17 @@ void register_smoke_ListenerWithProperties(py::module_& module) {
             self.set_buffered_message(value);
         })
         ;
-}
 
+auto cls_ListenerWithPropertiesResultStruct = py::class_<ResultStruct>(cls_ListenerWithProperties, "ResultStruct")
+        .def_readwrite("result", &ResultStruct::result)
+        .def(py::init<>())
+        .def(py::init<double>(), py::arg("result"))
+        ;
+
+auto cls_ListenerWithPropertiesResultEnum = py::enum_<ResultEnum>(cls_ListenerWithProperties, "ResultEnum")
+        .value("NONE", ResultEnum::NONE)
+        .value("RESULT", ResultEnum::RESULT)
+        ;
+
+
+}

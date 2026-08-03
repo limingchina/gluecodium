@@ -13,11 +13,12 @@
 namespace py = pybind11;
 #include "kotlin_smoke/SystemColor.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SystemColor = ::kotlin_smoke::SystemColor;
 
+
+
 void register_kotlin_smoke_SystemColor(py::module_& module) {
-    py::class_<SystemColor>(module, "kotlin_smoke_SystemColor")
+auto cls_SystemColor = py::class_<SystemColor>(module, "kotlin_smoke_SystemColor")
         .def_readwrite("red", &SystemColor::red)
         .def_readwrite("green", &SystemColor::green)
         .def_readwrite("blue", &SystemColor::blue)
@@ -25,5 +26,6 @@ void register_kotlin_smoke_SystemColor(py::module_& module) {
         .def(py::init<>())
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;
-}
 
+
+}

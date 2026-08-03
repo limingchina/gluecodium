@@ -26,11 +26,12 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PosDefaultStructWithCustomStructsFields = ::smoke::PosDefaultStructWithCustomStructsFields;
 
+
+
 void register_smoke_PosDefaultStructWithCustomStructsFields(py::module_& module) {
-    py::class_<PosDefaultStructWithCustomStructsFields>(module, "smoke_PosDefaultStructWithCustomStructsFields")
+auto cls_PosDefaultStructWithCustomStructsFields = py::class_<PosDefaultStructWithCustomStructsFields>(module, "smoke_PosDefaultStructWithCustomStructsFields")
         .def_readonly("const_ctor_field0", &PosDefaultStructWithCustomStructsFields::const_ctor_field0)
         .def_readonly("const_ctor_field1", &PosDefaultStructWithCustomStructsFields::const_ctor_field1)
         .def_readwrite("const_ctor_field2", &PosDefaultStructWithCustomStructsFields::const_ctor_field2)
@@ -50,5 +51,6 @@ void register_smoke_PosDefaultStructWithCustomStructsFields(py::module_& module)
         .def(py::init<>())
         .def(py::init<::smoke::ImmutableStructWithDefaults, std::optional< ::smoke::ImmutableStructWithDefaults >, ::std::vector< ::std::string >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, int32_t, double, std::optional< ::smoke::ImmutableStructWithDefaults >, std::optional< ::smoke::ImmutableStructWithDefaults >, ::smoke::StructWithAllDefaults, ::smoke::PosDefaultStructWithFieldUsingImmutableStruct, ::smoke::SomeMutableCustomStructWithDefaults, ::smoke::StructWithNullableCollectionDefaults, std::optional< ::smoke::StructWithAllDefaults >, ::std::shared_ptr< ::std::vector< uint8_t > >, ::std::shared_ptr< ::std::vector< uint8_t > >, std::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >>(), py::arg("const_ctor_field0"), py::arg("const_ctor_field1"), py::arg("const_ctor_field2"), py::arg("const_ctor_field3"), py::arg("const_ctor_field4"), py::arg("const_ctor_field5"), py::arg("const_ctor_field6"), py::arg("const_ctor_field7"), py::arg("non_const_ctor_field0"), py::arg("non_const_ctor_field1"), py::arg("non_const_ctor_field2"), py::arg("non_const_ctor_field3"), py::arg("non_const_ctor_field4"), py::arg("non_const_ctor_field5"), py::arg("non_const_ctor_field6"), py::arg("non_const_ctor_field7"))
         ;
-}
 
+
+}

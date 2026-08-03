@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/InterfaceWithLambda.h"
 #include "functional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InterfaceWithLambda = ::smoke::InterfaceWithLambda;
 
 class InterfaceWithLambdaTrampoline : public InterfaceWithLambda {
@@ -30,8 +29,10 @@ public:
 
 };
 
+
+
 void register_smoke_InterfaceWithLambda(py::module_& module) {
-    py::class_<InterfaceWithLambda, std::shared_ptr<InterfaceWithLambda>, InterfaceWithLambdaTrampoline>(module, "smoke_InterfaceWithLambda")
+auto cls_InterfaceWithLambda = py::class_<InterfaceWithLambda, std::shared_ptr<InterfaceWithLambda>, InterfaceWithLambdaTrampoline>(module, "smoke_InterfaceWithLambda")
         .def("__gluecodium_id__", [](const InterfaceWithLambda& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -48,5 +49,6 @@ void register_smoke_InterfaceWithLambda(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

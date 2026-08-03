@@ -17,16 +17,18 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ScalarKeyframeTrack = ::smoke::ScalarKeyframeTrack;
 
+
+
 void register_smoke_ScalarKeyframeTrack(py::module_& module) {
-    py::class_<ScalarKeyframeTrack>(module, "smoke_ScalarKeyframeTrack")
+auto cls_ScalarKeyframeTrack = py::class_<ScalarKeyframeTrack>(module, "smoke_ScalarKeyframeTrack")
         .def_readonly("keyframes", &ScalarKeyframeTrack::keyframes)
         .def_readwrite("easing_function", &ScalarKeyframeTrack::easing_function)
         .def_readwrite("interpolation_mode", &ScalarKeyframeTrack::interpolation_mode)
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::ScalarKeyframe >, ::std::string, ::std::string>(), py::arg("keyframes"), py::arg("easing_function"), py::arg("interpolation_mode"))
         ;
-}
 
+
+}

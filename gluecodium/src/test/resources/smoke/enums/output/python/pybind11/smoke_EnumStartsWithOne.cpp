@@ -13,13 +13,15 @@
 namespace py = pybind11;
 #include "smoke/EnumStartsWithOne.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumStartsWithOne = ::smoke::EnumStartsWithOne;
 
+
+
 void register_smoke_EnumStartsWithOne(py::module_& module) {
-    py::enum_<EnumStartsWithOne>(module, "smoke_EnumStartsWithOne")
+auto cls_EnumStartsWithOne = py::enum_<EnumStartsWithOne>(module, "smoke_EnumStartsWithOne")
         .value("FIRST", EnumStartsWithOne::FIRST)
         .value("SECOND", EnumStartsWithOne::SECOND)
         ;
-}
 
+
+}

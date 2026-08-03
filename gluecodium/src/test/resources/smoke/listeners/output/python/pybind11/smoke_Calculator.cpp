@@ -15,17 +15,18 @@ namespace py = pybind11;
 #include "smoke/CalculatorListener.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Calculator = ::smoke::Calculator;
 
 
+
 void register_smoke_Calculator(py::module_& module) {
-    py::class_<Calculator, std::shared_ptr<Calculator>>(module, "smoke_Calculator")
+auto cls_Calculator = py::class_<Calculator, std::shared_ptr<Calculator>>(module, "smoke_Calculator")
         .def("__gluecodium_id__", [](const Calculator& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def_static("register_listener", &Calculator::register_listener, py::arg("listener"))
         .def_static("unregister_listener", &Calculator::unregister_listener, py::arg("listener"))
         ;
-}
 
+
+}

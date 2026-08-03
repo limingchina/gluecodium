@@ -35,7 +35,7 @@ class OuterInterface(generated.smoke_OuterInterface):
     
     
     
-    class InnerInterface(generated.smoke_OuterInterfaceInnerInterface):
+    class InnerInterface(generated.smoke_OuterInterface.InnerInterface):
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an
@@ -44,14 +44,14 @@ class OuterInterface(generated.smoke_OuterInterface):
             # aliases the wrapper itself so the rest of the generated code can reach the
             # native object uniformly (e.g. when passing this interface back into a C++
             # call site).
-            if native is not None and isinstance(native, generated.smoke_OuterInterfaceInnerInterface):
+            if native is not None and isinstance(native, generated.smoke_OuterInterface.InnerInterface):
                 super().__init__(native)
             else:
                 super().__init__()
             self._native = self
     
         def foo(self, input: str) -> str:
-            return _wrap(generated.smoke_OuterInterfaceInnerInterface.foo(self, _unwrap(input, str)), str)
+            return _wrap(generated.smoke_OuterInterface.InnerInterface.foo(self, _unwrap(input, str)), str)
     
     
 

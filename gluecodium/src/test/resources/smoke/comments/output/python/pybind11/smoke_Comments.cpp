@@ -17,12 +17,14 @@ namespace py = pybind11;
 #include "optional"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Comments = ::smoke::Comments;
+using SomeStruct = ::smoke::Comments::SomeStruct;
+using SomeEnum = ::smoke::Comments::SomeEnum;
+
 
 
 void register_smoke_Comments(py::module_& module) {
-    py::class_<Comments, std::shared_ptr<Comments>>(module, "smoke_Comments")
+auto cls_Comments = py::class_<Comments, std::shared_ptr<Comments>>(module, "smoke_Comments")
         .def("__gluecodium_id__", [](const Comments& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -42,5 +44,31 @@ void register_smoke_Comments(py::module_& module) {
         .def_property_readonly("only_getter_property", py::overload_cast<>(&Comments::get_only_getter_property, py::const_))
         .def_property("is_is_visible", py::overload_cast<>(&Comments::is_is_visible, py::const_), py::overload_cast<const bool>(&Comments::set_is_visible))
         ;
-}
 
+auto cls_commentsSomeStruct = py::class_<SomeStruct>(cls_Comments, "SomeStruct")
+        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def_readwrite("nullable_field", &SomeStruct::nullable_field)
+        .def(py::init<>())
+        .def(py::init<bool>(), py::arg("some_field"))
+        .def(py::init<bool, std::optional< ::std::string >>(), py::arg("some_field"), py::arg("nullable_field"))
+        .def("some_struct_method", &SomeStruct::some_struct_method)
+        .def_static("some_static_struct_method", &SomeStruct::some_static_struct_method)
+        ;
+
+auto cls_commentsSomeEnum = py::enum_<SomeEnum>(cls_Comments, "SomeEnum")
+        .value("USELESS", SomeEnum::USELESS)
+        .value("USEFUL", SomeEnum::USEFUL)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_Comments, "SomethingWrongError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

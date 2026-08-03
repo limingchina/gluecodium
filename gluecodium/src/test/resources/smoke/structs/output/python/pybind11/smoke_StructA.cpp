@@ -16,14 +16,16 @@ namespace py = pybind11;
 #include "smoke/StructB.h"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructA = ::smoke::StructA;
 
+
+
 void register_smoke_StructA(py::module_& module) {
-    py::class_<StructA>(module, "smoke_StructA")
+auto cls_StructA = py::class_<StructA>(module, "smoke_StructA")
         .def_readwrite("field", &StructA::field)
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::StructB >>(), py::arg("field"))
         ;
-}
 
+
+}

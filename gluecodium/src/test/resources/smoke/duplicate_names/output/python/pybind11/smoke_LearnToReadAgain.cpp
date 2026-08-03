@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "smoke/bar/Alphabet.h"
 #include "smoke/foo/Alphabet.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using LearnToReadAgain = ::smoke::LearnToReadAgain;
 
+
+
 void register_smoke_LearnToReadAgain(py::module_& module) {
-    py::class_<LearnToReadAgain>(module, "smoke_LearnToReadAgain")
+auto cls_LearnToReadAgain = py::class_<LearnToReadAgain>(module, "smoke_LearnToReadAgain")
         .def_readwrite("field_b", &LearnToReadAgain::field_b)
         .def_readwrite("field_c", &LearnToReadAgain::field_c)
         .def(py::init<>())
         .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet>(), py::arg("field_b"), py::arg("field_c"))
         ;
-}
 
+
+}

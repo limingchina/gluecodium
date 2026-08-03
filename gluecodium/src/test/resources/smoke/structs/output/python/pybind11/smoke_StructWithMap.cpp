@@ -16,14 +16,16 @@ namespace py = pybind11;
 #include "string"
 #include "unordered_map"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithMap = ::smoke::StructWithMap;
 
+
+
 void register_smoke_StructWithMap(py::module_& module) {
-    py::class_<StructWithMap>(module, "smoke_StructWithMap")
+auto cls_StructWithMap = py::class_<StructWithMap>(module, "smoke_StructWithMap")
         .def_readwrite("field", &StructWithMap::field)
         .def(py::init<>())
         .def(py::init<::std::unordered_map< ::std::string, ::smoke::StructWithMap >>(), py::arg("field"))
         ;
-}
 
+
+}

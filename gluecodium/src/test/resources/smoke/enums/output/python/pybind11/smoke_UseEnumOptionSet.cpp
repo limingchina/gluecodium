@@ -17,11 +17,12 @@ namespace py = pybind11;
 #include "smoke/UseEnumOptionSet.h"
 #include "unordered_set"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseEnumOptionSet = ::smoke::UseEnumOptionSet;
 
+
+
 void register_smoke_UseEnumOptionSet(py::module_& module) {
-    py::class_<UseEnumOptionSet>(module, "smoke_UseEnumOptionSet")
+auto cls_UseEnumOptionSet = py::class_<UseEnumOptionSet>(module, "smoke_UseEnumOptionSet")
         .def_readwrite("set_field", &UseEnumOptionSet::set_field)
         .def_readwrite("set_field_empty", &UseEnumOptionSet::set_field_empty)
         .def_readwrite("set_field_value", &UseEnumOptionSet::set_field_value)
@@ -32,5 +33,6 @@ void register_smoke_UseEnumOptionSet(py::module_& module) {
                         return gluecodium::python::to_python_regular(UseEnumOptionSet::round_trip(input));
                 }, py::arg("input"))
         ;
-}
 
+
+}

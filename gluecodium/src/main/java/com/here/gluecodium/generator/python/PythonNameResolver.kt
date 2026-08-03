@@ -259,6 +259,55 @@ internal class PythonNameResolver(
     }
 
     /**
+     * Resolves the Python-side access path for the pybind11-bound type. This is the dotted
+     * path used by Python wrapper code to access the native (pybind11-registered) type via
+     * `{{nativeModule}}.{{typeName}}`.
+     *
+     * - Top-level type: `"smoke_OuterClass"` (same as [resolveRegisterName])
+     * - Nested type: `"smoke_OuterClass.InnerClass.InnerInnerClass"`
+     *
+     * With Option B (one pybind11 file per top element with nested scopes), nested types are
+     * registered as attributes of their parent `py::class_`, so the access path follows the
+     * nesting hierarchy rather than using a flattened name.
+     */
+    fun resolvePybind11AccessPath(limeElement: LimeNamedElement): String {
+        val topLevel = findTopLevelElement(limeElement)
+        val topRegName = resolveRegisterName(topLevel)
+        if (limeElement.path.toString() == topLevel.path.toString()) return topRegName
+
+        val limeType = limeElement as? LimeType
+            ?: throw GluecodiumExecutionException("Expected LimeType, got ${limeElement.javaClass.name}")
+        val qualifiedName = resolveQualifiedTypeName(limeType)
+        // resolveQualifiedTypeName returns "OuterClass.InnerClass" — strip the first component
+        // (the top-level name) and prepend the register name.
+        val parts = qualifiedName.split(".")
+        val pathFromTop = parts.drop(1).joinToString(".")
+        return if (pathFromTop.isNotEmpty()) "$topRegName.$pathFromTop" else topRegName
+    }
+
+    /**
+     * Resolves the short name for pybind11 registration of a type — the string passed as the
+     * second argument to `py::class_`/`py::enum_`/`py::exception`.
+     *
+     * - Top-level type: same as [resolveRegisterName] (e.g. `"smoke_OuterClass"`)
+     * - Nested type: just the short name (e.g. `"InnerClass"`)
+     */
+    fun resolvePybind11ShortName(limeElement: LimeNamedElement): String {
+        if (!limeElement.path.hasParent) return resolveRegisterName(limeElement)
+        return nameRules.getName(limeElement)
+    }
+
+    /**
+     * Resolves the register name of the top-level ancestor of [limeElement]. Used by the module
+     * init's topological sort to map per-type inheritance dependencies to per-top-level-register
+     * dependencies (since nested types are registered within their parent's register function).
+     */
+    fun resolveTopLevelRegisterName(limeElement: LimeNamedElement): String {
+        val topLevel = findTopLevelElement(limeElement)
+        return resolveRegisterName(topLevel)
+    }
+
+    /**
      * Resolves a chain of pybind11 `.attr("...")` calls to access a (possibly nested) Python class
      * from C++ via an imported module. For a top-level type, this produces:
      * `.attr("TypeName")`

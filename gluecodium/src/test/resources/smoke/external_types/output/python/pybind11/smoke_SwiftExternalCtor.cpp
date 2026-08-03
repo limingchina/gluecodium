@@ -14,15 +14,17 @@ namespace py = pybind11;
 #include "smoke/SwiftExternalCtor.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SwiftExternalCtor = ::smoke::SwiftExternalCtor;
 
+
+
 void register_smoke_SwiftExternalCtor(py::module_& module) {
-    py::class_<SwiftExternalCtor>(module, "smoke_SwiftExternalCtor")
+auto cls_SwiftExternalCtor = py::class_<SwiftExternalCtor>(module, "smoke_SwiftExternalCtor")
         .def_readwrite("field", &SwiftExternalCtor::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         .def_static("make", &SwiftExternalCtor::make, py::arg("field"))
         ;
-}
 
+
+}

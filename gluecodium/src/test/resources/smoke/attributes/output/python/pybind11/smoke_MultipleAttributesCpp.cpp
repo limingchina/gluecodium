@@ -13,12 +13,12 @@
 namespace py = pybind11;
 #include "smoke/MultipleAttributesCpp.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MultipleAttributesCpp = ::smoke::MultipleAttributesCpp;
 
 
+
 void register_smoke_MultipleAttributesCpp(py::module_& module) {
-    py::class_<MultipleAttributesCpp, std::shared_ptr<MultipleAttributesCpp>>(module, "smoke_MultipleAttributesCpp")
+auto cls_MultipleAttributesCpp = py::class_<MultipleAttributesCpp, std::shared_ptr<MultipleAttributesCpp>>(module, "smoke_MultipleAttributesCpp")
         .def("__gluecodium_id__", [](const MultipleAttributesCpp& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -28,5 +28,6 @@ void register_smoke_MultipleAttributesCpp(py::module_& module) {
         .def("list_second", &MultipleAttributesCpp::list_second)
         .def("two_lists", &MultipleAttributesCpp::two_lists)
         ;
-}
 
+
+}

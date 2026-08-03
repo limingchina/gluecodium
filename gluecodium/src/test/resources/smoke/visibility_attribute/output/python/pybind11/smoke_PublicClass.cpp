@@ -18,15 +18,34 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicClass = ::smoke::PublicClass;
+using PublicStruct = ::smoke::PublicClass::PublicStruct;
+using PublicStructWithInternalDefaults = ::smoke::PublicClass::PublicStructWithInternalDefaults;
+
 
 
 void register_smoke_PublicClass(py::module_& module) {
-    py::class_<PublicClass, std::shared_ptr<PublicClass>>(module, "smoke_PublicClass")
+auto cls_PublicClass = py::class_<PublicClass, std::shared_ptr<PublicClass>>(module, "smoke_PublicClass")
         .def("__gluecodium_id__", [](const PublicClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+auto cls_PublicClassPublicStruct = py::class_<PublicStruct>(cls_PublicClass, "PublicStruct")
+        .def(py::init<>())
+        .def(py::init([]() {
+            return PublicStruct(::smoke::PublicClass::InternalStruct{});
+        }))
+        ;
+
+auto cls_PublicClassPublicStructWithInternalDefaults = py::class_<PublicStructWithInternalDefaults>(cls_PublicClass, "PublicStructWithInternalDefaults")
+        .def_readwrite("public_field", &PublicStructWithInternalDefaults::public_field)
+        .def(py::init<>())
+        .def(py::init<float>(), py::arg("public_field"))
+        .def(py::init([](const float& public_field) {
+            return PublicStructWithInternalDefaults(::std::string{}, public_field);
+        }), py::arg("public_field"))
+        ;
+
+
+}

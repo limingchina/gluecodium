@@ -18,8 +18,8 @@ class Enums(_NativeBase):
 
     class ExternalEnum(Enum):
     
-        FOO_VALUE = generated.smoke_EnumsExternal_Enum.FOO_VALUE
-        BAR_VALUE = generated.smoke_EnumsExternal_Enum.BAR_VALUE
+        FOO_VALUE = generated.smoke_Enums.ExternalEnum.FOO_VALUE
+        BAR_VALUE = generated.smoke_Enums.ExternalEnum.BAR_VALUE
     
         @property
         def _native(self):
@@ -29,8 +29,8 @@ class Enums(_NativeBase):
     
     class VeryExternalEnum(Enum):
     
-        FOO = generated.smoke_EnumsVeryExternalEnum.FOO
-        BAR = generated.smoke_EnumsVeryExternalEnum.BAR
+        FOO = generated.smoke_Enums.VeryExternalEnum.FOO
+        BAR = generated.smoke_Enums.VeryExternalEnum.BAR
     
         @property
         def _native(self):

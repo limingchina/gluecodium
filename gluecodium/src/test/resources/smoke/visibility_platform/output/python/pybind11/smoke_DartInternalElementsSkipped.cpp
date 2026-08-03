@@ -14,16 +14,18 @@ namespace py = pybind11;
 #include "smoke/DartInternalElementsSkipped.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartInternalElementsSkipped = ::smoke::DartInternalElementsSkipped;
 
+
+
 void register_smoke_DartInternalElementsSkipped(py::module_& module) {
-    py::class_<DartInternalElementsSkipped>(module, "smoke_DartInternalElementsSkipped")
+auto cls_DartInternalElementsSkipped = py::class_<DartInternalElementsSkipped>(module, "smoke_DartInternalElementsSkipped")
         .def_readwrite("bool_field", &DartInternalElementsSkipped::bool_field)
         .def_readwrite("string_field", &DartInternalElementsSkipped::string_field)
         .def(py::init<>())
         .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
         .def("foo", &DartInternalElementsSkipped::foo)
         ;
-}
 
+
+}

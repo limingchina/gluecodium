@@ -14,15 +14,17 @@ namespace py = pybind11;
 #include "smoke/JavaExternalCtor.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using JavaExternalCtor = ::smoke::JavaExternalCtor;
 
+
+
 void register_smoke_JavaExternalCtor(py::module_& module) {
-    py::class_<JavaExternalCtor>(module, "smoke_JavaExternalCtor")
+auto cls_JavaExternalCtor = py::class_<JavaExternalCtor>(module, "smoke_JavaExternalCtor")
         .def_readwrite("field", &JavaExternalCtor::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         .def_static("make", &JavaExternalCtor::make, py::arg("field"))
         ;
-}
 
+
+}

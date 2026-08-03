@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/StructsInstance.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructsInstance = ::smoke::StructsInstance;
 
 
+
 void register_smoke_StructsInstance(py::module_& module) {
-    py::class_<StructsInstance, std::shared_ptr<StructsInstance>>(module, "smoke_StructsInstance")
+auto cls_StructsInstance = py::class_<StructsInstance, std::shared_ptr<StructsInstance>>(module, "smoke_StructsInstance")
         .def("__gluecodium_id__", [](const StructsInstance& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

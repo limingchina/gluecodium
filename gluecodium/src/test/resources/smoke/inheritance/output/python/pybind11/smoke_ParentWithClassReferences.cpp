@@ -16,7 +16,6 @@ namespace py = pybind11;
 #include "smoke/ParentWithClassReferences.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ParentWithClassReferences = ::smoke::ParentWithClassReferences;
 
 class ParentWithClassReferencesTrampoline : public ParentWithClassReferences {
@@ -55,8 +54,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ParentWithClassReferences(py::module_& module) {
-    py::class_<ParentWithClassReferences, std::shared_ptr<ParentWithClassReferences>, ParentWithClassReferencesTrampoline>(module, "smoke_ParentWithClassReferences")
+auto cls_ParentWithClassReferences = py::class_<ParentWithClassReferences, std::shared_ptr<ParentWithClassReferences>, ParentWithClassReferencesTrampoline>(module, "smoke_ParentWithClassReferences")
         .def("__gluecodium_id__", [](const ParentWithClassReferences& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -81,5 +82,6 @@ void register_smoke_ParentWithClassReferences(py::module_& module) {
             self.set_class_property(value);
         })
         ;
-}
 
+
+}

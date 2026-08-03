@@ -14,15 +14,17 @@ namespace py = pybind11;
 #include "smoke/DartInternalElementsRev.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartInternalElementsRev = ::smoke::DartInternalElementsRev;
 
+
+
 void register_smoke_DartInternalElementsRev(py::module_& module) {
-    py::class_<DartInternalElementsRev>(module, "smoke_DartInternalElementsRev")
+auto cls_DartInternalElementsRev = py::class_<DartInternalElementsRev>(module, "smoke_DartInternalElementsRev")
         .def_readwrite("string_field", &DartInternalElementsRev::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         .def("foo", &DartInternalElementsRev::foo)
         ;
-}
 
+
+}

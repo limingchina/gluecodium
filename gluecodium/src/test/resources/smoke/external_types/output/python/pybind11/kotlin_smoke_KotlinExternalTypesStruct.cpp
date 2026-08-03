@@ -18,11 +18,12 @@ namespace py = pybind11;
 #include "kotlin_smoke/SystemColor.h"
 #include "kotlin_smoke/TimeZone.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using KotlinExternalTypesStruct = ::kotlin_smoke::KotlinExternalTypesStruct;
 
+
+
 void register_kotlin_smoke_KotlinExternalTypesStruct(py::module_& module) {
-    py::class_<KotlinExternalTypesStruct>(module, "kotlin_smoke_KotlinExternalTypesStruct")
+auto cls_KotlinExternalTypesStruct = py::class_<KotlinExternalTypesStruct>(module, "kotlin_smoke_KotlinExternalTypesStruct")
         .def_readonly("currency", &KotlinExternalTypesStruct::currency)
         .def_readwrite("time_zone", &KotlinExternalTypesStruct::time_zone)
         .def_readwrite("month", &KotlinExternalTypesStruct::month)
@@ -30,5 +31,6 @@ void register_kotlin_smoke_KotlinExternalTypesStruct(py::module_& module) {
         .def_readwrite("season", &KotlinExternalTypesStruct::season)
         .def(py::init<::kotlin_smoke::Currency, ::kotlin_smoke::TimeZone, ::kotlin_smoke::Month, ::kotlin_smoke::SystemColor, ::kotlin_smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
         ;
-}
 
+
+}

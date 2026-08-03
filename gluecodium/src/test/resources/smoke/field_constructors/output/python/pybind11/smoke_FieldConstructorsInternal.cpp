@@ -14,11 +14,12 @@ namespace py = pybind11;
 #include "smoke/FieldConstructorsInternal.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldConstructorsInternal = ::smoke::FieldConstructorsInternal;
 
+
+
 void register_smoke_FieldConstructorsInternal(py::module_& module) {
-    py::class_<FieldConstructorsInternal>(module, "smoke_FieldConstructorsInternal")
+auto cls_FieldConstructorsInternal = py::class_<FieldConstructorsInternal>(module, "smoke_FieldConstructorsInternal")
         .def_readwrite("public_field", &FieldConstructorsInternal::public_field)
         .def_readwrite("internal_field", &FieldConstructorsInternal::internal_field)
         .def(py::init<>())
@@ -26,5 +27,6 @@ void register_smoke_FieldConstructorsInternal(py::module_& module) {
         .def(py::init<double>(), py::arg("internal_field"))
         .def(py::init<double, ::std::string>(), py::arg("internal_field"), py::arg("public_field"))
         ;
-}
 
+
+}

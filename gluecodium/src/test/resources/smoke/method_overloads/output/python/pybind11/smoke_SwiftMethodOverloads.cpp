@@ -16,12 +16,12 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SwiftMethodOverloads = ::smoke::SwiftMethodOverloads;
 
 
+
 void register_smoke_SwiftMethodOverloads(py::module_& module) {
-    py::class_<SwiftMethodOverloads, std::shared_ptr<SwiftMethodOverloads>>(module, "smoke_SwiftMethodOverloads")
+auto cls_SwiftMethodOverloads = py::class_<SwiftMethodOverloads, std::shared_ptr<SwiftMethodOverloads>>(module, "smoke_SwiftMethodOverloads")
         .def("__gluecodium_id__", [](const SwiftMethodOverloads& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -30,5 +30,6 @@ void register_smoke_SwiftMethodOverloads(py::module_& module) {
                         self.two(input);
                 }, py::arg("input"))
         ;
-}
 
+
+}

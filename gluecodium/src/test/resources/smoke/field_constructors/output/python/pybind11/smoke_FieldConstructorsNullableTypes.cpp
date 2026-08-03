@@ -14,14 +14,29 @@ namespace py = pybind11;
 #include "smoke/FieldConstructorsNullableTypes.h"
 #include "optional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldConstructorsNullableTypes = ::smoke::FieldConstructorsNullableTypes;
+using StructWithParameters = ::smoke::FieldConstructorsNullableTypes::StructWithParameters;
+using FoodType = ::smoke::FieldConstructorsNullableTypes::FoodType;
+
+
 
 void register_smoke_FieldConstructorsNullableTypes(py::module_& module) {
-    py::class_<FieldConstructorsNullableTypes>(module, "smoke_FieldConstructorsNullableTypes")
+auto cls_FieldConstructorsNullableTypes = py::class_<FieldConstructorsNullableTypes>(module, "smoke_FieldConstructorsNullableTypes")
         .def_readwrite("nullable_field", &FieldConstructorsNullableTypes::nullable_field)
         .def(py::init<>())
         .def(py::init<std::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >>(), py::arg("nullable_field"))
         ;
-}
 
+auto cls_FieldConstructorsNullableTypesStructWithParameters = py::class_<StructWithParameters>(cls_FieldConstructorsNullableTypes, "StructWithParameters")
+        .def_readwrite("food_type", &StructWithParameters::food_type)
+        .def(py::init<>())
+        .def(py::init<::smoke::FieldConstructorsNullableTypes::FoodType>(), py::arg("food_type"))
+        ;
+
+auto cls_FieldConstructorsNullableTypesFoodType = py::enum_<FoodType>(cls_FieldConstructorsNullableTypes, "FoodType")
+        .value("VEGETABLES", FoodType::VEGETABLES)
+        .value("FRUITS", FoodType::FRUITS)
+        ;
+
+
+}

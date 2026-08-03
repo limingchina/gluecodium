@@ -20,10 +20,10 @@ class CommentsTypeCollection(_NativeBase):
 
     class TypeCollectionStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CommentsTypeCollectionTypeCollectionStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CommentsTypeCollection.TypeCollectionStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_CommentsTypeCollectionTypeCollectionStruct(
+                super().__init__(generated.smoke_CommentsTypeCollection.TypeCollectionStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -40,7 +40,7 @@ class CommentsTypeCollection(_NativeBase):
     
     class TypeCollectionEnum(Enum):
     
-        ITEM = generated.smoke_CommentsTypeCollectionTypeCollectionEnum.ITEM
+        ITEM = generated.smoke_CommentsTypeCollection.TypeCollectionEnum.ITEM
     
         @property
         def _native(self):

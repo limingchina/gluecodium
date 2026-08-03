@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/SpecialNamesInterface.h"
 #include "functional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SpecialNamesInterface = ::smoke::SpecialNamesInterface;
 
 class SpecialNamesInterfaceTrampoline : public SpecialNamesInterface {
@@ -39,8 +38,10 @@ public:
     }
 };
 
+
+
 void register_smoke_SpecialNamesInterface(py::module_& module) {
-    py::class_<SpecialNamesInterface, std::shared_ptr<SpecialNamesInterface>, SpecialNamesInterfaceTrampoline>(module, "smoke_SpecialNamesInterface")
+auto cls_SpecialNamesInterface = py::class_<SpecialNamesInterface, std::shared_ptr<SpecialNamesInterface>, SpecialNamesInterfaceTrampoline>(module, "smoke_SpecialNamesInterface")
         .def("__gluecodium_id__", [](const SpecialNamesInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -60,5 +61,6 @@ void register_smoke_SpecialNamesInterface(py::module_& module) {
                         self.dispatch(callback);
                 }, py::arg("callback"))
         ;
-}
 
+
+}

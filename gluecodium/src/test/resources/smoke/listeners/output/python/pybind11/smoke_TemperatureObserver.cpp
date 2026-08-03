@@ -15,7 +15,6 @@ namespace py = pybind11;
 #include "smoke/Thermometer.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using TemperatureObserver = ::smoke::TemperatureObserver;
 
 class TemperatureObserverTrampoline : public TemperatureObserver {
@@ -40,8 +39,10 @@ public:
     }
 };
 
+
+
 void register_smoke_TemperatureObserver(py::module_& module) {
-    py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "smoke_TemperatureObserver")
+auto cls_TemperatureObserver = py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "smoke_TemperatureObserver")
         .def("__gluecodium_id__", [](const TemperatureObserver& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -61,5 +62,6 @@ void register_smoke_TemperatureObserver(py::module_& module) {
             return self.on_temperature_update(thermometer);
         }, py::arg("thermometer"))
         ;
-}
 
+
+}

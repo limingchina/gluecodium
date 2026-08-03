@@ -20,8 +20,8 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CalculatorListener = ::smoke::CalculatorListener;
+using ResultStruct = ::smoke::CalculatorListener::ResultStruct;
 
 class CalculatorListenerTrampoline : public CalculatorListener {
 public:
@@ -90,8 +90,10 @@ public:
     }
 };
 
+
+
 void register_smoke_CalculatorListener(py::module_& module) {
-    py::class_<CalculatorListener, std::shared_ptr<CalculatorListener>, CalculatorListenerTrampoline>(module, "smoke_CalculatorListener")
+auto cls_CalculatorListener = py::class_<CalculatorListener, std::shared_ptr<CalculatorListener>, CalculatorListenerTrampoline>(module, "smoke_CalculatorListener")
         .def("__gluecodium_id__", [](const CalculatorListener& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -126,5 +128,12 @@ void register_smoke_CalculatorListener(py::module_& module) {
             return self.on_calculation_result_instance(calculation_result);
         }, py::arg("calculation_result"))
         ;
-}
 
+auto cls_CalculatorListenerResultStruct = py::class_<ResultStruct>(cls_CalculatorListener, "ResultStruct")
+        .def_readwrite("result", &ResultStruct::result)
+        .def(py::init<>())
+        .def(py::init<double>(), py::arg("result"))
+        ;
+
+
+}

@@ -15,14 +15,16 @@ namespace py = pybind11;
 #include "smoke/StructWithClass.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithClass = ::smoke::StructWithClass;
 
+
+
 void register_smoke_StructWithClass(py::module_& module) {
-    py::class_<StructWithClass>(module, "smoke_StructWithClass")
+auto cls_StructWithClass = py::class_<StructWithClass>(module, "smoke_StructWithClass")
         .def_readwrite("class_instance", &StructWithClass::class_instance)
         .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::SimpleClass >>(), py::arg("class_instance"))
         ;
-}
 
+
+}

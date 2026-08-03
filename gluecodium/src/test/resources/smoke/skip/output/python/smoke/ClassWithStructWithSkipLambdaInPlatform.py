@@ -14,10 +14,10 @@ class ClassWithStructWithSkipLambdaInPlatform(_NativeBase):
 
     class SkipLambdaInPlatform(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ClassWithStructWithSkipLambdaInPlatform.SkipLambdaInPlatform):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform(
+                super().__init__(generated.smoke_ClassWithStructWithSkipLambdaInPlatform.SkipLambdaInPlatform(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

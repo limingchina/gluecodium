@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/CalculationResult.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CalculationResult = ::smoke::CalculationResult;
 
 class CalculationResultTrampoline : public CalculationResult {
@@ -29,8 +28,10 @@ public:
 
 };
 
+
+
 void register_smoke_CalculationResult(py::module_& module) {
-    py::class_<CalculationResult, std::shared_ptr<CalculationResult>, CalculationResultTrampoline>(module, "smoke_CalculationResult")
+auto cls_CalculationResult = py::class_<CalculationResult, std::shared_ptr<CalculationResult>, CalculationResultTrampoline>(module, "smoke_CalculationResult")
         .def("__gluecodium_id__", [](const CalculationResult& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -47,5 +48,6 @@ void register_smoke_CalculationResult(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

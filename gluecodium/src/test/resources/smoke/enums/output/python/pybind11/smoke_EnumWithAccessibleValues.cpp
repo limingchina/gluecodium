@@ -14,15 +14,17 @@ namespace py = pybind11;
 #include "smoke/EnumWithAccessibleValues.h"
 #include "array"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumWithAccessibleValues = ::smoke::EnumWithAccessibleValues;
 
+
+
 void register_smoke_EnumWithAccessibleValues(py::module_& module) {
-    py::enum_<EnumWithAccessibleValues>(module, "smoke_EnumWithAccessibleValues")
+auto cls_EnumWithAccessibleValues = py::enum_<EnumWithAccessibleValues>(module, "smoke_EnumWithAccessibleValues")
         .value("FOO", EnumWithAccessibleValues::FOO)
         .value("BAR", EnumWithAccessibleValues::BAR)
         .value("BAZ", EnumWithAccessibleValues::BAZ)
         .value("FOO_ALIAS", EnumWithAccessibleValues::FOO_ALIAS)
         ;
-}
 
+
+}

@@ -15,12 +15,17 @@ namespace py = pybind11;
 #include "smoke/ExternalTypeInTypesCollection.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExternalTypeInTypesCollection = ::smoke::ExternalTypeInTypesCollection;
 
+
+
 void register_smoke_ExternalTypeInTypesCollection(py::module_& module) {
-    py::class_<ExternalTypeInTypesCollection>(module, "smoke_ExternalTypeInTypesCollection")
+auto cls_ExternalTypeInTypesCollection = py::class_<ExternalTypeInTypesCollection>(module, "smoke_ExternalTypeInTypesCollection")
         .def(py::init<>())
         ;
-}
 
+auto cls_ExternalTypeInTypesCollectionIntStruct = py::class_<::external::IntStruct>(cls_ExternalTypeInTypesCollection, "IntStruct")
+        ;
+
+
+}

@@ -16,16 +16,18 @@ namespace py = pybind11;
 #include "smoke/StructWithSet.h"
 #include "unordered_set"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithSet = ::smoke::StructWithSet;
 
+
+
 void register_smoke_StructWithSet(py::module_& module) {
-    py::class_<StructWithSet>(module, "smoke_StructWithSet")
+auto cls_StructWithSet = py::class_<StructWithSet>(module, "smoke_StructWithSet")
         .def_readwrite("field", &StructWithSet::field)
         .def(py::init<>())
         .def(py::init<::std::unordered_set< ::smoke::StructWithSet, ::gluecodium::hash< ::smoke::StructWithSet > >>(), py::arg("field"))
         .def("__eq__", [](const StructWithSet& lhs, const StructWithSet& rhs) { return lhs == rhs; })
         .def("__hash__", [](const StructWithSet& self) { return gluecodium::hash<StructWithSet>{}(self); })
         ;
-}
 
+
+}

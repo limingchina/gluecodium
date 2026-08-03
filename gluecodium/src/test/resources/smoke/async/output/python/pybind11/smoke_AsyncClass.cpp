@@ -15,12 +15,12 @@ namespace py = pybind11;
 #include "smoke/AsyncErrorCode.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AsyncClass = ::smoke::AsyncClass;
 
 
+
 void register_smoke_AsyncClass(py::module_& module) {
-    py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "smoke_AsyncClass")
+auto cls_AsyncClass = py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module, "smoke_AsyncClass")
         .def("__gluecodium_id__", [](const AsyncClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -30,5 +30,6 @@ void register_smoke_AsyncClass(py::module_& module) {
         .def("async_int_throws", &AsyncClass::async_int_throws, py::arg("input"))
         .def_static("async_static", &AsyncClass::async_static, py::arg("input"))
         ;
-}
 
+
+}

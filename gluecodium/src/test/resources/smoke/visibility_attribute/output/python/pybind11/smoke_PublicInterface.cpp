@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/PublicClass.h"
 #include "smoke/PublicInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicInterface = ::smoke::PublicInterface;
 
 class PublicInterfaceTrampoline : public PublicInterface {
@@ -30,8 +29,10 @@ public:
 
 };
 
+
+
 void register_smoke_PublicInterface(py::module_& module) {
-    py::class_<PublicInterface, std::shared_ptr<PublicInterface>, PublicInterfaceTrampoline>(module, "smoke_PublicInterface")
+auto cls_PublicInterface = py::class_<PublicInterface, std::shared_ptr<PublicInterface>, PublicInterfaceTrampoline>(module, "smoke_PublicInterface")
         .def("__gluecodium_id__", [](const PublicInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -48,5 +49,6 @@ void register_smoke_PublicInterface(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

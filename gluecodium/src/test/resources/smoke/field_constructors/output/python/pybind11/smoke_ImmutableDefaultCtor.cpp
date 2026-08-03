@@ -14,13 +14,15 @@ namespace py = pybind11;
 #include "smoke/ImmutableDefaultCtor.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ImmutableDefaultCtor = ::smoke::ImmutableDefaultCtor;
 
+
+
 void register_smoke_ImmutableDefaultCtor(py::module_& module) {
-    py::class_<ImmutableDefaultCtor>(module, "smoke_ImmutableDefaultCtor")
+auto cls_ImmutableDefaultCtor = py::class_<ImmutableDefaultCtor>(module, "smoke_ImmutableDefaultCtor")
         .def_readwrite("string_field", &ImmutableDefaultCtor::string_field)
         .def(py::init<>())
         ;
-}
 
+
+}

@@ -14,11 +14,12 @@ namespace py = pybind11;
 #include "smoke/PublicFieldsMixedInit.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicFieldsMixedInit = ::smoke::PublicFieldsMixedInit;
 
+
+
 void register_smoke_PublicFieldsMixedInit(py::module_& module) {
-    py::class_<PublicFieldsMixedInit>(module, "smoke_PublicFieldsMixedInit")
+auto cls_PublicFieldsMixedInit = py::class_<PublicFieldsMixedInit>(module, "smoke_PublicFieldsMixedInit")
         .def_readwrite("public_field1", &PublicFieldsMixedInit::public_field1)
         .def_readwrite("public_field2", &PublicFieldsMixedInit::public_field2)
         .def(py::init<>())
@@ -27,5 +28,6 @@ void register_smoke_PublicFieldsMixedInit(py::module_& module) {
             return PublicFieldsMixedInit(public_field1, public_field2, ::std::string{});
         }), py::arg("public_field1"), py::arg("public_field2"))
         ;
-}
 
+
+}

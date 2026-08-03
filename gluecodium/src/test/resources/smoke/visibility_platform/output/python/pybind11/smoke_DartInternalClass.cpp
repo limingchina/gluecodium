@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/DartInternalClass.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartInternalClass = ::smoke::DartInternalClass;
 
 
+
 void register_smoke_DartInternalClass(py::module_& module) {
-    py::class_<DartInternalClass, std::shared_ptr<DartInternalClass>>(module, "smoke_DartInternalClass")
+auto cls_DartInternalClass = py::class_<DartInternalClass, std::shared_ptr<DartInternalClass>>(module, "smoke_DartInternalClass")
         .def("__gluecodium_id__", [](const DartInternalClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

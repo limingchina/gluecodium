@@ -20,11 +20,12 @@ namespace py = pybind11;
 #include "unordered_set"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithCollectionDefaults = ::smoke::StructWithCollectionDefaults;
 
+
+
 void register_smoke_StructWithCollectionDefaults(py::module_& module) {
-    py::class_<StructWithCollectionDefaults>(module, "smoke_StructWithCollectionDefaults")
+auto cls_StructWithCollectionDefaults = py::class_<StructWithCollectionDefaults>(module, "smoke_StructWithCollectionDefaults")
         .def_readwrite("empty_list_field", &StructWithCollectionDefaults::empty_list_field)
         .def_readwrite("empty_map_field", &StructWithCollectionDefaults::empty_map_field)
         .def_readwrite("empty_set_field", &StructWithCollectionDefaults::empty_set_field)
@@ -34,5 +35,6 @@ void register_smoke_StructWithCollectionDefaults(py::module_& module) {
         .def(py::init<>())
         .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
         ;
-}
 
+
+}

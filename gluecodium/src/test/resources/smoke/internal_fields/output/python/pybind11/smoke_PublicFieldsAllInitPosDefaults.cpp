@@ -14,16 +14,18 @@ namespace py = pybind11;
 #include "smoke/PublicFieldsAllInitPosDefaults.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicFieldsAllInitPosDefaults = ::smoke::PublicFieldsAllInitPosDefaults;
 
+
+
 void register_smoke_PublicFieldsAllInitPosDefaults(py::module_& module) {
-    py::class_<PublicFieldsAllInitPosDefaults>(module, "smoke_PublicFieldsAllInitPosDefaults")
+auto cls_PublicFieldsAllInitPosDefaults = py::class_<PublicFieldsAllInitPosDefaults>(module, "smoke_PublicFieldsAllInitPosDefaults")
         .def_readwrite("public_field", &PublicFieldsAllInitPosDefaults::public_field)
         .def(py::init<>())
         .def(py::init([](const ::std::string& public_field) {
             return PublicFieldsAllInitPosDefaults(public_field, ::std::string{});
         }), py::arg("public_field"))
         ;
-}
 
+
+}

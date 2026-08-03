@@ -22,15 +22,17 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using NullableCollectionsStruct = ::smoke::NullableCollectionsStruct;
 
+
+
 void register_smoke_NullableCollectionsStruct(py::module_& module) {
-    py::class_<NullableCollectionsStruct>(module, "smoke_NullableCollectionsStruct")
+auto cls_NullableCollectionsStruct = py::class_<NullableCollectionsStruct>(module, "smoke_NullableCollectionsStruct")
         .def_readwrite("dates", &NullableCollectionsStruct::dates)
         .def_readwrite("structs", &NullableCollectionsStruct::structs)
         .def(py::init<>())
         .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::unordered_map< int32_t, std::optional< ::smoke::Nullable::SomeStruct > >>(), py::arg("dates"), py::arg("structs"))
         ;
-}
 
+
+}

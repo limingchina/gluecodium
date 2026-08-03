@@ -15,15 +15,23 @@ namespace py = pybind11;
 #include "functional"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using LambdasDeclarationOrder = ::smoke::LambdasDeclarationOrder;
+using SomeStruct = ::smoke::LambdasDeclarationOrder::SomeStruct;
+
 
 
 void register_smoke_LambdasDeclarationOrder(py::module_& module) {
-    py::class_<LambdasDeclarationOrder, std::shared_ptr<LambdasDeclarationOrder>>(module, "smoke_LambdasDeclarationOrder")
+auto cls_LambdasDeclarationOrder = py::class_<LambdasDeclarationOrder, std::shared_ptr<LambdasDeclarationOrder>>(module, "smoke_LambdasDeclarationOrder")
         .def("__gluecodium_id__", [](const LambdasDeclarationOrder& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+auto cls_LambdasDeclarationOrderSomeStruct = py::class_<SomeStruct>(cls_LambdasDeclarationOrder, "SomeStruct")
+        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("some_field"))
+        ;
+
+
+}

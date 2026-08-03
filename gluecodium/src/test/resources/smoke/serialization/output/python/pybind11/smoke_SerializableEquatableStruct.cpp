@@ -14,16 +14,18 @@ namespace py = pybind11;
 #include "smoke/SerializableEquatableStruct.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SerializableEquatableStruct = ::smoke::SerializableEquatableStruct;
 
+
+
 void register_smoke_SerializableEquatableStruct(py::module_& module) {
-    py::class_<SerializableEquatableStruct>(module, "smoke_SerializableEquatableStruct")
+auto cls_SerializableEquatableStruct = py::class_<SerializableEquatableStruct>(module, "smoke_SerializableEquatableStruct")
         .def_readwrite("foo_field", &SerializableEquatableStruct::foo_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         .def("__eq__", [](const SerializableEquatableStruct& lhs, const SerializableEquatableStruct& rhs) { return lhs == rhs; })
         .def("__hash__", [](const SerializableEquatableStruct& self) { return gluecodium::hash<SerializableEquatableStruct>{}(self); })
         ;
-}
 
+
+}

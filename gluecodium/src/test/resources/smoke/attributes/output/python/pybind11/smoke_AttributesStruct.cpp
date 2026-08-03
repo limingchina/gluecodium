@@ -14,15 +14,17 @@ namespace py = pybind11;
 #include "smoke/AttributesStruct.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesStruct = ::smoke::AttributesStruct;
 
+
+
 void register_smoke_AttributesStruct(py::module_& module) {
-    py::class_<AttributesStruct>(module, "smoke_AttributesStruct")
+auto cls_AttributesStruct = py::class_<AttributesStruct>(module, "smoke_AttributesStruct")
         .def_readwrite("field", &AttributesStruct::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         .def("very_fun", &AttributesStruct::very_fun, py::arg("param"))
         ;
-}
 
+
+}

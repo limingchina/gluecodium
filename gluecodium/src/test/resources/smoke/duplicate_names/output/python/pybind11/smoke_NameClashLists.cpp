@@ -17,15 +17,17 @@ namespace py = pybind11;
 #include "smoke/foo/Alphabet.h"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using NameClashLists = ::smoke::NameClashLists;
 
+
+
 void register_smoke_NameClashLists(py::module_& module) {
-    py::class_<NameClashLists>(module, "smoke_NameClashLists")
+auto cls_NameClashLists = py::class_<NameClashLists>(module, "smoke_NameClashLists")
         .def_readwrite("field_a", &NameClashLists::field_a)
         .def_readwrite("field_b", &NameClashLists::field_b)
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::Alphabet >, ::std::vector< ::smoke::foo::Alphabet >>(), py::arg("field_a"), py::arg("field_b"))
         ;
-}
 
+
+}

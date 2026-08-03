@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/UnusedTopLevelPoint.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UnusedTopLevelPoint = ::smoke::UnusedTopLevelPoint;
 
+
+
 void register_smoke_UnusedTopLevelPoint(py::module_& module) {
-    py::class_<UnusedTopLevelPoint>(module, "smoke_UnusedTopLevelPoint")
+auto cls_UnusedTopLevelPoint = py::class_<UnusedTopLevelPoint>(module, "smoke_UnusedTopLevelPoint")
         .def_readwrite("foo", &UnusedTopLevelPoint::foo)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo"))
         ;
-}
 
+
+}

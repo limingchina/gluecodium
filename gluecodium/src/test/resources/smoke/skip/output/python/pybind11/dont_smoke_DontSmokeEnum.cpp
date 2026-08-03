@@ -13,12 +13,14 @@
 namespace py = pybind11;
 #include "dont/smoke/DontSmokeEnum.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DontSmokeEnum = ::dont::smoke::DontSmokeEnum;
 
+
+
 void register_dont_smoke_DontSmokeEnum(py::module_& module) {
-    py::enum_<DontSmokeEnum>(module, "dont_smoke_DontSmokeEnum")
+auto cls_DontSmokeEnum = py::enum_<DontSmokeEnum>(module, "dont_smoke_DontSmokeEnum")
         .value("FOO", DontSmokeEnum::FOO)
         ;
-}
 
+
+}

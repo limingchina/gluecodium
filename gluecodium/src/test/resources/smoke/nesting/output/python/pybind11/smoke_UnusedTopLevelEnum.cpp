@@ -13,13 +13,15 @@
 namespace py = pybind11;
 #include "smoke/UnusedTopLevelEnum.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UnusedTopLevelEnum = ::smoke::UnusedTopLevelEnum;
 
+
+
 void register_smoke_UnusedTopLevelEnum(py::module_& module) {
-    py::enum_<UnusedTopLevelEnum>(module, "smoke_UnusedTopLevelEnum")
+auto cls_UnusedTopLevelEnum = py::enum_<UnusedTopLevelEnum>(module, "smoke_UnusedTopLevelEnum")
         .value("DOESNT_WORK", UnusedTopLevelEnum::DOESNT_WORK)
         .value("CRASHED_ANYWAY", UnusedTopLevelEnum::CRASHED_ANYWAY)
         ;
-}
 
+
+}

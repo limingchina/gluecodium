@@ -17,12 +17,12 @@ namespace py = pybind11;
 #include "optional"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MapScene = ::smoke::MapScene;
 
 
+
 void register_smoke_MapScene(py::module_& module) {
-    py::class_<MapScene, std::shared_ptr<MapScene>>(module, "smoke_MapScene")
+auto cls_MapScene = py::class_<MapScene, std::shared_ptr<MapScene>>(module, "smoke_MapScene")
         .def("__gluecodium_id__", [](const MapScene& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -33,5 +33,6 @@ void register_smoke_MapScene(py::module_& module) {
                         self.load_scene(configuration_file, callback);
                 }, py::arg("configuration_file"), py::arg("callback"))
         ;
-}
 
+
+}

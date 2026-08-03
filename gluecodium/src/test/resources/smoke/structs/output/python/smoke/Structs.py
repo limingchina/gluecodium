@@ -35,10 +35,10 @@ class Structs(_NativeBase):
 
     class Point(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsPoint):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.Point):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsPoint(
+                super().__init__(generated.smoke_Structs.Point(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -62,17 +62,17 @@ class Structs(_NativeBase):
         @staticmethod
         def from_polar(phi: float, r: float) -> Structs.Point:
             """This is some constructor, which constructs Point from polar coordinates."""
-            native_result = generated.smoke_StructsPoint.from_polar(_unwrap(phi, float), _unwrap(r, float))
+            native_result = generated.smoke_Structs.Point.from_polar(_unwrap(phi, float), _unwrap(r, float))
             return _get_or_create_wrapper(native_result, Structs.Point)
     
     
     
     class Line(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsLine):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.Line):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsLine(
+                super().__init__(generated.smoke_Structs.Line(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -97,10 +97,10 @@ class Structs(_NativeBase):
     
     class AllTypesStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsAllTypesStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.AllTypesStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsAllTypesStruct(
+                super().__init__(generated.smoke_Structs.AllTypesStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -179,10 +179,10 @@ class Structs(_NativeBase):
     
     class NestingImmutableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsNestingImmutableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.NestingImmutableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsNestingImmutableStruct(
+                super().__init__(generated.smoke_Structs.NestingImmutableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -196,10 +196,10 @@ class Structs(_NativeBase):
     
     class DoubleNestingImmutableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsDoubleNestingImmutableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.DoubleNestingImmutableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsDoubleNestingImmutableStruct(
+                super().__init__(generated.smoke_Structs.DoubleNestingImmutableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -213,10 +213,10 @@ class Structs(_NativeBase):
     
     class StructWithArrayOfImmutable(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsStructWithArrayOfImmutable):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.StructWithArrayOfImmutable):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsStructWithArrayOfImmutable(
+                super().__init__(generated.smoke_Structs.StructWithArrayOfImmutable(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -230,10 +230,10 @@ class Structs(_NativeBase):
     
     class ImmutableStructWithCppAccessors(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsImmutableStructWithCppAccessors):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.ImmutableStructWithCppAccessors):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsImmutableStructWithCppAccessors(
+                super().__init__(generated.smoke_Structs.ImmutableStructWithCppAccessors(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -267,10 +267,10 @@ class Structs(_NativeBase):
     
     class MutableStructWithCppAccessors(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsMutableStructWithCppAccessors):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.MutableStructWithCppAccessors):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsMutableStructWithCppAccessors(
+                super().__init__(generated.smoke_Structs.MutableStructWithCppAccessors(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -319,8 +319,8 @@ class Structs(_NativeBase):
     
     class FooBar(Enum):
     
-        FOO = generated.smoke_StructsFooBar.FOO
-        BAR = generated.smoke_StructsFooBar.BAR
+        FOO = generated.smoke_Structs.FooBar.FOO
+        BAR = generated.smoke_Structs.FooBar.BAR
     
         @property
         def _native(self):

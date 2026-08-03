@@ -14,15 +14,17 @@ namespace py = pybind11;
 #include "smoke/StructWithConstMethod.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithConstMethod = ::smoke::StructWithConstMethod;
 
+
+
 void register_smoke_StructWithConstMethod(py::module_& module) {
-    py::class_<StructWithConstMethod>(module, "smoke_StructWithConstMethod")
+auto cls_StructWithConstMethod = py::class_<StructWithConstMethod>(module, "smoke_StructWithConstMethod")
         .def_readwrite("string_field", &StructWithConstMethod::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         .def("double_const", &StructWithConstMethod::double_const)
         ;
-}
 
+
+}

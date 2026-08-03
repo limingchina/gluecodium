@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnableIfField = ::smoke::EnableIfField;
 
+
+
 void register_smoke_EnableIfField(py::module_& module) {
-    py::class_<EnableIfField>(module, "smoke_EnableIfField")
+auto cls_EnableIfField = py::class_<EnableIfField>(module, "smoke_EnableIfField")
         .def_readwrite("int_field", &EnableIfField::int_field)
         .def_readwrite("bool_field", &EnableIfField::bool_field)
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;
-}
 
+
+}

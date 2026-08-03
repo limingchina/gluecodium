@@ -13,12 +13,30 @@
 namespace py = pybind11;
 #include "smoke/SomeTypeCollection.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SomeTypeCollection = ::smoke::SomeTypeCollection;
+using SomeTypeCollectionError = ::smoke::SomeTypeCollection::SomeTypeCollectionError;
+
+
 
 void register_smoke_SomeTypeCollection(py::module_& module) {
-    py::class_<SomeTypeCollection>(module, "smoke_SomeTypeCollection")
+auto cls_SomeTypeCollection = py::class_<SomeTypeCollection>(module, "smoke_SomeTypeCollection")
         .def(py::init<>())
         ;
-}
 
+auto cls_SomeTypeCollectionSomeTypeCollectionError = py::enum_<SomeTypeCollectionError>(cls_SomeTypeCollection, "SomeTypeCollectionError")
+        .value("ERROR_A", SomeTypeCollectionError::ERROR_A)
+        .value("ERROR_B", SomeTypeCollectionError::ERROR_B)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_SomeTypeCollection, "SomeError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

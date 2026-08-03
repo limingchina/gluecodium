@@ -22,11 +22,12 @@ namespace py = pybind11;
 #include "unordered_set"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithInitializerDefaults = ::smoke::StructWithInitializerDefaults;
 
+
+
 void register_smoke_StructWithInitializerDefaults(py::module_& module) {
-    py::class_<StructWithInitializerDefaults>(module, "smoke_StructWithInitializerDefaults")
+auto cls_StructWithInitializerDefaults = py::class_<StructWithInitializerDefaults>(module, "smoke_StructWithInitializerDefaults")
         .def_readwrite("ints_field", &StructWithInitializerDefaults::ints_field)
         .def_readwrite("floats_field", &StructWithInitializerDefaults::floats_field)
         .def_readwrite("set_type_field", &StructWithInitializerDefaults::set_type_field)
@@ -34,5 +35,6 @@ void register_smoke_StructWithInitializerDefaults(py::module_& module) {
         .def(py::init<>())
         .def(py::init<::std::vector< int32_t >, ::std::vector< float >, ::std::unordered_set< ::std::string >, ::std::unordered_map< uint32_t, ::std::string >>(), py::arg("ints_field"), py::arg("floats_field"), py::arg("set_type_field"), py::arg("map_field"))
         ;
-}
 
+
+}

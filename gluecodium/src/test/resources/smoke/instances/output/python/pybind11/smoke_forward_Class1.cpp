@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/forward/Class1.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Class1 = ::smoke::forward::Class1;
 
 
+
 void register_smoke_forward_Class1(py::module_& module) {
-    py::class_<Class1, std::shared_ptr<Class1>>(module, "smoke_forward_Class1")
+auto cls_Class1 = py::class_<Class1, std::shared_ptr<Class1>>(module, "smoke_forward_Class1")
         .def("__gluecodium_id__", [](const Class1& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

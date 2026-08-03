@@ -14,10 +14,10 @@ class PublicClass(_NativeBase):
 
     class PublicStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PublicClassPublicStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PublicClass.PublicStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_PublicClassPublicStruct(
+                super().__init__(generated.smoke_PublicClass.PublicStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -26,10 +26,10 @@ class PublicClass(_NativeBase):
     
     class PublicStructWithInternalDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PublicClassPublicStructWithInternalDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PublicClass.PublicStructWithInternalDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_PublicClassPublicStructWithInternalDefaults(
+                super().__init__(generated.smoke_PublicClass.PublicStructWithInternalDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

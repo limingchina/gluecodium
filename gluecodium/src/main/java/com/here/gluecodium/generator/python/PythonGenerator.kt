@@ -168,13 +168,6 @@ internal class PythonGenerator : Generator {
                 // in `cpp/CppReturnType.mustache`, which already emits that wrapper.
                 "C++" to pybind11NameResolver,
             )
-        // Filter out internal types from pybind11 file generation. Internal types are kept in
-        // the pybind11FilteredModel (for reference resolution and trampoline), but no pybind11
-        // binding file should be generated for them. This includes types nested inside an
-        // internal container (e.g. `OuterClassWithInternalAttribute.StructNestedInInternalClass`).
-        val pybind11Types =
-            getPythonTypes(pybind11FilteredModel.topElements)
-                .filter { !isInternalOrNestedInternal(it, pybind11FilteredModel.referenceMap) }
         // Only top-level enums are "standalone" (have their own Python module). Nested enums
         // are rendered inside their parent class/struct and use the simple integer-enum format.
         val standaloneEnumNames =
@@ -205,7 +198,7 @@ internal class PythonGenerator : Generator {
                 generatePythonFile(it, nameResolvers, predicates.predicates)
             }
         val pybind11Files =
-            pybind11Types.flatMap {
+            pybind11FilteredModel.topElements.flatMap {
                 generatePybind11File(it, nameResolvers, pybind11IncludeCollector, predicates.predicates, pybind11FilteredModel)
             }
 
@@ -281,8 +274,8 @@ internal class PythonGenerator : Generator {
             mapOf(
                 "model" to element,
                 "nativeModule" to pythonModule,
-                "typeName" to pythonNameResolver.resolveRegisterName(element),
-                "nativeTypeName" to pythonNameResolver.resolveRegisterName(element),
+                "typeName" to pythonNameResolver.resolvePybind11AccessPath(element),
+                "nativeTypeName" to pythonNameResolver.resolvePybind11AccessPath(element),
                 "nestedTypes" to nestedTypesStr,
                 "isStub" to isStub,
             ) + (
@@ -346,72 +339,142 @@ internal class PythonGenerator : Generator {
         pybind11FilteredModel: LimeModel,
     ): List<GeneratedFile> {
         val limeType = limeElement as? com.here.gluecodium.model.lime.LimeType ?: return emptyList()
-        // Enum-based exceptions are represented as std::error_code in C++ and have no dedicated
-        // header. Struct-backed exceptions need the payload header for their translator.
+
+        // Collect all types (top-level + nested) for this top-level element, excluding internal
+        // types and types that emit no binding (type aliases, lambdas).
+        val allTypes = collectPybind11Types(limeType, pybind11FilteredModel.referenceMap)
+        if (allTypes.isEmpty()) return emptyList()
+
+        // Collect includes for all types in the tree. Enum-based exceptions have no dedicated
+        // header (they map to std::error_code); struct-backed exceptions need the payload header.
         val includes =
-            if (limeType is com.here.gluecodium.model.lime.LimeException) {
-                if (limeType.errorType.type.actualType is LimeStruct) {
-                    includeCollector.collectImports(limeType).distinct().sorted()
+            allTypes
+                .flatMap { type ->
+                    if (type is com.here.gluecodium.model.lime.LimeException &&
+                        type.errorType.type.actualType !is LimeStruct
+                    ) {
+                        emptyList()
+                    } else {
+                        includeCollector.collectImports(type)
+                    }
+                }.distinct().sorted()
+
+        // Collect `using` aliases for all types (except exceptions, which have no C++ type).
+        val aliases =
+            allTypes.mapNotNull { type ->
+                if (type is com.here.gluecodium.model.lime.LimeException) return@mapNotNull null
+                val shortName = pybind11NameResolver.resolveName(type)
+                val fullName = cppNameCache.getFullyQualifiedName(type)
+                if (shortName != fullName) {
+                    mapOf("shortName" to shortName, "fullName" to fullName)
                 } else {
-                    emptyList()
+                    null
                 }
-            } else {
-                includeCollector.collectImports(limeType).distinct().sorted()
             }
+
+        // Render trampolines and binding bodies for each type.
+        val trampolines = StringBuilder()
+        val bindings = StringBuilder()
+
+        for (type in allTypes) {
+            val bindingTemplateName = selectPybind11Template(type) ?: continue
+
+            // C++ variable name for the py::class_ object (used as scope for nested children).
+            val varName = "cls_" + nameRules.getFlattenedName(type)
+            // Scope: `module` for top-level types, parent's variable for nested types.
+            val scope =
+                if (type.path.hasParent) {
+                    val parentPath = type.path.parent.toString()
+                    val parent = pybind11FilteredModel.referenceMap[parentPath] as? LimeNamedElement
+                    if (parent != null) "cls_" + nameRules.getFlattenedName(parent) else "module"
+                } else {
+                    "module"
+                }
+            // pybind11 registration name: flattened with package for top-level, short for nested.
+            val pybindName = pythonNameResolver.resolvePybind11ShortName(type)
+
+            // Render trampoline class (classes and interfaces only).
+            val trampolineTemplateName = selectPybind11TrampolineTemplate(type)
+            if (trampolineTemplateName != null) {
+                val trampolineData = mapOf("model" to type)
+                val trampolineResult =
+                    TemplateEngine.render(trampolineTemplateName, trampolineData, nameResolvers, predicates)
+                if (trampolineResult.isNotBlank()) {
+                    trampolines.append(trampolineResult)
+                    trampolines.append("\n")
+                }
+            }
+
+            // Render binding body (py::class_ / py::enum_ / exception translator).
+            val bindingData =
+                mapOf(
+                    "model" to type,
+                    "scope" to scope,
+                    "pybindName" to pybindName,
+                    "varName" to varName,
+                    "internalNamespaceStr" to internalNamespace.joinToString("::"),
+                    "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
+                    "baseClasses" to
+                        (type as? LimeContainerWithInheritance)
+                            ?.parents
+                            ?.mapNotNull { it.type.actualType as? LimeNamedElement }
+                            ?.filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
+                            ?.map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
+                            .orEmpty(),
+                    "pybind11AttrChain" to pythonNameResolver.resolvePybind11AttrChain(type),
+                )
+            bindings.append(TemplateEngine.render(bindingTemplateName, bindingData, nameResolvers, predicates))
+            bindings.append("\n")
+        }
+
         val templateData =
             mapOf(
-                "model" to limeElement,
-                "moduleName" to pythonModule,
                 "includes" to includes,
-                "internalNamespace" to internalNamespace,
-                "internalNamespaceStr" to internalNamespace.joinToString("::"),
-                // Whether a `using <alias> = <fullName>;` alias is needed. The alias brings the C++
-                // type into the global namespace so `py::class_<alias>`/`py::enum_<alias>` can use the
-                // short name. It is only needed when the short name differs from `fullName`; for
-                // external types whose `cpp name` is already fully-qualified (and thus equals
-                // `fullName`), emitting `using ::ns::Type = ::ns::Type;` would be malformed, so we skip it.
-                // Exceptions have no dedicated C++ header (they map to std::error_code) and no
-                // `fullName`, so they never need an alias.
-                "needsAlias" to
-                    if (limeType is com.here.gluecodium.model.lime.LimeException) {
-                        false
-                    } else {
-                        pybind11NameResolver.resolveName(limeType) !=
-                            cppNameCache.getFullyQualifiedName(limeElement)
-                    },
-                "fullName" to
-                    if (limeType is com.here.gluecodium.model.lime.LimeException) {
-                        ""
-                    } else {
-                        cppNameCache.getFullyQualifiedName(limeElement)
-                    },
-                "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
-                "trampolineName" to (pythonNameResolver.resolveName(limeElement) + "Trampoline"),
-                // Unique C++ function name for this type's `register_*` function. Includes the LIME
-                // package path so that types with the same short name in different packages (e.g.
-                // `test.StructConstants` and `fire.StructConstants`) do not collide at link time.
+                "aliases" to aliases,
+                "trampolines" to trampolines.toString(),
+                "bindings" to bindings.toString(),
                 "registerName" to pythonNameResolver.resolveRegisterName(limeElement),
-                // Base classes (parents) that are actually bound, as fully-qualified C++ names.
-                // pybind11 requires every base class to be listed as a template argument of
-                // `py::class_` for (multiple) inheritance to be visible and for `std::shared_ptr`
-                // up/down-casting between the derived type and its bases to work.
-                "baseClasses" to
-                    (limeType as? LimeContainerWithInheritance)
-                        ?.parents
-                        ?.mapNotNull { it.type.actualType as? LimeNamedElement }
-                        ?.filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
-                        ?.map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
-                        .orEmpty(),
-                "contentTemplate" to selectPybind11Template(limeElement),
-                // For exceptions: the chain of `.attr("...")` calls to access the Python
-                // exception class from C++ via the imported module. This handles nested
-                // types (e.g. `.attr("Outer").attr("Inner")`) correctly after the
-                // one-file-per-top-element refactoring.
-                "pybind11AttrChain" to pythonNameResolver.resolvePybind11AttrChain(limeElement),
             )
         val content = TemplateEngine.render("python/Pybind11File", templateData, nameResolvers, predicates)
         return listOf(GeneratedFile(content, nameRules.getPybind11FileName(limeElement)))
     }
+
+    /**
+     * Recursively collects all types (top-level + nested) that should emit a pybind11 binding,
+     * in parent-before-child order. Excludes internal types, type aliases, and lambdas (which
+     * emit no binding).
+     */
+    private fun collectPybind11Types(
+        limeType: LimeType,
+        referenceMap: Map<String, LimeElement>,
+    ): List<LimeType> {
+        if (isInternalOrNestedInternal(limeType, referenceMap)) return emptyList()
+
+        val result = mutableListOf<LimeType>()
+
+        // Add this type (skip type aliases and lambdas — they emit no binding).
+        if (limeType !is LimeTypeAlias && limeType !is com.here.gluecodium.model.lime.LimeLambda) {
+            result.add(limeType)
+        }
+
+        // Recursively collect nested types.
+        val container = limeType as? com.here.gluecodium.model.lime.LimeContainer ?: return result
+        val nestedTypes =
+            container.structs + container.classes + container.interfaces +
+                container.enumerations + container.exceptions +
+                container.typeAliases + container.lambdas
+        for (nested in nestedTypes) {
+            result.addAll(collectPybind11Types(nested, referenceMap))
+        }
+        return result
+    }
+
+    private fun selectPybind11TrampolineTemplate(limeElement: LimeNamedElement) =
+        when (limeElement) {
+            is com.here.gluecodium.model.lime.LimeClass -> "python/Pybind11ClassTrampoline"
+            is com.here.gluecodium.model.lime.LimeInterface -> "python/Pybind11InterfaceTrampoline"
+            else -> null
+        }
 
     private fun generateCommonFiles(
         pybind11FilteredModel: LimeModel,
@@ -439,27 +502,43 @@ internal class PythonGenerator : Generator {
         val casterContent =
             TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
 
-        // Module entry point: aggregates every per-type register_* function into a single
-        // PYBIND11_MODULE. Type aliases and lambdas emit no binding, so they are excluded.
+        // Module entry point: aggregates every per-top-level-element register_* function into a
+        // single PYBIND11_MODULE. With Option B, one register_* function is emitted per top-level
+        // LIME element (not per type), and it registers the top-level type AND all nested types
+        // using nested py::class_ scopes. Type aliases and lambdas emit no binding.
+        //
         // The register_* functions must be emitted in dependency order: a base class must be
         // registered before any derived class that lists it as a py::class_ base (pybind11 looks
         // up the base type info at construction time and throws if it is not yet registered).
-        val allBoundTypes =
-            getPythonTypes(pybind11FilteredModel.topElements)
-                .filter { it !is com.here.gluecodium.model.lime.LimeTypeAlias && it !is com.here.gluecodium.model.lime.LimeLambda }
+        // Since nested types are registered within their parent's register function, the
+        // dependency graph operates at the top-level register-function level: if any type in
+        // top-level element T's tree inherits from any type in top-level element S's tree, then
+        // register_S must be called before register_T.
+        val topLevelBoundTypes =
+            pybind11FilteredModel.topElements
+                .filterIsInstance<LimeType>()
+                .filter { it !is LimeTypeAlias && it !is com.here.gluecodium.model.lime.LimeLambda }
                 .filter { !isInternalOrNestedInternal(it, pybind11FilteredModel.referenceMap) }
-        val typeNameToParents =
-            allBoundTypes.associate { type ->
-                val parents =
-                    (type as? LimeContainerWithInheritance)
-                        ?.parents
-                        ?.mapNotNull { it.type.actualType as? LimeNamedElement }
-                        ?.map { pythonNameResolver.resolveRegisterName(it) }
-                        .orEmpty()
-                pythonNameResolver.resolveRegisterName(type) to parents
+        // For each top-level type, find all top-level register names it depends on.
+        val registerNameToDeps =
+            topLevelBoundTypes.associate { topType ->
+                val topRegName = pythonNameResolver.resolveRegisterName(topType)
+                val allTypesInTree = collectPybind11Types(topType, pybind11FilteredModel.referenceMap)
+                val deps =
+                    allTypesInTree
+                        .mapNotNull { it as? LimeContainerWithInheritance }
+                        .flatMap { container ->
+                            container.parents
+                                .mapNotNull { it.type.actualType as? LimeNamedElement }
+                                .filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
+                                .map { pythonNameResolver.resolveTopLevelRegisterName(it) }
+                        }
+                        .filter { it != topRegName }
+                        .distinct()
+                topRegName to deps
             }
         val registerFunctions =
-            topologicalSort(typeNameToParents).map { mapOf("name" to it) }
+            topologicalSort(registerNameToDeps).map { mapOf("name" to it) }
         val moduleInitTemplateData =
             mapOf(
                 "moduleName" to pythonModule,

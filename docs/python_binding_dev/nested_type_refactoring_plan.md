@@ -6,9 +6,10 @@
 |---|---|---|---|
 | G11 | Doc comment preservation for Python bindings | ✅ Completed | `762d0c50a` |
 | Phase 1 | Python wrapper files (`.py` and `.pyi`) — one file per top-level element with nested types | ✅ Completed | `21fc0d1f5` |
-| Phase 2 | Pybind11 binding files (`.cpp`) — Option A (per-type files, flattened registration names) | ✅ Completed | `21fc0d1f5` |
+| Phase 2A | Pybind11 binding files (`.cpp`) — Option A (per-type files, flattened registration names) | ✅ Completed | `21fc0d1f5` |
 | Phase 3 | Smoke test reference updates | ✅ Completed | (this commit) |
 | Phase 4 | Functional test updates — nested type access (Parent.Child) | ✅ Completed | `54fb6da6d` |
+| Phase 2B | Pybind11 binding files — Option B (one file per top element, nested py::class_ scopes) | ✅ Completed | (this commit) |
 
 ### Additional fixes applied during Phase 3
 
@@ -22,8 +23,45 @@
 
 ### Remaining work
 
-- **Phase 2 Option B** (one pybind11 file per top element with nested scopes) is deferred as a follow-up. The current Option A approach (per-type `.cpp` files with flattened registration names) is functional and passes all tests.
 - **Predicate cleanup**: `isAncestorField`, `isAncestorReturnType`, `isAncestorProperty` predicates are still present but could be simplified or removed in a future cleanup pass since circular imports between parent and child modules no longer occur with the one-file-per-top-element design.
+
+### Phase 2B: One pybind11 file per top element with nested scopes (✅ Completed)
+
+Replaced the per-type `.cpp` file approach (Option A) with one `.cpp` per top-level LIME element. Each `register_*` function now registers the top-level type AND all nested types using nested `py::class_`/`py::enum_` scopes (parent's `py::class_` as child's scope), matching the Python wrapper's physical class nesting.
+
+**Changes made:**
+
+- **`PythonNameResolver.kt`**: Added `resolvePybind11AccessPath()` (dotted path for Python wrapper references, e.g. `smoke_OuterClass.InnerClass`), `resolvePybind11ShortName()` (short name for pybind11 registration, e.g. `InnerClass`), and `resolveTopLevelRegisterName()` (maps per-type inheritance to top-level register-function dependencies for topological sort).
+- **`PythonGenerator.kt`**: Rewrote `generatePybind11File()` to iterate top-level elements (not flattened types); added `collectPybind11Types()` recursive collector; added `selectPybind11TrampolineTemplate()`; changed `generateTypeBody()` to use `resolvePybind11AccessPath()` for `typeName`/`nativeTypeName`; updated module init topological sort to operate at top-level register-function level.
+- **New templates**: `Pybind11ClassTrampoline.mustache`, `Pybind11InterfaceTrampoline.mustache` (trampoline class definitions extracted from binding templates).
+- **Modified templates**: `Pybind11File.mustache` (assembles all types in one file with `{{{trampolines}}}` and `{{{bindings}}}`); `Pybind11Class.mustache`, `Pybind11Interface.mustache`, `Pybind11Struct.mustache`, `Pybind11Enum.mustache`, `Pybind11Exception.mustache` (changed from standalone `register_*` functions to binding bodies using `{{scope}}`/`{{pybindName}}`/`{{varName}}`).
+- **`Pybind11ModuleInit.mustache`**: Updated comment to reflect per-top-level-element registration.
+- **Smoke test references**: Deleted 246 stale per-type `.cpp` files; updated all remaining references.
+
+**Validation:**
+- Unit tests: `./gradlew :gluecodium:test` — all pass.
+- Functional tests: `functional-tests/scripts/build-python-functional --publish` — 252 passed, 0 failed, 1 skipped.
+
+**Example output** (`smoke_OuterClass.cpp`):
+
+```cpp
+void register_smoke_OuterClass(py::module_& module) {
+    auto cls_OuterClass = py::class_<OuterClass, std::shared_ptr<OuterClass>>(module, "smoke_OuterClass")
+        .def("foo", &OuterClass::foo, py::arg("input"))
+        ;
+
+    auto cls_OuterClassInnerClass = py::class_<InnerClass, std::shared_ptr<InnerClass>>(cls_OuterClass, "InnerClass")
+        .def("foo", &InnerClass::foo, py::arg("input"))
+        ;
+
+    auto cls_OuterClassInnerInterface = py::class_<InnerInterface, std::shared_ptr<InnerInterface>, InnerInterfaceTrampoline>(cls_OuterClass, "InnerInterface")
+        .def(py::init<>())
+        .def("foo", ...)
+        ;
+}
+```
+
+Python wrapper references now use dotted paths: `generated.smoke_OuterClass.InnerInterface`.
 
 ---
 
@@ -453,6 +491,8 @@ This requires significant template rework — the current `Pybind11Class.mustach
 
 **Recommendation:** Start with **Option A** for Phase 1, then migrate to Option B in a follow-up.
 
+**Status:** ✅ Option B completed. See "Phase 2B" in the Status section above for details.
+
 ---
 
 ### Phase 3: Smoke test reference updates ✅
@@ -572,9 +612,16 @@ Two alternatives were considered:
 
 **Decision:** Use physically nested classes. The indentation challenge is handled by generating each type's body as a string via `TemplateEngine.render()`, then using Kotlin's `String.prependIndent()` to shift the entire body before injecting it as a `{{{nestedTypes}}}` variable into the parent's template. This is a clean separation: templates define structure, the generator handles indentation.
 
-### Why keep flattened names for pybind11 registration?
+### Why keep flattened names for pybind11 file names and top-level registration?
 
-pybind11 registration names must be valid C++ identifiers (no dots). The Python wrapper uses `{{nativeModule}}.{{typeName}}` to reference the pybind11-bound class. For nested classes, `typeName` is `resolveRegisterName(element)` which returns `pkg_OuterInner` (flattened, dot-free). The Python class name (`{{resolveName}}`) is the short name (`Inner`), and the nesting is provided by the class body. The pybind11 type is an implementation detail; users interact with the Python wrapper, not the raw pybind11 module.
+pybind11 registration names for **top-level** types must be valid C++ identifiers (no dots) and unique across packages. `resolveRegisterName()` returns `pkg_OuterClass` (flattened, dot-free) for the top-level type's register function name and the Python-side `generated.<name>` attribute.
+
+For **nested** types, Option B uses **nested py::class_ scopes** instead of flattened names. The nested type is registered as `py::class_<...>(parent_cls, "ShortName")`, making it accessible as `generated.pkg_OuterClass.InnerClass` in Python. The Python wrapper's `typeName` variable now uses `resolvePybind11AccessPath()` which returns the dotted path (e.g. `smoke_OuterClass.InnerClass`) instead of the flattened name.
+
+Flattened names are still used for:
+- C++ file names (`getPybind11FileName()` uses `getFlattenedName()` for the `.cpp` file name, but now only for the top-level element).
+- C++ variable names (`cls_<flattened>`) to ensure uniqueness within a single `.cpp` file.
+- Top-level register function names (`register_pkg_OuterClass`).
 
 ---
 
@@ -622,8 +669,9 @@ pybind11 registration names must be valid C++ identifiers (no dots). The Python 
 
 ## Validation Steps
 
-1. ✅ **Unit tests:** `./gradlew :gluecodium:test` — all 294 smoke tests pass (0 failed, 54 skipped for non-Python generators).
-2. ✅ **Regenerate references:** `DUMP_ACTUAL_DIR=$(pwd)/gluecodium/src/test/resources/smoke ./gradlew :gluecodium:test` — 139 reference files updated.
-3. ✅ **Inspect output:** Generated `.py` files contain nested classes with correct indentation.
-4. ✅ **Functional tests:** `functional-tests/scripts/build-python-functional --publish` — 252 passed, 0 failed, 1 skipped.
-5. **Python import test:** `python3 -c "from smoke.forward.InnerClassForwardDeclarations import InnerClassForwardDeclarations; print(InnerClassForwardDeclarations.InnerClass2.InnerInnerClass1)"`
+1. ✅ **Unit tests:** `./gradlew :gluecodium:test` — all smoke tests pass (0 failed, 54 skipped for non-Python generators).
+2. ✅ **Regenerate references:** `DUMP_ACTUAL_DIR=$(pwd)/gluecodium/src/test/resources/smoke ./gradlew :gluecodium:test` — 246 stale per-type `.cpp` files deleted; all remaining references updated.
+3. ✅ **Inspect output:** Generated `.py` files contain nested classes with correct indentation; generated `.cpp` files use nested `py::class_` scopes.
+4. ✅ **Functional tests (Phase 2A):** `functional-tests/scripts/build-python-functional --publish` — 252 passed, 0 failed, 1 skipped.
+5. ✅ **Functional tests (Phase 2B):** `functional-tests/scripts/build-python-functional --publish` — 252 passed, 0 failed, 1 skipped.
+6. **Python import test:** `python3 -c "from smoke.forward.InnerClassForwardDeclarations import InnerClassForwardDeclarations; print(InnerClassForwardDeclarations.InnerClass2.InnerInnerClass1)"`

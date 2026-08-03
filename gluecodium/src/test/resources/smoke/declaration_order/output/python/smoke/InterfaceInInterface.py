@@ -24,7 +24,7 @@ class InterfaceInInterface(generated.smoke_InterfaceInInterface):
             super().__init__()
         self._native = self
 
-    class FooChecker(generated.smoke_InterfaceInInterfaceFooChecker):
+    class FooChecker(generated.smoke_InterfaceInInterface.FooChecker):
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an
@@ -33,7 +33,7 @@ class InterfaceInInterface(generated.smoke_InterfaceInInterface):
             # aliases the wrapper itself so the rest of the generated code can reach the
             # native object uniformly (e.g. when passing this interface back into a C++
             # call site).
-            if native is not None and isinstance(native, generated.smoke_InterfaceInInterfaceFooChecker):
+            if native is not None and isinstance(native, generated.smoke_InterfaceInInterface.FooChecker):
                 super().__init__(native)
             else:
                 super().__init__()

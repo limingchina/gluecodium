@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/ExposeInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExposeInterface = ::smoke::ExposeInterface;
 
 class ExposeInterfaceTrampoline : public ExposeInterface {
@@ -29,8 +28,10 @@ public:
 
 };
 
+
+
 void register_smoke_ExposeInterface(py::module_& module) {
-    py::class_<ExposeInterface, std::shared_ptr<ExposeInterface>, ExposeInterfaceTrampoline>(module, "smoke_ExposeInterface")
+auto cls_ExposeInterface = py::class_<ExposeInterface, std::shared_ptr<ExposeInterface>, ExposeInterfaceTrampoline>(module, "smoke_ExposeInterface")
         .def("__gluecodium_id__", [](const ExposeInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -47,5 +48,6 @@ void register_smoke_ExposeInterface(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

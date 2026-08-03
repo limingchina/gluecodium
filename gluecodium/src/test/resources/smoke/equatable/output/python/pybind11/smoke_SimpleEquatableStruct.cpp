@@ -16,11 +16,12 @@ namespace py = pybind11;
 #include "smoke/SimpleEquatableStruct.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SimpleEquatableStruct = ::smoke::SimpleEquatableStruct;
 
+
+
 void register_smoke_SimpleEquatableStruct(py::module_& module) {
-    py::class_<SimpleEquatableStruct>(module, "smoke_SimpleEquatableStruct")
+auto cls_SimpleEquatableStruct = py::class_<SimpleEquatableStruct>(module, "smoke_SimpleEquatableStruct")
         .def_readwrite("class_field", &SimpleEquatableStruct::class_field)
         .def_readwrite("interface_field", &SimpleEquatableStruct::interface_field)
         .def_readwrite("nullable_class_field", &SimpleEquatableStruct::nullable_class_field)
@@ -31,5 +32,6 @@ void register_smoke_SimpleEquatableStruct(py::module_& module) {
         .def("__eq__", [](const SimpleEquatableStruct& lhs, const SimpleEquatableStruct& rhs) { return lhs == rhs; })
         .def("__hash__", [](const SimpleEquatableStruct& self) { return gluecodium::hash<SimpleEquatableStruct>{}(self); })
         ;
-}
 
+
+}

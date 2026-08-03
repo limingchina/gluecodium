@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/TimeZone.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using TimeZone = ::smoke::TimeZone;
 
+
+
 void register_smoke_TimeZone(py::module_& module) {
-    py::class_<TimeZone>(module, "smoke_TimeZone")
+auto cls_TimeZone = py::class_<TimeZone>(module, "smoke_TimeZone")
         .def_readwrite("raw_offset", &TimeZone::raw_offset)
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("raw_offset"))
         ;
-}
 
+
+}

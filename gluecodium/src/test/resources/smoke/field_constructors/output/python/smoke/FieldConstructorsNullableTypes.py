@@ -28,10 +28,10 @@ class FieldConstructorsNullableTypes(_NativeBase):
 
     class StructWithParameters(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_FieldConstructorsNullableTypesStructWithParameters):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_FieldConstructorsNullableTypes.StructWithParameters):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_FieldConstructorsNullableTypesStructWithParameters(
+                super().__init__(generated.smoke_FieldConstructorsNullableTypes.StructWithParameters(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -48,8 +48,8 @@ class FieldConstructorsNullableTypes(_NativeBase):
     
     class FoodType(Enum):
     
-        VEGETABLES = generated.smoke_FieldConstructorsNullableTypesFoodType.VEGETABLES
-        FRUITS = generated.smoke_FieldConstructorsNullableTypesFoodType.FRUITS
+        VEGETABLES = generated.smoke_FieldConstructorsNullableTypes.FoodType.VEGETABLES
+        FRUITS = generated.smoke_FieldConstructorsNullableTypes.FoodType.FRUITS
     
         @property
         def _native(self):

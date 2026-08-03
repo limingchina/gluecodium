@@ -15,16 +15,17 @@ namespace py = pybind11;
 #include "root/space/smoke/BasicForwardDeclarations.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using BasicForwardDeclarations = ::root::space::smoke::BasicForwardDeclarations;
 
 
+
 void register_smoke_BasicForwardDeclarations(py::module_& module) {
-    py::class_<BasicForwardDeclarations, std::shared_ptr<BasicForwardDeclarations>>(module, "smoke_BasicForwardDeclarations")
+auto cls_BasicForwardDeclarations = py::class_<BasicForwardDeclarations, std::shared_ptr<BasicForwardDeclarations>>(module, "smoke_BasicForwardDeclarations")
         .def("__gluecodium_id__", [](const BasicForwardDeclarations& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("use_basic", &BasicForwardDeclarations::use_basic)
         ;
-}
 
+
+}

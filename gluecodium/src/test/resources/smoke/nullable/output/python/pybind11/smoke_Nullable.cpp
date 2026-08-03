@@ -22,12 +22,16 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Nullable = ::smoke::Nullable;
+using SomeStruct = ::smoke::Nullable::SomeStruct;
+using NullableStruct = ::smoke::Nullable::NullableStruct;
+using NullableIntsStruct = ::smoke::Nullable::NullableIntsStruct;
+using SomeEnum = ::smoke::Nullable::SomeEnum;
+
 
 
 void register_smoke_Nullable(py::module_& module) {
-    py::class_<Nullable, std::shared_ptr<Nullable>>(module, "smoke_Nullable")
+auto cls_Nullable = py::class_<Nullable, std::shared_ptr<Nullable>>(module, "smoke_Nullable")
         .def("__gluecodium_id__", [](const Nullable& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -58,5 +62,44 @@ void register_smoke_Nullable(py::module_& module) {
         .def_property("map_property", py::overload_cast<>(&Nullable::get_map_property, py::const_), py::overload_cast<const std::optional< ::std::unordered_map< int64_t, ::std::string > >&>(&Nullable::set_map_property))
         .def_property("instance_property", py::overload_cast<>(&Nullable::get_instance_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::SomeInterface >&>(&Nullable::set_instance_property))
         ;
-}
 
+auto cls_NullableSomeStruct = py::class_<SomeStruct>(cls_Nullable, "SomeStruct")
+        .def_readwrite("string_field", &SomeStruct::string_field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("string_field"))
+        ;
+
+auto cls_NullableNullableStruct = py::class_<NullableStruct>(cls_Nullable, "NullableStruct")
+        .def_readwrite("string_field", &NullableStruct::string_field)
+        .def_readwrite("bool_field", &NullableStruct::bool_field)
+        .def_readwrite("double_field", &NullableStruct::double_field)
+        .def_readwrite("struct_field", &NullableStruct::struct_field)
+        .def_readwrite("enum_field", &NullableStruct::enum_field)
+        .def_readwrite("array_field", &NullableStruct::array_field)
+        .def_readwrite("inline_array_field", &NullableStruct::inline_array_field)
+        .def_readwrite("map_field", &NullableStruct::map_field)
+        .def_readwrite("instance_field", &NullableStruct::instance_field)
+        .def(py::init<>())
+        .def(py::init<std::optional< ::std::string >, std::optional< bool >, std::optional< double >, std::optional< ::smoke::Nullable::SomeStruct >, std::optional< ::smoke::Nullable::SomeEnum >, std::optional< ::std::vector< ::std::string > >, std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< int64_t, ::std::string > >, ::std::shared_ptr< ::smoke::SomeInterface >>(), py::arg("string_field"), py::arg("bool_field"), py::arg("double_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("inline_array_field"), py::arg("map_field"), py::arg("instance_field"))
+        ;
+
+auto cls_NullableNullableIntsStruct = py::class_<NullableIntsStruct>(cls_Nullable, "NullableIntsStruct")
+        .def_readwrite("int8_field", &NullableIntsStruct::int8_field)
+        .def_readwrite("int16_field", &NullableIntsStruct::int16_field)
+        .def_readwrite("int32_field", &NullableIntsStruct::int32_field)
+        .def_readwrite("int64_field", &NullableIntsStruct::int64_field)
+        .def_readwrite("uint8_field", &NullableIntsStruct::uint8_field)
+        .def_readwrite("uint16_field", &NullableIntsStruct::uint16_field)
+        .def_readwrite("uint32_field", &NullableIntsStruct::uint32_field)
+        .def_readwrite("uint64_field", &NullableIntsStruct::uint64_field)
+        .def(py::init<>())
+        .def(py::init<std::optional< int8_t >, std::optional< int16_t >, std::optional< int32_t >, std::optional< int64_t >, std::optional< uint8_t >, std::optional< uint16_t >, std::optional< uint32_t >, std::optional< uint64_t >>(), py::arg("int8_field"), py::arg("int16_field"), py::arg("int32_field"), py::arg("int64_field"), py::arg("uint8_field"), py::arg("uint16_field"), py::arg("uint32_field"), py::arg("uint64_field"))
+        ;
+
+auto cls_NullableSomeEnum = py::enum_<SomeEnum>(cls_Nullable, "SomeEnum")
+        .value("ON", SomeEnum::ON)
+        .value("OFF", SomeEnum::OFF)
+        ;
+
+
+}

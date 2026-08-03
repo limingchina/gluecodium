@@ -13,12 +13,12 @@
 namespace py = pybind11;
 #include "smoke/MultipleAttributesSwift.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MultipleAttributesSwift = ::smoke::MultipleAttributesSwift;
 
 
+
 void register_smoke_MultipleAttributesSwift(py::module_& module) {
-    py::class_<MultipleAttributesSwift, std::shared_ptr<MultipleAttributesSwift>>(module, "smoke_MultipleAttributesSwift")
+auto cls_MultipleAttributesSwift = py::class_<MultipleAttributesSwift, std::shared_ptr<MultipleAttributesSwift>>(module, "smoke_MultipleAttributesSwift")
         .def("__gluecodium_id__", [](const MultipleAttributesSwift& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -28,5 +28,6 @@ void register_smoke_MultipleAttributesSwift(py::module_& module) {
         .def("list_second", &MultipleAttributesSwift::list_second)
         .def("two_lists", &MultipleAttributesSwift::two_lists)
         ;
-}
 
+
+}

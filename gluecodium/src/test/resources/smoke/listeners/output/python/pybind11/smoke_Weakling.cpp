@@ -15,7 +15,6 @@ namespace py = pybind11;
 #include "smoke/Weakling.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Weakling = ::smoke::Weakling;
 
 class WeaklingTrampoline : public Weakling {
@@ -46,8 +45,10 @@ public:
     }
 };
 
+
+
 void register_smoke_Weakling(py::module_& module) {
-    py::class_<Weakling, std::shared_ptr<Weakling>, WeaklingTrampoline>(module, "smoke_Weakling")
+auto cls_Weakling = py::class_<Weakling, std::shared_ptr<Weakling>, WeaklingTrampoline>(module, "smoke_Weakling")
         .def("__gluecodium_id__", [](const Weakling& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -69,5 +70,6 @@ void register_smoke_Weakling(py::module_& module) {
             self.set_listener(value);
         })
         ;
-}
 
+
+}

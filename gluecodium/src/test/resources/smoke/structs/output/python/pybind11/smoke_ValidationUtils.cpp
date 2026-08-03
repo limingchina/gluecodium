@@ -13,12 +13,30 @@
 namespace py = pybind11;
 #include "smoke/ValidationUtils.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ValidationUtils = ::smoke::ValidationUtils;
+using ValidationErrorCode = ::smoke::ValidationUtils::ValidationErrorCode;
+
+
 
 void register_smoke_ValidationUtils(py::module_& module) {
-    py::class_<ValidationUtils>(module, "smoke_ValidationUtils")
+auto cls_ValidationUtils = py::class_<ValidationUtils>(module, "smoke_ValidationUtils")
         .def(py::init<>())
         ;
-}
 
+auto cls_ValidationUtilsValidationErrorCode = py::enum_<ValidationErrorCode>(cls_ValidationUtils, "ValidationErrorCode")
+        .value("NONE", ValidationErrorCode::NONE)
+        .value("VALIDATION_FAILED", ValidationErrorCode::VALIDATION_FAILED)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_ValidationUtils, "ValidationError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

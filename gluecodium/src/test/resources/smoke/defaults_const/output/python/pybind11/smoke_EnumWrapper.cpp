@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "fire/Enum4.h"
 #include "smoke/EnumWrapper.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumWrapper = ::smoke::EnumWrapper;
 
+
+
 void register_smoke_EnumWrapper(py::module_& module) {
-    py::class_<EnumWrapper>(module, "smoke_EnumWrapper")
+auto cls_EnumWrapper = py::class_<EnumWrapper>(module, "smoke_EnumWrapper")
         .def_readwrite("enum_field", &EnumWrapper::enum_field)
         .def(py::init<>())
         .def(py::init<::fire::Enum4>(), py::arg("enum_field"))
         ;
-}
 
+
+}

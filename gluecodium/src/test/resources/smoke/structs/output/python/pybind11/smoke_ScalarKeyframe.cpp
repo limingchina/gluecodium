@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/ScalarKeyframe.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ScalarKeyframe = ::smoke::ScalarKeyframe;
 
+
+
 void register_smoke_ScalarKeyframe(py::module_& module) {
-    py::class_<ScalarKeyframe>(module, "smoke_ScalarKeyframe")
+auto cls_ScalarKeyframe = py::class_<ScalarKeyframe>(module, "smoke_ScalarKeyframe")
         .def_readonly("value", &ScalarKeyframe::value)
         .def_readonly("offset_in_ms", &ScalarKeyframe::offset_in_ms)
         .def(py::init<double, int32_t>(), py::arg("value"), py::arg("offset_in_ms"))
         ;
-}
 
+
+}

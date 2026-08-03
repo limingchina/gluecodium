@@ -33,10 +33,10 @@ class ExternalInterface(generated.smoke_ExternalInterface):
 
     class SomeStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ExternalInterfacesome_Struct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ExternalInterface.SomeStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_ExternalInterfacesome_Struct(
+                super().__init__(generated.smoke_ExternalInterface.SomeStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -53,7 +53,7 @@ class ExternalInterface(generated.smoke_ExternalInterface):
     
     class SomeEnum(Enum):
     
-        SOME_VALUE = generated.smoke_ExternalInterfacesome_Enum.SOME_VALUE
+        SOME_VALUE = generated.smoke_ExternalInterface.SomeEnum.SOME_VALUE
     
         @property
         def _native(self):

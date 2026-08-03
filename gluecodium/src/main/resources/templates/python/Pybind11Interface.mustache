@@ -18,48 +18,11 @@
   ! License-Filename: LICENSE
   !
   !}}
-{{! pybind11 interface binding (trampoline for Python subclassing). }}
-{{#unless external.cpp}}
-class {{resolveName}}Trampoline : public {{resolveName model "Pybind11"}} {
-public:
-    using {{resolveName model "Pybind11"}}::{{resolveName model "Pybind11"}};
-
-    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
-    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
-    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
-    // the returned implementation. A Python subclass is instantiated with no impl held, in
-    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
-    std::shared_ptr<{{resolveName model "Pybind11"}}> m_impl;
-
-{{#functions}}
-{{#unless isStatic}}
-{{#unless isConstructor}}
-{{>python/Pybind11TrampolineFunction}}
-{{/unless}}
-{{/unless}}
-{{/functions}}
-{{#properties}}
-{{#unless isStatic}}
-{{>python/Pybind11TrampolineProperty}}
-{{/unless}}
-{{/properties}}
-{{#inheritedFunctions}}
-{{#unless isStatic}}
-{{#unless isConstructor}}
-{{>python/Pybind11TrampolineFunction}}
-{{/unless}}
-{{/unless}}
-{{/inheritedFunctions}}
-{{#inheritedProperties}}
-{{#unless isStatic}}
-{{>python/Pybind11TrampolineProperty}}
-{{/unless}}
-{{/inheritedProperties}}
-};
-{{/unless}}
-
-void register_{{registerName}}(py::module_& module) {
-    py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>{{#unless external.cpp}}, {{resolveName}}Trampoline{{/unless}}>(module, "{{registerName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
+{{! pybind11 interface binding body — the py::class_ construction and .def() calls. }}
+{{! Trampoline is emitted separately by Pybind11InterfaceTrampoline.mustache. }}
+{{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
+{{#model}}
+auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>{{#unless external.cpp}}, {{resolveName}}Trampoline{{/unless}}>({{scope}}, "{{pybindName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
         .def("__gluecodium_id__", [](const {{resolveName model "Pybind11"}}& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -97,4 +60,4 @@ void register_{{registerName}}(py::module_& module) {
     py::module_::import("atexit").attr("register")(py::cpp_function([]() { {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}({}); }));
 {{/ifPredicate}}{{/ifPredicate}}{{/if}}
 {{/properties}}{{/unless}}
-}
+{{/model}}

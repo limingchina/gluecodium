@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/ListenerInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ListenerInterface = ::smoke::ListenerInterface;
 
 class ListenerInterfaceTrampoline : public ListenerInterface {
@@ -38,8 +37,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ListenerInterface(py::module_& module) {
-    py::class_<ListenerInterface, std::shared_ptr<ListenerInterface>, ListenerInterfaceTrampoline>(module, "smoke_ListenerInterface")
+auto cls_ListenerInterface = py::class_<ListenerInterface, std::shared_ptr<ListenerInterface>, ListenerInterfaceTrampoline>(module, "smoke_ListenerInterface")
         .def("__gluecodium_id__", [](const ListenerInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -59,5 +60,6 @@ void register_smoke_ListenerInterface(py::module_& module) {
             return self.notify();
         })
         ;
-}
 
+
+}

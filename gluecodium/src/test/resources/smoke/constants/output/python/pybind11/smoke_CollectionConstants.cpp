@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/CollectionConstants.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CollectionConstants = ::smoke::CollectionConstants;
 
 
+
 void register_smoke_CollectionConstants(py::module_& module) {
-    py::class_<CollectionConstants, std::shared_ptr<CollectionConstants>>(module, "smoke_CollectionConstants")
+auto cls_CollectionConstants = py::class_<CollectionConstants, std::shared_ptr<CollectionConstants>>(module, "smoke_CollectionConstants")
         .def("__gluecodium_id__", [](const CollectionConstants& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

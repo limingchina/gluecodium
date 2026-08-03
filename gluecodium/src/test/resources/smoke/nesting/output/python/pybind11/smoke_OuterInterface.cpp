@@ -14,8 +14,9 @@ namespace py = pybind11;
 #include "smoke/OuterInterface.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using OuterInterface = ::smoke::OuterInterface;
+using InnerClass = ::smoke::OuterInterface::InnerClass;
+using InnerInterface = ::smoke::OuterInterface::InnerInterface;
 
 class OuterInterfaceTrampoline : public OuterInterface {
 public:
@@ -38,8 +39,31 @@ public:
     }
 };
 
+class InnerInterfaceTrampoline : public InnerInterface {
+public:
+    using InnerInterface::InnerInterface;
+
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<InnerInterface> m_impl;
+
+    ::std::string foo(
+            const ::std::string& input ) override {
+        py::gil_scoped_acquire gil;
+        if (m_impl) {
+            return m_impl->foo(input);
+        }
+        PYBIND11_OVERRIDE_PURE(::std::string, InnerInterface, foo, input);
+    }
+};
+
+
+
 void register_smoke_OuterInterface(py::module_& module) {
-    py::class_<OuterInterface, std::shared_ptr<OuterInterface>, OuterInterfaceTrampoline>(module, "smoke_OuterInterface")
+auto cls_OuterInterface = py::class_<OuterInterface, std::shared_ptr<OuterInterface>, OuterInterfaceTrampoline>(module, "smoke_OuterInterface")
         .def("__gluecodium_id__", [](const OuterInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -59,5 +83,34 @@ void register_smoke_OuterInterface(py::module_& module) {
             return self.foo(input);
         }, py::arg("input"))
         ;
-}
 
+auto cls_OuterInterfaceInnerClass = py::class_<InnerClass, std::shared_ptr<InnerClass>>(cls_OuterInterface, "InnerClass")
+        .def("__gluecodium_id__", [](const InnerClass& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def("foo", &InnerClass::foo, py::arg("input"))
+        ;
+
+auto cls_OuterInterfaceInnerInterface = py::class_<InnerInterface, std::shared_ptr<InnerInterface>, InnerInterfaceTrampoline>(cls_OuterInterface, "InnerInterface")
+        .def("__gluecodium_id__", [](const InnerInterface& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<InnerInterface> native) {
+            auto self = std::make_shared<InnerInterfaceTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
+        .def("foo", [](InnerInterface& self, const ::std::string& input) {
+            return self.foo(input);
+        }, py::arg("input"))
+        ;
+
+
+}

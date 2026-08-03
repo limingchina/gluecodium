@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/FcStruct.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FcStruct = ::smoke::FcStruct;
 
+
+
 void register_smoke_FcStruct(py::module_& module) {
-    py::class_<FcStruct>(module, "smoke_FcStruct")
+auto cls_FcStruct = py::class_<FcStruct>(module, "smoke_FcStruct")
         .def_readwrite("string_field", &FcStruct::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

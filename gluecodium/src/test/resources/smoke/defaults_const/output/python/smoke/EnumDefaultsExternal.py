@@ -19,10 +19,10 @@ class EnumDefaultsExternal(_NativeBase):
 
     class SimpleEnum(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternalSimpleEnum):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternal.SimpleEnum):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EnumDefaultsExternalSimpleEnum(
+                super().__init__(generated.smoke_EnumDefaultsExternal.SimpleEnum(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -39,10 +39,10 @@ class EnumDefaultsExternal(_NativeBase):
     
     class NullableEnum(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternalNullableEnum):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternal.NullableEnum):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EnumDefaultsExternalNullableEnum(
+                super().__init__(generated.smoke_EnumDefaultsExternal.NullableEnum(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -67,10 +67,10 @@ class EnumDefaultsExternal(_NativeBase):
     
     class AliasEnum(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternalAliasEnum):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternal.AliasEnum):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EnumDefaultsExternalAliasEnum(
+                super().__init__(generated.smoke_EnumDefaultsExternal.AliasEnum(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -87,10 +87,10 @@ class EnumDefaultsExternal(_NativeBase):
     
     class WrappedEnum(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternalWrappedEnum):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumDefaultsExternal.WrappedEnum):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EnumDefaultsExternalWrappedEnum(
+                super().__init__(generated.smoke_EnumDefaultsExternal.WrappedEnum(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

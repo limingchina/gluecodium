@@ -13,12 +13,14 @@
 namespace py = pybind11;
 #include "smoke/AttributesEnum.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesEnum = ::smoke::AttributesEnum;
 
+
+
 void register_smoke_AttributesEnum(py::module_& module) {
-    py::enum_<AttributesEnum>(module, "smoke_AttributesEnum")
+auto cls_AttributesEnum = py::enum_<AttributesEnum>(module, "smoke_AttributesEnum")
         .value("NOPE", AttributesEnum::NOPE)
         ;
-}
 
+
+}

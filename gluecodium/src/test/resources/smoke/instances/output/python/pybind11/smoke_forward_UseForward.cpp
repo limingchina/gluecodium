@@ -18,7 +18,6 @@ namespace py = pybind11;
 #include "smoke/forward/UseForward.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseForward = ::smoke::forward::UseForward;
 
 class UseForwardTrampoline : public UseForward {
@@ -43,8 +42,10 @@ public:
     }
 };
 
+
+
 void register_smoke_forward_UseForward(py::module_& module) {
-    py::class_<UseForward, std::shared_ptr<UseForward>, UseForwardTrampoline>(module, "smoke_forward_UseForward")
+auto cls_UseForward = py::class_<UseForward, std::shared_ptr<UseForward>, UseForwardTrampoline>(module, "smoke_forward_UseForward")
         .def("__gluecodium_id__", [](const UseForward& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -64,5 +65,6 @@ void register_smoke_forward_UseForward(py::module_& module) {
             return self.use_it(param1, param2, simple_class, simple_interface);
         }, py::arg("param1"), py::arg("param2"), py::arg("simple_class"), py::arg("simple_interface"))
         ;
-}
 
+
+}

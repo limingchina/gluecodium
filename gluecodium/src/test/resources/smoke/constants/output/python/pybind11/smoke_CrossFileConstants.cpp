@@ -13,12 +13,14 @@
 namespace py = pybind11;
 #include "smoke/CrossFileConstants.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CrossFileConstants = ::smoke::CrossFileConstants;
 
+
+
 void register_smoke_CrossFileConstants(py::module_& module) {
-    py::class_<CrossFileConstants>(module, "smoke_CrossFileConstants")
+auto cls_CrossFileConstants = py::class_<CrossFileConstants>(module, "smoke_CrossFileConstants")
         .def(py::init<>())
         ;
-}
 
+
+}

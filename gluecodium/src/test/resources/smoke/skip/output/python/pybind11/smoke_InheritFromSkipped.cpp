@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/InheritFromSkipped.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InheritFromSkipped = ::smoke::InheritFromSkipped;
 
 class InheritFromSkippedTrampoline : public InheritFromSkipped {
@@ -151,8 +150,10 @@ public:
     }
 };
 
+
+
 void register_smoke_InheritFromSkipped(py::module_& module) {
-    py::class_<InheritFromSkipped, ::smoke::SkipProxy, std::shared_ptr<InheritFromSkipped>, InheritFromSkippedTrampoline>(module, "smoke_InheritFromSkipped")
+auto cls_InheritFromSkipped = py::class_<InheritFromSkipped, ::smoke::SkipProxy, std::shared_ptr<InheritFromSkipped>, InheritFromSkippedTrampoline>(module, "smoke_InheritFromSkipped")
         .def("__gluecodium_id__", [](const InheritFromSkipped& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -201,5 +202,6 @@ void register_smoke_InheritFromSkipped(py::module_& module) {
             self.set_skipped_in_kotlin(value);
         })
         ;
-}
 
+
+}

@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/ChildWithCustomConstructor.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildWithCustomConstructor = ::smoke::ChildWithCustomConstructor;
 
 class ChildWithCustomConstructorTrampoline : public ChildWithCustomConstructor {
@@ -29,8 +28,10 @@ public:
 
 };
 
+
+
 void register_smoke_ChildWithCustomConstructor(py::module_& module) {
-    py::class_<ChildWithCustomConstructor, ::smoke::ParentWithCustomConstructor, std::shared_ptr<ChildWithCustomConstructor>, ChildWithCustomConstructorTrampoline>(module, "smoke_ChildWithCustomConstructor")
+auto cls_ChildWithCustomConstructor = py::class_<ChildWithCustomConstructor, ::smoke::ParentWithCustomConstructor, std::shared_ptr<ChildWithCustomConstructor>, ChildWithCustomConstructorTrampoline>(module, "smoke_ChildWithCustomConstructor")
         .def("__gluecodium_id__", [](const ChildWithCustomConstructor& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -46,5 +47,6 @@ void register_smoke_ChildWithCustomConstructor(py::module_& module) {
         }))
         .def_static("make", &ChildWithCustomConstructor::make)
         ;
-}
 
+
+}

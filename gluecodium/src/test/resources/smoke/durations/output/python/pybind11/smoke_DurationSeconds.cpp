@@ -23,12 +23,13 @@ namespace py = pybind11;
 #include "unordered_set"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DurationSeconds = ::smoke::DurationSeconds;
+using DurationStruct = ::smoke::DurationSeconds::DurationStruct;
+
 
 
 void register_smoke_DurationSeconds(py::module_& module) {
-    py::class_<DurationSeconds, std::shared_ptr<DurationSeconds>>(module, "smoke_DurationSeconds")
+auto cls_DurationSeconds = py::class_<DurationSeconds, std::shared_ptr<DurationSeconds>>(module, "smoke_DurationSeconds")
         .def("__gluecodium_id__", [](const DurationSeconds& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -36,5 +37,12 @@ void register_smoke_DurationSeconds(py::module_& module) {
         .def("nullable_duration_function", &DurationSeconds::nullable_duration_function, py::arg("input"))
         .def_property("duration_property", py::overload_cast<>(&DurationSeconds::get_duration_property, py::const_), py::overload_cast<const ::std::chrono::seconds>(&DurationSeconds::set_duration_property))
         ;
-}
 
+auto cls_DurationSecondsDurationStruct = py::class_<DurationStruct>(cls_DurationSeconds, "DurationStruct")
+        .def_readwrite("duration_field", &DurationStruct::duration_field)
+        .def(py::init<>())
+        .def(py::init<::std::chrono::seconds>(), py::arg("duration_field"))
+        ;
+
+
+}

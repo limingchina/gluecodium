@@ -20,10 +20,10 @@ class DeclarationOrderWithFunctions(_NativeBase):
 
     class MainStructWithFunctions(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctionsMainStructWithFunctions):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctions.MainStructWithFunctions):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DeclarationOrderWithFunctionsMainStructWithFunctions(
+                super().__init__(generated.smoke_DeclarationOrderWithFunctions.MainStructWithFunctions(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -49,10 +49,10 @@ class DeclarationOrderWithFunctions(_NativeBase):
     
     class FieldStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctionsFieldStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctions.FieldStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DeclarationOrderWithFunctionsFieldStruct(
+                super().__init__(generated.smoke_DeclarationOrderWithFunctions.FieldStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -69,10 +69,10 @@ class DeclarationOrderWithFunctions(_NativeBase):
     
     class ParameterStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctionsParameterStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctions.ParameterStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DeclarationOrderWithFunctionsParameterStruct(
+                super().__init__(generated.smoke_DeclarationOrderWithFunctions.ParameterStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -89,10 +89,10 @@ class DeclarationOrderWithFunctions(_NativeBase):
     
     class ReturnStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctionsReturnStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctions.ReturnStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DeclarationOrderWithFunctionsReturnStruct(
+                super().__init__(generated.smoke_DeclarationOrderWithFunctions.ReturnStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -109,10 +109,10 @@ class DeclarationOrderWithFunctions(_NativeBase):
     
     class ThrownStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctionsThrownStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderWithFunctions.ThrownStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DeclarationOrderWithFunctionsThrownStruct(
+                super().__init__(generated.smoke_DeclarationOrderWithFunctions.ThrownStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

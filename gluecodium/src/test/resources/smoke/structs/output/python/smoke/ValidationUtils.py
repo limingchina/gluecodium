@@ -20,8 +20,8 @@ class ValidationUtils(_NativeBase):
 
     class ValidationErrorCode(Enum):
     
-        NONE = generated.smoke_ValidationUtilsValidationErrorCode.NONE
-        VALIDATION_FAILED = generated.smoke_ValidationUtilsValidationErrorCode.VALIDATION_FAILED
+        NONE = generated.smoke_ValidationUtils.ValidationErrorCode.NONE
+        VALIDATION_FAILED = generated.smoke_ValidationUtils.ValidationErrorCode.VALIDATION_FAILED
     
         @property
         def _native(self):

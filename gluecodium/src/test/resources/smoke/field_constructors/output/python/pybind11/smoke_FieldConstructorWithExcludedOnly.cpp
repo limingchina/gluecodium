@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/FieldConstructorWithExcludedOnly.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldConstructorWithExcludedOnly = ::smoke::FieldConstructorWithExcludedOnly;
 
+
+
 void register_smoke_FieldConstructorWithExcludedOnly(py::module_& module) {
-    py::class_<FieldConstructorWithExcludedOnly>(module, "smoke_FieldConstructorWithExcludedOnly")
+auto cls_FieldConstructorWithExcludedOnly = py::class_<FieldConstructorWithExcludedOnly>(module, "smoke_FieldConstructorWithExcludedOnly")
         .def_readwrite("string_field", &FieldConstructorWithExcludedOnly::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

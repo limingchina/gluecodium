@@ -50,10 +50,10 @@ class TypeDefs(_NativeBase):
 
     class StructHavingAliasFieldDefinedBelow(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeDefsStructHavingAliasFieldDefinedBelow):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeDefs.StructHavingAliasFieldDefinedBelow):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypeDefsStructHavingAliasFieldDefinedBelow(
+                super().__init__(generated.smoke_TypeDefs.StructHavingAliasFieldDefinedBelow(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -70,10 +70,10 @@ class TypeDefs(_NativeBase):
     
     class TestStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeDefsTestStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeDefs.TestStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypeDefsTestStruct(
+                super().__init__(generated.smoke_TypeDefs.TestStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

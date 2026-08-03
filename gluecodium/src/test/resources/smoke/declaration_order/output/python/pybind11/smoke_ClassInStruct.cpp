@@ -15,12 +15,21 @@ namespace py = pybind11;
 #include "functional"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ClassInStruct = ::smoke::ClassInStruct;
+using FooChecker = ::smoke::ClassInStruct::FooChecker;
+
+
 
 void register_smoke_ClassInStruct(py::module_& module) {
-    py::class_<ClassInStruct>(module, "smoke_ClassInStruct")
+auto cls_ClassInStruct = py::class_<ClassInStruct>(module, "smoke_ClassInStruct")
         .def(py::init<>())
         ;
-}
 
+auto cls_ClassInStructFooChecker = py::class_<FooChecker, std::shared_ptr<FooChecker>>(cls_ClassInStruct, "FooChecker")
+        .def("__gluecodium_id__", [](const FooChecker& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        ;
+
+
+}

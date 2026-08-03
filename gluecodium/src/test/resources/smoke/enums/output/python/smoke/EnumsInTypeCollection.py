@@ -20,8 +20,8 @@ class EnumsInTypeCollection(_NativeBase):
 
     class TCEnum(Enum):
     
-        FIRST = generated.smoke_EnumsInTypeCollectionTCEnum.FIRST
-        SECOND = generated.smoke_EnumsInTypeCollectionTCEnum.SECOND
+        FIRST = generated.smoke_EnumsInTypeCollection.TCEnum.FIRST
+        SECOND = generated.smoke_EnumsInTypeCollection.TCEnum.SECOND
     
         @property
         def _native(self):

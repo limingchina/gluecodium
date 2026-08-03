@@ -70,8 +70,8 @@ class Thermometer(_NativeBase):
     class SomeThermometerErrorCode(Enum):
         """Some error code for thermometer."""
     
-        ERROR_NONE = generated.smoke_ThermometerSomeThermometerErrorCode.ERROR_NONE
-        ERROR_FATAL = generated.smoke_ThermometerSomeThermometerErrorCode.ERROR_FATAL
+        ERROR_NONE = generated.smoke_Thermometer.SomeThermometerErrorCode.ERROR_NONE
+        ERROR_FATAL = generated.smoke_Thermometer.SomeThermometerErrorCode.ERROR_FATAL
     
         @property
         def _native(self):

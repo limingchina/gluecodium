@@ -13,14 +13,16 @@
 namespace py = pybind11;
 #include "smoke/Persistence.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Persistence = ::smoke::Persistence;
 
+
+
 void register_smoke_Persistence(py::module_& module) {
-    py::enum_<Persistence>(module, "smoke_Persistence")
+auto cls_Persistence = py::enum_<Persistence>(module, "smoke_Persistence")
         .value("NONE", Persistence::NONE)
         .value("FOR_SESSION", Persistence::FOR_SESSION)
         .value("PERMANENT", Persistence::PERMANENT)
         ;
-}
 
+
+}

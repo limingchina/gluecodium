@@ -13,16 +13,18 @@
 namespace py = pybind11;
 #include "smoke/DartPublicElementsEnabled.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartPublicElementsEnabled = ::smoke::DartPublicElementsEnabled;
 
+
+
 void register_smoke_DartPublicElementsEnabled(py::module_& module) {
-    py::class_<DartPublicElementsEnabled>(module, "smoke_DartPublicElementsEnabled")
+auto cls_DartPublicElementsEnabled = py::class_<DartPublicElementsEnabled>(module, "smoke_DartPublicElementsEnabled")
         .def_readwrite("bool_field", &DartPublicElementsEnabled::bool_field)
         .def(py::init<>())
         .def(py::init([](const bool& bool_field) {
             return DartPublicElementsEnabled(bool_field, ::std::string{});
         }), py::arg("bool_field"))
         ;
-}
 
+
+}

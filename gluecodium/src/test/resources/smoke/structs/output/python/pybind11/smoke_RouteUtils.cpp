@@ -13,12 +13,22 @@
 namespace py = pybind11;
 #include "smoke/RouteUtils.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using RouteUtils = ::smoke::RouteUtils;
+using RouteType = ::smoke::RouteUtils::RouteType;
+
+
 
 void register_smoke_RouteUtils(py::module_& module) {
-    py::class_<RouteUtils>(module, "smoke_RouteUtils")
+auto cls_RouteUtils = py::class_<RouteUtils>(module, "smoke_RouteUtils")
         .def(py::init<>())
         ;
-}
 
+auto cls_RouteUtilsRouteType = py::enum_<RouteType>(cls_RouteUtils, "RouteType")
+        .value("NONE", RouteType::NONE)
+        .value("CAR", RouteType::CAR)
+        .value("PEDESTRIAN", RouteType::PEDESTRIAN)
+        .value("EQUESTRIAN", RouteType::EQUESTRIAN)
+        ;
+
+
+}

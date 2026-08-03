@@ -18,15 +18,17 @@ namespace py = pybind11;
 #include "optional"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MixedCollectionsStruct = ::smoke::MixedCollectionsStruct;
 
+
+
 void register_smoke_MixedCollectionsStruct(py::module_& module) {
-    py::class_<MixedCollectionsStruct>(module, "smoke_MixedCollectionsStruct")
+auto cls_MixedCollectionsStruct = py::class_<MixedCollectionsStruct>(module, "smoke_MixedCollectionsStruct")
         .def_readwrite("almost_dates", &MixedCollectionsStruct::almost_dates)
         .def_readwrite("dates", &MixedCollectionsStruct::dates)
         .def(py::init<>())
         .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("almost_dates"), py::arg("dates"))
         ;
-}
 
+
+}

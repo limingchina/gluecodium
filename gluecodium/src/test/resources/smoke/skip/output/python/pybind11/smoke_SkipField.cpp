@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/SkipField.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipField = ::smoke::SkipField;
 
+
+
 void register_smoke_SkipField(py::module_& module) {
-    py::class_<SkipField>(module, "smoke_SkipField")
+auto cls_SkipField = py::class_<SkipField>(module, "smoke_SkipField")
         .def_readwrite("field", &SkipField::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;
-}
 
+
+}

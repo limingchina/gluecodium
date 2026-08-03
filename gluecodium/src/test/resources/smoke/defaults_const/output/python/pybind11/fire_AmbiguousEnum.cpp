@@ -13,12 +13,14 @@
 namespace py = pybind11;
 #include "fire/AmbiguousEnum.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AmbiguousEnum = ::fire::AmbiguousEnum;
 
+
+
 void register_fire_AmbiguousEnum(py::module_& module) {
-    py::enum_<AmbiguousEnum>(module, "fire_AmbiguousEnum")
+auto cls_AmbiguousEnum = py::enum_<AmbiguousEnum>(module, "fire_AmbiguousEnum")
         .value("DISABLED", AmbiguousEnum::DISABLED)
         ;
-}
 
+
+}

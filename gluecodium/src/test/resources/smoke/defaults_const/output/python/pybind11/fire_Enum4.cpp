@@ -13,13 +13,15 @@
 namespace py = pybind11;
 #include "fire/Enum4.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Enum4 = ::fire::Enum4;
 
+
+
 void register_fire_Enum4(py::module_& module) {
-    py::enum_<Enum4>(module, "fire_Enum4")
+auto cls_Enum4 = py::enum_<Enum4>(module, "fire_Enum4")
         .value("ENABLED", Enum4::ENABLED)
         .value("DISABLED", Enum4::DISABLED)
         ;
-}
 
+
+}

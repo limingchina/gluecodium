@@ -15,11 +15,12 @@ namespace py = pybind11;
 #include "smoke/DurationDefaults.h"
 #include "chrono"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DurationDefaults = ::smoke::DurationDefaults;
 
+
+
 void register_smoke_DurationDefaults(py::module_& module) {
-    py::class_<DurationDefaults>(module, "smoke_DurationDefaults")
+auto cls_DurationDefaults = py::class_<DurationDefaults>(module, "smoke_DurationDefaults")
         .def_readwrite("dayz", &DurationDefaults::dayz)
         .def_readwrite("hourz", &DurationDefaults::hourz)
         .def_readwrite("minutez", &DurationDefaults::minutez)
@@ -30,5 +31,6 @@ void register_smoke_DurationDefaults(py::module_& module) {
         .def(py::init<>())
         .def(py::init<::std::chrono::seconds, ::std::chrono::seconds, ::std::chrono::seconds, std::chrono::seconds, ::std::chrono::milliseconds, ::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("dayz"), py::arg("hourz"), py::arg("minutez"), py::arg("secondz"), py::arg("milliz"), py::arg("microz"), py::arg("nanoz"))
         ;
-}
 
+
+}

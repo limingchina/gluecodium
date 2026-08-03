@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/ExposeStruct.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExposeStruct = ::smoke::ExposeStruct;
 
+
+
 void register_smoke_ExposeStruct(py::module_& module) {
-    py::class_<ExposeStruct>(module, "smoke_ExposeStruct")
+auto cls_ExposeStruct = py::class_<ExposeStruct>(module, "smoke_ExposeStruct")
         .def_readwrite("field", &ExposeStruct::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;
-}
 
+
+}

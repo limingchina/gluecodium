@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "kotlin_smoke/ExternalMarkedAsSerializable.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExternalMarkedAsSerializable = ::kotlin_smoke::ExternalMarkedAsSerializable;
 
+
+
 void register_kotlin_smoke_ExternalMarkedAsSerializable(py::module_& module) {
-    py::class_<ExternalMarkedAsSerializable>(module, "kotlin_smoke_ExternalMarkedAsSerializable")
+auto cls_ExternalMarkedAsSerializable = py::class_<ExternalMarkedAsSerializable>(module, "kotlin_smoke_ExternalMarkedAsSerializable")
         .def_readwrite("field", &ExternalMarkedAsSerializable::field)
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("field"))
         ;
-}
 
+
+}

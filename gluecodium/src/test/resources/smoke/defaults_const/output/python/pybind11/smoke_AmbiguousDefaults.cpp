@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "fire/SomeStruct.h"
 #include "smoke/AmbiguousDefaults.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AmbiguousDefaults = ::smoke::AmbiguousDefaults;
 
+
+
 void register_smoke_AmbiguousDefaults(py::module_& module) {
-    py::class_<AmbiguousDefaults>(module, "smoke_AmbiguousDefaults")
+auto cls_AmbiguousDefaults = py::class_<AmbiguousDefaults>(module, "smoke_AmbiguousDefaults")
         .def_readwrite("field1", &AmbiguousDefaults::field1)
         .def_readwrite("field2", &AmbiguousDefaults::field2)
         .def(py::init<>())
         .def(py::init<::fire::AmbiguousEnum, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;
-}
 
+
+}

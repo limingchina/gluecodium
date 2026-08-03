@@ -14,8 +14,8 @@ class ConstantsInterface(_NativeBase):
 
     class StateEnum(Enum):
     
-        OFF = generated.smoke_ConstantsInterfaceStateEnum.OFF
-        ON = generated.smoke_ConstantsInterfaceStateEnum.ON
+        OFF = generated.smoke_ConstantsInterface.StateEnum.OFF
+        ON = generated.smoke_ConstantsInterface.StateEnum.ON
     
         @property
         def _native(self):

@@ -20,10 +20,10 @@ class DeclarationOrder(_NativeBase):
 
     class MainStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderMainStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrder.MainStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DeclarationOrderMainStruct(
+                super().__init__(generated.smoke_DeclarationOrder.MainStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -72,10 +72,10 @@ class DeclarationOrder(_NativeBase):
     
     class NestedStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrderNestedStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DeclarationOrder.NestedStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DeclarationOrderNestedStruct(
+                super().__init__(generated.smoke_DeclarationOrder.NestedStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -92,8 +92,8 @@ class DeclarationOrder(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = generated.smoke_DeclarationOrderSomeEnum.FOO
-        BAR = generated.smoke_DeclarationOrderSomeEnum.BAR
+        FOO = generated.smoke_DeclarationOrder.SomeEnum.FOO
+        BAR = generated.smoke_DeclarationOrder.SomeEnum.BAR
     
         @property
         def _native(self):

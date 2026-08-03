@@ -15,12 +15,18 @@ namespace py = pybind11;
 #include "smoke/ExternalEquatable.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExternalEquatable = ::smoke::ExternalEquatable;
+using ExternalEquatableStruct = ::smoke::ExternalEquatable::ExternalEquatableStruct;
+
+
 
 void register_smoke_ExternalEquatable(py::module_& module) {
-    py::class_<ExternalEquatable>(module, "smoke_ExternalEquatable")
+auto cls_ExternalEquatable = py::class_<ExternalEquatable>(module, "smoke_ExternalEquatable")
         .def(py::init<>())
         ;
-}
 
+auto cls_ExternalEquatableExternalEquatableStruct = py::class_<ExternalEquatableStruct>(cls_ExternalEquatable, "ExternalEquatableStruct")
+        ;
+
+
+}

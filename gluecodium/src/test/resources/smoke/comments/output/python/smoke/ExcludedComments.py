@@ -35,10 +35,10 @@ class ExcludedComments(_NativeBase):
     class SomeStruct(_NativeBase):
         """This is some very useful struct."""
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ExcludedCommentsSomeStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ExcludedComments.SomeStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_ExcludedCommentsSomeStruct(
+                super().__init__(generated.smoke_ExcludedComments.SomeStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -58,7 +58,7 @@ class ExcludedComments(_NativeBase):
     class SomeEnum(Enum):
         """This is some very useful enum."""
     
-        USELESS = generated.smoke_ExcludedCommentsSomeEnum.USELESS
+        USELESS = generated.smoke_ExcludedComments.SomeEnum.USELESS
     
         @property
         def _native(self):

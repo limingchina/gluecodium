@@ -20,10 +20,10 @@ class Serialization(_NativeBase):
 
     class SerializableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SerializationSerializableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Serialization.SerializableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_SerializationSerializableStruct(
+                super().__init__(generated.smoke_Serialization.SerializableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -160,10 +160,10 @@ class Serialization(_NativeBase):
     
     class NestedSerializableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SerializationNestedSerializableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Serialization.NestedSerializableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_SerializationNestedSerializableStruct(
+                super().__init__(generated.smoke_Serialization.NestedSerializableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -180,8 +180,8 @@ class Serialization(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = generated.smoke_SerializationSomeEnum.FOO
-        BAR = generated.smoke_SerializationSomeEnum.BAR
+        FOO = generated.smoke_Serialization.SomeEnum.FOO
+        BAR = generated.smoke_Serialization.SomeEnum.BAR
     
         @property
         def _native(self):

@@ -14,13 +14,15 @@ namespace py = pybind11;
 #include "smoke/CppRefReturnTypeStruct.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CppRefReturnTypeStruct = ::smoke::CppRefReturnTypeStruct;
 
+
+
 void register_smoke_CppRefReturnTypeStruct(py::module_& module) {
-    py::class_<CppRefReturnTypeStruct>(module, "smoke_CppRefReturnTypeStruct")
+auto cls_CppRefReturnTypeStruct = py::class_<CppRefReturnTypeStruct>(module, "smoke_CppRefReturnTypeStruct")
         .def(py::init<>())
         .def_static("string_ref", &CppRefReturnTypeStruct::string_ref)
         ;
-}
 
+
+}

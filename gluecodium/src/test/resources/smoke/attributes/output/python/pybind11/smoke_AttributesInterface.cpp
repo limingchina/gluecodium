@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/AttributesInterface.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesInterface = ::smoke::AttributesInterface;
 
 class AttributesInterfaceTrampoline : public AttributesInterface {
@@ -54,8 +53,10 @@ public:
     }
 };
 
+
+
 void register_smoke_AttributesInterface(py::module_& module) {
-    py::class_<AttributesInterface, std::shared_ptr<AttributesInterface>, AttributesInterfaceTrampoline>(module, "smoke_AttributesInterface")
+auto cls_AttributesInterface = py::class_<AttributesInterface, std::shared_ptr<AttributesInterface>, AttributesInterfaceTrampoline>(module, "smoke_AttributesInterface")
         .def("__gluecodium_id__", [](const AttributesInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -80,5 +81,6 @@ void register_smoke_AttributesInterface(py::module_& module) {
             self.set_prop(value);
         })
         ;
-}
 
+
+}

@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/fooListener.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using fooListener = ::smoke::fooListener;
 
 class QuxListenerTrampoline : public fooListener {
@@ -39,8 +38,10 @@ public:
     }
 };
 
+
+
 void register_smoke_QuxListener(py::module_& module) {
-    py::class_<fooListener, std::shared_ptr<fooListener>, QuxListenerTrampoline>(module, "smoke_QuxListener")
+auto cls_QuxListener = py::class_<fooListener, std::shared_ptr<fooListener>, QuxListenerTrampoline>(module, "smoke_QuxListener")
         .def("__gluecodium_id__", [](const fooListener& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -60,5 +61,6 @@ void register_smoke_QuxListener(py::module_& module) {
             return self.FooMethod(qux_parameter);
         }, py::arg("qux_parameter"))
         ;
-}
 
+
+}

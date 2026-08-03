@@ -18,15 +18,45 @@ namespace py = pybind11;
 #include "smoke/EnumWrapper.h"
 #include "optional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumDefaults = ::smoke::EnumDefaults;
+using SimpleEnum = ::smoke::EnumDefaults::SimpleEnum;
+using NullableEnum = ::smoke::EnumDefaults::NullableEnum;
+using AliasEnum = ::smoke::EnumDefaults::AliasEnum;
+using WrappedEnum = ::smoke::EnumDefaults::WrappedEnum;
+
 
 
 void register_smoke_EnumDefaults(py::module_& module) {
-    py::class_<EnumDefaults, std::shared_ptr<EnumDefaults>>(module, "smoke_EnumDefaults")
+auto cls_EnumDefaults = py::class_<EnumDefaults, std::shared_ptr<EnumDefaults>>(module, "smoke_EnumDefaults")
         .def("__gluecodium_id__", [](const EnumDefaults& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+auto cls_EnumDefaultsSimpleEnum = py::class_<SimpleEnum>(cls_EnumDefaults, "SimpleEnum")
+        .def_readwrite("enum_field", &SimpleEnum::enum_field)
+        .def(py::init<>())
+        .def(py::init<::fire::Enum1>(), py::arg("enum_field"))
+        ;
+
+auto cls_EnumDefaultsNullableEnum = py::class_<NullableEnum>(cls_EnumDefaults, "NullableEnum")
+        .def_readwrite("enum_field1", &NullableEnum::enum_field1)
+        .def_readwrite("enum_field1", &NullableEnum::enum_field1)
+        .def(py::init<>())
+        .def(py::init<std::optional< ::fire::Enum2 >, std::optional< ::fire::Enum2 >>(), py::arg("enum_field1"), py::arg("enum_field1"))
+        ;
+
+auto cls_EnumDefaultsAliasEnum = py::class_<AliasEnum>(cls_EnumDefaults, "AliasEnum")
+        .def_readwrite("enum_field", &AliasEnum::enum_field)
+        .def(py::init<>())
+        .def(py::init<::fire::Enum3>(), py::arg("enum_field"))
+        ;
+
+auto cls_EnumDefaultsWrappedEnum = py::class_<WrappedEnum>(cls_EnumDefaults, "WrappedEnum")
+        .def_readwrite("struct_field", &WrappedEnum::struct_field)
+        .def(py::init<>())
+        .def(py::init<::smoke::EnumWrapper>(), py::arg("struct_field"))
+        ;
+
+
+}

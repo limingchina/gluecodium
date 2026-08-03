@@ -34,8 +34,8 @@ class Constructors(generated.smoke_Constructors):
 
     class ErrorEnum(Enum):
     
-        NONE = generated.smoke_ConstructorsErrorEnum.NONE
-        CRASHED = generated.smoke_ConstructorsErrorEnum.CRASHED
+        NONE = generated.smoke_Constructors.ErrorEnum.NONE
+        CRASHED = generated.smoke_Constructors.ErrorEnum.CRASHED
     
         @property
         def _native(self):

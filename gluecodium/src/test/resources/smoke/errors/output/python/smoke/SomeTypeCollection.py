@@ -20,8 +20,8 @@ class SomeTypeCollection(_NativeBase):
 
     class SomeTypeCollectionError(Enum):
     
-        ERROR_A = generated.smoke_SomeTypeCollectionSomeTypeCollectionError.ERROR_A
-        ERROR_B = generated.smoke_SomeTypeCollectionSomeTypeCollectionError.ERROR_B
+        ERROR_A = generated.smoke_SomeTypeCollection.SomeTypeCollectionError.ERROR_A
+        ERROR_B = generated.smoke_SomeTypeCollection.SomeTypeCollectionError.ERROR_B
     
         @property
         def _native(self):

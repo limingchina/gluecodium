@@ -15,8 +15,11 @@ namespace py = pybind11;
 #include "cstdint"
 
 
-void register_smoke_DurationExternal(py::module_& module) {
-    py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "smoke_DurationExternal")
-        ;
-}
 
+
+void register_smoke_DurationExternal(py::module_& module) {
+auto cls_DurationExternal = py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "smoke_DurationExternal")
+        ;
+
+
+}

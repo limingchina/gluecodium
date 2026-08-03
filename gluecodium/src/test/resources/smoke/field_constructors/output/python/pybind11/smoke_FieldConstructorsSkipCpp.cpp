@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldConstructorsSkipCpp = ::smoke::FieldConstructorsSkipCpp;
 
+
+
 void register_smoke_FieldConstructorsSkipCpp(py::module_& module) {
-    py::class_<FieldConstructorsSkipCpp>(module, "smoke_FieldConstructorsSkipCpp")
+auto cls_FieldConstructorsSkipCpp = py::class_<FieldConstructorsSkipCpp>(module, "smoke_FieldConstructorsSkipCpp")
         .def_readwrite("string_field", &FieldConstructorsSkipCpp::string_field)
         .def_readwrite("int_field", &FieldConstructorsSkipCpp::int_field)
         .def(py::init<>())
         .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
         ;
-}
 
+
+}

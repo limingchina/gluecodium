@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipFieldInPlatform = ::smoke::SkipFieldInPlatform;
 
+
+
 void register_smoke_SkipFieldInPlatform(py::module_& module) {
-    py::class_<SkipFieldInPlatform>(module, "smoke_SkipFieldInPlatform")
+auto cls_SkipFieldInPlatform = py::class_<SkipFieldInPlatform>(module, "smoke_SkipFieldInPlatform")
         .def_readwrite("int_field", &SkipFieldInPlatform::int_field)
         .def_readwrite("bool_field", &SkipFieldInPlatform::bool_field)
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;
-}
 
+
+}

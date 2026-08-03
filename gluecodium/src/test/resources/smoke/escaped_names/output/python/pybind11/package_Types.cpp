@@ -15,12 +15,36 @@ namespace py = pybind11;
 #include "package/Types.h"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Types = ::package::Types;
+using Struct = ::package::Types::Struct;
+using Enum = ::package::Types::Enum;
+
+
 
 void register_package_Types(py::module_& module) {
-    py::class_<Types>(module, "package_Types")
+auto cls_Types = py::class_<Types>(module, "package_Types")
         .def(py::init<>())
         ;
-}
 
+auto cls_typesstruct = py::class_<Struct>(cls_Types, "Struct")
+        .def_readwrite("null", &Struct::null)
+        .def(py::init<>())
+        .def(py::init<::package::Types::Enum>(), py::arg("null"))
+        ;
+
+auto cls_typesenum = py::enum_<Enum>(cls_Types, "Enum")
+        .value("NA_N", Enum::NA_N)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_Types, "ExceptionError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/ImmutableStructWithDefaults.h"
 #include "smoke/PosDefaultStructWithFieldUsingImmutableStruct.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PosDefaultStructWithFieldUsingImmutableStruct = ::smoke::PosDefaultStructWithFieldUsingImmutableStruct;
 
+
+
 void register_smoke_PosDefaultStructWithFieldUsingImmutableStruct(py::module_& module) {
-    py::class_<PosDefaultStructWithFieldUsingImmutableStruct>(module, "smoke_PosDefaultStructWithFieldUsingImmutableStruct")
+auto cls_PosDefaultStructWithFieldUsingImmutableStruct = py::class_<PosDefaultStructWithFieldUsingImmutableStruct>(module, "smoke_PosDefaultStructWithFieldUsingImmutableStruct")
         .def_readonly("some_field1", &PosDefaultStructWithFieldUsingImmutableStruct::some_field1)
         .def(py::init<>())
         .def(py::init<::smoke::ImmutableStructWithDefaults>(), py::arg("some_field1"))
         ;
-}
 
+
+}

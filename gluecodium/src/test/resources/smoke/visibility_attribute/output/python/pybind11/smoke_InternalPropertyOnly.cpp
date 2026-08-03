@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/InternalPropertyOnly.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InternalPropertyOnly = ::smoke::InternalPropertyOnly;
 
 
+
 void register_smoke_InternalPropertyOnly(py::module_& module) {
-    py::class_<InternalPropertyOnly, std::shared_ptr<InternalPropertyOnly>>(module, "smoke_InternalPropertyOnly")
+auto cls_InternalPropertyOnly = py::class_<InternalPropertyOnly, std::shared_ptr<InternalPropertyOnly>>(module, "smoke_InternalPropertyOnly")
         .def("__gluecodium_id__", [](const InternalPropertyOnly& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

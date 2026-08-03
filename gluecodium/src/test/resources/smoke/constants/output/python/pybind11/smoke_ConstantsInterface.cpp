@@ -13,15 +13,22 @@
 namespace py = pybind11;
 #include "smoke/ConstantsInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ConstantsInterface = ::smoke::ConstantsInterface;
+using StateEnum = ::smoke::ConstantsInterface::StateEnum;
+
 
 
 void register_smoke_ConstantsInterface(py::module_& module) {
-    py::class_<ConstantsInterface, std::shared_ptr<ConstantsInterface>>(module, "smoke_ConstantsInterface")
+auto cls_ConstantsInterface = py::class_<ConstantsInterface, std::shared_ptr<ConstantsInterface>>(module, "smoke_ConstantsInterface")
         .def("__gluecodium_id__", [](const ConstantsInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+auto cls_ConstantsInterfaceStateEnum = py::enum_<StateEnum>(cls_ConstantsInterface, "StateEnum")
+        .value("OFF", StateEnum::OFF)
+        .value("ON", StateEnum::ON)
+        ;
+
+
+}

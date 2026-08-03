@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/UseJavaExternalConst.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseJavaExternalConst = ::smoke::UseJavaExternalConst;
 
+
+
 void register_smoke_UseJavaExternalConst(py::module_& module) {
-    py::class_<UseJavaExternalConst>(module, "smoke_UseJavaExternalConst")
+auto cls_UseJavaExternalConst = py::class_<UseJavaExternalConst>(module, "smoke_UseJavaExternalConst")
         .def_readwrite("string_field", &UseJavaExternalConst::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

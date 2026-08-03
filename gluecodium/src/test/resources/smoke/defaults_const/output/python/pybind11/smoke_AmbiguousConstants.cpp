@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/AmbiguousConstants.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AmbiguousConstants = ::smoke::AmbiguousConstants;
 
 
+
 void register_smoke_AmbiguousConstants(py::module_& module) {
-    py::class_<AmbiguousConstants, std::shared_ptr<AmbiguousConstants>>(module, "smoke_AmbiguousConstants")
+auto cls_AmbiguousConstants = py::class_<AmbiguousConstants, std::shared_ptr<AmbiguousConstants>>(module, "smoke_AmbiguousConstants")
         .def("__gluecodium_id__", [](const AmbiguousConstants& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

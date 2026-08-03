@@ -14,10 +14,10 @@ class SkipTypes(_NativeBase):
 
     class NotInJava(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypesNotInJava):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypes.NotInJava):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_SkipTypesNotInJava(
+                super().__init__(generated.smoke_SkipTypes.NotInJava(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -34,10 +34,10 @@ class SkipTypes(_NativeBase):
     
     class NotInSwift(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypesNotInSwift):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypes.NotInSwift):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_SkipTypesNotInSwift(
+                super().__init__(generated.smoke_SkipTypes.NotInSwift(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -54,10 +54,10 @@ class SkipTypes(_NativeBase):
     
     class NotInDart(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypesNotInDart):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypes.NotInDart):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_SkipTypesNotInDart(
+                super().__init__(generated.smoke_SkipTypes.NotInDart(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -74,10 +74,10 @@ class SkipTypes(_NativeBase):
     
     class NotInKotlin(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypesNotInKotlin):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipTypes.NotInKotlin):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_SkipTypesNotInKotlin(
+                super().__init__(generated.smoke_SkipTypes.NotInKotlin(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

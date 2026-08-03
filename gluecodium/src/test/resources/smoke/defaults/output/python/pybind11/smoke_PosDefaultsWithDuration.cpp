@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "smoke/PosDefaultsWithDuration.h"
 #include "chrono"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PosDefaultsWithDuration = ::smoke::PosDefaultsWithDuration;
 
+
+
 void register_smoke_PosDefaultsWithDuration(py::module_& module) {
-    py::class_<PosDefaultsWithDuration>(module, "smoke_PosDefaultsWithDuration")
+auto cls_PosDefaultsWithDuration = py::class_<PosDefaultsWithDuration>(module, "smoke_PosDefaultsWithDuration")
         .def_readwrite("duration_field", &PosDefaultsWithDuration::duration_field)
         .def_readwrite("nanos_field", &PosDefaultsWithDuration::nanos_field)
         .def(py::init<>())
         .def(py::init<::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("duration_field"), py::arg("nanos_field"))
         ;
-}
 
+
+}

@@ -46,10 +46,10 @@ class NameRules(_NativeBase):
 
     class ExampleStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.namerules_NameRulesExampleStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.namerules_NameRules.ExampleStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.namerules_NameRulesExampleStruct(
+                super().__init__(generated.namerules_NameRules.ExampleStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -74,8 +74,8 @@ class NameRules(_NativeBase):
     
     class ExampleErrorCode(Enum):
     
-        NONE = generated.namerules_NameRulesExampleErrorCode.NONE
-        FATAL = generated.namerules_NameRulesExampleErrorCode.FATAL
+        NONE = generated.namerules_NameRules.ExampleErrorCode.NONE
+        FATAL = generated.namerules_NameRules.ExampleErrorCode.FATAL
     
         @property
         def _native(self):

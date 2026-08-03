@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/ChildClassFromInterface.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildClassFromInterface = ::smoke::ChildClassFromInterface;
 
 class ChildClassFromInterfaceTrampoline : public ChildClassFromInterface {
@@ -62,8 +61,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ChildClassFromInterface(py::module_& module) {
-    py::class_<ChildClassFromInterface, ::smoke::ParentInterface, std::shared_ptr<ChildClassFromInterface>, ChildClassFromInterfaceTrampoline>(module, "smoke_ChildClassFromInterface")
+auto cls_ChildClassFromInterface = py::class_<ChildClassFromInterface, ::smoke::ParentInterface, std::shared_ptr<ChildClassFromInterface>, ChildClassFromInterfaceTrampoline>(module, "smoke_ChildClassFromInterface")
         .def("__gluecodium_id__", [](const ChildClassFromInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -87,5 +88,6 @@ void register_smoke_ChildClassFromInterface(py::module_& module) {
             self.set_root_property(value);
         })
         ;
-}
 
+
+}
