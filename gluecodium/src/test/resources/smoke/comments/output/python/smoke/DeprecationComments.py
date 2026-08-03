@@ -47,9 +47,6 @@ class DeprecationComments(generated.smoke_DeprecationComments):
     def property_but_not_accessors(self, value: str):
         generated.smoke_DeprecationComments.property_but_not_accessors.fset(self, _unwrap(value, str))
 
-    #: This is some very useful constant.
-    VERY_USEFUL = True
-
     class SomeStruct(_NativeBase):
         """This is some very useful struct."""
         def __init__(self, *args, **kwargs):
@@ -75,12 +72,11 @@ class DeprecationComments(generated.smoke_DeprecationComments):
     class SomeEnum(Enum):
         """This is some very useful enum."""
     
-        USELESS = 0
+        USELESS = generated.smoke_DeprecationCommentsSomeEnum.USELESS
     
-    
-    
-    #: This is some very useful typedef.
-    bool = bool
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -92,4 +88,12 @@ class DeprecationComments(generated.smoke_DeprecationComments):
             self.message = message
     
     
+    
+    #: This is some very useful typedef.
+    Usefulness = bool
+    
+    
+
+    #: This is some very useful constant.
+    VERY_USEFUL = True
 

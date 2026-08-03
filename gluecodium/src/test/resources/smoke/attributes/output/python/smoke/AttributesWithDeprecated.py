@@ -26,9 +26,6 @@ class AttributesWithDeprecated(_NativeBase):
     def prop(self, value: str):
         self._native.prop = _unwrap(value, str)
 
-    #: 
-    PI = False
-
     class SomeStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_AttributesWithDeprecatedSomeStruct):
@@ -49,4 +46,7 @@ class AttributesWithDeprecated(_NativeBase):
     
     
     
+
+    #: 
+    PI = False
 

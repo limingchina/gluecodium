@@ -52,8 +52,12 @@ class ExternalClass(generated.smoke_ExternalClass):
     
     class ErrorEnum(Enum):
     
-        NONE = 0
-        CRASHED = 1
+        NONE = generated.smoke_ExternalClassErrorEnum.NONE
+        CRASHED = generated.smoke_ExternalClassErrorEnum.CRASHED
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     

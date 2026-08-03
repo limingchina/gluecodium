@@ -56,18 +56,18 @@ class OuterStruct:
     
     
     
-    OuterStruct.InnerEnum = OuterStruct.InnerEnum
-    
-    
-    
-    InnerLambda = Callable[[], None]
-    
-    
-    
     class InstantiationError(Exception):
         message: str
     
         def __init__(self, message: str) -> None: ...
+    
+    
+    
+    TypeAlias = InnerEnum
+    
+    
+    
+    InnerLambda = Callable[[], None]
     
     
 

@@ -42,20 +42,26 @@ class ErrorsInterface(generated.smoke_ErrorsInterface):
     def method_with_payload_error_and_return_value() -> str:
         return generated.smoke_ErrorsInterface.method_with_payload_error_and_return_value()
 
-    ERROR_MESSAGE = "Some error message constant"
-
     class InternalError(Enum):
     
-        ERROR_NONE = 0
-        ERROR_FATAL = 1
+        ERROR_NONE = generated.smoke_ErrorsInterfaceInternalError.ERROR_NONE
+        ERROR_FATAL = generated.smoke_ErrorsInterfaceInternalError.ERROR_FATAL
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
     class ExternalErrors(Enum):
     
-        NONE = 0
-        BOOM = 1
-        BUST = 2
+        NONE = generated.smoke_ErrorsInterfaceExternalErrors.NONE
+        BOOM = generated.smoke_ErrorsInterfaceExternalErrors.BOOM
+        BUST = generated.smoke_ErrorsInterfaceExternalErrors.BUST
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -74,4 +80,6 @@ class ErrorsInterface(generated.smoke_ErrorsInterface):
             self.message = message
     
     
+
+    ERROR_MESSAGE = "Some error message constant"
 

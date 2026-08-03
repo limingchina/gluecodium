@@ -43,7 +43,7 @@ class Enums:
     
     
     
-    dict[Enums.SimpleEnum, int] = dict[Enums.SimpleEnum, int]
+    ExampleMap = dict[SimpleEnum, int]
     
     
 

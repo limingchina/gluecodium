@@ -33,7 +33,7 @@ class LambdasDeclarationOrder(_NativeBase):
     
     
     
-    SomeCallback = Callable[[LambdasDeclarationOrder.SomeStruct], None]
+    SomeCallback = Callable[[SomeStruct], None]
     
     
 

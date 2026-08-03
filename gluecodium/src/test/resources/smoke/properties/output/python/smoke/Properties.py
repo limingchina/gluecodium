@@ -108,8 +108,12 @@ class Properties(_NativeBase):
     
     class InternalErrorCode(Enum):
     
-        ERROR_NONE = 0
-        ERROR_FATAL = 1
+        ERROR_NONE = generated.smoke_PropertiesInternalErrorCode.ERROR_NONE
+        ERROR_FATAL = generated.smoke_PropertiesInternalErrorCode.ERROR_FATAL
+    
+        @property
+        def _native(self):
+            return self.value
     
     
 

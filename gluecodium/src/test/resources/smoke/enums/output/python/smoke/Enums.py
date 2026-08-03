@@ -62,19 +62,27 @@ class Enums(_NativeBase):
     
     class SimpleEnum(Enum):
     
-        FIRST = 0
-        SECOND = 1
+        FIRST = generated.smoke_EnumsSimpleEnum.FIRST
+        SECOND = generated.smoke_EnumsSimpleEnum.SECOND
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
     class InternalErrorCode(Enum):
     
-        ERROR_NONE = 0
-        ERROR_FATAL = 1
+        ERROR_NONE = generated.smoke_EnumsInternalErrorCode.ERROR_NONE
+        ERROR_FATAL = generated.smoke_EnumsInternalErrorCode.ERROR_FATAL
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    dict[Enums.SimpleEnum, int] = dict[Enums.SimpleEnum, int]
+    ExampleMap = dict[SimpleEnum, int]
     
     
 

@@ -45,11 +45,15 @@ class QuxTypes(_NativeBase):
     
     class QuxEnum(Enum):
     
-        QUX_ITEM = 0
+        QUX_ITEM = generated.smoke_QuxEnum.QUX_ITEM
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    float = float
+    QuxTypedef = float
     
     
 

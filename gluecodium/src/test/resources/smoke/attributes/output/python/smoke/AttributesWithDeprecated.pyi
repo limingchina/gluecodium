@@ -19,13 +19,13 @@ class AttributesWithDeprecated:
     def prop(self, value: str) -> None:
         ...
 
-    #: 
-    PI = False
-
     class SomeStruct:
     
         #: 
         field: str
     
     
+
+    #: 
+    PI = False
 

@@ -9,6 +9,6 @@ import generated
 
 from smoke.PseudoColor import PseudoColor
 
-set[PseudoColor] = set[PseudoColor]
+ExternalSet = set[PseudoColor]
 
 

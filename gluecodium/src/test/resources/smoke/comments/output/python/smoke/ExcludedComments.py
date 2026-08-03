@@ -32,9 +32,6 @@ class ExcludedComments(_NativeBase):
         """Sets some very useful property."""
         self._native.is_some_property = _unwrap(value, bool)
 
-    #: This is some very useful constant.
-    VERY_USEFUL = True
-
     class SomeStruct(_NativeBase):
         """This is some very useful struct."""
         def __init__(self, *args, **kwargs):
@@ -61,17 +58,11 @@ class ExcludedComments(_NativeBase):
     class SomeEnum(Enum):
         """This is some very useful enum."""
     
-        USELESS = 0
+        USELESS = generated.smoke_ExcludedCommentsSomeEnum.USELESS
     
-    
-    
-    #: This is some very useful typealias.
-    bool = bool
-    
-    
-    
-    #: This is some very useful lambda that does it.
-    SomeLambda = Callable[[str, int], float]
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -83,4 +74,17 @@ class ExcludedComments(_NativeBase):
             self.message = message
     
     
+    
+    #: This is some very useful typealias.
+    Usefulness = bool
+    
+    
+    
+    #: This is some very useful lambda that does it.
+    SomeLambda = Callable[[str, int], float]
+    
+    
+
+    #: This is some very useful constant.
+    VERY_USEFUL = True
 

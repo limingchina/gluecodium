@@ -5,8 +5,6 @@ import typing
 
 class CommentsTypeCollection:
 
-    TYPE_COLLECTION_CONSTANT = True
-
     class TypeCollectionStruct:
     
         field: int
@@ -19,7 +17,9 @@ class CommentsTypeCollection:
     
     
     
-    bool = bool
+    TypeCollectionTypedef = bool
     
     
+
+    TYPE_COLLECTION_CONSTANT = True
 

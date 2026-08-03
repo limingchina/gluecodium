@@ -18,5 +18,5 @@ namespace py = pybind11;
 #include "unordered_set"
 
 
-// set[PseudoColor] is a type alias, no binding needed.
+// ExternalSet is a type alias, no binding needed.
 

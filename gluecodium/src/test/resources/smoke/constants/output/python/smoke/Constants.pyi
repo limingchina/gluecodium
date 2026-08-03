@@ -5,6 +5,13 @@ import typing
 
 class Constants:
 
+    class StateEnum(Enum):
+    
+        OFF = 0
+        ON = 1
+    
+    
+
     BOOL_CONSTANT = True
 
     INT_CONSTANT = -11
@@ -18,11 +25,4 @@ class Constants:
     STRING_CONSTANT = "Foo bar"
 
     ENUM_CONSTANT = StateEnum.ON
-
-    class StateEnum(Enum):
-    
-        OFF = 0
-        ON = 1
-    
-    
 

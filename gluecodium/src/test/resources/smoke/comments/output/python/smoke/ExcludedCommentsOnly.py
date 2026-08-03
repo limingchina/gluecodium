@@ -31,9 +31,6 @@ class ExcludedCommentsOnly(_NativeBase):
     def is_some_property(self, value: bool):
         self._native.is_some_property = _unwrap(value, bool)
 
-    #: 
-    VERY_USEFUL = True
-
     class SomeStruct(_NativeBase):
         """"""
         def __init__(self, *args, **kwargs):
@@ -59,17 +56,11 @@ class ExcludedCommentsOnly(_NativeBase):
     class SomeEnum(Enum):
         """"""
     
-        USELESS = 0
+        USELESS = generated.smoke_ExcludedCommentsOnlySomeEnum.USELESS
     
-    
-    
-    #: 
-    bool = bool
-    
-    
-    
-    #: 
-    SomeLambda = Callable[[str, int], float]
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -81,4 +72,17 @@ class ExcludedCommentsOnly(_NativeBase):
             self.message = message
     
     
+    
+    #: 
+    Usefulness = bool
+    
+    
+    
+    #: 
+    SomeLambda = Callable[[str, int], float]
+    
+    
+
+    #: 
+    VERY_USEFUL = True
 

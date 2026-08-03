@@ -19,5 +19,5 @@
   !
   !}}
 {{! Python struct field stub. }}
-{{#ifPredicate this "hasAnyComment"}}    #: {{prefix this "    #: " skipFirstLine=true}}
+{{#ifPredicate this "hasAnyComment"}}    #: {{#resolveName comment}}{{prefix this "    #: " skipFirstLine=true}}{{/resolveName}}
 {{/ifPredicate}}    {{resolveName}}: {{resolveName typeRef}}

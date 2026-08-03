@@ -10,7 +10,7 @@ class ClassInStruct:
     
     
     
-    SomeLambda = Callable[[ClassInStruct.FooChecker], None]
+    SomeLambda = Callable[[FooChecker], None]
     
     
 

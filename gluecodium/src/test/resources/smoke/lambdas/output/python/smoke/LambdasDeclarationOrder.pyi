@@ -12,7 +12,7 @@ class LambdasDeclarationOrder:
     
     
     
-    SomeCallback = Callable[[LambdasDeclarationOrder.SomeStruct], None]
+    SomeCallback = Callable[[SomeStruct], None]
     
     
 

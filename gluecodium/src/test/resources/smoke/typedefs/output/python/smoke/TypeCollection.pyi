@@ -5,8 +5,6 @@ import typing
 
 class TypeCollection:
 
-    INVALID_STORAGE_ID = 0
-
     class Point:
     
         x: float
@@ -21,11 +19,13 @@ class TypeCollection:
     
     
     
-    TypeCollection.Point = TypeCollection.Point
+    PointTypeDef = Point
     
     
     
-    int = int
+    StorageId = int
     
     
+
+    INVALID_STORAGE_ID = 0
 

@@ -51,14 +51,14 @@ class NameRules:
     
     
     
-    list[str] = list[str]
-    
-    
-    
     class ExampleError(Exception):
         message: str
     
         def __init__(self, message: str) -> None: ...
+    
+    
+    
+    StringArray = list[str]
     
     
 

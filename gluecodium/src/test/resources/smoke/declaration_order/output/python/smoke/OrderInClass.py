@@ -86,20 +86,24 @@ class OrderInClass(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_OrderInClassSomeEnum.FOO
+        BAR = generated.smoke_OrderInClassSomeEnum.BAR
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
-    int = int
+    SomeTypeDef = int
     
     
     
-    dict[int, list[OrderInClass.NestedStruct]] = dict[int, list[OrderInClass.NestedStruct]]
+    ErrorCodeToMessageMap = dict[int, list[NestedStruct]]
     
     
     
-    list[OrderInClass.NestedStruct] = list[OrderInClass.NestedStruct]
+    NestedStructArray = list[NestedStruct]
     
     
 

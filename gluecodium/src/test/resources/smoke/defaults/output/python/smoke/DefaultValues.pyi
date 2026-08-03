@@ -79,27 +79,27 @@ class DefaultValues:
     
     
     
-    int = int
+    LongTypedef = int
     
     
     
-    bool = bool
+    BooleanTypedef = bool
     
     
     
-    str = str
+    StringTypedef = str
     
     
     
-    list[float] = list[float]
+    FloatArray = list[float]
     
     
     
-    dict[int, str] = dict[int, str]
+    IdToStringMap = dict[int, str]
     
     
     
-    set[str] = set[str]
+    StringSet = set[str]
     
     
 

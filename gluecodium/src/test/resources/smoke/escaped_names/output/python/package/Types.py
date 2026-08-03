@@ -18,8 +18,6 @@ class Types(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    CONST = Enum.NA_N
-
     class Struct(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.package_typesstruct):
@@ -42,11 +40,11 @@ class Types(_NativeBase):
     
     class Enum(Enum):
     
-        NA_N = 0
+        NA_N = generated.package_typesenum.NA_N
     
-    
-    
-    list[Types.Struct] = list[Types.Struct]
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -57,4 +55,10 @@ class Types(_NativeBase):
             self.message = message
     
     
+    
+    ULong = list[Struct]
+    
+    
+
+    CONST = Enum.NA_N
 

@@ -12,9 +12,9 @@ class StructsWithConstants:
     
         type: RouteUtils.RouteType
     
+    
         DEFAULT_DESCRIPTION = "Nonsense"
     
-        DEFAULT_TYPE = RouteType.EQUESTRIAN
-    
+        DEFAULT_TYPE = RouteUtils.RouteType.EQUESTRIAN
     
 

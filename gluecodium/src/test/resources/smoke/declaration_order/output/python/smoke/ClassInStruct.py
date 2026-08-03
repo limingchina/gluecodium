@@ -25,7 +25,7 @@ class ClassInStruct(_NativeBase):
     
     
     
-    SomeLambda = Callable[[ClassInStruct.FooChecker], None]
+    SomeLambda = Callable[[FooChecker], None]
     
     
 

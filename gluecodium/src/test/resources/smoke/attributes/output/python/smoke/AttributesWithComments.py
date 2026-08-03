@@ -27,9 +27,6 @@ class AttributesWithComments(_NativeBase):
         """Setter comment"""
         self._native.prop = _unwrap(value, str)
 
-    #: Const comment
-    PI = False
-
     class SomeStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_AttributesWithCommentsSomeStruct):
@@ -50,4 +47,7 @@ class AttributesWithComments(_NativeBase):
     
     
     
+
+    #: Const comment
+    PI = False
 

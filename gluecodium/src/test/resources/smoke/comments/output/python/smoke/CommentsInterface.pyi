@@ -55,9 +55,6 @@ class CommentsInterface:
         """Sets some very useful property."""
         ...
 
-    #: This is some very useful constant.
-    VERY_USEFUL = True
-
     class SomeStruct:
         """This is some very useful struct."""
     
@@ -75,7 +72,10 @@ class CommentsInterface:
     
     
     #: This is some very useful typedef.
-    bool = bool
+    Usefulness = bool
     
     
+
+    #: This is some very useful constant.
+    VERY_USEFUL = True
 

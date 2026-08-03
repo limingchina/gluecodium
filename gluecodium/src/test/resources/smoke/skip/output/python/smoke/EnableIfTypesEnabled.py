@@ -18,8 +18,6 @@ class EnableIfTypesEnabled(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    PLACE_HOLDER_ENABLED = True
-
     class EnableMeToo(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnableIfTypesEnabledEnableMeToo):
@@ -42,7 +40,13 @@ class EnableIfTypesEnabled(_NativeBase):
     
     class EnableMe(Enum):
     
-        NOPE = 0
+        NOPE = generated.smoke_EnableIfTypesEnabledEnableMe.NOPE
+    
+        @property
+        def _native(self):
+            return self.value
     
     
+
+    PLACE_HOLDER_ENABLED = True
 

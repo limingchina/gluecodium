@@ -9,6 +9,6 @@ import generated
 
 import datetime
 
-datetime.datetime = datetime.datetime
+FreeTypeDef = datetime.datetime
 
 

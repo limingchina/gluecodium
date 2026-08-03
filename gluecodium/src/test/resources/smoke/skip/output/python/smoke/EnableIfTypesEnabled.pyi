@@ -5,8 +5,6 @@ import typing
 
 class EnableIfTypesEnabled:
 
-    PLACE_HOLDER_ENABLED = True
-
     class EnableMeToo:
     
         field: EnableIfTypesEnabled.EnableMe
@@ -18,4 +16,6 @@ class EnableIfTypesEnabled:
         NOPE = 0
     
     
+
+    PLACE_HOLDER_ENABLED = True
 

@@ -20,13 +20,13 @@ class AttributesWithComments:
         """Setter comment"""
         ...
 
-    #: Const comment
-    PI = False
-
     class SomeStruct:
     
         #: Field comment
         field: str
     
     
+
+    #: Const comment
+    PI = False
 

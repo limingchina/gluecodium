@@ -17,5 +17,5 @@ namespace py = pybind11;
 #include "vector"
 
 
-// list[PseudoColor] is a type alias, no binding needed.
+// ExternalList is a type alias, no binding needed.
 

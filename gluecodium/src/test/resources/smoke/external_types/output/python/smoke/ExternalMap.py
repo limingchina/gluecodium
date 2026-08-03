@@ -10,6 +10,6 @@ import generated
 from smoke.Persistence import Persistence
 from smoke.PseudoColor import PseudoColor
 
-dict[Persistence, PseudoColor] = dict[Persistence, PseudoColor]
+ExternalMap = dict[Persistence, PseudoColor]
 
 

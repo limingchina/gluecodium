@@ -50,27 +50,27 @@ class TypeDefs:
     
     
     
-    float = float
+    NestedIntTypeDef = float
     
     
     
-    float = float
+    PrimitiveTypeDef = float
     
     
     
-    list[TypeDefs.TestStruct] = list[TypeDefs.TestStruct]
+    StructArray = list[TestStruct]
     
     
     
-    list[TypeDefs.TestStruct] = list[TypeDefs.TestStruct]
+    ComplexTypeDef = list[TestStruct]
     
     
     
-    TypeDefs.TestStruct = TypeDefs.TestStruct
+    TestStructTypeDef = TestStruct
     
     
     
-    TypeDefs.TestStruct = TypeDefs.TestStruct
+    NestedStructTypeDef = TestStruct
     
     
 

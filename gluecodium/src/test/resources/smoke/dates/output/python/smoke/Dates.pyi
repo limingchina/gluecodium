@@ -36,15 +36,15 @@ class Dates:
     
     
     
-    datetime.datetime = datetime.datetime
+    DateTypeDef = datetime.datetime
     
     
     
-    list[datetime.datetime] = list[datetime.datetime]
+    DateArray = list[datetime.datetime]
     
     
     
-    dict[str, datetime.datetime] = dict[str, datetime.datetime]
+    DateMap = dict[str, datetime.datetime]
     
     
 

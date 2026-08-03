@@ -9,6 +9,6 @@ import generated
 
 
 #: This is some standalone list typedef.
-list[float] = list[float]
+GlobalListTypeDef = list[float]
 
 

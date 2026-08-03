@@ -18,8 +18,6 @@ class TypeCollection(_NativeBase):
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
 
-    INVALID_STORAGE_ID = 0
-
     class Point(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollectionPoint):
@@ -68,11 +66,13 @@ class TypeCollection(_NativeBase):
     
     
     
-    TypeCollection.Point = TypeCollection.Point
+    PointTypeDef = Point
     
     
     
-    int = int
+    StorageId = int
     
     
+
+    INVALID_STORAGE_ID = 0
 

@@ -37,9 +37,6 @@ class DeprecationCommentsOnly(generated.smoke_DeprecationCommentsOnly):
     def is_some_property(self, value: bool):
         generated.smoke_DeprecationCommentsOnly.is_some_property.fset(self, _unwrap(value, bool))
 
-    #: 
-    VERY_USEFUL = True
-
     class SomeStruct(_NativeBase):
         """"""
         def __init__(self, *args, **kwargs):
@@ -65,12 +62,19 @@ class DeprecationCommentsOnly(generated.smoke_DeprecationCommentsOnly):
     class SomeEnum(Enum):
         """"""
     
-        USELESS = 0
+        USELESS = generated.smoke_DeprecationCommentsOnlySomeEnum.USELESS
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     
     #: 
-    bool = bool
+    Usefulness = bool
     
     
+
+    #: 
+    VERY_USEFUL = True
 

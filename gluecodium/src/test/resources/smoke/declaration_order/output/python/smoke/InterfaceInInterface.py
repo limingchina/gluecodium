@@ -41,7 +41,7 @@ class InterfaceInInterface(generated.smoke_InterfaceInInterface):
     
     
     
-    SomeLambda = Callable[[InterfaceInInterface.FooChecker], None]
+    SomeLambda = Callable[[FooChecker], None]
     
     
 

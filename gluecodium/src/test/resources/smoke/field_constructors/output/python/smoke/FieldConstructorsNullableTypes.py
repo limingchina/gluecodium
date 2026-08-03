@@ -48,8 +48,12 @@ class FieldConstructorsNullableTypes(_NativeBase):
     
     class FoodType(Enum):
     
-        VEGETABLES = 0
-        FRUITS = 1
+        VEGETABLES = generated.smoke_FieldConstructorsNullableTypesFoodType.VEGETABLES
+        FRUITS = generated.smoke_FieldConstructorsNullableTypesFoodType.FRUITS
+    
+        @property
+        def _native(self):
+            return self.value
     
     
 

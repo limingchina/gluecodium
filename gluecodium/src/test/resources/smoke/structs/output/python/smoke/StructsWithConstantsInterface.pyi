@@ -12,15 +12,15 @@ class StructsWithConstantsInterface:
     
         type: RouteUtils.RouteType
     
+    
         DEFAULT_DESCRIPTION = "Foo"
     
-        DEFAULT_TYPE = RouteType.NONE
-    
+        DEFAULT_TYPE = RouteUtils.RouteType.NONE
     
     
     class StructWithConstantsOnly:
     
-        DEFAULT_DESCRIPTION = "Foo"
     
+        DEFAULT_DESCRIPTION = "Foo"
     
 

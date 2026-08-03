@@ -80,14 +80,11 @@ class Comments:
         """Sets the visibility flag that controls if [OnlyGetterProperty] should be visible on the screen."""
         ...
 
-    #: This is some very useful constant.
-    VERY_USEFUL = True
-
     class SomeStruct:
         """This is some very useful struct."""
     
         #: How useful this struct is
-    remains to be seen
+        #: remains to be seen
         some_field: bool
     
         #: Can be `None`
@@ -112,16 +109,6 @@ class Comments:
     
     
     
-    #: This is some very useful typedef.
-    bool = bool
-    
-    
-    
-    #: This is some very useful lambda that does it.
-    SomeLambda = Callable[[str, int], float]
-    
-    
-    
     class SomethingWrongError(Exception):
         """This is some very useful exception."""
         message: str
@@ -129,4 +116,17 @@ class Comments:
         def __init__(self, message: str) -> None: ...
     
     
+    
+    #: This is some very useful typedef.
+    Usefulness = bool
+    
+    
+    
+    #: This is some very useful lambda that does it.
+    SomeLambda = Callable[[str, int], float]
+    
+    
+
+    #: This is some very useful constant.
+    VERY_USEFUL = True
 

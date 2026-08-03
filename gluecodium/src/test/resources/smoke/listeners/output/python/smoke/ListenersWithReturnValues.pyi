@@ -40,7 +40,7 @@ class ListenersWithReturnValues:
     
     
     
-    dict[str, float] = dict[str, float]
+    StringToDouble = dict[str, float]
     
     
 

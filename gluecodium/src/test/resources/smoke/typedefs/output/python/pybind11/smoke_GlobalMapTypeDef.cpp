@@ -18,5 +18,5 @@ namespace py = pybind11;
 #include "unordered_map"
 
 
-// dict[int, str] is a type alias, no binding needed.
+// GlobalMapTypeDef is a type alias, no binding needed.
 

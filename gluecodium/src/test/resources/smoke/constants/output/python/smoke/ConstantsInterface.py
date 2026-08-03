@@ -12,6 +12,17 @@ class ConstantsInterface(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    class StateEnum(Enum):
+    
+        OFF = generated.smoke_ConstantsInterfaceStateEnum.OFF
+        ON = generated.smoke_ConstantsInterfaceStateEnum.ON
+    
+        @property
+        def _native(self):
+            return self.value
+    
+    
+
     BOOL_CONSTANT = True
 
     INT_CONSTANT = -11
@@ -25,11 +36,4 @@ class ConstantsInterface(_NativeBase):
     STRING_CONSTANT = "Foo bar"
 
     ENUM_CONSTANT = StateEnum.ON
-
-    class StateEnum(Enum):
-    
-        OFF = 0
-        ON = 1
-    
-    
 

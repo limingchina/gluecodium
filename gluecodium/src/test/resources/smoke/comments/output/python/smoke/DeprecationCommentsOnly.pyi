@@ -19,9 +19,6 @@ class DeprecationCommentsOnly:
     def is_some_property(self, value: bool) -> None:
         ...
 
-    #: 
-    VERY_USEFUL = True
-
     class SomeStruct:
         """"""
     
@@ -38,7 +35,10 @@ class DeprecationCommentsOnly:
     
     
     #: 
-    bool = bool
+    Usefulness = bool
     
     
+
+    #: 
+    VERY_USEFUL = True
 

@@ -105,7 +105,7 @@ class EnumDefaultsExternal(_NativeBase):
     
     
     
-    ExternalEnum3 = ExternalEnum3
+    EnumAlias = ExternalEnum3
     
     
 

@@ -43,11 +43,11 @@ class MethodOverloads:
     
     
     
-    list[str] = list[str]
+    StringArray = list[str]
     
     
     
-    list[int] = list[int]
+    IntArray = list[int]
     
     
 

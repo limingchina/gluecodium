@@ -74,12 +74,12 @@ class NameRules(_NativeBase):
     
     class ExampleErrorCode(Enum):
     
-        NONE = 0
-        FATAL = 1
+        NONE = generated.namerules_NameRulesExampleErrorCode.NONE
+        FATAL = generated.namerules_NameRulesExampleErrorCode.FATAL
     
-    
-    
-    list[str] = list[str]
+        @property
+        def _native(self):
+            return self.value
     
     
     
@@ -88,6 +88,10 @@ class NameRules(_NativeBase):
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
+    
+    
+    
+    StringArray = list[str]
     
     
 

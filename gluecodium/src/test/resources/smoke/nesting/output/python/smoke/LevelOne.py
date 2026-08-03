@@ -48,13 +48,17 @@ class LevelOne(_NativeBase):
                     native_result = generated.smoke_LevelOneLevelTwoLevelThreeLevelFour.foo_factory()
                     return _get_or_create_wrapper(native_result, LevelOne.LevelTwo.LevelThree.LevelFour)
     
-                FOO = False
     
+                FOO = False
     
     
             class LevelFourEnum(Enum):
     
-                NONE = 0
+                NONE = generated.smoke_LevelOneLevelTwoLevelThreeLevelFourEnum.NONE
+    
+                @property
+                def _native(self):
+                    return self.value
     
     
     

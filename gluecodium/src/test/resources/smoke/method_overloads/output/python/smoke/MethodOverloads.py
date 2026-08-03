@@ -54,11 +54,11 @@ class MethodOverloads(_NativeBase):
     
     
     
-    list[str] = list[str]
+    StringArray = list[str]
     
     
     
-    list[int] = list[int]
+    IntArray = list[int]
     
     
 

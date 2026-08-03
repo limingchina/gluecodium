@@ -56,8 +56,12 @@ class OrderInStruct(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_OrderInStructSomeEnum.FOO
+        BAR = generated.smoke_OrderInStructSomeEnum.BAR
+    
+        @property
+        def _native(self):
+            return self.value
     
     
 

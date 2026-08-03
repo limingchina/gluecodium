@@ -80,8 +80,12 @@ class CppRefReturnType(_NativeBase):
     
     class InternalError(Enum):
     
-        FOO = 0
-        BAR = 1
+        FOO = generated.smoke_CppRefReturnTypeInternalError.FOO
+        BAR = generated.smoke_CppRefReturnTypeInternalError.BAR
+    
+        @property
+        def _native(self):
+            return self.value
     
     
     

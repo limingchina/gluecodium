@@ -24,9 +24,6 @@ class ExcludedCommentsOnly:
     def is_some_property(self, value: bool) -> None:
         ...
 
-    #: 
-    VERY_USEFUL = True
-
     class SomeStruct:
         """"""
     
@@ -42,16 +39,6 @@ class ExcludedCommentsOnly:
     
     
     
-    #: 
-    bool = bool
-    
-    
-    
-    #: 
-    SomeLambda = Callable[[str, int], float]
-    
-    
-    
     class SomethingWrongError(Exception):
         """"""
         message: str
@@ -59,4 +46,17 @@ class ExcludedCommentsOnly:
         def __init__(self, message: str) -> None: ...
     
     
+    
+    #: 
+    Usefulness = bool
+    
+    
+    
+    #: 
+    SomeLambda = Callable[[str, int], float]
+    
+    
+
+    #: 
+    VERY_USEFUL = True
 

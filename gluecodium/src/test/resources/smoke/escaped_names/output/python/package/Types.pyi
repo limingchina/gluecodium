@@ -5,8 +5,6 @@ import typing
 
 class Types:
 
-    CONST = Enum.NA_N
-
     class Struct:
     
         null: Types.Enum
@@ -19,14 +17,16 @@ class Types:
     
     
     
-    list[Types.Struct] = list[Types.Struct]
-    
-    
-    
     class ExceptionError(Exception):
         message: str
     
         def __init__(self, message: str) -> None: ...
     
     
+    
+    ULong = list[Struct]
+    
+    
+
+    CONST = Enum.NA_N
 
