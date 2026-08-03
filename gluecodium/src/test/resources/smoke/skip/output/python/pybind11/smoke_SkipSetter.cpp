@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/SkipSetter.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipSetter = ::smoke::SkipSetter;
 
 class SkipSetterTrampoline : public SkipSetter {
@@ -45,8 +44,10 @@ public:
     }
 };
 
+
+
 void register_smoke_SkipSetter(py::module_& module) {
-    py::class_<SkipSetter, std::shared_ptr<SkipSetter>, SkipSetterTrampoline>(module, "smoke_SkipSetter")
+auto cls_SkipSetter = py::class_<SkipSetter, std::shared_ptr<SkipSetter>, SkipSetterTrampoline>(module, "smoke_SkipSetter")
         .def("__gluecodium_id__", [](const SkipSetter& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -68,5 +69,6 @@ void register_smoke_SkipSetter(py::module_& module) {
             self.set_foo(value);
         })
         ;
-}
 
+
+}

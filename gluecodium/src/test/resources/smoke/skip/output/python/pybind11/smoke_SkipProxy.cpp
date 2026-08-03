@@ -16,7 +16,6 @@ namespace py = pybind11;
 #include "smoke/SkippedEverywhereEnum.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipProxy = ::smoke::SkipProxy;
 
 class SkipProxyTrampoline : public SkipProxy {
@@ -154,8 +153,10 @@ public:
     }
 };
 
+
+
 void register_smoke_SkipProxy(py::module_& module) {
-    py::class_<SkipProxy, std::shared_ptr<SkipProxy>, SkipProxyTrampoline>(module, "smoke_SkipProxy")
+auto cls_SkipProxy = py::class_<SkipProxy, std::shared_ptr<SkipProxy>, SkipProxyTrampoline>(module, "smoke_SkipProxy")
         .def("__gluecodium_id__", [](const SkipProxy& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -204,5 +205,6 @@ void register_smoke_SkipProxy(py::module_& module) {
             self.set_skipped_in_kotlin(value);
         })
         ;
-}
 
+
+}

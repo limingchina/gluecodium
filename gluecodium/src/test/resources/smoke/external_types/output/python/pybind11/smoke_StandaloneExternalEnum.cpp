@@ -13,12 +13,14 @@
 namespace py = pybind11;
 #include "foo/Bar.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StandaloneExternalEnum = ::smoke::StandaloneExternalEnum;
 
+
+
 void register_smoke_StandaloneExternalEnum(py::module_& module) {
-    py::enum_<StandaloneExternalEnum>(module, "smoke_StandaloneExternalEnum")
+auto cls_StandaloneExternalEnum = py::enum_<StandaloneExternalEnum>(module, "smoke_StandaloneExternalEnum")
         .value("FOO", StandaloneExternalEnum::foo)
         ;
-}
 
+
+}

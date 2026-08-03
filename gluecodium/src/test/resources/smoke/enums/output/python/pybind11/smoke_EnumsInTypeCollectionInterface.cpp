@@ -14,16 +14,17 @@ namespace py = pybind11;
 #include "smoke/EnumsInTypeCollection.h"
 #include "smoke/EnumsInTypeCollectionInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumsInTypeCollectionInterface = ::smoke::EnumsInTypeCollectionInterface;
 
 
+
 void register_smoke_EnumsInTypeCollectionInterface(py::module_& module) {
-    py::class_<EnumsInTypeCollectionInterface, std::shared_ptr<EnumsInTypeCollectionInterface>>(module, "smoke_EnumsInTypeCollectionInterface")
+auto cls_EnumsInTypeCollectionInterface = py::class_<EnumsInTypeCollectionInterface, std::shared_ptr<EnumsInTypeCollectionInterface>>(module, "smoke_EnumsInTypeCollectionInterface")
         .def("__gluecodium_id__", [](const EnumsInTypeCollectionInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def_static("flip_enum_value", &EnumsInTypeCollectionInterface::flip_enum_value, py::arg("input"))
         ;
-}
 
+
+}

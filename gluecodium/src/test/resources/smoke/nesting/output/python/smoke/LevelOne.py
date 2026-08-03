@@ -27,10 +27,10 @@ class LevelOne(_NativeBase):
     
             class LevelFour(_NativeBase):
                 def __init__(self, *args, **kwargs):
-                    if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_LevelOneLevelTwoLevelThreeLevelFour):
+                    if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_LevelOne.LevelTwo.LevelThree.LevelFour):
                         super().__init__(args[0])
                     else:
-                        super().__init__(generated.smoke_LevelOneLevelTwoLevelThreeLevelFour(
+                        super().__init__(generated.smoke_LevelOne.LevelTwo.LevelThree.LevelFour(
                             *[_unwrap(arg) for arg in args],
                             **{k: _unwrap(v) for k, v in kwargs.items()}
                         ))
@@ -45,7 +45,7 @@ class LevelOne(_NativeBase):
     
                 @staticmethod
                 def foo_factory() -> LevelOne.LevelTwo.LevelThree.LevelFour:
-                    native_result = generated.smoke_LevelOneLevelTwoLevelThreeLevelFour.foo_factory()
+                    native_result = generated.smoke_LevelOne.LevelTwo.LevelThree.LevelFour.foo_factory()
                     return _get_or_create_wrapper(native_result, LevelOne.LevelTwo.LevelThree.LevelFour)
     
     
@@ -54,7 +54,7 @@ class LevelOne(_NativeBase):
     
             class LevelFourEnum(Enum):
     
-                NONE = generated.smoke_LevelOneLevelTwoLevelThreeLevelFourEnum.NONE
+                NONE = generated.smoke_LevelOne.LevelTwo.LevelThree.LevelFourEnum.NONE
     
                 @property
                 def _native(self):

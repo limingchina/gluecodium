@@ -18,9 +18,10 @@
   ! License-Filename: LICENSE
   !
   !}}
-{{! pybind11 struct binding. }}
-void register_{{registerName}}(py::module_& module) {
-    py::class_<{{resolveName model "Pybind11"}}>(module, "{{registerName}}")
+{{! pybind11 struct binding body — the py::class_ construction and .def() calls. }}
+{{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
+{{#model}}
+auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}")
 {{#unless external.cpp}}
 {{#fields}}
 {{! A skipped field may still be present here (retained for Pybind11StructInit's
@@ -53,4 +54,4 @@ void register_{{registerName}}(py::module_& module) {
 {{/ifPredicate}}
 {{/unless}}
         ;
-}
+{{/model}}

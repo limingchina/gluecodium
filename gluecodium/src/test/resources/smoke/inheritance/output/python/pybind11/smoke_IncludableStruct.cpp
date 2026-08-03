@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/IncludableStruct.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using IncludableStruct = ::smoke::IncludableStruct;
 
+
+
 void register_smoke_IncludableStruct(py::module_& module) {
-    py::class_<IncludableStruct>(module, "smoke_IncludableStruct")
+auto cls_IncludableStruct = py::class_<IncludableStruct>(module, "smoke_IncludableStruct")
         .def_readwrite("field", &IncludableStruct::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;
-}
 
+
+}

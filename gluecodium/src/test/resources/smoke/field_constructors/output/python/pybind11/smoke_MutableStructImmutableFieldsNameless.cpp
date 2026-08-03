@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "smoke/MutableStructImmutableFieldsNameless.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MutableStructImmutableFieldsNameless = ::smoke::MutableStructImmutableFieldsNameless;
 
+
+
 void register_smoke_MutableStructImmutableFieldsNameless(py::module_& module) {
-    py::class_<MutableStructImmutableFieldsNameless>(module, "smoke_MutableStructImmutableFieldsNameless")
+auto cls_MutableStructImmutableFieldsNameless = py::class_<MutableStructImmutableFieldsNameless>(module, "smoke_MutableStructImmutableFieldsNameless")
         .def_readwrite("struct_field", &MutableStructImmutableFieldsNameless::struct_field)
         .def_readwrite("int_field", &MutableStructImmutableFieldsNameless::int_field)
         .def_readwrite("bool_field", &MutableStructImmutableFieldsNameless::bool_field)
         .def(py::init<>())
         ;
-}
 
+
+}

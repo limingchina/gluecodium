@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/PlatformInternalInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PlatformInternalInterface = ::smoke::PlatformInternalInterface;
 
 class PlatformInternalInterfaceTrampoline : public PlatformInternalInterface {
@@ -29,8 +28,10 @@ public:
 
 };
 
+
+
 void register_smoke_PlatformInternalInterface(py::module_& module) {
-    py::class_<PlatformInternalInterface, std::shared_ptr<PlatformInternalInterface>, PlatformInternalInterfaceTrampoline>(module, "smoke_PlatformInternalInterface")
+auto cls_PlatformInternalInterface = py::class_<PlatformInternalInterface, std::shared_ptr<PlatformInternalInterface>, PlatformInternalInterfaceTrampoline>(module, "smoke_PlatformInternalInterface")
         .def("__gluecodium_id__", [](const PlatformInternalInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -47,5 +48,6 @@ void register_smoke_PlatformInternalInterface(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

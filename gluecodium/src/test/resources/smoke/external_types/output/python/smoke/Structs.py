@@ -24,10 +24,10 @@ class Structs(_NativeBase):
 
     class ExternalStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsExternalStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.ExternalStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsExternalStruct(
+                super().__init__(generated.smoke_Structs.ExternalStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -68,10 +68,10 @@ class Structs(_NativeBase):
     
     class AnotherExternalStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_StructsAnotherExternalStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Structs.AnotherExternalStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_StructsAnotherExternalStruct(
+                super().__init__(generated.smoke_Structs.AnotherExternalStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

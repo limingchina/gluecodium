@@ -14,17 +14,18 @@ namespace py = pybind11;
 #include "smoke/AttributesClass.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesClass = ::smoke::AttributesClass;
 
 
+
 void register_smoke_AttributesClass(py::module_& module) {
-    py::class_<AttributesClass, std::shared_ptr<AttributesClass>>(module, "smoke_AttributesClass")
+auto cls_AttributesClass = py::class_<AttributesClass, std::shared_ptr<AttributesClass>>(module, "smoke_AttributesClass")
         .def("__gluecodium_id__", [](const AttributesClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("very_fun", &AttributesClass::very_fun, py::arg("param"))
         .def_property("prop", py::overload_cast<>(&AttributesClass::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesClass::set_prop))
         ;
-}
 
+
+}

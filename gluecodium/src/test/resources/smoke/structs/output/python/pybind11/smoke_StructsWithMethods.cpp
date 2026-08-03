@@ -15,12 +15,28 @@ namespace py = pybind11;
 #include "smoke/ValidationUtils.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructsWithMethods = ::smoke::StructsWithMethods;
+using Vector = ::smoke::StructsWithMethods::Vector;
+
+
 
 void register_smoke_StructsWithMethods(py::module_& module) {
-    py::class_<StructsWithMethods>(module, "smoke_StructsWithMethods")
+auto cls_StructsWithMethods = py::class_<StructsWithMethods>(module, "smoke_StructsWithMethods")
         .def(py::init<>())
         ;
-}
 
+auto cls_StructsWithMethodsVector = py::class_<Vector>(cls_StructsWithMethods, "Vector")
+        .def_readwrite("x", &Vector::x)
+        .def_readwrite("y", &Vector::y)
+        .def(py::init<>())
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        .def("distance_to", &Vector::distance_to, py::arg("other"))
+        .def("add", &Vector::add, py::arg("other"))
+        .def_static("validate", &Vector::validate, py::arg("x"), py::arg("y"))
+        .def_static("create", py::overload_cast<const double, const double>(Vector::create), py::arg("x"), py::arg("y"))
+        .def_static("create", py::overload_cast<const ::smoke::StructsWithMethods::Vector&>(Vector::create), py::arg("other"))
+        .def_static("create", py::overload_cast<const uint64_t>(Vector::create), py::arg("input"))
+        ;
+
+
+}

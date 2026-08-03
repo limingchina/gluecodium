@@ -19,7 +19,7 @@ class CtorLinks(_NativeBase):
     
         @staticmethod
         def create() -> CtorLinks.SingleCtor:
-            native_result = generated.smoke_CtorLinksSingleCtor.create()
+            native_result = generated.smoke_CtorLinks.SingleCtor.create()
             return _get_or_create_wrapper(native_result, CtorLinks.SingleCtor)
     
     
@@ -31,7 +31,7 @@ class CtorLinks(_NativeBase):
     
         @staticmethod
         def create(arg: int) -> CtorLinks.SingleCtorWithOneArgument:
-            native_result = generated.smoke_CtorLinksSingleCtorWithOneArgument.create(_unwrap(arg, int))
+            native_result = generated.smoke_CtorLinks.SingleCtorWithOneArgument.create(_unwrap(arg, int))
             return _get_or_create_wrapper(native_result, CtorLinks.SingleCtorWithOneArgument)
     
     
@@ -43,7 +43,7 @@ class CtorLinks(_NativeBase):
     
         @staticmethod
         def create(arg: int, arg2: str) -> CtorLinks.SingleCtorWithTwoArgument:
-            native_result = generated.smoke_CtorLinksSingleCtorWithTwoArgument.create(_unwrap(arg, int), _unwrap(arg2, str))
+            native_result = generated.smoke_CtorLinks.SingleCtorWithTwoArgument.create(_unwrap(arg, int), _unwrap(arg2, str))
             return _get_or_create_wrapper(native_result, CtorLinks.SingleCtorWithTwoArgument)
     
     
@@ -54,7 +54,7 @@ class CtorLinks(_NativeBase):
     
         @staticmethod
         def create(*args, **kwargs) -> CtorLinks.OverloadedCtors:
-            native_result = generated.smoke_CtorLinksOverloadedCtors.create(*[_unwrap(a) for a in args])
+            native_result = generated.smoke_CtorLinks.OverloadedCtors.create(*[_unwrap(a) for a in args])
             return _get_or_create_wrapper(native_result, CtorLinks.OverloadedCtors)
     
     

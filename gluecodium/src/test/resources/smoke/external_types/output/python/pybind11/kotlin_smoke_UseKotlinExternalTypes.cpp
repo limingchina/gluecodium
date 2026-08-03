@@ -20,12 +20,12 @@ namespace py = pybind11;
 #include "kotlin_smoke/UseKotlinExternalTypes.h"
 #include "kotlin_smoke/VeryBoolean.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseKotlinExternalTypes = ::kotlin_smoke::UseKotlinExternalTypes;
 
 
+
 void register_kotlin_smoke_UseKotlinExternalTypes(py::module_& module) {
-    py::class_<UseKotlinExternalTypes, std::shared_ptr<UseKotlinExternalTypes>>(module, "kotlin_smoke_UseKotlinExternalTypes")
+auto cls_UseKotlinExternalTypes = py::class_<UseKotlinExternalTypes, std::shared_ptr<UseKotlinExternalTypes>>(module, "kotlin_smoke_UseKotlinExternalTypes")
         .def("__gluecodium_id__", [](const UseKotlinExternalTypes& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -37,5 +37,6 @@ void register_kotlin_smoke_UseKotlinExternalTypes(py::module_& module) {
         .def_static("struct_round_trip", &UseKotlinExternalTypes::struct_round_trip, py::arg("input"))
         .def_static("very_boolean_unbox", &UseKotlinExternalTypes::very_boolean_unbox, py::arg("input"))
         ;
-}
 
+
+}

@@ -15,11 +15,12 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AsyncStruct = ::smoke::AsyncStruct;
 
+
+
 void register_smoke_AsyncStruct(py::module_& module) {
-    py::class_<AsyncStruct>(module, "smoke_AsyncStruct")
+auto cls_AsyncStruct = py::class_<AsyncStruct>(module, "smoke_AsyncStruct")
         .def_readwrite("string_field", &AsyncStruct::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
@@ -29,5 +30,6 @@ void register_smoke_AsyncStruct(py::module_& module) {
         .def("async_int_throws", &AsyncStruct::async_int_throws, py::arg("input"))
         .def_static("async_static", &AsyncStruct::async_static, py::arg("input"))
         ;
-}
 
+
+}

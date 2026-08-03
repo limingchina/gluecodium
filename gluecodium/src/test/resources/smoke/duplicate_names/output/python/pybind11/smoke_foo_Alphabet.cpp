@@ -13,14 +13,16 @@
 namespace py = pybind11;
 #include "smoke/foo/Alphabet.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Alphabet = ::smoke::foo::Alphabet;
 
+
+
 void register_smoke_foo_Alphabet(py::module_& module) {
-    py::enum_<Alphabet>(module, "smoke_foo_Alphabet")
+auto cls_Alphabet = py::enum_<Alphabet>(module, "smoke_foo_Alphabet")
         .value("ALPHA", Alphabet::ALPHA)
         .value("BETA", Alphabet::BETA)
         .value("GAMMA", Alphabet::GAMMA)
         ;
-}
 
+
+}

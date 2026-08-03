@@ -14,13 +14,15 @@ namespace py = pybind11;
 #include "smoke/EnumWithToStringHelper.h"
 #include "string_view"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumWithToStringHelper = ::smoke::EnumWithToStringHelper;
 
+
+
 void register_smoke_EnumWithToStringHelper(py::module_& module) {
-    py::enum_<EnumWithToStringHelper>(module, "smoke_EnumWithToStringHelper")
+auto cls_EnumWithToStringHelper = py::enum_<EnumWithToStringHelper>(module, "smoke_EnumWithToStringHelper")
         .value("FIRST", EnumWithToStringHelper::FIRST)
         .value("SECOND", EnumWithToStringHelper::SECOND)
         ;
-}
 
+
+}

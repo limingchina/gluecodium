@@ -15,11 +15,12 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldCustomConstructorsMix = ::smoke::FieldCustomConstructorsMix;
 
+
+
 void register_smoke_FieldCustomConstructorsMix(py::module_& module) {
-    py::class_<FieldCustomConstructorsMix>(module, "smoke_FieldCustomConstructorsMix")
+auto cls_FieldCustomConstructorsMix = py::class_<FieldCustomConstructorsMix>(module, "smoke_FieldCustomConstructorsMix")
         .def_readwrite("string_field", &FieldCustomConstructorsMix::string_field)
         .def_readwrite("int_field", &FieldCustomConstructorsMix::int_field)
         .def_readwrite("bool_field", &FieldCustomConstructorsMix::bool_field)
@@ -27,5 +28,6 @@ void register_smoke_FieldCustomConstructorsMix(py::module_& module) {
         .def(py::init<int32_t>(), py::arg("int_field"))
         .def_static("create_me", &FieldCustomConstructorsMix::create_me, py::arg("int_value"), py::arg("dummy"))
         ;
-}
 
+
+}

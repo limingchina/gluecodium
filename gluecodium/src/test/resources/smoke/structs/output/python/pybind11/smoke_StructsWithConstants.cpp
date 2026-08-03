@@ -15,12 +15,22 @@ namespace py = pybind11;
 #include "smoke/StructsWithConstants.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructsWithConstants = ::smoke::StructsWithConstants;
+using Route = ::smoke::StructsWithConstants::Route;
+
+
 
 void register_smoke_StructsWithConstants(py::module_& module) {
-    py::class_<StructsWithConstants>(module, "smoke_StructsWithConstants")
+auto cls_StructsWithConstants = py::class_<StructsWithConstants>(module, "smoke_StructsWithConstants")
         .def(py::init<>())
         ;
-}
 
+auto cls_StructsWithConstantsRoute = py::class_<Route>(cls_StructsWithConstants, "Route")
+        .def_readwrite("description", &Route::description)
+        .def_readwrite("type", &Route::type)
+        .def(py::init<>())
+        .def(py::init<::std::string, ::smoke::RouteUtils::RouteType>(), py::arg("description"), py::arg("type"))
+        ;
+
+
+}

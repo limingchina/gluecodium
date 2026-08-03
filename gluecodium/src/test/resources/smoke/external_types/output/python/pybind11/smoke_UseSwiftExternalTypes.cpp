@@ -17,12 +17,12 @@ namespace py = pybind11;
 #include "smoke/SwiftSeason.h"
 #include "smoke/UseSwiftExternalTypes.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
 
 
+
 void register_smoke_UseSwiftExternalTypes(py::module_& module) {
-    py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "smoke_UseSwiftExternalTypes")
+auto cls_UseSwiftExternalTypes = py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "smoke_UseSwiftExternalTypes")
         .def("__gluecodium_id__", [](const UseSwiftExternalTypes& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -31,5 +31,6 @@ void register_smoke_UseSwiftExternalTypes(py::module_& module) {
         .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
         .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
         ;
-}
 
+
+}

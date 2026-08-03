@@ -22,12 +22,12 @@ namespace py = pybind11;
 #include "unordered_set"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseDartExternalGenerics = ::smoke::UseDartExternalGenerics;
 
 
+
 void register_smoke_UseDartExternalGenerics(py::module_& module) {
-    py::class_<UseDartExternalGenerics, std::shared_ptr<UseDartExternalGenerics>>(module, "smoke_UseDartExternalGenerics")
+auto cls_UseDartExternalGenerics = py::class_<UseDartExternalGenerics, std::shared_ptr<UseDartExternalGenerics>>(module, "smoke_UseDartExternalGenerics")
         .def("__gluecodium_id__", [](const UseDartExternalGenerics& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -35,5 +35,6 @@ void register_smoke_UseDartExternalGenerics(py::module_& module) {
                         return gluecodium::python::to_python_regular(self.use_generics(list, set));
                 }, py::arg("list"), py::arg("set"))
         ;
-}
 
+
+}

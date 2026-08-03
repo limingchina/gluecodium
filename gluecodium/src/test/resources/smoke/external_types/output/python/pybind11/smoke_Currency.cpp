@@ -15,14 +15,16 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Currency = ::smoke::Currency;
 
+
+
 void register_smoke_Currency(py::module_& module) {
-    py::class_<Currency>(module, "smoke_Currency")
+auto cls_Currency = py::class_<Currency>(module, "smoke_Currency")
         .def_readonly("currency_code", &Currency::currency_code)
         .def_readonly("numeric_code", &Currency::numeric_code)
         .def(py::init<::std::string, int32_t>(), py::arg("currency_code"), py::arg("numeric_code"))
         ;
-}
 
+
+}

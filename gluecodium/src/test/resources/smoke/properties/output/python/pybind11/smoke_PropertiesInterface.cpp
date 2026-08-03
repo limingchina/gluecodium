@@ -13,8 +13,8 @@
 namespace py = pybind11;
 #include "smoke/PropertiesInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PropertiesInterface = ::smoke::PropertiesInterface;
+using ExampleStruct = ::smoke::PropertiesInterface::ExampleStruct;
 
 class PropertiesInterfaceTrampoline : public PropertiesInterface {
 public:
@@ -44,8 +44,10 @@ public:
     }
 };
 
+
+
 void register_smoke_PropertiesInterface(py::module_& module) {
-    py::class_<PropertiesInterface, std::shared_ptr<PropertiesInterface>, PropertiesInterfaceTrampoline>(module, "smoke_PropertiesInterface")
+auto cls_PropertiesInterface = py::class_<PropertiesInterface, std::shared_ptr<PropertiesInterface>, PropertiesInterfaceTrampoline>(module, "smoke_PropertiesInterface")
         .def("__gluecodium_id__", [](const PropertiesInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -67,5 +69,12 @@ void register_smoke_PropertiesInterface(py::module_& module) {
             self.set_struct_property(value);
         })
         ;
-}
 
+auto cls_PropertiesInterfaceExampleStruct = py::class_<ExampleStruct>(cls_PropertiesInterface, "ExampleStruct")
+        .def_readwrite("value", &ExampleStruct::value)
+        .def(py::init<>())
+        .def(py::init<double>(), py::arg("value"))
+        ;
+
+
+}

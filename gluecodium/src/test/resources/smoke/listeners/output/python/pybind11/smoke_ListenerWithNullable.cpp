@@ -15,7 +15,6 @@ namespace py = pybind11;
 #include "cstdint"
 #include "optional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ListenerWithNullable = ::smoke::ListenerWithNullable;
 
 class ListenerWithNullableTrampoline : public ListenerWithNullable {
@@ -119,8 +118,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ListenerWithNullable(py::module_& module) {
-    py::class_<ListenerWithNullable, std::shared_ptr<ListenerWithNullable>, ListenerWithNullableTrampoline>(module, "smoke_ListenerWithNullable")
+auto cls_ListenerWithNullable = py::class_<ListenerWithNullable, std::shared_ptr<ListenerWithNullable>, ListenerWithNullableTrampoline>(module, "smoke_ListenerWithNullable")
         .def("__gluecodium_id__", [](const ListenerWithNullable& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -170,5 +171,6 @@ void register_smoke_ListenerWithNullable(py::module_& module) {
             return self.method_with_double(input);
         }, py::arg("input"))
         ;
-}
 
+
+}

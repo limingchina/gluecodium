@@ -21,12 +21,13 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DatesSteady = ::smoke::DatesSteady;
+using DateStruct = ::smoke::DatesSteady::DateStruct;
+
 
 
 void register_smoke_DatesSteady(py::module_& module) {
-    py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(module, "smoke_DatesSteady")
+auto cls_DatesSteady = py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(module, "smoke_DatesSteady")
         .def("__gluecodium_id__", [](const DatesSteady& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -36,5 +37,14 @@ void register_smoke_DatesSteady(py::module_& module) {
                         return gluecodium::python::to_python_regular(self.date_list_method(input));
                 }, py::arg("input"))
         ;
-}
 
+auto cls_DatesSteadyDateStruct = py::class_<DateStruct>(cls_DatesSteady, "DateStruct")
+        .def_readwrite("date_field", &DateStruct::date_field)
+        .def_readwrite("nullable_date_field", &DateStruct::nullable_date_field)
+        .def(py::init<>())
+        .def(py::init<std::chrono::steady_clock::time_point>(), py::arg("date_field"))
+        .def(py::init<std::chrono::steady_clock::time_point, std::optional< std::chrono::steady_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))
+        ;
+
+
+}

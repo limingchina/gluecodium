@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "dontsmoke/ExternalMarkedAsSerializable.h"
 #include "dontsmoke/SerializableStructWithExternalField.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SerializableStructWithExternalField = ::dontsmoke::SerializableStructWithExternalField;
 
+
+
 void register_dontsmoke_SerializableStructWithExternalField(py::module_& module) {
-    py::class_<SerializableStructWithExternalField>(module, "dontsmoke_SerializableStructWithExternalField")
+auto cls_SerializableStructWithExternalField = py::class_<SerializableStructWithExternalField>(module, "dontsmoke_SerializableStructWithExternalField")
         .def_readwrite("some_struct", &SerializableStructWithExternalField::some_struct)
         .def(py::init<>())
         .def(py::init<::dontsmoke::ExternalMarkedAsSerializable>(), py::arg("some_struct"))
         ;
-}
 
+
+}

@@ -17,12 +17,50 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using TypeCollection = ::smoke::TypeCollection;
+using Point = ::smoke::TypeCollection::Point;
+using Line = ::smoke::TypeCollection::Line;
+using AllTypesStruct = ::smoke::TypeCollection::AllTypesStruct;
+
+
 
 void register_smoke_TypeCollection(py::module_& module) {
-    py::class_<TypeCollection>(module, "smoke_TypeCollection")
+auto cls_TypeCollection = py::class_<TypeCollection>(module, "smoke_TypeCollection")
         .def(py::init<>())
         ;
-}
 
+auto cls_TypeCollectionPoint = py::class_<Point>(cls_TypeCollection, "Point")
+        .def_readwrite("x", &Point::x)
+        .def_readwrite("y", &Point::y)
+        .def(py::init<>())
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        ;
+
+auto cls_TypeCollectionLine = py::class_<Line>(cls_TypeCollection, "Line")
+        .def_readwrite("a", &Line::a)
+        .def_readwrite("b", &Line::b)
+        .def(py::init<>())
+        .def(py::init<::smoke::TypeCollection::Point, ::smoke::TypeCollection::Point>(), py::arg("a"), py::arg("b"))
+        ;
+
+auto cls_TypeCollectionAllTypesStruct = py::class_<AllTypesStruct>(cls_TypeCollection, "AllTypesStruct")
+        .def_readwrite("int8_field", &AllTypesStruct::int8_field)
+        .def_readwrite("uint8_field", &AllTypesStruct::uint8_field)
+        .def_readwrite("int16_field", &AllTypesStruct::int16_field)
+        .def_readwrite("uint16_field", &AllTypesStruct::uint16_field)
+        .def_readwrite("int32_field", &AllTypesStruct::int32_field)
+        .def_readwrite("uint32_field", &AllTypesStruct::uint32_field)
+        .def_readwrite("int64_field", &AllTypesStruct::int64_field)
+        .def_readwrite("uint64_field", &AllTypesStruct::uint64_field)
+        .def_readwrite("float_field", &AllTypesStruct::float_field)
+        .def_readwrite("double_field", &AllTypesStruct::double_field)
+        .def_readwrite("string_field", &AllTypesStruct::string_field)
+        .def_readwrite("boolean_field", &AllTypesStruct::boolean_field)
+        .def_readwrite("bytes_field", &AllTypesStruct::bytes_field)
+        .def_readwrite("point_field", &AllTypesStruct::point_field)
+        .def(py::init<>())
+        .def(py::init<int8_t, uint8_t, int16_t, uint16_t, int32_t, uint32_t, int64_t, uint64_t, float, double, ::std::string, bool, ::std::shared_ptr< ::std::vector< uint8_t > >, ::smoke::TypeCollection::Point>(), py::arg("int8_field"), py::arg("uint8_field"), py::arg("int16_field"), py::arg("uint16_field"), py::arg("int32_field"), py::arg("uint32_field"), py::arg("int64_field"), py::arg("uint64_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("boolean_field"), py::arg("bytes_field"), py::arg("point_field"))
+        ;
+
+
+}

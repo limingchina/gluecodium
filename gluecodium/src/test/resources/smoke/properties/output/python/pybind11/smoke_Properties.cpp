@@ -19,12 +19,14 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Properties = ::smoke::Properties;
+using ExampleStruct = ::smoke::Properties::ExampleStruct;
+using InternalErrorCode = ::smoke::Properties::InternalErrorCode;
+
 
 
 void register_smoke_Properties(py::module_& module) {
-    py::class_<Properties, std::shared_ptr<Properties>>(module, "smoke_Properties")
+auto cls_Properties = py::class_<Properties, std::shared_ptr<Properties>>(module, "smoke_Properties")
         .def("__gluecodium_id__", [](const Properties& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -40,5 +42,17 @@ void register_smoke_Properties(py::module_& module) {
         .def_static("static_property_set", &Properties::set_static_property)
         .def_static("static_readonly_property", &Properties::get_static_readonly_property)
         ;
-}
 
+auto cls_PropertiesExampleStruct = py::class_<ExampleStruct>(cls_Properties, "ExampleStruct")
+        .def_readwrite("value", &ExampleStruct::value)
+        .def(py::init<>())
+        .def(py::init<double>(), py::arg("value"))
+        ;
+
+auto cls_PropertiesInternalErrorCode = py::enum_<InternalErrorCode>(cls_Properties, "InternalErrorCode")
+        .value("ERROR_NONE", InternalErrorCode::ERROR_NONE)
+        .value("ERROR_FATAL", InternalErrorCode::ERROR_FATAL)
+        ;
+
+
+}

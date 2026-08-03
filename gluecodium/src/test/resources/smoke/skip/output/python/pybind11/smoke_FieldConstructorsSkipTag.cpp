@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/FieldConstructorsSkipTag.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldConstructorsSkipTag = ::smoke::FieldConstructorsSkipTag;
 
+
+
 void register_smoke_FieldConstructorsSkipTag(py::module_& module) {
-    py::class_<FieldConstructorsSkipTag>(module, "smoke_FieldConstructorsSkipTag")
+auto cls_FieldConstructorsSkipTag = py::class_<FieldConstructorsSkipTag>(module, "smoke_FieldConstructorsSkipTag")
         .def_readwrite("field1", &FieldConstructorsSkipTag::field1)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field1"))
         ;
-}
 
+
+}

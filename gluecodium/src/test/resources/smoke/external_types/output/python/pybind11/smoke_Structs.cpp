@@ -20,17 +20,25 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Structs = ::smoke::Structs;
+using ExternalStruct = ::smoke::Structs::ExternalStruct;
+
 
 
 void register_smoke_Structs(py::module_& module) {
-    py::class_<Structs, std::shared_ptr<Structs>>(module, "smoke_Structs")
+auto cls_Structs = py::class_<Structs, std::shared_ptr<Structs>>(module, "smoke_Structs")
         .def("__gluecodium_id__", [](const Structs& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def_static("get_external_struct", &Structs::get_external_struct)
         .def_static("get_another_external_struct", &Structs::get_another_external_struct)
         ;
-}
 
+auto cls_StructsExternalStruct = py::class_<ExternalStruct>(cls_Structs, "ExternalStruct")
+        ;
+
+auto cls_StructsAnotherExternalStruct = py::class_<::fire::SomeVeryExternalStruct>(cls_Structs, "AnotherExternalStruct")
+        ;
+
+
+}

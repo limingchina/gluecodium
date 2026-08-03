@@ -15,12 +15,12 @@ namespace py = pybind11;
 #include "cstdint"
 #include "functional"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using OuterClassWithLambdaAndProperty = ::smoke::OuterClassWithLambdaAndProperty;
 
 
+
 void register_smoke_OuterClassWithLambdaAndProperty(py::module_& module) {
-    py::class_<OuterClassWithLambdaAndProperty, std::shared_ptr<OuterClassWithLambdaAndProperty>>(module, "smoke_OuterClassWithLambdaAndProperty")
+auto cls_OuterClassWithLambdaAndProperty = py::class_<OuterClassWithLambdaAndProperty, std::shared_ptr<OuterClassWithLambdaAndProperty>>(module, "smoke_OuterClassWithLambdaAndProperty")
         .def("__gluecodium_id__", [](const OuterClassWithLambdaAndProperty& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -28,5 +28,6 @@ void register_smoke_OuterClassWithLambdaAndProperty(py::module_& module) {
         .def_static("another_integer", &OuterClassWithLambdaAndProperty::get_another_integer)
         .def_static("another_integer_set", &OuterClassWithLambdaAndProperty::set_another_integer)
         ;
-}
 
+
+}

@@ -14,8 +14,9 @@ namespace py = pybind11;
 #include "smoke/DeprecationCommentsOnly.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DeprecationCommentsOnly = ::smoke::DeprecationCommentsOnly;
+using SomeStruct = ::smoke::DeprecationCommentsOnly::SomeStruct;
+using SomeEnum = ::smoke::DeprecationCommentsOnly::SomeEnum;
 
 class DeprecationCommentsOnlyTrampoline : public DeprecationCommentsOnly {
 public:
@@ -53,8 +54,10 @@ public:
     }
 };
 
+
+
 void register_smoke_DeprecationCommentsOnly(py::module_& module) {
-    py::class_<DeprecationCommentsOnly, std::shared_ptr<DeprecationCommentsOnly>, DeprecationCommentsOnlyTrampoline>(module, "smoke_DeprecationCommentsOnly")
+auto cls_DeprecationCommentsOnly = py::class_<DeprecationCommentsOnly, std::shared_ptr<DeprecationCommentsOnly>, DeprecationCommentsOnlyTrampoline>(module, "smoke_DeprecationCommentsOnly")
         .def("__gluecodium_id__", [](const DeprecationCommentsOnly& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -79,5 +82,16 @@ void register_smoke_DeprecationCommentsOnly(py::module_& module) {
             self.set_some_property(value);
         })
         ;
-}
 
+auto cls_DeprecationCommentsOnlySomeStruct = py::class_<SomeStruct>(cls_DeprecationCommentsOnly, "SomeStruct")
+        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def(py::init<>())
+        .def(py::init<bool>(), py::arg("some_field"))
+        ;
+
+auto cls_DeprecationCommentsOnlySomeEnum = py::enum_<SomeEnum>(cls_DeprecationCommentsOnly, "SomeEnum")
+        .value("USELESS", SomeEnum::USELESS)
+        ;
+
+
+}

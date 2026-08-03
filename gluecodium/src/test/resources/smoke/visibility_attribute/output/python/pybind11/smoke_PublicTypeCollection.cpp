@@ -13,12 +13,14 @@
 namespace py = pybind11;
 #include "smoke/PublicTypeCollection.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicTypeCollection = ::smoke::PublicTypeCollection;
 
+
+
 void register_smoke_PublicTypeCollection(py::module_& module) {
-    py::class_<PublicTypeCollection>(module, "smoke_PublicTypeCollection")
+auto cls_PublicTypeCollection = py::class_<PublicTypeCollection>(module, "smoke_PublicTypeCollection")
         .def(py::init<>())
         ;
-}
 
+
+}

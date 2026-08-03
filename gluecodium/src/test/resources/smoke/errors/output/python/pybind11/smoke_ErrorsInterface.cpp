@@ -15,8 +15,9 @@ namespace py = pybind11;
 #include "smoke/Payload.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ErrorsInterface = ::smoke::ErrorsInterface;
+using InternalError = ::smoke::ErrorsInterface::InternalError;
+using ExternalErrors = ::smoke::ErrorsInterface::ExternalErrors;
 
 class ErrorsInterfaceTrampoline : public ErrorsInterface {
 public:
@@ -47,8 +48,8 @@ public:
         }
         PYBIND11_OVERRIDE_PURE(method_with_external_errors_return_type, ErrorsInterface, method_with_external_errors);
     }
-    using method_with_errors_and_return_value_return_type = ::gluecodium::Return< ::std::string, ::std::error_code >;
-    ::gluecodium::Return< ::std::string, ::std::error_code > method_with_errors_and_return_value(
+    using method_with_errors_and_return_value_return_type = ::Return< ::std::string, ::std::error_code >;
+    ::Return< ::std::string, ::std::error_code > method_with_errors_and_return_value(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
@@ -58,8 +59,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ErrorsInterface(py::module_& module) {
-    py::class_<ErrorsInterface, std::shared_ptr<ErrorsInterface>, ErrorsInterfaceTrampoline>(module, "smoke_ErrorsInterface")
+auto cls_ErrorsInterface = py::class_<ErrorsInterface, std::shared_ptr<ErrorsInterface>, ErrorsInterfaceTrampoline>(module, "smoke_ErrorsInterface")
         .def("__gluecodium_id__", [](const ErrorsInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -87,5 +90,37 @@ void register_smoke_ErrorsInterface(py::module_& module) {
         .def_static("method_with_payload_error", &ErrorsInterface::method_with_payload_error)
         .def_static("method_with_payload_error_and_return_value", &ErrorsInterface::method_with_payload_error_and_return_value)
         ;
-}
 
+auto cls_ErrorsInterfaceInternalError = py::enum_<InternalError>(cls_ErrorsInterface, "InternalError")
+        .value("ERROR_NONE", InternalError::ERROR_NONE)
+        .value("ERROR_FATAL", InternalError::ERROR_FATAL)
+        ;
+
+auto cls_ErrorsInterfaceExternalErrors = py::enum_<ExternalErrors>(cls_ErrorsInterface, "ExternalErrors")
+        .value("NONE", ExternalErrors::NONE)
+        .value("BOOM", ExternalErrors::BOOM)
+        .value("BUST", ExternalErrors::BUST)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_ErrorsInterface, "InternalError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+    static py::exception<::std::error_code> exc(cls_ErrorsInterface, "ExternalError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

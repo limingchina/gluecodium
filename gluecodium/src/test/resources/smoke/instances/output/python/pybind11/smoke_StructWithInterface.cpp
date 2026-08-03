@@ -15,14 +15,16 @@ namespace py = pybind11;
 #include "smoke/StructWithInterface.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithInterface = ::smoke::StructWithInterface;
 
+
+
 void register_smoke_StructWithInterface(py::module_& module) {
-    py::class_<StructWithInterface>(module, "smoke_StructWithInterface")
+auto cls_StructWithInterface = py::class_<StructWithInterface>(module, "smoke_StructWithInterface")
         .def_readwrite("interface_instance", &StructWithInterface::interface_instance)
         .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::SimpleInterface >>(), py::arg("interface_instance"))
         ;
-}
 
+
+}

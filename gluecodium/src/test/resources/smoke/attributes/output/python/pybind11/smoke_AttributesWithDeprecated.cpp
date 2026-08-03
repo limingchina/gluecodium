@@ -14,17 +14,25 @@ namespace py = pybind11;
 #include "smoke/AttributesWithDeprecated.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesWithDeprecated = ::smoke::AttributesWithDeprecated;
+using SomeStruct = ::smoke::AttributesWithDeprecated::SomeStruct;
+
 
 
 void register_smoke_AttributesWithDeprecated(py::module_& module) {
-    py::class_<AttributesWithDeprecated, std::shared_ptr<AttributesWithDeprecated>>(module, "smoke_AttributesWithDeprecated")
+auto cls_AttributesWithDeprecated = py::class_<AttributesWithDeprecated, std::shared_ptr<AttributesWithDeprecated>>(module, "smoke_AttributesWithDeprecated")
         .def("__gluecodium_id__", [](const AttributesWithDeprecated& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("very_fun", &AttributesWithDeprecated::very_fun)
         .def_property("prop", py::overload_cast<>(&AttributesWithDeprecated::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithDeprecated::set_prop))
         ;
-}
 
+auto cls_AttributesWithDeprecatedSomeStruct = py::class_<SomeStruct>(cls_AttributesWithDeprecated, "SomeStruct")
+        .def_readwrite("field", &SomeStruct::field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("field"))
+        ;
+
+
+}

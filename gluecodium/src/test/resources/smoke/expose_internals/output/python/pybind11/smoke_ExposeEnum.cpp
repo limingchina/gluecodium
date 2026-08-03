@@ -13,12 +13,14 @@
 namespace py = pybind11;
 #include "smoke/ExposeEnum.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExposeEnum = ::smoke::ExposeEnum;
 
+
+
 void register_smoke_ExposeEnum(py::module_& module) {
-    py::enum_<ExposeEnum>(module, "smoke_ExposeEnum")
+auto cls_ExposeEnum = py::enum_<ExposeEnum>(module, "smoke_ExposeEnum")
         .value("FOO", ExposeEnum::FOO)
         ;
-}
 
+
+}

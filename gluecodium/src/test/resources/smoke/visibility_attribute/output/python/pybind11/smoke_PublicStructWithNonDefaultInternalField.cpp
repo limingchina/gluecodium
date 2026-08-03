@@ -14,11 +14,12 @@ namespace py = pybind11;
 #include "smoke/PublicStructWithNonDefaultInternalField.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicStructWithNonDefaultInternalField = ::smoke::PublicStructWithNonDefaultInternalField;
 
+
+
 void register_smoke_PublicStructWithNonDefaultInternalField(py::module_& module) {
-    py::class_<PublicStructWithNonDefaultInternalField>(module, "smoke_PublicStructWithNonDefaultInternalField")
+auto cls_PublicStructWithNonDefaultInternalField = py::class_<PublicStructWithNonDefaultInternalField>(module, "smoke_PublicStructWithNonDefaultInternalField")
         .def_readwrite("defaulted_field", &PublicStructWithNonDefaultInternalField::defaulted_field)
         .def_readwrite("public_field", &PublicStructWithNonDefaultInternalField::public_field)
         .def(py::init<>())
@@ -29,5 +30,6 @@ void register_smoke_PublicStructWithNonDefaultInternalField(py::module_& module)
             return PublicStructWithNonDefaultInternalField(defaulted_field, ::std::string{}, public_field);
         }), py::arg("defaulted_field"), py::arg("public_field"))
         ;
-}
 
+
+}

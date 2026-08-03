@@ -34,10 +34,10 @@ class Enums(_NativeBase):
 
     class ErrorStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnumsErrorStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Enums.ErrorStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EnumsErrorStruct(
+                super().__init__(generated.smoke_Enums.ErrorStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -62,8 +62,8 @@ class Enums(_NativeBase):
     
     class SimpleEnum(Enum):
     
-        FIRST = generated.smoke_EnumsSimpleEnum.FIRST
-        SECOND = generated.smoke_EnumsSimpleEnum.SECOND
+        FIRST = generated.smoke_Enums.SimpleEnum.FIRST
+        SECOND = generated.smoke_Enums.SimpleEnum.SECOND
     
         @property
         def _native(self):
@@ -73,8 +73,8 @@ class Enums(_NativeBase):
     
     class InternalErrorCode(Enum):
     
-        ERROR_NONE = generated.smoke_EnumsInternalErrorCode.ERROR_NONE
-        ERROR_FATAL = generated.smoke_EnumsInternalErrorCode.ERROR_FATAL
+        ERROR_NONE = generated.smoke_Enums.InternalErrorCode.ERROR_NONE
+        ERROR_FATAL = generated.smoke_Enums.InternalErrorCode.ERROR_FATAL
     
         @property
         def _native(self):

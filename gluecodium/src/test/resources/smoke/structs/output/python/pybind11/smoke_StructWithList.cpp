@@ -15,14 +15,16 @@ namespace py = pybind11;
 #include "smoke/StructWithList.h"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithList = ::smoke::StructWithList;
 
+
+
 void register_smoke_StructWithList(py::module_& module) {
-    py::class_<StructWithList>(module, "smoke_StructWithList")
+auto cls_StructWithList = py::class_<StructWithList>(module, "smoke_StructWithList")
         .def_readwrite("field", &StructWithList::field)
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::StructWithList >>(), py::arg("field"))
         ;
-}
 
+
+}

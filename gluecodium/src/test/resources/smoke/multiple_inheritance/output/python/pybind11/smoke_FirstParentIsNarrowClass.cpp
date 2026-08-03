@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/FirstParentIsNarrowClass.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FirstParentIsNarrowClass = ::smoke::FirstParentIsNarrowClass;
 
 class FirstParentIsNarrowClassTrampoline : public FirstParentIsNarrowClass {
@@ -101,8 +100,10 @@ public:
     }
 };
 
+
+
 void register_smoke_FirstParentIsNarrowClass(py::module_& module) {
-    py::class_<FirstParentIsNarrowClass, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowClass>, FirstParentIsNarrowClassTrampoline>(module, "smoke_FirstParentIsNarrowClass", py::multiple_inheritance())
+auto cls_FirstParentIsNarrowClass = py::class_<FirstParentIsNarrowClass, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowClass>, FirstParentIsNarrowClassTrampoline>(module, "smoke_FirstParentIsNarrowClass", py::multiple_inheritance())
         .def("__gluecodium_id__", [](const FirstParentIsNarrowClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -135,5 +136,6 @@ void register_smoke_FirstParentIsNarrowClass(py::module_& module) {
             self.set_parent_property_two(value);
         })
         ;
-}
 
+
+}

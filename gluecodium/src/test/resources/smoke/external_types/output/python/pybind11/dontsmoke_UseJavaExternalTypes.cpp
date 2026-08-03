@@ -19,12 +19,12 @@ namespace py = pybind11;
 #include "smoke/SystemColor.h"
 #include "smoke/TimeZone.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using UseJavaExternalTypes = ::dontsmoke::UseJavaExternalTypes;
 
 
+
 void register_dontsmoke_UseJavaExternalTypes(py::module_& module) {
-    py::class_<UseJavaExternalTypes, std::shared_ptr<UseJavaExternalTypes>>(module, "dontsmoke_UseJavaExternalTypes")
+auto cls_UseJavaExternalTypes = py::class_<UseJavaExternalTypes, std::shared_ptr<UseJavaExternalTypes>>(module, "dontsmoke_UseJavaExternalTypes")
         .def("__gluecodium_id__", [](const UseJavaExternalTypes& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -35,5 +35,6 @@ void register_dontsmoke_UseJavaExternalTypes(py::module_& module) {
         .def_static("season_round_trip", &UseJavaExternalTypes::season_round_trip, py::arg("input"))
         .def_static("struct_round_trip", &UseJavaExternalTypes::struct_round_trip, py::arg("input"))
         ;
-}
 
+
+}

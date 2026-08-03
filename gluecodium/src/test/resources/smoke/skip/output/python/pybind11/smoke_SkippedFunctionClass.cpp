@@ -14,16 +14,17 @@ namespace py = pybind11;
 #include "dont/smoke/DontSmokeEnum.h"
 #include "smoke/SkippedFunctionClass.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkippedFunctionClass = ::smoke::SkippedFunctionClass;
 
 
+
 void register_smoke_SkippedFunctionClass(py::module_& module) {
-    py::class_<SkippedFunctionClass, std::shared_ptr<SkippedFunctionClass>>(module, "smoke_SkippedFunctionClass")
+auto cls_SkippedFunctionClass = py::class_<SkippedFunctionClass, std::shared_ptr<SkippedFunctionClass>>(module, "smoke_SkippedFunctionClass")
         .def("__gluecodium_id__", [](const SkippedFunctionClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("do_foo", &SkippedFunctionClass::do_foo, py::arg("input"))
         ;
-}
 
+
+}

@@ -20,10 +20,10 @@ class Equatable(_NativeBase):
 
     class EquatableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EquatableEquatableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Equatable.EquatableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EquatableEquatableStruct(
+                super().__init__(generated.smoke_Equatable.EquatableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -120,10 +120,10 @@ class Equatable(_NativeBase):
     
     class EquatableNullableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EquatableEquatableNullableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Equatable.EquatableNullableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EquatableEquatableNullableStruct(
+                super().__init__(generated.smoke_Equatable.EquatableNullableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -212,10 +212,10 @@ class Equatable(_NativeBase):
     
     class NestedEquatableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EquatableNestedEquatableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Equatable.NestedEquatableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EquatableNestedEquatableStruct(
+                super().__init__(generated.smoke_Equatable.NestedEquatableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -240,8 +240,8 @@ class Equatable(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = generated.smoke_EquatableSomeEnum.FOO
-        BAR = generated.smoke_EquatableSomeEnum.BAR
+        FOO = generated.smoke_Equatable.SomeEnum.FOO
+        BAR = generated.smoke_Equatable.SomeEnum.BAR
     
         @property
         def _native(self):

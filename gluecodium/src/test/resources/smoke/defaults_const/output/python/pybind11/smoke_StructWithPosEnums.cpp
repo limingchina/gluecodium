@@ -14,16 +14,18 @@ namespace py = pybind11;
 #include "smoke/SomethingEnum.h"
 #include "smoke/StructWithPosEnums.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithPosEnums = ::smoke::StructWithPosEnums;
 
+
+
 void register_smoke_StructWithPosEnums(py::module_& module) {
-    py::class_<StructWithPosEnums>(module, "smoke_StructWithPosEnums")
+auto cls_StructWithPosEnums = py::class_<StructWithPosEnums>(module, "smoke_StructWithPosEnums")
         .def_readwrite("first_field", &StructWithPosEnums::first_field)
         .def_readwrite("explicit_field", &StructWithPosEnums::explicit_field)
         .def_readwrite("last_field", &StructWithPosEnums::last_field)
         .def(py::init<>())
         .def(py::init<::smoke::SomethingEnum, ::smoke::SomethingEnum, ::smoke::SomethingEnum>(), py::arg("first_field"), py::arg("explicit_field"), py::arg("last_field"))
         ;
-}
 
+
+}

@@ -13,15 +13,17 @@
 namespace py = pybind11;
 #include "kotlin_smoke/Season.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Season = ::kotlin_smoke::Season;
 
+
+
 void register_kotlin_smoke_Season(py::module_& module) {
-    py::enum_<Season>(module, "kotlin_smoke_Season")
+auto cls_Season = py::enum_<Season>(module, "kotlin_smoke_Season")
         .value("WINTER", Season::WINTER)
         .value("SPRING", Season::SPRING)
         .value("SUMMER", Season::SUMMER)
         .value("AUTUMN", Season::AUTUMN)
         ;
-}
 
+
+}

@@ -21,12 +21,12 @@ namespace py = pybind11;
 #include "unordered_map"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Lambdas = ::smoke::Lambdas;
 
 
+
 void register_smoke_Lambdas(py::module_& module) {
-    py::class_<Lambdas, std::shared_ptr<Lambdas>>(module, "smoke_Lambdas")
+auto cls_Lambdas = py::class_<Lambdas, std::shared_ptr<Lambdas>>(module, "smoke_Lambdas")
         .def("__gluecodium_id__", [](const Lambdas& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -37,5 +37,6 @@ void register_smoke_Lambdas(py::module_& module) {
                         return gluecodium::python::to_python_regular(Lambdas::fuse(items, callback));
                 }, py::arg("items"), py::arg("callback"))
         ;
-}
 
+
+}

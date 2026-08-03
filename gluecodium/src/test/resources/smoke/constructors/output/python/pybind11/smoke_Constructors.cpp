@@ -18,8 +18,8 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Constructors = ::smoke::Constructors;
+using ErrorEnum = ::smoke::Constructors::ErrorEnum;
 
 class ConstructorsTrampoline : public Constructors {
 public:
@@ -33,8 +33,10 @@ public:
 
 };
 
+
+
 void register_smoke_Constructors(py::module_& module) {
-    py::class_<Constructors, std::shared_ptr<Constructors>, ConstructorsTrampoline>(module, "smoke_Constructors")
+auto cls_Constructors = py::class_<Constructors, std::shared_ptr<Constructors>, ConstructorsTrampoline>(module, "smoke_Constructors")
         .def("__gluecodium_id__", [](const Constructors& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -57,5 +59,21 @@ void register_smoke_Constructors(py::module_& module) {
             }, py::arg("input"))
         .def_static("create", py::overload_cast<const uint64_t>(Constructors::create), py::arg("input"))
         ;
-}
 
+auto cls_ConstructorsErrorEnum = py::enum_<ErrorEnum>(cls_Constructors, "ErrorEnum")
+        .value("NONE", ErrorEnum::NONE)
+        .value("CRASHED", ErrorEnum::CRASHED)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_Constructors, "ConstructorExplodedError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

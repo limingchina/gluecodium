@@ -15,7 +15,6 @@ namespace py = pybind11;
 #include "memory"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SimpleInterface = ::smoke::SimpleInterface;
 
 class SimpleInterfaceTrampoline : public SimpleInterface {
@@ -47,8 +46,10 @@ public:
     }
 };
 
+
+
 void register_smoke_SimpleInterface(py::module_& module) {
-    py::class_<SimpleInterface, std::shared_ptr<SimpleInterface>, SimpleInterfaceTrampoline>(module, "smoke_SimpleInterface")
+auto cls_SimpleInterface = py::class_<SimpleInterface, std::shared_ptr<SimpleInterface>, SimpleInterfaceTrampoline>(module, "smoke_SimpleInterface")
         .def("__gluecodium_id__", [](const SimpleInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -71,5 +72,6 @@ void register_smoke_SimpleInterface(py::module_& module) {
             return self.use_simple_interface(input);
         }, py::arg("input"))
         ;
-}
 
+
+}

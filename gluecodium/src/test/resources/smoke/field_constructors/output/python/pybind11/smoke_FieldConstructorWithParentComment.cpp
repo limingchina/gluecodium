@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/FieldConstructorWithParentComment.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldConstructorWithParentComment = ::smoke::FieldConstructorWithParentComment;
 
+
+
 void register_smoke_FieldConstructorWithParentComment(py::module_& module) {
-    py::class_<FieldConstructorWithParentComment>(module, "smoke_FieldConstructorWithParentComment")
+auto cls_FieldConstructorWithParentComment = py::class_<FieldConstructorWithParentComment>(module, "smoke_FieldConstructorWithParentComment")
         .def_readwrite("string_field", &FieldConstructorWithParentComment::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

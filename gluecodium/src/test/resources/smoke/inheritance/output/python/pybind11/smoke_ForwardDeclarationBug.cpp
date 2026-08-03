@@ -15,7 +15,6 @@ namespace py = pybind11;
 #include "smoke/ParentClass.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ForwardDeclarationBug = ::smoke::ForwardDeclarationBug;
 
 class ForwardDeclarationBugTrampoline : public ForwardDeclarationBug {
@@ -63,8 +62,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ForwardDeclarationBug(py::module_& module) {
-    py::class_<ForwardDeclarationBug, ::smoke::ParentClass, std::shared_ptr<ForwardDeclarationBug>, ForwardDeclarationBugTrampoline>(module, "smoke_ForwardDeclarationBug")
+auto cls_ForwardDeclarationBug = py::class_<ForwardDeclarationBug, ::smoke::ParentClass, std::shared_ptr<ForwardDeclarationBug>, ForwardDeclarationBugTrampoline>(module, "smoke_ForwardDeclarationBug")
         .def("__gluecodium_id__", [](const ForwardDeclarationBug& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -82,5 +83,6 @@ void register_smoke_ForwardDeclarationBug(py::module_& module) {
         .def("root_method", &ForwardDeclarationBug::root_method)
         .def_property("root_property", py::overload_cast<>(&ForwardDeclarationBug::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ForwardDeclarationBug::set_root_property))
         ;
-}
 
+
+}

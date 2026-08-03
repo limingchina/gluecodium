@@ -125,10 +125,10 @@ class Nullable(_NativeBase):
 
     class SomeStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_NullableSomeStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Nullable.SomeStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_NullableSomeStruct(
+                super().__init__(generated.smoke_Nullable.SomeStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -145,10 +145,10 @@ class Nullable(_NativeBase):
     
     class NullableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_NullableNullableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Nullable.NullableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_NullableNullableStruct(
+                super().__init__(generated.smoke_Nullable.NullableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -229,10 +229,10 @@ class Nullable(_NativeBase):
     
     class NullableIntsStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_NullableNullableIntsStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Nullable.NullableIntsStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_NullableNullableIntsStruct(
+                super().__init__(generated.smoke_Nullable.NullableIntsStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -305,8 +305,8 @@ class Nullable(_NativeBase):
     
     class SomeEnum(Enum):
     
-        ON = generated.smoke_NullableSomeEnum.ON
-        OFF = generated.smoke_NullableSomeEnum.OFF
+        ON = generated.smoke_Nullable.SomeEnum.ON
+        OFF = generated.smoke_Nullable.SomeEnum.OFF
     
         @property
         def _native(self):

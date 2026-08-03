@@ -14,12 +14,12 @@ namespace py = pybind11;
 #include "smoke/SkipPlatforms.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipPlatforms = ::smoke::SkipPlatforms;
 
 
+
 void register_smoke_SkipPlatforms(py::module_& module) {
-    py::class_<SkipPlatforms, std::shared_ptr<SkipPlatforms>>(module, "smoke_SkipPlatforms")
+auto cls_SkipPlatforms = py::class_<SkipPlatforms, std::shared_ptr<SkipPlatforms>>(module, "smoke_SkipPlatforms")
         .def("__gluecodium_id__", [](const SkipPlatforms& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -28,5 +28,6 @@ void register_smoke_SkipPlatforms(py::module_& module) {
         .def_static("not_in_dart", &SkipPlatforms::not_in_dart, py::arg("input"))
         .def_static("not_in_kotlin", &SkipPlatforms::not_in_kotlin, py::arg("input"))
         ;
-}
 
+
+}

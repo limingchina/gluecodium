@@ -15,11 +15,12 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using JavaDeprecatedPosDefaultsCustom = ::smoke::JavaDeprecatedPosDefaultsCustom;
 
+
+
 void register_smoke_JavaDeprecatedPosDefaultsCustom(py::module_& module) {
-    py::class_<JavaDeprecatedPosDefaultsCustom>(module, "smoke_JavaDeprecatedPosDefaultsCustom")
+auto cls_JavaDeprecatedPosDefaultsCustom = py::class_<JavaDeprecatedPosDefaultsCustom>(module, "smoke_JavaDeprecatedPosDefaultsCustom")
         .def_readwrite("first_init_field", &JavaDeprecatedPosDefaultsCustom::first_init_field)
         .def_readwrite("first_free_field", &JavaDeprecatedPosDefaultsCustom::first_free_field)
         .def(py::init<>())
@@ -27,5 +28,6 @@ void register_smoke_JavaDeprecatedPosDefaultsCustom(py::module_& module) {
         .def(py::init<int32_t, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"))
         .def_static("custom", &JavaDeprecatedPosDefaultsCustom::custom)
         ;
-}
 
+
+}

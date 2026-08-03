@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/IncludableClass.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using IncludableClass = ::smoke::IncludableClass;
 
 
+
 void register_smoke_IncludableClass(py::module_& module) {
-    py::class_<IncludableClass, std::shared_ptr<IncludableClass>>(module, "smoke_IncludableClass")
+auto cls_IncludableClass = py::class_<IncludableClass, std::shared_ptr<IncludableClass>>(module, "smoke_IncludableClass")
         .def("__gluecodium_id__", [](const IncludableClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

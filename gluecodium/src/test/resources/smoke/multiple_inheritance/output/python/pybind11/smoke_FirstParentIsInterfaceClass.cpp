@@ -16,7 +16,6 @@ namespace py = pybind11;
 #include "memory"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FirstParentIsInterfaceClass = ::smoke::FirstParentIsInterfaceClass;
 
 class FirstParentIsInterfaceClassTrampoline : public FirstParentIsInterfaceClass {
@@ -112,8 +111,10 @@ public:
     }
 };
 
+
+
 void register_smoke_FirstParentIsInterfaceClass(py::module_& module) {
-    py::class_<FirstParentIsInterfaceClass, ::smoke::ParentInterface, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsInterfaceClass>, FirstParentIsInterfaceClassTrampoline>(module, "smoke_FirstParentIsInterfaceClass", py::multiple_inheritance())
+auto cls_FirstParentIsInterfaceClass = py::class_<FirstParentIsInterfaceClass, ::smoke::ParentInterface, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsInterfaceClass>, FirstParentIsInterfaceClassTrampoline>(module, "smoke_FirstParentIsInterfaceClass", py::multiple_inheritance())
         .def("__gluecodium_id__", [](const FirstParentIsInterfaceClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -149,5 +150,6 @@ void register_smoke_FirstParentIsInterfaceClass(py::module_& module) {
             self.set_parent_property_one(value);
         })
         ;
-}
 
+
+}

@@ -13,11 +13,12 @@
 namespace py = pybind11;
 #include "smoke/DartColor.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartColor = ::smoke::DartColor;
 
+
+
 void register_smoke_DartColor(py::module_& module) {
-    py::class_<DartColor>(module, "smoke_DartColor")
+auto cls_DartColor = py::class_<DartColor>(module, "smoke_DartColor")
         .def_readwrite("red", &DartColor::red)
         .def_readwrite("green", &DartColor::green)
         .def_readwrite("blue", &DartColor::blue)
@@ -28,5 +29,6 @@ void register_smoke_DartColor(py::module_& module) {
         .def("__eq__", [](const DartColor& lhs, const DartColor& rhs) { return lhs == rhs; })
         .def("__hash__", [](const DartColor& self) { return gluecodium::hash<DartColor>{}(self); })
         ;
-}
 
+
+}

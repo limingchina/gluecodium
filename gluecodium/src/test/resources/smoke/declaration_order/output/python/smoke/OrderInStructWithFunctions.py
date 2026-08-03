@@ -31,10 +31,10 @@ class OrderInStructWithFunctions(_NativeBase):
 
     class NestedStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_OrderInStructWithFunctionsNestedStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_OrderInStructWithFunctions.NestedStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_OrderInStructWithFunctionsNestedStruct(
+                super().__init__(generated.smoke_OrderInStructWithFunctions.NestedStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -51,8 +51,8 @@ class OrderInStructWithFunctions(_NativeBase):
     
     class SomeEnum(Enum):
     
-        FOO = generated.smoke_OrderInStructWithFunctionsSomeEnum.FOO
-        BAR = generated.smoke_OrderInStructWithFunctionsSomeEnum.BAR
+        FOO = generated.smoke_OrderInStructWithFunctions.SomeEnum.FOO
+        BAR = generated.smoke_OrderInStructWithFunctions.SomeEnum.BAR
     
         @property
         def _native(self):

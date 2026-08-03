@@ -13,14 +13,23 @@
 namespace py = pybind11;
 #include "smoke/OuterStructWithFieldConstructor.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using OuterStructWithFieldConstructor = ::smoke::OuterStructWithFieldConstructor;
+using InnerStructWithDefaults = ::smoke::OuterStructWithFieldConstructor::InnerStructWithDefaults;
+
+
 
 void register_smoke_OuterStructWithFieldConstructor(py::module_& module) {
-    py::class_<OuterStructWithFieldConstructor>(module, "smoke_OuterStructWithFieldConstructor")
+auto cls_OuterStructWithFieldConstructor = py::class_<OuterStructWithFieldConstructor>(module, "smoke_OuterStructWithFieldConstructor")
         .def_readwrite("outer_struct_field", &OuterStructWithFieldConstructor::outer_struct_field)
         .def(py::init<>())
         .def(py::init<::smoke::OuterStructWithFieldConstructor::InnerStructWithDefaults>(), py::arg("outer_struct_field"))
         ;
-}
 
+auto cls_OuterStructWithFieldConstructorInnerStructWithDefaults = py::class_<InnerStructWithDefaults>(cls_OuterStructWithFieldConstructor, "InnerStructWithDefaults")
+        .def_readwrite("inner_struct_field", &InnerStructWithDefaults::inner_struct_field)
+        .def(py::init<>())
+        .def(py::init<double>(), py::arg("inner_struct_field"))
+        ;
+
+
+}

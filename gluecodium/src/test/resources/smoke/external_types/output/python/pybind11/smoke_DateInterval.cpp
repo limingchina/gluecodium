@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "smoke/DateInterval.h"
 #include "chrono"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DateInterval = ::smoke::DateInterval;
 
+
+
 void register_smoke_DateInterval(py::module_& module) {
-    py::class_<DateInterval>(module, "smoke_DateInterval")
+auto cls_DateInterval = py::class_<DateInterval>(module, "smoke_DateInterval")
         .def_readwrite("start", &DateInterval::start)
         .def_readwrite("end", &DateInterval::end)
         .def(py::init<>())
         .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("start"), py::arg("end"))
         ;
-}
 
+
+}

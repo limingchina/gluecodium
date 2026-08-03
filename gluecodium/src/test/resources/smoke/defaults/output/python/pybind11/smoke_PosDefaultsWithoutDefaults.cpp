@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/PosDefaultsWithoutDefaults.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PosDefaultsWithoutDefaults = ::smoke::PosDefaultsWithoutDefaults;
 
+
+
 void register_smoke_PosDefaultsWithoutDefaults(py::module_& module) {
-    py::class_<PosDefaultsWithoutDefaults>(module, "smoke_PosDefaultsWithoutDefaults")
+auto cls_PosDefaultsWithoutDefaults = py::class_<PosDefaultsWithoutDefaults>(module, "smoke_PosDefaultsWithoutDefaults")
         .def_readwrite("string_field", &PosDefaultsWithoutDefaults::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

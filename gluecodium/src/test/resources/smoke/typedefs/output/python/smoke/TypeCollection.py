@@ -20,10 +20,10 @@ class TypeCollection(_NativeBase):
 
     class Point(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollectionPoint):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollection.Point):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypeCollectionPoint(
+                super().__init__(generated.smoke_TypeCollection.Point(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -48,10 +48,10 @@ class TypeCollection(_NativeBase):
     
     class StructHavingAliasFieldDefinedBelow(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollectionStructHavingAliasFieldDefinedBelow):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollection.StructHavingAliasFieldDefinedBelow):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypeCollectionStructHavingAliasFieldDefinedBelow(
+                super().__init__(generated.smoke_TypeCollection.StructHavingAliasFieldDefinedBelow(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

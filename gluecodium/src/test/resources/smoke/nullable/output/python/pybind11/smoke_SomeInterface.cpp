@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/SomeInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SomeInterface = ::smoke::SomeInterface;
 
 
+
 void register_smoke_SomeInterface(py::module_& module) {
-    py::class_<SomeInterface, std::shared_ptr<SomeInterface>>(module, "smoke_SomeInterface")
+auto cls_SomeInterface = py::class_<SomeInterface, std::shared_ptr<SomeInterface>>(module, "smoke_SomeInterface")
         .def("__gluecodium_id__", [](const SomeInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

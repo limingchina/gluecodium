@@ -15,12 +15,12 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using BasicTypes = ::smoke::BasicTypes;
 
 
+
 void register_smoke_BasicTypes(py::module_& module) {
-    py::class_<BasicTypes, std::shared_ptr<BasicTypes>>(module, "smoke_BasicTypes")
+auto cls_BasicTypes = py::class_<BasicTypes, std::shared_ptr<BasicTypes>>(module, "smoke_BasicTypes")
         .def("__gluecodium_id__", [](const BasicTypes& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -37,5 +37,6 @@ void register_smoke_BasicTypes(py::module_& module) {
         .def_static("uint_function", &BasicTypes::uint_function, py::arg("input"))
         .def_static("ulong_function", &BasicTypes::ulong_function, py::arg("input"))
         ;
-}
 
+
+}

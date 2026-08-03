@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/CommentsTableLinks.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CommentsTableLinks = ::smoke::CommentsTableLinks;
 
 
+
 void register_smoke_CommentsTableLinks(py::module_& module) {
-    py::class_<CommentsTableLinks, std::shared_ptr<CommentsTableLinks>>(module, "smoke_CommentsTableLinks")
+auto cls_CommentsTableLinks = py::class_<CommentsTableLinks, std::shared_ptr<CommentsTableLinks>>(module, "smoke_CommentsTableLinks")
         .def("__gluecodium_id__", [](const CommentsTableLinks& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

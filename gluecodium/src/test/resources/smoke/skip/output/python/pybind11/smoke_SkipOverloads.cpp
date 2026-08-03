@@ -13,15 +13,17 @@
 namespace py = pybind11;
 #include "smoke/SkipOverloads.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipOverloads = ::smoke::SkipOverloads;
 
+
+
 void register_smoke_SkipOverloads(py::module_& module) {
-    py::class_<SkipOverloads>(module, "smoke_SkipOverloads")
+auto cls_SkipOverloads = py::class_<SkipOverloads>(module, "smoke_SkipOverloads")
         .def_readwrite("dummy", &SkipOverloads::dummy)
         .def(py::init<>())
         .def(py::init<double>(), py::arg("dummy"))
         .def("do_foo", &SkipOverloads::do_foo, py::arg("input"))
         ;
-}
 
+
+}

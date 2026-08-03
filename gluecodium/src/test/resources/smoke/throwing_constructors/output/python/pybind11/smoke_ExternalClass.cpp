@@ -15,8 +15,10 @@ namespace py = pybind11;
 #include "cstdint"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExternalClass = ::smoke::ExternalClass;
+using InternalOne = ::smoke::ExternalClass::InternalOne;
+using InternalTwo = ::smoke::ExternalClass::InternalTwo;
+using ErrorEnum = ::smoke::ExternalClass::ErrorEnum;
 
 class ExternalClassTrampoline : public ExternalClass {
 public:
@@ -30,8 +32,10 @@ public:
 
 };
 
+
+
 void register_smoke_ExternalClass(py::module_& module) {
-    py::class_<ExternalClass, std::shared_ptr<ExternalClass>, ExternalClassTrampoline>(module, "smoke_ExternalClass")
+auto cls_ExternalClass = py::class_<ExternalClass, std::shared_ptr<ExternalClass>, ExternalClassTrampoline>(module, "smoke_ExternalClass")
         .def("__gluecodium_id__", [](const ExternalClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -47,5 +51,36 @@ void register_smoke_ExternalClass(py::module_& module) {
         }))
         .def_static("create", &ExternalClass::create)
         ;
-}
 
+auto cls_ExternalClassInternalOne = py::class_<InternalOne, std::shared_ptr<InternalOne>>(cls_ExternalClass, "InternalOne")
+        .def("__gluecodium_id__", [](const InternalOne& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def_static("create", py::overload_cast<>(InternalOne::create))
+        .def_static("create", py::overload_cast<const uint64_t>(InternalOne::create), py::arg("value"))
+        ;
+
+auto cls_ExternalClassInternalTwo = py::class_<InternalTwo, std::shared_ptr<InternalTwo>>(cls_ExternalClass, "InternalTwo")
+        .def("__gluecodium_id__", [](const InternalTwo& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def_static("create", &InternalTwo::create)
+        ;
+
+auto cls_ExternalClassErrorEnum = py::enum_<ErrorEnum>(cls_ExternalClass, "ErrorEnum")
+        .value("NONE", ErrorEnum::NONE)
+        .value("CRASHED", ErrorEnum::CRASHED)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_ExternalClass, "ConstructorExplodedError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

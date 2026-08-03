@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/InterfaceWithOverloads.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InterfaceWithOverloads = ::smoke::InterfaceWithOverloads;
 
 class InterfaceWithOverloadsTrampoline : public InterfaceWithOverloads {
@@ -48,8 +47,10 @@ public:
     }
 };
 
+
+
 void register_smoke_InterfaceWithOverloads(py::module_& module) {
-    py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "smoke_InterfaceWithOverloads")
+auto cls_InterfaceWithOverloads = py::class_<InterfaceWithOverloads, std::shared_ptr<InterfaceWithOverloads>, InterfaceWithOverloadsTrampoline>(module, "smoke_InterfaceWithOverloads")
         .def("__gluecodium_id__", [](const InterfaceWithOverloads& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -72,5 +73,6 @@ void register_smoke_InterfaceWithOverloads(py::module_& module) {
             return self.parent_method(input);
         }, py::arg("input"))
         ;
-}
 
+
+}

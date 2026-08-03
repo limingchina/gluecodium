@@ -30,10 +30,10 @@ class PlatformComments(_NativeBase):
     class Something(_NativeBase):
         """This is a."""
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PlatformCommentssomething):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PlatformComments.Something):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_PlatformCommentssomething(
+                super().__init__(generated.smoke_PlatformComments.Something(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -50,8 +50,8 @@ class PlatformComments(_NativeBase):
     
     class SomeEnum(Enum):
     
-        USELESS = generated.smoke_PlatformCommentsSomeEnum.USELESS
-        USEFUL = generated.smoke_PlatformCommentsSomeEnum.USEFUL
+        USELESS = generated.smoke_PlatformComments.SomeEnum.USELESS
+        USEFUL = generated.smoke_PlatformComments.SomeEnum.USEFUL
     
         @property
         def _native(self):

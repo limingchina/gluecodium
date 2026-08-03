@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/ChildClassFromClass.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildClassFromClass = ::smoke::ChildClassFromClass;
 
 class ChildClassFromClassTrampoline : public ChildClassFromClass {
@@ -61,8 +60,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ChildClassFromClass(py::module_& module) {
-    py::class_<ChildClassFromClass, ::smoke::ParentClass, std::shared_ptr<ChildClassFromClass>, ChildClassFromClassTrampoline>(module, "smoke_ChildClassFromClass")
+auto cls_ChildClassFromClass = py::class_<ChildClassFromClass, ::smoke::ParentClass, std::shared_ptr<ChildClassFromClass>, ChildClassFromClassTrampoline>(module, "smoke_ChildClassFromClass")
         .def("__gluecodium_id__", [](const ChildClassFromClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -80,5 +81,6 @@ void register_smoke_ChildClassFromClass(py::module_& module) {
         .def("root_method", &ChildClassFromClass::root_method)
         .def_property("root_property", py::overload_cast<>(&ChildClassFromClass::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ChildClassFromClass::set_root_property))
         ;
-}
 
+
+}

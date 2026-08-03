@@ -20,10 +20,10 @@ class TypeCollection(_NativeBase):
 
     class Point(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollectionPoint):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollection.Point):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypeCollectionPoint(
+                super().__init__(generated.smoke_TypeCollection.Point(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -48,10 +48,10 @@ class TypeCollection(_NativeBase):
     
     class Line(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollectionLine):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollection.Line):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypeCollectionLine(
+                super().__init__(generated.smoke_TypeCollection.Line(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -76,10 +76,10 @@ class TypeCollection(_NativeBase):
     
     class AllTypesStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollectionAllTypesStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeCollection.AllTypesStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypeCollectionAllTypesStruct(
+                super().__init__(generated.smoke_TypeCollection.AllTypesStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

@@ -33,10 +33,10 @@ class OuterStruct(_NativeBase):
 
     class InnerStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_OuterStructInnerStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_OuterStruct.InnerStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_OuterStructInnerStruct(
+                super().__init__(generated.smoke_OuterStruct.InnerStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -69,7 +69,7 @@ class OuterStruct(_NativeBase):
     
         @staticmethod
         def create() -> OuterStruct.Builder:
-            native_result = generated.smoke_OuterStructBuilder.create()
+            native_result = generated.smoke_OuterStruct.Builder.create()
             return _get_or_create_wrapper(native_result, OuterStruct.Builder)
     
         def field(self, value: str) -> OuterStruct.Builder:
@@ -80,7 +80,7 @@ class OuterStruct(_NativeBase):
     
     
     
-    class InnerInterface(generated.smoke_OuterStructInnerInterface):
+    class InnerInterface(generated.smoke_OuterStruct.InnerInterface):
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an
@@ -89,21 +89,21 @@ class OuterStruct(_NativeBase):
             # aliases the wrapper itself so the rest of the generated code can reach the
             # native object uniformly (e.g. when passing this interface back into a C++
             # call site).
-            if native is not None and isinstance(native, generated.smoke_OuterStructInnerInterface):
+            if native is not None and isinstance(native, generated.smoke_OuterStruct.InnerInterface):
                 super().__init__(native)
             else:
                 super().__init__()
             self._native = self
     
         def bar_baz(self) -> dict[str, bytes]:
-            return _wrap(generated.smoke_OuterStructInnerInterface.bar_baz(self), dict[str, bytes])
+            return _wrap(generated.smoke_OuterStruct.InnerInterface.bar_baz(self), dict[str, bytes])
     
     
     
     class InnerEnum(Enum):
     
-        FOO = generated.smoke_OuterStructInnerEnum.FOO
-        BAR = generated.smoke_OuterStructInnerEnum.BAR
+        FOO = generated.smoke_OuterStruct.InnerEnum.FOO
+        BAR = generated.smoke_OuterStruct.InnerEnum.BAR
     
         @property
         def _native(self):

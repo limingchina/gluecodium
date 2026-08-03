@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/ChildClassNameClash.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildClassNameClash = ::smoke::ChildClassNameClash;
 
 class ChildClassNameClashTrampoline : public ChildClassNameClash {
@@ -47,8 +46,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ChildClassNameClash(py::module_& module) {
-    py::class_<ChildClassNameClash, ::smoke::InterfaceWithOverloads, std::shared_ptr<ChildClassNameClash>, ChildClassNameClashTrampoline>(module, "smoke_ChildClassNameClash")
+auto cls_ChildClassNameClash = py::class_<ChildClassNameClash, ::smoke::InterfaceWithOverloads, std::shared_ptr<ChildClassNameClash>, ChildClassNameClashTrampoline>(module, "smoke_ChildClassNameClash")
         .def("__gluecodium_id__", [](const ChildClassNameClash& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -69,5 +70,6 @@ void register_smoke_ChildClassNameClash(py::module_& module) {
             return self.parent_method(input);
         }, py::arg("input"))
         ;
-}
 
+
+}

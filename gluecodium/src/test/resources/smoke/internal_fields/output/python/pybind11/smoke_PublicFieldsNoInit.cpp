@@ -14,11 +14,12 @@ namespace py = pybind11;
 #include "smoke/PublicFieldsNoInit.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicFieldsNoInit = ::smoke::PublicFieldsNoInit;
 
+
+
 void register_smoke_PublicFieldsNoInit(py::module_& module) {
-    py::class_<PublicFieldsNoInit>(module, "smoke_PublicFieldsNoInit")
+auto cls_PublicFieldsNoInit = py::class_<PublicFieldsNoInit>(module, "smoke_PublicFieldsNoInit")
         .def_readwrite("public_field", &PublicFieldsNoInit::public_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("public_field"))
@@ -26,5 +27,6 @@ void register_smoke_PublicFieldsNoInit(py::module_& module) {
             return PublicFieldsNoInit(public_field, ::std::string{});
         }), py::arg("public_field"))
         ;
-}
 
+
+}

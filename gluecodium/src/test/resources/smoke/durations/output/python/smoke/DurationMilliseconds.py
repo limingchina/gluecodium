@@ -29,10 +29,10 @@ class DurationMilliseconds(_NativeBase):
 
     class DurationStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DurationMillisecondsDurationStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DurationMilliseconds.DurationStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DurationMillisecondsDurationStruct(
+                super().__init__(generated.smoke_DurationMilliseconds.DurationStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

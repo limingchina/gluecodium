@@ -15,15 +15,16 @@ namespace py = pybind11;
 #include "functional"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using LambdaComments = ::smoke::LambdaComments;
 
 
+
 void register_smoke_LambdaComments(py::module_& module) {
-    py::class_<LambdaComments, std::shared_ptr<LambdaComments>>(module, "smoke_LambdaComments")
+auto cls_LambdaComments = py::class_<LambdaComments, std::shared_ptr<LambdaComments>>(module, "smoke_LambdaComments")
         .def("__gluecodium_id__", [](const LambdaComments& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

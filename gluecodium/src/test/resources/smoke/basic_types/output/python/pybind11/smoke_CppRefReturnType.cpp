@@ -16,12 +16,14 @@ namespace py = pybind11;
 #include "optional"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CppRefReturnType = ::smoke::CppRefReturnType;
+using SomeStruct = ::smoke::CppRefReturnType::SomeStruct;
+using InternalError = ::smoke::CppRefReturnType::InternalError;
+
 
 
 void register_smoke_CppRefReturnType(py::module_& module) {
-    py::class_<CppRefReturnType, std::shared_ptr<CppRefReturnType>>(module, "smoke_CppRefReturnType")
+auto cls_CppRefReturnType = py::class_<CppRefReturnType, std::shared_ptr<CppRefReturnType>>(module, "smoke_CppRefReturnType")
         .def("__gluecodium_id__", [](const CppRefReturnType& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -37,5 +39,39 @@ void register_smoke_CppRefReturnType(py::module_& module) {
         .def_static("throwing_struct_with_string", &CppRefReturnType::throwing_struct_with_string)
         .def_static("string_property", &CppRefReturnType::get_string_property)
         ;
-}
 
+auto cls_CppRefReturnTypeSomeStruct = py::class_<SomeStruct>(cls_CppRefReturnType, "SomeStruct")
+        .def_readwrite("field", &SomeStruct::field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("field"))
+        ;
+
+auto cls_CppRefReturnTypeInternalError = py::enum_<InternalError>(cls_CppRefReturnType, "InternalError")
+        .value("FOO", InternalError::FOO)
+        .value("BAR", InternalError::BAR)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_CppRefReturnType, "EnumBasedError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+    static py::object py_exc =
+        py::module_::import("smoke.CppRefReturnType").attr("CppRefReturnType").attr("StructBasedError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::smoke::CppRefReturnType::SomeStruct& e) {
+            const auto message = pybind11::detail::ReturnErrorToString<::smoke::CppRefReturnType::SomeStruct>::convert(e);
+            PyErr_SetString(py_exc.ptr(), message.c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::smoke::CppRefReturnType::SomeStruct>(py_exc.ptr());
+
+
+}

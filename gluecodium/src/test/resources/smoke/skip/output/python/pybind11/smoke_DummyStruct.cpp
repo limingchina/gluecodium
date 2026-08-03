@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/DummyStruct.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DummyStruct = ::smoke::DummyStruct;
 
+
+
 void register_smoke_DummyStruct(py::module_& module) {
-    py::class_<DummyStruct>(module, "smoke_DummyStruct")
+auto cls_DummyStruct = py::class_<DummyStruct>(module, "smoke_DummyStruct")
         .def_readwrite("string_field", &DummyStruct::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

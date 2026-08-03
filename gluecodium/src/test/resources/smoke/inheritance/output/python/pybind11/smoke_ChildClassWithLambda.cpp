@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/ChildClassWithLambda.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildClassWithLambda = ::smoke::ChildClassWithLambda;
 
 class ChildClassWithLambdaTrampoline : public ChildClassWithLambda {
@@ -28,8 +27,10 @@ public:
 
 };
 
+
+
 void register_smoke_ChildClassWithLambda(py::module_& module) {
-    py::class_<ChildClassWithLambda, ::smoke::InterfaceWithLambda, std::shared_ptr<ChildClassWithLambda>, ChildClassWithLambdaTrampoline>(module, "smoke_ChildClassWithLambda")
+auto cls_ChildClassWithLambda = py::class_<ChildClassWithLambda, ::smoke::InterfaceWithLambda, std::shared_ptr<ChildClassWithLambda>, ChildClassWithLambdaTrampoline>(module, "smoke_ChildClassWithLambda")
         .def("__gluecodium_id__", [](const ChildClassWithLambda& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -44,5 +45,6 @@ void register_smoke_ChildClassWithLambda(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

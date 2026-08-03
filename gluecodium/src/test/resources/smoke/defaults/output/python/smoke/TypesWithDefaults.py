@@ -20,10 +20,10 @@ class TypesWithDefaults(_NativeBase):
 
     class StructWithDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsStructWithDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.StructWithDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsStructWithDefaults(
+                super().__init__(generated.smoke_TypesWithDefaults.StructWithDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -80,10 +80,10 @@ class TypesWithDefaults(_NativeBase):
     
     class ImmutableStructWithDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.ImmutableStructWithDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithDefaults(
+                super().__init__(generated.smoke_TypesWithDefaults.ImmutableStructWithDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -122,10 +122,10 @@ class TypesWithDefaults(_NativeBase):
     
     class ImmutableStructWithCollections(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithCollections):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.ImmutableStructWithCollections):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithCollections(
+                super().__init__(generated.smoke_TypesWithDefaults.ImmutableStructWithCollections(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -179,10 +179,10 @@ class TypesWithDefaults(_NativeBase):
     
     class ImmutableStructWithFieldConstructorAndCollections(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.ImmutableStructWithFieldConstructorAndCollections):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections(
+                super().__init__(generated.smoke_TypesWithDefaults.ImmutableStructWithFieldConstructorAndCollections(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -246,10 +246,10 @@ class TypesWithDefaults(_NativeBase):
     
     class SomeImmutableStructWithDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsSomeImmutableStructWithDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.SomeImmutableStructWithDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsSomeImmutableStructWithDefaults(
+                super().__init__(generated.smoke_TypesWithDefaults.SomeImmutableStructWithDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -263,10 +263,10 @@ class TypesWithDefaults(_NativeBase):
     
     class ImmutableStructWithFieldUsingImmutableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.ImmutableStructWithFieldUsingImmutableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithFieldUsingImmutableStruct(
+                super().__init__(generated.smoke_TypesWithDefaults.ImmutableStructWithFieldUsingImmutableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -285,10 +285,10 @@ class TypesWithDefaults(_NativeBase):
     
     class ImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.ImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct(
+                super().__init__(generated.smoke_TypesWithDefaults.ImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -317,10 +317,10 @@ class TypesWithDefaults(_NativeBase):
     
     class ImmutableStructWithNullableFieldUsingImmutableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.ImmutableStructWithNullableFieldUsingImmutableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct(
+                super().__init__(generated.smoke_TypesWithDefaults.ImmutableStructWithNullableFieldUsingImmutableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -339,10 +339,10 @@ class TypesWithDefaults(_NativeBase):
     
     class ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypesWithDefaults.ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct(
+                super().__init__(generated.smoke_TypesWithDefaults.ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

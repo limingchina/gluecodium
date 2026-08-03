@@ -20,8 +20,8 @@ class Constants(_NativeBase):
 
     class StateEnum(Enum):
     
-        OFF = generated.smoke_ConstantsStateEnum.OFF
-        ON = generated.smoke_ConstantsStateEnum.ON
+        OFF = generated.smoke_Constants.StateEnum.OFF
+        ON = generated.smoke_Constants.StateEnum.ON
     
         @property
         def _native(self):

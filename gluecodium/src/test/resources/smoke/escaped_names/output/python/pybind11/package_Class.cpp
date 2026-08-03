@@ -17,7 +17,6 @@ namespace py = pybind11;
 #include "memory"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Class = ::package::Class;
 
 class ClassTrampoline : public Class {
@@ -30,8 +29,8 @@ public:
     // PYBIND11_OVERRIDE_PURE for Python dispatch.
     std::shared_ptr<Class> m_impl;
 
-    using fun_return_type = ::gluecodium::Return< ::package::Types::Struct, ::std::error_code >;
-    ::gluecodium::Return< ::package::Types::Struct, ::std::error_code > fun(
+    using fun_return_type = ::Return< ::package::Types::Struct, ::std::error_code >;
+    ::Return< ::package::Types::Struct, ::std::error_code > fun(
             const ::std::vector< ::package::Types::Struct >& double ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
@@ -56,8 +55,10 @@ public:
     }
 };
 
+
+
 void register_package_Class(py::module_& module) {
-    py::class_<Class, ::package::Interface, std::shared_ptr<Class>, ClassTrampoline>(module, "package_Class")
+auto cls_Class = py::class_<Class, ::package::Interface, std::shared_ptr<Class>, ClassTrampoline>(module, "package_Class")
         .def("__gluecodium_id__", [](const Class& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -77,5 +78,6 @@ void register_package_Class(py::module_& module) {
                 }, py::arg("double"))
         .def_property("property", py::overload_cast<>(&Class::get_property, py::const_), py::overload_cast<const ::package::Types::Enum>(&Class::set_property))
         ;
-}
 
+
+}

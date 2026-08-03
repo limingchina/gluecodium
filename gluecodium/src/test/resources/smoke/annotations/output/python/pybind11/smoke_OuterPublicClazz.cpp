@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/OuterPublicClazz.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using OuterPublicClazz = ::smoke::OuterPublicClazz;
 
 
+
 void register_smoke_OuterPublicClazz(py::module_& module) {
-    py::class_<OuterPublicClazz, std::shared_ptr<OuterPublicClazz>>(module, "smoke_OuterPublicClazz")
+auto cls_OuterPublicClazz = py::class_<OuterPublicClazz, std::shared_ptr<OuterPublicClazz>>(module, "smoke_OuterPublicClazz")
         .def("__gluecodium_id__", [](const OuterPublicClazz& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

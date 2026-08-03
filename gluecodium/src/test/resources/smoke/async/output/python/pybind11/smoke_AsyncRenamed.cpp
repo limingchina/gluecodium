@@ -13,16 +13,17 @@
 namespace py = pybind11;
 #include "smoke/AsyncRenamed.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AsyncRenamed = ::smoke::AsyncRenamed;
 
 
+
 void register_smoke_AsyncRenamed(py::module_& module) {
-    py::class_<AsyncRenamed, std::shared_ptr<AsyncRenamed>>(module, "smoke_AsyncRenamed")
+auto cls_AsyncRenamed = py::class_<AsyncRenamed, std::shared_ptr<AsyncRenamed>>(module, "smoke_AsyncRenamed")
         .def("__gluecodium_id__", [](const AsyncRenamed& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("dispose", &AsyncRenamed::callDispose)
         ;
-}
 
+
+}

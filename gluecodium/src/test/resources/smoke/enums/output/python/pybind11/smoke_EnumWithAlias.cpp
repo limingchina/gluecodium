@@ -13,16 +13,18 @@
 namespace py = pybind11;
 #include "smoke/EnumWithAlias.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumWithAlias = ::smoke::EnumWithAlias;
 
+
+
 void register_smoke_EnumWithAlias(py::module_& module) {
-    py::enum_<EnumWithAlias>(module, "smoke_EnumWithAlias")
+auto cls_EnumWithAlias = py::enum_<EnumWithAlias>(module, "smoke_EnumWithAlias")
         .value("ONE", EnumWithAlias::ONE)
         .value("TWO", EnumWithAlias::TWO)
         .value("THREE", EnumWithAlias::THREE)
         .value("FIRST", EnumWithAlias::FIRST)
         .value("THE_BEST", EnumWithAlias::THE_BEST)
         ;
-}
 
+
+}

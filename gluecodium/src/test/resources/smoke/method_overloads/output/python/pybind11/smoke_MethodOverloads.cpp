@@ -17,12 +17,13 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MethodOverloads = ::smoke::MethodOverloads;
+using Point = ::smoke::MethodOverloads::Point;
+
 
 
 void register_smoke_MethodOverloads(py::module_& module) {
-    py::class_<MethodOverloads, std::shared_ptr<MethodOverloads>>(module, "smoke_MethodOverloads")
+auto cls_MethodOverloads = py::class_<MethodOverloads, std::shared_ptr<MethodOverloads>>(module, "smoke_MethodOverloads")
         .def("__gluecodium_id__", [](const MethodOverloads& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -43,5 +44,13 @@ void register_smoke_MethodOverloads(py::module_& module) {
                         return self.is_float(input);
                 }, py::arg("input"))
         ;
-}
 
+auto cls_MethodOverloadsPoint = py::class_<Point>(cls_MethodOverloads, "Point")
+        .def_readwrite("x", &Point::x)
+        .def_readwrite("y", &Point::y)
+        .def(py::init<>())
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        ;
+
+
+}

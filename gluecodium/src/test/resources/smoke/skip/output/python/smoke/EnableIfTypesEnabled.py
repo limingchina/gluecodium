@@ -20,10 +20,10 @@ class EnableIfTypesEnabled(_NativeBase):
 
     class EnableMeToo(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnableIfTypesEnabledEnableMeToo):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_EnableIfTypesEnabled.EnableMeToo):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_EnableIfTypesEnabledEnableMeToo(
+                super().__init__(generated.smoke_EnableIfTypesEnabled.EnableMeToo(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -40,7 +40,7 @@ class EnableIfTypesEnabled(_NativeBase):
     
     class EnableMe(Enum):
     
-        NOPE = generated.smoke_EnableIfTypesEnabledEnableMe.NOPE
+        NOPE = generated.smoke_EnableIfTypesEnabled.EnableMe.NOPE
     
         @property
         def _native(self):

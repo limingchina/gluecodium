@@ -16,7 +16,6 @@ namespace py = pybind11;
 #include "chrono"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DurationInterface = ::smoke::DurationInterface;
 
 class DurationInterfaceTrampoline : public DurationInterface {
@@ -40,8 +39,10 @@ public:
     }
 };
 
+
+
 void register_smoke_DurationInterface(py::module_& module) {
-    py::class_<DurationInterface, std::shared_ptr<DurationInterface>, DurationInterfaceTrampoline>(module, "smoke_DurationInterface")
+auto cls_DurationInterface = py::class_<DurationInterface, std::shared_ptr<DurationInterface>, DurationInterfaceTrampoline>(module, "smoke_DurationInterface")
         .def("__gluecodium_id__", [](const DurationInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -61,5 +62,6 @@ void register_smoke_DurationInterface(py::module_& module) {
             return self.duration_function(input);
         }, py::arg("input"))
         ;
-}
 
+
+}

@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/PublicStructWithInternalConstructors.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using PublicStructWithInternalConstructors = ::smoke::PublicStructWithInternalConstructors;
 
+
+
 void register_smoke_PublicStructWithInternalConstructors(py::module_& module) {
-    py::class_<PublicStructWithInternalConstructors>(module, "smoke_PublicStructWithInternalConstructors")
+auto cls_PublicStructWithInternalConstructors = py::class_<PublicStructWithInternalConstructors>(module, "smoke_PublicStructWithInternalConstructors")
         .def_readwrite("some_var", &PublicStructWithInternalConstructors::some_var)
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("some_var"))
         ;
-}
 
+
+}

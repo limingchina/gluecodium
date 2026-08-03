@@ -14,12 +14,12 @@ namespace py = pybind11;
 #include "smoke/SkipFunctions.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipFunctions = ::smoke::SkipFunctions;
 
 
+
 void register_smoke_SkipFunctions(py::module_& module) {
-    py::class_<SkipFunctions, std::shared_ptr<SkipFunctions>>(module, "smoke_SkipFunctions")
+auto cls_SkipFunctions = py::class_<SkipFunctions, std::shared_ptr<SkipFunctions>>(module, "smoke_SkipFunctions")
         .def("__gluecodium_id__", [](const SkipFunctions& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -28,5 +28,6 @@ void register_smoke_SkipFunctions(py::module_& module) {
         .def_static("not_in_dart", &SkipFunctions::not_in_dart, py::arg("input"))
         .def_static("not_in_kotlin", &SkipFunctions::not_in_kotlin, py::arg("input"))
         ;
-}
 
+
+}

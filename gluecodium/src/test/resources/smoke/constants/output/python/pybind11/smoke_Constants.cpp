@@ -13,12 +13,20 @@
 namespace py = pybind11;
 #include "smoke/Constants.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Constants = ::smoke::Constants;
+using StateEnum = ::smoke::Constants::StateEnum;
+
+
 
 void register_smoke_Constants(py::module_& module) {
-    py::class_<Constants>(module, "smoke_Constants")
+auto cls_Constants = py::class_<Constants>(module, "smoke_Constants")
         .def(py::init<>())
         ;
-}
 
+auto cls_ConstantsStateEnum = py::enum_<StateEnum>(cls_Constants, "StateEnum")
+        .value("OFF", StateEnum::OFF)
+        .value("ON", StateEnum::ON)
+        ;
+
+
+}

@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/ParentNarrowTwo.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ParentNarrowTwo = ::smoke::ParentNarrowTwo;
 
 class ParentNarrowTwoTrampoline : public ParentNarrowTwo {
@@ -54,8 +53,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ParentNarrowTwo(py::module_& module) {
-    py::class_<ParentNarrowTwo, std::shared_ptr<ParentNarrowTwo>, ParentNarrowTwoTrampoline>(module, "smoke_ParentNarrowTwo")
+auto cls_ParentNarrowTwo = py::class_<ParentNarrowTwo, std::shared_ptr<ParentNarrowTwo>, ParentNarrowTwoTrampoline>(module, "smoke_ParentNarrowTwo")
         .def("__gluecodium_id__", [](const ParentNarrowTwo& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -80,5 +81,6 @@ void register_smoke_ParentNarrowTwo(py::module_& module) {
             self.set_parent_property_two(value);
         })
         ;
-}
 
+
+}

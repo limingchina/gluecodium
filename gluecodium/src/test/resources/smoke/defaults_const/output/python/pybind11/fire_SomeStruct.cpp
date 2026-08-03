@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "fire/SomeStruct.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SomeStruct = ::fire::SomeStruct;
 
+
+
 void register_fire_SomeStruct(py::module_& module) {
-    py::class_<SomeStruct>(module, "fire_SomeStruct")
+auto cls_SomeStruct = py::class_<SomeStruct>(module, "fire_SomeStruct")
         .def_readwrite("int_field", &SomeStruct::int_field)
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("int_field"))
         ;
-}
 
+
+}

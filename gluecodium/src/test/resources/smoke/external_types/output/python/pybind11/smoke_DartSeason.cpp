@@ -13,15 +13,17 @@
 namespace py = pybind11;
 #include "smoke/DartSeason.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartSeason = ::smoke::DartSeason;
 
+
+
 void register_smoke_DartSeason(py::module_& module) {
-    py::enum_<DartSeason>(module, "smoke_DartSeason")
+auto cls_DartSeason = py::enum_<DartSeason>(module, "smoke_DartSeason")
         .value("WINTER", DartSeason::WINTER)
         .value("SPRING", DartSeason::SPRING)
         .value("SUMMER", DartSeason::SUMMER)
         .value("AUTUMN", DartSeason::AUTUMN)
         ;
-}
 
+
+}

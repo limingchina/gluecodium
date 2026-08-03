@@ -21,12 +21,13 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Thermometer = ::smoke::Thermometer;
+using SomeThermometerErrorCode = ::smoke::Thermometer::SomeThermometerErrorCode;
+
 
 
 void register_smoke_Thermometer(py::module_& module) {
-    py::class_<Thermometer, std::shared_ptr<Thermometer>>(module, "smoke_Thermometer")
+auto cls_Thermometer = py::class_<Thermometer, std::shared_ptr<Thermometer>>(module, "smoke_Thermometer")
         .def("__gluecodium_id__", [](const Thermometer& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -56,5 +57,33 @@ void register_smoke_Thermometer(py::module_& module) {
         .def("get_kelvin", &Thermometer::get_kelvin)
         .def("get_fahrenheit", &Thermometer::get_fahrenheit)
         ;
-}
 
+auto cls_ThermometerSomeThermometerErrorCode = py::enum_<SomeThermometerErrorCode>(cls_Thermometer, "SomeThermometerErrorCode")
+        .value("ERROR_NONE", SomeThermometerErrorCode::ERROR_NONE)
+        .value("ERROR_FATAL", SomeThermometerErrorCode::ERROR_FATAL)
+        ;
+
+    static py::object py_exc =
+        py::module_::import("smoke.Thermometer").attr("Thermometer").attr("NotificationError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::string& e) {
+            const auto message = pybind11::detail::ReturnErrorToString<::std::string>::convert(e);
+            PyErr_SetString(py_exc.ptr(), message.c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::string>(py_exc.ptr());
+
+    static py::exception<::std::error_code> exc(cls_Thermometer, "AnotherNotificationError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

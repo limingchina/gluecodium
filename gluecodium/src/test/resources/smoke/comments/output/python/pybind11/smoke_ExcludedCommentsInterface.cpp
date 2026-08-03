@@ -13,7 +13,6 @@
 namespace py = pybind11;
 #include "smoke/ExcludedCommentsInterface.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ExcludedCommentsInterface = ::smoke::ExcludedCommentsInterface;
 
 class ExcludedCommentsInterfaceTrampoline : public ExcludedCommentsInterface {
@@ -29,8 +28,10 @@ public:
 
 };
 
+
+
 void register_smoke_ExcludedCommentsInterface(py::module_& module) {
-    py::class_<ExcludedCommentsInterface, std::shared_ptr<ExcludedCommentsInterface>, ExcludedCommentsInterfaceTrampoline>(module, "smoke_ExcludedCommentsInterface")
+auto cls_ExcludedCommentsInterface = py::class_<ExcludedCommentsInterface, std::shared_ptr<ExcludedCommentsInterface>, ExcludedCommentsInterfaceTrampoline>(module, "smoke_ExcludedCommentsInterface")
         .def("__gluecodium_id__", [](const ExcludedCommentsInterface& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -47,5 +48,6 @@ void register_smoke_ExcludedCommentsInterface(py::module_& module) {
             return self;
         }))
         ;
-}
 
+
+}

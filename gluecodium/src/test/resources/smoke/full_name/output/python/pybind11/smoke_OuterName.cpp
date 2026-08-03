@@ -14,15 +14,23 @@ namespace py = pybind11;
 #include "smoke/OuterName.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using OuterName = ::smoke::OuterName;
+using InnerName = ::smoke::OuterName::InnerName;
+
 
 
 void register_smoke_OuterName(py::module_& module) {
-    py::class_<OuterName, std::shared_ptr<OuterName>>(module, "smoke_OuterName")
+auto cls_OuterName = py::class_<OuterName, std::shared_ptr<OuterName>>(module, "smoke_OuterName")
         .def("__gluecodium_id__", [](const OuterName& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+auto cls_OuterNameInnerName = py::class_<InnerName>(cls_OuterName, "InnerName")
+        .def_readwrite("string_field", &InnerName::string_field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("string_field"))
+        ;
+
+
+}

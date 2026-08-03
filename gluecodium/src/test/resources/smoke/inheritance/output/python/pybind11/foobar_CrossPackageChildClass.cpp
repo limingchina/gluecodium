@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "foobar/CrossPackageChildClass.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CrossPackageChildClass = ::foobar::CrossPackageChildClass;
 
 class CrossPackageChildClassTrampoline : public CrossPackageChildClass {
@@ -53,8 +52,10 @@ public:
     }
 };
 
+
+
 void register_foobar_CrossPackageChildClass(py::module_& module) {
-    py::class_<CrossPackageChildClass, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildClass>, CrossPackageChildClassTrampoline>(module, "foobar_CrossPackageChildClass")
+auto cls_CrossPackageChildClass = py::class_<CrossPackageChildClass, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildClass>, CrossPackageChildClassTrampoline>(module, "foobar_CrossPackageChildClass")
         .def("__gluecodium_id__", [](const CrossPackageChildClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -77,5 +78,6 @@ void register_foobar_CrossPackageChildClass(py::module_& module) {
             self.set_root_property(value);
         })
         ;
-}
 
+
+}

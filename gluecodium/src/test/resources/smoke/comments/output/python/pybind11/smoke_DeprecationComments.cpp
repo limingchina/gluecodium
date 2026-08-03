@@ -14,8 +14,9 @@ namespace py = pybind11;
 #include "smoke/DeprecationComments.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DeprecationComments = ::smoke::DeprecationComments;
+using SomeStruct = ::smoke::DeprecationComments::SomeStruct;
+using SomeEnum = ::smoke::DeprecationComments::SomeEnum;
 
 class DeprecationCommentsTrampoline : public DeprecationComments {
 public:
@@ -68,8 +69,10 @@ public:
     }
 };
 
+
+
 void register_smoke_DeprecationComments(py::module_& module) {
-    py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "smoke_DeprecationComments")
+auto cls_DeprecationComments = py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "smoke_DeprecationComments")
         .def("__gluecodium_id__", [](const DeprecationComments& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -99,5 +102,26 @@ void register_smoke_DeprecationComments(py::module_& module) {
             self.set_property_but_not_accessors(value);
         })
         ;
-}
 
+auto cls_DeprecationCommentsSomeStruct = py::class_<SomeStruct>(cls_DeprecationComments, "SomeStruct")
+        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def(py::init<>())
+        .def(py::init<bool>(), py::arg("some_field"))
+        ;
+
+auto cls_DeprecationCommentsSomeEnum = py::enum_<SomeEnum>(cls_DeprecationComments, "SomeEnum")
+        .value("USELESS", SomeEnum::USELESS)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_DeprecationComments, "SomethingWrongError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

@@ -20,7 +20,6 @@ namespace py = pybind11;
 #include "functional"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildClassWithIncludes = ::smoke::ChildClassWithIncludes;
 
 class ChildClassWithIncludesTrampoline : public ChildClassWithIncludes {
@@ -81,8 +80,10 @@ public:
     }
 };
 
+
+
 void register_smoke_ChildClassWithIncludes(py::module_& module) {
-    py::class_<ChildClassWithIncludes, ::smoke::ParentInterfaceWithIncludes, std::shared_ptr<ChildClassWithIncludes>, ChildClassWithIncludesTrampoline>(module, "smoke_ChildClassWithIncludes")
+auto cls_ChildClassWithIncludes = py::class_<ChildClassWithIncludes, ::smoke::ParentInterfaceWithIncludes, std::shared_ptr<ChildClassWithIncludes>, ChildClassWithIncludesTrampoline>(module, "smoke_ChildClassWithIncludes")
         .def("__gluecodium_id__", [](const ChildClassWithIncludes& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -113,5 +114,6 @@ void register_smoke_ChildClassWithIncludes(py::module_& module) {
             self.set_not_in_java_property(value);
         })
         ;
-}
 
+
+}

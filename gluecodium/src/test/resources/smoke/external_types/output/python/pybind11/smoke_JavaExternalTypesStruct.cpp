@@ -18,11 +18,12 @@ namespace py = pybind11;
 #include "smoke/SystemColor.h"
 #include "smoke/TimeZone.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using JavaExternalTypesStruct = ::smoke::JavaExternalTypesStruct;
 
+
+
 void register_smoke_JavaExternalTypesStruct(py::module_& module) {
-    py::class_<JavaExternalTypesStruct>(module, "smoke_JavaExternalTypesStruct")
+auto cls_JavaExternalTypesStruct = py::class_<JavaExternalTypesStruct>(module, "smoke_JavaExternalTypesStruct")
         .def_readonly("currency", &JavaExternalTypesStruct::currency)
         .def_readwrite("time_zone", &JavaExternalTypesStruct::time_zone)
         .def_readwrite("month", &JavaExternalTypesStruct::month)
@@ -30,5 +31,6 @@ void register_smoke_JavaExternalTypesStruct(py::module_& module) {
         .def_readwrite("season", &JavaExternalTypesStruct::season)
         .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
         ;
-}
 
+
+}

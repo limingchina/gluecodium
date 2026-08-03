@@ -18,12 +18,15 @@ namespace py = pybind11;
 #include "string"
 #include "unordered_map"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Enums = ::smoke::Enums;
+using ErrorStruct = ::smoke::Enums::ErrorStruct;
+using SimpleEnum = ::smoke::Enums::SimpleEnum;
+using InternalErrorCode = ::smoke::Enums::InternalErrorCode;
+
 
 
 void register_smoke_Enums(py::module_& module) {
-    py::class_<Enums, std::shared_ptr<Enums>>(module, "smoke_Enums")
+auto cls_Enums = py::class_<Enums, std::shared_ptr<Enums>>(module, "smoke_Enums")
         .def("__gluecodium_id__", [](const Enums& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -32,5 +35,23 @@ void register_smoke_Enums(py::module_& module) {
         .def_static("extract_enum_from_struct", &Enums::extract_enum_from_struct, py::arg("input"))
         .def_static("create_struct_with_enum_inside", &Enums::create_struct_with_enum_inside, py::arg("type"), py::arg("message"))
         ;
-}
 
+auto cls_EnumsErrorStruct = py::class_<ErrorStruct>(cls_Enums, "ErrorStruct")
+        .def_readwrite("type", &ErrorStruct::type)
+        .def_readwrite("message", &ErrorStruct::message)
+        .def(py::init<>())
+        .def(py::init<::smoke::Enums::InternalErrorCode, ::std::string>(), py::arg("type"), py::arg("message"))
+        ;
+
+auto cls_EnumsSimpleEnum = py::enum_<SimpleEnum>(cls_Enums, "SimpleEnum")
+        .value("FIRST", SimpleEnum::FIRST)
+        .value("SECOND", SimpleEnum::SECOND)
+        ;
+
+auto cls_EnumsInternalErrorCode = py::enum_<InternalErrorCode>(cls_Enums, "InternalErrorCode")
+        .value("ERROR_NONE", InternalErrorCode::ERROR_NONE)
+        .value("ERROR_FATAL", InternalErrorCode::ERROR_FATAL)
+        ;
+
+
+}

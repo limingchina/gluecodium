@@ -16,11 +16,12 @@ namespace py = pybind11;
 #include "smoke/InternalEnumDefaults.h"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InternalEnumDefaults = ::smoke::InternalEnumDefaults;
 
+
+
 void register_smoke_InternalEnumDefaults(py::module_& module) {
-    py::class_<InternalEnumDefaults>(module, "smoke_InternalEnumDefaults")
+auto cls_InternalEnumDefaults = py::class_<InternalEnumDefaults>(module, "smoke_InternalEnumDefaults")
         .def_readwrite("public_field", &InternalEnumDefaults::public_field)
         .def_readwrite("public_list_field", &InternalEnumDefaults::public_list_field)
         .def(py::init<>())
@@ -28,5 +29,6 @@ void register_smoke_InternalEnumDefaults(py::module_& module) {
             return InternalEnumDefaults(public_field, public_list_field, ::smoke::FooBarEnum{}, ::std::vector< ::smoke::FooBarEnum >{});
         }), py::arg("public_field"), py::arg("public_list_field"))
         ;
-}
 
+
+}

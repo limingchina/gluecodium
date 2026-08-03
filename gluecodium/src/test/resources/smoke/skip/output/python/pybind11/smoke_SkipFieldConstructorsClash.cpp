@@ -14,13 +14,15 @@ namespace py = pybind11;
 #include "smoke/SkipFieldConstructorsClash.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SkipFieldConstructorsClash = ::smoke::SkipFieldConstructorsClash;
 
+
+
 void register_smoke_SkipFieldConstructorsClash(py::module_& module) {
-    py::class_<SkipFieldConstructorsClash>(module, "smoke_SkipFieldConstructorsClash")
+auto cls_SkipFieldConstructorsClash = py::class_<SkipFieldConstructorsClash>(module, "smoke_SkipFieldConstructorsClash")
         .def_readwrite("param", &SkipFieldConstructorsClash::param)
         .def(py::init<>())
         ;
-}
 
+
+}

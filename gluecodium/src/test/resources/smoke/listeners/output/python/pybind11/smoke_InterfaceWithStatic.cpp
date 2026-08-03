@@ -14,7 +14,6 @@ namespace py = pybind11;
 #include "smoke/InterfaceWithStatic.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using InterfaceWithStatic = ::smoke::InterfaceWithStatic;
 
 class InterfaceWithStaticTrampoline : public InterfaceWithStatic {
@@ -53,8 +52,10 @@ public:
     }
 };
 
+
+
 void register_smoke_InterfaceWithStatic(py::module_& module) {
-    py::class_<InterfaceWithStatic, std::shared_ptr<InterfaceWithStatic>, InterfaceWithStaticTrampoline>(module, "smoke_InterfaceWithStatic")
+auto cls_InterfaceWithStatic = py::class_<InterfaceWithStatic, std::shared_ptr<InterfaceWithStatic>, InterfaceWithStaticTrampoline>(module, "smoke_InterfaceWithStatic")
         .def("__gluecodium_id__", [](const InterfaceWithStatic& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -82,5 +83,6 @@ void register_smoke_InterfaceWithStatic(py::module_& module) {
         .def_static("static_property", &InterfaceWithStatic::get_static_property)
         .def_static("static_property_set", &InterfaceWithStatic::set_static_property)
         ;
-}
 
+
+}

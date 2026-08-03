@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/FieldConstructorWithDeprecationAndComment.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using FieldConstructorWithDeprecationAndComment = ::smoke::FieldConstructorWithDeprecationAndComment;
 
+
+
 void register_smoke_FieldConstructorWithDeprecationAndComment(py::module_& module) {
-    py::class_<FieldConstructorWithDeprecationAndComment>(module, "smoke_FieldConstructorWithDeprecationAndComment")
+auto cls_FieldConstructorWithDeprecationAndComment = py::class_<FieldConstructorWithDeprecationAndComment>(module, "smoke_FieldConstructorWithDeprecationAndComment")
         .def_readwrite("string_field", &FieldConstructorWithDeprecationAndComment::string_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;
-}
 
+
+}

@@ -14,11 +14,12 @@ namespace py = pybind11;
 #include "smoke/Rectangle.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Rectangle = ::smoke::Rectangle;
 
+
+
 void register_smoke_Rectangle(py::module_& module) {
-    py::class_<Rectangle>(module, "smoke_Rectangle")
+auto cls_Rectangle = py::class_<Rectangle>(module, "smoke_Rectangle")
         .def_readwrite("left", &Rectangle::left)
         .def_readwrite("top", &Rectangle::top)
         .def_readwrite("width", &Rectangle::width)
@@ -26,5 +27,6 @@ void register_smoke_Rectangle(py::module_& module) {
         .def(py::init<>())
         .def(py::init<int32_t, int32_t, int32_t, int32_t>(), py::arg("left"), py::arg("top"), py::arg("width"), py::arg("height"))
         ;
-}
 
+
+}

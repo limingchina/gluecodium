@@ -15,17 +15,25 @@ namespace py = pybind11;
 #include "smoke/CommentsLinks.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CommentsLinks = ::smoke::CommentsLinks;
+using RandomStruct = ::smoke::CommentsLinks::RandomStruct;
+
 
 
 void register_smoke_CommentsLinks(py::module_& module) {
-    py::class_<CommentsLinks, std::shared_ptr<CommentsLinks>>(module, "smoke_CommentsLinks")
+auto cls_CommentsLinks = py::class_<CommentsLinks, std::shared_ptr<CommentsLinks>>(module, "smoke_CommentsLinks")
         .def("__gluecodium_id__", [](const CommentsLinks& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("random_method", py::overload_cast<const ::smoke::Comments::SomeEnum>(&CommentsLinks::random_method), py::arg("input_parameter"))
         .def("random_method", py::overload_cast<const ::std::string&, const bool>(&CommentsLinks::random_method), py::arg("text"), py::arg("flag"))
         ;
-}
 
+auto cls_CommentsLinksRandomStruct = py::class_<RandomStruct>(cls_CommentsLinks, "RandomStruct")
+        .def_readwrite("random_field", &RandomStruct::random_field)
+        .def(py::init<>())
+        .def(py::init<::smoke::Comments::SomeStruct>(), py::arg("random_field"))
+        ;
+
+
+}

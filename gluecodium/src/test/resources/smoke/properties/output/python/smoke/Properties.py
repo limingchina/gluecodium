@@ -88,10 +88,10 @@ class Properties(_NativeBase):
 
     class ExampleStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PropertiesExampleStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_Properties.ExampleStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_PropertiesExampleStruct(
+                super().__init__(generated.smoke_Properties.ExampleStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -108,8 +108,8 @@ class Properties(_NativeBase):
     
     class InternalErrorCode(Enum):
     
-        ERROR_NONE = generated.smoke_PropertiesInternalErrorCode.ERROR_NONE
-        ERROR_FATAL = generated.smoke_PropertiesInternalErrorCode.ERROR_FATAL
+        ERROR_NONE = generated.smoke_Properties.InternalErrorCode.ERROR_NONE
+        ERROR_FATAL = generated.smoke_Properties.InternalErrorCode.ERROR_FATAL
     
         @property
         def _native(self):

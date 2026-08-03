@@ -13,12 +13,20 @@
 namespace py = pybind11;
 #include "smoke/EnumsInTypeCollection.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using EnumsInTypeCollection = ::smoke::EnumsInTypeCollection;
+using TCEnum = ::smoke::EnumsInTypeCollection::TCEnum;
+
+
 
 void register_smoke_EnumsInTypeCollection(py::module_& module) {
-    py::class_<EnumsInTypeCollection>(module, "smoke_EnumsInTypeCollection")
+auto cls_EnumsInTypeCollection = py::class_<EnumsInTypeCollection>(module, "smoke_EnumsInTypeCollection")
         .def(py::init<>())
         ;
-}
 
+auto cls_EnumsInTypeCollectionTCEnum = py::enum_<TCEnum>(cls_EnumsInTypeCollection, "TCEnum")
+        .value("FIRST", TCEnum::FIRST)
+        .value("SECOND", TCEnum::SECOND)
+        ;
+
+
+}

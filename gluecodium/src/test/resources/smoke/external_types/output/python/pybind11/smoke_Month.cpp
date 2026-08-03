@@ -13,14 +13,16 @@
 namespace py = pybind11;
 #include "smoke/Month.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Month = ::smoke::Month;
 
+
+
 void register_smoke_Month(py::module_& module) {
-    py::enum_<Month>(module, "smoke_Month")
+auto cls_Month = py::enum_<Month>(module, "smoke_Month")
         .value("JANUARY", Month::JANUARY)
         .value("FEBRUARY", Month::FEBRUARY)
         .value("MARCH", Month::MARCH)
         ;
-}
 
+
+}

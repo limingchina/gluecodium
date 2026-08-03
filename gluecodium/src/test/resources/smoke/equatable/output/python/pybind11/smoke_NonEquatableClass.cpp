@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/NonEquatableClass.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using NonEquatableClass = ::smoke::NonEquatableClass;
 
 
+
 void register_smoke_NonEquatableClass(py::module_& module) {
-    py::class_<NonEquatableClass, std::shared_ptr<NonEquatableClass>>(module, "smoke_NonEquatableClass")
+auto cls_NonEquatableClass = py::class_<NonEquatableClass, std::shared_ptr<NonEquatableClass>>(module, "smoke_NonEquatableClass")
         .def("__gluecodium_id__", [](const NonEquatableClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

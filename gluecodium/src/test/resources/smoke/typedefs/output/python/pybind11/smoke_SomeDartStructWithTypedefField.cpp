@@ -16,14 +16,16 @@ namespace py = pybind11;
 #include "smoke/SomeDartStructWithTypedefField.h"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SomeDartStructWithTypedefField = ::smoke::SomeDartStructWithTypedefField;
 
+
+
 void register_smoke_SomeDartStructWithTypedefField(py::module_& module) {
-    py::class_<SomeDartStructWithTypedefField>(module, "smoke_SomeDartStructWithTypedefField")
+auto cls_SomeDartStructWithTypedefField = py::class_<SomeDartStructWithTypedefField>(module, "smoke_SomeDartStructWithTypedefField")
         .def_readwrite("some_field", &SomeDartStructWithTypedefField::some_field)
         .def(py::init<>())
         .def(py::init<::std::vector< float >>(), py::arg("some_field"))
         ;
-}
 
+
+}

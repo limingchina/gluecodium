@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/DeprecatedWithNoMessage.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DeprecatedWithNoMessage = ::smoke::DeprecatedWithNoMessage;
 
+
+
 void register_smoke_DeprecatedWithNoMessage(py::module_& module) {
-    py::class_<DeprecatedWithNoMessage>(module, "smoke_DeprecatedWithNoMessage")
+auto cls_DeprecatedWithNoMessage = py::class_<DeprecatedWithNoMessage>(module, "smoke_DeprecatedWithNoMessage")
         .def_readwrite("field", &DeprecatedWithNoMessage::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;
-}
 
+
+}

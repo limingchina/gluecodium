@@ -15,11 +15,12 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartDeprecatedPosDefaultsCustom = ::smoke::DartDeprecatedPosDefaultsCustom;
 
+
+
 void register_smoke_DartDeprecatedPosDefaultsCustom(py::module_& module) {
-    py::class_<DartDeprecatedPosDefaultsCustom>(module, "smoke_DartDeprecatedPosDefaultsCustom")
+auto cls_DartDeprecatedPosDefaultsCustom = py::class_<DartDeprecatedPosDefaultsCustom>(module, "smoke_DartDeprecatedPosDefaultsCustom")
         .def_readwrite("int_field", &DartDeprecatedPosDefaultsCustom::int_field)
         .def_readwrite("string_field", &DartDeprecatedPosDefaultsCustom::string_field)
         .def(py::init<>())
@@ -27,5 +28,6 @@ void register_smoke_DartDeprecatedPosDefaultsCustom(py::module_& module) {
         .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         .def_static("custom", &DartDeprecatedPosDefaultsCustom::custom)
         ;
-}
 
+
+}

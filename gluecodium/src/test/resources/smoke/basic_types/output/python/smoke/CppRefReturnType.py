@@ -60,10 +60,10 @@ class CppRefReturnType(_NativeBase):
 
     class SomeStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CppRefReturnTypeSomeStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CppRefReturnType.SomeStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_CppRefReturnTypeSomeStruct(
+                super().__init__(generated.smoke_CppRefReturnType.SomeStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -80,8 +80,8 @@ class CppRefReturnType(_NativeBase):
     
     class InternalError(Enum):
     
-        FOO = generated.smoke_CppRefReturnTypeInternalError.FOO
-        BAR = generated.smoke_CppRefReturnTypeInternalError.BAR
+        FOO = generated.smoke_CppRefReturnType.InternalError.FOO
+        BAR = generated.smoke_CppRefReturnType.InternalError.BAR
     
         @property
         def _native(self):

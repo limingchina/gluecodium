@@ -76,10 +76,10 @@ class CommentsInterface(generated.smoke_CommentsInterface):
     class SomeStruct(_NativeBase):
         """This is some very useful struct."""
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CommentsInterfaceSomeStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_CommentsInterface.SomeStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_CommentsInterfaceSomeStruct(
+                super().__init__(generated.smoke_CommentsInterface.SomeStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -98,8 +98,8 @@ class CommentsInterface(generated.smoke_CommentsInterface):
     class SomeEnum(Enum):
         """This is some very useful enum."""
     
-        USELESS = generated.smoke_CommentsInterfaceSomeEnum.USELESS
-        USEFUL = generated.smoke_CommentsInterfaceSomeEnum.USEFUL
+        USELESS = generated.smoke_CommentsInterface.SomeEnum.USELESS
+        USEFUL = generated.smoke_CommentsInterface.SomeEnum.USEFUL
     
         @property
         def _native(self):

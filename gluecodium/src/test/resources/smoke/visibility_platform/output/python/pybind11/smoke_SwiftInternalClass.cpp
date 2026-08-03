@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/SwiftInternalClass.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using SwiftInternalClass = ::smoke::SwiftInternalClass;
 
 
+
 void register_smoke_SwiftInternalClass(py::module_& module) {
-    py::class_<SwiftInternalClass, std::shared_ptr<SwiftInternalClass>>(module, "smoke_SwiftInternalClass")
+auto cls_SwiftInternalClass = py::class_<SwiftInternalClass, std::shared_ptr<SwiftInternalClass>>(module, "smoke_SwiftInternalClass")
         .def("__gluecodium_id__", [](const SwiftInternalClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

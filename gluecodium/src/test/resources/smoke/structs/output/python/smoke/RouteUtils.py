@@ -20,10 +20,10 @@ class RouteUtils(_NativeBase):
 
     class RouteType(Enum):
     
-        NONE = generated.smoke_RouteUtilsRouteType.NONE
-        CAR = generated.smoke_RouteUtilsRouteType.CAR
-        PEDESTRIAN = generated.smoke_RouteUtilsRouteType.PEDESTRIAN
-        EQUESTRIAN = generated.smoke_RouteUtilsRouteType.EQUESTRIAN
+        NONE = generated.smoke_RouteUtils.RouteType.NONE
+        CAR = generated.smoke_RouteUtils.RouteType.CAR
+        PEDESTRIAN = generated.smoke_RouteUtils.RouteType.PEDESTRIAN
+        EQUESTRIAN = generated.smoke_RouteUtils.RouteType.EQUESTRIAN
     
         @property
         def _native(self):

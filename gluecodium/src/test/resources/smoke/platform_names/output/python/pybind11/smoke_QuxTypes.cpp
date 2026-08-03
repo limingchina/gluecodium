@@ -14,12 +14,27 @@ namespace py = pybind11;
 #include "smoke/fooTypes.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using fooTypes = ::smoke::fooTypes;
+using fooStruct = ::smoke::fooTypes::fooStruct;
+using fooEnum = ::smoke::fooTypes::fooEnum;
+
+
 
 void register_smoke_QuxTypes(py::module_& module) {
-    py::class_<fooTypes>(module, "smoke_QuxTypes")
+auto cls_QuxTypes = py::class_<fooTypes>(module, "smoke_QuxTypes")
         .def(py::init<>())
         ;
-}
 
+auto cls_QuxStruct = py::class_<fooStruct>(cls_QuxTypes, "QuxStruct")
+        .def_readwrite("qux_field", &fooStruct::FOO_FIELD)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("qux_field"))
+        .def_static("qux_make", &fooStruct::FooCreate, py::arg("qux_parameter"))
+        ;
+
+auto cls_QuxEnum = py::enum_<fooEnum>(cls_QuxTypes, "QuxEnum")
+        .value("QUX_ITEM", fooEnum::foo_item)
+        ;
+
+
+}

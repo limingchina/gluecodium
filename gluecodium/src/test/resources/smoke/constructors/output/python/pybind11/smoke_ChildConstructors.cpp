@@ -15,7 +15,6 @@ namespace py = pybind11;
 #include "smoke/Constructors.h"
 #include "memory"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ChildConstructors = ::smoke::ChildConstructors;
 
 class ChildConstructorsTrampoline : public ChildConstructors {
@@ -30,8 +29,10 @@ public:
 
 };
 
+
+
 void register_smoke_ChildConstructors(py::module_& module) {
-    py::class_<ChildConstructors, ::smoke::Constructors, std::shared_ptr<ChildConstructors>, ChildConstructorsTrampoline>(module, "smoke_ChildConstructors")
+auto cls_ChildConstructors = py::class_<ChildConstructors, ::smoke::Constructors, std::shared_ptr<ChildConstructors>, ChildConstructorsTrampoline>(module, "smoke_ChildConstructors")
         .def("__gluecodium_id__", [](const ChildConstructors& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -48,5 +49,6 @@ void register_smoke_ChildConstructors(py::module_& module) {
         .def_static("create", py::overload_cast<>(ChildConstructors::create))
         .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(ChildConstructors::create), py::arg("other"))
         ;
-}
 
+
+}

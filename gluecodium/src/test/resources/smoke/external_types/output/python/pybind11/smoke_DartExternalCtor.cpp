@@ -14,15 +14,17 @@ namespace py = pybind11;
 #include "smoke/DartExternalCtor.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DartExternalCtor = ::smoke::DartExternalCtor;
 
+
+
 void register_smoke_DartExternalCtor(py::module_& module) {
-    py::class_<DartExternalCtor>(module, "smoke_DartExternalCtor")
+auto cls_DartExternalCtor = py::class_<DartExternalCtor>(module, "smoke_DartExternalCtor")
         .def_readwrite("field", &DartExternalCtor::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         .def_static("make", &DartExternalCtor::make, py::arg("field"))
         ;
-}
 
+
+}

@@ -14,14 +14,16 @@ namespace py = pybind11;
 #include "smoke/ShouldNotInclude.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using ShouldNotInclude = ::smoke::ShouldNotInclude;
 
+
+
 void register_smoke_ShouldNotInclude(py::module_& module) {
-    py::class_<ShouldNotInclude>(module, "smoke_ShouldNotInclude")
+auto cls_ShouldNotInclude = py::class_<ShouldNotInclude>(module, "smoke_ShouldNotInclude")
         .def_readwrite("field", &ShouldNotInclude::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;
-}
 
+
+}

@@ -47,10 +47,10 @@ class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
 
     class ResultStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ListenersWithReturnValuesResultStruct):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_ListenersWithReturnValues.ResultStruct):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_ListenersWithReturnValuesResultStruct(
+                super().__init__(generated.smoke_ListenersWithReturnValues.ResultStruct(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -67,8 +67,8 @@ class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
     
     class ResultEnum(Enum):
     
-        NONE = generated.smoke_ListenersWithReturnValuesResultEnum.NONE
-        RESULT = generated.smoke_ListenersWithReturnValuesResultEnum.RESULT
+        NONE = generated.smoke_ListenersWithReturnValues.ResultEnum.NONE
+        RESULT = generated.smoke_ListenersWithReturnValues.ResultEnum.RESULT
     
         @property
         def _native(self):

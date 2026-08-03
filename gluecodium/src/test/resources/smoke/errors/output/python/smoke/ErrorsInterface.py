@@ -44,8 +44,8 @@ class ErrorsInterface(generated.smoke_ErrorsInterface):
 
     class InternalError(Enum):
     
-        ERROR_NONE = generated.smoke_ErrorsInterfaceInternalError.ERROR_NONE
-        ERROR_FATAL = generated.smoke_ErrorsInterfaceInternalError.ERROR_FATAL
+        ERROR_NONE = generated.smoke_ErrorsInterface.InternalError.ERROR_NONE
+        ERROR_FATAL = generated.smoke_ErrorsInterface.InternalError.ERROR_FATAL
     
         @property
         def _native(self):
@@ -55,9 +55,9 @@ class ErrorsInterface(generated.smoke_ErrorsInterface):
     
     class ExternalErrors(Enum):
     
-        NONE = generated.smoke_ErrorsInterfaceExternalErrors.NONE
-        BOOM = generated.smoke_ErrorsInterfaceExternalErrors.BOOM
-        BUST = generated.smoke_ErrorsInterfaceExternalErrors.BUST
+        NONE = generated.smoke_ErrorsInterface.ExternalErrors.NONE
+        BOOM = generated.smoke_ErrorsInterface.ExternalErrors.BOOM
+        BUST = generated.smoke_ErrorsInterface.ExternalErrors.BUST
     
         @property
         def _native(self):

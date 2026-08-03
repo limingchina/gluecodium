@@ -16,12 +16,13 @@ namespace py = pybind11;
 #include "smoke/Payload.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using Errors = ::smoke::Errors;
+using InternalErrorCode = ::smoke::Errors::InternalErrorCode;
+
 
 
 void register_smoke_Errors(py::module_& module) {
-    py::class_<Errors, std::shared_ptr<Errors>>(module, "smoke_Errors")
+auto cls_Errors = py::class_<Errors, std::shared_ptr<Errors>>(module, "smoke_Errors")
         .def("__gluecodium_id__", [](const Errors& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -31,5 +32,37 @@ void register_smoke_Errors(py::module_& module) {
         .def_static("method_with_payload_error", &Errors::method_with_payload_error)
         .def_static("method_with_payload_error_and_return_value", &Errors::method_with_payload_error_and_return_value)
         ;
-}
 
+auto cls_ErrorsInternalErrorCode = py::enum_<InternalErrorCode>(cls_Errors, "InternalErrorCode")
+        .value("ERROR_NONE", InternalErrorCode::ERROR_NONE)
+        .value("ERROR_FATAL", InternalErrorCode::ERROR_FATAL)
+        ;
+
+auto cls_ErrorsExternalErrors = py::enum_<::fire::SomeEnum>(cls_Errors, "ExternalErrors")
+        .value("NONE", ::fire::SomeEnum::NONE)
+        .value("BOOM", ::fire::SomeEnum::BOOM)
+        .value("BUST", ::fire::SomeEnum::BUST)
+        ;
+
+    static py::exception<::std::error_code> exc(cls_Errors, "InternalError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+    static py::exception<::std::error_code> exc(cls_Errors, "ExternalError");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+
+
+}

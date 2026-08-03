@@ -19,10 +19,10 @@ class DefaultValues(_NativeBase):
 
     class StructWithDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValuesStructWithDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValues.StructWithDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DefaultValuesStructWithDefaults(
+                super().__init__(generated.smoke_DefaultValues.StructWithDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -79,10 +79,10 @@ class DefaultValues(_NativeBase):
     
     class NullableStructWithDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValuesNullableStructWithDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValues.NullableStructWithDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DefaultValuesNullableStructWithDefaults(
+                super().__init__(generated.smoke_DefaultValues.NullableStructWithDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -131,10 +131,10 @@ class DefaultValues(_NativeBase):
     
     class StructWithSpecialDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValuesStructWithSpecialDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValues.StructWithSpecialDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DefaultValuesStructWithSpecialDefaults(
+                super().__init__(generated.smoke_DefaultValues.StructWithSpecialDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -191,10 +191,10 @@ class DefaultValues(_NativeBase):
     
     class StructWithEmptyDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValuesStructWithEmptyDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValues.StructWithEmptyDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DefaultValuesStructWithEmptyDefaults(
+                super().__init__(generated.smoke_DefaultValues.StructWithEmptyDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
@@ -243,10 +243,10 @@ class DefaultValues(_NativeBase):
     
     class StructWithTypedefDefaults(_NativeBase):
         def __init__(self, *args, **kwargs):
-            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValuesStructWithTypedefDefaults):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_DefaultValues.StructWithTypedefDefaults):
                 super().__init__(args[0])
             else:
-                super().__init__(generated.smoke_DefaultValuesStructWithTypedefDefaults(
+                super().__init__(generated.smoke_DefaultValues.StructWithTypedefDefaults(
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))

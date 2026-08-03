@@ -16,12 +16,12 @@ namespace py = pybind11;
 #include "string"
 #include "vector"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using KotlinMethodOverloads = ::smoke::KotlinMethodOverloads;
 
 
+
 void register_smoke_KotlinMethodOverloads(py::module_& module) {
-    py::class_<KotlinMethodOverloads, std::shared_ptr<KotlinMethodOverloads>>(module, "smoke_KotlinMethodOverloads")
+auto cls_KotlinMethodOverloads = py::class_<KotlinMethodOverloads, std::shared_ptr<KotlinMethodOverloads>>(module, "smoke_KotlinMethodOverloads")
         .def("__gluecodium_id__", [](const KotlinMethodOverloads& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
@@ -30,5 +30,6 @@ void register_smoke_KotlinMethodOverloads(py::module_& module) {
                         self.two(input);
                 }, py::arg("input"))
         ;
-}
 
+
+}

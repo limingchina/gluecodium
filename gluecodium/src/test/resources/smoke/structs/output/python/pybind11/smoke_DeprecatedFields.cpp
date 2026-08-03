@@ -14,11 +14,12 @@ namespace py = pybind11;
 #include "smoke/DeprecatedFields.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using DeprecatedFields = ::smoke::DeprecatedFields;
 
+
+
 void register_smoke_DeprecatedFields(py::module_& module) {
-    py::class_<DeprecatedFields>(module, "smoke_DeprecatedFields")
+auto cls_DeprecatedFields = py::class_<DeprecatedFields>(module, "smoke_DeprecatedFields")
         .def_readwrite("normal_field1", &DeprecatedFields::normal_field1)
         .def_readwrite("deprecated_field", &DeprecatedFields::deprecated_field)
         .def_readwrite("normal_field2", &DeprecatedFields::normal_field2)
@@ -26,5 +27,6 @@ void register_smoke_DeprecatedFields(py::module_& module) {
         .def(py::init<::std::string, ::std::string>(), py::arg("normal_field1"), py::arg("normal_field2"))
         .def(py::init<::std::string, ::std::string, ::std::string>(), py::arg("normal_field1"), py::arg("deprecated_field"), py::arg("normal_field2"))
         ;
-}
 
+
+}

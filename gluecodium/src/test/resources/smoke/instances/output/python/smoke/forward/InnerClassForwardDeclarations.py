@@ -12,7 +12,7 @@ class InnerClassForwardDeclarations(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    class InnerClass1(generated.smoke_forward_InnerClassForwardDeclarationsInnerClass1):
+    class InnerClass1(generated.smoke_forward_InnerClassForwardDeclarations.InnerClass1):
         def __init__(self, native=None):
             # Subclass the native pybind11 type so a Python override of an inherited virtual
             # method (from a parent interface or open base class) is dispatched through the
@@ -20,7 +20,7 @@ class InnerClassForwardDeclarations(_NativeBase):
             # a factory), adopt it via the generated adoption constructor; otherwise construct a
             # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
             # generated code can reach the native object uniformly.
-            if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarationsInnerClass1):
+            if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarations.InnerClass1):
                 super().__init__(native)
             else:
                 super().__init__()
@@ -51,7 +51,7 @@ class InnerClassForwardDeclarations(_NativeBase):
     
     
     
-    class InnerInterface2(generated.smoke_forward_InnerClassForwardDeclarationsInnerInterface2):
+    class InnerInterface2(generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface2):
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an
@@ -60,7 +60,7 @@ class InnerClassForwardDeclarations(_NativeBase):
             # aliases the wrapper itself so the rest of the generated code can reach the
             # native object uniformly (e.g. when passing this interface back into a C++
             # call site).
-            if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarationsInnerInterface2):
+            if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface2):
                 super().__init__(native)
             else:
                 super().__init__()
@@ -68,7 +68,7 @@ class InnerClassForwardDeclarations(_NativeBase):
     
     
     
-    class InnerInterface3(generated.smoke_forward_InnerClassForwardDeclarationsInnerInterface3):
+    class InnerInterface3(generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface3):
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an
@@ -77,7 +77,7 @@ class InnerClassForwardDeclarations(_NativeBase):
             # aliases the wrapper itself so the rest of the generated code can reach the
             # native object uniformly (e.g. when passing this interface back into a C++
             # call site).
-            if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarationsInnerInterface3):
+            if native is not None and isinstance(native, generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface3):
                 super().__init__(native)
             else:
                 super().__init__()

@@ -14,12 +14,29 @@ namespace py = pybind11;
 #include "smoke/TypeCollection.h"
 #include "cstdint"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using TypeCollection = ::smoke::TypeCollection;
+using Point = ::smoke::TypeCollection::Point;
+using StructHavingAliasFieldDefinedBelow = ::smoke::TypeCollection::StructHavingAliasFieldDefinedBelow;
+
+
 
 void register_smoke_TypeCollection(py::module_& module) {
-    py::class_<TypeCollection>(module, "smoke_TypeCollection")
+auto cls_TypeCollection = py::class_<TypeCollection>(module, "smoke_TypeCollection")
         .def(py::init<>())
         ;
-}
 
+auto cls_TypeCollectionPoint = py::class_<Point>(cls_TypeCollection, "Point")
+        .def_readwrite("x", &Point::x)
+        .def_readwrite("y", &Point::y)
+        .def(py::init<>())
+        .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
+        ;
+
+auto cls_TypeCollectionStructHavingAliasFieldDefinedBelow = py::class_<StructHavingAliasFieldDefinedBelow>(cls_TypeCollection, "StructHavingAliasFieldDefinedBelow")
+        .def_readwrite("field", &StructHavingAliasFieldDefinedBelow::field)
+        .def(py::init<>())
+        .def(py::init<uint64_t>(), py::arg("field"))
+        ;
+
+
+}

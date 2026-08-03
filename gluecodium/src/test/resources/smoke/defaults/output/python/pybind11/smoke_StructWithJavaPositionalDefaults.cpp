@@ -15,11 +15,12 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using StructWithJavaPositionalDefaults = ::smoke::StructWithJavaPositionalDefaults;
 
+
+
 void register_smoke_StructWithJavaPositionalDefaults(py::module_& module) {
-    py::class_<StructWithJavaPositionalDefaults>(module, "smoke_StructWithJavaPositionalDefaults")
+auto cls_StructWithJavaPositionalDefaults = py::class_<StructWithJavaPositionalDefaults>(module, "smoke_StructWithJavaPositionalDefaults")
         .def_readwrite("first_init_field", &StructWithJavaPositionalDefaults::first_init_field)
         .def_readwrite("first_free_field", &StructWithJavaPositionalDefaults::first_free_field)
         .def_readwrite("second_init_field", &StructWithJavaPositionalDefaults::second_init_field)
@@ -29,5 +30,6 @@ void register_smoke_StructWithJavaPositionalDefaults(py::module_& module) {
         .def(py::init<::std::string, bool>(), py::arg("first_free_field"), py::arg("second_free_field"))
         .def(py::init<int32_t, ::std::string, float, bool, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))
         ;
-}
 
+
+}

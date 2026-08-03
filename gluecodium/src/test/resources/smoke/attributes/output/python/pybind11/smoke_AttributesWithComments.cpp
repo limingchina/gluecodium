@@ -14,17 +14,25 @@ namespace py = pybind11;
 #include "smoke/AttributesWithComments.h"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using AttributesWithComments = ::smoke::AttributesWithComments;
+using SomeStruct = ::smoke::AttributesWithComments::SomeStruct;
+
 
 
 void register_smoke_AttributesWithComments(py::module_& module) {
-    py::class_<AttributesWithComments, std::shared_ptr<AttributesWithComments>>(module, "smoke_AttributesWithComments")
+auto cls_AttributesWithComments = py::class_<AttributesWithComments, std::shared_ptr<AttributesWithComments>>(module, "smoke_AttributesWithComments")
         .def("__gluecodium_id__", [](const AttributesWithComments& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("very_fun", &AttributesWithComments::very_fun)
         .def_property("prop", py::overload_cast<>(&AttributesWithComments::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithComments::set_prop))
         ;
-}
 
+auto cls_AttributesWithCommentsSomeStruct = py::class_<SomeStruct>(cls_AttributesWithComments, "SomeStruct")
+        .def_readwrite("field", &SomeStruct::field)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("field"))
+        ;
+
+
+}

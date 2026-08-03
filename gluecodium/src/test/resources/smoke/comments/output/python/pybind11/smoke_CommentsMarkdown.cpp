@@ -13,15 +13,16 @@
 namespace py = pybind11;
 #include "smoke/CommentsMarkdown.h"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using CommentsMarkdown = ::smoke::CommentsMarkdown;
 
 
+
 void register_smoke_CommentsMarkdown(py::module_& module) {
-    py::class_<CommentsMarkdown, std::shared_ptr<CommentsMarkdown>>(module, "smoke_CommentsMarkdown")
+auto cls_CommentsMarkdown = py::class_<CommentsMarkdown, std::shared_ptr<CommentsMarkdown>>(module, "smoke_CommentsMarkdown")
         .def("__gluecodium_id__", [](const CommentsMarkdown& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         ;
-}
 
+
+}

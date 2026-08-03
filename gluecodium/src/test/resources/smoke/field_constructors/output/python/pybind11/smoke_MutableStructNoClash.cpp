@@ -15,15 +15,17 @@ namespace py = pybind11;
 #include "cstdint"
 #include "string"
 
-// Bring the generated C++ type into the global namespace so it can be referenced by its short name.
 using MutableStructNoClash = ::smoke::MutableStructNoClash;
 
+
+
 void register_smoke_MutableStructNoClash(py::module_& module) {
-    py::class_<MutableStructNoClash>(module, "smoke_MutableStructNoClash")
+auto cls_MutableStructNoClash = py::class_<MutableStructNoClash>(module, "smoke_MutableStructNoClash")
         .def_readwrite("string_field", &MutableStructNoClash::string_field)
         .def_readwrite("int_field", &MutableStructNoClash::int_field)
         .def_readwrite("bool_field", &MutableStructNoClash::bool_field)
         .def(py::init<>())
         ;
-}
 
+
+}
