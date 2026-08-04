@@ -21,6 +21,7 @@ using PublicFieldsAllInitPosDefaults = ::smoke::PublicFieldsAllInitPosDefaults;
 void register_smoke_PublicFieldsAllInitPosDefaults(py::module_& module) {
 auto cls_PublicFieldsAllInitPosDefaults = py::class_<PublicFieldsAllInitPosDefaults>(module, "smoke_PublicFieldsAllInitPosDefaults")
         .def_readwrite("public_field", &PublicFieldsAllInitPosDefaults::public_field)
+        .def_readwrite("_internal_field", &PublicFieldsAllInitPosDefaults::internal_field)
         .def(py::init<>())
         .def(py::init([](const ::std::string& public_field) {
             return PublicFieldsAllInitPosDefaults(public_field, ::std::string{});

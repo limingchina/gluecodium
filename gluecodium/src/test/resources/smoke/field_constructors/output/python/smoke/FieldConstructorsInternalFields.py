@@ -34,4 +34,12 @@ class FieldConstructorsInternalFields(_NativeBase):
       self._native.int_field = _unwrap(value, int)
 
 
+    @property
+    def _bool_field(self) -> bool:
+        return _wrap(self._native._bool_field, bool)
+    @_bool_field.setter
+    def _bool_field(self, value: bool):
+      self._native._bool_field = _unwrap(value, bool)
+
+
 

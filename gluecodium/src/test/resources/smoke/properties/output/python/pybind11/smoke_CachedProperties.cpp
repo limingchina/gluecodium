@@ -28,7 +28,9 @@ auto cls_CachedProperties = py::class_<CachedProperties, std::shared_ptr<CachedP
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def_property_readonly("cached_property", py::overload_cast<>(&CachedProperties::get_cached_property, py::const_))
+        .def_property_readonly("__internal_cached_property", py::overload_cast<>(&CachedProperties::get_internal_cached_property, py::const_))
         .def_static("static_cached_property", &CachedProperties::get_static_cached_property)
+        .def_static("__internal_static_cached_property", &CachedProperties::get_internal_static_cached_property)
         ;
 
 

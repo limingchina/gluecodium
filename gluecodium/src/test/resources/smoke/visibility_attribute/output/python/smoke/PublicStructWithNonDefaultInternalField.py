@@ -27,6 +27,14 @@ class PublicStructWithNonDefaultInternalField(_NativeBase):
 
 
     @property
+    def _internal_field(self) -> str:
+        return _wrap(self._native._internal_field, str)
+    @_internal_field.setter
+    def _internal_field(self, value: str):
+      self._native._internal_field = _unwrap(value, str)
+
+
+    @property
     def public_field(self) -> bool:
         return _wrap(self._native.public_field, bool)
     @public_field.setter

@@ -14,6 +14,7 @@
 // declarations).
 void register_smoke_AssetsManager(pybind11::module_& module);
 void register_smoke_Image(pybind11::module_& module);
+void register_smoke__AssetsManager(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -23,4 +24,5 @@ PYBIND11_MODULE(generated, m) {
 
     register_smoke_AssetsManager(m);
     register_smoke_Image(m);
+    register_smoke__AssetsManager(m);
 }

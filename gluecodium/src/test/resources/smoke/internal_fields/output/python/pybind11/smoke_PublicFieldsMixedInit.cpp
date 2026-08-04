@@ -22,6 +22,7 @@ void register_smoke_PublicFieldsMixedInit(py::module_& module) {
 auto cls_PublicFieldsMixedInit = py::class_<PublicFieldsMixedInit>(module, "smoke_PublicFieldsMixedInit")
         .def_readwrite("public_field1", &PublicFieldsMixedInit::public_field1)
         .def_readwrite("public_field2", &PublicFieldsMixedInit::public_field2)
+        .def_readwrite("_internal_field", &PublicFieldsMixedInit::internal_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("public_field2"))
         .def(py::init([](const ::std::string& public_field1, const ::std::string& public_field2) {

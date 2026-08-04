@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Optional
 import generated
 
+from smoke.JavaExternalCtor import JavaExternalCtor
 
 class UseJavaExternalConst(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -26,4 +27,6 @@ class UseJavaExternalConst(_NativeBase):
       self._native.string_field = _unwrap(value, str)
 
 
+
+    _DEFAULT_TRUTH = {"foo"}
 

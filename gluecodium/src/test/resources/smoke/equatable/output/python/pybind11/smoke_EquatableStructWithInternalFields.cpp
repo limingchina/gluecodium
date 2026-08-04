@@ -11,8 +11,14 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/UnorderedMapHash.h"
+#include "gluecodium/UnorderedSetHash.h"
+#include "gluecodium/VectorHash.h"
 #include "smoke/EquatableStructWithInternalFields.h"
 #include "string"
+#include "unordered_map"
+#include "unordered_set"
+#include "vector"
 
 using EquatableStructWithInternalFields = ::smoke::EquatableStructWithInternalFields;
 
@@ -21,6 +27,10 @@ using EquatableStructWithInternalFields = ::smoke::EquatableStructWithInternalFi
 void register_smoke_EquatableStructWithInternalFields(py::module_& module) {
 auto cls_EquatableStructWithInternalFields = py::class_<EquatableStructWithInternalFields>(module, "smoke_EquatableStructWithInternalFields")
         .def_readwrite("public_field", &EquatableStructWithInternalFields::public_field)
+        .def_readwrite("_internal_field", &EquatableStructWithInternalFields::internal_field)
+        .def_readwrite("_internal_list_field", &EquatableStructWithInternalFields::internal_list_field)
+        .def_readwrite("_internal_map_field", &EquatableStructWithInternalFields::internal_map_field)
+        .def_readwrite("_internal_set_field", &EquatableStructWithInternalFields::internal_set_field)
         .def(py::init<>())
         .def(py::init([](const ::std::string& public_field) {
             return EquatableStructWithInternalFields(public_field, ::std::string{}, ::std::vector< ::std::string >{}, ::std::unordered_map< ::std::string, ::std::string >{}, ::std::unordered_set< ::std::string >{});

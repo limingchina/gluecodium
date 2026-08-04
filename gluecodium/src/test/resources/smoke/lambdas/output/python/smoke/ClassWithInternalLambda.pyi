@@ -10,4 +10,7 @@ class ClassWithInternalLambda:
     def invoke_internal_lambda(lambda_: Callable[[str], bool], value: str) -> bool:
         ...
 
+    _InternalNestedLambda = Callable[[str], bool]
+    
+    
 

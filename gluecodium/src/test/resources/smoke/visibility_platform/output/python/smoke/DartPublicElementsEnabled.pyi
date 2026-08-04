@@ -7,4 +7,9 @@ class DartPublicElementsEnabled:
 
     bool_field: bool
 
+    _string_field: str
+
+    def _foo(self):
+        ...
+
 

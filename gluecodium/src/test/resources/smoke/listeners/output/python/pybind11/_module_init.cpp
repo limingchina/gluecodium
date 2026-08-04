@@ -23,6 +23,7 @@ void register_smoke_ListenersWithReturnValues(pybind11::module_& module);
 void register_smoke_TemperatureObserver(pybind11::module_& module);
 void register_smoke_Thermometer(pybind11::module_& module);
 void register_smoke_Weakling(pybind11::module_& module);
+void register_smoke__InternalListener(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -41,4 +42,5 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_TemperatureObserver(m);
     register_smoke_Thermometer(m);
     register_smoke_Weakling(m);
+    register_smoke__InternalListener(m);
 }

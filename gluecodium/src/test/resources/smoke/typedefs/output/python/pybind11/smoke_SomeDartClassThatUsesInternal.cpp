@@ -26,6 +26,7 @@ auto cls_SomeDartClassThatUsesInternal = py::class_<SomeDartClassThatUsesInterna
         .def("__gluecodium_id__", [](const SomeDartClassThatUsesInternal& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
+        .def("_add_entity", &SomeDartClassThatUsesInternal::add_entity, py::arg("entity"))
         ;
 
 

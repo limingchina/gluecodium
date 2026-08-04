@@ -17,4 +17,7 @@ class ClassWithInternalLambda(_NativeBase):
     def invoke_internal_lambda(lambda_: Callable[[str], bool], value: str) -> bool:
         return generated.smoke_ClassWithInternalLambda.invoke_internal_lambda(_unwrap(lambda_, Callable[[str], bool]), _unwrap(value, str))
 
+    _InternalNestedLambda = Callable[[str], bool]
+    
+    
 

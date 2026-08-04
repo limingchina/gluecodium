@@ -7,4 +7,6 @@ class PublicFieldsNoInit:
 
     public_field: str
 
+    _internal_field: str
+
 

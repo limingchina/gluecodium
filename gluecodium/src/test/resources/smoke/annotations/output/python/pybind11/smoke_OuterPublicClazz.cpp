@@ -14,6 +14,7 @@ namespace py = pybind11;
 #include "smoke/OuterPublicClazz.h"
 
 using OuterPublicClazz = ::smoke::OuterPublicClazz;
+using InnerInternalClazz = ::smoke::OuterPublicClazz::InnerInternalClazz;
 
 
 
@@ -22,6 +23,13 @@ auto cls_OuterPublicClazz = py::class_<OuterPublicClazz, std::shared_ptr<OuterPu
         .def("__gluecodium_id__", [](const OuterPublicClazz& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
+        ;
+
+auto cls__OuterPublicClazzInnerInternalClazz = py::class_<InnerInternalClazz, std::shared_ptr<InnerInternalClazz>>(cls_OuterPublicClazz, "_InnerInternalClazz")
+        .def("__gluecodium_id__", [](const InnerInternalClazz& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def("some_function", &InnerInternalClazz::some_function)
         ;
 
 

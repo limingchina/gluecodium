@@ -16,6 +16,11 @@ void register_smoke_ExposeClass(pybind11::module_& module);
 void register_smoke_ExposeEnum(pybind11::module_& module);
 void register_smoke_ExposeInterface(pybind11::module_& module);
 void register_smoke_ExposeStruct(pybind11::module_& module);
+void register_smoke__ExposeInternalClass(pybind11::module_& module);
+void register_smoke__ExposeInternalEnum(pybind11::module_& module);
+void register_smoke__ExposeInternalInterface(pybind11::module_& module);
+void register_smoke__ExposeInternalNested(pybind11::module_& module);
+void register_smoke__ExposeInternalStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -27,4 +32,9 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_ExposeEnum(m);
     register_smoke_ExposeInterface(m);
     register_smoke_ExposeStruct(m);
+    register_smoke__ExposeInternalClass(m);
+    register_smoke__ExposeInternalEnum(m);
+    register_smoke__ExposeInternalInterface(m);
+    register_smoke__ExposeInternalNested(m);
+    register_smoke__ExposeInternalStruct(m);
 }

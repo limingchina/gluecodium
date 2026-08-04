@@ -13,6 +13,7 @@
 namespace py = pybind11;
 #include "smoke/PublicStructWithNonDefaultInternalField.h"
 #include "cstdint"
+#include "string"
 
 using PublicStructWithNonDefaultInternalField = ::smoke::PublicStructWithNonDefaultInternalField;
 
@@ -21,6 +22,7 @@ using PublicStructWithNonDefaultInternalField = ::smoke::PublicStructWithNonDefa
 void register_smoke_PublicStructWithNonDefaultInternalField(py::module_& module) {
 auto cls_PublicStructWithNonDefaultInternalField = py::class_<PublicStructWithNonDefaultInternalField>(module, "smoke_PublicStructWithNonDefaultInternalField")
         .def_readwrite("defaulted_field", &PublicStructWithNonDefaultInternalField::defaulted_field)
+        .def_readwrite("_internal_field", &PublicStructWithNonDefaultInternalField::internal_field)
         .def_readwrite("public_field", &PublicStructWithNonDefaultInternalField::public_field)
         .def(py::init<>())
         .def(py::init([](const bool& public_field) {

@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Optional
 import generated
 
+from kotlin_smoke.VeryBoolean import VeryBoolean
 
 class UseKotlinExternalConst(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -26,4 +27,6 @@ class UseKotlinExternalConst(_NativeBase):
       self._native.string_field = _unwrap(value, str)
 
 
+
+    _DEFAULT_TRUTH = {true}
 

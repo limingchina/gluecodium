@@ -13,6 +13,11 @@
 // is used here because the `py` namespace alias is introduced further below (after these
 // declarations).
 void register_smoke_OuterPublicClazz(pybind11::module_& module);
+void register_smoke__Annotations(pybind11::module_& module);
+void register_smoke__OuterInternalEnum(pybind11::module_& module);
+void register_smoke__OuterInternalError(pybind11::module_& module);
+void register_smoke__OuterInternalInterface(pybind11::module_& module);
+void register_smoke__OuterInternalStruct(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -21,4 +26,9 @@ PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
     register_smoke_OuterPublicClazz(m);
+    register_smoke__Annotations(m);
+    register_smoke__OuterInternalEnum(m);
+    register_smoke__OuterInternalError(m);
+    register_smoke__OuterInternalInterface(m);
+    register_smoke__OuterInternalStruct(m);
 }

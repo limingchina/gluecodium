@@ -12,6 +12,7 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "smoke/PublicFieldsNone.h"
+#include "string"
 
 using PublicFieldsNone = ::smoke::PublicFieldsNone;
 
@@ -19,6 +20,7 @@ using PublicFieldsNone = ::smoke::PublicFieldsNone;
 
 void register_smoke_PublicFieldsNone(py::module_& module) {
 auto cls_PublicFieldsNone = py::class_<PublicFieldsNone>(module, "smoke_PublicFieldsNone")
+        .def_readwrite("_internal_field", &PublicFieldsNone::internal_field)
         .def(py::init<>())
         .def(py::init([]() {
             return PublicFieldsNone(::std::string{});

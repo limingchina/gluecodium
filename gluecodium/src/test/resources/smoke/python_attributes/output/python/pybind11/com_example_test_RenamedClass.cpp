@@ -24,6 +24,7 @@ auto cls_RenamedClass = py::class_<MyClass, std::shared_ptr<MyClass>>(module, "c
         .def("__gluecodium_id__", [](const MyClass& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
+        .def("_internal_method", &MyClass::internal_method)
         .def("visible_method", &MyClass::visible_method, py::arg("param"))
         ;
 

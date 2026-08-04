@@ -9,4 +9,12 @@ class EquatableStructWithInternalFields:
 
     public_field: str
 
+    _internal_field: str
+
+    _internal_list_field: list[str]
+
+    _internal_map_field: dict[str, str]
+
+    _internal_set_field: set[str]
+
 

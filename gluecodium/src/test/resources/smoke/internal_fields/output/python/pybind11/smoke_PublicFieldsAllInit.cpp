@@ -21,6 +21,7 @@ using PublicFieldsAllInit = ::smoke::PublicFieldsAllInit;
 void register_smoke_PublicFieldsAllInit(py::module_& module) {
 auto cls_PublicFieldsAllInit = py::class_<PublicFieldsAllInit>(module, "smoke_PublicFieldsAllInit")
         .def_readwrite("public_field", &PublicFieldsAllInit::public_field)
+        .def_readwrite("_internal_field", &PublicFieldsAllInit::internal_field)
         .def(py::init<>())
         .def(py::init([](const ::std::string& public_field) {
             return PublicFieldsAllInit(public_field, ::std::string{});

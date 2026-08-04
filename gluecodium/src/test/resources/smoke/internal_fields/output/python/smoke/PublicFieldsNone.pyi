@@ -5,4 +5,6 @@ import typing
 
 class PublicFieldsNone:
 
+    _internal_field: str
+
 

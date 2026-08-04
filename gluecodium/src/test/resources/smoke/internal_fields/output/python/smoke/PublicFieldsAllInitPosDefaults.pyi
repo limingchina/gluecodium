@@ -7,4 +7,6 @@ class PublicFieldsAllInitPosDefaults:
 
     public_field: str
 
+    _internal_field: str
+
 

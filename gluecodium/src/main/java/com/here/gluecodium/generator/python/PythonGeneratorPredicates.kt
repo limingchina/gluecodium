@@ -132,6 +132,18 @@ internal class PythonGeneratorPredicates(
             "isSkippedForPython" to { limeElement: Any ->
                 limeElement is LimeNamedElement && !limeReferenceMap.containsKey(limeElement.fullName)
             },
+            // Whether an element is either @Internal for Python or skipped for Python
+            // (via @Skip(Python)). Used by the pybind11 struct init template to decide
+            // whether a field should be default-constructed in the lambda constructor
+            // (instead of being passed as a constructor parameter). Both internal and
+            // skipped fields must not appear in the constructor signature, but they
+            // still need to be present in the C++ constructor call (default-constructed).
+            "isInternalOrSkipped" to { limeElement: Any ->
+                limeElement is LimeNamedElement && (
+                    !limeReferenceMap.containsKey(limeElement.fullName) ||
+                        CommonGeneratorPredicates.isInternal(limeElement, PYTHON)
+                )
+            },
             "isNestedInternal" to { limeElement: Any ->
                 limeElement is LimeNamedElement &&
                     generateSequence(limeElement) {

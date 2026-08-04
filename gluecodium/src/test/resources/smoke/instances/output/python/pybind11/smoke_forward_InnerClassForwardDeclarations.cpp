@@ -19,6 +19,7 @@ using InnerClass1 = ::smoke::forward::InnerClassForwardDeclarations::InnerClass1
 using InnerClass2 = ::smoke::forward::InnerClassForwardDeclarations::InnerClass2;
 using InnerInnerClass1 = ::smoke::forward::InnerClassForwardDeclarations::InnerClass2::InnerInnerClass1;
 using InnerInnerClass2 = ::smoke::forward::InnerClassForwardDeclarations::InnerClass2::InnerInnerClass2;
+using InnerInterface1 = ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1;
 using InnerInterface2 = ::smoke::forward::InnerClassForwardDeclarations::InnerInterface2;
 using InnerInterface3 = ::smoke::forward::InnerClassForwardDeclarations::InnerInterface3;
 
@@ -40,6 +41,19 @@ public:
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1 >, InnerClass1, get_inner_interface);
     }
+};
+
+class _InnerInterface1Trampoline : public InnerInterface1 {
+public:
+    using InnerInterface1::InnerInterface1;
+
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<InnerInterface1> m_impl;
+
 };
 
 class InnerInterface2Trampoline : public InnerInterface2 {
@@ -91,6 +105,7 @@ auto cls_InnerClassForwardDeclarationsInnerClass1 = py::class_<InnerClass1, std:
             self->m_impl = native;
             return self;
         }))
+        .def("_get_inner_interface", &InnerClass1::get_inner_interface)
         ;
 
 auto cls_InnerClassForwardDeclarationsInnerClass2 = py::class_<InnerClass2, std::shared_ptr<InnerClass2>>(cls_InnerClassForwardDeclarations, "InnerClass2")
@@ -111,6 +126,24 @@ auto cls_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2 = py::class_<I
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("bar", &InnerInnerClass2::bar, py::arg("arg"))
+        ;
+
+auto cls__InnerClassForwardDeclarationsInnerInterface1 = py::class_<InnerInterface1, std::shared_ptr<InnerInterface1>, _InnerInterface1Trampoline>(cls_InnerClassForwardDeclarations, "_InnerInterface1")
+        .def("__gluecodium_id__", [](const InnerInterface1& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<InnerInterface1> native) {
+            auto self = std::make_shared<_InnerInterface1Trampoline>();
+            self->m_impl = native;
+            return self;
+        }))
         ;
 
 auto cls_InnerClassForwardDeclarationsInnerInterface2 = py::class_<InnerInterface2, std::shared_ptr<InnerInterface2>, InnerInterface2Trampoline>(cls_InnerClassForwardDeclarations, "InnerInterface2")

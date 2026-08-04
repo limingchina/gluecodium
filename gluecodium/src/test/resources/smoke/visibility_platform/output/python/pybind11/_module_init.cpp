@@ -33,6 +33,12 @@ void register_smoke_KotlinInternalClassRev(pybind11::module_& module);
 void register_smoke_PlatformInternalInterface(pybind11::module_& module);
 void register_smoke_SwiftInternalClass(pybind11::module_& module);
 void register_smoke_SwiftInternalClassRev(pybind11::module_& module);
+void register_smoke__DartPublicClass(pybind11::module_& module);
+void register_smoke__DartPublicClassEnabled(pybind11::module_& module);
+void register_smoke__DartPublicClassSkipped(pybind11::module_& module);
+void register_smoke__JavaPublicClass(pybind11::module_& module);
+void register_smoke__KotlinPublicClass(pybind11::module_& module);
+void register_smoke__SwiftPublicClass(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -61,4 +67,10 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_PlatformInternalInterface(m);
     register_smoke_SwiftInternalClass(m);
     register_smoke_SwiftInternalClassRev(m);
+    register_smoke__DartPublicClass(m);
+    register_smoke__DartPublicClassEnabled(m);
+    register_smoke__DartPublicClassSkipped(m);
+    register_smoke__JavaPublicClass(m);
+    register_smoke__KotlinPublicClass(m);
+    register_smoke__SwiftPublicClass(m);
 }

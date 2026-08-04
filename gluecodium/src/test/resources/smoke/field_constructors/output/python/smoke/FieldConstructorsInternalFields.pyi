@@ -9,4 +9,6 @@ class FieldConstructorsInternalFields:
 
     int_field: int
 
+    _bool_field: bool
+
 
