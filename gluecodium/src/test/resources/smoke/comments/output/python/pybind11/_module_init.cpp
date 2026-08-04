@@ -33,6 +33,7 @@ void register_smoke_MultiLineComments(pybind11::module_& module);
 void register_smoke_PlatformComments(pybind11::module_& module);
 void register_smoke_PlatformCommentsLineBreaks(pybind11::module_& module);
 void register_smoke_UnicodeComments(pybind11::module_& module);
+void register_smoke__InternalClassWithComments(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -61,4 +62,5 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_PlatformComments(m);
     register_smoke_PlatformCommentsLineBreaks(m);
     register_smoke_UnicodeComments(m);
+    register_smoke__InternalClassWithComments(m);
 }
