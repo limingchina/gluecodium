@@ -22,11 +22,14 @@ package com.here.gluecodium.generator.python
 /**
  * Represents a Python import statement. [modulePath] is the dotted module path (e.g.
  * `myapp.src.foo.bar`), [importedName] is the symbol imported from it (when using a
- * `from <module> import <name>` form).
+ * `from <module> import <name>` form). [alias] is an optional alias used when two
+ * imports would otherwise bring the same name into scope (e.g. `Alphabet` from
+ * `test.Alphabet` and `test.foo.Alphabet`), producing `from <module> import <name> as <alias>`.
  */
 data class PythonImport(
     val modulePath: String,
     val importedName: String? = null,
+    val alias: String? = null,
 ) : Comparable<PythonImport> {
     override fun compareTo(other: PythonImport): Int = modulePath.compareTo(other.modulePath)
 }

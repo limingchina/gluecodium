@@ -7,8 +7,8 @@ from enum import Enum
 from typing import Optional
 import generated
 
-from smoke.Alphabet import Alphabet
-from smoke.foo.Alphabet import Alphabet
+from smoke.Alphabet import Alphabet as smoke_Alphabet
+from smoke.foo.Alphabet import Alphabet as smoke_foo_Alphabet
 
 class NameClashLists(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -21,19 +21,19 @@ class NameClashLists(_NativeBase):
             ))
 
     @property
-    def field_a(self) -> list[Alphabet]:
-        return _wrap(self._native.field_a, list[Alphabet])
+    def field_a(self) -> list[smoke_Alphabet]:
+        return _wrap(self._native.field_a, list[smoke_Alphabet])
     @field_a.setter
-    def field_a(self, value: list[Alphabet]):
-      self._native.field_a = _unwrap(value, list[Alphabet])
+    def field_a(self, value: list[smoke_Alphabet]):
+      self._native.field_a = _unwrap(value, list[smoke_Alphabet])
 
 
     @property
-    def field_b(self) -> list[Alphabet]:
-        return _wrap(self._native.field_b, list[Alphabet])
+    def field_b(self) -> list[smoke_foo_Alphabet]:
+        return _wrap(self._native.field_b, list[smoke_foo_Alphabet])
     @field_b.setter
-    def field_b(self, value: list[Alphabet]):
-      self._native.field_b = _unwrap(value, list[Alphabet])
+    def field_b(self, value: list[smoke_foo_Alphabet]):
+      self._native.field_b = _unwrap(value, list[smoke_foo_Alphabet])
 
 
 

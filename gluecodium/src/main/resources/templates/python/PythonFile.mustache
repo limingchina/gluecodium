@@ -48,7 +48,7 @@ from typing import Optional
 import {{nativeModule}}
 
 {{#imports}}
-{{#importedName}}from {{modulePath}} import {{importedName}}
+{{#importedName}}from {{modulePath}} import {{importedName}}{{#alias}} as {{alias}}{{/alias}}
 {{/importedName}}{{^importedName}}import {{modulePath}}
 {{/importedName}}{{/imports}}
 

@@ -7,8 +7,8 @@ from enum import Enum
 from typing import Optional
 import generated
 
-from smoke.Alphabet import Alphabet
-from smoke.foo.Alphabet import Alphabet
+from smoke.Alphabet import Alphabet as smoke_Alphabet
+from smoke.foo.Alphabet import Alphabet as smoke_foo_Alphabet
 
 class LearnToRead(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -21,19 +21,19 @@ class LearnToRead(_NativeBase):
             ))
 
     @property
-    def field_a(self) -> Alphabet:
-        return _wrap(self._native.field_a, Alphabet)
+    def field_a(self) -> smoke_Alphabet:
+        return _wrap(self._native.field_a, smoke_Alphabet)
     @field_a.setter
-    def field_a(self, value: Alphabet):
-      self._native.field_a = _unwrap(value, Alphabet)
+    def field_a(self, value: smoke_Alphabet):
+      self._native.field_a = _unwrap(value, smoke_Alphabet)
 
 
     @property
-    def field_b(self) -> Alphabet:
-        return _wrap(self._native.field_b, Alphabet)
+    def field_b(self) -> smoke_foo_Alphabet:
+        return _wrap(self._native.field_b, smoke_foo_Alphabet)
     @field_b.setter
-    def field_b(self, value: Alphabet):
-      self._native.field_b = _unwrap(value, Alphabet)
+    def field_b(self, value: smoke_foo_Alphabet):
+      self._native.field_b = _unwrap(value, smoke_foo_Alphabet)
 
 
 

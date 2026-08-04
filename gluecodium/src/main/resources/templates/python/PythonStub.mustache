@@ -39,7 +39,7 @@
 {{#if copyrightHeader}}{{prefix copyrightHeader "# "}}{{/if}}
 
 {{#imports}}
-{{#importedName}}from {{modulePath}} import {{importedName}}
+{{#importedName}}from {{modulePath}} import {{importedName}}{{#alias}} as {{alias}}{{/alias}}
 {{/importedName}}{{^importedName}}import {{modulePath}}
 {{/importedName}}{{/imports}}
 from enum import Enum

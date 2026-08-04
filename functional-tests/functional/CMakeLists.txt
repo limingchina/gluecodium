@@ -495,7 +495,7 @@ feature(Locales cpp android android-kotlin swift dart SOURCES
     input/lime/LocaleDefaults.lime
 )
 
-feature(CrossPackageNameClash cpp android android-kotlin swift dart SOURCES
+feature(CrossPackageNameClash cpp android android-kotlin swift dart python SOURCES
     input/lime/CrossPackageNameClashA.lime
     input/lime/CrossPackageNameClashB.lime
     input/lime/CrossPackageNameClashC.lime

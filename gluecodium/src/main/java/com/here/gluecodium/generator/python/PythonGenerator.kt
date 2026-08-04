@@ -224,24 +224,55 @@ internal class PythonGenerator : Generator {
                 .distinct()
                 .sorted()
 
-        val contentBody = generateTypeBody(limeElement, nameResolvers, predicates, isStub = false)
-        val stubBody = generateTypeBody(limeElement, nameResolvers, predicates, isStub = true)
+        // Detect name clashes: two imports with the same importedName from different module
+        // paths would shadow each other (the second `from a.b import X` overwrites the first
+        // `from c.d import X`). For each clashed name, assign a deterministic alias derived
+        // from the module path (dots → underscores) so both are accessible at runtime.
+        val nameCounts = imports.filter { it.importedName != null }
+            .groupingBy { it.importedName!! }
+            .eachCount()
+        val clashedNames = nameCounts.filter { it.value > 1 }.keys
+        val clashAliases = mutableMapOf<String, String>()
+        val importsWithAliases =
+            if (clashedNames.isEmpty()) {
+                imports
+            } else {
+                imports.map { imp ->
+                    if (imp.importedName != null && imp.importedName in clashedNames) {
+                        val alias = imp.modulePath.replace(".", "_")
+                        clashAliases[imp.modulePath] = alias
+                        imp.copy(alias = alias)
+                    } else {
+                        imp
+                    }
+                }
+            }
 
-        val templateData =
-            mapOf(
-                "imports" to imports,
-                "moduleName" to pythonModule,
-                "nativeModule" to pythonModule,
-                "usesCallable" to usesCallableForFile(limeElement),
-                "content" to contentBody,
-                "stubContent" to stubBody,
+        // Set the clash alias map so the name resolver substitutes aliases for clashed types
+        // in type references (annotations, _wrap/_unwrap arguments, etc.).
+        pythonNameResolver.setClashAliases(clashAliases)
+        try {
+            val contentBody = generateTypeBody(limeElement, nameResolvers, predicates, isStub = false)
+            val stubBody = generateTypeBody(limeElement, nameResolvers, predicates, isStub = true)
+
+            val templateData =
+                mapOf(
+                    "imports" to importsWithAliases,
+                    "moduleName" to pythonModule,
+                    "nativeModule" to pythonModule,
+                    "usesCallable" to usesCallableForFile(limeElement),
+                    "content" to contentBody,
+                    "stubContent" to stubBody,
+                )
+            val content = TemplateEngine.render("python/PythonFile", templateData + ("isStub" to false), nameResolvers, predicates)
+            val stubContent = TemplateEngine.render("python/PythonStub", templateData + ("isStub" to true), nameResolvers, predicates)
+            return listOf(
+                GeneratedFile(content, nameRules.getPythonFileName(limeElement)),
+                GeneratedFile(stubContent, nameRules.getPythonStubFileName(limeElement)),
             )
-        val content = TemplateEngine.render("python/PythonFile", templateData + ("isStub" to false), nameResolvers, predicates)
-        val stubContent = TemplateEngine.render("python/PythonStub", templateData + ("isStub" to true), nameResolvers, predicates)
-        return listOf(
-            GeneratedFile(content, nameRules.getPythonFileName(limeElement)),
-            GeneratedFile(stubContent, nameRules.getPythonStubFileName(limeElement)),
-        )
+        } finally {
+            pythonNameResolver.clearClashAliases()
+        }
     }
 
     /**
