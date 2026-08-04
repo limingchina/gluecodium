@@ -64,12 +64,38 @@ internal class PythonNameResolver(
      */
     private val currentContext: ThreadLocal<LimeNamedElement?> = ThreadLocal()
 
+    /**
+     * Per-file map from module path to import alias, for types whose short name clashes with
+     * another imported type. Set by the generator before rendering a file and cleared afterwards.
+     * When non-empty, [resolvePythonType] and [resolveQualifiedTypeName] substitute the alias
+     * for the short name so that runtime references (e.g. `_wrap(..., TypeName)`) resolve to
+     * the correct class object.
+     */
+    private val clashAliases: ThreadLocal<Map<String, String>> = ThreadLocal.withInitial { emptyMap() }
+
     fun setContext(element: LimeNamedElement?) {
         currentContext.set(element)
     }
 
     fun clearContext() {
         currentContext.set(null)
+    }
+
+    fun setClashAliases(aliases: Map<String, String>) {
+        clashAliases.set(aliases)
+    }
+
+    fun clearClashAliases() {
+        clashAliases.set(emptyMap())
+    }
+
+    /**
+     * Resolves the name for a top-level type, substituting the clash alias if one is set for
+     * this file. Returns the short name when no alias is applicable (the common case).
+     */
+    private fun resolveTopLevelTypeName(element: LimeNamedElement): String {
+        val modulePath = (element.path.head + nameRules.getName(element)).joinToString(".")
+        return clashAliases.get()[modulePath] ?: nameRules.getName(element)
     }
 
     private fun resolvePythonType(
@@ -110,8 +136,8 @@ internal class PythonNameResolver(
                     "dict[" + keyType + ", " + valueType + "]"
                 }
             }
-            is LimeType -> nameRules.getName(element)
-            is LimeNamedElement -> getPlatformName(element) ?: nameRules.getName(element)
+            is LimeType -> resolveTopLevelTypeName(element)
+            is LimeNamedElement -> getPlatformName(element) ?: resolveTopLevelTypeName(element)
             is LimeValue -> resolveValue(element)
             else -> throw GluecodiumExecutionException("Unsupported element type ${element.javaClass.name}")
         }
@@ -171,21 +197,26 @@ internal class PythonNameResolver(
      * arguments) where the full attribute path is needed to access the type at runtime.
      */
     private fun resolveQualifiedTypeName(limeType: LimeType): String {
-        if (!limeType.path.hasParent) return nameRules.getName(limeType)
+        if (!limeType.path.hasParent) return resolveTopLevelTypeName(limeType)
         // Walk the path tail, looking up each ancestor in the reference map and resolving
         // its (short) name. This produces a dotted qualified name like `Outer.Inner`.
+        // For the first component (the top-level type), substitute the clash alias if set.
         val head = limeType.path.head
         val tail = limeType.path.tail
         val sb = StringBuilder()
         var currentFullPath: String? = null
-        for (component in tail) {
+        for ((index, component) in tail.withIndex()) {
             currentFullPath =
                 if (currentFullPath == null)
                     if (head.isNotEmpty()) head.joinToString(".") + "." + component else component
                 else
                     "$currentFullPath.$component"
             val element = limeReferenceMap[currentFullPath] as? LimeNamedElement
-            val name = if (element != null) nameRules.getName(element) else component
+            val name = if (element != null) {
+                if (index == 0) resolveTopLevelTypeName(element) else nameRules.getName(element)
+            } else {
+                component
+            }
             if (sb.isNotEmpty()) sb.append(".")
             sb.append(name)
         }
@@ -377,8 +408,8 @@ internal class PythonNameResolver(
                 }
             }
             is LimeTypeAlias -> resolvePythonTypeShort(element.typeRef, requiresHashable, contextElement)
-            is LimeType -> nameRules.getName(element)
-            is LimeNamedElement -> getPlatformName(element) ?: nameRules.getName(element)
+            is LimeType -> resolveTopLevelTypeName(element)
+            is LimeNamedElement -> getPlatformName(element) ?: resolveTopLevelTypeName(element)
             else -> resolvePythonType(element, requiresHashable)
         }
 
