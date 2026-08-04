@@ -26,4 +26,9 @@ class PublicStructWithInternalConstructors(_NativeBase):
       self._native.some_var = _unwrap(value, int)
 
 
+    @staticmethod
+    def _make() -> PublicStructWithInternalConstructors:
+        native_result = generated.smoke_PublicStructWithInternalConstructors._make()
+        return _get_or_create_wrapper(native_result, PublicStructWithInternalConstructors)
+
 

@@ -20,6 +20,8 @@ void register_smoke_SomeTypeCollection(pybind11::module_& module);
 void register_smoke_UseTcException(pybind11::module_& module);
 void register_smoke_WithPayloadError(pybind11::module_& module);
 void register_smoke_WithStringError(pybind11::module_& module);
+void register_smoke__SomeInternalEnum(pybind11::module_& module);
+void register_smoke__SomethingBadHappenedError(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -35,4 +37,6 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_UseTcException(m);
     register_smoke_WithPayloadError(m);
     register_smoke_WithStringError(m);
+    register_smoke__SomeInternalEnum(m);
+    register_smoke__SomethingBadHappenedError(m);
 }

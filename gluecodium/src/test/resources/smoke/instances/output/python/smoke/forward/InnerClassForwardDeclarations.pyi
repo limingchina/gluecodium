@@ -7,6 +7,9 @@ class InnerClassForwardDeclarations:
 
     class InnerClass1:
     
+        def _get_inner_interface(self) -> InnerClassForwardDeclarations._InnerInterface1:
+            ...
+    
     
     
     class InnerClass2:
@@ -23,6 +26,10 @@ class InnerClassForwardDeclarations:
             def bar(self, arg: InnerClassForwardDeclarations.InnerInterface2):
                 ...
     
+    
+    
+    
+    class _InnerInterface1:
     
     
     

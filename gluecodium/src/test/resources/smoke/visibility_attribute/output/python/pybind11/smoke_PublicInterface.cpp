@@ -15,6 +15,7 @@ namespace py = pybind11;
 #include "smoke/PublicInterface.h"
 
 using PublicInterface = ::smoke::PublicInterface;
+using InternalStruct = ::smoke::PublicInterface::InternalStruct;
 
 class PublicInterfaceTrampoline : public PublicInterface {
 public:
@@ -48,6 +49,12 @@ auto cls_PublicInterface = py::class_<PublicInterface, std::shared_ptr<PublicInt
             self->m_impl = native;
             return self;
         }))
+        ;
+
+auto cls__PublicInterfaceInternalStruct = py::class_<InternalStruct>(cls_PublicInterface, "_InternalStruct")
+        .def_readwrite("field_of_internal_type", &InternalStruct::field_of_internal_type)
+        .def(py::init<>())
+        .def(py::init<::smoke::PublicClass::InternalStruct>(), py::arg("field_of_internal_type"))
         ;
 
 

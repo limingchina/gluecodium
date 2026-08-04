@@ -34,4 +34,36 @@ class EquatableStructWithInternalFields(_NativeBase):
       self._native.public_field = _unwrap(value, str)
 
 
+    @property
+    def _internal_field(self) -> str:
+        return _wrap(self._native._internal_field, str)
+    @_internal_field.setter
+    def _internal_field(self, value: str):
+      self._native._internal_field = _unwrap(value, str)
+
+
+    @property
+    def _internal_list_field(self) -> list[str]:
+        return _wrap(self._native._internal_list_field, list[str])
+    @_internal_list_field.setter
+    def _internal_list_field(self, value: list[str]):
+      self._native._internal_list_field = _unwrap(value, list[str])
+
+
+    @property
+    def _internal_map_field(self) -> dict[str, str]:
+        return _wrap(self._native._internal_map_field, dict[str, str])
+    @_internal_map_field.setter
+    def _internal_map_field(self, value: dict[str, str]):
+      self._native._internal_map_field = _unwrap(value, dict[str, str])
+
+
+    @property
+    def _internal_set_field(self) -> set[str]:
+        return _wrap(self._native._internal_set_field, set[str])
+    @_internal_set_field.setter
+    def _internal_set_field(self, value: set[str]):
+      self._native._internal_set_field = _unwrap(value, set[str])
+
+
 

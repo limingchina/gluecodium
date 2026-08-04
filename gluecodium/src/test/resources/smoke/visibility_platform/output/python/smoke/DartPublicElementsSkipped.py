@@ -26,4 +26,15 @@ class DartPublicElementsSkipped(_NativeBase):
       self._native.bool_field = _unwrap(value, bool)
 
 
+    @property
+    def _string_field(self) -> str:
+        return _wrap(self._native._string_field, str)
+    @_string_field.setter
+    def _string_field(self, value: str):
+      self._native._string_field = _unwrap(value, str)
+
+
+    def _foo(self):
+        return _wrap(self._native._foo(), None)
+
 

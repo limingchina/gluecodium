@@ -23,6 +23,7 @@ auto cls_PublicStructWithInternalConstructors = py::class_<PublicStructWithInter
         .def_readwrite("some_var", &PublicStructWithInternalConstructors::some_var)
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("some_var"))
+        .def_static("_make", &PublicStructWithInternalConstructors::make)
         ;
 
 

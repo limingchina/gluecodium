@@ -10,4 +10,8 @@ class InternalEnumDefaults:
 
     public_list_field: list[FooBarEnum]
 
+    _internal_field: FooBarEnum
+
+    _internal_list_field: list[FooBarEnum]
+
 

@@ -23,7 +23,6 @@ import com.here.gluecodium.cli.GluecodiumExecutionException
 import com.here.gluecodium.common.LimeLogger
 import com.here.gluecodium.common.LimeModelFilter
 import com.here.gluecodium.common.LimeModelSkipPredicates
-import com.here.gluecodium.generator.common.CommonGeneratorPredicates
 import com.here.gluecodium.generator.common.GeneratedFile
 import com.here.gluecodium.generator.common.Generator
 import com.here.gluecodium.generator.common.GeneratorOptions
@@ -110,15 +109,15 @@ internal class PythonGenerator : Generator {
                     !isCppSkipped(it)
             }
         // Filter the model for the actual Python output. Unlike the pybind11 model, this one
-        // also drops @Internal elements: Python has no concept of "internal" visibility, so
-        // internal elements are suppressed entirely from the Python wrapper (no Python class,
-        // no method/property/field). They remain in the pybind11 model above so the C++-facing
-        // trampoline can still override every pure-virtual member (including internal ones)
-        // to remain a valid concrete C++ type.
+        // drops functions/fields individually (retainFunctionsAndFields = false). Internal
+        // (@Internal) elements are NOT filtered out: they are retained and their names are
+        // prefixed with a leading underscore (_) by PythonNameRules, following PEP 8's
+        // convention for non-public API. This keeps internal members reachable (as they
+        // may be relied upon by other generated code or same-package callers) while clearly
+        // signaling non-public intent.
         val pythonFilteredModel =
             LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false) &&
-                    !CommonGeneratorPredicates.isInternal(it, PYTHON)
+                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, PYTHON, retainFunctionsAndFields = false)
             }
 
         pythonNameResolver =
@@ -190,7 +189,7 @@ internal class PythonGenerator : Generator {
         val pybind11IncludeCollector =
             GenericIncludesCollector(
                 pybind11IncludeResolver,
-                retainPredicate = { predicates.predicates["isPublic"]!!.invoke(it) },
+                retainPredicate = { true },
             )
 
         val pythonFiles =
@@ -441,15 +440,15 @@ internal class PythonGenerator : Generator {
 
     /**
      * Recursively collects all types (top-level + nested) that should emit a pybind11 binding,
-     * in parent-before-child order. Excludes internal types, type aliases, and lambdas (which
-     * emit no binding).
+     * in parent-before-child order. Excludes type aliases and lambdas (which emit no binding).
+     * Internal (@Internal) types are included — their Python-side names are underscore-prefixed
+     * by PythonNameRules, but the pybind11 binding exposes them so the Python wrapper can access
+     * the native C++ object.
      */
     private fun collectPybind11Types(
         limeType: LimeType,
         referenceMap: Map<String, LimeElement>,
     ): List<LimeType> {
-        if (isInternalOrNestedInternal(limeType, referenceMap)) return emptyList()
-
         val result = mutableListOf<LimeType>()
 
         // Add this type (skip type aliases and lambdas — they emit no binding).
@@ -518,7 +517,6 @@ internal class PythonGenerator : Generator {
             pybind11FilteredModel.topElements
                 .filterIsInstance<LimeType>()
                 .filter { it !is LimeTypeAlias && it !is com.here.gluecodium.model.lime.LimeLambda }
-                .filter { !isInternalOrNestedInternal(it, pybind11FilteredModel.referenceMap) }
         // For each top-level type, find all top-level register names it depends on.
         val registerNameToDeps =
             topLevelBoundTypes.associate { topType ->
@@ -700,27 +698,6 @@ internal class PythonGenerator : Generator {
     private fun isCppSkipped(element: LimeNamedElement) =
         (element is LimeFieldConstructor || element is LimeConstant) &&
             element.attributes.have(LimeAttributeType.CPP, SKIP)
-
-    /**
-     * Checks whether a type is `@Internal` for Python, or is nested (directly or transitively)
-     * inside a container that is `@Internal` for Python. The latter check walks the parent chain
-     * via the reference map because [LimeTypeHelper.getAllTypes] flattens nested types into
-     * top-level entries whose own `@Internal` attribute may not be set even though their
-     * enclosing container is internal.
-     *
-     * Uses [LimePath.tailParents] (a finite list) instead of `generateSequence(..., { it.parent })`
-     * because `LimePath.parent` is idempotent for an empty tail — calling `.parent` on a root
-     * path returns the same path, so `generateSequence` would loop forever.
-     */
-    private fun isInternalOrNestedInternal(
-        element: LimeNamedElement,
-        referenceMap: Map<String, LimeElement>,
-    ): Boolean {
-        if (CommonGeneratorPredicates.isInternal(element, PYTHON)) return true
-        return element.path.tailParents
-            .mapNotNull { referenceMap[it.toString()] as? LimeNamedElement }
-            .any { CommonGeneratorPredicates.isInternal(it, PYTHON) }
-    }
 
     companion object {
         private val logger = Logger.getLogger(PythonGenerator::class.java.name)

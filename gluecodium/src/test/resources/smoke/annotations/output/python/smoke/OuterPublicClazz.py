@@ -12,4 +12,12 @@ class OuterPublicClazz(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    class _InnerInternalClazz(_NativeBase):
+        def __init__(self, native):
+            super().__init__(native)
+    
+        def some_function(self) -> bool:
+            return _wrap(self._native.some_function(), bool)
+    
+    
 

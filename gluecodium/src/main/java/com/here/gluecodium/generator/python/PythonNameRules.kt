@@ -19,6 +19,7 @@
 
 package com.here.gluecodium.generator.python
 
+import com.here.gluecodium.generator.common.CommonGeneratorPredicates
 import com.here.gluecodium.generator.common.NameRuleSet
 import com.here.gluecodium.generator.common.NameRules
 import com.here.gluecodium.model.lime.LimeAttributeType.PYTHON
@@ -36,26 +37,35 @@ import java.io.File
 class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
     override fun getName(limeElement: LimeElement) =
         getPlatformName(limeElement as? LimeNamedElement)
-            ?: sanitizeKeyword(super.getName(limeElement))
+            ?: sanitizeKeyword(maybePrefixInternal(super.getName(limeElement), limeElement))
 
     /**
      * Returns the flattened (concatenated) name for pybind11 registration identifiers.
      * Nested types like `Outer.Inner` become `OuterInner` so the resulting C++ function name
      * (e.g. `register_pkg_OuterInner`) is a valid, dot-free identifier. This preserves
      * backward compatibility with the per-type pybind11 binding files.
+     *
+     * `@Internal` elements are also prefixed with `_` here (not just in [getName]) so that
+     * pybind11 file names and `register_*` function names do not collide when an internal
+     * type has the same LIME name as a public type (e.g. the `name_clash_overloads` smoke
+     * test, where `@Internal class AssetsManager {}` coexists with a public
+     * `class AssetsManager {}` in the same package). This mirrors how C++ avoids the
+     * collision via `@Cpp("AssetsManagerInternal")`.
      */
     fun getFlattenedName(limeElement: LimeNamedElement): String {
         val platformName = getPlatformName(limeElement)
         if (platformName != null) return sanitizeKeyword(platformName)
-        return sanitizeKeyword(
+        val baseName =
             if (limeElement is LimeType && limeElement.path.hasParent)
                 limeElement.path.tail.joinToString("")
             else
                 super.getName(limeElement)
-        )
+        return sanitizeKeyword(maybePrefixInternal(baseName, limeElement))
     }
 
-    override fun getPropertyName(limeProperty: LimeProperty) = getPlatformName(limeProperty) ?: super.getPropertyName(limeProperty)
+    override fun getPropertyName(limeProperty: LimeProperty) =
+        getPlatformName(limeProperty)
+            ?: sanitizeKeyword(maybePrefixInternal(super.getPropertyName(limeProperty), limeProperty))
 
     /** Resolve the output path of a generated Python source file for the given element. */
     fun getPythonFileName(limeElement: LimeNamedElement): String {
@@ -76,6 +86,17 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
     }
 
     private fun getPlatformName(limeElement: LimeNamedElement?) = limeElement?.attributes?.get(PYTHON, NAME)
+
+    /**
+     * Prepends a single underscore to [name] if [element] is `@Internal` for Python, following
+     * PEP 8's convention for non-public API. This makes internal members reachable but clearly
+     * signals they are not part of the public API. A `@Python(Name=...)` override (handled by
+     * [getPlatformName]) takes priority and bypasses this prefixing.
+     */
+    private fun maybePrefixInternal(name: String, element: Any): String {
+        val namedElement = element as? LimeNamedElement ?: return name
+        return if (CommonGeneratorPredicates.isInternal(namedElement, PYTHON)) "_$name" else name
+    }
 
     /**
      * Appends an underscore to any Python hard keyword to avoid SyntaxError in generated code.

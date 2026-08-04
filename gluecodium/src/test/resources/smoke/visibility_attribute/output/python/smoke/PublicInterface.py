@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Optional
 import generated
 
+from smoke.PublicClass import PublicClass
 
 class PublicInterface(generated.smoke_PublicInterface):
     def __init__(self, native=None):
@@ -23,4 +24,23 @@ class PublicInterface(generated.smoke_PublicInterface):
             super().__init__()
         self._native = self
 
+    class _InternalStruct(_NativeBase):
+        def __init__(self, *args, **kwargs):
+            if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_PublicInterface._InternalStruct):
+                super().__init__(args[0])
+            else:
+                super().__init__(generated.smoke_PublicInterface._InternalStruct(
+                    *[_unwrap(arg) for arg in args],
+                    **{k: _unwrap(v) for k, v in kwargs.items()}
+                ))
+    
+        @property
+        def field_of_internal_type(self) -> PublicClass._InternalStruct:
+            return _wrap(self._native.field_of_internal_type, PublicClass._InternalStruct)
+        @field_of_internal_type.setter
+        def field_of_internal_type(self, value: PublicClass._InternalStruct):
+          self._native.field_of_internal_type = _unwrap(value, PublicClass._InternalStruct)
+    
+    
+    
 

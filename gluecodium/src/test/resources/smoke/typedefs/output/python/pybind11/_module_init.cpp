@@ -16,6 +16,7 @@ void register_smoke_SomeDartClassThatUsesInternal(pybind11::module_& module);
 void register_smoke_SomeDartStructWithTypedefField(pybind11::module_& module);
 void register_smoke_TypeCollection(pybind11::module_& module);
 void register_smoke_TypeDefs(pybind11::module_& module);
+void register_smoke__DartInternalClassWithInternalTypedef(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -27,4 +28,5 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_SomeDartStructWithTypedefField(m);
     register_smoke_TypeCollection(m);
     register_smoke_TypeDefs(m);
+    register_smoke__DartInternalClassWithInternalTypedef(m);
 }

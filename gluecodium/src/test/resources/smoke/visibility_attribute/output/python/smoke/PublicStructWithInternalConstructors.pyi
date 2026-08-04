@@ -7,4 +7,8 @@ class PublicStructWithInternalConstructors:
 
     some_var: int
 
+    @staticmethod
+    def _make() -> PublicStructWithInternalConstructors:
+        ...
+
 

@@ -26,4 +26,12 @@ class PublicFieldsAllInit(_NativeBase):
       self._native.public_field = _unwrap(value, str)
 
 
+    @property
+    def _internal_field(self) -> str:
+        return _wrap(self._native._internal_field, str)
+    @_internal_field.setter
+    def _internal_field(self, value: str):
+      self._native._internal_field = _unwrap(value, str)
+
+
 

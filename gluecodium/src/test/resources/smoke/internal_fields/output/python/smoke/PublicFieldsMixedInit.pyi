@@ -9,4 +9,6 @@ class PublicFieldsMixedInit:
 
     public_field2: str
 
+    _internal_field: str
+
 

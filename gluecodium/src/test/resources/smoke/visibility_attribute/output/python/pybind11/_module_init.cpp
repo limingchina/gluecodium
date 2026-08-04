@@ -18,6 +18,14 @@ void register_smoke_PublicInterface(pybind11::module_& module);
 void register_smoke_PublicStructWithInternalConstructors(pybind11::module_& module);
 void register_smoke_PublicStructWithNonDefaultInternalField(pybind11::module_& module);
 void register_smoke_PublicTypeCollection(pybind11::module_& module);
+void register_smoke__InternalClass(pybind11::module_& module);
+void register_smoke__InternalInterfaceParent(pybind11::module_& module);
+void register_smoke__InternalClassInherits(pybind11::module_& module);
+void register_smoke__InternalClassWithFunctions(pybind11::module_& module);
+void register_smoke__InternalClassWithStaticProperty(pybind11::module_& module);
+void register_smoke__InternalInterface(pybind11::module_& module);
+void register_smoke__OuterClassWithInternalAttribute(pybind11::module_& module);
+void register_smoke__OuterStructWithInternalAttribute(pybind11::module_& module);
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -31,4 +39,12 @@ PYBIND11_MODULE(generated, m) {
     register_smoke_PublicStructWithInternalConstructors(m);
     register_smoke_PublicStructWithNonDefaultInternalField(m);
     register_smoke_PublicTypeCollection(m);
+    register_smoke__InternalClass(m);
+    register_smoke__InternalInterfaceParent(m);
+    register_smoke__InternalClassInherits(m);
+    register_smoke__InternalClassWithFunctions(m);
+    register_smoke__InternalClassWithStaticProperty(m);
+    register_smoke__InternalInterface(m);
+    register_smoke__OuterClassWithInternalAttribute(m);
+    register_smoke__OuterStructWithInternalAttribute(m);
 }

@@ -30,7 +30,7 @@
 {{#ifPredicate model "hasPartialDefaults"}}
 {{#ifPredicate model "hasInternalUninitializedFields"}}
         .def(py::init([]({{#filter uninitializedFields predicate="isPublic"}}{{#this}}const {{resolveName typeRef "Pybind11"}}& {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}) {
-            return {{resolveName model "Pybind11"}}({{#uninitializedFields}}{{#ifPredicate "isSkippedForPython"}}{{resolveName typeRef "Pybind11"}}{}{{/ifPredicate}}{{#unlessPredicate "isSkippedForPython"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/uninitializedFields}});
+            return {{resolveName model "Pybind11"}}({{#uninitializedFields}}{{#ifPredicate "isInternalOrSkipped"}}{{resolveName typeRef "Pybind11"}}{}{{/ifPredicate}}{{#unlessPredicate "isInternalOrSkipped"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/uninitializedFields}});
         }){{#filter uninitializedFields predicate="isPublic"}}{{#this}}, py::arg("{{resolveName}}"){{/this}}{{/filter}})
 {{/ifPredicate}}
 {{#unlessPredicate model "hasInternalUninitializedFields"}}
@@ -40,7 +40,7 @@
 {{#ifPredicate model "needsAllFieldsConstructor"}}
 {{#ifPredicate model "hasInternalFields"}}
         .def(py::init([]({{#filter fields predicate="isPublic"}}{{#this}}const {{resolveName typeRef "Pybind11"}}& {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}) {
-            return {{resolveName model "Pybind11"}}({{#fields}}{{#ifPredicate "isSkippedForPython"}}{{resolveName typeRef "Pybind11"}}{}{{/ifPredicate}}{{#unlessPredicate "isSkippedForPython"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/fields}});
+            return {{resolveName model "Pybind11"}}({{#fields}}{{#ifPredicate "isInternalOrSkipped"}}{{resolveName typeRef "Pybind11"}}{}{{/ifPredicate}}{{#unlessPredicate "isInternalOrSkipped"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/fields}});
         }){{#filter fields predicate="isPublic"}}{{#this}}, py::arg("{{resolveName}}"){{/this}}{{/filter}})
 {{/ifPredicate}}
 {{#unlessPredicate model "hasInternalFields"}}
