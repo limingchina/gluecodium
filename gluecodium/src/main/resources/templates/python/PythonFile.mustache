@@ -53,3 +53,7 @@ import {{nativeModule}}
 {{/importedName}}{{/imports}}
 
 {{{content}}}
+{{#deferredImports}}
+{{#importedName}}from {{modulePath}} import {{importedName}}{{#alias}} as {{alias}}{{/alias}}
+{{/importedName}}{{^importedName}}import {{modulePath}}
+{{/importedName}}{{/deferredImports}}

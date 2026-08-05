@@ -42,6 +42,10 @@
 {{#importedName}}from {{modulePath}} import {{importedName}}{{#alias}} as {{alias}}{{/alias}}
 {{/importedName}}{{^importedName}}import {{modulePath}}
 {{/importedName}}{{/imports}}
+{{#deferredImports}}
+{{#importedName}}from {{modulePath}} import {{importedName}}{{#alias}} as {{alias}}{{/alias}}
+{{/importedName}}{{^importedName}}import {{modulePath}}
+{{/importedName}}{{/deferredImports}}
 from enum import Enum
 import typing
 {{#usesCallable}}from typing import Callable
