@@ -190,7 +190,7 @@ feature(Properties cpp android android-kotlin swift dart python SOURCES
     input/lime/AttributesInterfaceFactory.lime
 )
 
-feature(Listeners cpp android android-kotlin swift dart SOURCES
+feature(Listeners cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StringListeners.cpp
     input/src/cpp/ListenerRoundtrip.cpp
     input/src/cpp/ListenerRoute.cpp

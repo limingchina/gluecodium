@@ -192,9 +192,19 @@ internal class PythonGenerator : Generator {
                 retainPredicate = { true },
             )
 
+        // Pre-compute the import graph for all top-level Python types so that circular
+        // imports can be detected. When type A imports type B and type B imports type A,
+        // a module-level `from ...B import B` in A's file would deadlock Python's import
+        // machinery. The fix is to move one direction's import to the bottom of the file
+        // (after the class definition), so the class is already defined when the other
+        // module tries to import it. Since `from __future__ import annotations` makes
+        // type hints lazy (string-based), the imported type is only needed at runtime in
+        // function bodies, which are called after the module is fully loaded.
+        val importGraph = buildImportGraph(pythonFilteredModel.topElements)
+
         val pythonFiles =
             pythonFilteredModel.topElements.flatMap {
-                generatePythonFile(it, nameResolvers, predicates.predicates)
+                generatePythonFile(it, nameResolvers, predicates.predicates, importGraph)
             }
         val pybind11Files =
             pybind11FilteredModel.topElements.flatMap {
@@ -213,16 +223,26 @@ internal class PythonGenerator : Generator {
         limeElement: LimeNamedElement,
         nameResolvers: Map<String, NameResolver>,
         predicates: Map<String, (Any) -> Boolean>,
+        importGraph: Map<String, Set<String>>,
     ): List<GeneratedFile> {
         // Drop the self-import: a type that references itself (e.g. `Greeter.create()` returns
         // `Greeter`) would otherwise emit `from ...Greeter import Greeter` inside Greeter.py,
         // which is a circular import and breaks direct importability of the wrapper.
         val selfModulePath = (limeElement.path.head + pythonNameResolver.resolveName(limeElement)).joinToString(".")
-        val imports =
+        val allImports =
             pythonImportsCollector.collectImports(limeElement)
                 .filterNot { it.modulePath == selfModulePath }
                 .distinct()
                 .sorted()
+
+        // Detect circular imports: if this element's module path is in the import set of
+        // a module we import, that creates a bidirectional dependency. Move those imports
+        // to the bottom of the file (after the class definition) so the class is already
+        // defined when the other module tries to import it.
+        val (imports, deferredImports) = allImports.partition { imp ->
+            val importedModulePaths = importGraph[imp.modulePath] ?: emptySet()
+            selfModulePath !in importedModulePaths
+        }
 
         // Detect name clashes: two imports with the same importedName from different module
         // paths would shadow each other (the second `from a.b import X` overwrites the first
@@ -258,6 +278,7 @@ internal class PythonGenerator : Generator {
             val templateData =
                 mapOf(
                     "imports" to importsWithAliases,
+                    "deferredImports" to deferredImports.distinct().sorted(),
                     "moduleName" to pythonModule,
                     "nativeModule" to pythonModule,
                     "usesCallable" to usesCallableForFile(limeElement),
@@ -273,6 +294,25 @@ internal class PythonGenerator : Generator {
         } finally {
             pythonNameResolver.clearClashAliases()
         }
+    }
+
+    /**
+     * Builds a directed import graph: for each top-level element, maps its module path to
+     * the set of module paths it imports. Used to detect circular (bidirectional) imports
+     * between top-level types.
+     */
+    private fun buildImportGraph(topElements: List<LimeNamedElement>): Map<String, Set<String>> {
+        val graph = mutableMapOf<String, MutableSet<String>>()
+        for (element in topElements) {
+            val modulePath = (element.path.head + pythonNameResolver.resolveName(element)).joinToString(".")
+            val importedPaths =
+                pythonImportsCollector.collectImports(element)
+                    .map { it.modulePath }
+                    .filter { it != modulePath }
+                    .toMutableSet()
+            graph[modulePath] = importedPaths
+        }
+        return graph
     }
 
     /**
