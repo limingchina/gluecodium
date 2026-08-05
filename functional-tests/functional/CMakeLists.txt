@@ -218,7 +218,7 @@ feature(ComplexListeners cpp android android-kotlin swift dart python SOURCES
     input/lime/ComplexListeners.lime
 )
 
-feature(ListenersWithReturnValues cpp android android-kotlin swift dart SOURCES
+feature(ListenersWithReturnValues cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/ListenersReturnValues.cpp
     input/src/cpp/ListenersReturnValues.h
     input/src/cpp/ListenerWithAttributes.cpp
