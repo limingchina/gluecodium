@@ -13,11 +13,11 @@ class InternalPropertyOnly(_NativeBase):
         super().__init__(native)
 
     @property
-    def __foo(self) -> str:
-        return _wrap(self._native.__foo, str)
+    def _foo(self) -> str:
+        return _wrap(self._native._foo, str)
 
-    @__foo.setter
-    def __foo(self, value: str):
-        self._native.__foo = _unwrap(value, str)
+    @_foo.setter
+    def _foo(self, value: str):
+        self._native._foo = _unwrap(value, str)
 
 

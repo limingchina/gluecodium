@@ -18,8 +18,8 @@ class CachedProperties(_NativeBase):
 
 
     @property
-    def __internal_cached_property(self) -> list[str]:
-        return _wrap(self._native.__internal_cached_property, list[str])
+    def _internal_cached_property(self) -> list[str]:
+        return _wrap(self._native._internal_cached_property, list[str])
 
 
     @staticmethod
@@ -27,7 +27,7 @@ class CachedProperties(_NativeBase):
         return _wrap(generated.smoke_CachedProperties.static_cached_property(), bytes)
 
     @staticmethod
-    def __internal_static_cached_property() -> bytes:
-        return _wrap(generated.smoke_CachedProperties.__internal_static_cached_property(), bytes)
+    def _internal_static_cached_property() -> bytes:
+        return _wrap(generated.smoke_CachedProperties._internal_static_cached_property(), bytes)
 
 

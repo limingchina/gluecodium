@@ -426,7 +426,10 @@ internal class PythonGenerator : Generator {
             // Render trampoline class (classes and interfaces only).
             val trampolineTemplateName = selectPybind11TrampolineTemplate(type)
             if (trampolineTemplateName != null) {
-                val trampolineData = mapOf("model" to type)
+                val trampolineData = mapOf(
+                    "model" to type,
+                    "internalNamespace" to internalNamespace,
+                )
                 val trampolineResult =
                     TemplateEngine.render(trampolineTemplateName, trampolineData, nameResolvers, predicates)
                 if (trampolineResult.isNotBlank()) {
@@ -532,6 +535,18 @@ internal class PythonGenerator : Generator {
         val casterContent =
             TemplateEngine.render("python/Pybind11ReturnCaster", casterTemplateData, nameResolvers, predicates)
 
+        // Custom type caster for Gluecodium's Locale type. The Locale struct lives in the
+        // internal namespace (e.g. "lorem_ipsum::test::Locale"). On the Python side, Locale is
+        // represented as a str containing the BCP 47 language tag, matching the Dart/Swift approach.
+        val localeInclude = (internalNamespace + "Locale.h").joinToString("/")
+        val localeCasterTemplateData =
+            mapOf(
+                "localeInclude" to localeInclude,
+                "localeTypeFullName" to (internalNamespace + "Locale").joinToString("::"),
+            )
+        val localeCasterContent =
+            TemplateEngine.render("python/Pybind11LocaleCaster", localeCasterTemplateData, nameResolvers, predicates)
+
         // Module entry point: aggregates every per-top-level-element register_* function into a
         // single PYBIND11_MODULE. With Option B, one register_* function is emitted per top-level
         // LIME element (not per type), and it registers the top-level type AND all nested types
@@ -602,6 +617,7 @@ internal class PythonGenerator : Generator {
         return listOf(
             GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
             GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
+            GeneratedFile(localeCasterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_locale_caster.h"),
             GeneratedFile(wrapperCacheContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_wrapper_cache.h"),
             GeneratedFile(
                 TemplateEngine.render("python/Pybind11GenericCaster", emptyMap<String, Any>(), nameResolvers, predicates),

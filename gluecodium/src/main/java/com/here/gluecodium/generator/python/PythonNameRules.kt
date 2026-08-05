@@ -65,7 +65,7 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
 
     override fun getPropertyName(limeProperty: LimeProperty) =
         getPlatformName(limeProperty)
-            ?: sanitizeKeyword(maybePrefixInternal(super.getPropertyName(limeProperty), limeProperty))
+            ?: sanitizeKeyword(super.getPropertyName(limeProperty))
 
     /** Resolve the output path of a generated Python source file for the given element. */
     fun getPythonFileName(limeElement: LimeNamedElement): String {

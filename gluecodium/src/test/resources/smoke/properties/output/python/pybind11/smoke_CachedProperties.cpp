@@ -8,6 +8,7 @@
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
 #include "_generic_caster.h"
+#include "_locale_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -28,9 +29,9 @@ auto cls_CachedProperties = py::class_<CachedProperties, std::shared_ptr<CachedP
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def_property_readonly("cached_property", py::overload_cast<>(&CachedProperties::get_cached_property, py::const_))
-        .def_property_readonly("__internal_cached_property", py::overload_cast<>(&CachedProperties::get_internal_cached_property, py::const_))
+        .def_property_readonly("_internal_cached_property", py::overload_cast<>(&CachedProperties::get_internal_cached_property, py::const_))
         .def_static("static_cached_property", &CachedProperties::get_static_cached_property)
-        .def_static("__internal_static_cached_property", &CachedProperties::get_internal_static_cached_property)
+        .def_static("_internal_static_cached_property", &CachedProperties::get_internal_static_cached_property)
         ;
 
 

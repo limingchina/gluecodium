@@ -8,6 +8,7 @@
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
 #include "_generic_caster.h"
+#include "_locale_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -51,27 +52,27 @@ auto cls_CppRefReturnTypeInternalError = py::enum_<InternalError>(cls_CppRefRetu
         .value("BAR", InternalError::BAR)
         ;
 
-    static py::exception<::std::error_code> exc(cls_CppRefReturnType, "EnumBasedError");
+    static py::exception<::std::error_code> exc_EnumBasedError(cls_CppRefReturnType, "EnumBasedError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::error_code& e) {
-            PyErr_SetString(exc.ptr(), e.message().c_str());
+            PyErr_SetString(exc_EnumBasedError.ptr(), e.message().c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+    pybind11::detail::registerReturnError<::std::error_code>(exc_EnumBasedError.ptr());
 
-    static py::object py_exc =
+    static py::object py_exc_StructBasedError =
         py::module_::import("smoke.CppRefReturnType").attr("CppRefReturnType").attr("StructBasedError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::smoke::CppRefReturnType::SomeStruct& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::smoke::CppRefReturnType::SomeStruct>::convert(e);
-            PyErr_SetString(py_exc.ptr(), message.c_str());
+            PyErr_SetString(py_exc_StructBasedError.ptr(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::smoke::CppRefReturnType::SomeStruct>(py_exc.ptr());
+    pybind11::detail::registerReturnError<::smoke::CppRefReturnType::SomeStruct>(py_exc_StructBasedError.ptr());
 
 
 }

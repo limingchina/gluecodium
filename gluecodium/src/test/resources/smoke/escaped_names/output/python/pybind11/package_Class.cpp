@@ -8,6 +8,7 @@
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
 #include "_generic_caster.h"
+#include "_locale_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -29,8 +30,8 @@ public:
     // PYBIND11_OVERRIDE_PURE for Python dispatch.
     std::shared_ptr<Class> m_impl;
 
-    using fun_return_type = ::Return< ::package::Types::Struct, ::std::error_code >;
-    ::Return< ::package::Types::Struct, ::std::error_code > fun(
+    using fun_return_type = ::gluecodium::Return< ::package::Types::Struct, ::std::error_code >;
+    ::gluecodium::Return< ::package::Types::Struct, ::std::error_code > fun(
             const ::std::vector< ::package::Types::Struct >& double ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
