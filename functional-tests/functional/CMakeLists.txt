@@ -211,7 +211,7 @@ feature(Listeners cpp android android-kotlin swift dart SOURCES
     input/lime/ListenerAsConstructorParam.lime
 )
 
-feature(ComplexListeners cpp android android-kotlin swift dart SOURCES
+feature(ComplexListeners cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/ComplexListener.cpp
     input/src/cpp/ComplexListener.h
 
