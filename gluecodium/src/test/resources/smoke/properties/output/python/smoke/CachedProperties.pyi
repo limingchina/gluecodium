@@ -11,7 +11,7 @@ class CachedProperties:
 
 
     @property
-    def __internal_cached_property(self) -> list[str]:
+    def _internal_cached_property(self) -> list[str]:
         ...
 
 
@@ -21,7 +21,7 @@ class CachedProperties:
 
 
     @property
-    def __internal_static_cached_property(self) -> bytes:
+    def _internal_static_cached_property(self) -> bytes:
         ...
 
 

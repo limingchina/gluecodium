@@ -8,6 +8,7 @@
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
 #include "_generic_caster.h"
+#include "_locale_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -63,27 +64,27 @@ auto cls_ThermometerSomeThermometerErrorCode = py::enum_<SomeThermometerErrorCod
         .value("ERROR_FATAL", SomeThermometerErrorCode::ERROR_FATAL)
         ;
 
-    static py::object py_exc =
+    static py::object py_exc_NotificationError =
         py::module_::import("smoke.Thermometer").attr("Thermometer").attr("NotificationError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::string& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::std::string>::convert(e);
-            PyErr_SetString(py_exc.ptr(), message.c_str());
+            PyErr_SetString(py_exc_NotificationError.ptr(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::string>(py_exc.ptr());
+    pybind11::detail::registerReturnError<::std::string>(py_exc_NotificationError.ptr());
 
-    static py::exception<::std::error_code> exc(cls_Thermometer, "AnotherNotificationError");
+    static py::exception<::std::error_code> exc_AnotherNotificationError(cls_Thermometer, "AnotherNotificationError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::error_code& e) {
-            PyErr_SetString(exc.ptr(), e.message().c_str());
+            PyErr_SetString(exc_AnotherNotificationError.ptr(), e.message().c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+    pybind11::detail::registerReturnError<::std::error_code>(exc_AnotherNotificationError.ptr());
 
 
 }

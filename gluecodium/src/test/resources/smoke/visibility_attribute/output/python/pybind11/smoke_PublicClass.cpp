@@ -8,6 +8,7 @@
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
 #include "_generic_caster.h"
+#include "_locale_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -32,7 +33,7 @@ auto cls_PublicClass = py::class_<PublicClass, std::shared_ptr<PublicClass>>(mod
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("_internal_method", &PublicClass::internal_method, py::arg("input"))
-        .def_property("__internal_struct_property", py::overload_cast<>(&PublicClass::get_internal_struct_property, py::const_), py::overload_cast<const ::smoke::PublicClass::InternalStruct&>(&PublicClass::set_internal_struct_property))
+        .def_property("_internal_struct_property", py::overload_cast<>(&PublicClass::get_internal_struct_property, py::const_), py::overload_cast<const ::smoke::PublicClass::InternalStruct&>(&PublicClass::set_internal_struct_property))
         ;
 
 auto cls__PublicClassInternalStruct = py::class_<InternalStruct>(cls_PublicClass, "_InternalStruct")

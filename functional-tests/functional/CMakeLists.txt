@@ -488,7 +488,7 @@ feature(CppNoexcept cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/CppNoexceptMethods.cpp
 )
 
-feature(Locales cpp android android-kotlin swift dart SOURCES
+feature(Locales cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Locales.cpp
 
     input/lime/Locales.lime

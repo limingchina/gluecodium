@@ -16,12 +16,12 @@ class PublicClass(_NativeBase):
         return _wrap(self._native._internal_method(_unwrap(input, PublicClass._InternalStruct)), PublicClass._InternalStruct)
 
     @property
-    def __internal_struct_property(self) -> PublicClass._InternalStruct:
-        return _wrap(self._native.__internal_struct_property, PublicClass._InternalStruct)
+    def _internal_struct_property(self) -> PublicClass._InternalStruct:
+        return _wrap(self._native._internal_struct_property, PublicClass._InternalStruct)
 
-    @__internal_struct_property.setter
-    def __internal_struct_property(self, value: PublicClass._InternalStruct):
-        self._native.__internal_struct_property = _unwrap(value, PublicClass._InternalStruct)
+    @_internal_struct_property.setter
+    def _internal_struct_property(self, value: PublicClass._InternalStruct):
+        self._native._internal_struct_property = _unwrap(value, PublicClass._InternalStruct)
 
     class _InternalStruct(_NativeBase):
         def __init__(self, *args, **kwargs):

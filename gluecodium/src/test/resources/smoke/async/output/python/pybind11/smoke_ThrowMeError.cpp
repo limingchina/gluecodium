@@ -8,6 +8,7 @@
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
 #include "_generic_caster.h"
+#include "_locale_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -16,17 +17,17 @@ namespace py = pybind11;
 
 
 void register_smoke_ThrowMeError(py::module_& module) {
-    static py::object py_exc =
+    static py::object py_exc_smoke_ThrowMeError =
         py::module_::import("smoke.ThrowMeError").attr("ThrowMeError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::string& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::std::string>::convert(e);
-            PyErr_SetString(py_exc.ptr(), message.c_str());
+            PyErr_SetString(py_exc_smoke_ThrowMeError.ptr(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::string>(py_exc.ptr());
+    pybind11::detail::registerReturnError<::std::string>(py_exc_smoke_ThrowMeError.ptr());
 
 
 }

@@ -8,6 +8,7 @@
 #include "_wrapper_cache.h"
 #include "_return_caster.h"
 #include "_generic_caster.h"
+#include "_locale_caster.h"
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
@@ -48,8 +49,8 @@ public:
         }
         PYBIND11_OVERRIDE_PURE(method_with_external_errors_return_type, ErrorsInterface, method_with_external_errors);
     }
-    using method_with_errors_and_return_value_return_type = ::Return< ::std::string, ::std::error_code >;
-    ::Return< ::std::string, ::std::error_code > method_with_errors_and_return_value(
+    using method_with_errors_and_return_value_return_type = ::gluecodium::Return< ::std::string, ::std::error_code >;
+    ::gluecodium::Return< ::std::string, ::std::error_code > method_with_errors_and_return_value(
             /* no args */ ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
@@ -102,25 +103,25 @@ auto cls_ErrorsInterfaceExternalErrors = py::enum_<ExternalErrors>(cls_ErrorsInt
         .value("BUST", ExternalErrors::BUST)
         ;
 
-    static py::exception<::std::error_code> exc(cls_ErrorsInterface, "InternalError");
+    static py::exception<::std::error_code> exc_InternalError(cls_ErrorsInterface, "InternalError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::error_code& e) {
-            PyErr_SetString(exc.ptr(), e.message().c_str());
+            PyErr_SetString(exc_InternalError.ptr(), e.message().c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+    pybind11::detail::registerReturnError<::std::error_code>(exc_InternalError.ptr());
 
-    static py::exception<::std::error_code> exc(cls_ErrorsInterface, "ExternalError");
+    static py::exception<::std::error_code> exc_ExternalError(cls_ErrorsInterface, "ExternalError");
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::error_code& e) {
-            PyErr_SetString(exc.ptr(), e.message().c_str());
+            PyErr_SetString(exc_ExternalError.ptr(), e.message().c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::error_code>(exc.ptr());
+    pybind11::detail::registerReturnError<::std::error_code>(exc_ExternalError.ptr());
 
 
 }

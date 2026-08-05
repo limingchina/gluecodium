@@ -9,11 +9,11 @@ class PublicClass:
         ...
 
     @property
-    def __internal_struct_property(self) -> PublicClass._InternalStruct:
+    def _internal_struct_property(self) -> PublicClass._InternalStruct:
         ...
 
-    @__internal_struct_property.setter
-    def __internal_struct_property(self, value: PublicClass._InternalStruct) -> None:
+    @_internal_struct_property.setter
+    def _internal_struct_property(self, value: PublicClass._InternalStruct) -> None:
         ...
 
     class _InternalStruct:
