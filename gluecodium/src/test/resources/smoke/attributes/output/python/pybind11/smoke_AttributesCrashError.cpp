@@ -17,17 +17,22 @@ namespace py = pybind11;
 
 
 void register_smoke_AttributesCrashError(py::module_& module) {
-    static py::object py_exc_smoke_AttributesCrashError =
-        py::module_::import("smoke.AttributesCrashError").attr("AttributesCrashError");
+    static auto get_py_exc_smoke_AttributesCrashError = []() -> PyObject* {
+        static py::object exception;
+        if (!exception) {
+            exception = py::module_::import("smoke.AttributesCrashError").attr("AttributesCrashError");
+        }
+        return exception.ptr();
+    };
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::string& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::std::string>::convert(e);
-            PyErr_SetString(py_exc_smoke_AttributesCrashError.ptr(), message.c_str());
+            PyErr_SetString(get_py_exc_smoke_AttributesCrashError(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::string>(py_exc_smoke_AttributesCrashError.ptr());
+    pybind11::detail::registerReturnError<::std::string>(get_py_exc_smoke_AttributesCrashError);
 
 
 }

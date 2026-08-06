@@ -62,17 +62,22 @@ auto cls_CppRefReturnTypeInternalError = py::enum_<InternalError>(cls_CppRefRetu
     });
     pybind11::detail::registerReturnError<::std::error_code>(exc_EnumBasedError.ptr());
 
-    static py::object py_exc_StructBasedError =
-        py::module_::import("smoke.CppRefReturnType").attr("CppRefReturnType").attr("StructBasedError");
+    static auto get_py_exc_StructBasedError = []() -> PyObject* {
+        static py::object exception;
+        if (!exception) {
+            exception = py::module_::import("smoke.CppRefReturnType").attr("CppRefReturnType").attr("StructBasedError");
+        }
+        return exception.ptr();
+    };
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::smoke::CppRefReturnType::SomeStruct& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::smoke::CppRefReturnType::SomeStruct>::convert(e);
-            PyErr_SetString(py_exc_StructBasedError.ptr(), message.c_str());
+            PyErr_SetString(get_py_exc_StructBasedError(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::smoke::CppRefReturnType::SomeStruct>(py_exc_StructBasedError.ptr());
+    pybind11::detail::registerReturnError<::smoke::CppRefReturnType::SomeStruct>(get_py_exc_StructBasedError);
 
 
 }
