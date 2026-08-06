@@ -17,12 +17,9 @@
 
 package test
 
-@Skip(Python)
 interface InterfaceWithLambda {
     lambda FooBar = () -> Void
 }
 
-@Skip(Python)
-@Skip(Python)
 class ChildClassWithLambda : InterfaceWithLambda {
 }

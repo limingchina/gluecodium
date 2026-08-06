@@ -92,7 +92,6 @@ struct StructWithConstMethod {
     fun doubleConst(): Double
 }
 
-@Skip(Python)
 struct StructWithOverloads {
     external {
         cpp include "include/ExternalTypes.h"
