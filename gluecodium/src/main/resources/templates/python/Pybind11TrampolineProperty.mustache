@@ -26,16 +26,16 @@
 {{#ifPredicate typeRef "returnTypeHasComma"}}
     using {{resolveName this "Pybind11" "getter"}}_return_type = {{resolveName typeRef "Pybind11"}};
 {{/ifPredicate}}
-    {{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}} {{resolveName this "Pybind11" "getter"}}() const{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
+    {{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}} {{resolveName this "Pybind11" "getter"}}() const{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->{{resolveName this "Pybind11" "getter"}}();
         }
 {{#ifPredicate typeRef "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
+        PYBIND11_OVERRIDE_PURE({{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
 {{/ifPredicate}}
 {{#unlessPredicate typeRef "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE({{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
+        PYBIND11_OVERRIDE_PURE({{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
 {{/unlessPredicate}}
     }
 {{#ifPredicate "hasSetter"}}
