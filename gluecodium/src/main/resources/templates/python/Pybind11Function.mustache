@@ -26,6 +26,25 @@
     trampoline class can override every pure-virtual C++ method), but if it is
     itself skipped for Python it must not get an actual pybind11 binding. }}
 {{#unlessPredicate "isSkippedForPython"}}
+{{#ifPredicate "isRawErrorCodeReturn"}}
+{{#if isStatic}}
+        .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
+                const auto error = {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+                if (error) {
+                    throw error;
+                }
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/if}}
+{{#unless isStatic}}
+        .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
+                const auto error = self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+                if (error) {
+                    throw error;
+                }
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unless}}
+{{/ifPredicate}}
+{{#unlessPredicate "isRawErrorCodeReturn"}}
 {{#if isConstructor}}
 {{#ifPredicate "needsCollectionLambdaBinding"}}
         .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
@@ -77,4 +96,5 @@
 {{/unless}}
 {{/unlessPredicate}}
 {{/unless}}
+{{/unlessPredicate}}
 {{/unlessPredicate}}
