@@ -7,7 +7,6 @@ from enum import Enum
 from typing import Optional
 import generated
 
-from smoke.StructB import StructB
 
 class StructA(_NativeBase):
     def __init__(self, *args, **kwargs):
@@ -28,3 +27,4 @@ class StructA(_NativeBase):
 
 
 
+from smoke.StructB import StructB

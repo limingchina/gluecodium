@@ -7,7 +7,6 @@ from enum import Enum
 from typing import Optional
 import generated
 
-from smoke.Thermometer import Thermometer
 
 class TemperatureObserver(generated.smoke_TemperatureObserver):
     """Observer interface for monitoring changes in thermometer (\"Observer of subject\")."""
@@ -29,3 +28,4 @@ class TemperatureObserver(generated.smoke_TemperatureObserver):
         return _wrap(generated.smoke_TemperatureObserver.on_temperature_update(self, _unwrap(thermometer, Thermometer)), None)
 
 
+from smoke.Thermometer import Thermometer
