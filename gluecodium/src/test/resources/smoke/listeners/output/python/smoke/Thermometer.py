@@ -8,7 +8,6 @@ from typing import Optional
 import generated
 
 import datetime
-from smoke.TemperatureObserver import TemperatureObserver
 
 class Thermometer(_NativeBase):
     """A class, which reads temperature and updates observers according to the given interval.
@@ -98,3 +97,4 @@ class Thermometer(_NativeBase):
     
     
 
+from smoke.TemperatureObserver import TemperatureObserver
