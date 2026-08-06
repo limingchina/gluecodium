@@ -14,7 +14,7 @@ class MapScene(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    def load_scene(*args, **kwargs):
+    def load_scene(self, *args, **kwargs):
         return _wrap(self._native.load_scene(*[_unwrap(a) for a in args]), None)
 
 

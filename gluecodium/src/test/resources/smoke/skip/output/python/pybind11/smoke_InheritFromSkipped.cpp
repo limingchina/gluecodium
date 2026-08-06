@@ -40,7 +40,7 @@ public:
         PYBIND11_OVERRIDE_PURE(::std::string, InheritFromSkipped, not_in_java, input);
     }
     bool not_in_swift(
-            bool input ) override {
+            const bool input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->not_in_swift(input);
@@ -48,7 +48,7 @@ public:
         PYBIND11_OVERRIDE_PURE(bool, InheritFromSkipped, not_in_swift, input);
     }
     float not_in_dart(
-            float input ) override {
+            const float input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->not_in_dart(input);
@@ -56,7 +56,7 @@ public:
         PYBIND11_OVERRIDE_PURE(float, InheritFromSkipped, not_in_dart, input);
     }
     float not_in_kotlin(
-            float input ) override {
+            const float input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->not_in_kotlin(input);

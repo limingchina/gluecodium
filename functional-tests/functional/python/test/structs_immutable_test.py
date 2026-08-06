@@ -116,3 +116,24 @@ class TestStructsImmutable:
         assert result.int8_field == 42
         assert result.string_field == "hello"
         assert result.point_field.x == 1.0
+
+    def test_immutable_struct_overloaded_methods(self):
+        point = Point(1.0, 2.0)
+        struct = AllTypesImmutableStruct(
+            int8_field=0,
+            uint8_field=0,
+            int16_field=0,
+            uint16_field=0,
+            int32_field=0,
+            uint32_field=0,
+            int64_field=0,
+            uint64_field=0,
+            float_field=0.0,
+            double_field=0.0,
+            string_field="same",
+            boolean_field=False,
+            point_field=point,
+        )
+
+        assert struct.contains(point)
+        assert struct.contains(struct)

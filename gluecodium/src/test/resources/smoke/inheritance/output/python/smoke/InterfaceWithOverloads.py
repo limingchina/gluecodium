@@ -23,7 +23,7 @@ class InterfaceWithOverloads(generated.smoke_InterfaceWithOverloads):
             super().__init__()
         self._native = self
 
-    def parent_method(*args, **kwargs):
+    def parent_method(self, *args, **kwargs):
         return _wrap(generated.smoke_InterfaceWithOverloads.parent_method(self, *[_unwrap(a) for a in args]), None)
 
 

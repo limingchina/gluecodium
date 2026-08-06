@@ -23,7 +23,7 @@ class ParentInterface(generated.smoke_ParentInterface):
             super().__init__()
         self._native = self
 
-    def foo(*args, **kwargs):
+    def foo(self, *args, **kwargs):
         return _wrap(generated.smoke_ParentInterface.foo(self, *[_unwrap(a) for a in args]), None)
 
 

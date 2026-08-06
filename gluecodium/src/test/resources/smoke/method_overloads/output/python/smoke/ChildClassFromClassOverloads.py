@@ -23,11 +23,11 @@ class ChildClassFromClassOverloads(generated.smoke_ChildClassFromClassOverloads)
             super().__init__()
         self._native = self
 
-    def foo(*args, **kwargs):
+    def foo(self, *args, **kwargs):
         return _wrap(generated.smoke_ChildClassFromClassOverloads.foo(self, *[_unwrap(a) for a in args]), None)
 
 
-    def bar(*args, **kwargs):
+    def bar(self, *args, **kwargs):
         return _wrap(generated.smoke_ChildClassFromClassOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 

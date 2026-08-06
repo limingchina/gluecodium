@@ -39,7 +39,7 @@ public:
         PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, foo, input);
     }
     void foo(
-            double input ) override {
+            const double input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo(input);
@@ -57,7 +57,7 @@ public:
         PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, bar, input);
     }
     void bar(
-            double input ) override {
+            const double input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->bar(input);
@@ -75,7 +75,7 @@ public:
         PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, foo);
     }
     void foo(
-            int32_t input ) override {
+            const int32_t input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo(input);

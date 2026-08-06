@@ -32,7 +32,7 @@
     using {{resolveName this "Pybind11"}}_return_type = {{>cpp/CppReturnType}};
 {{/ifPredicate}}
     {{>cpp/CppReturnType}} {{resolveName this "Pybind11"}}(
-            {{#parameters}}{{#ifPredicate typeRef "needsRefSuffix"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ){{#ifPredicate "isCppConst"}} const{{/ifPredicate}}{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
+            {{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ){{#ifPredicate "isCppConst"}} const{{/ifPredicate}}{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
 {{#ifPredicate this "isCppVoid"}}

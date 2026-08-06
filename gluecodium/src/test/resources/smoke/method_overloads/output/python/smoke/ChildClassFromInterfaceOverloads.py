@@ -23,11 +23,11 @@ class ChildClassFromInterfaceOverloads(generated.smoke_ChildClassFromInterfaceOv
             super().__init__()
         self._native = self
 
-    def foo(*args, **kwargs):
+    def foo(self, *args, **kwargs):
         return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.foo(self, *[_unwrap(a) for a in args]), None)
 
 
-    def bar(*args, **kwargs):
+    def bar(self, *args, **kwargs):
         return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 

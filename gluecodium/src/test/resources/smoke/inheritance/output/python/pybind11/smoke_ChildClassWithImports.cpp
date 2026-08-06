@@ -34,7 +34,7 @@ public:
     std::shared_ptr<ChildClassWithImports> m_impl;
 
     ::std::shared_ptr< ::smoke::IncludableClass > root_method(
-            const ::smoke::IncludableStruct& input1, ::smoke::IncludableEnum input2 ) override {
+            const ::smoke::IncludableStruct& input1, const ::smoke::IncludableEnum input2 ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->root_method(input1, input2);

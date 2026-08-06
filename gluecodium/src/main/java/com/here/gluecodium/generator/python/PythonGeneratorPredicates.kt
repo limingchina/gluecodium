@@ -295,15 +295,14 @@ internal class PythonGeneratorPredicates(
             "hasCppRef" to { limeElement: Any ->
                 limeElement is LimeProperty && limeElement.attributes.have(CPP, REF)
             },
-            // Whether a function/property carries `@Cpp(Const)`. The generated C++ declares such
-            // methods as `const`, so the pybind11 trampoline override must also be `const` to
-            // match the virtual signature (otherwise it "hides" the base method and the trampoline
-            // class stays abstract, failing to instantiate).
+            // Whether the generated C++ declares a function as `const`. Immutable structs expose
+            // const instance functions implicitly, while immutable classes may still contain
+            // mutating virtual functions and therefore must rely on explicit `@Cpp(Const)`.
             "isCppConst" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeFunction &&
                     (
                         limeElement.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.CONST) ||
-                            (limeReferenceMap[limeElement.path.parent.toString()] as? com.here.gluecodium.model.lime.LimeContainer)
+                            (limeReferenceMap[limeElement.path.parent.toString()] as? LimeStruct)
                                 ?.attributes
                                 ?.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) == true
                     )

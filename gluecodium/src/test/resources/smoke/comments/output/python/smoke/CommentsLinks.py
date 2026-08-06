@@ -20,7 +20,7 @@ Weblinks are not modified like this [example1], [example2](http://www.example.co
     def __init__(self, native):
         super().__init__(native)
 
-    def random_method(*args, **kwargs) -> Comments.SomeEnum:
+    def random_method(self, *args, **kwargs) -> Comments.SomeEnum:
         """Link types:
 * constant: `Comments.VERY_USEFUL`
 * struct: `Comments.SomeStruct`
