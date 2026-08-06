@@ -63,7 +63,12 @@ auto cls_OuterStruct = py::class_<OuterStruct>(module, "smoke_OuterStruct")
         .def_readwrite("field", &OuterStruct::field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
-        .def("do_nothing", &OuterStruct::do_nothing)
+        .def("do_nothing", [](OuterStruct& self) {
+                const auto error = self.do_nothing();
+                if (error) {
+                    throw error;
+                }
+        })
         ;
 
 auto cls_OuterStructInnerStruct = py::class_<InnerStruct>(cls_OuterStruct, "InnerStruct")

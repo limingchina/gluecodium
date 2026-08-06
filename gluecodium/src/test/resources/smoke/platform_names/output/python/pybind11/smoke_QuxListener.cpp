@@ -35,7 +35,7 @@ public:
             m_impl->FooMethod(qux_parameter);
             return;
         }
-        PYBIND11_OVERRIDE_PURE(void, fooListener, FooMethod, qux_parameter);
+        PYBIND11_OVERRIDE_PURE(void, fooListener, qux_method, qux_parameter);
     }
 };
 

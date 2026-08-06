@@ -40,7 +40,7 @@ public:
         if (m_impl) {
             return m_impl->get_inner_interface();
         }
-        PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1 >, InnerClass1, get_inner_interface);
+        PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1 >, InnerClass1, _get_inner_interface);
     }
 };
 

@@ -26,7 +26,12 @@ auto cls_AsyncClass = py::class_<AsyncClass, std::shared_ptr<AsyncClass>>(module
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("async_void", &AsyncClass::async_void, py::arg("input"))
-        .def("async_void_throws", &AsyncClass::async_void_throws, py::arg("input"))
+        .def("async_void_throws", [](AsyncClass& self, const bool input) {
+                const auto error = self.async_void_throws(input);
+                if (error) {
+                    throw error;
+                }
+        }, py::arg("input"))
         .def("async_int", &AsyncClass::async_int, py::arg("input"))
         .def("async_int_throws", &AsyncClass::async_int_throws, py::arg("input"))
         .def_static("async_static", &AsyncClass::async_static, py::arg("input"))

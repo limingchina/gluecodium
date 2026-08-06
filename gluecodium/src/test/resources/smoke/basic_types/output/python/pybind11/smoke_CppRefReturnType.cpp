@@ -34,7 +34,12 @@ auto cls_CppRefReturnType = py::class_<CppRefReturnType, std::shared_ptr<CppRefR
         .def_static("struct_ref", &CppRefReturnType::struct_ref)
         .def_static("class_ref", &CppRefReturnType::class_ref)
         .def_static("nullable_ref", &CppRefReturnType::nullable_ref)
-        .def_static("throwing_enum_with_void", &CppRefReturnType::throwing_enum_with_void)
+        .def_static("throwing_enum_with_void", []() {
+                const auto error = CppRefReturnType::throwing_enum_with_void();
+                if (error) {
+                    throw error;
+                }
+        })
         .def_static("throwing_enum_with_string", &CppRefReturnType::throwing_enum_with_string)
         .def_static("throwing_struct_with_void", &CppRefReturnType::throwing_struct_with_void)
         .def_static("throwing_struct_with_string", &CppRefReturnType::throwing_struct_with_string)
