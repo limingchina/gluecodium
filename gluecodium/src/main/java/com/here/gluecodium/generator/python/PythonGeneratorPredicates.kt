@@ -392,6 +392,18 @@ internal class PythonGeneratorPredicates(
                 limeElement is com.here.gluecodium.model.lime.LimeFunction &&
                     limeElement.exception != null
             },
+            // A void function throwing an enum-based error is represented as a raw std::error_code
+            // in C++, rather than Return<void, std::error_code>. Bind it through a lambda so a
+            // non-zero error code is translated by the generated Python exception translator.
+            "isRawErrorCodeReturn" to { limeElement: Any ->
+                limeElement is com.here.gluecodium.model.lime.LimeFunction &&
+                    limeElement.thrownType != null &&
+                    limeElement.returnType.typeRef.type.actualType.let {
+                        it is com.here.gluecodium.model.lime.LimeBasicType &&
+                            it.typeId == com.here.gluecodium.model.lime.LimeBasicType.TypeId.VOID
+                    } &&
+                    limeElement.exception?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
+            },
             // Whether the C++ return type of a function contains a comma (e.g. a `std::map<K, V>` or
             // `std::pair<A, B>` instantiation). The `PYBIND11_OVERRIDE_PURE` / `PYBIND11_OVERRIDE`
             // Whether a function/property's (unwrapped) return type is `void`. Used by the
