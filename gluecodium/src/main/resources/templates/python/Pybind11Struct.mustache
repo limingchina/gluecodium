@@ -21,6 +21,7 @@
 {{! pybind11 struct binding body — the py::class_ construction and .def() calls. }}
 {{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
 {{#model}}
+{{#unless external.cpp}}
 auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}")
 {{#unless external.cpp}}
 {{#fields}}
@@ -54,4 +55,5 @@ auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{py
 {{/ifPredicate}}
 {{/unless}}
         ;
+{{/unless}}
 {{/model}}

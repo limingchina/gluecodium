@@ -21,9 +21,11 @@
 {{! pybind11 enum binding body — the py::enum_ construction and .value() calls. }}
 {{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
 {{#model}}
+{{#unless external.cpp}}
 auto {{varName}} = py::enum_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}")
 {{#enumerators}}
         .value("{{resolveName}}", {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
 {{/enumerators}}
         ;
+{{/unless}}
 {{/model}}
