@@ -62,17 +62,22 @@ auto cls_DeclarationOrderWithFunctionsThrownStruct = py::class_<ThrownStruct>(cl
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 
-    static py::object py_exc_FooBarError =
-        py::module_::import("smoke.DeclarationOrderWithFunctions").attr("DeclarationOrderWithFunctions").attr("FooBarError");
+    static auto get_py_exc_FooBarError = []() -> PyObject* {
+        static py::object exception;
+        if (!exception) {
+            exception = py::module_::import("smoke.DeclarationOrderWithFunctions").attr("DeclarationOrderWithFunctions").attr("FooBarError");
+        }
+        return exception.ptr();
+    };
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::smoke::DeclarationOrderWithFunctions::ThrownStruct& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::smoke::DeclarationOrderWithFunctions::ThrownStruct>::convert(e);
-            PyErr_SetString(py_exc_FooBarError.ptr(), message.c_str());
+            PyErr_SetString(get_py_exc_FooBarError(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::smoke::DeclarationOrderWithFunctions::ThrownStruct>(py_exc_FooBarError.ptr());
+    pybind11::detail::registerReturnError<::smoke::DeclarationOrderWithFunctions::ThrownStruct>(get_py_exc_FooBarError);
 
 
 }

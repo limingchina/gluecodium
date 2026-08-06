@@ -64,17 +64,22 @@ auto cls_ThermometerSomeThermometerErrorCode = py::enum_<SomeThermometerErrorCod
         .value("ERROR_FATAL", SomeThermometerErrorCode::ERROR_FATAL)
         ;
 
-    static py::object py_exc_NotificationError =
-        py::module_::import("smoke.Thermometer").attr("Thermometer").attr("NotificationError");
+    static auto get_py_exc_NotificationError = []() -> PyObject* {
+        static py::object exception;
+        if (!exception) {
+            exception = py::module_::import("smoke.Thermometer").attr("Thermometer").attr("NotificationError");
+        }
+        return exception.ptr();
+    };
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::string& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::std::string>::convert(e);
-            PyErr_SetString(py_exc_NotificationError.ptr(), message.c_str());
+            PyErr_SetString(get_py_exc_NotificationError(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::string>(py_exc_NotificationError.ptr());
+    pybind11::detail::registerReturnError<::std::string>(get_py_exc_NotificationError);
 
     static py::exception<::std::error_code> exc_AnotherNotificationError(cls_Thermometer, "AnotherNotificationError");
     py::register_exception_translator([](std::exception_ptr p) {

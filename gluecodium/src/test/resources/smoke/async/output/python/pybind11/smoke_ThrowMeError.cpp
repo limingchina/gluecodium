@@ -17,17 +17,22 @@ namespace py = pybind11;
 
 
 void register_smoke_ThrowMeError(py::module_& module) {
-    static py::object py_exc_smoke_ThrowMeError =
-        py::module_::import("smoke.ThrowMeError").attr("ThrowMeError");
+    static auto get_py_exc_smoke_ThrowMeError = []() -> PyObject* {
+        static py::object exception;
+        if (!exception) {
+            exception = py::module_::import("smoke.ThrowMeError").attr("ThrowMeError");
+        }
+        return exception.ptr();
+    };
     py::register_exception_translator([](std::exception_ptr p) {
         try {
             if (p) std::rethrow_exception(p);
         } catch (const ::std::string& e) {
             const auto message = pybind11::detail::ReturnErrorToString<::std::string>::convert(e);
-            PyErr_SetString(py_exc_smoke_ThrowMeError.ptr(), message.c_str());
+            PyErr_SetString(get_py_exc_smoke_ThrowMeError(), message.c_str());
         }
     });
-    pybind11::detail::registerReturnError<::std::string>(py_exc_smoke_ThrowMeError.ptr());
+    pybind11::detail::registerReturnError<::std::string>(get_py_exc_smoke_ThrowMeError);
 
 
 }
