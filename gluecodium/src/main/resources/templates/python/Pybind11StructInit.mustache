@@ -40,7 +40,7 @@
 {{#ifPredicate model "needsAllFieldsConstructor"}}
 {{#ifPredicate model "hasInternalFields"}}
         .def(py::init([]({{#filter fields predicate="isPublic"}}{{#this}}const {{resolveName typeRef "Pybind11"}}& {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}) {
-            return {{resolveName model "Pybind11"}}({{#fields}}{{#ifPredicate "isInternalOrSkipped"}}{{resolveName typeRef "Pybind11"}}{}{{/ifPredicate}}{{#unlessPredicate "isInternalOrSkipped"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/fields}});
+            return {{resolveName model "Pybind11"}}({{#fields}}{{#ifPredicate "isInternalOrSkipped"}}{{#ifPredicate "needsExplicitDefaultConstruction"}}{{resolveName defaultValue "C++"}}{{/ifPredicate}}{{#unlessPredicate "needsExplicitDefaultConstruction"}}{{resolveName typeRef "Pybind11"}}{}{{/unlessPredicate}}{{/ifPredicate}}{{#unlessPredicate "isInternalOrSkipped"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/fields}});
         }){{#filter fields predicate="isPublic"}}{{#this}}, py::arg("{{resolveName}}"){{/this}}{{/filter}})
 {{/ifPredicate}}
 {{#unlessPredicate model "hasInternalFields"}}

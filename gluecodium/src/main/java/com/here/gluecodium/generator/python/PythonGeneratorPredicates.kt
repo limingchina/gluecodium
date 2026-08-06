@@ -144,6 +144,12 @@ internal class PythonGeneratorPredicates(
                         CommonGeneratorPredicates.isInternal(limeElement, PYTHON)
                 )
             },
+            "needsExplicitDefaultConstruction" to { limeElement: Any ->
+                limeElement is LimeField &&
+                    limeElement.defaultValue != null &&
+                    limeElement.typeRef.type is LimeStruct &&
+                    (limeElement.typeRef.type as LimeStruct).fieldConstructors.none { it.fieldRefs.isEmpty() }
+            },
             "isNestedInternal" to { limeElement: Any ->
                 limeElement is LimeNamedElement &&
                     generateSequence(limeElement) {
