@@ -10,7 +10,7 @@ import generated
 
 
 class MapScene(_NativeBase):
-    """Referencing some type [MapScene.load_scene(Int, MapScene.LoadSceneCallback?)]."""
+    """Referencing some type `MapScene.load_scene`."""
     def __init__(self, native):
         super().__init__(native)
 

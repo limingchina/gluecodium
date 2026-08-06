@@ -135,3 +135,101 @@ def test_comments_stub_nested_struct_field_comment():
     from another.CommentsInterface import CommentsInterface
     source = inspect.getsource(CommentsInterface.SomeStruct)
     assert '"""How useful this struct is"""' in source
+
+
+def test_doc_reference_class_level():
+    """Test that class-level doc comment references to other types and members are resolved."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.__doc__
+    # Relative reference to a method within the same class
+    assert "`CommentsLinks.random_method`" in doc
+    # Cross-package reference to an interface
+    assert "`CommentsInterface`" in doc
+    # Reference to a method in another class (snake_case conversion)
+    assert "`Comments.some_method_with_all_comments`" in doc
+    # Raw bracket references should NOT remain for resolved links
+    assert "[random_method]" not in doc
+    assert "[another.CommentsInterface]" not in doc
+    assert "[comments.someMethodWithAllComments]" not in doc
+
+def test_doc_reference_constant():
+    """Test that doc references to constants are resolved with UPPER_SNAKE_CASE."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    assert "`Comments.VERY_USEFUL`" in doc
+    assert "[comments.VeryUseful]" not in doc
+
+def test_doc_reference_struct_and_field():
+    """Test that doc references to structs and struct fields are resolved."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    assert "`Comments.SomeStruct`" in doc
+    assert "`Comments.SomeStruct.some_field`" in doc
+    assert "[comments.SomeStruct]" not in doc
+    assert "[comments.SomeStruct.someField]" not in doc
+
+def test_doc_reference_enum_and_enumerator():
+    """Test that doc references to enums and enum items are resolved."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    assert "`Comments.SomeCommentedEnum`" in doc
+    assert "`Comments.SomeCommentedEnum.USEFUL`" in doc
+    assert "[comments.SomeCommentedEnum]" not in doc
+    assert "[comments.SomeCommentedEnum.Useful]" not in doc
+
+def test_doc_reference_property():
+    """Test that doc references to properties are resolved with Python naming."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    # Boolean property gets 'is_' prefix in Python
+    assert "`Comments.is_some_attribute`" in doc
+    assert "[comments.SomeAttribute]" not in doc
+
+def test_doc_reference_method():
+    """Test that doc references to methods are resolved with snake_case."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    assert "`Comments.instance_method`" in doc
+    assert "[comments.instanceMethod]" not in doc
+
+def test_doc_reference_top_level_elements():
+    """Test that doc references to top-level constants, structs, enums, and fields are resolved."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    assert "`CommentsTypeCollection.TYPE_COLLECTION_CONSTANT`" in doc
+    assert "`CommentsTypeCollection.TypeCollectionStruct`" in doc
+    assert "`CommentsTypeCollection.TypeCollectionStruct.field`" in doc
+    assert "`CommentsTypeCollection.TypeCollectionEnum`" in doc
+    assert "`CommentsTypeCollection.TypeCollectionEnum.ITEM`" in doc
+
+def test_doc_reference_error():
+    """Test that doc references to exceptions are resolved with Error suffix."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    # The LIME exception 'TooUseful' becomes 'TooUsefulError' in Python
+    assert "`CommentsLinks.TooUsefulError`" in doc
+    assert "[TooUseful]" not in doc
+
+def test_doc_reference_typealias():
+    """Test that doc references to type aliases are resolved."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    assert "`Comments.Usefulness`" in doc
+    assert "`Comments.SomeArray`" in doc
+    assert "`Comments.SomeMap`" in doc
+    assert "`CommentsTypeCollection.TypeCollectionTypedef`" in doc
+
+def test_doc_reference_parameter():
+    """Test that doc references to function parameters are resolved."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    # Parameter reference resolves to the fully-qualified path
+    assert "`CommentsLinks.random_method.input_parameter`" in doc
+    assert "[inputParameter]" not in doc
+
+def test_doc_reference_unresolved_remains():
+    """Test that references to non-existent elements remain as raw brackets."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    # 'outputParameter' doesn't exist, so it should remain unresolved
+    assert "[outputParameter]" in doc

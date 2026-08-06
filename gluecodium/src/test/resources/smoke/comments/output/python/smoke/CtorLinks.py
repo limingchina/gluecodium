@@ -13,7 +13,7 @@ class CtorLinks(_NativeBase):
         super().__init__(native)
 
     class SingleCtor(_NativeBase):
-        """This class has just one constructor [create]."""
+        """This class has just one constructor `CtorLinks.SingleCtor`."""
         def __init__(self, native):
             super().__init__(native)
     
@@ -25,7 +25,7 @@ class CtorLinks(_NativeBase):
     
     
     class SingleCtorWithOneArgument(_NativeBase):
-        """This class has just one constructor with one argument [create(Int)]."""
+        """This class has just one constructor with one argument `CtorLinks.SingleCtorWithOneArgument`."""
         def __init__(self, native):
             super().__init__(native)
     
@@ -37,7 +37,7 @@ class CtorLinks(_NativeBase):
     
     
     class SingleCtorWithTwoArgument(_NativeBase):
-        """This class has just one constructor with two argument [create(Int, String)]."""
+        """This class has just one constructor with two argument `CtorLinks.SingleCtorWithTwoArgument`."""
         def __init__(self, native):
             super().__init__(native)
     
