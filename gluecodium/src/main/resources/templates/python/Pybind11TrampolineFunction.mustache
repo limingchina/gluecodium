@@ -44,9 +44,9 @@
 {{/unlessPredicate}}
         }
 {{#ifPredicate this "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
+        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
 {{/ifPredicate}}
 {{#unlessPredicate this "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11"}}{{#parameters}}, {{resolveName}}{{/parameters}});
+        PYBIND11_OVERRIDE_PURE({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
 {{/unlessPredicate}}
     }

@@ -80,10 +80,16 @@ auto cls_ErrorsInterface = py::class_<ErrorsInterface, std::shared_ptr<ErrorsInt
             return self;
         }))
         .def("method_with_errors", [](ErrorsInterface& self) {
-            return self.method_with_errors();
+                const auto error = self.method_with_errors();
+                if (error) {
+                    throw error;
+                }
         })
         .def("method_with_external_errors", [](ErrorsInterface& self) {
-            return self.method_with_external_errors();
+                const auto error = self.method_with_external_errors();
+                if (error) {
+                    throw error;
+                }
         })
         .def("method_with_errors_and_return_value", [](ErrorsInterface& self) {
             return self.method_with_errors_and_return_value();

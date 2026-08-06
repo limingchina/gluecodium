@@ -25,8 +25,18 @@ auto cls_FooBar = py::class_<FooBar, std::shared_ptr<FooBar>>(module, "example_F
         .def("__gluecodium_id__", [](const FooBar& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def_static("method_with_internal_error", &FooBar::method_with_internal_error)
-        .def_static("method_with_type_collection_error", &FooBar::method_with_type_collection_error)
+        .def_static("method_with_internal_error", []() {
+                const auto error = FooBar::method_with_internal_error();
+                if (error) {
+                    throw error;
+                }
+        })
+        .def_static("method_with_type_collection_error", []() {
+                const auto error = FooBar::method_with_type_collection_error();
+                if (error) {
+                    throw error;
+                }
+        })
         ;
 
 

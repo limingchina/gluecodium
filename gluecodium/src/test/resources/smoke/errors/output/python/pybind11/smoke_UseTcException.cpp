@@ -24,7 +24,12 @@ auto cls_UseTcException = py::class_<UseTcException, std::shared_ptr<UseTcExcept
         .def("__gluecodium_id__", [](const UseTcException& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def("do_nothing", &UseTcException::do_nothing)
+        .def("do_nothing", [](UseTcException& self) {
+                const auto error = self.do_nothing();
+                if (error) {
+                    throw error;
+                }
+        })
         ;
 
 

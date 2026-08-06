@@ -27,8 +27,18 @@ auto cls_Errors = py::class_<Errors, std::shared_ptr<Errors>>(module, "smoke_Err
         .def("__gluecodium_id__", [](const Errors& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def_static("method_with_errors", &Errors::method_with_errors)
-        .def_static("method_with_external_errors", &Errors::method_with_external_errors)
+        .def_static("method_with_errors", []() {
+                const auto error = Errors::method_with_errors();
+                if (error) {
+                    throw error;
+                }
+        })
+        .def_static("method_with_external_errors", []() {
+                const auto error = Errors::method_with_external_errors();
+                if (error) {
+                    throw error;
+                }
+        })
         .def_static("method_with_errors_and_return_value", &Errors::method_with_errors_and_return_value)
         .def_static("method_with_payload_error", &Errors::method_with_payload_error)
         .def_static("method_with_payload_error_and_return_value", &Errors::method_with_payload_error_and_return_value)
