@@ -12,7 +12,11 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "another/SomeCoolClassType.h"
 #include "smoke/FirstParentIsInterfaceInterface.h"
+#include "smoke/ParentInterface.h"
+#include "smoke/ParentNarrowOne.h"
+#include "memory"
 #include "string"
 
 using FirstParentIsInterfaceInterface = ::smoke::FirstParentIsInterfaceInterface;

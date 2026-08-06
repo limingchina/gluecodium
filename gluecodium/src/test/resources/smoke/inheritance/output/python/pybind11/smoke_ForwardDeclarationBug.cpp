@@ -15,6 +15,7 @@ namespace py = pybind11;
 #include "smoke/ForwardDeclarationBug.h"
 #include "smoke/ParentClass.h"
 #include "memory"
+#include "string"
 
 using ForwardDeclarationBug = ::smoke::ForwardDeclarationBug;
 

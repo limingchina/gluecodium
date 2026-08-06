@@ -130,8 +130,9 @@ internal class PythonImportResolver(
     private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {
         var current = element
         while (current.path.hasParent) {
-            val parent = limeReferenceMap[current.path.parent.toString()] as? LimeNamedElement
-                ?: return current
+            val parent =
+                limeReferenceMap[current.path.parent.toString()] as? LimeNamedElement
+                    ?: return current
             current = parent
         }
         return current

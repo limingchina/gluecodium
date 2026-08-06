@@ -23,11 +23,7 @@ using some_Enum = ::smoke::ExternalInterface::some_Enum;
 
 
 void register_smoke_ExternalInterface(py::module_& module) {
-auto cls_ExternalInterface = py::class_<ExternalInterface, std::shared_ptr<ExternalInterface>>(module, "smoke_ExternalInterface")
-        .def("__gluecodium_id__", [](const ExternalInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
-        })
-        ;
+auto cls_ExternalInterface = py::class_<ExternalInterface>(module, "smoke_ExternalInterface");
 
 auto cls_ExternalInterfacesome_Struct = py::class_<some_Struct>(cls_ExternalInterface, "SomeStruct")
         .def_readwrite("some_field", &some_Struct::some_Field)

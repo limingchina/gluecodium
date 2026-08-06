@@ -13,6 +13,13 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "smoke/ChildClassWithImports.h"
+#include "smoke/IncludableClass.h"
+#include "smoke/IncludableEnum.h"
+#include "smoke/IncludableLambda.h"
+#include "smoke/IncludableStruct.h"
+#include "smoke/ParentClassWithImports.h"
+#include "functional"
+#include "memory"
 
 using ChildClassWithImports = ::smoke::ChildClassWithImports;
 

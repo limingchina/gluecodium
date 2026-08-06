@@ -18,10 +18,6 @@ namespace py = pybind11;
 
 
 void register_fire_ExternalEnum4(py::module_& module) {
-auto cls_ExternalEnum4 = py::enum_<foo::AlienEnum4>(module, "fire_ExternalEnum4")
-        .value("ENABLED", foo::AlienEnum4::ENABLED)
-        .value("DISABLED", foo::AlienEnum4::DISABLED)
-        ;
 
 
 }

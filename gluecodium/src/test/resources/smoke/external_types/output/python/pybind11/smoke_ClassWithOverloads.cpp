@@ -22,11 +22,6 @@ using ClassWithOverloads = ::smoke::ClassWithOverloads;
 
 
 void register_smoke_ClassWithOverloads(py::module_& module) {
-auto cls_ClassWithOverloads = py::class_<ClassWithOverloads, std::shared_ptr<ClassWithOverloads>>(module, "smoke_ClassWithOverloads")
-        .def("__gluecodium_id__", [](const ClassWithOverloads& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
-        })
-        ;
 
 
 }

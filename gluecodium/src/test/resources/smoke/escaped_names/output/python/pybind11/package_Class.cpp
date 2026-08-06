@@ -14,6 +14,7 @@
 namespace py = pybind11;
 #include "gluecodium/VectorHash.h"
 #include "package/Class.h"
+#include "package/Interface.h"
 #include "package/Types.h"
 #include "memory"
 #include "vector"

@@ -13,6 +13,7 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "foobar/CrossPackageChildClass.h"
+#include "smoke/ParentInterface.h"
 #include "string"
 
 using CrossPackageChildClass = ::foobar::CrossPackageChildClass;

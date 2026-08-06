@@ -15,6 +15,7 @@ namespace py = pybind11;
 #include "smoke/ChildClassFromClass.h"
 #include "smoke/ChildWithParentClassReferences.h"
 #include "smoke/ParentClass.h"
+#include "smoke/ParentWithClassReferences.h"
 #include "memory"
 
 using ChildWithParentClassReferences = ::smoke::ChildWithParentClassReferences;

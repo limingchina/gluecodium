@@ -19,9 +19,6 @@ using StandaloneExternalEnum = ::smoke::StandaloneExternalEnum;
 
 
 void register_smoke_StandaloneExternalEnum(py::module_& module) {
-auto cls_StandaloneExternalEnum = py::enum_<StandaloneExternalEnum>(module, "smoke_StandaloneExternalEnum")
-        .value("FOO", StandaloneExternalEnum::foo)
-        ;
 
 
 }

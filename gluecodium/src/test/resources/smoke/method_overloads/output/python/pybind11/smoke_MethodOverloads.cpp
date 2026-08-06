@@ -39,7 +39,7 @@ auto cls_MethodOverloads = py::class_<MethodOverloads, std::shared_ptr<MethodOve
                 .def("is_boolean", [](MethodOverloads& self, const ::std::vector< int8_t >& input) {
                         return self.is_boolean(input);
                 }, py::arg("input"))
-        .def("is_boolean", py::overload_cast<>(&MethodOverloads::is_boolean))
+        .def("is_boolean", py::overload_cast<>(&MethodOverloads::is_boolean, py::const_))
         .def("is_float", py::overload_cast<const ::std::string&>(&MethodOverloads::is_float), py::arg("input"))
                 .def("is_float", [](MethodOverloads& self, const ::std::vector< int8_t >& input) {
                         return self.is_float(input);

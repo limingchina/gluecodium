@@ -17,6 +17,7 @@ namespace py = pybind11;
 #include "smoke/IncludableEnum.h"
 #include "smoke/IncludableLambda.h"
 #include "smoke/IncludableStruct.h"
+#include "smoke/ParentInterfaceWithIncludes.h"
 #include "smoke/ShouldNotInclude.h"
 #include "functional"
 #include "memory"

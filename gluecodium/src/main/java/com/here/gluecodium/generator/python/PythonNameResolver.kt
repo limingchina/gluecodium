@@ -35,7 +35,6 @@ import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeParameter
-import com.here.gluecodium.model.lime.LimePath
 import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeReturnType
 import com.here.gluecodium.model.lime.LimeSet
@@ -123,12 +122,13 @@ internal class PythonNameResolver(
                 val typeName =
                     (actualType as? LimeLambda)
                         ?.let(::resolveLambdaType)
-                        ?: if (actualType is LimeTypeAlias)
+                        ?: if (actualType is LimeTypeAlias) {
                             resolvePythonType(actualType.typeRef, requiresHashable)
-                        else if (actualType.path.hasParent)
+                        } else if (actualType.path.hasParent) {
                             resolveQualifiedTypeName(actualType)
-                        else
+                        } else {
                             resolvePythonType(actualType, requiresHashable)
+                        }
                 if (element.isNullable) "Optional[" + typeName + "]" else typeName
             }
             is LimeList -> {
@@ -283,16 +283,22 @@ internal class PythonNameResolver(
         var currentFullPath: String? = null
         for ((index, component) in tail.withIndex()) {
             currentFullPath =
-                if (currentFullPath == null)
-                    if (head.isNotEmpty()) head.joinToString(".") + "." + component else component
-                else
+                if (currentFullPath == null) {
+                    if (head.isNotEmpty()) {
+                        head.joinToString(".") + "." + component
+                    } else {
+                        component
+                    }
+                } else {
                     "$currentFullPath.$component"
+                }
             val element = limeReferenceMap[currentFullPath] as? LimeNamedElement
-            val name = if (element != null) {
-                if (index == 0) resolveTopLevelTypeName(element) else nameRules.getName(element)
-            } else {
-                component
-            }
+            val name =
+                if (element != null) {
+                    if (index == 0) resolveTopLevelTypeName(element) else nameRules.getName(element)
+                } else {
+                    component
+                }
             if (sb.isNotEmpty()) sb.append(".")
             sb.append(name)
         }
@@ -306,8 +312,9 @@ internal class PythonNameResolver(
     private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {
         var current = element
         while (current.path.hasParent) {
-            val parent = limeReferenceMap[current.path.parent.toString()] as? LimeNamedElement
-                ?: return current
+            val parent =
+                limeReferenceMap[current.path.parent.toString()] as? LimeNamedElement
+                    ?: return current
             current = parent
         }
         return current
@@ -325,15 +332,17 @@ internal class PythonNameResolver(
             is LimeValue.Constant -> {
                 val limeElement = limeValue.valueRef.element
                 val parentElement = getParentElement(limeElement)
-                val parentName = if (parentElement is LimeType && parentElement.path.hasParent) {
-                    val ctx = currentContext.get()
-                    if (ctx != null && isSameTopLevel(parentElement, ctx))
-                        nameRules.getName(parentElement)
-                    else
-                        resolveQualifiedTypeName(parentElement)
-                } else {
-                    resolveName(parentElement)
-                }
+                val parentName =
+                    if (parentElement is LimeType && parentElement.path.hasParent) {
+                        val ctx = currentContext.get()
+                        if (ctx != null && isSameTopLevel(parentElement, ctx)) {
+                            nameRules.getName(parentElement)
+                        } else {
+                            resolveQualifiedTypeName(parentElement)
+                        }
+                    } else {
+                        resolveName(parentElement)
+                    }
                 "$parentName.${resolveName(limeElement)}"
             }
             is LimeValue.Literal -> {
@@ -382,8 +391,9 @@ internal class PythonNameResolver(
         val topRegName = resolveRegisterName(topLevel)
         if (limeElement.path.toString() == topLevel.path.toString()) return topRegName
 
-        val limeType = limeElement as? LimeType
-            ?: throw GluecodiumExecutionException("Expected LimeType, got ${limeElement.javaClass.name}")
+        val limeType =
+            limeElement as? LimeType
+                ?: throw GluecodiumExecutionException("Expected LimeType, got ${limeElement.javaClass.name}")
         val qualifiedName = resolveQualifiedTypeName(limeType)
         // resolveQualifiedTypeName returns "OuterClass.InnerClass" — strip the first component
         // (the top-level name) and prepend the register name.
@@ -424,8 +434,11 @@ internal class PythonNameResolver(
      * Used by the Pybind11Exception template to locate the Python exception class at runtime.
      */
     fun resolvePybind11AttrChain(limeElement: LimeNamedElement): String {
-        val qualifiedName = resolveQualifiedTypeName(limeElement as? LimeType
-            ?: throw GluecodiumExecutionException("Expected LimeType, got ${limeElement.javaClass.name}"))
+        val qualifiedName =
+            resolveQualifiedTypeName(
+                limeElement as? LimeType
+                    ?: throw GluecodiumExecutionException("Expected LimeType, got ${limeElement.javaClass.name}"),
+            )
         return qualifiedName.split(".").joinToString("") { ".attr(\"$it\")" }
     }
 
@@ -440,8 +453,10 @@ internal class PythonNameResolver(
      * because it resolves to the local class-body scope (as long as the referenced type is
      * defined earlier in the body — ensured by reordering in `generateNestedTypeBodies`).
      */
-    fun resolveShortTypeRef(typeRef: LimeTypeRef, contextElement: LimeNamedElement? = null): String =
-        resolvePythonTypeShort(typeRef, contextElement = contextElement)
+    fun resolveShortTypeRef(
+        typeRef: LimeTypeRef,
+        contextElement: LimeNamedElement? = null,
+    ): String = resolvePythonTypeShort(typeRef, contextElement = contextElement)
 
     private fun resolvePythonTypeShort(
         element: Any,
@@ -456,14 +471,15 @@ internal class PythonNameResolver(
                 val typeName =
                     (actualType as? LimeLambda)
                         ?.let(::resolveLambdaType)
-                        ?: if (actualType is LimeTypeAlias)
+                        ?: if (actualType is LimeTypeAlias) {
                             resolvePythonTypeShort(actualType.typeRef, requiresHashable, contextElement)
-                        else if (isSameTopLevel(actualType, contextElement))
+                        } else if (isSameTopLevel(actualType, contextElement)) {
                             nameRules.getName(actualType)
-                        else if (actualType.path.hasParent)
+                        } else if (actualType.path.hasParent) {
                             resolveQualifiedTypeName(actualType)
-                        else
+                        } else {
                             resolvePythonTypeShort(actualType, requiresHashable, contextElement)
+                        }
                 if (element.isNullable) "Optional[" + typeName + "]" else typeName
             }
             is LimeList -> {
@@ -493,7 +509,10 @@ internal class PythonNameResolver(
      * Returns true if [type] and [context] belong to the same top-level LIME element
      * (i.e. they share the same top-level ancestor in the path hierarchy).
      */
-    private fun isSameTopLevel(type: LimeType, context: LimeNamedElement?): Boolean {
+    private fun isSameTopLevel(
+        type: LimeType,
+        context: LimeNamedElement?,
+    ): Boolean {
         if (context == null) return false
         val typeTop = findTopLevelElement(type as LimeNamedElement)
         val contextTop = findTopLevelElement(context)

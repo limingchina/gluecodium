@@ -9,7 +9,7 @@ class OverloadsWithComments:
         ...
 
     def do_stuff(self, stuff: str):
-        """[stuff]"""
+        """`OverloadsWithComments.do_stuff.stuff`"""
         ...
 
 
