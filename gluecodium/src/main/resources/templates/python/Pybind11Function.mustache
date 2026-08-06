@@ -63,7 +63,7 @@
             return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
         }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
-        .def("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+        .def("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}, py::const_){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/unlessPredicate}}
 {{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
 {{#ifPredicate "needsInterfaceLambdaBinding"}}
