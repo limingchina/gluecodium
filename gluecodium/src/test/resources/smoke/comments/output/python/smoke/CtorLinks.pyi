@@ -6,7 +6,7 @@ import typing
 class CtorLinks:
 
     class SingleCtor:
-        """This class has just one constructor [create]."""
+        """This class has just one constructor `CtorLinks.SingleCtor`."""
     
         @staticmethod
         def create() -> CtorLinks.SingleCtor:
@@ -15,7 +15,7 @@ class CtorLinks:
     
     
     class SingleCtorWithOneArgument:
-        """This class has just one constructor with one argument [create(Int)]."""
+        """This class has just one constructor with one argument `CtorLinks.SingleCtorWithOneArgument`."""
     
         @staticmethod
         def create(arg: int) -> CtorLinks.SingleCtorWithOneArgument:
@@ -24,7 +24,7 @@ class CtorLinks:
     
     
     class SingleCtorWithTwoArgument:
-        """This class has just one constructor with two argument [create(Int, String)]."""
+        """This class has just one constructor with two argument `CtorLinks.SingleCtorWithTwoArgument`."""
     
         @staticmethod
         def create(arg: int, arg2: str) -> CtorLinks.SingleCtorWithTwoArgument:

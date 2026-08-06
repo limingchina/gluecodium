@@ -79,12 +79,12 @@ class Comments(_NativeBase):
 
     @property
     def is_is_visible(self) -> bool:
-        """A flag that determines if [OnlyGetterProperty] is visible on the screen."""
+        """A flag that determines if `Comments.only_getter_property` is visible on the screen."""
         return _wrap(self._native.is_is_visible, bool)
 
     @is_is_visible.setter
     def is_is_visible(self, value: bool):
-        """Sets the visibility flag that controls if [OnlyGetterProperty] should be visible on the screen."""
+        """Sets the visibility flag that controls if `Comments.only_getter_property` should be visible on the screen."""
         self._native.is_is_visible = _unwrap(value, bool)
 
     class SomeStruct(_NativeBase):

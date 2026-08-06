@@ -29,11 +29,14 @@ import com.here.gluecodium.model.lime.LimeAttributeValueType.NAME
 import com.here.gluecodium.model.lime.LimeBasicType
 import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeElement
+import com.here.gluecodium.model.lime.LimeFunction
 import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeParameter
 import com.here.gluecodium.model.lime.LimePath
+import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeReturnType
 import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeType
@@ -55,6 +58,15 @@ internal class PythonNameResolver(
     private val commentsProcessor: CommentsProcessor,
 ) : ReferenceMapBasedResolver(limeReferenceMap), NameResolver {
     override fun resolveName(element: Any): String = resolvePythonType(element)
+
+    /**
+     * Pre-built map from LIME element paths (ambiguous strings) to fully-qualified Python names.
+     * Used by [resolveComment] to resolve documentation cross-references (Markdown `[ref]` links)
+     * to Python-qualified names (e.g. `Comments.SomeStruct`, `Comments.some_method`).
+     *
+     * Mirrors the `buildPathMap()` pattern used by the Swift, Dart, Kotlin, and Java generators.
+     */
+    private val limeToPythonNames: Map<String, String> = buildPathMap()
 
     /**
      * Thread-local context element used during template rendering to resolve constant values
@@ -148,7 +160,71 @@ internal class PythonNameResolver(
         val commentedElement =
             limeReferenceMap[limeComment.path.toString()] as? LimeNamedElement
                 ?: getParentElement(limeComment.path)
-        return commentsProcessor.process(commentedElement.fullName, commentText, emptyMap(), limeLogger)
+        return commentsProcessor.process(commentedElement.fullName, commentText, limeToPythonNames, limeLogger)
+    }
+
+    /**
+     * Resolves the fully-qualified Python name for an element, including parent qualifiers for
+     * nested elements (e.g. `Comments.SomeStruct`, `Comments.some_method`). Top-level elements
+     * resolve to their short name. Used by [buildPathMap] to populate the documentation
+     * cross-reference map.
+     *
+     * For constructors, the parent class's fully-qualified name is returned directly (since
+     * Python constructors are `__init__`, the class name is the most useful reference for
+     * documentation).
+     */
+    private fun resolveFullName(limeElement: LimeNamedElement): String {
+        if (!limeElement.path.hasParent) {
+            return nameRules.getName(limeElement)
+        }
+        val parentElement = getParentElement(limeElement)
+        if (limeElement is LimeFunction && limeElement.isConstructor) {
+            return resolveFullName(parentElement)
+        }
+        return "${resolveFullName(parentElement)}.${nameRules.getName(limeElement)}"
+    }
+
+    /**
+     * Builds a map from LIME element paths (as ambiguous strings) to fully-qualified Python names,
+     * used for resolving documentation cross-references. Covers all named elements (types,
+     * functions, properties, fields, constants, enumerators, parameters, exceptions, lambdas).
+     *
+     * Property getter/setter function entries are overwritten by the corresponding property's
+     * `.get`/`.set` suffix entries (which map to the property name, not the accessor function name).
+     *
+     * Function signature keys (e.g. `path(Type,Type)`) are also added for overloaded function
+     * references.
+     */
+    private fun buildPathMap(): Map<String, String> {
+        val result =
+            limeReferenceMap.values
+                .filterIsInstance<LimeNamedElement>()
+                .filterNot { it is LimeParameter }
+                .associateBy({ it.path.toAmbiguousString() }, { resolveFullName(it) })
+                .toMutableMap()
+
+        result +=
+            limeReferenceMap.values.filterIsInstance<LimeParameter>()
+                .associateBy({ it.fullName }, { resolveFullName(it) })
+
+        val functions = limeReferenceMap.values.filterIsInstance<LimeFunction>()
+        result += functions.associateBy({ it.path.toAmbiguousString() }, { resolveFullName(it) })
+        result +=
+            functions.associateBy(
+                { function ->
+                    function.path.toAmbiguousString() +
+                        function.parameters.joinToString(prefix = "(", postfix = ")", separator = ",") { it.typeRef.toString() }
+                },
+                { resolveFullName(it) },
+            )
+
+        val properties = limeReferenceMap.values.filterIsInstance<LimeProperty>()
+        result += properties.associateBy({ it.path.toAmbiguousString() + ".get" }, { resolveFullName(it) })
+        result +=
+            properties.filter { it.setter != null }
+                .associateBy({ it.path.toAmbiguousString() + ".set" }, { resolveFullName(it) })
+
+        return result
     }
 
     private fun resolveBasicType(limeBasicType: LimeBasicType): String {
