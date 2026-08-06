@@ -47,7 +47,7 @@ class ListenerWithNullable(generated.smoke_ListenerWithNullable):
     def method_with_u_long(self, input: Optional[int]) -> Optional[int]:
         return _wrap(generated.smoke_ListenerWithNullable.method_with_u_long(self, _unwrap(input, Optional[int])), Optional[int])
 
-    def method_with_double(*args, **kwargs) -> Optional[bool]:
+    def method_with_double(self, *args, **kwargs) -> Optional[bool]:
         return _wrap(generated.smoke_ListenerWithNullable.method_with_double(self, *[_unwrap(a) for a in args]), Optional[bool])
 
     def method_with_float(self, input: Optional[float]) -> Optional[float]:

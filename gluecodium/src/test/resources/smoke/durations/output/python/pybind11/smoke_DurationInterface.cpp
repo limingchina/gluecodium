@@ -31,7 +31,7 @@ public:
     std::shared_ptr<DurationInterface> m_impl;
 
     ::std::string duration_function(
-            ::std::chrono::seconds input ) override {
+            const ::std::chrono::seconds input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->duration_function(input);

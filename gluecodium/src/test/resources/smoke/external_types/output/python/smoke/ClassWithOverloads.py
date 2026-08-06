@@ -15,7 +15,7 @@ class ClassWithOverloads(_NativeBase):
     def one_overload_not_exposed(self) -> str:
         return _wrap(self._native.one_overload_not_exposed(), str)
 
-    def all_overloads_exposed(*args, **kwargs) -> str:
+    def all_overloads_exposed(self, *args, **kwargs) -> str:
         return _wrap(self._native.all_overloads_exposed(*[_unwrap(a) for a in args]), str)
 
 

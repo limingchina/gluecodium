@@ -22,7 +22,7 @@ class ParentClass(generated.smoke_ParentClass):
             super().__init__()
         self._native = self
 
-    def foo(*args, **kwargs):
+    def foo(self, *args, **kwargs):
         return _wrap(generated.smoke_ParentClass.foo(self, *[_unwrap(a) for a in args]), None)
 
 

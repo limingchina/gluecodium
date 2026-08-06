@@ -37,7 +37,7 @@ public:
         PYBIND11_OVERRIDE_PURE(void, ParentClass, foo);
     }
     void foo(
-            int32_t input ) override {
+            const int32_t input ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo(input);

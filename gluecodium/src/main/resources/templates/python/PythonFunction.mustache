@@ -23,7 +23,7 @@
 {{/ifPredicate}}{{#if isStatic}}    @staticmethod
 {{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}: ...
 {{/if}}{{#unless isStub}}{{#ifPredicate this "isOverloaded"}}{{#ifPredicate this "isFirstOverload"}}{{#if isStatic}}    @staticmethod
-{{/if}}    def {{resolveName}}(*args, **kwargs){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
+{{/if}}    def {{resolveName}}({{#unless isStatic}}self, {{/unless}}*args, **kwargs){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
 {{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
 {{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
 {{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])

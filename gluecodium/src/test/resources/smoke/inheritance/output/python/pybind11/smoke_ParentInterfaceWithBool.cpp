@@ -28,7 +28,7 @@ public:
     std::shared_ptr<ParentInterfaceWithBool> m_impl;
 
     void root_method(
-            bool input1 ) override {
+            const bool input1 ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->root_method(input1);

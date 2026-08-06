@@ -36,7 +36,7 @@ public:
     std::shared_ptr<CalculatorListener> m_impl;
 
     void on_calculation_result(
-            double calculation_result ) override {
+            const double calculation_result ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->on_calculation_result(calculation_result);
@@ -45,7 +45,7 @@ public:
         PYBIND11_OVERRIDE_PURE(void, CalculatorListener, on_calculation_result, calculation_result);
     }
     void on_calculation_result_const(
-            double calculation_result ) const override {
+            const double calculation_result ) const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->on_calculation_result_const(calculation_result);
