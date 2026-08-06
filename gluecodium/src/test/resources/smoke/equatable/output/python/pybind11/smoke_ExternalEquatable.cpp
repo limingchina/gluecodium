@@ -27,6 +27,11 @@ auto cls_ExternalEquatable = py::class_<ExternalEquatable>(module, "smoke_Extern
         ;
 
 auto cls_ExternalEquatableExternalEquatableStruct = py::class_<ExternalEquatableStruct>(cls_ExternalEquatable, "ExternalEquatableStruct")
+        .def_readwrite("foo_field", &ExternalEquatableStruct::fooField)
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("foo_field"))
+        .def("__eq__", [](const ExternalEquatableStruct& lhs, const ExternalEquatableStruct& rhs) { return lhs == rhs; })
+        .def("__hash__", [](const ExternalEquatableStruct& self) { return gluecodium::hash<ExternalEquatableStruct>{}(self); })
         ;
 
 

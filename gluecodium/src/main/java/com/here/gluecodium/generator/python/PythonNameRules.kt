@@ -56,10 +56,11 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
         val platformName = getPlatformName(limeElement)
         if (platformName != null) return sanitizeKeyword(platformName)
         val baseName =
-            if (limeElement is LimeType && limeElement.path.hasParent)
+            if (limeElement is LimeType && limeElement.path.hasParent) {
                 limeElement.path.tail.joinToString("")
-            else
+            } else {
                 super.getName(limeElement)
+            }
         return sanitizeKeyword(maybePrefixInternal(baseName, limeElement))
     }
 
@@ -93,7 +94,10 @@ class PythonNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
      * signals they are not part of the public API. A `@Python(Name=...)` override (handled by
      * [getPlatformName]) takes priority and bypasses this prefixing.
      */
-    private fun maybePrefixInternal(name: String, element: Any): String {
+    private fun maybePrefixInternal(
+        name: String,
+        element: Any,
+    ): String {
         val namedElement = element as? LimeNamedElement ?: return name
         return if (CommonGeneratorPredicates.isInternal(namedElement, PYTHON)) "_$name" else name
     }

@@ -9,7 +9,7 @@ import generated
 
 
 class ClassWithDocRef(_NativeBase):
-    """[SkipEnableConstants.someConstant]"""
+    """`SkipEnableConstants.SOME_CONSTANT`"""
     def __init__(self, native):
         super().__init__(native)
 

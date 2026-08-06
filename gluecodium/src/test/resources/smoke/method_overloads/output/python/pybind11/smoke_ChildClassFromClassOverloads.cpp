@@ -13,6 +13,8 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "smoke/ChildClassFromClassOverloads.h"
+#include "smoke/ParentClass.h"
+#include "cstdint"
 #include "string"
 
 using ChildClassFromClassOverloads = ::smoke::ChildClassFromClassOverloads;

@@ -21,9 +21,12 @@
 {{! pybind11 struct binding body — the py::class_ construction and .def() calls. }}
 {{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
 {{#model}}
-{{#unless external.cpp}}
+{{#generateExternalScope}}{{#external.cpp}}
+auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}");
+{{/external.cpp}}{{/generateExternalScope}}
+{{#generateBinding}}
 auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}")
-{{#unless external.cpp}}
+{{#generateBinding}}
 {{#fields}}
 {{! A skipped field may still be present here (retained for Pybind11StructInit's
     constructor signature, which must match the real C++ struct), but it must not
@@ -53,7 +56,7 @@ auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{py
         .def("__eq__", [](const {{resolveName model "Pybind11"}}& lhs, const {{resolveName model "Pybind11"}}& rhs) { return lhs == rhs; })
         .def("__hash__", [](const {{resolveName model "Pybind11"}}& self) { return {{internalNamespaceStr}}::hash<{{resolveName model "Pybind11"}}>{}(self); })
 {{/ifPredicate}}
-{{/unless}}
+{{/generateBinding}}
         ;
-{{/unless}}
+{{/generateBinding}}
 {{/model}}

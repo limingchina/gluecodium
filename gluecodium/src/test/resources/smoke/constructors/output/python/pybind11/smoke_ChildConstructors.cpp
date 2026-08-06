@@ -12,9 +12,13 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/VectorHash.h"
 #include "smoke/ChildConstructors.h"
 #include "smoke/Constructors.h"
+#include "cstdint"
 #include "memory"
+#include "string"
+#include "vector"
 
 using ChildConstructors = ::smoke::ChildConstructors;
 

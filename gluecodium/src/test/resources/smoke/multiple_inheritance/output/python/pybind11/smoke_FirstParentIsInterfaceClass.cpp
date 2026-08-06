@@ -14,6 +14,8 @@
 namespace py = pybind11;
 #include "another/SomeCoolClassType.h"
 #include "smoke/FirstParentIsInterfaceClass.h"
+#include "smoke/ParentInterface.h"
+#include "smoke/ParentNarrowOne.h"
 #include "memory"
 #include "string"
 

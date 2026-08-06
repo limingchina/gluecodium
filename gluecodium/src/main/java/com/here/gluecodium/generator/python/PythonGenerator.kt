@@ -239,18 +239,20 @@ internal class PythonGenerator : Generator {
         // a module we import, that creates a bidirectional dependency. Move those imports
         // to the bottom of the file (after the class definition) so the class is already
         // defined when the other module tries to import it.
-        val (imports, deferredImports) = allImports.partition { imp ->
-            val importedModulePaths = importGraph[imp.modulePath] ?: emptySet()
-            selfModulePath !in importedModulePaths
-        }
+        val (imports, deferredImports) =
+            allImports.partition { imp ->
+                val importedModulePaths = importGraph[imp.modulePath] ?: emptySet()
+                selfModulePath !in importedModulePaths
+            }
 
         // Detect name clashes: two imports with the same importedName from different module
         // paths would shadow each other (the second `from a.b import X` overwrites the first
         // `from c.d import X`). For each clashed name, assign a deterministic alias derived
         // from the module path (dots → underscores) so both are accessible at runtime.
-        val nameCounts = imports.filter { it.importedName != null }
-            .groupingBy { it.importedName!! }
-            .eachCount()
+        val nameCounts =
+            imports.filter { it.importedName != null }
+                .groupingBy { it.importedName!! }
+                .eachCount()
         val clashedNames = nameCounts.filter { it.value > 1 }.keys
         val clashAliases = mutableMapOf<String, String>()
         val importsWithAliases =
@@ -340,31 +342,32 @@ internal class PythonGenerator : Generator {
         // references when resolving constant values (e.g. StateEnum.ON vs RouteUtils.RouteType.EQUESTRIAN).
         pythonNameResolver.setContext(element)
         try {
-        val templateData =
-            mapOf(
-                "model" to element,
-                "nativeModule" to pythonModule,
-                "typeName" to pythonNameResolver.resolvePybind11AccessPath(element),
-                "nativeTypeName" to pythonNameResolver.resolvePybind11AccessPath(element),
-                "nestedTypes" to nestedTypesStr,
-                "isStub" to isStub,
-            ) + (
-                if (element is com.here.gluecodium.model.lime.LimeTypeAlias) {
-                    mapOf("typeRefShortName" to pythonNameResolver.resolveShortTypeRef(element.typeRef, element))
-                } else if (element is com.here.gluecodium.model.lime.LimeLambda) {
-                    val fn = element.asFunction()
-                    mapOf(
-                        "typeRefShortName" to pythonNameResolver.resolveShortTypeRef(fn.returnType.typeRef, element),
-                        "parameterTypes" to fn.parameters.joinToString(", ") {
-                            pythonNameResolver.resolveShortTypeRef(it.typeRef, element)
-                        },
-                    )
-                } else {
-                    emptyMap()
-                }
-            )
-        val result = TemplateEngine.render(templateName, templateData, nameResolvers, predicates)
-        return result
+            val templateData =
+                mapOf(
+                    "model" to element,
+                    "nativeModule" to pythonModule,
+                    "typeName" to pythonNameResolver.resolvePybind11AccessPath(element),
+                    "nativeTypeName" to pythonNameResolver.resolvePybind11AccessPath(element),
+                    "nestedTypes" to nestedTypesStr,
+                    "isStub" to isStub,
+                ) + (
+                    if (element is com.here.gluecodium.model.lime.LimeTypeAlias) {
+                        mapOf("typeRefShortName" to pythonNameResolver.resolveShortTypeRef(element.typeRef, element))
+                    } else if (element is com.here.gluecodium.model.lime.LimeLambda) {
+                        val fn = element.asFunction()
+                        mapOf(
+                            "typeRefShortName" to pythonNameResolver.resolveShortTypeRef(fn.returnType.typeRef, element),
+                            "parameterTypes" to
+                                fn.parameters.joinToString(", ") {
+                                    pythonNameResolver.resolveShortTypeRef(it.typeRef, element)
+                                },
+                        )
+                    } else {
+                        emptyMap()
+                    }
+                )
+            val result = TemplateEngine.render(templateName, templateData, nameResolvers, predicates)
+            return result
         } finally {
             pythonNameResolver.clearContext()
         }
@@ -418,16 +421,25 @@ internal class PythonGenerator : Generator {
         // Collect includes for all types in the tree. Enum-based exceptions have no dedicated
         // header (they map to std::error_code); struct-backed exceptions need the payload header.
         val includes =
-            allTypes
-                .flatMap { type ->
-                    if (type is com.here.gluecodium.model.lime.LimeException &&
-                        type.errorType.type.actualType !is LimeStruct
-                    ) {
-                        emptyList()
-                    } else {
-                        includeCollector.collectImports(type)
-                    }
-                }.distinct().sorted()
+            (
+                allTypes
+                    .flatMap { type ->
+                        if (type is com.here.gluecodium.model.lime.LimeException &&
+                            type.errorType.type.actualType !is LimeStruct
+                        ) {
+                            emptyList()
+                        } else {
+                            includeCollector.collectImports(type)
+                        }
+                    } +
+                    allTypes
+                        .filterIsInstance<LimeContainerWithInheritance>()
+                        .flatMap { type ->
+                            type.parents
+                                .mapNotNull { it.type.actualType as? LimeContainerWithInheritance }
+                                .flatMap { includeCollector.collectImports(it) }
+                        }
+            ).distinct().sorted()
 
         // Collect `using` aliases for all types (except exceptions, which have no C++ type).
         val aliases =
@@ -466,10 +478,11 @@ internal class PythonGenerator : Generator {
             // Render trampoline class (classes and interfaces only).
             val trampolineTemplateName = selectPybind11TrampolineTemplate(type)
             if (trampolineTemplateName != null) {
-                val trampolineData = mapOf(
-                    "model" to type,
-                    "internalNamespace" to internalNamespace,
-                )
+                val trampolineData =
+                    mapOf(
+                        "model" to type,
+                        "internalNamespace" to internalNamespace,
+                    )
                 val trampolineResult =
                     TemplateEngine.render(trampolineTemplateName, trampolineData, nameResolvers, predicates)
                 if (trampolineResult.isNotBlank()) {
@@ -479,12 +492,14 @@ internal class PythonGenerator : Generator {
             }
 
             // Render binding body (py::class_ / py::enum_ / exception translator).
+            val isExternal = type.external?.cpp?.isNotEmpty() == true
             val bindingData =
                 mapOf(
                     "model" to type,
                     "scope" to scope,
                     "pybindName" to pybindName,
                     "varName" to varName,
+                    "generateBinding" to (!isExternal || type.path.hasParent),
                     "internalNamespaceStr" to internalNamespace.joinToString("::"),
                     "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
                     "baseClasses" to
@@ -494,6 +509,7 @@ internal class PythonGenerator : Generator {
                             ?.filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
                             ?.map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
                             .orEmpty(),
+                    "generateExternalScope" to (type === allTypes.first() && allTypes.size > 1),
                     "pybind11AttrChain" to pythonNameResolver.resolvePybind11AttrChain(type),
                 )
             bindings.append(TemplateEngine.render(bindingTemplateName, bindingData, nameResolvers, predicates))

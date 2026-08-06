@@ -13,6 +13,7 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "smoke/MyOuterClass.h"
+#include "smoke/MyParentInterface.h"
 
 using MyOuterClass = ::smoke::MyOuterClass;
 using MyNestedImplementation = ::smoke::MyOuterClass::MyNestedImplementation;

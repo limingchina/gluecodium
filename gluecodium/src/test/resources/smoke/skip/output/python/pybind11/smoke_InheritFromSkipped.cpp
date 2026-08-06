@@ -13,6 +13,10 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "smoke/InheritFromSkipped.h"
+#include "smoke/SkipProxy.h"
+#include "smoke/SkippedEverywhere.h"
+#include "smoke/SkippedEverywhereEnum.h"
+#include "string"
 
 using InheritFromSkipped = ::smoke::InheritFromSkipped;
 

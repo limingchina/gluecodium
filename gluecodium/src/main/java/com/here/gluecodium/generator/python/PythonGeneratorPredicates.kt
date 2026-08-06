@@ -301,7 +301,12 @@ internal class PythonGeneratorPredicates(
             // class stays abstract, failing to instantiate).
             "isCppConst" to { limeElement: Any ->
                 limeElement is com.here.gluecodium.model.lime.LimeFunction &&
-                    limeElement.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.CONST)
+                    (
+                        limeElement.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.CONST) ||
+                            (limeReferenceMap[limeElement.path.parent.toString()] as? com.here.gluecodium.model.lime.LimeContainer)
+                                ?.attributes
+                                ?.have(com.here.gluecodium.model.lime.LimeAttributeType.IMMUTABLE) == true
+                    )
             },
             // Whether a function/property carries `@Cpp(Noexcept)`. The generated C++ declares such
             // methods as `noexcept`, so the pybind11 trampoline override must also be `noexcept`

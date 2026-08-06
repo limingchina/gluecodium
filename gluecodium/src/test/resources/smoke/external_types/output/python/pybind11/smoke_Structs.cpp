@@ -36,9 +36,18 @@ auto cls_Structs = py::class_<Structs, std::shared_ptr<Structs>>(module, "smoke_
         ;
 
 auto cls_StructsExternalStruct = py::class_<ExternalStruct>(cls_Structs, "ExternalStruct")
+        .def_readwrite("string_field", &ExternalStruct::stringField)
+        .def_property("external_string_field", static_cast<const ::std::string& (ExternalStruct::*)() const &>(&ExternalStruct::get_some_string), py::overload_cast<const ::std::string&>(&ExternalStruct::set_some_string))
+        .def_property("external_array_field", static_cast<const ::std::vector< int8_t >& (ExternalStruct::*)() const &>(&ExternalStruct::get_some_array), py::overload_cast<const ::std::vector< int8_t >&>(&ExternalStruct::set_some_array))
+        .def_property("external_struct_field", static_cast<const ::fire::SomeVeryExternalStruct& (ExternalStruct::*)() const &>(&ExternalStruct::get_some_struct), py::overload_cast<const ::fire::SomeVeryExternalStruct&>(&ExternalStruct::set_some_struct))
+        .def(py::init<>())
+        .def(py::init<::std::string, ::std::string, ::std::vector< int8_t >, ::fire::SomeVeryExternalStruct>(), py::arg("string_field"), py::arg("external_string_field"), py::arg("external_array_field"), py::arg("external_struct_field"))
         ;
 
 auto cls_StructsAnotherExternalStruct = py::class_<::fire::SomeVeryExternalStruct>(cls_Structs, "AnotherExternalStruct")
+        .def_readwrite("int_field", &::fire::SomeVeryExternalStruct::intField)
+        .def(py::init<>())
+        .def(py::init<int8_t>(), py::arg("int_field"))
         ;
 
 

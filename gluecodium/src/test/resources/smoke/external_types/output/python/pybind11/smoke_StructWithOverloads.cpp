@@ -20,8 +20,6 @@ namespace py = pybind11;
 
 
 void register_smoke_StructWithOverloads(py::module_& module) {
-auto cls_StructWithOverloads = py::class_<external::ClassWithOverloads::StructWithOverloads>(module, "smoke_StructWithOverloads")
-        ;
 
 
 }

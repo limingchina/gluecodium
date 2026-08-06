@@ -26,8 +26,8 @@ auto cls_CommentsLinks = py::class_<CommentsLinks, std::shared_ptr<CommentsLinks
         .def("__gluecodium_id__", [](const CommentsLinks& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def("random_method", py::overload_cast<const ::smoke::Comments::SomeEnum>(&CommentsLinks::random_method, py::const_), py::arg("input_parameter"))
-        .def("random_method", py::overload_cast<const ::std::string&, const bool>(&CommentsLinks::random_method, py::const_), py::arg("text"), py::arg("flag"))
+        .def("random_method", py::overload_cast<const ::smoke::Comments::SomeEnum>(&CommentsLinks::random_method), py::arg("input_parameter"))
+        .def("random_method", py::overload_cast<const ::std::string&, const bool>(&CommentsLinks::random_method), py::arg("text"), py::arg("flag"))
         ;
 
 auto cls_CommentsLinksRandomStruct = py::class_<RandomStruct>(cls_CommentsLinks, "RandomStruct")

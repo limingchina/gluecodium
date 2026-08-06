@@ -22,12 +22,15 @@
 {{! Trampoline is emitted separately by Pybind11InterfaceTrampoline.mustache. }}
 {{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
 {{#model}}
-{{#unless external.cpp}}
+{{#generateExternalScope}}{{#external.cpp}}
+auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}");
+{{/external.cpp}}{{/generateExternalScope}}
+{{#generateBinding}}
 auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>{{#unless external.cpp}}, {{resolveName}}Trampoline{{/unless}}>({{scope}}, "{{pybindName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
         .def("__gluecodium_id__", [](const {{resolveName model "Pybind11"}}& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-{{#unless external.cpp}}
+{{#generateBinding}}
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
         // C++ implementation of this interface), adopt it into the trampoline subclass and
@@ -54,12 +57,12 @@ auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}
 {{#unless isStatic}}
 {{>python/Pybind11Property}}{{/unless}}
 {{/inheritedProperties}}
-{{/unless}}
+{{/generateBinding}}
         ;
-{{#unless external.cpp}}{{#properties}}
+{{#generateBinding}}{{#properties}}
 {{#if isStatic}}{{#ifPredicate typeRef "isLambdaType"}}{{#ifPredicate "hasSetter"}}
     py::module_::import("atexit").attr("register")(py::cpp_function([]() { {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}({}); }));
 {{/ifPredicate}}{{/ifPredicate}}{{/if}}
-{{/properties}}{{/unless}}
-{{/unless}}
+{{/properties}}{{/generateBinding}}
+{{/generateBinding}}
 {{/model}}
