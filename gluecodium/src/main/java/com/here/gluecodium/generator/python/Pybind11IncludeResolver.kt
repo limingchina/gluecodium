@@ -25,6 +25,7 @@ import com.here.gluecodium.generator.cpp.CppIncludeResolver
 import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeException
+import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeTypeAlias
 import com.here.gluecodium.model.lime.LimeTypeRef
 
@@ -49,11 +50,20 @@ internal class Pybind11IncludeResolver(
         when {
             limeElement is LimeException -> emptyList()
             limeElement is LimeTypeRef && limeElement.type.actualType is LimeException -> emptyList()
+            limeElement is LimeTypeRef && limeElement.type is LimeLambda ->
+                cppIncludeResolver.resolveElementImports(limeElement) +
+                    resolveLambdaTypeImports(limeElement.type as LimeLambda)
             limeElement is LimeTypeRef && limeElement.type is LimeTypeAlias ->
                 cppIncludeResolver.resolveElementImports(limeElement) +
                     resolveElementImports((limeElement.type as LimeTypeAlias).typeRef)
             limeElement is LimeTypeAlias ->
                 cppIncludeResolver.resolveElementImports(limeElement) + resolveElementImports(limeElement.typeRef)
+            limeElement is LimeLambda ->
+                cppIncludeResolver.resolveElementImports(limeElement) + resolveLambdaTypeImports(limeElement)
             else -> cppIncludeResolver.resolveElementImports(limeElement)
         }
+
+    private fun resolveLambdaTypeImports(limeLambda: LimeLambda): List<Include> =
+        (limeLambda.parameters.map { it.typeRef } + limeLambda.returnType.typeRef)
+            .flatMap { resolveElementImports(it) }
 }

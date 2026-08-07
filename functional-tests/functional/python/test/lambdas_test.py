@@ -30,8 +30,10 @@ TakeScreenshotCallback = LambdasInterface.TakeScreenshotCallback
 LambdaHolder = Lambdas.LambdaHolder
 ClassCallback = LambdasWithStructuredTypes.ClassCallback
 StructCallback = LambdasWithStructuredTypes.StructCallback
+ClassCollectionCallback = LambdasWithStructuredTypes.ClassCollectionCallback
 SomeCallback = LambdasDeclarationOrder.SomeCallback
 SomeStruct = LambdasDeclarationOrder.SomeStruct
+from test.YetAnotherDummyClass import YetAnotherDummyClass
 from test.SignatureClashLambda import SignatureClashLambda
 from test.StructWithLambda import StructWithLambda
 
@@ -236,6 +238,11 @@ class TestLambdas:
         """The SomeCallback type alias references SomeStruct (declared after the lambda).
         Verify the generated type alias is correct."""
         assert SomeCallback == Callable[[SomeStruct], None]
+
+    def test_lambda_collection_type_alias(self):
+        """A named lambda's collection element type is available to the Python binding."""
+        assert ClassCollectionCallback == Callable[[list[YetAnotherDummyClass]], None]
+        assert hasattr(LambdasWithStructuredTypes, "do_class_collection_stuff")
 
     def test_signature_clash_lambda_type_alias(self):
         """SignatureClashLambda is a top-level lambda () -> String with a name that

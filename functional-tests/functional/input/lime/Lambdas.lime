@@ -140,6 +140,8 @@ class LambdasWithStructuredTypes {
     lambda ClassCallback = (LambdasInterface) -> Void
     // @param[p0] the struct parameter
     lambda StructCallback = (Lambdas.LambdaHolder) -> Void
+    // @param[p0] the class collection parameter
+    lambda ClassCollectionCallback = (List<YetAnotherDummyClass>) -> Void
 
     // Performs class-related operations using the callback
     // @param[callback] the callback to invoke
@@ -147,6 +149,9 @@ class LambdasWithStructuredTypes {
     // Performs struct-related operations using the callback
     // @param[callback] the callback to invoke
     fun do_struct_stuff(callback : StructCallback)
+    // Performs class collection-related operations using the callback
+    // @param[callback] the callback to invoke
+    fun do_class_collection_stuff(callback : ClassCollectionCallback)
 }
 
 class ClassWithInternalLambda {
