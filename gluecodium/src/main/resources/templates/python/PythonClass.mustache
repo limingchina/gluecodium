@@ -38,9 +38,15 @@ class {{resolveName}}({{nativeModule}}.{{typeName}}):
 {{#functions}}
 
 {{>python/PythonFunction}}{{/functions}}
+{{#interfaceInheritedFunctions}}
+
+{{>python/PythonFunction}}{{/interfaceInheritedFunctions}}
 {{#properties}}
 
 {{>python/PythonProperty}}{{/properties}}
+{{#interfaceInheritedProperties}}
+
+{{>python/PythonProperty}}{{/interfaceInheritedProperties}}
 {{{nestedTypes}}}
 {{#constants}}
 
