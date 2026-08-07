@@ -105,9 +105,22 @@ internal class PythonNameResolver(
      * this file. Returns the short name when no alias is applicable (the common case).
      */
     private fun resolveTopLevelTypeName(element: LimeNamedElement): String {
-        val modulePath = (element.path.head + nameRules.getName(element)).joinToString(".")
-        return clashAliases.get()[modulePath] ?: nameRules.getName(element)
+        val canonicalElement =
+            if (element is LimeType) canonicalizeNamedElement(element) else element
+        val modulePath = (canonicalElement.path.head + nameRules.getName(canonicalElement)).joinToString(".")
+        return clashAliases.get()[modulePath] ?: nameRules.getName(canonicalElement)
     }
+
+    /**
+     * Resolves a type against the filtered model used for Python generation. Type references can
+     * retain an element from a duplicate Lime path that was removed by platform filtering, while
+     * the filtered reference map points to the element that is actually emitted. Using the
+     * filtered element keeps imports, annotations, and wrapper runtime references consistent.
+     */
+    private fun canonicalizeNamedElement(element: LimeNamedElement): LimeNamedElement =
+        (limeReferenceMap[element.path.toString()] as? LimeNamedElement)
+            ?: (limeReferenceMap[element.path.toAmbiguousString()] as? LimeNamedElement)
+            ?: element
 
     private fun resolvePythonType(
         element: Any,
