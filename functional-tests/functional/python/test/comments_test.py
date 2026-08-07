@@ -233,3 +233,11 @@ def test_doc_reference_unresolved_remains():
     doc = CommentsLinks.random_method.__doc__
     # 'outputParameter' doesn't exist, so it should remain unresolved
     assert "[outputParameter]" in doc
+
+def test_comments_escaped_brackets():
+    """Test that escaped square brackets in comments are rendered as literal brackets without backslashes."""
+    from test.CommentsLinks import CommentsLinks
+    doc = CommentsLinks.random_method.__doc__
+    # Escaped brackets \[0, 23\] should appear as literal [0, 23] in the docstring
+    assert "[0, 23]" in doc
+    assert "\\[0, 23\\]" not in doc
