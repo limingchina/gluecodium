@@ -40,6 +40,7 @@ enum class LimeAttributeType(
     INTERNAL("Internal"),
     NO_CACHE("NoCache"),
     OPTIMIZED("Optimized"),
+    ONLY("Only", LimeAttributeValueType.TAG),
     OVERLOADED("Overloaded"),
     SERIALIZABLE("Serializable"),
     SKIP("Skip", LimeAttributeValueType.TAG),

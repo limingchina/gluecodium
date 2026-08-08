@@ -47,9 +47,14 @@ side on demand instead of a creating a full platform-side copy. C++ list is gene
 * **@NoCache**: *EXPERIMENTAL* marks a class or an interface to omit instance caching when crossing a language boundary.
 This breaks the referential equality invariant (see `Referential equality` below), but may save resources for use cases
 when a lot of small instances are sent over the language boundary repeatedly.
+* **@Only(**\[**Tag** **=**\] **"**_LanguageTag_**"**__)__ or **@Only(**__LanguageTag__**)**: marks an element to be generated
+only for the specified languages. This is the inverse of `@Skip`. The attribute accepts predefined language tags:
+"Java", "Kotlin", "Swift", "Dart", and "Cpp". The element will only be generated in the code for the specified languages.
+Custom tags are not supported. The `@Only` attribute is mutually exclusive with `@Skip` and `@EnableIf` attributes and cannot
+be used on enumerators or on fields of immutable structs without default values.
 * **@Skip(**\[**Tag** **=**\] **"**_CustomTag_**"**__)__ or **@Skip(**__CustomTag__**)**: marks an element to be skipped
 (not generated) if a custom tag with that name was defined through command-line parameters. Custom tags are
-case-insensitive. There are three predefined tags that do not need to be specified explicitly: "Java", "Kotlin", "Swift", "Dart",
+case-insensitive. There are five predefined tags that do not need to be specified explicitly: "Java", "Kotlin", "Swift", "Dart",
 and "Cpp". They mark the element to be skipped in the generated code for the corresponding language. Please note that
 only `const` and `field constructor` can be skipped in C++.
 * **@EnableIf(**\[**Tag** **=**\] **"**_CustomTag_**"**__)__ or **@EnableIf(**__CustomTag__**)**: marks an element to be

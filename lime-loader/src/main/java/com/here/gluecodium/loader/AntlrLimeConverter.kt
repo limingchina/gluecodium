@@ -199,6 +199,10 @@ internal object AntlrLimeConverter {
             annotationValues.forEach { addSkipAttribute(attributes, it) }
             return
         }
+        if (attributeType == LimeAttributeType.ONLY) {
+            annotationValues.forEach { addOnlyAttribute(attributes, it) }
+            return
+        }
         if (attributeType == LimeAttributeType.ENABLE_IF) {
             annotationValues.forEach { addEnableIfAttribute(attributes, it) }
             return
@@ -256,6 +260,23 @@ internal object AntlrLimeConverter {
         }
     }
 
+    private fun addOnlyAttribute(
+        attributes: LimeAttributes.Builder,
+        valueContext: LimeParser.AnnotationValueContext,
+    ) {
+        val valueTypeText = valueContext.simpleId()?.text
+        val value =
+            when (valueTypeText?.lowercase(Locale.getDefault())) {
+                null, "tag" -> convertAnnotationValue(valueContext)
+                else -> valueTypeText
+            }
+
+        val valueList = if (value is List<*>) value else listOf(value)
+        valueList.filterIsInstance<String>().forEach {
+            attributes.addAttribute(LimeAttributeType.ONLY, LimeAttributeValueType.TAG, it)
+        }
+    }
+
     private fun addEnableIfAttribute(
         attributes: LimeAttributes.Builder,
         valueContext: LimeParser.AnnotationValueContext,
@@ -310,6 +331,7 @@ internal object AntlrLimeConverter {
             "Kotlin" -> LimeAttributeType.KOTLIN
             "NoCache" -> LimeAttributeType.NO_CACHE
             "Optimized" -> LimeAttributeType.OPTIMIZED
+            "Only" -> LimeAttributeType.ONLY
             "Overloaded" -> LimeAttributeType.OVERLOADED
             "Swift" -> LimeAttributeType.SWIFT
             "Serializable" -> LimeAttributeType.SERIALIZABLE
