@@ -23,4 +23,7 @@ class ChildClassWithBool(generated.smoke_ChildClassWithBool):
             super().__init__()
         self._native = self
 
+    def root_method(self, input1: bool):
+        return _wrap(generated.smoke_ChildClassWithBool.root_method(self, _unwrap(input1, bool)), None)
+
 

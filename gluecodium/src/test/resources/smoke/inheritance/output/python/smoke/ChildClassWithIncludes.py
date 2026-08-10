@@ -28,4 +28,26 @@ class ChildClassWithIncludes(generated.smoke_ChildClassWithIncludes):
             super().__init__()
         self._native = self
 
+    def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
+        return _wrap(generated.smoke_ChildClassWithIncludes.root_method(self, _unwrap(input1, IncludableStruct), _unwrap(input2, IncludableEnum)), IncludableClass)
+
+    def not_in_java(self) -> ShouldNotInclude:
+        return _wrap(generated.smoke_ChildClassWithIncludes.not_in_java(self), ShouldNotInclude)
+
+    @property
+    def root_property(self) -> Callable[[int], None]:
+        return _wrap(generated.smoke_ChildClassWithIncludes.root_property.fget(self), Callable[[int], None])
+
+    @root_property.setter
+    def root_property(self, value: Callable[[int], None]):
+        generated.smoke_ChildClassWithIncludes.root_property.fset(self, _unwrap(value, Callable[[int], None]))
+
+    @property
+    def not_in_java_property(self) -> ShouldNotInclude:
+        return _wrap(generated.smoke_ChildClassWithIncludes.not_in_java_property.fget(self), ShouldNotInclude)
+
+    @not_in_java_property.setter
+    def not_in_java_property(self, value: ShouldNotInclude):
+        generated.smoke_ChildClassWithIncludes.not_in_java_property.fset(self, _unwrap(value, ShouldNotInclude))
+
 

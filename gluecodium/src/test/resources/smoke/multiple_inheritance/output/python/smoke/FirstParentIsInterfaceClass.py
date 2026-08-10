@@ -28,6 +28,15 @@ class FirstParentIsInterfaceClass(generated.smoke_FirstParentIsInterfaceClass):
     def child_function(self):
         return _wrap(generated.smoke_FirstParentIsInterfaceClass.child_function(self), None)
 
+    def parent_function(self):
+        return _wrap(generated.smoke_FirstParentIsInterfaceClass.parent_function(self), None)
+
+    def some_function_that_uses_type_from_another_package(self, some_param: SomeCoolClassType):
+        return _wrap(generated.smoke_FirstParentIsInterfaceClass.some_function_that_uses_type_from_another_package(self, _unwrap(some_param, SomeCoolClassType)), None)
+
+    def parent_function_one(self):
+        return _wrap(generated.smoke_FirstParentIsInterfaceClass.parent_function_one(self), None)
+
     @property
     def child_property(self) -> str:
         return _wrap(generated.smoke_FirstParentIsInterfaceClass.child_property.fget(self), str)
@@ -35,5 +44,21 @@ class FirstParentIsInterfaceClass(generated.smoke_FirstParentIsInterfaceClass):
     @child_property.setter
     def child_property(self, value: str):
         generated.smoke_FirstParentIsInterfaceClass.child_property.fset(self, _unwrap(value, str))
+
+    @property
+    def parent_property(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsInterfaceClass.parent_property.fget(self), str)
+
+    @parent_property.setter
+    def parent_property(self, value: str):
+        generated.smoke_FirstParentIsInterfaceClass.parent_property.fset(self, _unwrap(value, str))
+
+    @property
+    def parent_property_one(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsInterfaceClass.parent_property_one.fget(self), str)
+
+    @parent_property_one.setter
+    def parent_property_one(self, value: str):
+        generated.smoke_FirstParentIsInterfaceClass.parent_property_one.fset(self, _unwrap(value, str))
 
 

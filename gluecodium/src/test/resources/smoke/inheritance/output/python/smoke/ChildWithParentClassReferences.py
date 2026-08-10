@@ -25,4 +25,15 @@ class ChildWithParentClassReferences(generated.smoke_ChildWithParentClassReferen
             super().__init__()
         self._native = self
 
+    def class_function(self) -> ChildClassFromClass:
+        return _wrap(generated.smoke_ChildWithParentClassReferences.class_function(self), ChildClassFromClass)
+
+    @property
+    def class_property(self) -> ParentClass:
+        return _wrap(generated.smoke_ChildWithParentClassReferences.class_property.fget(self), ParentClass)
+
+    @class_property.setter
+    def class_property(self, value: ParentClass):
+        generated.smoke_ChildWithParentClassReferences.class_property.fset(self, _unwrap(value, ParentClass))
+
 

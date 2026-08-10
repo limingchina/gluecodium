@@ -23,4 +23,8 @@ class ChildClassNameClash(generated.smoke_ChildClassNameClash):
             super().__init__()
         self._native = self
 
+    def parent_method(self, *args, **kwargs):
+        return _wrap(generated.smoke_ChildClassNameClash.parent_method(self, *[_unwrap(a) for a in args]), None)
+
+
 
