@@ -7,10 +7,12 @@ import typing
 class ChildConstructors(
     Constructors):
 
+    @typing.overload
     @staticmethod
     def create() -> ChildConstructors:
         ...
 
+    @typing.overload
     @staticmethod
     def create(other: Constructors) -> ChildConstructors:
         ...

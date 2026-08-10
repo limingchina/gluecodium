@@ -24,10 +24,12 @@ class StructsWithMethodsInterface:
         def validate(x: float, y: float, z: float) -> bool:
             ...
     
+        @typing.overload
         @staticmethod
         def create(input: str) -> StructsWithMethodsInterface.Vector3:
             ...
     
+        @typing.overload
         @staticmethod
         def create(other: StructsWithMethodsInterface.Vector3) -> StructsWithMethodsInterface.Vector3:
             ...

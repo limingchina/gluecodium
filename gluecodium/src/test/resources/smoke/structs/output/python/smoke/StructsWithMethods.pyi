@@ -22,14 +22,17 @@ class StructsWithMethods:
         def validate(x: float, y: float) -> bool:
             ...
     
+        @typing.overload
         @staticmethod
         def create(x: float, y: float) -> StructsWithMethods.Vector:
             ...
     
+        @typing.overload
         @staticmethod
         def create(other: StructsWithMethods.Vector) -> StructsWithMethods.Vector:
             ...
     
+        @typing.overload
         @staticmethod
         def create(input: int) -> StructsWithMethods.Vector:
             ...

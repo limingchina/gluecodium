@@ -7,9 +7,11 @@ from typing import Callable
 class MapScene:
     """Referencing some type `MapScene.load_scene`."""
 
+    @typing.overload
     def load_scene(self, map_scheme: int, callback: Optional[Callable[[Optional[str]], None]]):
         ...
 
+    @typing.overload
     def load_scene(self, configuration_file: str, callback: Optional[Callable[[Optional[str]], None]]):
         ...
 

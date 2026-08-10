@@ -13,6 +13,7 @@ Weblinks are not modified like this [example1], [example2](http://www.example.co
 
 [example1]: http://example.com/1"""
 
+    @typing.overload
     def random_method(self, input_parameter: Comments.SomeEnum) -> Comments.SomeEnum:
         """Link types:
 * constant: `Comments.VERY_USEFUL`
@@ -47,6 +48,7 @@ Not working for Swift:
 * named comment: []`Comments.VERY_USEFUL`"""
         ...
 
+    @typing.overload
     def random_method(self, text: str, flag: bool):
         """Links to method overloads:
 * other one: `CommentsLinks.random_method`

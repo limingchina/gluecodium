@@ -5,9 +5,11 @@ import typing
 
 class ParentInterface:
 
+    @typing.overload
     def foo(self):
         ...
 
+    @typing.overload
     def foo(self, input: int):
         ...
 

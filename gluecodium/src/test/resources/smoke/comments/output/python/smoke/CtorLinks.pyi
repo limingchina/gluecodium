@@ -34,10 +34,12 @@ class CtorLinks:
     
     class OverloadedCtors:
     
+        @typing.overload
         @staticmethod
         def create(input: str) -> CtorLinks.OverloadedCtors:
             ...
     
+        @typing.overload
         @staticmethod
         def create(input: str, flag: bool) -> CtorLinks.OverloadedCtors:
             """"""
