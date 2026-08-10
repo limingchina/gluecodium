@@ -19,7 +19,8 @@
   !
   !}}
 {{! Python method/function stub. }}
-{{#if isStatic}}    @staticmethod
+{{#ifPredicate this "isPythonOverloaded"}}    @typing.overload
+{{/ifPredicate}}{{#if isStatic}}    @staticmethod
 {{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
 {{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
 {{/ifPredicate}}        ...

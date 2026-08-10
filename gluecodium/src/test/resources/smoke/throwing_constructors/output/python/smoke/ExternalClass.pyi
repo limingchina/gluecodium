@@ -11,10 +11,12 @@ class ExternalClass:
 
     class InternalOne:
     
+        @typing.overload
         @staticmethod
         def create() -> ExternalClass.InternalOne:
             ...
     
+        @typing.overload
         @staticmethod
         def create(value: int) -> ExternalClass.InternalOne:
             ...

@@ -188,6 +188,25 @@ internal class PythonGeneratorPredicates(
                             container.functions.indexOf(limeFunction)
                     }
             },
+            // Whether a function is part of a Python overload group: more than one function in
+            // the same container resolves to the same Python name. Used by the `.pyi` stub
+            // template to emit `@typing.overload` decorators. Groups by the resolved Python
+            // name (not the raw LIME name) so it matches what the stub actually renders as
+            // `def {{resolveName}}` — the same key used by `isFirstOverload` and the
+            // `PythonOverloadsValidator`. Deliberately kept separate from `isFirstOverload`
+            // (which only identifies the representative for the `.py` dispatcher) so a future
+            // reader can tell at a glance that stub-decoration and dispatcher-collapsing are
+            // two independent concerns that happen to share a grouping key today.
+            "isPythonOverloaded" to { limeFunction: Any ->
+                limeFunction is com.here.gluecodium.model.lime.LimeFunction &&
+                    run {
+                        val container =
+                            limeReferenceMap[limeFunction.path.parent.toString()]
+                                as? com.here.gluecodium.model.lime.LimeContainer ?: return@run false
+                        val pythonName = pythonNameResolver.resolveName(limeFunction)
+                        container.functions.count { pythonNameResolver.resolveName(it) == pythonName } > 1
+                    }
+            },
             // Whether the C++ name of this function collides with another function in the same
             // container OR an inherited one. In C++ a child class exposes all inherited overloads,
             // so pybind11 needs py::overload_cast whenever the resolved C++ name appears more than

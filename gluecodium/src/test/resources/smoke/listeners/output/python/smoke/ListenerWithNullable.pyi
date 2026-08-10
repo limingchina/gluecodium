@@ -29,12 +29,14 @@ class ListenerWithNullable:
     def method_with_u_long(self, input: Optional[int]) -> Optional[int]:
         ...
 
+    @typing.overload
     def method_with_double(self, input: Optional[bool]) -> Optional[bool]:
         ...
 
     def method_with_float(self, input: Optional[float]) -> Optional[float]:
         ...
 
+    @typing.overload
     def method_with_double(self, input: Optional[float]) -> Optional[float]:
         ...
 
