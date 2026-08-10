@@ -27,6 +27,12 @@ class FirstParentIsNarrowClass(generated.smoke_FirstParentIsNarrowClass):
     def child_function(self):
         return _wrap(generated.smoke_FirstParentIsNarrowClass.child_function(self), None)
 
+    def parent_function_one(self):
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_function_one(self), None)
+
+    def parent_function_two(self):
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_function_two(self), None)
+
     @property
     def child_property(self) -> str:
         return _wrap(generated.smoke_FirstParentIsNarrowClass.child_property.fget(self), str)
@@ -34,5 +40,21 @@ class FirstParentIsNarrowClass(generated.smoke_FirstParentIsNarrowClass):
     @child_property.setter
     def child_property(self, value: str):
         generated.smoke_FirstParentIsNarrowClass.child_property.fset(self, _unwrap(value, str))
+
+    @property
+    def parent_property_one(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_property_one.fget(self), str)
+
+    @parent_property_one.setter
+    def parent_property_one(self, value: str):
+        generated.smoke_FirstParentIsNarrowClass.parent_property_one.fset(self, _unwrap(value, str))
+
+    @property
+    def parent_property_two(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_property_two.fget(self), str)
+
+    @parent_property_two.setter
+    def parent_property_two(self, value: str):
+        generated.smoke_FirstParentIsNarrowClass.parent_property_two.fset(self, _unwrap(value, str))
 
 

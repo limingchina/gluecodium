@@ -26,4 +26,15 @@ class ChildClassFromInterface(generated.smoke_ChildClassFromInterface):
     def child_class_method(self):
         return _wrap(generated.smoke_ChildClassFromInterface.child_class_method(self), None)
 
+    def root_method(self):
+        return _wrap(generated.smoke_ChildClassFromInterface.root_method(self), None)
+
+    @property
+    def root_property(self) -> str:
+        return _wrap(generated.smoke_ChildClassFromInterface.root_property.fget(self), str)
+
+    @root_property.setter
+    def root_property(self, value: str):
+        generated.smoke_ChildClassFromInterface.root_property.fset(self, _unwrap(value, str))
+
 

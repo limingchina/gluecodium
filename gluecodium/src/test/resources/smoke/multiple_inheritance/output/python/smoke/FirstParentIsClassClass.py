@@ -27,6 +27,9 @@ class FirstParentIsClassClass(generated.smoke_FirstParentIsClassClass):
     def child_function(self):
         return _wrap(generated.smoke_FirstParentIsClassClass.child_function(self), None)
 
+    def parent_function_one(self):
+        return _wrap(generated.smoke_FirstParentIsClassClass.parent_function_one(self), None)
+
     @property
     def child_property(self) -> str:
         return _wrap(generated.smoke_FirstParentIsClassClass.child_property.fget(self), str)
@@ -34,5 +37,13 @@ class FirstParentIsClassClass(generated.smoke_FirstParentIsClassClass):
     @child_property.setter
     def child_property(self, value: str):
         generated.smoke_FirstParentIsClassClass.child_property.fset(self, _unwrap(value, str))
+
+    @property
+    def parent_property_one(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsClassClass.parent_property_one.fget(self), str)
+
+    @parent_property_one.setter
+    def parent_property_one(self, value: str):
+        generated.smoke_FirstParentIsClassClass.parent_property_one.fset(self, _unwrap(value, str))
 
 

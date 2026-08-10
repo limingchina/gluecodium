@@ -31,4 +31,14 @@ class ChildClassFromInterfaceOverloads(generated.smoke_ChildClassFromInterfaceOv
         return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.bar(self, *[_unwrap(a) for a in args]), None)
 
 
+    def foo(self, *args, **kwargs):
+        return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.foo(self, *[_unwrap(a) for a in args]), None)
+
+
+    def bar(self):
+        return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.bar(self), None)
+
+    def baz(self):
+        return _wrap(generated.smoke_ChildClassFromInterfaceOverloads.baz(self), None)
+
 
