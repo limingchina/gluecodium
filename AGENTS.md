@@ -11,6 +11,7 @@ Gluecodium is a code generation tool that creates bindings between C++ and multi
 - Java/Kotlin (for Android via JNI)
 - Swift (for iOS/macOS via CBridge)
 - Dart (for Flutter via FFI)
+- JavaScript/TypeScript (for WebAssembly via embind — in development, see `docs/js_binding_dev/`)
 
 ## Repository Structure
 
@@ -29,6 +30,7 @@ gluecodium/
 │       │   │   ├── swift/             # Swift generator (with CBridge)
 │       │   │   ├── dart/              # Dart generator (with FFI)
 │       │   │   └── common/            # Shared generator infrastructure
+│       │   │   # (js/ — JS/embind generator, planned: see docs/js_binding_dev/js_binding_plan.md)
 │       │   └── validator/             # LIME model validators
 │       └── resources/
 │           └── templates/             # Mustache templates for each language
@@ -115,6 +117,13 @@ Each generator:
 - **Java/Kotlin Generators**: Java/Kotlin files + JNI bindings (C/C++)
 - **Swift Generator**: Swift files + CBridge (Objective-C compatible C/C++ bindings)
 - **Dart Generator**: Dart files + FFI bindings (C/C++)
+- **JavaScript/WebAssembly Generator** (in development): TypeScript `.d.ts` stubs + embind C++
+  bindings (`EMSCRIPTEN_BINDINGS` blocks) cross-compiled by `em++` into a `.wasm` binary.
+  Unlike pybind11/Dart/Swift, the *entire* dependency graph must be compiled with the Emscripten
+  toolchain. See `docs/js_binding_dev/js_binding_plan.md` for the phased plan and
+  `docs/js_binding_dev/spike_phase0_results.md` for validated spike findings (notably: embind
+  needs custom casters for `Return<T, E>` and `std::optional<T>`; multiple inheritance is handled
+  via primary-base registration + flattened secondary-parent members).
 
 ### Mustache Templates
 
@@ -294,6 +303,8 @@ gluecodium {
 - `docs/internal/architecture.md`: Internal architecture overview
 - `docs/internal/generators.md`: Generator implementation details
 - `docs/internal/testing.md`: Testing approach
+- `docs/js_binding_dev/`: JS/WebAssembly (embind) binding development — phased plan, spike
+  results, and spike sources
 - `examples/calculator/`: Simple example demonstrating features
 
 ## Validation
