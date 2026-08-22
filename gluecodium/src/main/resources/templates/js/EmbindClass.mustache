@@ -1,0 +1,11 @@
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+
+Embind registration for a LIME class. Only one `base<>` is supported (see plan §5.3);
+secondary parents are flattened by binding their members on the derived type.
+}}
+void {{registerName}}(void) {
+    class_<{{cppFullName}}{{#primaryBase}}, base<{{fqn}}>{{/primaryBase}}>("{{jsName}}")
+        ;
+}

@@ -1,0 +1,9 @@
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+}}
+EMSCRIPTEN_BINDINGS({{moduleName}}) {
+{{#registerFunctions}}
+    {{name}}();
+{{/registerFunctions}}
+}

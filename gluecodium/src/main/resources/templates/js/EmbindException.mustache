@@ -1,0 +1,11 @@
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+
+Enum-based exceptions map to std::error_code in C++ and have no dedicated header;
+struct-backed exceptions are registered as value_objects of their payload type.
+}}
+void {{registerName}}(void) {
+    // Exception binding: struct-backed exceptions are bound via their payload struct;
+    // enum-based exceptions surface as std::error_code (no C++ type to register here).
+}

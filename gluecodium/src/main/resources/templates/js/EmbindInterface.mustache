@@ -1,0 +1,8 @@
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+}}
+void {{registerName}}(void) {
+    class_<{{cppFullName}}{{#primaryBase}}, base<{{fqn}}>{{/primaryBase}}>("{{jsName}}")
+        ;
+}

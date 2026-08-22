@@ -1,0 +1,9 @@
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+
+Shared header for all generated .d.ts stubs: copyright comment and imports.
+}}
+{{#imports}}
+import type { {{importedName}} } from "{{modulePath}}";
+{{/imports}}

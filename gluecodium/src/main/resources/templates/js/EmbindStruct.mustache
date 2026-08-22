@@ -1,0 +1,10 @@
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+
+LIME structs map to embind value_object (value semantics, all fields public).
+}}
+void {{registerName}}(void) {
+    value_object<{{cppFullName}}>("{{jsName}}")
+        ;
+}

@@ -1,0 +1,15 @@
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+}}
+#include <emscripten/bind.h>
+
+{{#includes}}
+{{.}}
+{{/includes}}
+
+using namespace emscripten;
+
+{{#bindings}}
+{{.}}
+{{/bindings}}
