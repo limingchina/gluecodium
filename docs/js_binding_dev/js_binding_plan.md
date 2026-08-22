@@ -6,6 +6,13 @@
 > **Base branch analyzed**: `limingchina/gluecodium` @ `python_bind` (commit `6d0c3ac`, "Emit `@typing.overload` in generated .pyi stubs for overloaded functions")
 > **Related**: Follows the same architectural precedent as `docs/python_pybind11_plan.md`
 > (Dart FFI / Swift CBridge / Python pybind11 generators used as reference implementations)
+>
+> **Reference implementation location**: The Python binding implementation lives in a **separate
+> checkout at `~/dev/gluecodium1`** — a directory parallel to this project's folder
+> (`~/dev/gluecodium`). During development, use it directly for code search and reference
+> (e.g. `grep`/read `~/dev/gluecodium1/gluecodium/src/main/java/com/here/gluecodium/generator/python/`
+> when mirroring `PythonGenerator` structure), rather than relying on the summarized snippets in
+> this plan.
 
 ---
 
@@ -563,10 +570,28 @@ than guessing blind.
 
 ### Phase 8 — Testing
 
-#### 8.1 Smoke tests (JVM-side unit tests)
+#### 8.1 Smoke tests — deliberately skipped during development
 
-Mirror the Python smoke-test suite (Kotlin tests exercising `JsGenerator` directly against small
-in-memory LIME models) — same test harness, new fixtures.
+**Decision: skip the smoke-test suite (and its reference files) entirely for the JS generator.**
+
+The existing smoke tests (`gluecodium/src/test/resources/smoke/`) compare generated output against
+checked-in reference files. Every generator feature change requires regenerating those reference
+files (`DUMP_ACTUAL_DIR=... ./gradlew test`), which is a tedious, error-prone, and high-churn
+workflow during active development — and the JS generator will touch templates and resolvers
+frequently across Phases 2–7.
+
+Instead:
+- **Functional tests are the primary correctness gate.** They compile and *execute* the generated
+  code under `em++`/Node.js, which is a strictly stronger signal than textual diffing of generated
+  output — a smoke test can pass while producing bindings that don't compile or run.
+- **JVM-side unit tests** still cover the pure-logic pieces that functional tests can't reach
+  cheaply (name resolvers, comments processing, predicates) via targeted Kotlin unit tests against
+  small in-memory LIME models — but without checked-in golden files.
+- If a regression ever demands output-level diffing, it can be added ad hoc later; do not maintain
+  a standing `smoke/js/` reference directory.
+
+This deviates from how Python was built (it inherited the full smoke suite), and that deviation is
+intentional.
 
 #### 8.2 Functional tests
 
