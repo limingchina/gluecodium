@@ -547,6 +547,42 @@ against a separately-installed CPython), the entire dependency chain here must b
 Recommend spiking option 1 first (§0.3) since it requires the least new CMake machinery; only
 pursue option 2 if wasm binary size becomes a demonstrated problem.
 
+> **Spike status update (2026-08-22)**: Phase 0.3 is complete (`docs/wasm_binding_dev/spike_phase0_results.md`).
+> The calculator example already compiles cleanly under `emcmake`/`em++` with zero source changes,
+> using a *hand-written* `EMSCRIPTEN_BINDINGS` entry point. That hand-written spike is not a
+> substitute for the work in §7.4 below — the point there is to replace the hand-written glue
+> with generator output.
+
+#### 7.4 Convert `examples/calculator` into a first-class JS/wasm example
+
+**This is the right moment for the calculator JS example: immediately after Phase 7 lands, before
+Phase 8 begins.** Rationale:
+
+- It depends on everything from Phases 2–6 (generator, templates, type mapping, lifecycle
+  contract, output layout) *and* on Phase 7's `Js.cmake`/toolchain wiring — attempting it earlier
+  would mean hand-writing bindings again, which the Phase 0.3 spike already proved but which
+  validates nothing about the generator itself.
+- It is the ideal first end-to-end exercise of the generator: small enough to debug quickly, yet
+  it exercises nearly every hard feature in one file — exceptions (`CalculatorException`),
+  lambdas/callbacks (`SubtructCallback`), platform-implemented interfaces (`MultiplyCallback`),
+  structs as parameters and return values (`DivideArguments`/`DivideResult`), C++-implemented
+  interfaces returned to JS (`MinResultRetriever`), and optionals (`max`). See
+  `examples/calculator/lime/Calculator.lime`.
+- It directly feeds Phase 8 (use it as the first non-trivial fixture for the Node.js test runner)
+  and acceptance criterion 4 (`tsc --strict` check against the generated `.d.ts`).
+
+Concretely:
+
+1. Add a `js` (wasm/embind) target to `examples/calculator/CMakeLists.txt`, gated behind an
+   option (e.g. `-DENABLE_JS=ON`) and only meaningful when configured through `emcmake`, mirroring
+   how the existing targets are gated.
+2. Run Gluecodium with `-generators cpp,js` so the example consumes *generated* `.d.ts` +
+   embind `.cpp` output instead of the Phase 0.3 spike's hand-written `main.cpp`.
+3. Add a minimal Node.js smoke script (`node examples/calculator/js/smoke.js`) that loads the
+   modularized module and exercises `summarize`, `divide`, and `min` — this doubles as the seed
+   for the Phase 8 test runner.
+4. Update `examples/calculator/README.md` with the emcmake build instructions.
+
 Required `em++`/linker flags to bake into the module, all justified above:
 ```cmake
 target_link_options(${_module_target} PRIVATE
@@ -649,6 +685,9 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 5. Phase 5 (lifecycle/MI/callbacks — highest design risk, needs the Phase 0 spike findings)
 6. Phase 6 (output structure)
 7. Phase 7 (build integration — second-highest risk, do not start until Phase 0.3 spike passes)
+   — immediately followed by §7.4: converting `examples/calculator` into a generated-JS example
+   (the calculator JS example belongs here, not earlier: it needs the generator *and* the CMake
+   wiring, and it seeds Phase 8's test runner)
 8. Phase 8 (testing, in parallel with Phases 3–7 once Phase 2 lands)
 9. Phase 9 (docs)
 10. Phase 10 (Gradle plugin, deferred)
@@ -678,6 +717,7 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 - `gluecodium/src/main/java/com/here/gluecodium/generator/js/*.kt` (see §2.1 for the full list)
 - `gluecodium/src/main/resources/templates/js/*.mustache` (see §3.1)
 - `cmake/modules/gluecodium/Js.cmake`
+- `examples/calculator/` — add JS/wasm target + Node smoke script (§7.4; modify, not new)
 - `functional-tests/functional/js/` (new test directory, mirrors `functional-tests/functional/python`
   if that exists, or the `dart`/`swift` directories otherwise)
 - `docs/js_embind_dev/` (phase implementation notes, mirrors `docs/python_binding_dev/`)
@@ -690,6 +730,7 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 - `gluecodium/src/main/java/com/here/gluecodium/cli/OptionReader.kt` (§1.5)
 - `gluecodium/src/main/resources/META-INF/services/com.here.gluecodium.generator.common.Generator` (§2.3)
 - `docs/guide.md`, `docs/lime_attributes.md`, `docs/external_types.md` (§9)
+- `examples/calculator/CMakeLists.txt`, `examples/calculator/README.md` (§7.4)
 
 ---
 
