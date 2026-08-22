@@ -414,8 +414,9 @@ Two options, not mutually exclusive:
 2. **`FinalizationRegistry`-based best-effort safety net** — register each JS wrapper with a
    `FinalizationRegistry` that calls `.delete()` when the JS object is GC'd. This is explicitly
    non-deterministic (the spec gives no timing guarantee) and should be pitched as a leak-reducing
-   safety net only, never as a replacement for explicit disposal. See Open Question Q2 in §8 for
-   the product decision this needs.
+   safety net only, never as a replacement for explicit disposal. **Resolved (Q2, §8): implement
+   both** — the registry net is generated into the glue layer and enabled by default, with an
+   opt-out flag and thread-safe cleanup under pthreads (§5.7).
 
 For functions returning pointers to existing (non-owned) C++ objects, decide the embind equivalent
 of pybind11's `return_value_policy::reference_internal` vs. `take_ownership` — embind's smart
@@ -739,7 +740,7 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 | Risk | Severity | Mitigation |
 |------|----------|------------|
 | No multiple inheritance in embind (`base<>` is single-parent) | **High** — blocks parity with `MultipleInheritance.lime`, which every other generator passes | Primary-base + flattened-secondary-members + explicit upcast helpers (§5.3); spike before Phase 2 |
-| No automatic GC of wasm-heap objects | **High** — correctness/leak risk, and a real API-ergonomics divergence from every other target | Explicit `dispose()`/`delete()` as the documented contract; `FinalizationRegistry` only as a best-effort net (§5.1); needs a product decision (Q2, §8) |
+| No automatic GC of wasm-heap objects | **High** — correctness/leak risk, and a real API-ergonomics divergence from every other target | Explicit `dispose()`/`delete()` as the documented contract; `FinalizationRegistry` net generated into the glue and enabled by default with opt-out (§5.1, resolved Q2) |
 | Whole dependency graph must cross-compile under `em++`/Emscripten toolchain file | **High** — largest infra change of any generator added so far | Spike a minimal `emcmake` build of `examples/calculator` in Phase 0.3 before committing to Phase 7's design |
 | No native `std::optional<T>` embind support | **Medium** | Hand-written value caster, spiked and documented separately (mirrors the Python chrono-caster spike) |
 | `int64_t`/`uint64_t` precision loss in JS `number` | **Medium** | Require `-sWASM_BIGINT=1` unconditionally; document as an acceptance criterion, not an opt-in flag |
@@ -824,10 +825,29 @@ This plan recommends `@Js` to match the existing "attribute name = output langua
 preference before Phase 1 lands, since renaming a LIME attribute after `.lime` files start using
 it is a breaking change for any early adopters.
 
-### Q2: Object lifecycle contract — explicit-only, or `FinalizationRegistry`-assisted?
-Explicit `.delete()`/`dispose()` is the safe default; `FinalizationRegistry` is a legitimate
-leak-reduction safety net but its non-deterministic timing means it must never be documented as a
-substitute for explicit disposal. This is a product/API-ergonomics call more than a technical one.
+### Q2: Object lifecycle contract — explicit-only, or `FinalizationRegistry`-assisted? — RESOLVED: implement both
+
+**Decision: ship both mechanisms together.** Explicit `.delete()`/`dispose()` remains the primary,
+documented contract; a `FinalizationRegistry`-based leak-reduction net is generated as part of the
+glue layer and enabled by default:
+
+1. **Explicit disposal (primary contract)** — every generated class exposes `.delete()` (sketched
+   in the §3.3 stub template). All documentation, examples, and lint guidance present this as the
+   required way to release wasm-heap objects deterministically.
+2. **`FinalizationRegistry` safety net (generated, on by default)** — the generated JS wrapper
+   registers each instance with a shared registry whose cleanup callback calls `.delete()` when
+   the wrapper is GC'd. Caveats that must be encoded in the implementation:
+   - Timing is non-deterministic; never document it as a substitute for explicit disposal.
+   - Cleanup callbacks must not resurrect or touch other wrappers; keep them minimal
+     (pointer-freeing only).
+   - Under pthreads (§5.7), freeing from the finalizer must run on the correct thread — marshal
+     through the same cross-thread mechanism used elsewhere rather than calling into wasm from an
+     arbitrary thread.
+   - Provide a module-level opt-out (e.g. a config flag at module init) for embedding contexts
+     where registry overhead or teardown-order issues matter.
+3. **Diagnostics** — expose a debug counter of live wrappers vs. deleted wrappers so tests can
+   assert leak-freedom (feeds acceptance criterion 5) and users can detect missed `.delete()`
+   calls in development builds.
 
 ### Q3: Node.js vs. browser as the primary target environment? — RESOLVED: both are required targets
 
