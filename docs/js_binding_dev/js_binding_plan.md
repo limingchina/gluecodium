@@ -519,9 +519,11 @@ This changes several assumptions made elsewhere in this plan:
 - **Build flags**: `-pthread -sPTHREAD_POOL_SIZE=... -sPROXY_TO_PTHREAD=1` join `-sWASM_BIGINT=1`
   and exception flags as required link options in Phase 7; `SharedArrayBuffer` availability
   (cross-origin isolation) becomes a documented deployment requirement.
-- **Functional tests (§8.2)**: the Node.js runner must enable `--experimental-wasm-threads` /
-  COOP/COEP-equivalent settings as needed, and at least one test should exercise a callback fired
-  from a pthread context.
+- **Functional tests (§8.2)**: the Node.js runner must enable
+  `--experimental-wasm-threads` / COOP/COEP-equivalent settings as needed, and at least one test
+  should exercise a callback fired from a pthread context; a browser-based pass (headless Chromium)
+  covers the same under real COOP/COEP headers — both Node.js and browser are required targets
+  (Q3).
 
 Add a spike doc (`docs/js_embind_dev/spike_pthreads_callbacks.md`) covering cross-thread `val`
 invocation and callback-from-worker behavior before committing to the Phase 5 design.
@@ -623,6 +625,7 @@ target_link_options(${_module_target} PRIVATE
   -sPTHREAD_POOL_SIZE=4      # §5.7 — sized to HERE SDK's expected concurrency; tune as needed
   -sMODULARIZE=1
   -sEXPORT_ES6=1
+  -sENVIRONMENT=web,node     # Q3 — both Node.js and browser are required targets
   -sALLOW_MEMORY_GROWTH=1
 )
 ```
@@ -668,10 +671,10 @@ intentional.
 #### 8.2 Functional tests
 
 The functional-test *fixtures* (`functional-tests/functional/input/lime/*.lime`, including
-`MultipleInheritance.lime`) are already shared across every generator — reuse them as-is. What's
-new is the **test runner**: unlike JVM/native targets, this needs either Node.js (fastest,
-recommended first) or a headless-browser runner (Puppeteer/Playwright + Karma/Jest) if
-browser-only APIs are ever exercised. Start with a `functional-tests/functional/js/` directory
+`MultipleInheritance.lime`) are already shared across every generator — reuse them as-is. What's new is the **test runner**: unlike
+JVM/native targets, this needs Node.js (fast inner loop, recommended first) **and** a
+headless-browser pass (Playwright + Chromium) before release gating, since both environments are
+required targets (Q3). Start with a `functional-tests/functional/js/` directory
 using Node.js + a JS test framework (Jest, given HERE SDK's existing JS/TS tooling elsewhere, if
 any — otherwise Node's built-in `node:test` is a zero-dependency option) driving the compiled
 `.wasm`/`.js` module directly.
@@ -788,6 +791,9 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 7. The pthreads build (`-pthread`, `PROXY_TO_PTHREAD`, `SharedArrayBuffer`) is the default
    configuration; at least one functional test exercises a callback invoked from a pthread
    context without data races or lost `val` handles (§5.7).
+8. The generated module is verified in **both** Node.js and a browser (headless Chromium) —
+   including the pthreads/`SharedArrayBuffer` path under real COOP/COEP headers in the browser
+   case (Q3).
 
 ---
 
@@ -823,12 +829,25 @@ Explicit `.delete()`/`dispose()` is the safe default; `FinalizationRegistry` is 
 leak-reduction safety net but its non-deterministic timing means it must never be documented as a
 substitute for explicit disposal. This is a product/API-ergonomics call more than a technical one.
 
-### Q3: Node.js vs. browser as the primary target environment?
-Affects `MODULARIZE`/`EXPORT_ES6`/`ENVIRONMENT` Emscripten flags. Note that pthreads +
-`SharedArrayBuffer` (a hard requirement per §5.7) already constrains this: browsers require
-cross-origin isolation (COOP/COEP headers) to serve `SharedArrayBuffer`, while Node.js enables
-threads without extra headers — another reason to default to Node.js first and treat browser
-support as an additive follow-up with documented deployment-header requirements.
+### Q3: Node.js vs. browser as the primary target environment? — RESOLVED: both are required targets
+
+**Decision: the generated module must work in both Node.js and browsers; neither is optional.**
+This constrains the Emscripten configuration as follows:
+
+- Use `-sENVIRONMENT=web,node` so the same glue `.js` works in both runtimes.
+- Keep `-sMODULARIZE=1 -sEXPORT_ES6=1` so consumers instantiate the module explicitly in either
+  environment.
+- Pthreads + `SharedArrayBuffer` (§5.7) is a hard requirement for both targets:
+  - **Node.js**: threads work out of the box (worker support built in); use it for CI and
+    functional tests since no cross-origin-isolation setup is needed.
+  - **Browsers**: serving the output requires cross-origin isolation headers
+    (`Cross-Origin-Opener-Policy: same-origin`, `Cross-Origin-Embedder-Policy: require-corp`) for
+    `SharedArrayBuffer` availability — document this as a deployment requirement, and add a
+    browser smoke check (headless Chromium via Playwright or similar) to Phase 8 alongside the
+    Node.js runner.
+- The functional-test runner (§8.2) should treat Node.js as the fast inner loop and add a
+  browser-based test pass before release gating, so browser-only issues (header misconfiguration,
+  worker/COOP behavior) are caught too.
 
 ### Q4: Should the generated JS API be Promise-based even for non-`@Async` functions?
 Given a single-threaded wasm module blocks the JS event loop for the duration of any call, is it
