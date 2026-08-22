@@ -404,7 +404,7 @@ Rationale: functional-style verification for this target requires compiling gene
 `.cpp` + C++ under `em++` and executing the `.wasm` in Node.js, so there is otherwise no runnable
 artifact to test against until Phase 7 exists. A *minimal* harness needs only:
 
-1. A throwaway CMake project (the `/tmp/jsspike` shape) that:
+1. A small CMake project (the `/tmp/jsspike` shape) that:
    - Runs Gluecodium with `-generators cpp,js` on the test `.lime` files (via the `generate`
      launcher or Gradle plugin),
    - Configures with `emcmake` so everything compiles under `em++`,
@@ -412,6 +412,12 @@ artifact to test against until Phase 7 exists. A *minimal* harness needs only:
      `-lembind -fexceptions -sMODULARIZE=1 -sEXPORT_ES6=1 -sALLOW_MEMORY_GROWTH=1`.
 2. A Node.js script that loads the module and asserts a few values.
 3. Optionally, a shell script tying the three steps together.
+
+**This is explicitly *not* a throw-away project**: it is a standing development harness, kept in
+use from right after Phase 4 until full Phase 7 build integration (§7.2 `Js.cmake`) lands and
+supersedes it. It is the primary correctness signal for all generator work during Phases 4–7
+(templates, type mapping, lifecycle, output layout), extended incrementally as later phases add
+features — it is only "minimal" in what it covers, not in its lifespan.
 
 This is enough surface for meaningful assertions once Phase 4's type mapping lands (structs via
 `value_object`, optionals, containers, strings, enums all round-trip). It deliberately excludes
@@ -424,8 +430,9 @@ the required flags and output-layout behavior are known empirically, making real
 mechanical.
 
 Caveats:
-- Keep it **out of the repo** (or under a clearly-marked dev-only scratch location) so it does not
-  ossify into a parallel, unmaintained build path before `Js.cmake` supersedes it.
+- Keep it lightweight and clearly-marked as a dev-only harness (whether in-repo under a dedicated
+  directory or as a scratch location) so it does not compete with `Js.cmake` once Phase 7 lands;
+  at that point it is retired in favor of the real integration and §7.4's calculator example.
 - Smoke tests remain skipped per §8.1; this harness serves the functional-verification role during
   development only.
 - Phase 5 features (callbacks, JS-implemented interfaces, disposal) will require extending the
