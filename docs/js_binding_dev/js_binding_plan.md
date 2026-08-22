@@ -874,12 +874,37 @@ This constrains the Emscripten configuration as follows:
   browser-based test pass before release gating, so browser-only issues (header misconfiguration,
   worker/COOP behavior) are caught too.
 
-### Q4: Should the generated JS API be Promise-based even for non-`@Async` functions?
-Given a single-threaded wasm module blocks the JS event loop for the duration of any call, is it
-worth wrapping *all* generated methods in Promises uniformly (JS-ecosystem-idiomatic), or only the
-LIME-`@Async`-annotated ones (parity with every other target's behavior)? This is worth deciding
-before Phase 3's templates are written, since it changes every method signature in the `.d.ts`
-output.
+### Q4: Should the generated JS API be Promise-based even for non-`@Async` functions? — RESOLVED: no — synchronous by default
+
+**Decision: non-`@Async` functions return plain values synchronously; only LIME-`@Async` functions
+return `Promise<T>` (once §5.6 lands).** This preserves parity with every other target's behavior.
+
+Rationale:
+
+1. **A Promise over a blocking call is fake asynchrony.** A single-threaded wasm module blocks the
+   JS event loop for the duration of any call regardless of how the result is wrapped. Under
+   Option B ("wrap everything"), `await calc.divide(10, 4)` does not yield to the event loop — the
+   call still runs to completion before the microtask that resolves the Promise executes. The
+   consumer pays the ergonomic cost (forced `await`, harder stack traces, no synchronous access to
+   results) while getting zero actual concurrency benefit.
+2. **Parity across targets matters more than JS idiom here.** Teams porting logic between the
+   Android/iOS/JS SDKs benefit from identical call shapes; a uniform-Promise API is a JS-only
+   divergence with no compensating capability.
+3. **The one real benefit of Option B** — stable signatures when a method later gains `@Async` —
+   is not worth it: adding `@Async` is already a breaking signature change in every other target,
+   and documenting it as such for JS is consistent.
+
+Concretely, for `fun divide(numerator: Double, denominator: Double): DivideResult`:
+
+```typescript
+// Option A (chosen):                       // Option B (rejected):
+divide(numerator: number,                   divide(numerator: number,
+       denominator: number): DivideResult;         denominator: number): Promise<DivideResult>;
+```
+
+Template impact (Phase 3): the `.d.ts` templates need two return-type paths keyed on the
+`@Async` predicate (`JsGeneratorPredicates`), not one uniform path; until §5.6 lands, all methods
+are synchronous and the async path is simply unexercised.
 
 ### Q5: What if React Native support is wanted in the future?
 
