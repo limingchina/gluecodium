@@ -467,12 +467,12 @@ approach, that is a hard blocker, not a follow-up item.
   class) is the direct analog of pybind11's `PYBIND11_OVERRIDE` trampoline pattern
   (`docs/python_pybind11_plan.md` §5.3). Unlike pybind11's GIL-acquire concern, a default
   single-threaded wasm module has no equivalent lock to manage — but see the pthreads note below.
+- **Pthreads is a hard requirement, not a hypothetical**: the HERE SDK core *will* run with
+  Emscripten pthreads (`-pthread` + `SharedArrayBuffer`). This makes callback re-entrancy and
+  cross-thread `val` handling a first-class design concern analogous to pybind11's GIL story —
+  it must be designed for up front (see §5.7), not deferred as an open question.
 - For simple `LimeLambda`/callable parameters, use `emscripten::val` to hold a reference to the JS
   function and invoke it via `val::call<ReturnType>(args...)`.
-- If the HERE SDK core ever runs with Emscripten pthreads (`-pthread` + `SharedArrayBuffer`)
-  rather than the default single-threaded model, callback re-entrancy and cross-thread `val`
-  handling becomes a real concern analogous to pybind11's GIL story — flag as an open question
-  (§8, Q3) rather than assuming single-threaded up front.
 
 #### 5.5 Exception mapping
 
@@ -496,6 +496,35 @@ of this plan's writing). Do not commit to one without a dedicated spike, since t
 where Emscripten's recommended approach is still shifting.
 
 ---
+
+#### 5.7 Threading: Emscripten pthreads + `SharedArrayBuffer` (hard requirement)
+
+The HERE SDK core requires a pthreads build (`-pthread`, `PROXY_TO_PTHREAD`, and
+`SharedArrayBuffer`, which in turn requires cross-origin isolation headers on the serving side).
+This changes several assumptions made elsewhere in this plan:
+
+- **Callback re-entrancy**: with `PROXY_TO_PTHREAD`, the wasm module runs on a dedicated worker,
+  so JS callbacks invoked from C++ (`allow_subclass<Wrapper>` trampolines, `emscripten::val`
+  lambdas) execute on that worker's thread, not the main thread. Generated trampolines must not
+  assume main-thread-only execution; any DOM/UI-touching callback bodies are the *consumer's*
+  responsibility to proxy (e.g. via `postMessage`), but the generator's documentation contract
+  must state which thread each callback fires on.
+- **Cross-thread `emscripten::val`**: `val` handles are only valid on the thread that created
+  them. Any generated code that stores a `val` (e.g. a lambda held by a C++ object for later
+  invocation) must either guarantee same-thread invocation or marshal through
+  `emscripten_sync_run_in_main_runtime_thread`-style helpers. This is the direct analog of
+  pybind11's GIL-acquire discipline and needs its own spike before Phase 5 is marked done.
+- **Object identity cache (§5.2)**: the wrapper cache must be thread-safe (or per-thread) once
+  multiple threads can retrieve wrappers concurrently.
+- **Build flags**: `-pthread -sPTHREAD_POOL_SIZE=... -sPROXY_TO_PTHREAD=1` join `-sWASM_BIGINT=1`
+  and exception flags as required link options in Phase 7; `SharedArrayBuffer` availability
+  (cross-origin isolation) becomes a documented deployment requirement.
+- **Functional tests (§8.2)**: the Node.js runner must enable `--experimental-wasm-threads` /
+  COOP/COEP-equivalent settings as needed, and at least one test should exercise a callback fired
+  from a pthread context.
+
+Add a spike doc (`docs/js_embind_dev/spike_pthreads_callbacks.md`) covering cross-thread `val`
+invocation and callback-from-worker behavior before committing to the Phase 5 design.
 
 ### Phase 6 — Output File Structure
 
@@ -589,10 +618,17 @@ target_link_options(${_module_target} PRIVATE
   -lembind
   -fexceptions               # §5.5
   -sWASM_BIGINT=1            # §4.4
+  -pthread                   # §5.7 — hard requirement for HERE SDK
+  -sPROXY_TO_PTHREAD=1       # §5.7 — run module on a dedicated worker
+  -sPTHREAD_POOL_SIZE=4      # §5.7 — sized to HERE SDK's expected concurrency; tune as needed
   -sMODULARIZE=1
   -sEXPORT_ES6=1
   -sALLOW_MEMORY_GROWTH=1
 )
+```
+Serving the output requires cross-origin isolation headers (`Cross-Origin-Opener-Policy:
+same-origin`, `Cross-Origin-Embedder-Policy: require-corp`) so `SharedArrayBuffer` is available —
+document this as a deployment requirement (§5.7).
 ```
 
 #### 7.3 Update the generated-files list / supported-generators list
@@ -682,7 +718,8 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 3. Phase 2 (generator skeleton — structural mirror of `PythonGenerator`)
 4. Phase 3 + 4 (templates + type mapping — the `Optional<T>` caster and `vector`/`map`
    registration collection are the two items likely to take longer than they look)
-5. Phase 5 (lifecycle/MI/callbacks — highest design risk, needs the Phase 0 spike findings)
+5. Phase 5 (lifecycle/MI/callbacks — highest design risk, needs the Phase 0 spike findings;
+   includes the §5.7 pthreads/cross-thread-`val` spike before the callback design is finalized)
 6. Phase 6 (output structure)
 7. Phase 7 (build integration — second-highest risk, do not start until Phase 0.3 spike passes)
    — immediately followed by §7.4: converting `examples/calculator` into a generated-JS example
@@ -705,6 +742,7 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 | `int64_t`/`uint64_t` precision loss in JS `number` | **Medium** | Require `-sWASM_BIGINT=1` unconditionally; document as an acceptance criterion, not an opt-in flag |
 | Exception-handling code size/perf overhead (`-fexceptions`) | **Medium** | Accept the cost as a baseline requirement (§5.5); revisit only if binary size becomes a blocking concern |
 | `@Async` story is toolchain-immature (Asyncify vs. JSPI) | **Low/Medium** | Explicitly deferred (§5.6), same posture as Python's deferred async support |
+| Pthreads + `SharedArrayBuffer` required: cross-thread `val` and callback re-entrancy | **High** — HERE SDK requires a pthreads build; `val` is thread-affine and callbacks fire on the wasm worker | Design for threading up front (§5.7): spike cross-thread `val` marshalling before Phase 5; make wrapper cache thread-safe; document callback thread contract |
 | Emscripten SDK version churn | **Low** | Pin an `emsdk` version for CI once Phase 0 lands |
 
 ---
@@ -723,6 +761,7 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 - `docs/js_embind_dev/` (phase implementation notes, mirrors `docs/python_binding_dev/`)
 - `docs/js_embind_dev/spike_optional_caster.md`
 - `docs/js_embind_dev/spike_multiple_inheritance.md`
+- `docs/js_embind_dev/spike_pthreads_callbacks.md` (§5.7)
 
 ### Modified files
 - `lime-loader/src/main/java/com/here/gluecodium/loader/AntlrLimeConverter.kt` (§1.2)
@@ -746,6 +785,9 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 5. A documented, explicit object-disposal API exists and is exercised by at least one functional
    test that verifies memory is actually released (not just that `.delete()` doesn't throw).
 6. CI builds the JS target through `emcmake`/`em++` on a pinned `emsdk` version.
+7. The pthreads build (`-pthread`, `PROXY_TO_PTHREAD`, `SharedArrayBuffer`) is the default
+   configuration; at least one functional test exercises a callback invoked from a pthread
+   context without data races or lost `val` handles (§5.7).
 
 ---
 
@@ -782,10 +824,11 @@ leak-reduction safety net but its non-deterministic timing means it must never b
 substitute for explicit disposal. This is a product/API-ergonomics call more than a technical one.
 
 ### Q3: Node.js vs. browser as the primary target environment?
-Affects `MODULARIZE`/`EXPORT_ES6`/`ENVIRONMENT` Emscripten flags, and whether a pthreads +
-`SharedArrayBuffer` build is ever needed (which would reopen the callback re-entrancy question
-noted in §5.4). Recommend defaulting to Node.js first (simpler CI, no `SharedArrayBuffer`
-cross-origin-isolation headers to manage) and treating browser support as an additive follow-up.
+Affects `MODULARIZE`/`EXPORT_ES6`/`ENVIRONMENT` Emscripten flags. Note that pthreads +
+`SharedArrayBuffer` (a hard requirement per §5.7) already constrains this: browsers require
+cross-origin isolation (COOP/COEP headers) to serve `SharedArrayBuffer`, while Node.js enables
+threads without extra headers — another reason to default to Node.js first and treat browser
+support as an additive follow-up with documented deployment-header requirements.
 
 ### Q4: Should the generated JS API be Promise-based even for non-`@Async` functions?
 Given a single-threaded wasm module blocks the JS event loop for the duration of any call, is it
