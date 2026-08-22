@@ -25,6 +25,7 @@ import com.here.gluecodium.antlr.LimedocParser
 import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.DART
 import com.here.gluecodium.model.lime.LimeAttributeType.JAVA
+import com.here.gluecodium.model.lime.LimeAttributeType.JS
 import com.here.gluecodium.model.lime.LimeAttributeType.KOTLIN
 import com.here.gluecodium.model.lime.LimeAttributeType.SWIFT
 import com.here.gluecodium.model.lime.LimeAttributeValueType
@@ -156,7 +157,7 @@ internal object AntlrLimeConverter {
             attributes.addAttribute(LimeAttributeType.INTERNAL)
         }
 
-        listOf(JAVA, SWIFT, DART, KOTLIN).forEach {
+        listOf(JAVA, SWIFT, DART, KOTLIN, JS).forEach {
             if (parentAttributes.have(it, LimeAttributeValueType.INTERNAL)) {
                 attributes.addAttribute(it, LimeAttributeValueType.INTERNAL)
             }
@@ -307,6 +308,7 @@ internal object AntlrLimeConverter {
             "Immutable" -> LimeAttributeType.IMMUTABLE
             "Internal" -> LimeAttributeType.INTERNAL
             "Java" -> LimeAttributeType.JAVA
+            "Js" -> LimeAttributeType.JS
             "Kotlin" -> LimeAttributeType.KOTLIN
             "NoCache" -> LimeAttributeType.NO_CACHE
             "Optimized" -> LimeAttributeType.OPTIMIZED

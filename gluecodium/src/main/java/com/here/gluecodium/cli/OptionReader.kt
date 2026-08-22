@@ -93,6 +93,19 @@ object OptionReader {
                 true,
                 "Kotlin package name to append to 'kotlinpackage' for internal types.",
             )
+            addOption("jspackage", true, "JS/TS package (namespace) for generated sources")
+            addOption(
+                "jsintpackage",
+                "js-internal-package",
+                true,
+                "JS/TS sub-package to append to 'jspackage' for internal types.",
+            )
+            addOption("jsmodule", true, "Name of the generated Emscripten module / embind binding namespace")
+            addOption(
+                "jsemittestubs",
+                false,
+                "Emit TypeScript .d.ts declaration stubs alongside the JS output.",
+            )
             addOption("help", false, "Shows this help and exits.")
             addOption("version", false, "Prints version info and exits.")
             addOption(
@@ -180,6 +193,7 @@ object OptionReader {
             addOption("swiftnamerules", true, "Swift name rules property file.")
             addOption("dartnamerules", true, "Dart name rules property file.")
             addOption("kotlinnamerules", true, "Kotlin name rules property file.")
+            addOption("jsnamerules", true, "JS name rules property file.")
             addOption(
                 "docsplaceholderslist",
                 true,
@@ -281,6 +295,12 @@ object OptionReader {
             readConfigFile(getStringValue("dartnamerules"), generatorOptions.dartNameRules)
         generatorOptions.kotlinNameRules =
             readConfigFile(getStringValue("kotlinnamerules"), generatorOptions.kotlinNameRules)
+        generatorOptions.jsPackages = getStringValue("jspackage")?.split(".") ?: emptyList()
+        generatorOptions.jsInternalPackages = getStringValue("jsintpackage")?.split(".") ?: emptyList()
+        getStringValue("jsmodule")?.let { generatorOptions.jsModuleName = it }
+        generatorOptions.jsEmitTypeScriptStubs = getFlagValue("jsemittestubs")
+        generatorOptions.jsNameRules =
+            readConfigFile(getStringValue("jsnamerules"), generatorOptions.jsNameRules)
 
         generatorOptions.copyrightHeaderContents = getStringValue("copyright")?.let { File(it).readText() }
         getStringListValue("tag")?.let { generatorOptions.tags = CaseInsensitiveSet(it) }
