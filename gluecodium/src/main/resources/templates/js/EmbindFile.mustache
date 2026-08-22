@@ -4,8 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 }}
 #include <emscripten/bind.h>
 
-{{#includes}}
-{{.}}
+{{#includes}}{{>common/Include}}
 {{/includes}}
 
 using namespace emscripten;

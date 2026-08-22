@@ -6,6 +6,25 @@ Embind registration for a LIME class. Only one `base<>` is supported (see plan Â
 secondary parents are flattened by binding their members on the derived type.
 }}
 void {{registerName}}(void) {
-    class_<{{cppFullName}}{{#primaryBase}}, base<{{fqn}}>{{/primaryBase}}>("{{jsName}}")
+    class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{jsName}}")
+{{#constructors}}
+        .constructor<{{#parameters}}{{cppType}}{{^last}}, {{/last}}{{/parameters}}>()
+{{/constructors}}
+{{#methods}}
+{{#isStatic}}
+        .class_function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+{{/isStatic}}
+{{^isStatic}}
+        .function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+{{/isStatic}}
+{{/methods}}
+{{#properties}}
+{{#isStatic}}
+        .class_property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
+{{/isStatic}}
+{{^isStatic}}
+        .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
+{{/isStatic}}
+{{/properties}}
         ;
 }

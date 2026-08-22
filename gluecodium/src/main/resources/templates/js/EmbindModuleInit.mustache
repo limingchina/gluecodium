@@ -2,7 +2,18 @@
 Copyright (C) 2026 HERE Europe B.V.
 SPDX-License-Identifier: Apache-2.0
 }}
+#include <emscripten/bind.h>
+
+{{#registerFunctions}}
+void {{name}}();
+{{/registerFunctions}}
+
 EMSCRIPTEN_BINDINGS({{moduleName}}) {
+{{#genericRegistrations}}
+    {{#optional}}register_optional<{{type}}>();{{/optional}}
+    {{#vector}}register_vector<{{type}}>("{{name}}");{{/vector}}
+    {{#map}}register_map<{{keyType}}, {{valueType}}>("{{name}}");{{/map}}
+{{/genericRegistrations}}
 {{#registerFunctions}}
     {{name}}();
 {{/registerFunctions}}

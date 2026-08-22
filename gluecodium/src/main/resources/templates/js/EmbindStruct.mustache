@@ -6,5 +6,8 @@ LIME structs map to embind value_object (value semantics, all fields public).
 }}
 void {{registerName}}(void) {
     value_object<{{cppFullName}}>("{{jsName}}")
+{{#fields}}
+    .field("{{jsName}}", &{{cppFullName}}::{{cppFieldName}})
+{{/fields}}
         ;
 }

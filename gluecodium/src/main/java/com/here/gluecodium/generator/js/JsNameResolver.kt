@@ -64,14 +64,13 @@ internal class JsNameResolver(
             is LimeTypeRef -> {
                 val actualType = element.type.actualType
                 val typeName =
-                    (actualType as? LimeLambda)?.let(::resolveLambdaType)
-                        ?: if (actualType is LimeTypeAlias) {
-                            resolveType(actualType.typeRef)
-                        } else if (actualType.path.hasParent) {
-                            resolveQualifiedTypeName(actualType)
-                        } else {
-                            nameRules.getName(actualType)
-                        }
+                    when {
+                        actualType is LimeBasicType -> resolveBasicType(actualType)
+                        actualType is LimeLambda -> resolveLambdaType(actualType)
+                        actualType is LimeTypeAlias -> resolveType(actualType.typeRef)
+                        actualType.path.hasParent -> resolveQualifiedTypeName(actualType)
+                        else -> nameRules.getName(actualType)
+                    }
                 if (element.isNullable) "$typeName | null" else typeName
             }
             is LimeList -> {

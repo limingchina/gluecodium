@@ -1,0 +1,5 @@
+package phase4
+
+class Harness {
+    static fun add(first: Int, second: Int): Int
+}

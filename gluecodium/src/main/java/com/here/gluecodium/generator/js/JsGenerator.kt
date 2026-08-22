@@ -32,17 +32,26 @@ import com.here.gluecodium.generator.common.NameResolver
 import com.here.gluecodium.generator.common.nameRuleSetFromConfig
 import com.here.gluecodium.generator.cpp.CppNameCache
 import com.here.gluecodium.generator.cpp.CppNameRules
+import com.here.gluecodium.generator.cpp.CppSignatureResolver
 import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
+import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeException
+import com.here.gluecodium.model.lime.LimeExternalDescriptor
+import com.here.gluecodium.model.lime.LimeField
 import com.here.gluecodium.model.lime.LimeFieldConstructor
+import com.here.gluecodium.model.lime.LimeFunction
 import com.here.gluecodium.model.lime.LimeLambda
+import com.here.gluecodium.model.lime.LimeList
+import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeProperty
+import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeStruct
 import java.util.logging.Logger
 
@@ -161,13 +170,56 @@ internal class JsGenerator : Generator {
                     "model" to limeElement,
                     "imports" to imports,
                     "moduleName" to jsModuleName,
-                    "content" to "",
-                    "nestedTypes" to "",
-                ),
+                ) + stubViewModel(limeElement),
                 nameResolvers,
             )
         return listOf(GeneratedFile(content, nameRules.getJsStubFileName(limeElement)))
     }
+
+    private fun stubViewModel(limeElement: LimeNamedElement): Map<String, Any> {
+        val data = mutableMapOf<String, Any>(
+            "jsName" to nameRules.getName(limeElement),
+        )
+        val container = limeElement as? com.here.gluecodium.model.lime.LimeContainer
+        if (container != null) {
+            data["constructors"] = container.constructors.map { functionStubViewModel(it) }
+            data["functions"] = container.functions.map { functionStubViewModel(it) }
+            data["properties"] = container.properties.map {
+                mapOf(
+                    "jsName" to nameRules.getName(it),
+                    "jsType" to jsNameResolver.resolveName(it.typeRef),
+                    "isStatic" to it.isStatic,
+                )
+            }
+        }
+        if (limeElement is LimeStruct) {
+            data["fields"] = limeElement.fields.map {
+                mapOf(
+                    "jsName" to nameRules.getName(it),
+                    "jsType" to jsNameResolver.resolveName(it.typeRef),
+                )
+            }
+        }
+        if (limeElement is com.here.gluecodium.model.lime.LimeEnumeration) {
+            data["enumerators"] = limeElement.enumerators.map { mapOf("jsName" to nameRules.getName(it)) }
+        }
+        return data
+    }
+
+    private fun functionStubViewModel(function: LimeFunction): Map<String, Any> =
+        mapOf(
+            "jsName" to nameRules.getName(function),
+            "isConstructor" to function.isConstructor,
+            "isStatic" to function.isStatic,
+            "returnType" to jsNameResolver.resolveName(function.returnType),
+            "parameters" to function.parameters.mapIndexed { index, parameter ->
+                mapOf(
+                    "jsName" to nameRules.getName(parameter),
+                    "jsType" to jsNameResolver.resolveName(parameter.typeRef),
+                    "last" to (index == function.parameters.lastIndex),
+                )
+            },
+        )
 
     private fun generateEmbindFile(
         limeElement: LimeNamedElement,
@@ -188,13 +240,7 @@ internal class JsGenerator : Generator {
                 val templateName = selectEmbindTemplate(type) ?: return@mapNotNull null
                 TemplateEngine.render(
                     templateName,
-                    mapOf(
-                        "model" to type,
-                        "internalNamespace" to internalNamespace,
-                        "jsName" to nameRules.getName(type),
-                        "cppFullName" to cppNameCache.getFullyQualifiedName(type),
-                        "primaryBase" to primaryBaseOf(type, filteredModel),
-                    ),
+                    buildEmbindViewModel(type, filteredModel),
                     nameResolvers,
                 )
             }
@@ -216,12 +262,103 @@ internal class JsGenerator : Generator {
     private fun primaryBaseOf(
         type: com.here.gluecodium.model.lime.LimeType,
         filteredModel: LimeModel,
-    ): Map<String, String>? =
+    ): String? =
         (type as? LimeContainerWithInheritance)?.parents
             ?.mapNotNull { it.type.actualType as? LimeContainerWithInheritance }
             ?.filter { filteredModel.referenceMap.containsKey(it.fullName) }
             ?.minByOrNull { it is com.here.gluecodium.model.lime.LimeInterface }
-            ?.let { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
+            ?.let { cppNameCache.getFullyQualifiedName(it) }
+
+    /**
+     * Builds the template data for one embind binding: the common identity fields plus
+     * member view models (constructors, functions, properties, fields, enumerators,
+     * constants) resolved against both the C++ names (for the binding body) and the JS
+     * names (for the registered identifiers).
+     */
+    private fun buildEmbindViewModel(
+        type: com.here.gluecodium.model.lime.LimeType,
+        filteredModel: LimeModel,
+    ): Map<String, Any> {
+        val data = mutableMapOf<String, Any>(
+            "model" to type,
+            "internalNamespace" to internalNamespace,
+            "jsName" to nameRules.getName(type),
+            "cppFullName" to cppNameCache.getFullyQualifiedName(type),
+            "registerName" to resolveRegisterName(type),
+        )
+        primaryBaseOf(type, filteredModel)?.let { data["primaryBase"] = it }
+        val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return data
+
+        data["constructors"] = container.constructors.map { functionViewModel(it) }
+        data["methods"] = container.functions.filterNot { it.isConstructor }.map { functionViewModel(it) }
+        data["properties"] = container.properties.map { propertyViewModel(it) }
+        if (type is LimeStruct) {
+            data["fields"] = type.fields.map { fieldViewModel(type, it) }
+        }
+        if (type is com.here.gluecodium.model.lime.LimeEnumeration) {
+            data["enumerators"] = type.enumerators.map { enumeratorViewModel(it) }
+        }
+        data["constants"] = container.constants.map { constantViewModel(it) }
+        return data
+    }
+
+    private fun functionViewModel(function: LimeFunction): Map<String, Any> {
+        val isOverloaded = CppSignatureResolver(limeReferenceMap, cppNameRules).isOverloaded(function)
+        return mapOf(
+            "model" to function,
+            "jsName" to nameRules.getName(function),
+            "cppName" to embindNameResolver.resolveName(function),
+            "isStatic" to function.isStatic,
+            // Overloads are registered with explicit signatures via select_overload.
+            "isOverloaded" to isOverloaded,
+            "parameters" to function.parameters.map { parameter ->
+                mapOf(
+                    "model" to parameter,
+                    "jsName" to nameRules.getName(parameter),
+                    "cppType" to embindNameResolver.resolveName(parameter.typeRef),
+                )
+            },
+        )
+    }
+
+    private fun propertyViewModel(property: LimeProperty): Map<String, Any> =
+        mapOf(
+            "model" to property,
+            "jsName" to nameRules.getName(property),
+            "cppGetterName" to cppNameCache.getGetterName(property),
+            "cppSetterName" to cppNameCache.getSetterName(property),
+            "isStatic" to property.isStatic,
+        )
+
+    private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> =
+        mapOf(
+            "model" to field,
+            "jsName" to nameRules.getName(field),
+            "cppFullName" to cppNameCache.getFullyQualifiedName(struct),
+            "cppType" to embindNameResolver.resolveName(field.typeRef),
+            // Raw field name for `&Struct::field` pointer syntax; null when the field uses
+            // external accessors (getter/setter registration is required then).
+            "cppFieldName" to
+                if (field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null) {
+                    null
+                } else {
+                    field.path.tail.last()
+                },
+        )
+
+    private fun enumeratorViewModel(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): Map<String, Any> =
+        mapOf(
+            "model" to enumerator,
+            "jsName" to nameRules.getName(enumerator),
+            "cppName" to embindNameResolver.resolveName(enumerator),
+        )
+
+    private fun constantViewModel(constant: LimeConstant): Map<String, Any> =
+        mapOf(
+            "model" to constant,
+            "jsName" to nameRules.getName(constant),
+            "cppFullName" to cppNameCache.getFullyQualifiedName(constant),
+        )
 
     /**
      * Recursively collects all types (top-level + nested) that should emit an embind binding,
@@ -275,11 +412,64 @@ internal class JsGenerator : Generator {
                 mapOf(
                     "moduleName" to jsModuleName,
                     "registerFunctions" to topologicalSort(registerNameToDeps).map { mapOf("name" to it) },
+                    "genericRegistrations" to collectGenericRegistrations(filteredModel),
                 ),
                 nameResolvers,
             )
         return listOf(GeneratedFile(moduleInitContent, JsNameRules.MODULE_INIT_FILE))
     }
+
+    private fun collectGenericRegistrations(filteredModel: LimeModel): List<Map<String, Any>> {
+        val registrations = linkedMapOf<String, Map<String, Any>>()
+
+        fun collect(typeRef: com.here.gluecodium.model.lime.LimeTypeRef) {
+            when (val type = typeRef.type) {
+                is LimeList -> {
+                    collect(type.elementType)
+                    val elementType = embindNameResolver.resolveName(type.elementType)
+                    val name = "Vector_${sanitizeRegistrationName(elementType)}"
+                    registrations.putIfAbsent(name, mapOf("vector" to true, "type" to elementType, "name" to name))
+                }
+                is LimeMap -> {
+                    collect(type.keyType)
+                    collect(type.valueType)
+                    val keyType = embindNameResolver.resolveName(type.keyType)
+                    val valueType = embindNameResolver.resolveName(type.valueType)
+                    val name = "Map_${sanitizeRegistrationName(keyType)}_${sanitizeRegistrationName(valueType)}"
+                    registrations.putIfAbsent(
+                        name,
+                        mapOf("map" to true, "keyType" to keyType, "valueType" to valueType, "name" to name),
+                    )
+                }
+                is LimeSet -> collect(type.elementType)
+                else -> Unit
+            }
+            if (typeRef.isNullable) {
+                val typeName = embindNameResolver.resolveName(typeRef)
+                val name = "Optional_${sanitizeRegistrationName(typeName)}"
+                registrations.putIfAbsent(name, mapOf("optional" to true, "type" to typeName, "name" to name))
+            }
+        }
+
+        fun collectFromContainer(container: com.here.gluecodium.model.lime.LimeContainer) {
+            container.functions.flatMap { it.parameters.map { parameter -> parameter.typeRef } + it.returnType.typeRef }.forEach(::collect)
+            container.properties.map { it.typeRef }.forEach(::collect)
+            container.constants.map { it.typeRef }.forEach(::collect)
+            container.constructors.flatMap { constructor -> constructor.parameters.map { it.typeRef } }.forEach(::collect)
+            (container as? LimeStruct)?.fields?.map { it.typeRef }?.forEach(::collect)
+        }
+
+        filteredModel.topElements
+            .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
+            .flatMap(::collectEmbindTypes)
+            .forEach { type ->
+                (type as? com.here.gluecodium.model.lime.LimeContainer)?.let(::collectFromContainer)
+            }
+        return registrations.values.toList()
+    }
+
+    private fun sanitizeRegistrationName(typeName: String) =
+        typeName.replace(Regex("[^A-Za-z0-9_]"), "_").trim('_').ifEmpty { "Type" }
 
     private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {
         var current = element

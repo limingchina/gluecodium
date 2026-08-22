@@ -3,6 +3,22 @@ Copyright (C) 2026 HERE Europe B.V.
 SPDX-License-Identifier: Apache-2.0
 }}
 void {{registerName}}(void) {
-    class_<{{cppFullName}}{{#primaryBase}}, base<{{fqn}}>{{/primaryBase}}>("{{jsName}}")
+    class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{jsName}}")
+{{#methods}}
+{{#isStatic}}
+    .class_function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+{{/isStatic}}
+{{^isStatic}}
+    .function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+{{/isStatic}}
+{{/methods}}
+{{#properties}}
+{{#isStatic}}
+    .class_property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
+{{/isStatic}}
+{{^isStatic}}
+    .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
+{{/isStatic}}
+{{/properties}}
         ;
 }

@@ -4,5 +4,8 @@ SPDX-License-Identifier: Apache-2.0
 }}
 void {{registerName}}(void) {
     enum_<{{cppFullName}}>("{{jsName}}")
+{{#enumerators}}
+    .value("{{jsName}}", {{cppName}})
+{{/enumerators}}
         ;
 }
