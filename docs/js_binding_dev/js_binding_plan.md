@@ -819,11 +819,16 @@ reasoning that doesn't actually apply here.
 
 ## 8. Open Questions for Future Architecture Discussion
 
-### Q1: Attribute name — `@Js` vs. `@Embind` vs. `@Wasm`?
-This plan recommends `@Js` to match the existing "attribute name = output language" convention
-(`@Dart` not `@Ffi`, `@Swift` not `@Cbridge`). Worth confirming there's no competing convention
-preference before Phase 1 lands, since renaming a LIME attribute after `.lime` files start using
-it is a breaking change for any early adopters.
+### Q1: Attribute name — `@Js` vs. `@Embind` vs. `@Wasm`? — RESOLVED: `@Js`
+
+**Decision: the attribute is `@Js`.** This matches the established "attribute name = output
+language" convention (`@Dart` not `@Ffi`, `@Swift` not `@Cbridge`, `@Python` not `@Pybind11`).
+embind is the binding *technology*; JavaScript/TypeScript is the output *language*, and LIME
+attributes name languages. It also keeps the door open to swapping the underlying technology
+later (e.g. a future Emscripten binding mechanism) without breaking `.lime` files — exactly the
+reasoning that makes `@Wasm` (a compilation target, not a language) and `@Embind` (a technology
+that could be replaced) wrong choices. No competing convention preference exists; Phase 1 proceeds
+with `JS("Js", ...)` in `LimeAttributeType.kt` as specified in §1.1.
 
 ### Q2: Object lifecycle contract — explicit-only, or `FinalizationRegistry`-assisted? — RESOLVED: implement both
 
@@ -875,6 +880,33 @@ worth wrapping *all* generated methods in Promises uniformly (JS-ecosystem-idiom
 LIME-`@Async`-annotated ones (parity with every other target's behavior)? This is worth deciding
 before Phase 3's templates are written, since it changes every method signature in the `.d.ts`
 output.
+
+### Q5: What if React Native support is wanted in the future?
+
+React Native does **not** run bindings through Emscripten/embind. Its native-module story is
+**JSI** (JavaScript Interface): C++ objects are exposed directly to the Hermes/JSC runtime via
+`jsi::Object`/host classes, compiled natively per platform (no wasm, no `SharedArrayBuffer`, no
+embind). Concretely, adding RN later would mean:
+
+- **A new binding technology, but the same output language.** A hypothetical `react-native`
+  target would generate JSI C++ host objects + TypeScript declarations — structurally closer to
+  pybind11 than to embind (direct runtime API calls, no cross-compilation of the whole graph).
+- **What can be reused from this plan**: the `@Js` LIME attribute (§1.1), the `.d.ts` template
+  family (`JsStub*.mustache`), name resolvers, comments processor, and most of Phase 1's model
+  layer are technology-agnostic and carry over directly.
+- **What cannot be reused**: all `Embind*.mustache` templates, the Emscripten toolchain/CMake
+  integration (Phase 7), pthreads/`SharedArrayBuffer` work (§5.7), and the lifecycle contract
+  details (JSI host objects are GC-managed by the runtime — no `.delete()` needed, which actually
+  *removes* the biggest divergence in §5.1).
+- **Naming implication**: this is precisely why Q1 resolves to `@Js` and not `@Embind`/`@Wasm`.
+  If the attribute were named after the technology, RN support would need a second attribute
+  (`@Embind(Skip)` vs `@Jsi(...)`) on every element; with `@Js`, one attribute serves both
+  targets, and any target-specific behavior is expressed through generator options, not new
+  attributes.
+- **Recommended posture**: do nothing now, but keep the generator's JS-facing layer
+  (`.d.ts` generation, name rules, filtering) cleanly separated from the embind layer so a future
+  `react-native` generator can share the former without dragging in the latter. This separation
+  already exists in the §2.1 file layout (JS-facing resolvers vs. `Embind*` resolvers).
 
 ---
 
