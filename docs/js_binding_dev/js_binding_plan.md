@@ -395,6 +395,44 @@ maps C++ `int64_t`/`uint64_t` to JS `bigint` instead of silently truncating. Thi
 required link flag, not optional, or any LIME `Long`/`ULong` field will silently corrupt values
 above 2^53 — flag as a hard requirement in Phase 7, and add it to the acceptance criteria in §6.
 
+#### 4.5 Minimal build integration harness (dev-only, immediately after Phase 4)
+
+**Decision (2026-08-22): formalize the Phase 0.3 spike into a repeatable
+`generate → emcmake → node` loop as soon as Phase 4 lands — do not wait for full Phase 7.**
+
+Rationale: functional-style verification for this target requires compiling generated embind
+`.cpp` + C++ under `em++` and executing the `.wasm` in Node.js, so there is otherwise no runnable
+artifact to test against until Phase 7 exists. A *minimal* harness needs only:
+
+1. A throwaway CMake project (the `/tmp/jsspike` shape) that:
+   - Runs Gluecodium with `-generators cpp,js` on the test `.lime` files (via the `generate`
+     launcher or Gradle plugin),
+   - Configures with `emcmake` so everything compiles under `em++`,
+   - Links one module with only the essential flags:
+     `-lembind -fexceptions -sMODULARIZE=1 -sEXPORT_ES6=1 -sALLOW_MEMORY_GROWTH=1`.
+2. A Node.js script that loads the module and asserts a few values.
+3. Optionally, a shell script tying the three steps together.
+
+This is enough surface for meaningful assertions once Phase 4's type mapping lands (structs via
+`value_object`, optionals, containers, strings, enums all round-trip). It deliberately excludes
+everything else from Phase 7: no `Js.cmake`, no functional-tests CMake integration, no
+pthreads/`PROXY_TO_PTHREAD`, no cross-origin-isolation story, no browser pass.
+
+Benefits: template errors, bad includes, and name-resolution bugs in generated `.cpp` surface as
+compile errors immediately instead of piling up until Phase 7; by the time `Js.cmake` is written,
+the required flags and output-layout behavior are known empirically, making real Phase 7 mostly
+mechanical.
+
+Caveats:
+- Keep it **out of the repo** (or under a clearly-marked dev-only scratch location) so it does not
+  ossify into a parallel, unmaintained build path before `Js.cmake` supersedes it.
+- Smoke tests remain skipped per §8.1; this harness serves the functional-verification role during
+  development only.
+- Phase 5 features (callbacks, JS-implemented interfaces, disposal) will require extending the
+  harness incrementally — expected, not a redesign.
+- This does **not** replace §7.4: the calculator example still becomes a first-class generated-JS
+  example only after full Phase 7 lands.
+
 ---
 
 ### Phase 5 — Object Lifecycle and Callbacks
@@ -722,6 +760,8 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 3. Phase 2 (generator skeleton — structural mirror of `PythonGenerator`)
 4. Phase 3 + 4 (templates + type mapping — the `Optional<T>` caster and `vector`/`map`
    registration collection are the two items likely to take longer than they look)
+   — immediately followed by §4.5: a dev-only minimal build harness
+   (`generate → emcmake → node`) to get an end-to-end correctness signal before Phase 5
 5. Phase 5 (lifecycle/MI/callbacks — highest design risk, needs the Phase 0 spike findings;
    includes the §5.7 pthreads/cross-thread-`val` spike before the callback design is finalized)
 6. Phase 6 (output structure)
