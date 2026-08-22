@@ -404,7 +404,7 @@ Rationale: functional-style verification for this target requires compiling gene
 `.cpp` + C++ under `em++` and executing the `.wasm` in Node.js, so there is otherwise no runnable
 artifact to test against until Phase 7 exists. A *minimal* harness needs only:
 
-1. A small CMake project (the `/tmp/jsspike` shape) that:
+1. A small CMake project that:
    - Runs Gluecodium with `-generators cpp,js` on the test `.lime` files (via the `generate`
      launcher or Gradle plugin),
    - Configures with `emcmake` so everything compiles under `em++`,
