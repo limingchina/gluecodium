@@ -32,11 +32,14 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/builtin-types.test.mjs"
     "${JS_TEST_DIR}/builtin-types.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/enums.test.mjs"
     "${JS_TEST_DIR}/enums.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/structs.test.mjs"
+    "${JS_TEST_DIR}/structs.test.mjs" COPYONLY)
 
 add_test(NAME unit_tests_javascript
     COMMAND ${NODE_EXECUTABLE} --test
         "${JS_TEST_DIR}/strings.test.mjs"
         "${JS_TEST_DIR}/builtin-types.test.mjs"
-        "${JS_TEST_DIR}/enums.test.mjs")
+        "${JS_TEST_DIR}/enums.test.mjs"
+        "${JS_TEST_DIR}/structs.test.mjs")
 set_tests_properties(unit_tests_javascript PROPERTIES
     ENVIRONMENT "GLUECODIUM_JS_MODULE=$<TARGET_FILE:functional_bindings_js>")

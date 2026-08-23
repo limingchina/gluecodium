@@ -27,7 +27,16 @@ LIME structs map to embind value_object (value semantics, all fields public).
 void {{registerName}}(void) {
     value_object<{{cppFullName}}>("{{jsName}}")
 {{#fields}}
+{{^hasAccessors}}
     .field("{{jsName}}", &{{cppFullName}}::{{cppFieldName}})
+{{/hasAccessors}}
+{{#hasAccessors}}
+  .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> {{accessorType}} {
+    return self.{{cppGetterName}}();
+  }, +[] ({{cppFullName}}& self, {{accessorType}} value) {
+    self.{{cppSetterName}}(value);
+  })
+{{/hasAccessors}}
 {{/fields}}
         ;
 }

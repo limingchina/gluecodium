@@ -131,8 +131,9 @@ feature(InstanceInStruct cpp android android-kotlin swift dart SOURCES
     input/lime/StructWithInstance.lime
 )
 
-feature(Structs cpp android android-kotlin swift dart SOURCES
+feature(Structs cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/PlainDataStructures.cpp
+    input/src/cpp/SomeOpenNumberWrapperClass.cpp
 
     input/lime/Structs.lime
     input/lime/Accessors.lime

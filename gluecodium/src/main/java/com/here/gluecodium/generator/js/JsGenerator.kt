@@ -37,7 +37,9 @@ import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.generator.cpp.CppSignatureResolver
 import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeAttributeType
+import com.here.gluecodium.model.lime.LimeAttributeType.CPP
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
+import com.here.gluecodium.model.lime.LimeAttributeValueType.ACCESSORS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
 import com.here.gluecodium.model.lime.LimeBasicType
 import com.here.gluecodium.model.lime.LimeClass
@@ -784,20 +786,24 @@ internal class JsGenerator : Generator {
         )
 
     private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> =
-        mapOf(
-            "model" to field,
-            "jsName" to nameRules.getName(field),
-            "cppFullName" to cppNameCache.getFullyQualifiedName(struct),
-            "cppType" to embindNameResolver.resolveName(field.typeRef),
-            // Raw field name for `&Struct::field` pointer syntax; null when the field uses
-            // external accessors (getter/setter registration is required then).
-            "cppFieldName" to
-                if (field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null) {
-                    null
-                } else {
-                    cppNameCache.getName(field)
-                },
-        )
+        run {
+            val cppType = embindNameResolver.resolveName(field.typeRef)
+            val hasAccessors =
+                struct.attributes.have(CPP, ACCESSORS) ||
+                    field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null
+            val accessorType = if (CppNameResolver.needsRefSuffix(field.typeRef)) "const $cppType&" else cppType
+            mapOf(
+                "model" to field,
+                "jsName" to nameRules.getName(field),
+                "cppFullName" to cppNameCache.getFullyQualifiedName(struct),
+                "cppType" to cppType,
+                "cppFieldName" to if (hasAccessors) null else cppNameCache.getName(field),
+                "hasAccessors" to hasAccessors,
+                "cppGetterName" to cppNameCache.getGetterName(field),
+                "cppSetterName" to cppNameCache.getSetterName(field),
+                "accessorType" to accessorType,
+            )
+        }
 
     private fun enumeratorViewModel(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): Map<String, Any> =
         mapOf(
@@ -1017,6 +1023,8 @@ internal class JsGenerator : Generator {
         val includes = linkedSetOf<Include>()
 
         fun collect(typeRef: com.here.gluecodium.model.lime.LimeTypeRef) {
+            includes += EmbindIncludeResolver(limeReferenceMap, cppNameRules, internalNamespace)
+                .resolveElementImports(typeRef)
             when (val type = typeRef.type) {
                 is LimeList -> collect(type.elementType)
                 is LimeMap -> {
@@ -1025,10 +1033,6 @@ internal class JsGenerator : Generator {
                 }
                 is LimeSet -> collect(type.elementType)
                 else -> Unit
-            }
-            if (typeRef.isNullable) {
-                includes += EmbindIncludeResolver(limeReferenceMap, cppNameRules, internalNamespace)
-                    .resolveElementImports(typeRef)
             }
         }
 

@@ -1,6 +1,6 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: In progress; Strings, BuiltinTypes, and Enums Node.js functional coverage is passing
+**Status**: In progress; Strings, BuiltinTypes, Enums, and Structs Node.js functional coverage is passing
 
 **Date**: 2026-08-23
 
@@ -15,6 +15,8 @@ the `js` generator:
 - `BuiltinTypes`: Boolean, Float, Double, signed and unsigned integer mappings, including 64-bit
   values as JavaScript `bigint`.
 - `Enums`: enum member export and round-trip behavior, including enums used by type collections.
+- `Structs`: public and nested value-object fields, object-literal input, field mutation, and
+  accessor-backed C++ struct fields.
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
@@ -35,6 +37,7 @@ ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascrip
 
 The build and filtered CTest run pass for the checkpoint scope. The generated module is compiled
 with `-sWASM_BIGINT=1`, and the Node tests assert `bigint` values for `Long` and `ULong` methods.
+The focused Structs test passes all three cases, and `unit_tests_javascript` passes through CTest.
 
 ## Generator Fixes Exercised
 
@@ -47,15 +50,14 @@ The first tests found several embind generation defects that are fixed in this c
   output compile time.
 - generated struct field pointers use C++ name resolution, preserving native names such as
   `set_field` when the JavaScript name is `setField`;
+- accessor-backed structs use typed non-capturing getter/setter function pointers for embind
+  `value_object` fields, preserving C++ reference signatures for nontrivial values;
+- generic vector/map/optional registrations include the C++ headers needed by their element types;
 - enum bindings avoid Emscripten runtime names such as `InternalError` by using a distinct embind
   public name while retaining the generated C++ type identity.
 
 ## Next Work
 
-`Structs` has an initial Node test file present in the worktree for the next modular iteration,
-but is intentionally not included or enabled in this checkpoint. Its broader model currently
-causes JS generation to fail before compilation. The Node versions tested locally
+The next iteration should enable the next feature group one at a time. The Node versions tested locally
 (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all treat a directory argument to `node --test`
 as a module entry rather than a test collection, so the harness passes explicit test-file paths.
-The next iteration should first fix the expanded-model generator failure, then enable enum and
-value-object tests one feature group at a time.
