@@ -5,8 +5,9 @@
 Generated class and interface returns need a Gluecodium-owned cache because
 Emscripten 6.0.6 does not canonicalize ordinary `std::shared_ptr` return
 wrappers. This document defines the contract; implementation is gated on a
-supported JavaScript lifecycle integration. A native-only C++ cache is not
-sufficient.
+generated JavaScript wrapper layer, which is also the lifecycle integration
+point for `.delete()`, `[Symbol.dispose]`, and any `FinalizationRegistry`
+safety net. A native-only C++ cache is not sufficient.
 
 ## Identity
 
@@ -34,6 +35,28 @@ The implementation must therefore either intercept explicit deletion and the
 finalization path, or make explicit disposal a strict requirement and provide a
 supported eviction operation.
 
+## Generated Wrapper Responsibilities
+
+The future generated JavaScript layer sits between the raw embind handle and
+the consumer. A shared-pointer return first produces an embind candidate
+handle. The generated layer then looks up the `(native pointee address,
+exposed embind type)` key. It returns the live canonical wrapper when one
+exists and disposes the duplicate candidate without creating another
+consumer-visible `.delete()` obligation. Otherwise, it records the candidate
+as the canonical wrapper and returns the generated wrapper object.
+
+The generated wrapper's `.delete()` is the single explicit disposal path. It
+must evict the cache entry, mark the wrapper disposed, and delegate release of
+the underlying embind handle exactly once. `[Symbol.dispose]()` must invoke the
+same path rather than implement separate ownership logic. The wrapper layer
+owns JavaScript cache bookkeeping; embind's smart-pointer holder remains the
+sole native owner held for that JavaScript wrapper.
+
+Any `FinalizationRegistry` integration must track the generated wrapper and use
+the same eviction path. It is a best-effort fallback, never an additional
+owner, and must be disabled or marshalled when the finalizer may run on a
+different thread from the wrapper's owning WebAssembly runtime.
+
 ## Threads
 
 `emscripten::val` is thread-affine. The cache is therefore `thread_local`, not
@@ -52,11 +75,23 @@ they can claim referential equality.
 The implementation must use one of these supported boundaries:
 
 1. A generated JavaScript wrapper layer that owns canonical wrapper creation,
-	overrides or wraps `.delete()`, evicts the cache entry, and coordinates
-	finalization.
+  overrides or wraps `.delete()`, exposes `[Symbol.dispose]` as its alias,
+  evicts the cache entry, and coordinates optional finalization on the owning
+  WebAssembly thread.
 2. An explicitly version-pinned embind integration that exposes equivalent
-	wrapper lookup and lifecycle hooks, with a focused compatibility test for
-	every supported Emscripten version.
+  wrapper lookup and lifecycle hooks, with a focused compatibility test for
+  every supported Emscripten version. If this boundary is used, the same
+  integration must define the disposal alias and finalizer thread policy.
 
 Private embind internals such as `registeredInstances`, `ClassHandle.$$`, and
 `RegisteredPointer_fromWireType` are not a supported boundary by themselves.
+
+## Finalization and Pthreads
+
+Explicit `.delete()` and `[Symbol.dispose]` are safe deterministic APIs when
+called by the consumer on the owning runtime thread. `FinalizationRegistry`
+cleanup is not enabled by default for pthread builds until cross-thread
+marshalling is implemented and verified. The pthread spike demonstrated that
+calling `emscripten::val` from the wrong thread aborts the runtime, so a
+finalizer must not assume that its JavaScript callback runs on the WebAssembly
+thread that owns the wrapper.

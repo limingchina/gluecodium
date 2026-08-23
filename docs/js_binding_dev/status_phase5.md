@@ -45,13 +45,24 @@ returns to raw pointers would also lose the holder's ownership and deletion
 semantics, so it is not an acceptable workaround.
 
 The required contract is recorded in
-`docs/js_binding_dev/wrapper_cache_design.md`. Implementation is gated on one
-of two supported integration points: a generated JavaScript wrapper layer that
-owns interception of `.delete()` and cache eviction, or an explicitly
-version-pinned embind integration that exposes equivalent lifecycle hooks. The
-contract covers same-thread shared-pointer identity only; raw pointers,
-cross-type upcasts, JS-implemented interface wrappers, and pthread marshalling
-remain separate items.
+`docs/js_binding_dev/wrapper_cache_design.md`. The generated JavaScript wrapper
+layer is the preferred single integration point for canonical wrapper lookup,
+`.delete()` eviction, `[Symbol.dispose]`, and optional finalization. An
+explicitly version-pinned embind integration is the alternative. The contract
+covers same-thread shared-pointer identity only; raw pointers, cross-type
+upcasts, JS-implemented interface wrappers, and pthread marshalling remain
+separate items.
+
+The planned flow is that embind first creates a candidate handle for a
+shared-pointer return. The generated layer checks the
+`(native pointee address, exposed embind type)` key, reuses the live canonical
+wrapper when present, and releases any duplicate candidate without creating a
+second consumer-visible disposal obligation. The canonical wrapper's
+`.delete()` evicts the cache entry, marks the wrapper disposed, and delegates
+to embind exactly once; `[Symbol.dispose]()` uses that same path. The generated
+layer owns JavaScript bookkeeping, not a second native owner: embind retains
+the `std::shared_ptr` holder. Finalization must use the same path and remains
+thread-gated for pthread builds.
 
 ## Verification
 
@@ -192,8 +203,9 @@ constraint rather than claiming cross-thread support.
 ## Remaining Phase 5 Items
 
 1. Design thread-aware callback marshalling for the pthread build.
-2. Implement the documented Gluecodium-owned wrapper identity cache after a
-   supported JavaScript `.delete()` interception hook is available.
+2. Implement the generated JavaScript wrapper layer that combines the
+	documented wrapper identity cache, `.delete()`/`[Symbol.dispose]` lifecycle,
+	and thread-gated finalization policy.
 3. Extend collection adapters to nested and nullable `Set`/container cases, or
 	replace the inline adapters with a composable caster design.
 
