@@ -171,9 +171,12 @@ on the owning WebAssembly thread only. `PROXY_TO_PTHREAD=1` remains a separate
 application-module deployment concern because the embind-only probe has no
 `main()` entry point.
 
-The browser/COOP/COEP pass and a thread-aware marshalling design remain future
-work; this item records the constraint rather than claiming cross-thread
-support.
+The browser/COOP/COEP pass in the same spike directory (`serve.mjs`,
+`test.html`, `browser-test.mjs` with headless Chromium) reproduces the
+identical `val accessed from wrong thread` assertion under real cross-origin
+isolation, confirming the constraint in both required target environments. A
+thread-aware marshalling design remains future work; this item records the
+constraint rather than claiming cross-thread support.
 
 ## Remaining Phase 5 Items
 
