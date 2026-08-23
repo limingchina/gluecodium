@@ -4,7 +4,7 @@
 
 ## Item 1 - Referential Equality
 
-**Status**: Investigated; implementation remains open
+**Status**: Verified limitation; implementation deferred
 
 **Commit**: `dab2bff75` - `Document embind referential equality limitation`
 
@@ -35,6 +35,13 @@ pointer-equality contract is required for JavaScript. That cache must define
 ownership, `.delete()` invalidation, raw-pointer and smart-pointer behavior,
 explicit upcasts, and pthread safety.
 
+The cache was not added in this item. Emscripten 6.0.6 keeps the relevant
+`registeredInstances` table internal to the embind runtime. Its supported
+`registerInheritedInstance` API is reserved for `allow_subclass` wrappers and
+is not exported to generated modules. Converting generated `std::shared_ptr`
+returns to raw pointers would lose the holder's ownership and deletion
+semantics, so it is not an acceptable workaround.
+
 ## Verification
 
 The stable regression harness passes:
@@ -44,7 +51,8 @@ Phase 4 harness OK
 ```
 
 The failed identity assertion is intentionally retained as a documented spike
-result rather than a passing production test until the cache design is defined.
+result. Referential equality remains an explicit JavaScript-target limitation
+until a stable cache integration point is designed for the generated module.
 
 ## Item 2 - Multiple Inheritance
 
@@ -84,12 +92,11 @@ inheritance status`.
 
 ## Remaining Phase 5 Items
 
-1. Design and implement the pointer-to-wrapper cache for same-object identity.
-2. Add JavaScript-implemented interface and callback trampoline coverage.
-3. Add callable `LimeLambda` coverage and document callback thread behavior.
-4. Add exception and `Return<T, Error>` behavior where it belongs in the
+1. Add JavaScript-implemented interface and callback trampoline coverage.
+2. Add callable `LimeLambda` coverage and document callback thread behavior.
+3. Add exception and `Return<T, Error>` behavior where it belongs in the
    generator/build plan.
-5. Add pthread callback and cross-thread `emscripten::val` spike coverage.
+4. Add pthread callback and cross-thread `emscripten::val` spike coverage.
 
 Each item should be independently verified and committed before the next item
 begins.
