@@ -74,7 +74,7 @@ function(feature feature_name)
     set(FUNCTIONAL_LIME_SOURCES "${FUNCTIONAL_LIME_SOURCES};${lime_sources}" PARENT_SCOPE)
 endfunction()
 
-feature(Strings cpp android android-kotlin swift dart SOURCES
+feature(Strings cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StaticStringMethods.cpp
     input/src/cpp/StringsWithCstring.cpp
     input/src/cpp/CppRefReturnType.cpp
@@ -99,7 +99,7 @@ feature(Blob cpp android android-kotlin swift dart SOURCES
     input/lime/StaticByteArrayMethods.lime
 )
 
-feature(BuiltinTypes cpp android android-kotlin swift dart SOURCES
+feature(BuiltinTypes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StaticBooleanMethods.cpp
     input/src/cpp/StaticFloatDoubleMethods.cpp
     input/src/cpp/StaticIntMethods.cpp
@@ -569,6 +569,11 @@ gluecodium_target_lime_sources(functional_bindings PRIVATE ${FUNCTIONAL_LIME_SOU
 add_library(functional SHARED)
 target_link_libraries(functional PUBLIC functional_bindings)
 
+if(js IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
+    include(gluecodium/Js)
+    gluecodium_target_js_sources(functional_bindings)
+endif()
+
 # Target platform specific rules to follow...
 if(swift IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
     include(gluecodium/Swift)
@@ -657,3 +662,4 @@ set(CPP_INPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/input/src/cpp")
 
 add_subdirectory(cpp)
 add_subdirectory(dart)
+add_subdirectory(js)

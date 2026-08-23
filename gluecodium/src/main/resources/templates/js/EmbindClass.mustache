@@ -47,7 +47,7 @@ void {{registerName}}(void) {
             {{adapterPreparations}}
                         {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
             {{adapterReturnConversion}}
-        })
+                }{{#hasAdapterPolicies}}, {{adapterPolicies}}{{/hasAdapterPolicies}})
 {{/needsAdapter}}
 {{^needsAdapter}}
         .class_function("{{jsName}}", &{{cppFullName}}::{{cppName}})
@@ -67,7 +67,7 @@ void {{registerName}}(void) {
             {{adapterPreparations}}
                         {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
             {{adapterReturnConversion}}
-        }, allow_raw_pointer<arg<0>>())
+                }, allow_raw_pointer<arg<0>>(){{#hasAdapterMemberPolicies}}, {{adapterMemberPolicies}}{{/hasAdapterMemberPolicies}})
 {{/needsAdapter}}
 {{^needsAdapter}}
         .function("{{jsName}}", &{{cppFullName}}::{{cppName}})
@@ -77,10 +77,20 @@ void {{registerName}}(void) {
 {{/methods}}
 {{#properties}}
 {{#isStatic}}
+{{#hasSetter}}
         .class_property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
+{{/hasSetter}}
+{{^hasSetter}}
+        .class_function("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
+{{/hasSetter}}
 {{/isStatic}}
 {{^isStatic}}
+{{#hasSetter}}
         .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
+{{/hasSetter}}
+{{^hasSetter}}
+        .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
+{{/hasSetter}}
 {{/isStatic}}
 {{/properties}}
         ;

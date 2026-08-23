@@ -39,6 +39,7 @@ import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
+import com.here.gluecodium.model.lime.LimeBasicType
 import com.here.gluecodium.model.lime.LimeClass
 import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeConstant
@@ -60,6 +61,7 @@ import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeStruct
 import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeRef
+import com.here.gluecodium.model.lime.LimeBasicType.TypeId
 import java.util.logging.Logger
 
 /**
@@ -464,6 +466,7 @@ internal class JsGenerator : Generator {
         val thrownErrorIsEnum =
             thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
         val needsAdapter =
+            isOverloaded ||
             thrownException != null ||
                 returnType.isNullable ||
                 returnActualType is LimeList ||
@@ -474,7 +477,8 @@ internal class JsGenerator : Generator {
                         parameter.typeRef.type.actualType is LimeList ||
                         parameter.typeRef.type.actualType is LimeMap ||
                         parameter.typeRef.type.actualType is LimeSet ||
-                        parameter.typeRef.type.actualType is LimeLambda
+                        parameter.typeRef.type.actualType is LimeLambda ||
+                        hasCppStringOverride(parameter.typeRef)
                 }
         return mapOf(
             "model" to function,
@@ -511,7 +515,9 @@ internal class JsGenerator : Generator {
                     "jsName" to nameRules.getName(parameter),
                     "cppType" to embindNameResolver.resolveName(parameter.typeRef),
                     "adapterType" to
-                        if (
+                        if (hasCppStringOverride(parameter.typeRef)) {
+                            "::std::string"
+                        } else if (
                             parameter.typeRef.isNullable ||
                                 actualType is LimeList ||
                                 actualType is LimeMap ||
@@ -538,7 +544,9 @@ internal class JsGenerator : Generator {
                 val actualType = parameter.typeRef.type.actualType
                 val nativeType = embindNameResolver.resolveName(parameter.typeRef)
                 val adapterType =
-                    if (
+                    if (hasCppStringOverride(parameter.typeRef)) {
+                        "::std::string"
+                    } else if (
                         parameter.typeRef.isNullable ||
                             actualType is LimeList ||
                             actualType is LimeMap ||
@@ -549,7 +557,9 @@ internal class JsGenerator : Generator {
                     } else {
                         nativeType
                     }
-                val callName = if (
+                val callName = if (hasCppStringOverride(parameter.typeRef)) {
+                    "${parameter.path.name}.c_str()"
+                } else if (
                     parameter.typeRef.isNullable ||
                         actualType is LimeList ||
                         actualType is LimeMap ||
@@ -571,6 +581,28 @@ internal class JsGenerator : Generator {
             put("adapterParameters", parameters.joinToString(", ") { "${it["type"]} ${it["name"]}" })
             put("adapterSignatureParameters", parameters.joinToString(", ") { it["type"].toString() })
             put("adapterCallArguments", parameters.joinToString(", ") { it["callName"].toString() })
+            put(
+                "adapterPolicies",
+                parameters.mapIndexedNotNull { index, parameter ->
+                    if (parameter["type"].toString().endsWith("*")) {
+                        "allow_raw_pointer<arg<$index>>()"
+                    } else {
+                        null
+                    }
+                }.joinToString(", "),
+            )
+            put("hasAdapterPolicies", parameters.any { it["type"].toString().endsWith("*") })
+            put(
+                "adapterMemberPolicies",
+                parameters.mapIndexedNotNull { index, parameter ->
+                    if (parameter["type"].toString().endsWith("*")) {
+                        "allow_raw_pointer<arg<${index + 1}>>()"
+                    } else {
+                        null
+                    }
+                }.joinToString(", "),
+            )
+            put("hasAdapterMemberPolicies", parameters.any { it["type"].toString().endsWith("*") })
             put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
             put(
                 "adapterCallPrefix",
@@ -628,6 +660,13 @@ internal class JsGenerator : Generator {
                 "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             else -> ""
         }
+    }
+
+    private fun hasCppStringOverride(typeRef: LimeTypeRef): Boolean {
+        val actualType = typeRef.type.actualType
+        return actualType is LimeBasicType &&
+            actualType.typeId == TypeId.STRING &&
+            typeRef.attributes.get(com.here.gluecodium.model.lime.LimeAttributeType.CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.TYPE) != null
     }
 
     private fun jsToNative(typeRef: LimeTypeRef, source: String): String {
@@ -740,6 +779,7 @@ internal class JsGenerator : Generator {
             "cppGetterName" to cppNameCache.getGetterName(property),
             "cppSetterName" to cppNameCache.getSetterName(property),
             "isStatic" to property.isStatic,
+            "hasSetter" to (property.setter != null),
         )
 
     private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> =
