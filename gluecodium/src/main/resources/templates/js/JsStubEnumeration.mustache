@@ -24,8 +24,10 @@ SPDX-License-Identifier: Apache-2.0
 }}
 {{> js/JsStubHeader}}
 
+{{> js/JsStubDocumentation}}
 export enum {{jsName}} {
 {{#enumerators}}
+{{> js/JsStubDocumentation}}
 	{{jsName}},
 {{/enumerators}}
 }

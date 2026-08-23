@@ -1,0 +1,9 @@
+{{#if hasDocumentation}}
+/**
+{{#resolveName comment}}{{#unless this.isEmpty}}
+{{prefix this " * "}}
+{{/unless}}{{/resolveName}}{{#resolveName additionalDescriptionComment}}{{#unless this.isEmpty}}
+{{prefix this " * "}}
+{{/unless}}{{/resolveName}}
+ */
+{{/if}}

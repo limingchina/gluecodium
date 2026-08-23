@@ -24,8 +24,10 @@ SPDX-License-Identifier: Apache-2.0
 }}
 {{> js/JsStubHeader}}
 
+{{> js/JsStubDocumentation}}
 export interface {{jsName}} {
 {{#fields}}
+{{> js/JsStubDocumentation}}
 	{{jsName}}: {{jsType}};
 {{/fields}}
 }

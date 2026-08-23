@@ -24,11 +24,14 @@ SPDX-License-Identifier: Apache-2.0
 }}
 {{> js/JsStubHeader}}
 
+{{> js/JsStubDocumentation}}
 export interface {{jsName}} {
 {{#functions}}
+{{> js/JsStubFunctionDocumentation}}
   {{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{returnType}};
 {{/functions}}
 {{#properties}}
+{{> js/JsStubDocumentation}}
   {{jsName}}: {{jsType}};
 {{/properties}}
   delete(): void;

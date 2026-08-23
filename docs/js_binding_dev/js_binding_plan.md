@@ -305,6 +305,14 @@ type (`Class`, `Interface`, `Struct`, `Enumeration`, `Exception`, `Lambda`, `Typ
 - `Embind*.mustache` — the C++ `EMSCRIPTEN_BINDINGS` registration code (parallels `Pybind11*` →
   pybind11 `py::class_<...>` registration).
 
+The TypeScript stub family must preserve Lime documentation as JSDoc/TSDoc. This requires two
+pieces working together: `JsGenerator.stubViewModel()` passes the original `LimeComment` objects
+for top-level types and members, including property descriptions, fields, and enumerators; the
+stub templates render those comments through `JsNameResolver` so `@Js` platform sections and Lime
+links are processed consistently. Function declarations additionally render parameter comments as
+`@param`, return comments as `@returns`, and thrown-type comments as `@throws`. A declaration with
+only child documentation must still receive a complete JSDoc block.
+
 #### 3.2 embind binding template example (conceptual)
 
 ```cpp
@@ -802,13 +810,16 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
    retrieved more than once from the JS side.
 4. Generated `.d.ts` stubs type-check under `tsc --strict` for at least one non-trivial fixture
    (e.g., the calculator example).
-5. A documented, explicit object-disposal API exists and is exercised by at least one functional
+5. Lime documentation is emitted in generated `.d.ts` files: type/member descriptions, named
+  `@param` tags, `@returns`, `@throws`, property descriptions, nested struct fields, and enum
+  enumerator comments are preserved, with platform-specific sections and links resolved for JS.
+6. A documented, explicit object-disposal API exists and is exercised by at least one functional
    test that verifies memory is actually released (not just that `.delete()` doesn't throw).
-6. CI builds the JS target through `emcmake`/`em++` on a pinned `emsdk` version.
-7. The pthreads build (`-pthread`, `PROXY_TO_PTHREAD`, `SharedArrayBuffer`) is the default
+7. CI builds the JS target through `emcmake`/`em++` on a pinned `emsdk` version.
+8. The pthreads build (`-pthread`, `PROXY_TO_PTHREAD`, `SharedArrayBuffer`) is the default
    configuration; at least one functional test exercises a callback invoked from a pthread
    context without data races or lost `val` handles (§5.7).
-8. The generated module is verified in **both** Node.js and a browser (headless Chromium) —
+9. The generated module is verified in **both** Node.js and a browser (headless Chromium) —
    including the pthreads/`SharedArrayBuffer` path under real COOP/COEP headers in the browser
    case (Q3).
 

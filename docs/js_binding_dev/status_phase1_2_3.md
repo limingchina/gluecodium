@@ -59,3 +59,27 @@ services file. `-g js` now works from the CLI.
   yet bound — that is Phase 4 (type mapping) and Phase 5 work.
 - `std::optional<T>` / `Return<T,E>` casters not yet emitted (Phase 4 carry-forward from spike).
 - No functional-test wiring yet (Phase 7/8).
+
+## Phase 3 Documentation Follow-up - TypeScript JSDoc ✅
+
+The initial Phase 3 implementation created `JsCommentsProcessor` and wired comment resolution
+into `JsNameResolver`, but the `.d.ts` templates did not render the resolved comments and the
+stub view model discarded child comment objects. Generated declarations therefore contained no
+Lime documentation even though the resolver path existed.
+
+The follow-up adds shared `JsStubDocumentation` and `JsStubFunctionDocumentation` partials and
+preserves comments in `JsGenerator` view models. Generated declarations now include:
+
+- top-level type, exception, lambda, and type-alias documentation;
+- class/interface constructors, methods, and properties;
+- named `@param`, `@returns`, and `@throws` tags;
+- property extended descriptions, struct field comments, and enum enumerator comments; and
+- JS-specific comment filtering and link resolution through the existing resolver.
+
+### Verification
+
+- `./gradlew :gluecodium:compileKotlin`
+- Generated `Calculator.d.ts` from `examples/calculator/lime` using the JS generator.
+- Confirmed the output contains calculator class and constructor descriptions, named parameter
+  tags such as `@param first`, return and throws tags, and the resolved
+  `Calculator.CalculatorError.RESULT_OUT_OF_BOUNDS` link.

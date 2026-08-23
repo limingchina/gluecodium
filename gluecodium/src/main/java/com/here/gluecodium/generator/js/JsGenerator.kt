@@ -40,6 +40,7 @@ import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
 import com.here.gluecodium.model.lime.LimeClass
+import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeElement
@@ -191,6 +192,9 @@ internal class JsGenerator : Generator {
     private fun stubViewModel(limeElement: LimeNamedElement): Map<String, Any> {
         val data = mutableMapOf<String, Any>(
             "jsName" to nameRules.getName(limeElement),
+            "comment" to limeElement.comment,
+            "additionalDescriptionComment" to LimeComment(),
+            "hasDocumentation" to hasJsDocumentation(limeElement.comment),
         )
         val container = limeElement as? com.here.gluecodium.model.lime.LimeContainer
         if (container != null) {
@@ -201,6 +205,10 @@ internal class JsGenerator : Generator {
                     "jsName" to nameRules.getName(it),
                     "jsType" to jsNameResolver.resolveName(it.typeRef),
                     "isStatic" to it.isStatic,
+                    "comment" to it.comment,
+                    "additionalDescriptionComment" to it.additionalDescriptionComment,
+                    "hasDocumentation" to
+                        (hasJsDocumentation(it.comment) || hasJsDocumentation(it.additionalDescriptionComment)),
                 )
             }
         }
@@ -209,11 +217,21 @@ internal class JsGenerator : Generator {
                 mapOf(
                     "jsName" to nameRules.getName(it),
                     "jsType" to jsNameResolver.resolveName(it.typeRef),
+                    "comment" to it.comment,
+                    "additionalDescriptionComment" to LimeComment(),
+                    "hasDocumentation" to hasJsDocumentation(it.comment),
                 )
             }
         }
         if (limeElement is com.here.gluecodium.model.lime.LimeEnumeration) {
-            data["enumerators"] = limeElement.enumerators.map { mapOf("jsName" to nameRules.getName(it)) }
+            data["enumerators"] = limeElement.enumerators.map {
+                mapOf(
+                    "jsName" to nameRules.getName(it),
+                    "comment" to it.comment,
+                    "additionalDescriptionComment" to LimeComment(),
+                    "hasDocumentation" to hasJsDocumentation(it.comment),
+                )
+            }
         }
         return data
     }
@@ -221,17 +239,32 @@ internal class JsGenerator : Generator {
     private fun functionStubViewModel(function: LimeFunction): Map<String, Any> =
         mapOf(
             "jsName" to nameRules.getName(function),
+            "comment" to function.comment,
+            "hasDocumentation" to hasJsDocumentation(function),
             "isConstructor" to function.isConstructor,
             "isStatic" to function.isStatic,
             "returnType" to stubReturnType(function),
+            "returnComment" to function.returnType.comment,
+            "throwsComment" to (function.thrownType?.comment ?: LimeComment()),
             "parameters" to function.parameters.mapIndexed { index, parameter ->
                 mapOf(
                     "jsName" to nameRules.getName(parameter),
+                    "parameterName" to nameRules.getName(parameter),
                     "jsType" to jsNameResolver.resolveName(parameter.typeRef),
+                    "comment" to parameter.comment,
                     "last" to (index == function.parameters.lastIndex),
                 )
             },
         )
+
+    private fun hasJsDocumentation(function: LimeFunction): Boolean =
+        jsNameResolver.resolveName(function.comment).isNotBlank() ||
+            function.parameters.any { jsNameResolver.resolveName(it.comment).isNotBlank() } ||
+            jsNameResolver.resolveName(function.returnType.comment).isNotBlank() ||
+            (function.thrownType?.comment?.let { jsNameResolver.resolveName(it).isNotBlank() } == true)
+
+    private fun hasJsDocumentation(comment: LimeComment): Boolean =
+        jsNameResolver.resolveName(comment).isNotBlank()
 
     private fun stubReturnType(function: LimeFunction): String {
         val exception = function.exception ?: return jsNameResolver.resolveName(function.returnType)

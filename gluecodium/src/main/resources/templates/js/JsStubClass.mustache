@@ -24,16 +24,20 @@ SPDX-License-Identifier: Apache-2.0
 }}
 {{> js/JsStubHeader}}
 
+{{> js/JsStubDocumentation}}
 export class {{jsName}} {
 {{#constructors}}
+{{> js/JsStubFunctionDocumentation}}
   static {{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{../jsName}};
 {{/constructors}}
 {{#functions}}
 {{^isConstructor}}
+{{> js/JsStubFunctionDocumentation}}
   {{#isStatic}}static {{/isStatic}}{{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{returnType}};
 {{/isConstructor}}
 {{/functions}}
 {{#properties}}
+{{> js/JsStubDocumentation}}
   {{#isStatic}}static {{/isStatic}}{{jsName}}: {{jsType}};
 {{/properties}}
   delete(): void;
