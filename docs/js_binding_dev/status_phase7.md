@@ -47,14 +47,14 @@ GLUECODIUM_PATH="$PWD" cmake --build build-calculator-js --target mylibrary_js
 node build-calculator-js/calculator-js-smoke.mjs
 ```
 
-The generated module consists of `generated.mjs` and `generated.wasm`. It is a modularized ES
-module and can be loaded from Node.js with:
+The generated module consists of `generated.mjs` and `generated.wasm`. The generated `js/` tree
+next to it contains package facades and a shared runtime loader. Consumers import a package facade
+with:
 
 ```js
-import createModule from "./generated.mjs";
+import { Calculator } from "./js/gluecodium/calculator/index.mjs";
 
-const module = await createModule();
-const calculator = module.Calculator.make();
+const calculator = Calculator.make();
 const result = calculator.summarize(20, 22);
 calculator.delete();
 ```
@@ -92,9 +92,10 @@ These headers make `SharedArrayBuffer` and WebAssembly pthreads available to the
 ## Verification
 
 Phase 7 was verified with focused CMake coverage, a calculator Emscripten build, and the Node.js
-smoke test. The generated module was imported successfully and its embind API was exercised at
-runtime. The browser example uses the same generated `Calculator` class and documents the
-cross-origin-isolated serving requirement.
+smoke test. The generated package facade was imported successfully and its embind API was exercised
+at runtime. The browser example uses the same generated `Calculator` class and documents the
+cross-origin-isolated serving requirement. The raw Emscripten module remains an implementation
+detail behind `js/runtime.mjs`; its private embind registration names are not consumer API.
 
 The full CMake suite still includes unrelated Swift/CBridge failures on the macOS/Ninja baseline;
 those failures are outside the JS integration change. Phase 8 remains responsible for broader

@@ -46,6 +46,7 @@ function(gluecodium_target_js_sources _target)
   gluecodium_read_required_properties(
     ${_target}
     GENERATORS _generators
+    OUTPUT_MAIN_DIR _main_dir
     OUTPUT_UNITY_DIR _unity_dir)
 
   if(NOT js IN_LIST _generators)
@@ -102,6 +103,12 @@ function(gluecodium_target_js_sources _target)
   set_target_properties(${_module_target} PROPERTIES
     OUTPUT_NAME "${_module_name}"
     SUFFIX ".mjs")
+
+  add_custom_command(TARGET ${_module_target} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+      "${_main_dir}/js"
+      "$<TARGET_FILE_DIR:${_module_target}>/js"
+    COMMENT "Copy generated JavaScript package modules")
 
   if(_args_OUTPUT)
     set(${_args_OUTPUT} ${_module_target} PARENT_SCOPE)

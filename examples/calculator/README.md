@@ -61,12 +61,13 @@ cmake --build . --target mylibrary_js
 node calculator-js-smoke.mjs
 ```
 
-The generated module is emitted as `generated.mjs` with its accompanying `.wasm` file. Browser
+The generated module is emitted as `generated.mjs` with its accompanying `.wasm` file. The generated
+`js/gluecodium/calculator/index.mjs` package facade is the public ES-module entrypoint. Browser
 deployment of the pthread-enabled build requires `Cross-Origin-Opener-Policy: same-origin` and
 `Cross-Origin-Embedder-Policy: require-corp` response headers.
 
 The same build directory contains `index.html` and `app.mjs`, a browser calculator application that
-creates `module.Calculator.make()` and uses the generated class for addition, subtraction,
+imports `Calculator` from the package facade and uses the generated class for addition, subtraction,
 multiplication, division, minimum, and maximum. Press the on-screen number and operator buttons,
 then press `=` to get a result. The number keys, decimal point, operators, `Enter`, `Escape`, and
 `Backspace` also work from the keyboard; `m` selects minimum and `M` selects maximum. `C` resets

@@ -372,7 +372,7 @@ internal class JsGenerator : Generator {
             "model" to type,
             "internalNamespace" to internalNamespace,
             "jsName" to nameRules.getName(type),
-            "embindName" to embindPublicName(type),
+            "embindName" to nameRules.getEmbindRuntimeName(type),
             "cppFullName" to cppNameCache.getFullyQualifiedName(type),
             "registerName" to resolveRegisterName(type),
         )
@@ -389,6 +389,8 @@ internal class JsGenerator : Generator {
         if (type is com.here.gluecodium.model.lime.LimeInterface) {
             val inheritedContainer = type as LimeContainerWithInheritance
             data["wrapperName"] = "${resolveRegisterName(type)}Wrapper"
+            data["wrapperEmbindName"] = "${nameRules.getEmbindRuntimeName(type)}__Wrapper"
+            data["wrapperPtrEmbindName"] = "${nameRules.getEmbindRuntimeName(type)}__WrapperPtr"
             data["wrapperMethods"] =
                 (container.functions + inheritedContainer.inheritedFunctions)
                     .filterNot { it.isStatic || it.isConstructor }
@@ -918,7 +920,7 @@ internal class JsGenerator : Generator {
                 .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
                 .flatMap(::collectEmbindTypes)
                 .filter { it is LimeClass || it is LimeInterface }
-                .map { nameRules.getName(it) }
+                .map { nameRules.getEmbindRuntimeName(it) }
                 .distinct()
         val wrapperTypes =
             wrapperTypeNames.mapIndexed { index, name ->
@@ -930,15 +932,17 @@ internal class JsGenerator : Generator {
                 mapOf("wrapperTypes" to wrapperTypes),
                 nameResolvers,
             )
-        val packageFiles =
-            if (emitTypeScriptStubs) {
-                generatePackageFiles(jsFilteredModel, nameResolvers)
-            } else {
-                emptyList()
-            }
+        val moduleRuntimeContent =
+            TemplateEngine.render(
+                "js/JsModuleRuntime",
+                mapOf("moduleFileName" to jsModuleName),
+                nameResolvers,
+            )
+        val packageFiles = generatePackageFiles(jsFilteredModel, nameResolvers)
         return packageFiles + listOf(
             GeneratedFile(moduleInitContent, JsNameRules.MODULE_INIT_FILE),
             GeneratedFile(wrapperRuntimeContent, JsNameRules.WRAPPER_RUNTIME_FILE),
+            GeneratedFile(moduleRuntimeContent, JsNameRules.MODULE_RUNTIME_FILE),
         )
     }
 
@@ -964,11 +968,55 @@ internal class JsGenerator : Generator {
                         nameResolvers,
                     )
                 val directory = packagePath.joinToString(java.io.File.separator)
+                val runtimeExports =
+                    elements
+                        .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
+                        .flatMap(::collectEmbindTypes)
+                        .filter { it is com.here.gluecodium.model.lime.LimeClass ||
+                            it is com.here.gluecodium.model.lime.LimeInterface ||
+                            it is LimeStruct ||
+                            it is com.here.gluecodium.model.lime.LimeEnumeration }
+                        .distinctBy { it.fullName }
+                        .sortedBy { nameRules.getName(it) }
+                        .map { element ->
+                            mapOf(
+                                "moduleName" to nameRules.getName(element),
+                                "runtimeName" to nameRules.getEmbindRuntimeName(element),
+                            )
+                        }
+                val duplicateRuntimeExports = runtimeExports.groupBy { it["moduleName"] }.filterValues { it.size > 1 }.keys
+                check(duplicateRuntimeExports.isEmpty()) {
+                    "Duplicate JavaScript exports in package ${packagePath.joinToString(".")}: " +
+                        duplicateRuntimeExports.joinToString(", ")
+                }
                 GeneratedFile(
                     content,
                     JsNameRules.JS_TARGET_DIRECTORY + directory + java.io.File.separator + "index.d.ts",
+                ) to GeneratedFile(
+                    TemplateEngine.render(
+                        "js/JsRuntimeIndex",
+                        mapOf(
+                            "runtimeImportPath" to "../".repeat(packagePath.size) + "runtime.mjs",
+                            "runtimeExports" to runtimeExports,
+                        ),
+                        nameResolvers,
+                    ),
+                    JsNameRules.JS_TARGET_DIRECTORY + directory + java.io.File.separator + "index.mjs",
                 )
             }
+        val declarationIndexFiles = indexFiles.map { it.first }
+        val runtimeIndexFiles = indexFiles.map { it.second }
+        val sortedPackagePaths = packageTypes.keys.sortedBy { it.joinToString("/") }
+        val exportEntries = sortedPackagePaths.mapIndexed { index, packagePath ->
+            val subpath = "./" + packagePath.joinToString("/")
+            val relativePath = "./" + packagePath.joinToString("/") + "/index"
+            mapOf(
+                "subpath" to subpath,
+                "typesPath" to "$relativePath.d.ts",
+                "importPath" to "$relativePath.mjs",
+                "last" to (index == sortedPackagePaths.lastIndex),
+            )
+        }
         val packageJson =
             TemplateEngine.render(
                 "js/JsPackageJson",
@@ -977,6 +1025,7 @@ internal class JsGenerator : Generator {
                     "typesPath" to packageTypes.keys.singleOrNull()?.let { packagePath ->
                         (packagePath + "index.d.ts").joinToString("/").let { "./$it" }
                     },
+                    "exports" to exportEntries,
                 ),
                 nameResolvers,
             )
@@ -986,11 +1035,14 @@ internal class JsGenerator : Generator {
                 emptyMap<String, Any>(),
                 nameResolvers,
             )
-        return indexFiles +
-            listOf(
-                GeneratedFile(packageJson, JsNameRules.JS_PACKAGE_JSON_FILE),
-                GeneratedFile(tsconfig, JsNameRules.JS_TSCONFIG_FILE),
-            )
+        val packageMetadataFiles = mutableListOf(
+            GeneratedFile(packageJson, JsNameRules.JS_PACKAGE_JSON_FILE),
+        )
+        if (emitTypeScriptStubs) {
+            packageMetadataFiles += GeneratedFile(tsconfig, JsNameRules.JS_TSCONFIG_FILE)
+        }
+        return (if (emitTypeScriptStubs) declarationIndexFiles else emptyList()) +
+            runtimeIndexFiles + packageMetadataFiles
     }
 
     private fun jsonString(value: String) =

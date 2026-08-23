@@ -22,5 +22,15 @@
   "name": "{{packageName}}",
   "private": true,
   "type": "module"{{#typesPath}},
-  "types": "{{typesPath}}"{{/typesPath}}
+  "types": "{{typesPath}}"{{/typesPath}}{{#exports}},
+  "exports": {
+{{#exports}}
+    "{{subpath}}": {
+{{#typesPath}}
+      "types": "{{typesPath}}",
+{{/typesPath}}
+      "import": "{{importPath}}"
+    }{{^last}},{{/last}}
+{{/exports}}
+  }{{/exports}}
 }

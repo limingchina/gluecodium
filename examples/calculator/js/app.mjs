@@ -1,4 +1,4 @@
-import createModule from "./generated.mjs";
+import { Calculator, CalculatorError, MultiplyCallback } from "./js/gluecodium/calculator/index.mjs";
 
 const display = document.querySelector("#display");
 const expressionOutput = document.querySelector("#expression");
@@ -8,7 +8,6 @@ const clearButton = document.querySelector("#clear");
 const historyList = document.querySelector("#history-list");
 
 let calculator;
-let module;
 let multiplyCallbackType;
 let currentInput = "0";
 let storedValue = null;
@@ -17,7 +16,7 @@ let waitingForOperand = false;
 let justEvaluated = false;
 
 function errorName(error) {
-  const match = Object.entries(module.CalculatorError).find(([, value]) => value === error);
+  const match = Object.entries(CalculatorError).find(([, value]) => value === error);
   return match ? match[0].replaceAll("_", " ").toLowerCase() : "calculation error";
 }
 
@@ -222,9 +221,8 @@ try {
     throw new Error("The page needs COOP and COEP headers for WebAssembly threads.");
   }
 
-  module = await createModule();
-  calculator = module.Calculator.make();
-  multiplyCallbackType = module.MultiplyCallback.extend("BrowserMultiplyCallback", {
+  calculator = Calculator.make();
+  multiplyCallbackType = MultiplyCallback.extend("BrowserMultiplyCallback", {
     onError() {},
     onResult() {},
   });

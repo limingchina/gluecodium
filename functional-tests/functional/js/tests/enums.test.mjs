@@ -1,14 +1,10 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { pathToFileURL } from "node:url";
+import { loadPackage } from "./load-package.mjs";
 
-const modulePath = process.env.GLUECODIUM_JS_MODULE;
-assert.ok(modulePath, "GLUECODIUM_JS_MODULE must point to the generated module");
-
-const { default: createModule } = await import(pathToFileURL(modulePath));
-const module = await createModule();
+const module = await loadPackage("test");
 const enums = module.Enums;
-const internalError = module.test_EnumsInternalErrorType;
+const internalError = module.InternalError;
 
 test("enum members are exported and round-trip", () => {
   assert.ok(internalError.ERROR_NONE !== undefined);

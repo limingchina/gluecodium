@@ -2,13 +2,12 @@ import assert from "node:assert/strict";
 import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
-const { default: createModule } = await import(
-  pathToFileURL(resolve(dirname(process.argv[1]), "generated.mjs"))
+const { Calculator, CalculatorError, MultiplyCallback } = await import(
+  pathToFileURL(resolve(dirname(process.argv[1]), "js/gluecodium/calculator/index.mjs"))
 );
 
-const module = await createModule();
-const calculator = module.Calculator.make();
-const multiplyCallbackType = module.MultiplyCallback.extend("SmokeMultiplyCallback", {
+const calculator = Calculator.make();
+const multiplyCallbackType = MultiplyCallback.extend("SmokeMultiplyCallback", {
   onError() {},
   onResult() {},
 });
@@ -36,14 +35,14 @@ assert.deepEqual(calculator.divide({ dividend: 20, divider: 4 }), {
   error: undefined,
   result: 5,
 });
-assert.equal(calculator.divide({ dividend: 20, divider: 0 }).error, module.CalculatorError.DIVIDE_BY_ZERO);
+assert.equal(calculator.divide({ dividend: 20, divider: 0 }).error, CalculatorError.DIVIDE_BY_ZERO);
 assert.equal(calculator.max(3, 7), 7);
 assert.equal(calculator.max(null, 7), 7);
 assert.equal(calculator.max(null, null), undefined);
 const minimum = calculator.min(8, 3);
 assert.equal(minimum.getResult(), 3);
 minimum.delete();
-assert.ok(module.CalculatorError.RESULT_OUT_OF_BOUNDS);
+assert.ok(CalculatorError.RESULT_OUT_OF_BOUNDS);
 
 calculator.delete();
 console.log("Calculator JS smoke test OK");

@@ -43,8 +43,8 @@ public:
 };
 
 void {{registerName}}(void) {
-    class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{jsName}}")
-        .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{jsName}}")
+    class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{embindName}}")
+        .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{embindName}}")
 {{#methods}}
 {{#isStatic}}
 {{#needsAdapter}}
@@ -89,6 +89,6 @@ void {{registerName}}(void) {
 {{/hasSetter}}
 {{/isStatic}}
 {{/properties}}
-    .allow_subclass<{{wrapperName}}, std::shared_ptr<{{wrapperName}}>>("{{wrapperName}}", "{{wrapperName}}Ptr")
+    .allow_subclass<{{wrapperName}}, std::shared_ptr<{{wrapperName}}>>("{{wrapperEmbindName}}", "{{wrapperPtrEmbindName}}")
         ;
 }

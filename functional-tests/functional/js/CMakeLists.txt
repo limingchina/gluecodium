@@ -26,6 +26,8 @@ find_program(NODE_EXECUTABLE node REQUIRED)
 
 set(JS_TEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/tests")
 file(MAKE_DIRECTORY "${JS_TEST_DIR}")
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/load-package.mjs"
+    "${JS_TEST_DIR}/load-package.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/strings.test.mjs"
     "${JS_TEST_DIR}/strings.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/builtin-types.test.mjs"

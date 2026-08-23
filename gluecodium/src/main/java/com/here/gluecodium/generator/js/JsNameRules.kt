@@ -55,6 +55,18 @@ class JsNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
         return baseName
     }
 
+    /**
+     * Returns the private, globally unique name used by embind at runtime. The name is based on
+     * the canonical Lime path rather than a platform rename, so two packages may expose the same
+     * public leaf name without colliding in the shared Emscripten module.
+     */
+    fun getEmbindRuntimeName(limeElement: LimeNamedElement): String {
+        val path = limeElement.fullName
+            .split('.')
+            .joinToString("__") { component -> component.replace(Regex("[^A-Za-z0-9_]"), "_") }
+        return "gluecodium__$path"
+    }
+
     /** Resolve the output path of a generated TypeScript declaration stub for the given element. */
     fun getJsStubFileName(limeElement: LimeNamedElement): String {
         val packagePath = limeElement.path.head.joinToString(File.separator)
@@ -74,6 +86,7 @@ class JsNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
         val EMBIND_TARGET_DIRECTORY = JS_TARGET_DIRECTORY + "embind" + File.separator
         val MODULE_INIT_FILE = EMBIND_TARGET_DIRECTORY + "_module_init.cpp"
         val WRAPPER_RUNTIME_FILE = JS_TARGET_DIRECTORY + "WrapperRuntime.mjs"
+        val MODULE_RUNTIME_FILE = JS_TARGET_DIRECTORY + "runtime.mjs"
         val JS_PACKAGE_JSON_FILE = JS_TARGET_DIRECTORY + "package.json"
         val JS_TSCONFIG_FILE = JS_TARGET_DIRECTORY + "tsconfig.json"
 

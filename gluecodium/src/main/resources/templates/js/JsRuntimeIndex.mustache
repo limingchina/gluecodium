@@ -1,0 +1,12 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  ! SPDX-License-Identifier: Apache-2.0
+  !
+  !}}
+import { loadModule } from "{{runtimeImportPath}}";
+
+const module = await loadModule();
+{{#runtimeExports}}
+export const {{moduleName}} = module["{{runtimeName}}"];
+{{/runtimeExports}}

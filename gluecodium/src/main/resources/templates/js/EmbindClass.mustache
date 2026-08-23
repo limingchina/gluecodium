@@ -26,8 +26,8 @@ Embind registration for a LIME class. Only one `base<>` is supported (see plan Â
 secondary parents are flattened by binding their members on the derived type.
 }}
 void {{registerName}}(void) {
-    class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{jsName}}")
-        .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{jsName}}")
+        class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{embindName}}")
+                .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{embindName}}")
 {{#constructors}}
 {{#needsAdapter}}
         .class_function<{{adapterReturnType}}({{adapterSignatureParameters}})>("{{jsName}}", []({{adapterParameters}}) -> {{adapterReturnType}} {
