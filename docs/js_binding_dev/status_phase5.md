@@ -157,9 +157,31 @@ Verification passes:
 Phase 5 harness OK
 ```
 
+## Item 6 - Pthreads and Cross-Thread `emscripten::val`
+
+**Status**: Verified limitation; marshalling design deferred
+
+The standalone spike in
+`docs/js_binding_dev/spikes/pthreads_callbacks_spike/README.md` compiles with
+Emscripten 6.0.6 and invokes a JavaScript callable from a native `std::thread`.
+The runtime aborts with `val accessed from wrong thread`, confirming that a
+stored `emscripten::val` cannot be moved to an arbitrary pthread. Generated
+callbacks and `LimeLambda` adapters therefore guarantee synchronous invocation
+on the owning WebAssembly thread only. `PROXY_TO_PTHREAD=1` remains a separate
+application-module deployment concern because the embind-only probe has no
+`main()` entry point.
+
+The browser/COOP/COEP pass and a thread-aware marshalling design remain future
+work; this item records the constraint rather than claiming cross-thread
+support.
+
 ## Remaining Phase 5 Items
 
-1. Add pthread callback and cross-thread `emscripten::val` spike coverage.
+1. Design thread-aware callback marshalling for the pthread build.
+2. Define a Gluecodium-owned wrapper identity cache and ownership contract if
+	JavaScript referential equality is required.
+3. Extend collection adapters to nested and nullable `Set`/container cases, or
+	replace the inline adapters with a composable caster design.
 
 Each item should be independently verified and committed before the next item
 begins.
