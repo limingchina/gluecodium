@@ -17,4 +17,5 @@ export class {{jsName}} {
   {{#isStatic}}static {{/isStatic}}{{jsName}}: {{jsType}};
 {{/properties}}
   delete(): void;
+  [Symbol.dispose](): void;
 }

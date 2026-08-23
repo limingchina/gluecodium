@@ -344,6 +344,7 @@ export class {{jsName}} {
   {{jsPropertyName}}: {{propertyType}};
   {{/properties}}
   delete(): void;   // explicit manual free — see §5.1
+  [Symbol.dispose](): void; // using-compatible alias for delete()
 }
 ```
 
@@ -463,6 +464,11 @@ Two options, not mutually exclusive:
    safety net only, never as a replacement for explicit disposal. **Resolved (Q2, §8): implement
    both** — the registry net is generated into the glue layer and enabled by default, with an
    opt-out flag and thread-safe cleanup under pthreads (§5.7).
+
+Generated TypeScript declarations also expose `[Symbol.dispose]()` as an additive alias for
+`.delete()`. On runtimes implementing the Explicit Resource Management proposal, this enables
+`using` declarations to perform deterministic cleanup. It does not replace `.delete()`: browser
+support varies, and consumers may need an `ESNext.Disposable` TypeScript library configuration.
 
 For functions returning pointers to existing (non-owned) C++ objects, decide the embind equivalent
 of pybind11's `return_value_policy::reference_internal` vs. `take_ownership` — embind's smart
