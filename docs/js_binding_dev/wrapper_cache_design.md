@@ -2,10 +2,10 @@
 
 ## Scope
 
-Generated class and interface returns need a Gluecodium-owned cache because
+Generated class and interface returns use a Gluecodium-owned cache because
 Emscripten 6.0.6 does not canonicalize ordinary `std::shared_ptr` return
-wrappers. This document defines the contract; implementation is gated on a
-generated JavaScript wrapper layer, which is also the lifecycle integration
+wrappers. This document defines the implemented generated JavaScript wrapper
+layer, which is also the lifecycle integration
 point for `.delete()`, `[Symbol.dispose]`, and any `FinalizationRegistry`
 safety net. A native-only C++ cache is not sufficient.
 
@@ -44,13 +44,14 @@ later lookup must never return a deleted wrapper, and pointer-address reuse must
 create a fresh wrapper. Checking `isDeleted()` only during a later lookup is a
 fallback sanity check, not a lifecycle implementation: a strong cached handle
 would keep the wrapper reachable indefinitely and prevent normal finalization.
-The implementation must therefore either intercept explicit deletion and the
-finalization path, or make explicit disposal a strict requirement and provide a
-supported eviction operation.
+The generated layer intercepts explicit deletion and provides the supported
+eviction operation. Native garbage-collection finalization remains embind's
+responsibility because the public API does not expose a callback hook for the
+generated layer to invoke native deletion safely.
 
 ## Generated Wrapper Responsibilities
 
-The future generated JavaScript layer sits between the raw embind handle and
+The generated JavaScript layer sits between the raw embind handle and
 the consumer. A shared-pointer return first produces an embind candidate
 handle. The generated layer then looks up the `(native pointee address,
 exposed embind type)` key. It returns the live canonical wrapper when one
@@ -59,9 +60,9 @@ consumer-visible `.delete()` obligation. Otherwise, it records the candidate
 as the canonical wrapper and returns the generated wrapper object.
 
 The generated wrapper's `.delete()` is the single explicit disposal path. It
-must evict the cache entry, mark the wrapper disposed, and delegate release of
-the underlying embind handle exactly once. `[Symbol.dispose]()` must invoke the
-same path rather than implement separate ownership logic. The wrapper layer
+evicts the cache entry, marks the wrapper disposed, and delegates release of
+the underlying embind handle exactly once. `[Symbol.dispose]()` invokes the
+same path rather than implementing separate ownership logic. The wrapper layer
 owns JavaScript cache bookkeeping; embind's smart-pointer holder remains the
 sole native owner held for that JavaScript wrapper.
 
@@ -75,8 +76,8 @@ metadata. It does not call `.delete()` or access `emscripten::val`; embind's
 own finalization mechanism remains responsible for releasing the native holder
 when the embind wrapper becomes unreachable. This keeps the generated callback
 outside the thread-affine native API. The generated registry is opt-in through
-`wrapModule(module, { enableFinalization: true })` until a stronger lifecycle
-hook is available.
+`wrapModule(module, { enableFinalization: true })`; it evicts cache metadata
+only and does not replace embind's native finalizer.
 
 ## Threads
 

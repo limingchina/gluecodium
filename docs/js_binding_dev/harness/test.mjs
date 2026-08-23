@@ -31,6 +31,10 @@ assert.equal(harness.roundTripMode(Mode.ON), Mode.ON);
 assert.equal(harness.roundTripLong(9007199254740993n), 9007199254740993n);
 
 harness[Symbol.dispose]();
+assert.equal(harness.isDeleted(), true);
+const freshHarness = Harness.create(10);
+assert.notStrictEqual(freshHarness, harness);
+freshHarness.delete();
 
 const multi = MultipleInheritanceFactory.getMultiClass();
 assert.equal(typeof multi.parentFunction, "function");

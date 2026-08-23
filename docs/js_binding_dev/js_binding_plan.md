@@ -492,7 +492,8 @@ remains the native owner. Any `FinalizationRegistry` callback must use the same 
 must be disabled or marshalled for pthread configurations where its callback can run off-thread.
 The current generated registry only evicts weak cache metadata and never calls `.delete()` or
 accesses `emscripten::val`; embind's own finalization path remains responsible for native-holder
-cleanup. It is opt-in via `enableFinalization` until a stronger lifecycle hook is available.
+cleanup. Explicit `.delete()` and `[Symbol.dispose]` are fully integrated with embind's supported
+native deletion path. The generated metadata registry remains opt-in via `enableFinalization`.
 
 For functions returning pointers to existing (non-owned) C++ objects, decide the embind equivalent
 of pybind11's `return_value_policy::reference_internal` vs. `take_ownership` — embind's smart
