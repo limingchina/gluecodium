@@ -212,7 +212,7 @@ internal class JsGenerator : Generator {
             "jsName" to nameRules.getName(function),
             "isConstructor" to function.isConstructor,
             "isStatic" to function.isStatic,
-            "returnType" to jsNameResolver.resolveName(function.returnType),
+            "returnType" to stubReturnType(function),
             "parameters" to function.parameters.mapIndexed { index, parameter ->
                 mapOf(
                     "jsName" to nameRules.getName(parameter),
@@ -221,6 +221,14 @@ internal class JsGenerator : Generator {
                 )
             },
         )
+
+    private fun stubReturnType(function: LimeFunction): String {
+        val exception = function.exception ?: return jsNameResolver.resolveName(function.returnType)
+        val valueType = if (function.returnType.isVoid) null else jsNameResolver.resolveName(function.returnType)
+        val errorType = if (exception.errorType.type.actualType is com.here.gluecodium.model.lime.LimeEnumeration) "number" else jsNameResolver.resolveName(exception.errorType)
+        return listOfNotNull(valueType?.let { "value?: $it" }, "error?: $errorType")
+            .joinToString("; ", prefix = "{ ", postfix = " }")
+    }
 
     private fun generateEmbindFile(
         limeElement: LimeNamedElement,
@@ -403,8 +411,10 @@ internal class JsGenerator : Generator {
         val isOverloaded = CppSignatureResolver(limeReferenceMap, cppNameRules).isOverloaded(function)
         val returnType = function.returnType.typeRef
         val returnActualType = returnType.type.actualType
+        val thrownException = function.exception
+        val thrownErrorIsEnum = thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
         val needsAdapter =
-            returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap ||
+            thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap ||
                 function.parameters.any { parameter ->
                     parameter.typeRef.isNullable ||
                         parameter.typeRef.type.actualType is LimeList ||
@@ -419,11 +429,13 @@ internal class JsGenerator : Generator {
             "isStatic" to function.isStatic,
             "needsAdapter" to needsAdapter,
             "adapterReturnType" to
-                if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) {
+                if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) {
                     "emscripten::val"
                 } else {
                     embindNameResolver.resolveName(returnType)
                 },
+            "isThrown" to (thrownException != null),
+            "thrownErrorIsEnum" to thrownErrorIsEnum,
             "returnIsNullable" to returnType.isNullable,
             "returnIsList" to (returnActualType is LimeList),
             "returnIsMap" to (returnActualType is LimeMap),
@@ -485,17 +497,23 @@ internal class JsGenerator : Generator {
                 "adapterCallPrefix",
                 if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) {
                     "auto result = "
+                } else if (thrownException != null) {
+                    "auto result = "
                 } else {
                     "return "
                 },
             )
-            put("adapterReturnConversion", adapterReturnConversion(returnType, returnActualType))
+            put("adapterReturnConversion", if (thrownException != null) {
+                thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid)
+            } else {
+                adapterReturnConversion(returnType, returnActualType)
+            })
             if (isFlattened) {
                 val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
                 put(
                     "flattenedFunctionSignature",
                     listOf(
-                        "${if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) "emscripten::val" else embindNameResolver.resolveName(returnType)}($receiverType*",
+                        "${if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) "emscripten::val" else embindNameResolver.resolveName(returnType)}($receiverType*",
                         *parameters.map { it["type"].toString() }.toTypedArray(),
                     )
                         .joinToString(", ")
@@ -561,6 +579,15 @@ internal class JsGenerator : Generator {
                 "return emscripten::val::array($source.begin(), $source.end());"
             else -> ""
         }
+    }
+
+    private fun thrownReturnConversion(errorIsEnum: Boolean, returnIsVoid: Boolean): String {
+        if (errorIsEnum && returnIsVoid) {
+            return "auto jsResult = emscripten::val::object(); if (result.value() != 0) { jsResult.set(\"error\", result.value()); } return jsResult;"
+        }
+        val errorExpression = if (errorIsEnum) "result.error().value()" else "result.error()"
+        val successExpression = if (returnIsVoid) "" else " jsResult.set(\"value\", result.unsafe_value());"
+        return "auto jsResult = emscripten::val::object(); if (result) {$successExpression} else { jsResult.set(\"error\", $errorExpression); } return jsResult;"
     }
 
     private fun propertyViewModel(property: LimeProperty): Map<String, Any> =

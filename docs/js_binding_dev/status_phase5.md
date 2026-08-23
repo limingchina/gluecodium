@@ -135,10 +135,31 @@ Verification passes:
 Phase 5 harness OK
 ```
 
+## Item 5 - Exceptions and `Return<T, Error>`
+
+**Status**: Verified for non-void and void enum-based errors
+
+Methods declared with `throws` retain their generated C++
+`Return<T, Error>` signature and are registered through an `emscripten::val`
+adapter. Successful calls return an object with a `value` property; failed
+calls return an object with an `error` property. Enum-based errors are exposed
+as their numeric `std::error_code::value()`.
+
+The persistent harness verifies both branches of synchronous `String throws
+Callback` and `Void throws Callback` methods. Struct-backed payload errors are
+not included in this item yet because their payload registration and JavaScript
+error shape need a separate compatibility check.
+
+Verification passes:
+
+```text
+./gradlew :gluecodium:compileKotlin -q
+Phase 5 harness OK
+```
+
 ## Remaining Phase 5 Items
 
-1. Add exception and `Return<T, Error>` behavior where it belongs in the
-   generator/build plan.
+1. Add struct-backed exception payload coverage and finalize error shape.
 2. Add pthread callback and cross-thread `emscripten::val` spike coverage.
 
 Each item should be independently verified and committed before the next item

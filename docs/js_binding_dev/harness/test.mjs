@@ -54,6 +54,11 @@ assert.equal(MultipleInheritanceFactory.invokeJsCallback(callback), "js-native")
 const transformer = (value) => `js-${value}`;
 assert.equal(MultipleInheritanceFactory.invokeLambda(transformer, "lambda"), "js-lambda");
 
+assert.deepEqual(MultipleInheritanceFactory.invokeThrowing(true), { value: "success" });
+assert.deepEqual(MultipleInheritanceFactory.invokeThrowing(false), { error: 7 });
+assert.deepEqual(MultipleInheritanceFactory.invokeThrowingVoid(true), {});
+assert.deepEqual(MultipleInheritanceFactory.invokeThrowingVoid(false), { error: 7 });
+
 multi.delete();
 narrow.delete();
 separateNarrow.delete();

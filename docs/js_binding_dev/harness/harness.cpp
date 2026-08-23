@@ -120,4 +120,22 @@ std::string MultipleInheritanceFactory::invoke_lambda(
     return callback(value);
 }
 
+::Return<std::string, std::error_code> MultipleInheritanceFactory::invoke_throwing(
+    const bool success
+) {
+    if (success) {
+        return std::string("success");
+    }
+    return std::error_code(7, std::generic_category());
+}
+
+::std::error_code MultipleInheritanceFactory::invoke_throwing_void(
+    const bool success
+) {
+    if (success) {
+        return {};
+    }
+    return std::error_code(7, std::generic_category());
+}
+
 }  // namespace phase5
