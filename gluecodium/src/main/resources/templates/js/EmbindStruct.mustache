@@ -27,9 +27,9 @@ LIME structs map to embind value_object (value semantics, all fields public).
 void {{registerName}}(void) {
     value_object<{{cppFullName}}>("{{jsName}}")
 {{#fields}}
-{{^hasAccessors}}
+{{^hasAccessors}}{{^hasBlob}}
     .field("{{jsName}}", &{{cppFullName}}::{{cppFieldName}})
-{{/hasAccessors}}
+{{/hasBlob}}{{/hasAccessors}}
 {{#hasAccessors}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> {{accessorType}} {
     return self.{{cppGetterName}}();
@@ -37,6 +37,14 @@ void {{registerName}}(void) {
     self.{{cppSetterName}}(value);
   })
 {{/hasAccessors}}
+{{#hasBlob}}
+  .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
+    return self.{{cppFieldName}} ? emscripten::val::array(*self.{{cppFieldName}}) : emscripten::val::undefined();
+  }, +[] ({{cppFullName}}& self, emscripten::val value) {
+    self.{{cppFieldName}} = ::std::make_shared<::std::vector<uint8_t>>(
+        emscripten::convertJSArrayToNumberVector<uint8_t>(value));
+  })
+{{/hasBlob}}
 {{/fields}}
         ;
 }

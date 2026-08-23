@@ -475,11 +475,13 @@ internal class JsGenerator : Generator {
                 returnActualType is LimeList ||
                 returnActualType is LimeMap ||
                 returnActualType is LimeSet ||
+                isBlob(returnType) ||
                 function.parameters.any { parameter ->
                     parameter.typeRef.isNullable ||
                         parameter.typeRef.type.actualType is LimeList ||
                         parameter.typeRef.type.actualType is LimeMap ||
                         parameter.typeRef.type.actualType is LimeSet ||
+                    isBlob(parameter.typeRef) ||
                         parameter.typeRef.type.actualType is LimeLambda ||
                         hasCppStringOverride(parameter.typeRef)
                 }
@@ -496,7 +498,8 @@ internal class JsGenerator : Generator {
                         returnType.isNullable ||
                         returnActualType is LimeList ||
                         returnActualType is LimeMap ||
-                        returnActualType is LimeSet
+                        returnActualType is LimeSet ||
+                        isBlob(returnType)
                 ) {
                     "emscripten::val"
                 } else {
@@ -525,6 +528,7 @@ internal class JsGenerator : Generator {
                                 actualType is LimeList ||
                                 actualType is LimeMap ||
                                 actualType is LimeSet ||
+                                isBlob(parameter.typeRef) ||
                                 actualType is LimeLambda
                         ) {
                             "emscripten::val"
@@ -554,6 +558,7 @@ internal class JsGenerator : Generator {
                             actualType is LimeList ||
                             actualType is LimeMap ||
                             actualType is LimeSet ||
+                            isBlob(parameter.typeRef) ||
                             actualType is LimeLambda
                     ) {
                         "emscripten::val"
@@ -567,6 +572,7 @@ internal class JsGenerator : Generator {
                         actualType is LimeList ||
                         actualType is LimeMap ||
                         actualType is LimeSet ||
+                        isBlob(parameter.typeRef) ||
                         actualType is LimeLambda
                 ) {
                     "${parameter.path.name}_value"
@@ -609,7 +615,7 @@ internal class JsGenerator : Generator {
             put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
             put(
                 "adapterCallPrefix",
-                if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet) {
+                if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet || isBlob(returnType)) {
                     "auto result = "
                 } else if (thrownException != null) {
                     "auto result = "
@@ -618,7 +624,7 @@ internal class JsGenerator : Generator {
                 },
             )
             put("adapterReturnConversion", if (thrownException != null) {
-                thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid)
+                thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid, returnType)
             } else {
                 adapterReturnConversion(returnType, returnActualType)
             })
@@ -630,7 +636,8 @@ internal class JsGenerator : Generator {
                             returnType.isNullable ||
                             returnActualType is LimeList ||
                             returnActualType is LimeMap ||
-                            returnActualType is LimeSet
+                            returnActualType is LimeSet ||
+                            isBlob(returnType)
                     ) {
                         "emscripten::val"
                     } else {
@@ -659,7 +666,7 @@ internal class JsGenerator : Generator {
         val actualType = typeRef.type.actualType
         return when {
             actualType is LimeLambda -> lambdaAdapterPreparation(actualType, parameter.path.name, callName)
-            typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet ->
+            typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) ->
                 "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             else -> ""
         }
@@ -671,6 +678,9 @@ internal class JsGenerator : Generator {
             actualType.typeId == TypeId.STRING &&
             typeRef.attributes.get(com.here.gluecodium.model.lime.LimeAttributeType.CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.TYPE) != null
     }
+
+    private fun isBlob(typeRef: LimeTypeRef): Boolean =
+        (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.BLOB
 
     private fun jsToNative(typeRef: LimeTypeRef, source: String): String {
         if (typeRef.isNullable) {
@@ -703,6 +713,12 @@ internal class JsGenerator : Generator {
                     "for (const auto& entry : $source.call<emscripten::val>(\"values\")) { " +
                     "converted.emplace($element); } return converted; }())"
             }
+            is LimeBasicType ->
+                if (actualType.typeId == TypeId.BLOB) {
+                    "::std::make_shared<::std::vector<uint8_t>>(emscripten::convertJSArrayToNumberVector<uint8_t>($source))"
+                } else {
+                    "$source.as<${embindNameResolver.resolveName(typeRef.type)}>()"
+                }
             else -> "$source.as<${embindNameResolver.resolveName(typeRef.type)}>()"
         }
 
@@ -724,7 +740,7 @@ internal class JsGenerator : Generator {
         returnType: com.here.gluecodium.model.lime.LimeTypeRef,
         actualType: com.here.gluecodium.model.lime.LimeType,
     ): String {
-        return if (returnType.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet) {
+        return if (returnType.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(returnType)) {
             "return ${nativeToJs(returnType, "result")};"
         } else {
             ""
@@ -759,17 +775,24 @@ internal class JsGenerator : Generator {
                     "for (const auto& entry : $source) { jsResult.call<void>(\"add\", $element); } " +
                     "return jsResult; }())"
             }
+            is LimeBasicType ->
+                if (actualType.typeId == TypeId.BLOB) {
+                    "($source ? emscripten::val::array(*$source) : emscripten::val::array(::std::vector<uint8_t>{}))"
+                } else {
+                    "emscripten::val($source)"
+                }
             else -> "emscripten::val($source)"
         }
 
-    private fun thrownReturnConversion(errorIsEnum: Boolean, returnIsVoid: Boolean): String {
+    private fun thrownReturnConversion(errorIsEnum: Boolean, returnIsVoid: Boolean, returnType: LimeTypeRef): String {
         if (errorIsEnum && returnIsVoid) {
             return "auto jsResult = emscripten::val::object(); " +
                 "if (result.value() != 0) { jsResult.set(\"error\", result.value()); } " +
                 "return jsResult;"
         }
         val errorExpression = if (errorIsEnum) "result.error().value()" else "result.error()"
-        val successExpression = if (returnIsVoid) "" else " jsResult.set(\"value\", result.unsafe_value());"
+        val successExpression =
+            if (returnIsVoid) "" else " jsResult.set(\"value\", ${nativeToJs(returnType, "result.unsafe_value()")});"
         return "auto jsResult = emscripten::val::object(); " +
             "if (result) {$successExpression} else { jsResult.set(\"error\", $errorExpression); } " +
             "return jsResult;"
@@ -799,6 +822,7 @@ internal class JsGenerator : Generator {
                 "cppType" to cppType,
                 "cppFieldName" to if (hasAccessors) null else cppNameCache.getName(field),
                 "hasAccessors" to hasAccessors,
+                "hasBlob" to isBlob(field.typeRef),
                 "cppGetterName" to cppNameCache.getGetterName(field),
                 "cppSetterName" to cppNameCache.getSetterName(field),
                 "accessorType" to accessorType,

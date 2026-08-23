@@ -1,6 +1,6 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: In progress; Strings, BuiltinTypes, Enums, and Structs Node.js functional coverage is passing
+**Status**: In progress; Strings, BuiltinTypes, Enums, Structs, and Blobs Node.js functional coverage is passing
 
 **Date**: 2026-08-23
 
@@ -17,6 +17,8 @@ the `js` generator:
 - `Enums`: enum member export and round-trip behavior, including enums used by type collections.
 - `Structs`: public and nested value-object fields, object-literal input, field mutation, and
   accessor-backed C++ struct fields.
+- `Blobs`: `std::shared_ptr<std::vector<uint8_t>>` conversion to and from JavaScript `Uint8Array`,
+  including blobs nested in value objects, byte-buffer APIs, and nullable results.
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
@@ -38,6 +40,10 @@ ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascrip
 The build and filtered CTest run pass for the checkpoint scope. The generated module is compiled
 with `-sWASM_BIGINT=1`, and the Node tests assert `bigint` values for `Long` and `ULong` methods.
 The focused Structs test passes all three cases, and `unit_tests_javascript` passes through CTest.
+The focused Blobs test passes all four cases, including null shared pointers mapping to an empty
+`Uint8Array` for non-nullable results and `undefined` for nullable results. The immutable Blob
+value-object fixture remains skipped for JS because embind `value_object` bindings require a
+default-constructible, writable class without custom construction support.
 
 ## Generator Fixes Exercised
 
@@ -55,6 +61,8 @@ The first tests found several embind generation defects that are fixed in this c
 - generic vector/map/optional registrations include the C++ headers needed by their element types;
 - enum bindings avoid Emscripten runtime names such as `InternalError` by using a distinct embind
   public name while retaining the generated C++ type identity.
+- Blob adapters convert JavaScript typed arrays with `convertJSArrayToNumberVector` and convert
+  native byte vectors back with `emscripten::val::array`, guarding nullable shared pointers.
 
 ## Next Work
 
