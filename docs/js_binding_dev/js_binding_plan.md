@@ -618,6 +618,8 @@ once the LimeIDL/API surface and host queue-pumping ownership are defined.
 
 ### Phase 6 — Output File Structure
 
+**Status:** See [status_phase6.md](status_phase6.md).
+
 Mirror `PythonNameRules.PYTHON_TARGET_DIRECTORY` / `PYBIND11_TARGET_DIRECTORY` layout:
 
 ```

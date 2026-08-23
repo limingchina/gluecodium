@@ -158,7 +158,7 @@ internal class JsGenerator : Generator {
         }
 
         return stubFiles + embindFiles +
-            generateCommonFiles(embindFilteredModel, nameResolvers)
+            generateCommonFiles(embindFilteredModel, jsFilteredModel, nameResolvers)
     }
 
     private fun generateStubFile(
@@ -765,6 +765,7 @@ internal class JsGenerator : Generator {
 
     private fun generateCommonFiles(
         filteredModel: LimeModel,
+        jsFilteredModel: LimeModel,
         nameResolvers: Map<String, NameResolver>,
     ): List<GeneratedFile> {
         // Module init: aggregates every per-top-level-element register_* call inside one
@@ -818,11 +819,76 @@ internal class JsGenerator : Generator {
                 mapOf("wrapperTypes" to wrapperTypes),
                 nameResolvers,
             )
-        return listOf(
+        val packageFiles =
+            if (emitTypeScriptStubs) {
+                generatePackageFiles(jsFilteredModel, nameResolvers)
+            } else {
+                emptyList()
+            }
+        return packageFiles + listOf(
             GeneratedFile(moduleInitContent, JsNameRules.MODULE_INIT_FILE),
             GeneratedFile(wrapperRuntimeContent, JsNameRules.WRAPPER_RUNTIME_FILE),
         )
     }
+
+    private fun generatePackageFiles(
+        filteredModel: LimeModel,
+        nameResolvers: Map<String, NameResolver>,
+    ): List<GeneratedFile> {
+        val packageTypes =
+            filteredModel.topElements
+                .filterIsInstance<LimeNamedElement>()
+                .groupBy { it.path.head }
+                .toSortedMap(compareBy { it.joinToString(".") })
+        val indexFiles =
+            packageTypes.map { (packagePath, elements) ->
+                val exports =
+                    elements
+                        .sortedBy { nameRules.getName(it) }
+                        .map { mapOf("moduleName" to nameRules.getName(it)) }
+                val content =
+                    TemplateEngine.render(
+                        "js/JsIndex",
+                        mapOf("exports" to exports),
+                        nameResolvers,
+                    )
+                val directory = packagePath.joinToString(java.io.File.separator)
+                GeneratedFile(
+                    content,
+                    JsNameRules.JS_TARGET_DIRECTORY + directory + java.io.File.separator + "index.d.ts",
+                )
+            }
+        val packageJson =
+            TemplateEngine.render(
+                "js/JsPackageJson",
+                mapOf(
+                    "packageName" to jsonString(jsModuleName),
+                    "typesPath" to packageTypes.keys.singleOrNull()?.let { packagePath ->
+                        (packagePath + "index.d.ts").joinToString("/").let { "./$it" }
+                    },
+                ),
+                nameResolvers,
+            )
+        val tsconfig =
+            TemplateEngine.render(
+                "js/JsTsconfig",
+                emptyMap<String, Any>(),
+                nameResolvers,
+            )
+        return indexFiles +
+            listOf(
+                GeneratedFile(packageJson, JsNameRules.JS_PACKAGE_JSON_FILE),
+                GeneratedFile(tsconfig, JsNameRules.JS_TSCONFIG_FILE),
+            )
+    }
+
+    private fun jsonString(value: String) =
+        value
+            .replace("\\", "\\\\")
+            .replace("\"", "\\\"")
+            .replace("\n", "\\n")
+            .replace("\r", "\\r")
+            .replace("\t", "\\t")
 
     private fun collectGenericRegistrations(filteredModel: LimeModel): List<Map<String, Any>> {
         val registrations = linkedMapOf<String, Map<String, Any>>()
