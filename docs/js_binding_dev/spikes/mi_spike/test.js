@@ -22,7 +22,7 @@ factory().then((Module) => {
   assert(narrow !== null && narrow !== undefined, 'upcastToNarrow returns non-null');
   console.log('NOTE: upcast result parentFunctionLight() =', narrow.parentFunctionLight());
 
-  // 4. Referential equality: embind caches wrapper per pointer for smart_ptr-held objects.
+  // 4. Distinct C++ objects should produce distinct JS wrappers.
   const mc2 = Module.getMultiClass(); // different object
   assert(mc !== mc2, 'distinct C++ objects yield distinct JS wrappers');
 
