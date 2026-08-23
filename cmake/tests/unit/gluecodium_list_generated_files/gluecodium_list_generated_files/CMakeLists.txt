@@ -43,7 +43,8 @@ gluecodium_list_generated_files(
   OUTPUT_ALL _all_files
   OUTPUT_CPP _cpp_files
   OUTPUT_SWIFT _swift_files
-  OUTPUT_BRIDGING_HEADERS _bridging_files)
+  OUTPUT_BRIDGING_HEADERS _bridging_files
+  OUTPUT_JS _js_files)
 
 set(_unity_dir "${CMAKE_CURRENT_BINARY_DIR}/gluecodium/shared.module/generated-sources/unity")
 
@@ -118,6 +119,15 @@ elseif(ANDROID)
     CONDITION DEFINED _bridging_files
     MESSAGE "When Swift code is not generated"
             "then variable with bridging headers should be undefined")
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+  test_expect_strequal_lists(
+    EXPECTED "${_unity_dir}/js/shared.module_main_embind.cpp"
+             "${_unity_dir}/js/shared.module_common_embind.cpp"
+    ACTUAL ${_js_files}
+    MESSAGE "When JS is generated"
+            "then both JS source sets must be returned")
 endif()
 
 gluecodium_list_generated_files(

@@ -23,6 +23,10 @@ Copyright (C) 2026 HERE Europe B.V.
 SPDX-License-Identifier: Apache-2.0
 }}
 #include <emscripten/bind.h>
+{{#genericRegistrationIncludes}}
+{{#isSystem}}#include <{{fileName}}>{{/isSystem}}
+{{^isSystem}}#include "{{fileName}}"{{/isSystem}}
+{{/genericRegistrationIncludes}}
 {{#needsUnorderedSet}}
 #include <unordered_set>
 {{/needsUnorderedSet}}
@@ -32,12 +36,12 @@ void {{name}}();
 {{/registerFunctions}}
 
 EMSCRIPTEN_BINDINGS({{moduleName}}) {
-{{#genericRegistrations}}
-    {{#optional}}emscripten::register_optional<{{type}}>();{{/optional}}
-    {{#vector}}emscripten::register_vector<{{type}}>("{{name}}");{{/vector}}
-    {{#map}}emscripten::register_map<{{keyType}}, {{valueType}}>("{{name}}");{{/map}}
-{{/genericRegistrations}}
 {{#registerFunctions}}
     {{name}}();
 {{/registerFunctions}}
+{{#genericRegistrations}}
+  {{#optional}}emscripten::register_optional<{{type}}>();{{/optional}}
+  {{#vector}}emscripten::register_vector<{{type}}>("{{name}}");{{/vector}}
+  {{#map}}emscripten::register_map<{{keyType}}, {{valueType}}>("{{name}}");{{/map}}
+{{/genericRegistrations}}
 }

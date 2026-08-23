@@ -40,5 +40,9 @@ function(get_supported_gluecodium_generators result)
     list(APPEND _gluecodium_generator dart)
   endif()
 
+  if(CMAKE_SYSTEM_NAME STREQUAL "Emscripten")
+    list(APPEND _gluecodium_generator js)
+  endif()
+
   set(${result} ${_gluecodium_generator} PARENT_SCOPE)
 endfunction()

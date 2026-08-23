@@ -50,6 +50,21 @@ cmake path/to/example -GXcode
 ```
 Optionally parameter `-DENABLE_APP=OFF` can be passed to skip building the test application. In this case only framework is built which can be used in another existing Xcode project.
 
+## JavaScript/WebAssembly
+
+With the Emscripten SDK activated, configure the calculator with `emcmake` and enable the embind
+module:
+
+```
+emcmake cmake path/to/example -G Ninja -DENABLE_APP=OFF -DENABLE_JS=ON
+cmake --build . --target mylibrary_js
+node calculator-js-smoke.mjs
+```
+
+The generated module is emitted as `generated.mjs` with its accompanying `.wasm` file. Browser
+deployment of the pthread-enabled build requires `Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp` response headers.
+
 To build framework from console:
 ```
 # Build debug

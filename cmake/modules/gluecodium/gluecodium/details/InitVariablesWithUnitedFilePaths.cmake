@@ -35,5 +35,7 @@ macro(gluecodium_init_variables_with_united_file_paths name_suffix)
     set(GLUECODIUM_GENERATED_swift_${_source_group}
         swift/${name_suffix}_${_source_group}_glue.swift)
     set(GLUECODIUM_GENERATED_dart_${_source_group} dart/${name_suffix}_${_source_group}_ffiglue.cpp)
+    set(GLUECODIUM_GENERATED_js_${_source_group}
+      js/${name_suffix}_${_source_group}_embind.cpp)
   endforeach()
 endmacro()

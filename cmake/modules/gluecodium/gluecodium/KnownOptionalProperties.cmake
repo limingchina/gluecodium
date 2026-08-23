@@ -280,6 +280,47 @@ _gluecodium_define_target_property(
 )
 
 _gluecodium_define_target_property(
+  GLUECODIUM_JS_PACKAGE
+  BRIEF_DOCS "The base JS/TS package to use for generated sources"
+  FULL_DOCS
+    "The base JS/TS package to use for generated sources, for example \"com.my_company\"."
+    "This property is initialized by the value of the GLUECODIUM_JS_PACKAGE_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
+  GLUECODIUM_JS_INTERNAL_PACKAGE
+  BRIEF_DOCS "The sub-package to use for internal JS/TS code"
+  FULL_DOCS
+    "The sub-package to use for internal JS/TS code. This value is appended with separator '.' to a value passed with GLUECODIUM_JS_PACKAGE."
+    "This property is initialized by the value of the GLUECODIUM_JS_INTERNAL_PACKAGE_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
+  GLUECODIUM_JS_MODULE_NAME
+  BRIEF_DOCS "Name of the generated Emscripten module"
+  FULL_DOCS
+    "Name of the generated Emscripten module and embind binding namespace."
+    "This property is initialized by the value of the GLUECODIUM_JS_MODULE_NAME_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
+  GLUECODIUM_JS_NAMERULES
+  BRIEF_DOCS "The path to a file with name rules for JS/TS"
+  FULL_DOCS
+    "The path to a file with name rules for JS/TS."
+    ${_gluecodium_namerules_doc}
+    "This property is initialized by the value of the GLUECODIUM_JS_NAMERULES_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
+  GLUECODIUM_JS_EMIT_TYPESCRIPT_STUBS
+  BRIEF_DOCS "Emit TypeScript declaration stubs for JS"
+  FULL_DOCS
+    "Emit .d.ts declaration stubs alongside the generated JS output."
+    "This property is initialized by the value of the GLUECODIUM_JS_EMIT_TYPESCRIPT_STUBS_DEFAULT variable if it is set when the function gluecodium_add_generate_command is called."
+)
+
+_gluecodium_define_target_property(
   GLUECODIUM_WERROR
   BRIEF_DOCS "The list of warnings to treat as errors."
   FULL_DOCS

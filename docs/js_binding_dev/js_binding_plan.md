@@ -654,10 +654,6 @@ the whitelist in
 `cmake/tests/utils/get_supported_gluecodium_generators.cmake` so CMake tests advertise `js` only
 when an Emscripten toolchain is available or active.
 
-Do not refer to `cmake/modules/gluecodium/Python.cmake` as an existing local file: that module was
-introduced by the historical Python integration commit and is not present on this branch. The
-Python commit is useful as a history reference, not as a mechanical template.
-
 #### 7.2 New `cmake/modules/gluecodium/Js.cmake`
 
 Unlike `Python.cmake` (which links a normal native `.so`/`.pyd` built by the *host* compiler
