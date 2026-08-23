@@ -1,6 +1,6 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: In progress; Strings, BuiltinTypes, Enums, Structs, Blobs, and Classes Node.js functional coverage is passing
+**Status**: In progress; Strings, BuiltinTypes, Enums, Structs, Blobs, Classes, and TypeDefs Node.js functional coverage is passing
 
 **Date**: 2026-08-23
 
@@ -21,6 +21,7 @@ the `js` generator:
   including blobs nested in value objects, byte-buffer APIs, and nullable results.
 - `Classes`: static factory construction, instance method mutation, shared-pointer round trips,
   referential aliasing, and explicit `delete()` disposal.
+- `TypeDefs`: primitive, nested, blob, type-collection, and struct aliases through static class methods.
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
@@ -48,6 +49,24 @@ value-object fixture remains skipped for JS because embind `value_object` bindin
 default-constructible, writable class without custom construction support.
 The focused Classes test passes both cases, including shared-pointer aliasing through nested class
 values and explicit disposal of embind handles.
+
+## Lessons Learned
+
+- Treat LimeIDL inputs as a dependency-closed set for each feature. `StaticTypedef.lime` references
+  `TypeCollection.PointTypedef`, so the TypeDefs feature must include `TypeCollection.lime` or model
+  validation and generation will fail before the JS bindings are produced.
+- CMake generation runs the Gradle wrapper project under `cmake/modules/gluecodium/gluecodium/details`,
+  which normally resolves the published Gluecodium artifact. Set `GLUECODIUM_PATH="$PWD"` when
+  validating local generator changes; running the repository root's `./gradlew run` is not an equivalent
+  replacement and can hide or create misleading ServiceLoader/provider failures.
+- Direct Gluecodium generation updates `main/js`, but the package copied beside the Emscripten module
+  is produced by the JS target's `POST_BUILD` step. Rebuild the module after generation, and use the
+  same local-generator setting, or Node tests may import stale package indexes.
+- A type alias does not create an embind runtime object. The package facade must export the owning class
+  or struct that contains alias-using methods; TypeScript alias declarations alone do not make a runtime
+  `StaticTypedef` export appear.
+- Register every new Node test in both parts of `functional-tests/functional/js/CMakeLists.txt`:
+  `configure_file` copies the test into the build tree, while the `add_test` file list is what executes it.
 
 ## Generator Fixes Exercised
 
@@ -94,6 +113,8 @@ and a green `ctest -R unit_tests_javascript` run.
 | Structs | value objects, nested structs, object-literal input, accessors |
 | Blobs | `shared_ptr<vector<uint8_t>>` ↔ `Uint8Array`, nullable results |
 | Classes | factories, instance methods, shared-pointer aliasing, explicit `delete()` |
+| Constants | scalar, enum, struct, collection, and skipped constant exports |
+| TypeDefs | primitive, nested, blob, type-collection, and struct aliases |
 
 ### Dependency analysis
 
@@ -286,7 +307,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | Batch | Features | Status |
 |-------|----------|--------|
 | 0 (done) | Strings, BuiltinTypes, Enums, Structs, Blobs, Classes | ✅ passing |
-| 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | not started |
+| 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | partially complete: Constants and TypeDefs passing |
 | 2 | Interfaces, Listeners, ComplexListeners, ListenersWithReturnValues, CallbacksWithThreads, Properties | not started |
 | 3 | MethodOverloading, Errors, Nullable, Equatable, Inheritance, MultipleInheritance, Nesting, Lambdas | not started |
 | 4 | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash, DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
