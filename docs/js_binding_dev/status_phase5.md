@@ -46,16 +46,39 @@ Phase 4 harness OK
 The failed identity assertion is intentionally retained as a documented spike
 result rather than a passing production test until the cache design is defined.
 
+## Item 2 - Multiple Inheritance
+
+**Status**: Verified
+
+The generator now selects one primary embind `base<>` parent, preferring an open
+class over a narrow interface, and flattens members from secondary parents onto
+the derived registration. Flattened methods use an explicit derived-class
+lambda because embind does not expose an inherited secondary-base member pointer
+on the derived JavaScript prototype. Interfaces also register their
+`std::shared_ptr` holders so interface-returning factory methods and explicit
+upcasts resolve correctly.
+
+The persistent harness covers:
+
+- primary-base method and property access;
+- flattened secondary-interface method and property access;
+- factory returns typed as the secondary interface; and
+- explicit `MultiClass` to `NarrowInterface` upcasting.
+
+The complete generation, Emscripten build, and Node.js assertions pass:
+
+```text
+Phase 5 harness OK
+```
+
 ## Remaining Phase 5 Items
 
 1. Design and implement the pointer-to-wrapper cache for same-object identity.
-2. Validate primary-base and flattened-secondary multiple inheritance in the
-   persistent harness.
-3. Add JavaScript-implemented interface and callback trampoline coverage.
-4. Add callable `LimeLambda` coverage and document callback thread behavior.
-5. Add exception and `Return<T, Error>` behavior where it belongs in the
+2. Add JavaScript-implemented interface and callback trampoline coverage.
+3. Add callable `LimeLambda` coverage and document callback thread behavior.
+4. Add exception and `Return<T, Error>` behavior where it belongs in the
    generator/build plan.
-6. Add pthread callback and cross-thread `emscripten::val` spike coverage.
+5. Add pthread callback and cross-thread `emscripten::val` spike coverage.
 
 Each item should be independently verified and committed before the next item
 begins.
