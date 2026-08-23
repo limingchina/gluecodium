@@ -28,7 +28,7 @@ def parse_arguments():
     parser.add_argument(
         "--directory",
         type=Path,
-        default=Path(__file__).resolve().parent,
+        default=Path(__file__).absolute().parent,
         help="directory containing index.html and the generated module",
     )
     parser.add_argument("--host", default="127.0.0.1")
