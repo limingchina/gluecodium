@@ -49,7 +49,8 @@ The first tests found two embind generation defects that are fixed in this check
 
 `Enums` and `Structs` have initial Node test files present in the worktree for the next modular
 iteration, but are intentionally not included or enabled in this checkpoint. Their broader model
-currently causes JS generation to fail before compilation, and Node 23 does not treat a directory
-argument to `node --test` as a test collection in this environment. The next iteration should
-first fix the expanded-model generator failure, then enable enum and value-object tests one feature
-group at a time.
+currently causes JS generation to fail before compilation. The Node versions tested locally
+(22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all treat a directory argument to `node --test`
+as a module entry rather than a test collection, so the harness passes explicit test-file paths.
+The next iteration should first fix the expanded-model generator failure, then enable enum and
+value-object tests one feature group at a time.
