@@ -433,8 +433,9 @@ Caveats:
 - Keep it lightweight and clearly-marked as a dev-only harness (whether in-repo under a dedicated
   directory or as a scratch location) so it does not compete with `Js.cmake` once Phase 7 lands;
   at that point it is retired in favor of the real integration and §7.4's calculator example.
-- Smoke tests remain skipped per §8.1; this harness serves the functional-verification role during
-  development only.
+- Smoke tests remain deferred per §8.1 (golden reference files are generated only after all
+  functional tests pass); this harness serves the functional-verification role during development
+  only.
 - Phase 5 features (callbacks, JS-implemented interfaces, disposal) will require extending the
   harness incrementally — expected, not a redesign.
 - This does **not** replace §7.4: the calculator example still becomes a first-class generated-JS
@@ -691,9 +692,10 @@ than guessing blind.
 
 ### Phase 8 — Testing
 
-#### 8.1 Smoke tests — deliberately skipped during development
+#### 8.1 Smoke tests — deferred until functional tests pass
 
-**Decision: skip the smoke-test suite (and its reference files) entirely for the JS generator.**
+**Decision: skip the smoke-test suite (and its reference files) during development; generate the
+golden reference files only after all functional tests are passing.**
 
 The existing smoke tests (`gluecodium/src/test/resources/smoke/`) compare generated output against
 checked-in reference files. Every generator feature change requires regenerating those reference
@@ -708,11 +710,15 @@ Instead:
 - **JVM-side unit tests** still cover the pure-logic pieces that functional tests can't reach
   cheaply (name resolvers, comments processing, predicates) via targeted Kotlin unit tests against
   small in-memory LIME models — but without checked-in golden files.
-- If a regression ever demands output-level diffing, it can be added ad hoc later; do not maintain
-  a standing `smoke/js/` reference directory.
+- **Golden reference files are generated once, at the end**: once the functional-test suite is
+  fully passing (i.e., the generated bindings compile under `em++` and behave correctly in
+  Node.js/browser), run `DUMP_ACTUAL_DIR=... ./gradlew test` to capture the generated output as
+  the checked-in `smoke/js/` reference directory. At that point the output is known-good by
+  construction, so the reference files cost one regeneration instead of dozens, and from then on
+  they serve as a cheap regression tripwire for template/name-resolver changes.
 
-This deviates from how Python was built (it inherited the full smoke suite), and that deviation is
-intentional.
+This deviates from how Python was built (it inherited the full smoke suite from day one), and that
+deviation is intentional: same end state, different sequencing.
 
 #### 8.2 Functional tests
 
