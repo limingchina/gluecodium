@@ -65,8 +65,12 @@ The generated module is emitted as `generated.mjs` with its accompanying `.wasm`
 deployment of the pthread-enabled build requires `Cross-Origin-Opener-Policy: same-origin` and
 `Cross-Origin-Embedder-Policy: require-corp` response headers.
 
-The same build directory contains `index.html` and `app.mjs`, a small browser application that
-creates `module.Calculator.make()` and uses the generated class to calculate a sum from the form.
+The same build directory contains `index.html` and `app.mjs`, a browser calculator application that
+creates `module.Calculator.make()` and uses the generated class for addition, subtraction,
+multiplication, and division. Press the on-screen number and operator buttons, then press `=` to
+get a result. The number keys, decimal point, operators, `Enter`, `Escape`, and `Backspace` also
+work from the keyboard. `C` resets the current calculation, and **Clear history** resets the five
+most recent calculations.
 The build also copies `serve.py`, which starts a static server with the required headers:
 
 ```
@@ -75,8 +79,8 @@ python3 serve.py
 ```
 
 Open `http://localhost:8000/index.html` in a browser. The page loads the generated ES module,
-creates one `Calculator` instance, calls `summarize` when the form is submitted, and releases the
-embind handle when the page is closed.
+creates one `Calculator` instance, dispatches the selected operation through the generated embind
+API, and releases native handles when the page is closed or an operation completes.
 
 To build framework from console:
 ```
