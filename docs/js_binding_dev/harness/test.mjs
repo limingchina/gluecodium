@@ -58,6 +58,10 @@ assert.deepEqual(MultipleInheritanceFactory.invokeThrowing(true), { value: "succ
 assert.deepEqual(MultipleInheritanceFactory.invokeThrowing(false), { error: 7 });
 assert.deepEqual(MultipleInheritanceFactory.invokeThrowingVoid(true), {});
 assert.deepEqual(MultipleInheritanceFactory.invokeThrowingVoid(false), { error: 7 });
+assert.deepEqual(MultipleInheritanceFactory.invokePayloadThrowing(true), { value: "payload-success" });
+assert.deepEqual(MultipleInheritanceFactory.invokePayloadThrowing(false), {
+	error: { code: 9, message: "payload failure" },
+});
 
 multi.delete();
 narrow.delete();

@@ -138,4 +138,13 @@ std::string MultipleInheritanceFactory::invoke_lambda(
     return std::error_code(7, std::generic_category());
 }
 
+::Return<std::string, CallbackPayload> MultipleInheritanceFactory::invoke_payload_throwing(
+    const bool success
+) {
+    if (success) {
+        return std::string("payload-success");
+    }
+    return CallbackPayload{9, "payload failure"};
+}
+
 }  // namespace phase5

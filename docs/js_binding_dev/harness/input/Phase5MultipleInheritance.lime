@@ -7,6 +7,11 @@ enum CallbackError {
     FAILED
 }
 
+struct CallbackPayload {
+    code: Int
+    message: String
+}
+
 open class OpenClass {
     fun parentFunction(): String
     property parentProperty: String
@@ -34,6 +39,8 @@ class MultipleInheritanceFactory {
     static fun invokeLambda(callback: StringTransformer, value: String): String
     static fun invokeThrowing(success: Boolean): String throws Callback
     static fun invokeThrowingVoid(success: Boolean) throws Callback
+    static fun invokePayloadThrowing(success: Boolean): String throws CallbackWithPayload
 
     exception Callback(CallbackError)
+    exception CallbackWithPayload(CallbackPayload)
 }

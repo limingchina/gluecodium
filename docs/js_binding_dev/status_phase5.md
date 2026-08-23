@@ -137,7 +137,7 @@ Phase 5 harness OK
 
 ## Item 5 - Exceptions and `Return<T, Error>`
 
-**Status**: Verified for non-void and void enum-based errors
+**Status**: Verified for enum-based and struct-backed errors
 
 Methods declared with `throws` retain their generated C++
 `Return<T, Error>` signature and are registered through an `emscripten::val`
@@ -146,9 +146,9 @@ calls return an object with an `error` property. Enum-based errors are exposed
 as their numeric `std::error_code::value()`.
 
 The persistent harness verifies both branches of synchronous `String throws
-Callback` and `Void throws Callback` methods. Struct-backed payload errors are
-not included in this item yet because their payload registration and JavaScript
-error shape need a separate compatibility check.
+Callback` and `Void throws Callback` methods, plus success and payload-error
+branches of `String throws CallbackWithPayload`. Struct-backed errors are
+returned as their bound payload object under the `error` property.
 
 Verification passes:
 
@@ -159,8 +159,7 @@ Phase 5 harness OK
 
 ## Remaining Phase 5 Items
 
-1. Add struct-backed exception payload coverage and finalize error shape.
-2. Add pthread callback and cross-thread `emscripten::val` spike coverage.
+1. Add pthread callback and cross-thread `emscripten::val` spike coverage.
 
 Each item should be independently verified and committed before the next item
 begins.
