@@ -50,6 +50,8 @@ result rather than a passing production test until the cache design is defined.
 
 **Status**: Verified
 
+**Commit**: `abe50017c` - `Add JavaScript multiple inheritance bindings`
+
 The generator now selects one primary embind `base<>` parent, preferring an open
 class over a narrow interface, and flattens members from secondary parents onto
 the derived registration. Flattened methods use an explicit derived-class
@@ -70,6 +72,15 @@ The complete generation, Emscripten build, and Node.js assertions pass:
 ```text
 Phase 5 harness OK
 ```
+
+The repository regression suite also passes:
+
+```text
+./gradlew test -q
+```
+
+The status update is recorded in commit `2555ad2ec` - `Record Phase 5 multiple
+inheritance status`.
 
 ## Remaining Phase 5 Items
 
