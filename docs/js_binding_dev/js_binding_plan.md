@@ -7,8 +7,8 @@
 > **Related**: Follows the same architectural precedent as `docs/python_pybind11_plan.md`
 > (Dart FFI / Swift CBridge / Python pybind11 generators used as reference implementations)
 >
-> **Reference implementation location**: The Python binding implementation lives in a **separate
-> checkout at `~/dev/gluecodium1`** — a directory parallel to this project's folder
+> **Reference implementation location**: The Python binding implementation exists on the
+> **`python_bind` branch** and lives in a **separate checkout at `~/dev/gluecodium1`** — a directory parallel to this project's folder
 > (`~/dev/gluecodium`). During development, use it directly for code search and reference
 > (e.g. `grep`/read `~/dev/gluecodium1/gluecodium/src/main/java/com/here/gluecodium/generator/python/`
 > when mirroring `PythonGenerator` structure), rather than relying on the summarized snippets in
