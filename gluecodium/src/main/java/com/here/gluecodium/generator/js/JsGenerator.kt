@@ -370,6 +370,7 @@ internal class JsGenerator : Generator {
             "model" to type,
             "internalNamespace" to internalNamespace,
             "jsName" to nameRules.getName(type),
+            "embindName" to embindPublicName(type),
             "cppFullName" to cppNameCache.getFullyQualifiedName(type),
             "registerName" to resolveRegisterName(type),
         )
@@ -794,7 +795,7 @@ internal class JsGenerator : Generator {
                 if (field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null) {
                     null
                 } else {
-                    field.path.tail.last()
+                    cppNameCache.getName(field)
                 },
         )
 
@@ -1094,6 +1095,15 @@ internal class JsGenerator : Generator {
         val name = nameRules.getFlattenedName(limeElement)
         val packagePath = limeElement.path.head.joinToString("_")
         return if (packagePath.isNotEmpty()) "${packagePath}_$name" else name
+    }
+
+    private fun embindPublicName(type: com.here.gluecodium.model.lime.LimeType): String {
+        val jsName = nameRules.getName(type)
+        return if (jsName in setOf("InternalError", "BindingError", "UnboundTypeError")) {
+            "${resolveRegisterName(type)}Type"
+        } else {
+            jsName
+        }
     }
 
     // Topologically sorts register names so that every base class appears before its derived

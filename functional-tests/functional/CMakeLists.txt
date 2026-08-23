@@ -165,7 +165,7 @@ feature(TypeDefs cpp android android-kotlin swift dart SOURCES
     input/lime/StaticTypedef.lime
 )
 
-feature(Enums cpp android android-kotlin swift dart SOURCES
+feature(Enums cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Enums.cpp
     input/src/cpp/EnumsTypeCollection.cpp
 
