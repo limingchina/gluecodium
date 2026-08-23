@@ -79,6 +79,18 @@ if(ENABLE_JS)
     "${CMAKE_CURRENT_LIST_DIR}/js/smoke.mjs"
     "${CMAKE_CURRENT_BINARY_DIR}/calculator-js-smoke.mjs"
     COPYONLY)
+  configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/js/index.html"
+    "${CMAKE_CURRENT_BINARY_DIR}/index.html"
+    COPYONLY)
+  configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/js/app.mjs"
+    "${CMAKE_CURRENT_BINARY_DIR}/app.mjs"
+    COPYONLY)
+  configure_file(
+    "${CMAKE_CURRENT_LIST_DIR}/js/serve.py"
+    "${CMAKE_CURRENT_BINARY_DIR}/serve.py"
+    COPYONLY)
 endif()
 
 if (CMAKE_GENERATOR STREQUAL "Xcode")

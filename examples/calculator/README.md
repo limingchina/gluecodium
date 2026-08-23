@@ -65,6 +65,19 @@ The generated module is emitted as `generated.mjs` with its accompanying `.wasm`
 deployment of the pthread-enabled build requires `Cross-Origin-Opener-Policy: same-origin` and
 `Cross-Origin-Embedder-Policy: require-corp` response headers.
 
+The same build directory contains `index.html` and `app.mjs`, a small browser application that
+creates `module.Calculator.make()` and uses the generated class to calculate a sum from the form.
+The build also copies `serve.py`, which starts a static server with the required headers:
+
+```
+cd build-calculator-js
+python3 serve.py
+```
+
+Open `http://localhost:8000/index.html` in a browser. The page loads the generated ES module,
+creates one `Calculator` instance, calls `summarize` when the form is submitted, and releases the
+embind handle when the page is closed.
+
 To build framework from console:
 ```
 # Build debug

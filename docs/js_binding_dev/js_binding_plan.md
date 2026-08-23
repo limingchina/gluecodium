@@ -1,6 +1,6 @@
 # Gluecodium JavaScript/WebAssembly Generator Plan (embind Approach)
 
-> **Status**: Design phase
+> **Status**: Phase 7 complete; Phase 8 testing remains
 > **Author**: l2ming (plan drafted with Claude)
 > **Date**: 2026-08-16
 > **Base branch analyzed**: `limingchina/gluecodium` @ `python_bind` (commit `6d0c3ac`, "Emit `@typing.overload` in generated .pyi stubs for overloaded functions")
@@ -645,129 +645,11 @@ Architecture Decision).
 
 ### Phase 7 — Build Integration (the largest infrastructure departure)
 
-#### 7.1 Add `js` to the CMake-supported generator list
-
-The JS generator is already registered with the ServiceLoader and can be invoked directly with
-`-generators cpp,js`, but it is not yet a supported CMake generator in this checkout. Add `js` to
-the whitelist in
-`cmake/modules/gluecodium/gluecodium/details/ReadRequiredProperties.cmake` and update
-`cmake/tests/utils/get_supported_gluecodium_generators.cmake` so CMake tests advertise `js` only
-when an Emscripten toolchain is available or active.
-
-#### 7.2 New `cmake/modules/gluecodium/Js.cmake`
-
-Unlike `Python.cmake` (which links a normal native `.so`/`.pyd` built by the *host* compiler
-against a separately-installed CPython), the entire dependency chain here must be compiled by
-`em++`. This is not a drop-in analog of `gluecodium_target_python_sources()` — it needs one of:
-
-1. **Emscripten toolchain file** applied to the whole CMake configure step
-   (`-DCMAKE_TOOLCHAIN_FILE=$EMSDK/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake`),
-   so the HERE SDK core, generated C++, and embind glue are all built as one `em++` invocation —
-   this is the most consistent approach with the C++ generator's existing output.
-2. A separate wasm-only super-build target that only pulls in the subset of the C++ core needed
-   for the exposed API surface, if compiling the *entire* SDK core to wasm is not desired for size
-   reasons.
-
-Recommend spiking option 1 first (§0.3) since it requires the least new CMake machinery; only
-pursue option 2 if wasm binary size becomes a demonstrated problem.
-
-> **Spike status update (2026-08-22)**: Phase 0.3 is complete (`docs/js_binding_dev/spike_phase0_results.md`).
-> The calculator example already compiles cleanly under `emcmake`/`em++` with zero source changes,
-> using a *hand-written* `EMSCRIPTEN_BINDINGS` entry point. That hand-written spike is not a
-> substitute for the work in §7.4 below — the point there is to replace the hand-written glue
-> with generator output.
-
-The CMake module also needs to bridge the existing target-property and generation machinery:
-
-- Add JS properties to `cmake/modules/gluecodium/gluecodium/KnownOptionalProperties.cmake` for
-  the JS package, internal package, module name, name rules, and TypeScript-stub toggle.
-- Forward those properties in `cmake/modules/gluecodium/gluecodium/details/runGenerate.cmake` so
-  CMake-driven generation can configure the same options as the CLI.
-- Export the module from `cmake/modules/gluecodium/Gluecodium.cmake` and `All.cmake` if it is
-  intended to be a public convenience module, following the existing module-loading convention.
-
-The generic `ListGeneratedFiles.cmake` / `TargetGeneratedSources.cmake` path must not be changed
-mechanically just because Python was integrated that way. The JS generator emits per-type files
-under `js/embind/` plus `_module_init.cpp`; `Js.cmake` must either own discovery and compilation of
-those files or deliberately add a JS-specific generated-source category to the generic machinery.
-Likewise, `TargetIncludeDirectories.cmake` should only be changed for include paths that the
-Emscripten target actually consumes; adding embind outputs to ordinary host C++ targets would be
-incorrect.
-
-#### 7.3 Generated-file and target integration
-
-This is not a generic “update the generated-files list” step. The current JS generator already
-emits the following artifacts:
-
-```
-<output>/js/<package>/*.d.ts
-<output>/js/embind/<package>_<Type>.cpp
-<output>/js/embind/_module_init.cpp
-<output>/js/WrapperRuntime.mjs
-<output>/js/package.json
-<output>/js/tsconfig.json
-```
-
-The build integration must make the embind C++ files and the generated C++ API headers visible to
-the Emscripten target, establish a generation-to-compilation dependency, and keep the TypeScript
-and runtime artifacts in the package output. A glob over `js/embind/*.cpp` may be acceptable for a
-development harness, but the production CMake path should use a stable generated-file list or a
-generated unity/aggregation source so new LimeIDL types are picked up without requiring a manual
-reconfigure.
-
-Update the relevant CMake tests and the calculator/functional-test build only after this target
-contract is defined. `functional-tests/CMakeLists.txt` and sample-project scripts are consumers of
-the generator; they are not the central supported-generator registry.
-
-#### 7.4 Convert `examples/calculator` into a first-class JS/wasm example
-
-**This is the right moment for the calculator JS example: immediately after Phase 7 lands, before
-Phase 8 begins.** Rationale:
-
-- It depends on everything from Phases 2–6 (generator, templates, type mapping, lifecycle
-  contract, output layout) *and* on Phase 7's `Js.cmake`/toolchain wiring — attempting it earlier
-  would mean hand-writing bindings again, which the Phase 0.3 spike already proved but which
-  validates nothing about the generator itself.
-- It is the ideal first end-to-end exercise of the generator: small enough to debug quickly, yet
-  it exercises nearly every hard feature in one file — exceptions (`CalculatorException`),
-  lambdas/callbacks (`SubtructCallback`), platform-implemented interfaces (`MultiplyCallback`),
-  structs as parameters and return values (`DivideArguments`/`DivideResult`), C++-implemented
-  interfaces returned to JS (`MinResultRetriever`), and optionals (`max`). See
-  `examples/calculator/lime/Calculator.lime`.
-- It directly feeds Phase 8 (use it as the first non-trivial fixture for the Node.js test runner)
-  and acceptance criterion 4 (`tsc --strict` check against the generated `.d.ts`).
-
-Concretely:
-
-1. Add a `js` (wasm/embind) target to `examples/calculator/CMakeLists.txt`, gated behind an
-   option (e.g. `-DENABLE_JS=ON`) and only meaningful when configured through `emcmake`, mirroring
-   how the existing targets are gated.
-2. Run Gluecodium with `-generators cpp,js` so the example consumes *generated* `.d.ts` +
-   embind `.cpp` output instead of the Phase 0.3 spike's hand-written `main.cpp`.
-3. Add a minimal Node.js smoke script (`node examples/calculator/js/smoke.js`) that loads the
-   modularized module and exercises `summarize`, `divide`, and `min` — this doubles as the seed
-   for the Phase 8 test runner.
-4. Update `examples/calculator/README.md` with the emcmake build instructions.
-
-Required `em++`/linker flags to bake into the module, all justified above:
-```cmake
-target_link_options(${_module_target} PRIVATE
-  -lembind
-  -fexceptions               # §5.5
-  -sWASM_BIGINT=1            # §4.4
-  -pthread                   # §5.7 — hard requirement for HERE SDK
-  -sPROXY_TO_PTHREAD=1       # §5.7 — run module on a dedicated worker
-  -sPTHREAD_POOL_SIZE=4      # §5.7 — sized to HERE SDK's expected concurrency; tune as needed
-  -sMODULARIZE=1
-  -sEXPORT_ES6=1
-  -sENVIRONMENT=web,node     # Q3 — both Node.js and browser are required targets
-  -sALLOW_MEMORY_GROWTH=1
-)
-```
-Serving the output requires cross-origin isolation headers (`Cross-Origin-Opener-Policy:
-same-origin`, `Cross-Origin-Embedder-Policy: require-corp`) so `SharedArrayBuffer` is available —
-document this as a deployment requirement (§5.7).
-```
+> **Status: Complete (2026-08-23).** CMake integration and the calculator end-to-end example are
+> delivered in commit `63a938bd5`.
+>
+> See [status_phase7.md](status_phase7.md) for the implementation summary, build and usage
+> instructions, runtime contract, and verification results.
 
 ---
 
