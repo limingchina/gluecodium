@@ -35,12 +35,23 @@ pointer-equality contract is required for JavaScript. That cache must define
 ownership, `.delete()` invalidation, raw-pointer and smart-pointer behavior,
 explicit upcasts, and pthread safety.
 
-The cache was not added in this item. Emscripten 6.0.6 keeps the relevant
-`registeredInstances` table internal to the embind runtime. Its supported
-`registerInheritedInstance` API is reserved for `allow_subclass` wrappers and
-is not exported to generated modules. Converting generated `std::shared_ptr`
-returns to raw pointers would lose the holder's ownership and deletion
+The cache was not added in this item. A C++ map of `emscripten::val` is not a
+complete implementation: the strong cached value keeps the JavaScript wrapper
+reachable, while embind's public API provides no hook for generated code to
+observe `.delete()` and evict that entry immediately. Checking `isDeleted()` on
+a later lookup would leave stale entries retained and would not define safe
+single-disposal behavior for aliases. Converting generated `std::shared_ptr`
+returns to raw pointers would also lose the holder's ownership and deletion
 semantics, so it is not an acceptable workaround.
+
+The required contract is recorded in
+`docs/js_binding_dev/wrapper_cache_design.md`. Implementation is gated on one
+of two supported integration points: a generated JavaScript wrapper layer that
+owns interception of `.delete()` and cache eviction, or an explicitly
+version-pinned embind integration that exposes equivalent lifecycle hooks. The
+contract covers same-thread shared-pointer identity only; raw pointers,
+cross-type upcasts, JS-implemented interface wrappers, and pthread marshalling
+remain separate items.
 
 ## Verification
 
@@ -52,7 +63,7 @@ Phase 4 harness OK
 
 The failed identity assertion is intentionally retained as a documented spike
 result. Referential equality remains an explicit JavaScript-target limitation
-until a stable cache integration point is designed for the generated module.
+until a stable cache integration point is available for the generated module.
 
 ## Item 2 - Multiple Inheritance
 
@@ -181,8 +192,8 @@ constraint rather than claiming cross-thread support.
 ## Remaining Phase 5 Items
 
 1. Design thread-aware callback marshalling for the pthread build.
-2. Define a Gluecodium-owned wrapper identity cache and ownership contract if
-	JavaScript referential equality is required.
+2. Implement the documented Gluecodium-owned wrapper identity cache after a
+   supported JavaScript `.delete()` interception hook is available.
 3. Extend collection adapters to nested and nullable `Set`/container cases, or
 	replace the inline adapters with a composable caster design.
 
