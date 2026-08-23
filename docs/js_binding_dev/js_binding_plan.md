@@ -647,9 +647,16 @@ Architecture Decision).
 
 #### 7.1 Add `js` to the CMake-supported generator list
 
-Mirror how `python` was wired into the CMake generator list (referenced by
-`cmake/modules/gluecodium/Python.cmake` and whatever central list feeds
-`gluecodium_generate(... GENERATORS cpp python ...)`).
+The JS generator is already registered with the ServiceLoader and can be invoked directly with
+`-generators cpp,js`, but it is not yet a supported CMake generator in this checkout. Add `js` to
+the whitelist in
+`cmake/modules/gluecodium/gluecodium/details/ReadRequiredProperties.cmake` and update
+`cmake/tests/utils/get_supported_gluecodium_generators.cmake` so CMake tests advertise `js` only
+when an Emscripten toolchain is available or active.
+
+Do not refer to `cmake/modules/gluecodium/Python.cmake` as an existing local file: that module was
+introduced by the historical Python integration commit and is not present on this branch. The
+Python commit is useful as a history reference, not as a mechanical template.
 
 #### 7.2 New `cmake/modules/gluecodium/Js.cmake`
 
@@ -673,6 +680,48 @@ pursue option 2 if wasm binary size becomes a demonstrated problem.
 > using a *hand-written* `EMSCRIPTEN_BINDINGS` entry point. That hand-written spike is not a
 > substitute for the work in §7.4 below — the point there is to replace the hand-written glue
 > with generator output.
+
+The CMake module also needs to bridge the existing target-property and generation machinery:
+
+- Add JS properties to `cmake/modules/gluecodium/gluecodium/KnownOptionalProperties.cmake` for
+  the JS package, internal package, module name, name rules, and TypeScript-stub toggle.
+- Forward those properties in `cmake/modules/gluecodium/gluecodium/details/runGenerate.cmake` so
+  CMake-driven generation can configure the same options as the CLI.
+- Export the module from `cmake/modules/gluecodium/Gluecodium.cmake` and `All.cmake` if it is
+  intended to be a public convenience module, following the existing module-loading convention.
+
+The generic `ListGeneratedFiles.cmake` / `TargetGeneratedSources.cmake` path must not be changed
+mechanically just because Python was integrated that way. The JS generator emits per-type files
+under `js/embind/` plus `_module_init.cpp`; `Js.cmake` must either own discovery and compilation of
+those files or deliberately add a JS-specific generated-source category to the generic machinery.
+Likewise, `TargetIncludeDirectories.cmake` should only be changed for include paths that the
+Emscripten target actually consumes; adding embind outputs to ordinary host C++ targets would be
+incorrect.
+
+#### 7.3 Generated-file and target integration
+
+This is not a generic “update the generated-files list” step. The current JS generator already
+emits the following artifacts:
+
+```
+<output>/js/<package>/*.d.ts
+<output>/js/embind/<package>_<Type>.cpp
+<output>/js/embind/_module_init.cpp
+<output>/js/WrapperRuntime.mjs
+<output>/js/package.json
+<output>/js/tsconfig.json
+```
+
+The build integration must make the embind C++ files and the generated C++ API headers visible to
+the Emscripten target, establish a generation-to-compilation dependency, and keep the TypeScript
+and runtime artifacts in the package output. A glob over `js/embind/*.cpp` may be acceptable for a
+development harness, but the production CMake path should use a stable generated-file list or a
+generated unity/aggregation source so new LimeIDL types are picked up without requiring a manual
+reconfigure.
+
+Update the relevant CMake tests and the calculator/functional-test build only after this target
+contract is defined. `functional-tests/CMakeLists.txt` and sample-project scripts are consumers of
+the generator; they are not the central supported-generator registry.
 
 #### 7.4 Convert `examples/calculator` into a first-class JS/wasm example
 
@@ -723,13 +772,6 @@ Serving the output requires cross-origin isolation headers (`Cross-Origin-Opener
 same-origin`, `Cross-Origin-Embedder-Policy: require-corp`) so `SharedArrayBuffer` is available —
 document this as a deployment requirement (§5.7).
 ```
-
-#### 7.3 Update the generated-files list / supported-generators list
-
-Same mechanical update `python` needed (functional-tests CMakeLists, sample-project scripts, etc.)
-— enumerate exact touch points once Phase 0.3's spike build is working, since the precise list is
-easiest to get right by diffing what the Python `git log` touched for the equivalent step rather
-than guessing blind.
 
 ---
 
