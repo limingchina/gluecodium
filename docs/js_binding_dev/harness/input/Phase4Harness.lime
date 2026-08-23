@@ -15,6 +15,7 @@ class Harness {
     constructor create(seed: Int)
     property value: Int
     fun increment(amount: Int): Int
+    fun self(): Harness
     fun nullableValue(input: Int?): Int?
     fun sum(values: List<Int>): Int
     fun lookup(values: Map<String, Int>, key: String): Int?

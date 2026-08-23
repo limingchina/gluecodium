@@ -9,6 +9,19 @@ generated JavaScript wrapper layer, which is also the lifecycle integration
 point for `.delete()`, `[Symbol.dispose]`, and any `FinalizationRegistry`
 safety net. A native-only C++ cache is not sufficient.
 
+The first implementation slice is emitted as `js/WrapperRuntime.mjs`. A
+consumer applies it to the Emscripten module factory result:
+
+```js
+import createModule from "./module.mjs";
+import { wrapModule } from "./WrapperRuntime.mjs";
+
+const Module = wrapModule(await createModule());
+```
+
+The runtime patches only generated class and interface exports. Enums,
+structs, and other value exports remain untouched.
+
 ## Identity
 
 The cache key is the pair `(native pointee address, exposed C++ type)`. A live
@@ -56,6 +69,14 @@ Any `FinalizationRegistry` integration must track the generated wrapper and use
 the same eviction path. It is a best-effort fallback, never an additional
 owner, and must be disabled or marshalled when the finalizer may run on a
 different thread from the wrapper's owning WebAssembly runtime.
+
+In the current implementation, the generated registry only evicts weak cache
+metadata. It does not call `.delete()` or access `emscripten::val`; embind's
+own finalization mechanism remains responsible for releasing the native holder
+when the embind wrapper becomes unreachable. This keeps the generated callback
+outside the thread-affine native API. The generated registry is opt-in through
+`wrapModule(module, { enableFinalization: true })` until a stronger lifecycle
+hook is available.
 
 ## Threads
 

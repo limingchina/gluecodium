@@ -460,7 +460,7 @@ threading mode:
    gets a `.delete()` method (already sketched in the stub template in §3.3); this is the safe,
    deterministic default and should be the primary documented contract.
 2. **`FinalizationRegistry`-based best-effort safety net** — register each JS wrapper with a
-  `FinalizationRegistry` that calls `.delete()` when the JS object is GC'd. This is explicitly
+  `FinalizationRegistry` that evicts generated cache metadata when the JS object is GC'd. This is explicitly
   non-deterministic (the spec gives no timing guarantee) and should be pitched as a leak-reducing
   safety net only, never as a replacement for explicit disposal. The registry is implemented in
   the generated JavaScript wrapper layer, but it is enabled by default only for configurations
@@ -473,10 +473,14 @@ Generated TypeScript declarations also expose `[Symbol.dispose]()` as an additiv
 `using` declarations to perform deterministic cleanup. It does not replace `.delete()`: browser
 support varies, and consumers may need an `ESNext.Disposable` TypeScript library configuration.
 
-The future generated JavaScript wrapper layer is the single lifecycle integration point for the
+The generated `js/WrapperRuntime.mjs` layer is the single lifecycle integration point for the
 cache, explicit deletion interception, `[Symbol.dispose]`, and finalization. These concerns must
 not be implemented as independent mechanisms: cache eviction and any finalizer cleanup must use
 the same ownership and thread-affinity rules.
+
+Consumers apply the generated layer to the Emscripten module factory result with
+`wrapModule(await createModule())`. The runtime patches only generated class and interface
+exports; enum, struct, and other value exports remain untouched.
 
 Its intended flow is: embind creates a candidate handle for a shared-pointer return; the generated
 layer looks up the `(native pointee address, exposed embind type)` key; a live canonical wrapper is
@@ -486,6 +490,9 @@ delegates to the underlying embind handle exactly once. `[Symbol.dispose]()` cal
 The generated layer owns JavaScript cache bookkeeping, while embind's `std::shared_ptr` holder
 remains the native owner. Any `FinalizationRegistry` callback must use the same eviction path and
 must be disabled or marshalled for pthread configurations where its callback can run off-thread.
+The current generated registry only evicts weak cache metadata and never calls `.delete()` or
+accesses `emscripten::val`; embind's own finalization path remains responsible for native-holder
+cleanup. It is opt-in via `enableFinalization` until a stronger lifecycle hook is available.
 
 For functions returning pointers to existing (non-owned) C++ objects, decide the embind equivalent
 of pybind11's `return_value_policy::reference_internal` vs. `take_ownership` — embind's smart
@@ -919,8 +926,9 @@ default only when cleanup is proven to run on the wrapper's owning WebAssembly t
    in the §3.3 stub template). All documentation, examples, and lint guidance present this as the
    required way to release wasm-heap objects deterministically.
 2. **`FinalizationRegistry` safety net (generated, conditionally enabled)** — the generated JS
-  wrapper registers each instance with a shared registry whose cleanup callback releases it when
-  the wrapper is GC'd. Caveats that must be encoded in the implementation:
+  wrapper registers each instance with a shared registry whose cleanup callback evicts generated
+  cache metadata when the wrapper is GC'd. Embind's own finalization path remains responsible for
+  releasing the native holder. Caveats that must be encoded in the implementation:
    - Timing is non-deterministic; never document it as a substitute for explicit disposal.
    - Cleanup callbacks must not resurrect or touch other wrappers; keep them minimal
      (pointer-freeing only).

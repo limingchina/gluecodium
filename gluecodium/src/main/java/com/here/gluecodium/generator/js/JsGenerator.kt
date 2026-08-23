@@ -38,6 +38,7 @@ import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
+import com.here.gluecodium.model.lime.LimeClass
 import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeElement
@@ -46,6 +47,7 @@ import com.here.gluecodium.model.lime.LimeExternalDescriptor
 import com.here.gluecodium.model.lime.LimeField
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeFunction
+import com.here.gluecodium.model.lime.LimeInterface
 import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
@@ -705,7 +707,27 @@ internal class JsGenerator : Generator {
                 ),
                 nameResolvers,
             )
-        return listOf(GeneratedFile(moduleInitContent, JsNameRules.MODULE_INIT_FILE))
+        val wrapperTypeNames =
+            filteredModel.topElements
+                .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
+                .flatMap(::collectEmbindTypes)
+                .filter { it is LimeClass || it is LimeInterface }
+                .map { nameRules.getName(it) }
+                .distinct()
+        val wrapperTypes =
+            wrapperTypeNames.mapIndexed { index, name ->
+                mapOf("name" to name, "last" to (index == wrapperTypeNames.lastIndex))
+            }
+        val wrapperRuntimeContent =
+            TemplateEngine.render(
+                "js/JsWrapperRuntime",
+                mapOf("wrapperTypes" to wrapperTypes),
+                nameResolvers,
+            )
+        return listOf(
+            GeneratedFile(moduleInitContent, JsNameRules.MODULE_INIT_FILE),
+            GeneratedFile(wrapperRuntimeContent, JsNameRules.WRAPPER_RUNTIME_FILE),
+        )
     }
 
     private fun collectGenericRegistrations(filteredModel: LimeModel): List<Map<String, Any>> {

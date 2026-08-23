@@ -1,0 +1,164 @@
+const isEmbindHandle = (value) =>
+  value !== null &&
+  value !== undefined &&
+  typeof value.isAliasOf === "function" &&
+  typeof value.isDeleted === "function" &&
+  typeof value.delete === "function";
+
+const wrapModule = (module, options = {}) => {
+  const entriesByType = new WeakMap();
+  const statesByWrapper = new WeakMap();
+  const patchedPrototypes = new WeakSet();
+  const weakReferencesAvailable = typeof WeakRef === "function";
+  const finalizationEnabled = options.enableFinalization === true;
+  const finalizationEntries = new Map();
+  const finalizationRegistry =
+    finalizationEnabled && weakReferencesAvailable && typeof FinalizationRegistry === "function"
+      ? new FinalizationRegistry((entryId) => {
+          const entry = finalizationEntries.get(entryId);
+          if (entry !== undefined) {
+            removeEntry(entry);
+          }
+        })
+      : undefined;
+  let nextEntryId = 0;
+
+  const removeEntry = (entry) => {
+    const entries = entriesByType.get(entry.type);
+    if (entries !== undefined) {
+      const index = entries.indexOf(entry);
+      if (index !== -1) {
+        entries.splice(index, 1);
+      }
+      if (entries.length === 0) {
+        entriesByType.delete(entry.type);
+      }
+    }
+    finalizationEntries.delete(entry.id);
+    if (finalizationRegistry !== undefined) {
+      finalizationRegistry.unregister(entry.unregisterToken);
+    }
+  };
+
+  const disposeDuplicate = (value) => {
+    value.delete();
+    return value;
+  };
+
+  const canonicalize = (value) => {
+    if (!isEmbindHandle(value)) {
+      return value;
+    }
+
+    const type = value.constructor;
+    let entries = entriesByType.get(type);
+    if (entries === undefined) {
+      entries = [];
+      entriesByType.set(type, entries);
+    }
+
+    for (let index = entries.length - 1; index >= 0; index -= 1) {
+      const entry = entries[index];
+      const canonical = entry.reference.deref();
+      if (canonical === undefined || canonical.isDeleted()) {
+        removeEntry(entry);
+        continue;
+      }
+      if (canonical === value) {
+        return canonical;
+      }
+      if (canonical.isAliasOf(value)) {
+        disposeDuplicate(value);
+        return canonical;
+      }
+    }
+
+    const entry = {
+      id: nextEntryId++,
+      type,
+      reference: weakReferencesAvailable ? new WeakRef(value) : { deref: () => value },
+      unregisterToken: {},
+    };
+    entries.push(entry);
+    statesByWrapper.set(value, entry);
+    if (finalizationRegistry !== undefined) {
+      finalizationEntries.set(entry.id, entry);
+      finalizationRegistry.register(value, entry.id, entry.unregisterToken);
+    }
+    return value;
+  };
+
+  const patchPrototype = (prototype) => {
+    if (patchedPrototypes.has(prototype)) {
+      return;
+    }
+    patchedPrototypes.add(prototype);
+
+    const originalDelete = prototype.delete;
+    prototype.delete = function (...args) {
+      const entry = statesByWrapper.get(this);
+      if (entry !== undefined) {
+        removeEntry(entry);
+        statesByWrapper.delete(this);
+      }
+      return originalDelete.apply(this, args);
+    };
+    if (typeof Symbol.dispose === "symbol") {
+      prototype[Symbol.dispose] = prototype.delete;
+    }
+
+    for (const key of Reflect.ownKeys(prototype)) {
+      if (key === "constructor" || key === "delete" || key === Symbol.dispose) {
+        continue;
+      }
+      const descriptor = Object.getOwnPropertyDescriptor(prototype, key);
+      if (typeof descriptor?.get === "function") {
+        const originalGet = descriptor.get;
+        Object.defineProperty(prototype, key, {
+          ...descriptor,
+          get() {
+            return canonicalize(originalGet.call(this));
+          },
+        });
+        continue;
+      }
+      const functionValue = descriptor?.value;
+      if (typeof functionValue !== "function") {
+        continue;
+      }
+      prototype[key] = function (...args) {
+        return canonicalize(functionValue.apply(this, args));
+      };
+    }
+  };
+
+  const patchConstructor = (constructor) => {
+    if (typeof constructor !== "function" || constructor.prototype === undefined) {
+      return;
+    }
+    patchPrototype(constructor.prototype);
+    for (const key of Reflect.ownKeys(constructor)) {
+      if (key === "length" || key === "name" || key === "prototype" || key === "caller" || key === "arguments") {
+        continue;
+      }
+      const functionValue = constructor[key];
+      if (typeof functionValue !== "function") {
+        continue;
+      }
+      constructor[key] = function (...args) {
+        return canonicalize(functionValue.apply(this, args));
+      };
+    }
+  };
+
+  for (const typeName of [
+{{#wrapperTypes}}
+    "{{name}}"{{^last}},{{/last}}
+{{/wrapperTypes}}
+  ]) {
+    patchConstructor(module[typeName]);
+  }
+  return module;
+};
+
+export { wrapModule };

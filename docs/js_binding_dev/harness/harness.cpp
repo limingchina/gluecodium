@@ -9,13 +9,17 @@ namespace phase4 {
 
 namespace {
 
-class HarnessImpl final : public Harness {
+class HarnessImpl final : public Harness, public std::enable_shared_from_this<HarnessImpl> {
 public:
     explicit HarnessImpl(const int32_t seed) : value(seed) {}
 
     int32_t increment(const int32_t amount) override {
         value += amount;
         return value;
+    }
+
+    std::shared_ptr<Harness> self() override {
+        return shared_from_this();
     }
 
     std::optional<int32_t> nullable_value(const std::optional<int32_t>& input) override {

@@ -4,7 +4,7 @@
 
 ## Item 1 - Referential Equality
 
-**Status**: Verified limitation; implementation deferred
+**Status**: Partially implemented; native lifecycle integration remains deferred
 
 **Commit**: `dab2bff75` - `Document embind referential equality limitation`
 
@@ -35,7 +35,7 @@ pointer-equality contract is required for JavaScript. That cache must define
 ownership, `.delete()` invalidation, raw-pointer and smart-pointer behavior,
 explicit upcasts, and pthread safety.
 
-The cache was not added in this item. A C++ map of `emscripten::val` is not a
+The cache was not added as a C++ map of `emscripten::val`. Such a map is not a
 complete implementation: the strong cached value keeps the JavaScript wrapper
 reachable, while embind's public API provides no hook for generated code to
 observe `.delete()` and evict that entry immediately. Checking `isDeleted()` on
@@ -64,6 +64,16 @@ layer owns JavaScript bookkeeping, not a second native owner: embind retains
 the `std::shared_ptr` holder. Finalization must use the same path and remains
 thread-gated for pthread builds.
 
+The first implementation slice now emits `js/WrapperRuntime.mjs`. Consumers
+apply `wrapModule(await createModule())` to the Emscripten module factory result.
+The runtime patches only generated class/interface exports, uses public embind
+`isAliasOf()`/`isDeleted()` APIs, and leaves enums and value types untouched.
+Its cache holds weak references so live wrappers can be canonicalized without
+preventing collection. The optional generated `FinalizationRegistry` evicts
+cache metadata only; it never calls `.delete()` or accesses `emscripten::val`.
+Embind's own finalization remains responsible for native-holder cleanup, which
+keeps this generated callback outside the pthread thread-affinity hazard.
+
 ## Verification
 
 The stable regression harness passes:
@@ -72,9 +82,13 @@ The stable regression harness passes:
 Phase 4 harness OK
 ```
 
-The failed identity assertion is intentionally retained as a documented spike
-result. Referential equality remains an explicit JavaScript-target limitation
-until a stable cache integration point is available for the generated module.
+The failed identity assertion is retained as the original spike result. The
+generated `WrapperRuntime.mjs` now provides the supported JavaScript-side
+integration point for same-type, same-thread shared-pointer returns. The
+runtime harness verifies same-object retrieval, explicit cache eviction through
+`.delete()`, and `[Symbol.dispose]`. Native cleanup through a generated
+finalizer remains deferred because the public embind API does not expose a safe
+hook; embind's own finalization remains responsible for native-holder cleanup.
 
 ## Item 2 - Multiple Inheritance
 
@@ -203,11 +217,12 @@ constraint rather than claiming cross-thread support.
 ## Remaining Phase 5 Items
 
 1. Design thread-aware callback marshalling for the pthread build.
-2. Implement the generated JavaScript wrapper layer that combines the
-	documented wrapper identity cache, `.delete()`/`[Symbol.dispose]` lifecycle,
-	and thread-gated finalization policy.
+2. Complete the generated JavaScript wrapper layer's native lifecycle
+   integration after a supported embind deletion/finalization hook is available.
+   The current runtime already combines the documented wrapper identity cache,
+   `.delete()`/[Symbol.dispose] lifecycle, and thread-gated finalization policy.
 3. Extend collection adapters to nested and nullable `Set`/container cases, or
-	replace the inline adapters with a composable caster design.
+   replace the inline adapters with a composable caster design.
 
 Each item should be independently verified and committed before the next item
 begins.

@@ -73,6 +73,7 @@ class JsNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
         val JS_TARGET_DIRECTORY = "js" + File.separator
         val EMBIND_TARGET_DIRECTORY = JS_TARGET_DIRECTORY + "embind" + File.separator
         val MODULE_INIT_FILE = EMBIND_TARGET_DIRECTORY + "_module_init.cpp"
+        val WRAPPER_RUNTIME_FILE = JS_TARGET_DIRECTORY + "WrapperRuntime.mjs"
 
         fun isInternal(element: LimeNamedElement) = CommonGeneratorPredicates.isInternal(element, JS)
     }
