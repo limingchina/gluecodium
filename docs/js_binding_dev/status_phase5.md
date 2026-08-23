@@ -1,10 +1,13 @@
 # JavaScript/Embind Generator - Phase 5 Status
 
-**Status**: In progress
+**Status**: Complete for the scoped synchronous JavaScript/embind features
+
+Generated asynchronous callback integration remains deferred because it
+requires a public LimeIDL surface and host-owned runtime queue pumping.
 
 ## Item 1 - Referential Equality
 
-**Status**: Verified for generated wrapper lifecycle; embind-owned GC finalization remains separate
+**Status**: Implemented and verified for same-type, same-thread `std::shared_ptr` returns
 
 **Commit**: `dab2bff75` - `Document embind referential equality limitation`
 
@@ -25,36 +28,40 @@ conversion, but ordinary smart-pointer return handles are not inserted into
 that table. Its built-in `FinalizationRegistry` provides leak-reduction cleanup
 but does not provide referential equality.
 
-The failed probe was removed from the stable Phase 4 harness. The full Phase 4
-generation, Emscripten build, and Node.js regression harness still passes.
+The failed probe was removed from the stable Phase 4 harness after the
+limitation was isolated. The generated JavaScript wrapper layer now supplies
+the missing canonicalization for the supported scope. The full Phase 4
+generation, Emscripten build, and Node.js regression harness passes.
 
-The complete finding is recorded in
-`docs/js_binding_dev/spikes/referential_equality_spike.md`. A Gluecodium-owned
+The complete historical finding is recorded in
+[referential_equality_spike.md](spikes/referential_equality_spike.md). A Gluecodium-owned
 pointer-to-JavaScript-wrapper cache is required if the existing cross-language
 pointer-equality contract is required for JavaScript. That cache must define
 ownership, `.delete()` invalidation, raw-pointer and smart-pointer behavior,
 explicit upcasts, and pthread safety.
 
+The limitation and the implemented JavaScript-layer solution are explained in
+[referential_equality.md](referential_equality.md). The current status of this
+item remains implemented and verified for same-type, same-thread
+`std::shared_ptr` returns.
+
 The cache is implemented in the generated JavaScript layer rather than as a
-C++ map of `emscripten::val`. Such a map is not a complete implementation: the
-strong cached value keeps the JavaScript wrapper
-reachable, while embind's public API provides no hook for generated code to
-observe `.delete()` and evict that entry immediately. Checking `isDeleted()` on
-a later lookup would leave stale entries retained and would not define safe
-single-disposal behavior for aliases. Converting generated `std::shared_ptr`
-returns to raw pointers would also lose the holder's ownership and deletion
-semantics, so it is not an acceptable workaround.
+C++ map of `emscripten::val`. A native-only cache would keep JavaScript
+wrappers reachable, would not observe explicit `.delete()` through a supported
+public hook, and would not define safe single-disposal behavior for aliases.
+Converting generated `std::shared_ptr` returns to raw pointers would also lose
+the holder's ownership and deletion semantics, so it is not an acceptable
+workaround.
 
-The required contract is recorded in
-`docs/js_binding_dev/wrapper_cache_design.md`. The generated JavaScript wrapper
-layer is the preferred single integration point for canonical wrapper lookup,
-`.delete()` eviction, `[Symbol.dispose]`, and optional finalization. An
-explicitly version-pinned embind integration is the alternative. The contract
-covers same-thread shared-pointer identity only; raw pointers, cross-type
-upcasts, JS-implemented interface wrappers, and pthread marshalling remain
-separate items.
+The implemented contract is recorded in
+[wrapper_cache_design.md](wrapper_cache_design.md). The generated JavaScript
+wrapper layer is the single integration point for canonical wrapper lookup,
+`.delete()` eviction, `[Symbol.dispose]`, and optional finalization. The
+contract covers same-thread shared-pointer identity only; raw pointers,
+cross-type upcasts, JS-implemented interface wrappers, and pthread marshalling
+remain separate boundaries.
 
-The planned flow is that embind first creates a candidate handle for a
+The implemented flow is that embind first creates a candidate handle for a
 shared-pointer return. The generated layer checks the
 `(native pointee address, exposed embind type)` key, reuses the live canonical
 wrapper when present, and releases any duplicate candidate without creating a
