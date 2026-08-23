@@ -202,8 +202,20 @@ internal class JsGenerator : Generator {
         )
         val container = limeElement as? com.here.gluecodium.model.lime.LimeContainer
         if (container != null) {
+            data["constantOwnerName"] = nameRules.getName(limeElement)
+            val supportedConstants = container.constants.filter(::isSupportedConstant)
+            data["hasConstants"] = supportedConstants.isNotEmpty()
             data["constructors"] = container.constructors.map { functionStubViewModel(it) }
             data["functions"] = container.functions.map { functionStubViewModel(it) }
+            data["constants"] = supportedConstants.filterNot(::isCppSkipped).map {
+                mapOf(
+                    "jsName" to nameRules.getName(it),
+                    "jsType" to jsNameResolver.resolveName(it.typeRef),
+                    "comment" to it.comment,
+                    "additionalDescriptionComment" to LimeComment(),
+                    "hasDocumentation" to hasJsDocumentation(it.comment),
+                )
+            }
             data["properties"] = container.properties.map {
                 mapOf(
                     "jsName" to nameRules.getName(it),
@@ -420,7 +432,7 @@ internal class JsGenerator : Generator {
         if (type is LimeStruct) {
             data["fields"] = type.fields.map { fieldViewModel(type, it) }
         }
-        data["constants"] = container.constants.map { constantViewModel(it) }
+        data["constants"] = container.constants.filter(::isSupportedConstant).map { constantViewModel(it) }
         return data
     }
 
@@ -848,7 +860,16 @@ internal class JsGenerator : Generator {
             "model" to constant,
             "jsName" to nameRules.getName(constant),
             "cppFullName" to cppNameCache.getFullyQualifiedName(constant),
+            "cppType" to embindNameResolver.resolveName(constant.typeRef),
+            "functionName" to constantFunctionName(constant),
+            "runtimeName" to constantRuntimeName(constant),
         )
+
+    private fun constantFunctionName(constant: LimeConstant) =
+        "gluecodium_constant_${constant.fullName.replace('.', '_')}"
+
+    private fun constantRuntimeName(constant: LimeConstant) =
+        "gluecodium_constant_${constant.fullName.replace(".", "__")}"
 
     /**
      * Recursively collects all types (top-level + nested) that should emit an embind binding,
@@ -968,7 +989,7 @@ internal class JsGenerator : Generator {
                         nameResolvers,
                     )
                 val directory = packagePath.joinToString(java.io.File.separator)
-                val runtimeExports =
+                val runtimeElements =
                     elements
                         .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
                         .flatMap(::collectEmbindTypes)
@@ -978,10 +999,33 @@ internal class JsGenerator : Generator {
                             it is com.here.gluecodium.model.lime.LimeEnumeration }
                         .distinctBy { it.fullName }
                         .sortedBy { nameRules.getName(it) }
+                val duplicateRuntimeNames = runtimeElements.groupBy { nameRules.getName(it) }
+                    .filterValues { it.size > 1 }
+                    .keys
+                val runtimeExports =
+                    runtimeElements
                         .map { element ->
+                            val moduleName =
+                                if (nameRules.getName(element) in duplicateRuntimeNames) {
+                                    nameRules.getFlattenedName(element)
+                                } else {
+                                    nameRules.getName(element)
+                                }
                             mapOf(
-                                "moduleName" to nameRules.getName(element),
+                                "moduleName" to moduleName,
                                 "runtimeName" to nameRules.getEmbindRuntimeName(element),
+                                "isEmptyStruct" to (element is LimeStruct && element.fields.isEmpty()),
+                                "constants" to (element as? com.here.gluecodium.model.lime.LimeContainer)
+                                    ?.constants
+                                    ?.filter(::isSupportedConstant)
+                                    ?.filterNot(::isCppSkipped)
+                                    ?.map { constant ->
+                                        mapOf(
+                                            "jsName" to nameRules.getName(constant),
+                                            "runtimeName" to constantRuntimeName(constant),
+                                        )
+                                    }
+                                    .orEmpty(),
                             )
                         }
                 val duplicateRuntimeExports = runtimeExports.groupBy { it["moduleName"] }.filterValues { it.size > 1 }.keys
@@ -1222,6 +1266,12 @@ internal class JsGenerator : Generator {
             is com.here.gluecodium.model.lime.LimeClass -> "js/EmbindClass"
             is com.here.gluecodium.model.lime.LimeInterface -> "js/EmbindInterface"
             else -> null
+        }
+
+    private fun isSupportedConstant(constant: com.here.gluecodium.model.lime.LimeConstant) =
+        when (constant.typeRef.type.actualType) {
+            is LimeList, is LimeSet, is LimeMap -> false
+            else -> true
         }
 
     /**

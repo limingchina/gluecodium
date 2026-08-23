@@ -34,6 +34,14 @@ export interface {{jsName}} {
 {{> js/JsStubDocumentation}}
   {{jsName}}: {{jsType}};
 {{/properties}}
+}
+{{#hasConstants}}
+export const {{constantOwnerName}}: {
+{{#constants}}
+  {{jsName}}: {{jsType}};
+{{/constants}}
+};
+{{/hasConstants}}
   delete(): void;
   [Symbol.dispose](): void;
 }

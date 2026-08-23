@@ -8,5 +8,9 @@ import { loadModule } from "{{runtimeImportPath}}";
 
 const module = await loadModule();
 {{#runtimeExports}}
-export const {{moduleName}} = module["{{runtimeName}}"];
+const {{moduleName}} = module["{{runtimeName}}"]{{#isEmptyStruct}} ?? {}{{/isEmptyStruct}};
+{{#constants}}
+{{moduleName}}.{{jsName}} = module["{{runtimeName}}"]();
+{{/constants}}
+export { {{moduleName}} };
 {{/runtimeExports}}

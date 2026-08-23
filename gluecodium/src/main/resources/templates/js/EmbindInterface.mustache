@@ -42,6 +42,12 @@ public:
 {{/wrapperProperties}}
 };
 
+{{#constants}}
+{{cppType}} {{functionName}}() {
+    return {{cppFullName}};
+}
+{{/constants}}
+
 void {{registerName}}(void) {
     class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{embindName}}")
         .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{embindName}}")
@@ -91,4 +97,7 @@ void {{registerName}}(void) {
 {{/properties}}
     .allow_subclass<{{wrapperName}}, std::shared_ptr<{{wrapperName}}>>("{{wrapperEmbindName}}", "{{wrapperPtrEmbindName}}")
         ;
+{{#constants}}
+    function("{{runtimeName}}", &{{functionName}});
+{{/constants}}
 }

@@ -40,6 +40,10 @@ export class {{jsName}} {
 {{> js/JsStubDocumentation}}
   {{#isStatic}}static {{/isStatic}}{{jsName}}: {{jsType}};
 {{/properties}}
+{{#constants}}
+{{> js/JsStubDocumentation}}
+  static {{jsName}}: {{jsType}};
+{{/constants}}
   delete(): void;
   [Symbol.dispose](): void;
 }

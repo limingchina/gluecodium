@@ -24,6 +24,12 @@ SPDX-License-Identifier: Apache-2.0
 
 LIME structs map to embind value_object (value semantics, all fields public).
 }}
+{{#constants}}
+{{cppType}} {{functionName}}() {
+  return {{cppFullName}};
+}
+{{/constants}}
+
 void {{registerName}}(void) {
     value_object<{{cppFullName}}>("{{embindName}}")
 {{#fields}}
@@ -47,4 +53,7 @@ void {{registerName}}(void) {
 {{/hasBlob}}
 {{/fields}}
         ;
+{{#constants}}
+  function("{{runtimeName}}", &{{functionName}});
+{{/constants}}
 }

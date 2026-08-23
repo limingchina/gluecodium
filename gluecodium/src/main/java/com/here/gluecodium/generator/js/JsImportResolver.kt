@@ -21,6 +21,7 @@ package com.here.gluecodium.generator.js
 
 import com.here.gluecodium.generator.common.ImportsResolver
 import com.here.gluecodium.model.lime.LimeBasicType
+import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeGenericType
 import com.here.gluecodium.model.lime.LimeList
@@ -42,6 +43,7 @@ internal class JsImportResolver(
     override fun resolveElementImports(limeElement: LimeElement): List<JsImport> =
         when (limeElement) {
             is LimeTypeRef -> resolveTypeImports(limeElement.type.actualType)
+            is LimeConstant -> resolveTypeImports(limeElement.typeRef.type.actualType)
             is LimeGenericType -> resolveGenericTypeImports(limeElement)
             is LimeType -> resolveTypeImports(limeElement.actualType)
             is LimeNamedElement -> listOf(createImport(limeElement))

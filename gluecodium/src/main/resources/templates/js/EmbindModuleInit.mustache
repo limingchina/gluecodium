@@ -34,11 +34,17 @@ SPDX-License-Identifier: Apache-2.0
 {{#registerFunctions}}
 void {{name}}();
 {{/registerFunctions}}
+{{#constantFunctions}}
+{{cppType}} {{runtimeName}}();
+{{/constantFunctions}}
 
 EMSCRIPTEN_BINDINGS({{moduleName}}) {
 {{#registerFunctions}}
     {{name}}();
 {{/registerFunctions}}
+{{#constantFunctions}}
+  function("{{runtimeName}}", &{{runtimeName}});
+{{/constantFunctions}}
 {{#genericRegistrations}}
   {{#optional}}emscripten::register_optional<{{type}}>();{{/optional}}
   {{#vector}}emscripten::register_vector<{{type}}>("{{name}}");{{/vector}}

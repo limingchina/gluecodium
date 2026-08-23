@@ -31,3 +31,10 @@ export interface {{jsName}} {
 	{{jsName}}: {{jsType}};
 {{/fields}}
 }
+{{#hasConstants}}
+export const {{constantOwnerName}}: {
+{{#constants}}
+  {{jsName}}: {{jsType}};
+{{/constants}}
+};
+{{/hasConstants}}

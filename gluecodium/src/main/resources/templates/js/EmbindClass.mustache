@@ -25,6 +25,12 @@ SPDX-License-Identifier: Apache-2.0
 Embind registration for a LIME class. Only one `base<>` is supported (see plan §5.3);
 secondary parents are flattened by binding their members on the derived type.
 }}
+{{#constants}}
+{{cppType}} {{functionName}}() {
+        return {{cppFullName}};
+}
+{{/constants}}
+
 void {{registerName}}(void) {
         class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{embindName}}")
                 .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{embindName}}")
@@ -94,4 +100,7 @@ void {{registerName}}(void) {
 {{/isStatic}}
 {{/properties}}
         ;
+{{#constants}}
+        function("{{runtimeName}}", &{{functionName}});
+{{/constants}}
 }

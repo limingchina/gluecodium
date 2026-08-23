@@ -346,7 +346,7 @@ feature(UnderscorePackage cpp android android-kotlin swift dart SOURCES
     input/lime/UseUnderscorePackage.lime
 )
 
-feature(Constants cpp android android-kotlin swift dart SOURCES
+feature(Constants cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Constants.cpp
 
     input/lime/Constants.lime
