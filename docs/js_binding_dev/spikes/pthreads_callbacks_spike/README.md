@@ -15,13 +15,29 @@ em++ spike.cpp -std=c++17 -pthread \
     -sALLOW_MEMORY_GROWTH=1 \
     -o pthreads_callbacks_spike.mjs
 node test.mjs 2>&1 | tee /tmp/pthreads_callbacks_spike.log
-grep -q "val accessed from wrong thread" /tmp/pthreads_callbacks_spike.log
+grep -q "PASS: callback marshalled to the runtime thread" /tmp/pthreads_callbacks_spike.log
 ```
 
-The JavaScript function is created on the module's JavaScript side and passed
-to native code. Native code captures the `emscripten::val`, invokes it on a
-worker thread, joins that thread, and reports either the returned string or
-the exception text.
+The JavaScript function and Promise settlement callbacks are passed to native
+code. Native code stores them in a short-lived state object, queues one
+`emscripten_async_run_in_main_runtime_thread(EM_FUNC_SIG_VI, ...)` operation,
+and destroys the state only after the runtime-thread operation settles the
+Promise. The standalone module exposes `pumpRuntimeQueue()` because it has no
+application event loop that would otherwise drain the runtime queue.
+
+The callback adapter returns a tagged result object:
+
+```js
+{ ok: true, value }
+{ ok: false, error }
+```
+
+The adapter catches JavaScript exceptions and converts them to the second
+form before calling native code. This is required because an arbitrary
+JavaScript `Error` thrown by `emscripten::val::call` is rethrown by generated
+Embind glue rather than caught by a native C++ `try`/`catch` in this
+configuration. Native exceptions are still converted to rejection strings by
+the runtime-thread function.
 
 ## Browser pass
 
@@ -54,27 +70,26 @@ kill %1
 
 ## Result
 
-The probe compiles successfully but aborts on the current Emscripten/Node
-configuration with `val accessed from wrong thread`: `emscripten::val` is
-thread-affine, so generated callbacks and `LimeLambda` values must be invoked
-on the thread that owns the handle. A future threaded design must marshal work
-to the owning runtime thread instead of moving a stored `emscripten::val` into
-an arbitrary pthread.
+The original direct worker invocation aborts with `val accessed from wrong
+thread`: `emscripten::val` is thread-affine, so generated callbacks and
+`LimeLambda` values must not be invoked from an arbitrary pthread. The
+implemented design marshals the invocation to the owning runtime thread and
+settles the Promise there. Node.js verifies both the successful callback path
+and a JavaScript exception converted by the adapter into rejection data.
 
-The browser pass reproduces the identical assertion under headless Chromium
-with real COOP/COEP headers (`crossOriginIsolated === true`): the worker
-pthread aborts with `pthread_equal(thread, pthread_self()) && "val accessed
-from wrong thread"` from `emscripten/val.h`, surfacing as an uncaught
-`RuntimeError` in the worker and an `unhandledrejection` on the main thread.
-The thread-affinity constraint is therefore confirmed in both required target
-environments (Node.js and browser), not just Node.js.
+The browser pass succeeds under headless Chromium with real COOP/COEP headers
+and `crossOriginIsolated === true`, verifying the same runtime queue hop with
+an actual pthread-enabled browser module.
 
 `PROXY_TO_PTHREAD=1` is a separate module-level option for applications with a
 `main()` entry point. This embind-only probe has no `main()`, so it uses
 `-pthread` and a worker pool directly to exercise the same thread-affinity
 assertion.
 
-The generated Phase 5 callback and lambda adapters therefore claim synchronous
-same-thread invocation only. This spike does not establish behavior for a
-`PROXY_TO_PTHREAD` deployment; a thread-aware marshalling design remains
-future work.
+The existing generated Phase 5 callback and lambda adapters still claim
+synchronous same-thread invocation only. The spike establishes the reusable
+dispatch design for a future asynchronous callback surface; it does not change
+existing synchronous APIs or claim that native C++ can catch arbitrary
+JavaScript exceptions. A generated async adapter must provide the tagged-result
+conversion at the JavaScript boundary and must arrange for the runtime queue to
+be pumped by the host/application.

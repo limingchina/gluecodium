@@ -590,10 +590,16 @@ This changes several assumptions made elsewhere in this plan:
   responsibility to proxy (e.g. via `postMessage`), but the generator's documentation contract
   must state which thread each callback fires on.
 - **Cross-thread `emscripten::val`**: `val` handles are only valid on the thread that created
-  them. Any generated code that stores a `val` (e.g. a lambda held by a C++ object for later
-  invocation) must either guarantee same-thread invocation or marshal through
-  `emscripten_sync_run_in_main_runtime_thread`-style helpers. This is the direct analog of
-  pybind11's GIL-acquire discipline and needs its own spike before Phase 5 is marked done.
+  them. Direct invocation from an arbitrary pthread aborts with `val accessed from wrong thread`.
+  The callback spike verifies a supported asynchronous pattern: queue one operation with
+  `emscripten_async_run_in_main_runtime_thread(EM_FUNC_SIG_VI, ...)`, invoke and settle on the
+  owning runtime thread, and destroy the callback state there. A standalone module must arrange
+  for `emscripten_current_thread_process_queued_calls()` to be pumped; an application integration
+  must define that ownership explicitly.
+- **JavaScript exception boundary**: arbitrary JavaScript exceptions thrown by `val::call` are
+  rethrown by generated Embind glue and do not become native C++ exceptions under the validated
+  configuration. An asynchronous generated callback adapter must catch JavaScript exceptions at
+  the JavaScript boundary and return tagged success/error data before the runtime-thread dispatch.
 - **Object identity cache (§5.2)**: the wrapper cache must be thread-safe (or per-thread) once
   multiple threads can retrieve wrappers concurrently.
 - **Build flags**: `-pthread -sPTHREAD_POOL_SIZE=... -sPROXY_TO_PTHREAD=1` join `-sWASM_BIGINT=1`
@@ -605,8 +611,10 @@ This changes several assumptions made elsewhere in this plan:
   covers the same under real COOP/COEP headers — both Node.js and browser are required targets
   (Q3).
 
-Add a spike doc (`docs/js_binding_dev/spikes/pthreads_callbacks_spike/README.md`) covering cross-thread `val`
-invocation and callback-from-worker behavior before committing to the Phase 5 design.
+The spike doc (`docs/js_binding_dev/spikes/pthreads_callbacks_spike/README.md`) verifies the runtime-thread
+dispatch and tagged-result contract in Node.js and in a browser under real COOP/COEP headers. Existing
+synchronous generated callbacks remain same-thread; generated asynchronous integration is a follow-up
+once the LimeIDL/API surface and host queue-pumping ownership are defined.
 
 ### Phase 6 — Output File Structure
 

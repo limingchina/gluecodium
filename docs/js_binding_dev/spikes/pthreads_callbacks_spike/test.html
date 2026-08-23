@@ -21,10 +21,17 @@ try {
     }
     const createModule = (await import("./pthreads_callbacks_spike.mjs")).default;
     const Module = await createModule();
-    // Same probe as test.mjs: a JS callable handed to native code and invoked
-    // from a std::thread. Expected to abort with "val accessed from wrong thread".
-    Module.invokeFromWorker((value) => `js-${value}`);
-    window.__spikeResult.push("UNEXPECTED: cross-thread emscripten::val invocation succeeded");
+    const pump = setInterval(() => Module.pumpRuntimeQueue(), 0);
+    const result = await new Promise((resolve, reject) => {
+        Module.invokeFromWorkerAsync((value) => ({
+            ok: true,
+            value: `js-${value}`,
+        }), resolve, reject);
+    });
+    clearInterval(pump);
+    window.__spikeResult.push(result === "js-worker"
+        ? "PASS: callback marshalled to the runtime thread"
+        : `FAIL: unexpected callback result ${result}`);
 } catch (exception) {
     window.__spikeResult.push(`caught: ${exception?.message ?? exception}`);
 }

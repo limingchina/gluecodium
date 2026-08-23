@@ -199,24 +199,27 @@ Phase 5 harness OK
 
 ## Item 6 - Pthreads and Cross-Thread `emscripten::val`
 
-**Status**: Verified limitation; marshalling design deferred
+**Status**: Runtime-thread marshalling design verified; generated async integration deferred
 
 The standalone spike in
 `docs/js_binding_dev/spikes/pthreads_callbacks_spike/README.md` compiles with
-Emscripten 6.0.6 and invokes a JavaScript callable from a native `std::thread`.
-The runtime aborts with `val accessed from wrong thread`, confirming that a
-stored `emscripten::val` cannot be moved to an arbitrary pthread. Generated
-callbacks and `LimeLambda` adapters therefore guarantee synchronous invocation
-on the owning WebAssembly thread only. `PROXY_TO_PTHREAD=1` remains a separate
-application-module deployment concern because the embind-only probe has no
-`main()` entry point.
+Emscripten 6.0.6 and verifies a supported dispatch path: native code stores the
+callback state, queues `emscripten_async_run_in_main_runtime_thread`, invokes
+the callback on the owning runtime thread, settles the Promise, and destroys
+the state there. The standalone module explicitly drains its queue through
+`pumpRuntimeQueue()`.
 
-The browser/COOP/COEP pass in the same spike directory (`serve.mjs`,
-`test.html`, `browser-test.mjs` with headless Chromium) reproduces the
-identical `val accessed from wrong thread` assertion under real cross-origin
-isolation, confirming the constraint in both required target environments. A
-thread-aware marshalling design remains future work; this item records the
-constraint rather than claiming cross-thread support.
+The Node.js test verifies successful callback delivery and rejection after the
+JavaScript adapter converts a thrown `Error` into tagged result data. The
+browser/COOP/COEP pass in the same spike directory (`serve.mjs`, `test.html`,
+`browser-test.mjs` with headless Chromium) verifies the runtime-thread hop with
+an actual pthread-enabled browser module. Direct invocation from an arbitrary
+pthread remains invalid and continues to produce `val accessed from wrong
+thread`.
+
+The existing generated callbacks and `LimeLambda` adapters remain synchronous
+same-thread APIs. Generated asynchronous integration, host queue-pumping
+ownership, and a public LimeIDL surface for this behavior remain future work.
 
 ## Remaining Phase 5 Items
 
