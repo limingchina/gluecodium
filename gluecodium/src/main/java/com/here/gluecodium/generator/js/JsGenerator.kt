@@ -72,6 +72,7 @@ internal class JsGenerator : Generator {
     private lateinit var nameRules: JsNameRules
     private lateinit var jsModuleName: String
     private lateinit var activeTags: Set<String>
+    private var emitTypeScriptStubs = true
 
     private lateinit var limeReferenceMap: Map<String, LimeElement>
     private lateinit var jsNameResolver: JsNameResolver
@@ -88,6 +89,7 @@ internal class JsGenerator : Generator {
         nameRules = JsNameRules(nameRuleSetFromConfig(options.jsNameRules))
         jsModuleName = options.jsModuleName
         activeTags = options.tags
+        emitTypeScriptStubs = options.jsEmitTypeScriptStubs
     }
 
     override fun generate(limeModel: LimeModel): List<GeneratedFile> {
@@ -137,7 +139,11 @@ internal class JsGenerator : Generator {
             )
 
         val stubFiles =
-            jsFilteredModel.topElements.flatMap { generateStubFile(it, importsCollector, nameResolvers) }
+            if (emitTypeScriptStubs) {
+                jsFilteredModel.topElements.flatMap { generateStubFile(it, importsCollector, nameResolvers) }
+            } else {
+                emptyList()
+            }
         val embindFiles =
             embindFilteredModel.topElements.flatMap {
                 generateEmbindFile(it, nameResolvers, embindFilteredModel)
@@ -414,11 +420,12 @@ internal class JsGenerator : Generator {
         val thrownException = function.exception
         val thrownErrorIsEnum = thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
         val needsAdapter =
-            thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap ||
+            thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet ||
                 function.parameters.any { parameter ->
                     parameter.typeRef.isNullable ||
                         parameter.typeRef.type.actualType is LimeList ||
                         parameter.typeRef.type.actualType is LimeMap ||
+                        parameter.typeRef.type.actualType is LimeSet ||
                         parameter.typeRef.type.actualType is LimeLambda
                 }
         return mapOf(
@@ -429,7 +436,7 @@ internal class JsGenerator : Generator {
             "isStatic" to function.isStatic,
             "needsAdapter" to needsAdapter,
             "adapterReturnType" to
-                if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) {
+                if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet) {
                     "emscripten::val"
                 } else {
                     embindNameResolver.resolveName(returnType)
@@ -450,7 +457,7 @@ internal class JsGenerator : Generator {
                     "jsName" to nameRules.getName(parameter),
                     "cppType" to embindNameResolver.resolveName(parameter.typeRef),
                     "adapterType" to
-                        if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeLambda) {
+                        if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || actualType is LimeLambda) {
                             "emscripten::val"
                         } else {
                             embindNameResolver.resolveName(parameter.typeRef)
@@ -471,12 +478,12 @@ internal class JsGenerator : Generator {
                 val actualType = parameter.typeRef.type.actualType
                 val nativeType = embindNameResolver.resolveName(parameter.typeRef)
                 val adapterType =
-                    if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeLambda) {
+                    if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || actualType is LimeLambda) {
                         "emscripten::val"
                     } else {
                         nativeType
                     }
-                val callName = if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeLambda) {
+                val callName = if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || actualType is LimeLambda) {
                     "${parameter.path.name}_value"
                 } else {
                     parameter.path.name
@@ -495,7 +502,7 @@ internal class JsGenerator : Generator {
             put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
             put(
                 "adapterCallPrefix",
-                if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) {
+                if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet) {
                     "auto result = "
                 } else if (thrownException != null) {
                     "auto result = "
@@ -513,7 +520,7 @@ internal class JsGenerator : Generator {
                 put(
                     "flattenedFunctionSignature",
                     listOf(
-                        "${if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) "emscripten::val" else embindNameResolver.resolveName(returnType)}($receiverType*",
+                        "${if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet) "emscripten::val" else embindNameResolver.resolveName(returnType)}($receiverType*",
                         *parameters.map { it["type"].toString() }.toTypedArray(),
                     )
                         .joinToString(", ")
@@ -545,6 +552,10 @@ internal class JsGenerator : Generator {
                 val valueType = embindNameResolver.resolveName(actualType.valueType)
                 "${nativeType} $callName; for (const auto& entry : ${parameter.path.name}.call<emscripten::val>(\"entries\")) { $callName.emplace(entry[0].as<$keyType>(), entry[1].as<$valueType>()); }"
             }
+            actualType is LimeSet -> {
+                val elementType = embindNameResolver.resolveName(actualType.elementType)
+                "${nativeType} $callName; for (const auto& entry : ${parameter.path.name}.call<emscripten::val>(\"values\")) { $callName.emplace(entry.as<$elementType>()); }"
+            }
             else -> ""
         }
     }
@@ -573,6 +584,10 @@ internal class JsGenerator : Generator {
                 "if (!result) return emscripten::val::undefined(); auto jsResult = emscripten::val::global(\"Map\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"set\", emscripten::val(entry.first), emscripten::val(entry.second)); } return jsResult;"
             actualType is LimeMap ->
                 "auto jsResult = emscripten::val::global(\"Map\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"set\", emscripten::val(entry.first), emscripten::val(entry.second)); } return jsResult;"
+            returnType.isNullable && actualType is LimeSet ->
+                "if (!result) return emscripten::val::undefined(); auto jsResult = emscripten::val::global(\"Set\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"add\", emscripten::val(entry)); } return jsResult;"
+            actualType is LimeSet ->
+                "auto jsResult = emscripten::val::global(\"Set\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"add\", emscripten::val(entry)); } return jsResult;"
             returnType.isNullable ->
                 "return result ? emscripten::val($source) : emscripten::val::undefined();"
             actualType is LimeList ->

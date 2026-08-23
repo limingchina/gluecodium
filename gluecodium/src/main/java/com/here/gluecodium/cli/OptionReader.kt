@@ -298,7 +298,9 @@ object OptionReader {
         generatorOptions.jsPackages = getStringValue("jspackage")?.split(".") ?: emptyList()
         generatorOptions.jsInternalPackages = getStringValue("jsintpackage")?.split(".") ?: emptyList()
         getStringValue("jsmodule")?.let { generatorOptions.jsModuleName = it }
-        generatorOptions.jsEmitTypeScriptStubs = getFlagValue("jsemittestubs")
+        if (getFlagValue("jsemittestubs")) {
+            generatorOptions.jsEmitTypeScriptStubs = true
+        }
         generatorOptions.jsNameRules =
             readConfigFile(getStringValue("jsnamerules"), generatorOptions.jsNameRules)
 

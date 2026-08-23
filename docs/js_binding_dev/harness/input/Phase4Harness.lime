@@ -18,6 +18,7 @@ class Harness {
     fun nullableValue(input: Int?): Int?
     fun sum(values: List<Int>): Int
     fun lookup(values: Map<String, Int>, key: String): Int?
+    fun roundTripSet(values: Set<String>): Set<String>
     fun roundTrip(sample: Sample): Sample
     fun roundTripMode(mode: Mode): Mode
     fun roundTripLong(value: Long): Long

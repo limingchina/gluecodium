@@ -376,7 +376,7 @@ export class {{jsName}} {
   as the Python `Pybind11Chrono`-style spike described in
   `docs/python_binding_dev/spike_chrono_caster.md`) that maps to a JS `T | null`/`T | undefined`,
   or (b) waiting on/adopting whatever `optional<T>` helper the target Emscripten version ships.
-  This should get its own spike doc (`docs/js_embind_dev/spike_optional_caster.md`) before Phase 4
+  This should get its own spike doc (`docs/js_binding_dev/spikes/optional_caster_spike/README.md`) before Phase 4
   is marked done, mirroring how the Python plan spiked its chrono/return casters separately.
 
 #### 4.3 User-defined type mapping
@@ -572,7 +572,7 @@ This changes several assumptions made elsewhere in this plan:
   covers the same under real COOP/COEP headers — both Node.js and browser are required targets
   (Q3).
 
-Add a spike doc (`docs/js_embind_dev/spike_pthreads_callbacks.md`) covering cross-thread `val`
+Add a spike doc (`docs/js_binding_dev/spikes/pthreads_callbacks_spike/README.md`) covering cross-thread `val`
 invocation and callback-from-worker behavior before committing to the Phase 5 design.
 
 ### Phase 6 — Output File Structure
@@ -625,7 +625,7 @@ against a separately-installed CPython), the entire dependency chain here must b
 Recommend spiking option 1 first (§0.3) since it requires the least new CMake machinery; only
 pursue option 2 if wasm binary size becomes a demonstrated problem.
 
-> **Spike status update (2026-08-22)**: Phase 0.3 is complete (`docs/wasm_binding_dev/spike_phase0_results.md`).
+> **Spike status update (2026-08-22)**: Phase 0.3 is complete (`docs/js_binding_dev/spike_phase0_results.md`).
 > The calculator example already compiles cleanly under `emcmake`/`em++` with zero source changes,
 > using a *hand-written* `EMSCRIPTEN_BINDINGS` entry point. That hand-written spike is not a
 > substitute for the work in §7.4 below — the point there is to replace the hand-written glue
@@ -754,7 +754,7 @@ Mirror `docs/python_pybind11_plan.md` §9:
   `docs/lime_attributes.md`, and `docs/external_types.md` currently returns nothing, so this is a
   pre-existing documentation gap to close for *both* targets, not something JS uniquely owes).
 - Update `docs/lime_attributes.md` with the `@Js` attribute.
-- Add `docs/js_embind_dev/` for phase-by-phase implementation notes, mirroring
+- Add `docs/js_binding_dev/` for phase-by-phase implementation notes, mirroring
   `docs/python_binding_dev/`.
 
 ---
@@ -815,10 +815,10 @@ the Gradle plugin's job is largely to orchestrate the same CMake/toolchain invoc
 - `examples/calculator/` — add JS/wasm target + Node smoke script (§7.4; modify, not new)
 - `functional-tests/functional/js/` (new test directory, mirrors `functional-tests/functional/python`
   if that exists, or the `dart`/`swift` directories otherwise)
-- `docs/js_embind_dev/` (phase implementation notes, mirrors `docs/python_binding_dev/`)
-- `docs/js_embind_dev/spike_optional_caster.md`
-- `docs/js_embind_dev/spike_multiple_inheritance.md`
-- `docs/js_embind_dev/spike_pthreads_callbacks.md` (§5.7)
+- `docs/js_binding_dev/` (phase implementation notes, mirrors `docs/python_binding_dev/`)
+- `docs/js_binding_dev/spikes/optional_caster_spike/README.md`
+- `docs/js_binding_dev/spikes/mi_spike/`
+- `docs/js_binding_dev/spikes/pthreads_callbacks_spike/README.md` (§5.7)
 
 ### Modified files
 - `lime-loader/src/main/java/com/here/gluecodium/loader/AntlrLimeConverter.kt` (§1.2)

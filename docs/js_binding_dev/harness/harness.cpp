@@ -38,6 +38,10 @@ public:
         return found == values.end() ? std::nullopt : std::optional<int32_t>(found->second);
     }
 
+    std::unordered_set<std::string> round_trip_set(const std::unordered_set<std::string>& values) override {
+        return values;
+    }
+
     Sample round_trip(const Sample& sample) override {
         return sample;
     }
