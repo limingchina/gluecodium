@@ -90,13 +90,36 @@ The repository regression suite also passes:
 The status update is recorded in commit `2555ad2ec` - `Record Phase 5 multiple
 inheritance status`.
 
+## Item 3 - JavaScript-Implemented Interfaces
+
+**Status**: Verified
+
+The JS generator now emits an `emscripten::wrapper<T>` trampoline for each
+interface. Interface methods forward to the JavaScript implementation using
+their generated JS names, and interface registrations mark methods as
+`pure_virtual()` and expose the smart-pointer `allow_subclass` overload. This
+enables `Interface.implement({...})` objects to be passed to native APIs that
+accept `std::shared_ptr<Interface>`.
+
+The persistent harness adds `JsCallback`, whose native implementation invokes
+the callback through `MultipleInheritanceFactory.invokeJsCallback()`. The Node
+assertion creates the implementation with `JsCallback.implement({...})`,
+verifies the native-to-JavaScript-to-native return value, and explicitly
+deletes the callback wrapper.
+
+Verification passes:
+
+```text
+./gradlew :gluecodium:compileKotlin -q
+Phase 5 harness OK
+```
+
 ## Remaining Phase 5 Items
 
-1. Add JavaScript-implemented interface and callback trampoline coverage.
-2. Add callable `LimeLambda` coverage and document callback thread behavior.
-3. Add exception and `Return<T, Error>` behavior where it belongs in the
+1. Add callable `LimeLambda` coverage and document callback thread behavior.
+2. Add exception and `Return<T, Error>` behavior where it belongs in the
    generator/build plan.
-4. Add pthread callback and cross-thread `emscripten::val` spike coverage.
+3. Add pthread callback and cross-thread `emscripten::val` spike coverage.
 
 Each item should be independently verified and committed before the next item
 begins.

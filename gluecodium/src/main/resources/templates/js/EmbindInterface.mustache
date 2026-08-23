@@ -2,6 +2,26 @@
 Copyright (C) 2026 HERE Europe B.V.
 SPDX-License-Identifier: Apache-2.0
 }}
+class {{wrapperName}} : public emscripten::wrapper<{{cppFullName}}> {
+public:
+    EMSCRIPTEN_WRAPPER({{wrapperName}});
+{{#wrapperMethods}}
+    {{returnType}} {{cppName}}({{parameters}}) override {
+        {{#isVoid}}{{call}};{{/isVoid}}{{^isVoid}}return {{call}};{{/isVoid}}
+    }
+{{/wrapperMethods}}
+{{#wrapperProperties}}
+    {{returnType}} {{cppGetterName}}() const override {
+        return call<{{returnType}}>("{{jsName}}");
+    }
+{{#hasSetter}}
+    void {{cppSetterName}}({{setterParameter}}) override {
+        call<void>("{{jsName}}", value);
+    }
+{{/hasSetter}}
+{{/wrapperProperties}}
+};
+
 void {{registerName}}(void) {
     class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{jsName}}")
         .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{jsName}}")
@@ -27,7 +47,7 @@ void {{registerName}}(void) {
     }, allow_raw_pointer<arg<0>>())
 {{/needsAdapter}}
 {{^needsAdapter}}
-    .function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+    .function("{{jsName}}", &{{cppFullName}}::{{cppName}}, pure_virtual())
 {{/needsAdapter}}
 {{/isStatic}}
 {{/methods}}
@@ -39,5 +59,6 @@ void {{registerName}}(void) {
     .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
 {{/isStatic}}
 {{/properties}}
+    .allow_subclass<{{wrapperName}}, std::shared_ptr<{{wrapperName}}>>("{{wrapperName}}", "{{wrapperName}}Ptr")
         ;
 }

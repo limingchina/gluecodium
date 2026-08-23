@@ -3,6 +3,7 @@
 #include "phase4/Harness.h"
 #include "phase5/MultiClass.h"
 #include "phase5/MultipleInheritanceFactory.h"
+#include "phase5/JsCallback.h"
 
 namespace phase4 {
 
@@ -104,6 +105,12 @@ std::shared_ptr<NarrowInterface> MultipleInheritanceFactory::upcast_to_narrow(
     const std::shared_ptr<MultiClass>& instance
 ) {
     return instance;
+}
+
+std::string MultipleInheritanceFactory::invoke_js_callback(
+    const std::shared_ptr<JsCallback>& callback
+) {
+    return callback->invoke("native");
 }
 
 }  // namespace phase5

@@ -5,6 +5,7 @@ const Module = await createModule();
 const Harness = Module.Harness;
 const Mode = Module.Mode;
 const MultipleInheritanceFactory = Module.MultipleInheritanceFactory;
+const JsCallback = Module.JsCallback;
 
 assert.equal(typeof Harness.add, "function");
 assert.equal(Harness.add(20, 22), 42);
@@ -43,8 +44,16 @@ assert.equal(narrow.parentPropertyLight, "narrow-property");
 const separateNarrow = MultipleInheritanceFactory.getMultiClassAsNarrow();
 assert.notEqual(narrow, separateNarrow);
 
+const callback = JsCallback.implement({
+	invoke(value) {
+		return `js-${value}`;
+	},
+});
+assert.equal(MultipleInheritanceFactory.invokeJsCallback(callback), "js-native");
+
 multi.delete();
 narrow.delete();
 separateNarrow.delete();
+callback.delete();
 
 console.log("Phase 5 harness OK");

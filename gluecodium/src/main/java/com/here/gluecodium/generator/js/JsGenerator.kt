@@ -31,6 +31,7 @@ import com.here.gluecodium.generator.common.GenericIncludesCollector
 import com.here.gluecodium.generator.common.NameResolver
 import com.here.gluecodium.generator.common.nameRuleSetFromConfig
 import com.here.gluecodium.generator.cpp.CppNameCache
+import com.here.gluecodium.generator.cpp.CppNameResolver
 import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.generator.cpp.CppSignatureResolver
 import com.here.gluecodium.generator.common.templates.TemplateEngine
@@ -323,6 +324,19 @@ internal class JsGenerator : Generator {
         val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return data
 
         val (secondaryFunctions, secondaryProperties) = secondaryParentMembers(type, filteredModel)
+        if (type is com.here.gluecodium.model.lime.LimeInterface) {
+            val inheritedContainer = type as LimeContainerWithInheritance
+            data["wrapperName"] = "${resolveRegisterName(type)}Wrapper"
+            data["wrapperMethods"] =
+                (container.functions + inheritedContainer.inheritedFunctions)
+                    .filterNot { it.isStatic || it.isConstructor }
+                    .distinctBy { it.fullName }
+                    .map { wrapperMethodViewModel(it) }
+            data["wrapperProperties"] =
+                (container.properties + inheritedContainer.inheritedProperties)
+                    .distinctBy { it.fullName }
+                    .map { wrapperPropertyViewModel(it) }
+        }
         data["constructors"] = container.constructors.map { functionViewModel(it) }
         data["methods"] =
             (container.functions.filterNot { it.isConstructor } + secondaryFunctions)
@@ -332,6 +346,7 @@ internal class JsGenerator : Generator {
                         it,
                         isFlattened = secondaryFunctions.contains(it),
                         flattenedReceiverType = cppNameCache.getFullyQualifiedName(type),
+                        isPureVirtual = type is com.here.gluecodium.model.lime.LimeInterface,
                     )
                 }
         data["properties"] =
@@ -345,10 +360,45 @@ internal class JsGenerator : Generator {
         return data
     }
 
+    private fun wrapperMethodViewModel(function: LimeFunction): Map<String, Any> {
+        val returnType = embindNameResolver.resolveName(function.returnType)
+        val parameters = function.parameters.map { parameter ->
+            val nativeType = embindNameResolver.resolveName(parameter.typeRef)
+            val parameterType =
+                if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $nativeType&" else nativeType
+            "$parameterType ${parameter.path.name}"
+        }
+        val arguments = function.parameters.joinToString(", ") { it.path.name }
+        val call = "call<$returnType>(\"${nameRules.getName(function)}\"${if (arguments.isNotEmpty()) ", $arguments" else ""})"
+        return mapOf(
+            "returnType" to returnType,
+            "cppName" to embindNameResolver.resolveName(function),
+            "parameters" to parameters.joinToString(", "),
+            "call" to call,
+            "isVoid" to function.returnType.isVoid,
+        )
+    }
+
+    private fun wrapperPropertyViewModel(property: LimeProperty): Map<String, Any> {
+        val propertyType = embindNameResolver.resolveName(property.typeRef)
+        val setter = property.setter
+        val setterParameter =
+            if (CppNameResolver.needsRefSuffix(property.typeRef)) "const $propertyType& value" else "$propertyType value"
+        return mapOf(
+            "returnType" to propertyType,
+            "jsName" to nameRules.getName(property),
+            "cppGetterName" to cppNameCache.getGetterName(property),
+            "cppSetterName" to cppNameCache.getSetterName(property),
+            "setterParameter" to setterParameter,
+            "hasSetter" to (setter != null),
+        )
+    }
+
     private fun functionViewModel(
         function: LimeFunction,
         isFlattened: Boolean = false,
         flattenedReceiverType: String? = null,
+        isPureVirtual: Boolean = false,
     ): Map<String, Any> {
         val isOverloaded = CppSignatureResolver(limeReferenceMap, cppNameRules).isOverloaded(function)
         val returnType = function.returnType.typeRef
@@ -379,6 +429,7 @@ internal class JsGenerator : Generator {
             // Overloads are registered with explicit signatures via select_overload.
             "isOverloaded" to isOverloaded,
             "isFlattened" to isFlattened,
+            "isPureVirtual" to isPureVirtual,
             "parameters" to function.parameters.mapIndexed { index, parameter ->
                 val actualType = parameter.typeRef.type.actualType
                 mapOf(

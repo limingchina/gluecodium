@@ -10,6 +10,10 @@ narrow interface NarrowInterface {
     property parentPropertyLight: String
 }
 
+interface JsCallback {
+    fun invoke(value: String): String
+}
+
 class MultiClass: OpenClass, NarrowInterface {
     fun childFunction(): String
     property childProperty: String
@@ -19,4 +23,5 @@ class MultipleInheritanceFactory {
     static fun getMultiClass(): MultiClass
     static fun getMultiClassAsNarrow(): NarrowInterface
     static fun upcastToNarrow(instance: MultiClass): NarrowInterface
+    static fun invokeJsCallback(callback: JsCallback): String
 }
