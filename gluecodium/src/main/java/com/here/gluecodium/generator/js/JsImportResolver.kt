@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 HERE Europe B.V.
+ * Copyright (C) 2016-2026 HERE Europe B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@
 package com.here.gluecodium.generator.js
 
 import com.here.gluecodium.generator.common.ImportsResolver
-import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeBasicType
+import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeGenericType
 import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap

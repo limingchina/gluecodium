@@ -221,10 +221,34 @@ The existing generated callbacks and `LimeLambda` adapters remain synchronous
 same-thread APIs. Generated asynchronous integration, host queue-pumping
 ownership, and a public LimeIDL surface for this behavior remain future work.
 
+## Item 7 - Nested and Nullable Collection Adapters
+
+**Status**: Verified
+
+JavaScript collection adapters now recursively convert `List`, `Map`, and
+`Set` values in both directions. Nullable references are handled at every
+level, so nullable top-level containers and nullable nested elements preserve
+the `null`/`undefined` to `std::optional` mapping instead of bypassing the
+collection adapter.
+
+The generated embind module initializer also includes the standard headers
+needed by optional nested container registrations. The Phase 4/5 harness
+verifies nested `Set<Set<Int>>`, nullable `Set<Int>?`, and
+`List<List<Int>?>` round trips alongside the existing collection, interface,
+exception, and wrapper lifecycle coverage.
+
+Verification passes:
+
+```text
+./gradlew :gluecodium:compileKotlin -q
+Phase 5 harness OK
+```
+
 ## Remaining Phase 5 Items
 
-1. Extend collection adapters to nested and nullable `Set`/container cases, or
-   replace the inline adapters with a composable caster design.
+None. Generated asynchronous callback integration remains explicitly deferred
+under Item 6 because it requires a public LimeIDL surface and host-owned
+runtime queue pumping.
 
-Each item should be independently verified and committed before the next item
-begins.
+Each completed item is independently verified and committed before the next
+item begins.

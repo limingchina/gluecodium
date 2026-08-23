@@ -46,6 +46,24 @@ public:
         return values;
     }
 
+    std::unordered_set<std::unordered_set<int32_t>, ::hash<std::unordered_set<int32_t>>> round_trip_nested_set(
+        const std::unordered_set<std::unordered_set<int32_t>, ::hash<std::unordered_set<int32_t>>>& values
+    ) override {
+        return values;
+    }
+
+    std::optional<std::unordered_set<int32_t>> round_trip_nullable_set(
+        const std::optional<std::unordered_set<int32_t>>& values
+    ) override {
+        return values;
+    }
+
+    std::vector<std::optional<std::vector<int32_t>>> round_trip_nested_nullable_list(
+        const std::vector<std::optional<std::vector<int32_t>>>& values
+    ) override {
+        return values;
+    }
+
     Sample round_trip(const Sample& sample) override {
         return sample;
     }

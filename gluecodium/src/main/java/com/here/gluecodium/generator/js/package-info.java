@@ -18,9 +18,9 @@
  */
 
 /**
- * JavaScript/WebAssembly generator (embind approach). Generates TypeScript declaration stubs
- * plus embind C++ binding files that wrap the generated C++ API directly (no C-ABI intermediate
- * layer), cross-compiled by `em++` into a `.wasm` binary.
+ * JavaScript/WebAssembly generator (embind approach). Generates TypeScript declaration stubs plus
+ * embind C++ binding files that wrap the generated C++ API directly (no C-ABI intermediate layer),
+ * cross-compiled by `em++` into a `.wasm` binary.
  *
  * <p>The architecture mirrors {@code com.here.gluecodium.generator.python}: a platform-language
  * name resolver (JS/TS) paired with a C++-facing binding name resolver (embind).

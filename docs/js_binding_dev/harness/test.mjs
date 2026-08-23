@@ -22,6 +22,18 @@ assert.equal(harness.sum([1, 2, 3, 4]), 10);
 assert.equal(harness.lookup(new Map([["answer", 42]]), "answer"), 42);
 assert.equal(harness.lookup(new Map(), "missing"), undefined);
 assert.deepEqual([...harness.roundTripSet(new Set(["one", "two"]))].sort(), ["one", "two"]);
+assert.deepEqual(
+	[...harness.roundTripNestedSet(new Set([new Set([1, 2]), new Set([3])]))]
+		.map((values) => [...values].sort((first, second) => first - second))
+		.sort((first, second) => first[0] - second[0]),
+	[[1, 2], [3]],
+);
+assert.equal(harness.roundTripNullableSet(null), undefined);
+assert.deepEqual([...harness.roundTripNullableSet(new Set([4, 5]))].sort(), [4, 5]);
+assert.deepEqual(
+	harness.roundTripNestedNullableList([[1, 2], null, [3]]),
+	[[1, 2], undefined, [3]],
+);
 
 const sample = { count: 3, label: "three" };
 const copiedSample = harness.roundTrip(sample);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2026 HERE Europe B.V.
+ * Copyright (C) 2016-2026 HERE Europe B.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,11 @@ import com.here.gluecodium.generator.common.GenericImportsCollector
 import com.here.gluecodium.generator.common.GenericIncludesCollector
 import com.here.gluecodium.generator.common.NameResolver
 import com.here.gluecodium.generator.common.nameRuleSetFromConfig
+import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.generator.cpp.CppNameCache
 import com.here.gluecodium.generator.cpp.CppNameResolver
 import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.generator.cpp.CppSignatureResolver
-import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
@@ -56,6 +56,8 @@ import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeStruct
+import com.here.gluecodium.model.lime.LimeType
+import com.here.gluecodium.model.lime.LimeTypeRef
 import java.util.logging.Logger
 
 /**
@@ -186,28 +188,31 @@ internal class JsGenerator : Generator {
     }
 
     private fun stubViewModel(limeElement: LimeNamedElement): Map<String, Any> {
-        val data = mutableMapOf<String, Any>(
-            "jsName" to nameRules.getName(limeElement),
-        )
+        val data =
+            mutableMapOf<String, Any>(
+                "jsName" to nameRules.getName(limeElement),
+            )
         val container = limeElement as? com.here.gluecodium.model.lime.LimeContainer
         if (container != null) {
             data["constructors"] = container.constructors.map { functionStubViewModel(it) }
             data["functions"] = container.functions.map { functionStubViewModel(it) }
-            data["properties"] = container.properties.map {
-                mapOf(
-                    "jsName" to nameRules.getName(it),
-                    "jsType" to jsNameResolver.resolveName(it.typeRef),
-                    "isStatic" to it.isStatic,
-                )
-            }
+            data["properties"] =
+                container.properties.map {
+                    mapOf(
+                        "jsName" to nameRules.getName(it),
+                        "jsType" to jsNameResolver.resolveName(it.typeRef),
+                        "isStatic" to it.isStatic,
+                    )
+                }
         }
         if (limeElement is LimeStruct) {
-            data["fields"] = limeElement.fields.map {
-                mapOf(
-                    "jsName" to nameRules.getName(it),
-                    "jsType" to jsNameResolver.resolveName(it.typeRef),
-                )
-            }
+            data["fields"] =
+                limeElement.fields.map {
+                    mapOf(
+                        "jsName" to nameRules.getName(it),
+                        "jsType" to jsNameResolver.resolveName(it.typeRef),
+                    )
+                }
         }
         if (limeElement is com.here.gluecodium.model.lime.LimeEnumeration) {
             data["enumerators"] = limeElement.enumerators.map { mapOf("jsName" to nameRules.getName(it)) }
@@ -221,19 +226,25 @@ internal class JsGenerator : Generator {
             "isConstructor" to function.isConstructor,
             "isStatic" to function.isStatic,
             "returnType" to stubReturnType(function),
-            "parameters" to function.parameters.mapIndexed { index, parameter ->
-                mapOf(
-                    "jsName" to nameRules.getName(parameter),
-                    "jsType" to jsNameResolver.resolveName(parameter.typeRef),
-                    "last" to (index == function.parameters.lastIndex),
-                )
-            },
+            "parameters" to
+                function.parameters.mapIndexed { index, parameter ->
+                    mapOf(
+                        "jsName" to nameRules.getName(parameter),
+                        "jsType" to jsNameResolver.resolveName(parameter.typeRef),
+                        "last" to (index == function.parameters.lastIndex),
+                    )
+                },
         )
 
     private fun stubReturnType(function: LimeFunction): String {
         val exception = function.exception ?: return jsNameResolver.resolveName(function.returnType)
         val valueType = if (function.returnType.isVoid) null else jsNameResolver.resolveName(function.returnType)
-        val errorType = if (exception.errorType.type.actualType is com.here.gluecodium.model.lime.LimeEnumeration) "number" else jsNameResolver.resolveName(exception.errorType)
+        val errorType =
+            if (exception.errorType.type.actualType is com.here.gluecodium.model.lime.LimeEnumeration) {
+                "number"
+            } else {
+                jsNameResolver.resolveName(exception.errorType)
+            }
         return listOfNotNull(valueType?.let { "value?: $it" }, "error?: $errorType")
             .joinToString("; ", prefix = "{ ", postfix = " }")
     }
@@ -323,19 +334,21 @@ internal class JsGenerator : Generator {
         type: com.here.gluecodium.model.lime.LimeType,
         filteredModel: LimeModel,
     ): Map<String, Any> {
-        val data = mutableMapOf<String, Any>(
-            "model" to type,
-            "internalNamespace" to internalNamespace,
-            "jsName" to nameRules.getName(type),
-            "cppFullName" to cppNameCache.getFullyQualifiedName(type),
-            "registerName" to resolveRegisterName(type),
-        )
+        val data =
+            mutableMapOf<String, Any>(
+                "model" to type,
+                "internalNamespace" to internalNamespace,
+                "jsName" to nameRules.getName(type),
+                "cppFullName" to cppNameCache.getFullyQualifiedName(type),
+                "registerName" to resolveRegisterName(type),
+            )
         primaryBaseOf(type, filteredModel)?.let { data["primaryBase"] = it }
         if (type is com.here.gluecodium.model.lime.LimeEnumeration) {
             val enumerators = type.enumerators.map { enumeratorViewModel(it) }
-            data["enumeratorBindings"] = enumerators.joinToString("\n") {
-                "    .value(\"${it["jsName"]}\", ${it["cppName"]})"
-            }
+            data["enumeratorBindings"] =
+                enumerators.joinToString("\n") {
+                    "    .value(\"${it["jsName"]}\", ${it["cppName"]})"
+                }
         }
         val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return data
 
@@ -378,12 +391,13 @@ internal class JsGenerator : Generator {
 
     private fun wrapperMethodViewModel(function: LimeFunction): Map<String, Any> {
         val returnType = embindNameResolver.resolveName(function.returnType)
-        val parameters = function.parameters.map { parameter ->
-            val nativeType = embindNameResolver.resolveName(parameter.typeRef)
-            val parameterType =
-                if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $nativeType&" else nativeType
-            "$parameterType ${parameter.path.name}"
-        }
+        val parameters =
+            function.parameters.map { parameter ->
+                val nativeType = embindNameResolver.resolveName(parameter.typeRef)
+                val parameterType =
+                    if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $nativeType&" else nativeType
+                "$parameterType ${parameter.path.name}"
+            }
         val arguments = function.parameters.joinToString(", ") { it.path.name }
         val call = "call<$returnType>(\"${nameRules.getName(function)}\"${if (arguments.isNotEmpty()) ", $arguments" else ""})"
         return mapOf(
@@ -420,9 +434,14 @@ internal class JsGenerator : Generator {
         val returnType = function.returnType.typeRef
         val returnActualType = returnType.type.actualType
         val thrownException = function.exception
-        val thrownErrorIsEnum = thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
+        val thrownErrorIsEnum =
+            thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
         val needsAdapter =
-            thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet ||
+            thrownException != null ||
+                returnType.isNullable ||
+                returnActualType is LimeList ||
+                returnActualType is LimeMap ||
+                returnActualType is LimeSet ||
                 function.parameters.any { parameter ->
                     parameter.typeRef.isNullable ||
                         parameter.typeRef.type.actualType is LimeList ||
@@ -438,7 +457,13 @@ internal class JsGenerator : Generator {
             "isStatic" to function.isStatic,
             "needsAdapter" to needsAdapter,
             "adapterReturnType" to
-                if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet) {
+                if (
+                    thrownException != null ||
+                    returnType.isNullable ||
+                    returnActualType is LimeList ||
+                    returnActualType is LimeMap ||
+                    returnActualType is LimeSet
+                ) {
                     "emscripten::val"
                 } else {
                     embindNameResolver.resolveName(returnType)
@@ -452,52 +477,73 @@ internal class JsGenerator : Generator {
             "isOverloaded" to isOverloaded,
             "isFlattened" to isFlattened,
             "isPureVirtual" to isPureVirtual,
-            "parameters" to function.parameters.mapIndexed { index, parameter ->
-                val actualType = parameter.typeRef.type.actualType
-                mapOf(
-                    "model" to parameter,
-                    "jsName" to nameRules.getName(parameter),
-                    "cppType" to embindNameResolver.resolveName(parameter.typeRef),
-                    "adapterType" to
-                        if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || actualType is LimeLambda) {
+            "parameters" to
+                function.parameters.mapIndexed { index, parameter ->
+                    val actualType = parameter.typeRef.type.actualType
+                    mapOf(
+                        "model" to parameter,
+                        "jsName" to nameRules.getName(parameter),
+                        "cppType" to embindNameResolver.resolveName(parameter.typeRef),
+                        "adapterType" to
+                            if (
+                                parameter.typeRef.isNullable ||
+                                actualType is LimeList ||
+                                actualType is LimeMap ||
+                                actualType is LimeSet ||
+                                actualType is LimeLambda
+                            ) {
+                                "emscripten::val"
+                            } else {
+                                embindNameResolver.resolveName(parameter.typeRef)
+                            },
+                        "nativeName" to parameter.path.name,
+                        "nativeType" to embindNameResolver.resolveName(parameter.typeRef),
+                        "underlyingType" to embindNameResolver.resolveName(parameter.typeRef.type),
+                        "isNullable" to parameter.typeRef.isNullable,
+                        "isList" to (actualType is LimeList),
+                        "isMap" to (actualType is LimeMap),
+                        "mapKeyType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.keyType) },
+                        "mapValueType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.valueType) },
+                        "last" to (index == function.parameters.lastIndex),
+                    )
+                },
+        ).toMutableMap().apply {
+            val parameters =
+                function.parameters.mapIndexed { index, parameter ->
+                    val actualType = parameter.typeRef.type.actualType
+                    val nativeType = embindNameResolver.resolveName(parameter.typeRef)
+                    val adapterType =
+                        if (
+                            parameter.typeRef.isNullable ||
+                            actualType is LimeList ||
+                            actualType is LimeMap ||
+                            actualType is LimeSet ||
+                            actualType is LimeLambda
+                        ) {
                             "emscripten::val"
                         } else {
-                            embindNameResolver.resolveName(parameter.typeRef)
-                        },
-                    "nativeName" to parameter.path.name,
-                    "nativeType" to embindNameResolver.resolveName(parameter.typeRef),
-                    "underlyingType" to embindNameResolver.resolveName(parameter.typeRef.type),
-                    "isNullable" to parameter.typeRef.isNullable,
-                    "isList" to (actualType is LimeList),
-                    "isMap" to (actualType is LimeMap),
-                    "mapKeyType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.keyType) },
-                    "mapValueType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.valueType) },
-                    "last" to (index == function.parameters.lastIndex),
-                )
-            },
-        ).toMutableMap().apply {
-            val parameters = function.parameters.mapIndexed { index, parameter ->
-                val actualType = parameter.typeRef.type.actualType
-                val nativeType = embindNameResolver.resolveName(parameter.typeRef)
-                val adapterType =
-                    if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || actualType is LimeLambda) {
-                        "emscripten::val"
-                    } else {
-                        nativeType
-                    }
-                val callName = if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || actualType is LimeLambda) {
-                    "${parameter.path.name}_value"
-                } else {
-                    parameter.path.name
+                            nativeType
+                        }
+                    val callName =
+                        if (
+                            parameter.typeRef.isNullable ||
+                            actualType is LimeList ||
+                            actualType is LimeMap ||
+                            actualType is LimeSet ||
+                            actualType is LimeLambda
+                        ) {
+                            "${parameter.path.name}_value"
+                        } else {
+                            parameter.path.name
+                        }
+                    mapOf(
+                        "type" to adapterType,
+                        "name" to parameter.path.name,
+                        "last" to (index == function.parameters.lastIndex),
+                        "callName" to callName,
+                        "preparation" to adapterParameterPreparation(parameter, callName),
+                    )
                 }
-                mapOf(
-                    "type" to adapterType,
-                    "name" to parameter.path.name,
-                    "last" to (index == function.parameters.lastIndex),
-                    "callName" to callName,
-                    "preparation" to adapterParameterPreparation(parameter, callName),
-                )
-            }
             put("adapterParameters", parameters.joinToString(", ") { "${it["type"]} ${it["name"]}" })
             put("adapterSignatureParameters", parameters.joinToString(", ") { it["type"].toString() })
             put("adapterCallArguments", parameters.joinToString(", ") { it["callName"].toString() })
@@ -512,17 +558,32 @@ internal class JsGenerator : Generator {
                     "return "
                 },
             )
-            put("adapterReturnConversion", if (thrownException != null) {
-                thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid)
-            } else {
-                adapterReturnConversion(returnType, returnActualType)
-            })
+            put(
+                "adapterReturnConversion",
+                if (thrownException != null) {
+                    thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid)
+                } else {
+                    adapterReturnConversion(returnType, returnActualType)
+                },
+            )
             if (isFlattened) {
                 val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
+                val flattenedReturnType =
+                    if (
+                        thrownException != null ||
+                        returnType.isNullable ||
+                        returnActualType is LimeList ||
+                        returnActualType is LimeMap ||
+                        returnActualType is LimeSet
+                    ) {
+                        "emscripten::val"
+                    } else {
+                        embindNameResolver.resolveName(returnType)
+                    }
                 put(
                     "flattenedFunctionSignature",
                     listOf(
-                        "${if (thrownException != null || returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet) "emscripten::val" else embindNameResolver.resolveName(returnType)}($receiverType*",
+                        "$flattenedReturnType($receiverType*",
                         *parameters.map { it["type"].toString() }.toTypedArray(),
                     )
                         .joinToString(", ")
@@ -537,41 +598,76 @@ internal class JsGenerator : Generator {
         }
     }
 
-    private fun adapterParameterPreparation(parameter: com.here.gluecodium.model.lime.LimeParameter, callName: String): String {
+    private fun adapterParameterPreparation(
+        parameter: com.here.gluecodium.model.lime.LimeParameter,
+        callName: String,
+    ): String {
         val typeRef = parameter.typeRef
         val actualType = typeRef.type.actualType
-        val nativeType = embindNameResolver.resolveName(typeRef)
         return when {
             actualType is LimeLambda -> lambdaAdapterPreparation(actualType, parameter.path.name, callName)
-            typeRef.isNullable ->
-                "auto $callName = ${parameter.path.name}.isNull() || ${parameter.path.name}.isUndefined() ? $nativeType{} : $nativeType(${parameter.path.name}.as<${embindNameResolver.resolveName(typeRef.type)}>());"
-            actualType is LimeList -> {
-                val elementType = embindNameResolver.resolveName(actualType.elementType)
-                "auto $callName = emscripten::vecFromJSArray<$elementType>(${parameter.path.name});"
-            }
-            actualType is LimeMap -> {
-                val keyType = embindNameResolver.resolveName(actualType.keyType)
-                val valueType = embindNameResolver.resolveName(actualType.valueType)
-                "${nativeType} $callName; for (const auto& entry : ${parameter.path.name}.call<emscripten::val>(\"entries\")) { $callName.emplace(entry[0].as<$keyType>(), entry[1].as<$valueType>()); }"
-            }
-            actualType is LimeSet -> {
-                val elementType = embindNameResolver.resolveName(actualType.elementType)
-                "${nativeType} $callName; for (const auto& entry : ${parameter.path.name}.call<emscripten::val>(\"values\")) { $callName.emplace(entry.as<$elementType>()); }"
-            }
+            typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet ->
+                "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             else -> ""
         }
     }
 
-    private fun lambdaAdapterPreparation(lambda: LimeLambda, parameterName: String, callName: String): String {
+    private fun jsToNative(
+        typeRef: LimeTypeRef,
+        source: String,
+    ): String {
+        if (typeRef.isNullable) {
+            val nativeType = embindNameResolver.resolveName(typeRef)
+            val value = jsToNativeNonNullable(typeRef.type.actualType, typeRef, source)
+            return "($source.isNull() || $source.isUndefined() ? " +
+                "$nativeType{} : $nativeType($value))"
+        }
+        return jsToNativeNonNullable(typeRef.type.actualType, typeRef, source)
+    }
+
+    private fun jsToNativeNonNullable(
+        actualType: LimeType,
+        typeRef: LimeTypeRef,
+        source: String,
+    ): String =
+        when (actualType) {
+            is LimeList -> {
+                val element = jsToNative(actualType.elementType, "entry")
+                "([&]() { ${embindNameResolver.resolveName(typeRef.type)} converted; " +
+                    "for (const auto& entry : $source.call<emscripten::val>(\"values\")) { " +
+                    "converted.emplace_back($element); } return converted; }())"
+            }
+            is LimeMap -> {
+                val key = jsToNative(actualType.keyType, "entry[0]")
+                val value = jsToNative(actualType.valueType, "entry[1]")
+                "([&]() { ${embindNameResolver.resolveName(typeRef.type)} converted; " +
+                    "for (const auto& entry : $source.call<emscripten::val>(\"entries\")) { " +
+                    "converted.emplace($key, $value); } return converted; }())"
+            }
+            is LimeSet -> {
+                val element = jsToNative(actualType.elementType, "entry")
+                "([&]() { ${embindNameResolver.resolveName(typeRef.type)} converted; " +
+                    "for (const auto& entry : $source.call<emscripten::val>(\"values\")) { " +
+                    "converted.emplace($element); } return converted; }())"
+            }
+            else -> "$source.as<${embindNameResolver.resolveName(typeRef.type)}>()"
+        }
+
+    private fun lambdaAdapterPreparation(
+        lambda: LimeLambda,
+        parameterName: String,
+        callName: String,
+    ): String {
         val function = lambda.asFunction()
         val returnType = embindNameResolver.resolveName(function.returnType)
-        val parameters = function.parameters.map { parameter ->
-            val type = embindNameResolver.resolveName(parameter.typeRef)
-            val cppType = if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $type&" else type
-            "$cppType ${parameter.path.name}"
-        }
+        val parameters =
+            function.parameters.map { parameter ->
+                val type = embindNameResolver.resolveName(parameter.typeRef)
+                val cppType = if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $type&" else type
+                "$cppType ${parameter.path.name}"
+            }
         val arguments = function.parameters.joinToString(", ") { it.path.name }
-        val invocation = "${parameterName}.call<$returnType>(\"call\", $parameterName${if (arguments.isNotEmpty()) ", $arguments" else ""})"
+        val invocation = "$parameterName.call<$returnType>(\"call\", $parameterName${if (arguments.isNotEmpty()) ", $arguments" else ""})"
         val body = if (function.returnType.isVoid) "$invocation;" else "return $invocation;"
         return "auto $callName = [$parameterName = std::move($parameterName)](${parameters.joinToString(", ")}) -> $returnType { $body };"
     }
@@ -580,31 +676,65 @@ internal class JsGenerator : Generator {
         returnType: com.here.gluecodium.model.lime.LimeTypeRef,
         actualType: com.here.gluecodium.model.lime.LimeType,
     ): String {
-        val source = if (returnType.isNullable) "*result" else "result"
-        return when {
-            returnType.isNullable && actualType is LimeMap ->
-                "if (!result) return emscripten::val::undefined(); auto jsResult = emscripten::val::global(\"Map\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"set\", emscripten::val(entry.first), emscripten::val(entry.second)); } return jsResult;"
-            actualType is LimeMap ->
-                "auto jsResult = emscripten::val::global(\"Map\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"set\", emscripten::val(entry.first), emscripten::val(entry.second)); } return jsResult;"
-            returnType.isNullable && actualType is LimeSet ->
-                "if (!result) return emscripten::val::undefined(); auto jsResult = emscripten::val::global(\"Set\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"add\", emscripten::val(entry)); } return jsResult;"
-            actualType is LimeSet ->
-                "auto jsResult = emscripten::val::global(\"Set\").new_(); for (const auto& entry : $source) { jsResult.call<void>(\"add\", emscripten::val(entry)); } return jsResult;"
-            returnType.isNullable ->
-                "return result ? emscripten::val($source) : emscripten::val::undefined();"
-            actualType is LimeList ->
-                "return emscripten::val::array($source.begin(), $source.end());"
-            else -> ""
+        return if (returnType.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet) {
+            "return ${nativeToJs(returnType, "result")};"
+        } else {
+            ""
         }
     }
 
-    private fun thrownReturnConversion(errorIsEnum: Boolean, returnIsVoid: Boolean): String {
+    private fun nativeToJs(
+        typeRef: LimeTypeRef,
+        source: String,
+    ): String {
+        if (typeRef.isNullable) {
+            return "($source ? ${nativeToJsNonNullable(typeRef.type.actualType, typeRef, "*$source")} : emscripten::val::undefined())"
+        }
+        return nativeToJsNonNullable(typeRef.type.actualType, typeRef, source)
+    }
+
+    private fun nativeToJsNonNullable(
+        actualType: LimeType,
+        typeRef: LimeTypeRef,
+        source: String,
+    ): String =
+        when (actualType) {
+            is LimeList -> {
+                val element = nativeToJs(actualType.elementType, "entry")
+                "([&]() { auto jsResult = emscripten::val::global(\"Array\").new_(); " +
+                    "for (const auto& entry : $source) { jsResult.call<void>(\"push\", $element); } " +
+                    "return jsResult; }())"
+            }
+            is LimeMap -> {
+                val key = nativeToJs(actualType.keyType, "entry.first")
+                val value = nativeToJs(actualType.valueType, "entry.second")
+                "([&]() { auto jsResult = emscripten::val::global(\"Map\").new_(); " +
+                    "for (const auto& entry : $source) { jsResult.call<void>(\"set\", $key, $value); } " +
+                    "return jsResult; }())"
+            }
+            is LimeSet -> {
+                val element = nativeToJs(actualType.elementType, "entry")
+                "([&]() { auto jsResult = emscripten::val::global(\"Set\").new_(); " +
+                    "for (const auto& entry : $source) { jsResult.call<void>(\"add\", $element); } " +
+                    "return jsResult; }())"
+            }
+            else -> "emscripten::val($source)"
+        }
+
+    private fun thrownReturnConversion(
+        errorIsEnum: Boolean,
+        returnIsVoid: Boolean,
+    ): String {
         if (errorIsEnum && returnIsVoid) {
-            return "auto jsResult = emscripten::val::object(); if (result.value() != 0) { jsResult.set(\"error\", result.value()); } return jsResult;"
+            return "auto jsResult = emscripten::val::object(); " +
+                "if (result.value() != 0) { jsResult.set(\"error\", result.value()); } " +
+                "return jsResult;"
         }
         val errorExpression = if (errorIsEnum) "result.error().value()" else "result.error()"
         val successExpression = if (returnIsVoid) "" else " jsResult.set(\"value\", result.unsafe_value());"
-        return "auto jsResult = emscripten::val::object(); if (result) {$successExpression} else { jsResult.set(\"error\", $errorExpression); } return jsResult;"
+        return "auto jsResult = emscripten::val::object(); " +
+            "if (result) {$successExpression} else { jsResult.set(\"error\", $errorExpression); } " +
+            "return jsResult;"
     }
 
     private fun propertyViewModel(property: LimeProperty): Map<String, Any> =
@@ -616,7 +746,10 @@ internal class JsGenerator : Generator {
             "isStatic" to property.isStatic,
         )
 
-    private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> =
+    private fun fieldViewModel(
+        struct: LimeStruct,
+        field: LimeField,
+    ): Map<String, Any?> =
         mapOf(
             "model" to field,
             "jsName" to nameRules.getName(field),
@@ -640,7 +773,9 @@ internal class JsGenerator : Generator {
                 "${embindNameResolver.resolveFullName(getParentEnumeration(enumerator))}::${embindNameResolver.resolveName(enumerator)}",
         )
 
-    private fun getParentEnumeration(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): com.here.gluecodium.model.lime.LimeEnumeration =
+    private fun getParentEnumeration(
+        enumerator: com.here.gluecodium.model.lime.LimeEnumerator,
+    ): com.here.gluecodium.model.lime.LimeEnumeration =
         limeReferenceMap[enumerator.path.parent.toString()] as? com.here.gluecodium.model.lime.LimeEnumeration
             ?: throw IllegalStateException("Unable to resolve parent enumeration for ${enumerator.fullName}")
 
@@ -697,13 +832,15 @@ internal class JsGenerator : Generator {
                         .distinct()
                 topRegName to deps
             }
+        val genericRegistrations = collectGenericRegistrations(filteredModel)
         val moduleInitContent =
             TemplateEngine.render(
                 "js/EmbindModuleInit",
                 mapOf(
                     "moduleName" to jsModuleName,
                     "registerFunctions" to topologicalSort(registerNameToDeps).map { mapOf("name" to it) },
-                    "genericRegistrations" to collectGenericRegistrations(filteredModel),
+                    "genericRegistrations" to genericRegistrations,
+                    "needsUnorderedSet" to containsNullableSet(filteredModel),
                 ),
                 nameResolvers,
             )
@@ -772,8 +909,29 @@ internal class JsGenerator : Generator {
         return registrations.values.toList()
     }
 
-    private fun sanitizeRegistrationName(typeName: String) =
-        typeName.replace(Regex("[^A-Za-z0-9_]"), "_").trim('_').ifEmpty { "Type" }
+    private fun containsNullableSet(filteredModel: LimeModel): Boolean {
+        fun contains(typeRef: com.here.gluecodium.model.lime.LimeTypeRef): Boolean {
+            val type = typeRef.type
+            if (typeRef.isNullable && type.actualType is LimeSet) return true
+            return type.childTypes.any(::contains)
+        }
+
+        return filteredModel.topElements
+            .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
+            .flatMap(::collectEmbindTypes)
+            .filterIsInstance<com.here.gluecodium.model.lime.LimeContainer>()
+            .any { container ->
+                container.functions.any { function ->
+                    function.parameters.any { contains(it.typeRef) } || contains(function.returnType.typeRef)
+                } ||
+                    container.properties.any { contains(it.typeRef) } ||
+                    container.constants.any { contains(it.typeRef) } ||
+                    container.constructors.any { constructor -> constructor.parameters.any { contains(it.typeRef) } } ||
+                    (container as? LimeStruct)?.fields?.any { contains(it.typeRef) } == true
+            }
+    }
+
+    private fun sanitizeRegistrationName(typeName: String) = typeName.replace(Regex("[^A-Za-z0-9_]"), "_").trim('_').ifEmpty { "Type" }
 
     private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {
         var current = element
