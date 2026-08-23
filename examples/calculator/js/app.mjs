@@ -3,6 +3,7 @@ import createModule from "./generated.mjs";
 const display = document.querySelector("#display");
 const expressionOutput = document.querySelector("#expression");
 const keypad = document.querySelector("#keypad");
+const comparisonKeypad = document.querySelector("#comparison-keypad");
 const clearButton = document.querySelector("#clear");
 const historyList = document.querySelector("#history-list");
 
@@ -85,6 +86,23 @@ function calculate(first, operator, second) {
       throw new Error(errorName(result.error));
     }
     return result.result;
+  }
+
+  if (operator === "min") {
+    const result = calculator.min(first, second);
+    try {
+      return result.getResult();
+    } finally {
+      result.delete();
+    }
+  }
+
+  if (operator === "max") {
+    const result = calculator.max(first, second);
+    if (result == null) {
+      throw new Error("maximum is undefined");
+    }
+    return result;
   }
 
   throw new Error("Choose a calculator operation.");
@@ -183,7 +201,7 @@ function handleInput(value) {
       backspace();
     } else if (value === "C") {
       resetCalculator();
-    } else if (["+", "-", "×", "÷"].includes(value)) {
+    } else if (["+", "-", "×", "÷", "min", "max"].includes(value)) {
       chooseOperator(value);
     } else if (value === "=") {
       evaluate();
@@ -220,15 +238,22 @@ try {
     }
   });
 
+  comparisonKeypad.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (button) {
+      handleInput(button.dataset.value);
+    }
+  });
+
   clearButton.addEventListener("click", () => {
     historyList.innerHTML = '<li class="empty-history">No calculations yet.</li>';
     resetCalculator();
   });
 
   document.addEventListener("keydown", (event) => {
-    const keyMap = { "*": "×", "/": "÷", Enter: "=", Escape: "C", Backspace: "⌫" };
+    const keyMap = { "*": "×", "/": "÷", m: "min", M: "max", Enter: "=", Escape: "C", Backspace: "⌫" };
     const value = keyMap[event.key] || event.key;
-    if (/^\d$/.test(value) || [".", "±", "⌫", "C", "+", "-", "×", "÷", "="].includes(value)) {
+    if (/^\d$/.test(value) || [".", "±", "⌫", "C", "+", "-", "×", "÷", "min", "max", "="].includes(value)) {
       event.preventDefault();
       handleInput(value);
     }

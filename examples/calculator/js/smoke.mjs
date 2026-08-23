@@ -1,5 +1,10 @@
 import assert from "node:assert/strict";
-import createModule from "./generated.mjs";
+import { dirname, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+
+const { default: createModule } = await import(
+  pathToFileURL(resolve(dirname(process.argv[1]), "generated.mjs"))
+);
 
 const module = await createModule();
 const calculator = module.Calculator.make();

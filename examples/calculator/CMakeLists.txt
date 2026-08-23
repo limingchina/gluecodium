@@ -75,22 +75,25 @@ set_property(TARGET mylibrary APPEND PROPERTY GLUECODIUM_LIME_SOURCES
 
 if(ENABLE_JS)
   gluecodium_target_js_sources(mylibrary OUTPUT mylibrary_js)
-  configure_file(
-    "${CMAKE_CURRENT_LIST_DIR}/js/smoke.mjs"
+  file(RELATIVE_PATH _js_source_dir
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "${CMAKE_CURRENT_LIST_DIR}/js")
+  file(CREATE_LINK
+    "${_js_source_dir}/smoke.mjs"
     "${CMAKE_CURRENT_BINARY_DIR}/calculator-js-smoke.mjs"
-    COPYONLY)
-  configure_file(
-    "${CMAKE_CURRENT_LIST_DIR}/js/index.html"
+    SYMBOLIC)
+  file(CREATE_LINK
+    "${_js_source_dir}/index.html"
     "${CMAKE_CURRENT_BINARY_DIR}/index.html"
-    COPYONLY)
-  configure_file(
-    "${CMAKE_CURRENT_LIST_DIR}/js/app.mjs"
+    SYMBOLIC)
+  file(CREATE_LINK
+    "${_js_source_dir}/app.mjs"
     "${CMAKE_CURRENT_BINARY_DIR}/app.mjs"
-    COPYONLY)
-  configure_file(
-    "${CMAKE_CURRENT_LIST_DIR}/js/serve.py"
+    SYMBOLIC)
+  file(CREATE_LINK
+    "${_js_source_dir}/serve.py"
     "${CMAKE_CURRENT_BINARY_DIR}/serve.py"
-    COPYONLY)
+    SYMBOLIC)
 endif()
 
 if (CMAKE_GENERATOR STREQUAL "Xcode")

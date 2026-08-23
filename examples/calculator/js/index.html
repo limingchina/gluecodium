@@ -115,6 +115,19 @@
         grid-column: span 2;
       }
 
+      .comparison-keypad {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+        margin-top: 0.65rem;
+      }
+
+      .comparison-keypad button {
+        min-height: 2.75rem;
+        background: #c3d8cf;
+        color: #18312b;
+      }
+
       .history {
         margin-top: 1.75rem;
         border-top: 1px solid #c3d8cf;
@@ -190,6 +203,10 @@
           <button class="wide" data-value="0" type="button">0</button>
           <button data-value="." type="button">.</button>
           <button class="equals" data-value="=" type="button" aria-label="Equals">=</button>
+        </div>
+        <div id="comparison-keypad" class="comparison-keypad" aria-label="Comparison operations">
+          <button data-value="min" type="button" aria-label="Minimum">min</button>
+          <button data-value="max" type="button" aria-label="Maximum">max</button>
         </div>
         <button id="clear" class="utility" type="button">Clear history</button>
       </section>
