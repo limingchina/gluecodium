@@ -1,5 +1,24 @@
 package phase4
 
+enum Mode {
+    Off,
+    On
+}
+
+struct Sample {
+    count: Int
+    label: String
+}
+
 class Harness {
     static fun add(first: Int, second: Int): Int
+    constructor create(seed: Int)
+    property value: Int
+    fun increment(amount: Int): Int
+    fun nullableValue(input: Int?): Int?
+    fun sum(values: List<Int>): Int
+    fun lookup(values: Map<String, Int>, key: String): Int?
+    fun roundTrip(sample: Sample): Sample
+    fun roundTripMode(mode: Mode): Mode
+    fun roundTripLong(value: Long): Long
 }

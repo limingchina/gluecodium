@@ -10,9 +10,9 @@ void {{name}}();
 
 EMSCRIPTEN_BINDINGS({{moduleName}}) {
 {{#genericRegistrations}}
-    {{#optional}}register_optional<{{type}}>();{{/optional}}
-    {{#vector}}register_vector<{{type}}>("{{name}}");{{/vector}}
-    {{#map}}register_map<{{keyType}}, {{valueType}}>("{{name}}");{{/map}}
+    {{#optional}}emscripten::register_optional<{{type}}>();{{/optional}}
+    {{#vector}}emscripten::register_vector<{{type}}>("{{name}}");{{/vector}}
+    {{#map}}emscripten::register_map<{{keyType}}, {{valueType}}>("{{name}}");{{/map}}
 {{/genericRegistrations}}
 {{#registerFunctions}}
     {{name}}();

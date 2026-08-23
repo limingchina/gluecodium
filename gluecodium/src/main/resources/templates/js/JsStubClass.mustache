@@ -6,7 +6,7 @@ SPDX-License-Identifier: Apache-2.0
 
 export class {{jsName}} {
 {{#constructors}}
-  constructor({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}});
+  static {{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{../jsName}};
 {{/constructors}}
 {{#functions}}
 {{^isConstructor}}

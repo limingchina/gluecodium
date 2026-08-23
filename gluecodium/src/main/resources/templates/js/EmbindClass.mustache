@@ -7,15 +7,43 @@ secondary parents are flattened by binding their members on the derived type.
 }}
 void {{registerName}}(void) {
     class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{jsName}}")
+        .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{jsName}}")
 {{#constructors}}
-        .constructor<{{#parameters}}{{cppType}}{{^last}}, {{/last}}{{/parameters}}>()
+{{#needsAdapter}}
+        .class_function<{{adapterReturnType}}({{adapterSignatureParameters}})>("{{jsName}}", []({{adapterParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+        })
+{{/needsAdapter}}
+{{^needsAdapter}}
+        .class_function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+{{/needsAdapter}}
 {{/constructors}}
 {{#methods}}
 {{#isStatic}}
+{{#needsAdapter}}
+        .class_function<{{adapterReturnType}}({{adapterSignatureParameters}})>("{{jsName}}", []({{adapterParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+        })
+{{/needsAdapter}}
+{{^needsAdapter}}
         .class_function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+{{/needsAdapter}}
 {{/isStatic}}
 {{^isStatic}}
+{{#needsAdapter}}
+        .function<{{adapterReturnType}}({{cppFullName}}*, {{adapterSignatureParameters}})>("{{jsName}}", []({{cppFullName}}* self, {{adapterParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+        }, allow_raw_pointer<arg<0>>())
+{{/needsAdapter}}
+{{^needsAdapter}}
         .function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+{{/needsAdapter}}
 {{/isStatic}}
 {{/methods}}
 {{#properties}}
