@@ -1,6 +1,6 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: In progress; Strings, BuiltinTypes, Enums, Structs, and Blobs Node.js functional coverage is passing
+**Status**: In progress; Strings, BuiltinTypes, Enums, Structs, Blobs, and Classes Node.js functional coverage is passing
 
 **Date**: 2026-08-23
 
@@ -19,6 +19,8 @@ the `js` generator:
   accessor-backed C++ struct fields.
 - `Blobs`: `std::shared_ptr<std::vector<uint8_t>>` conversion to and from JavaScript `Uint8Array`,
   including blobs nested in value objects, byte-buffer APIs, and nullable results.
+- `Classes`: static factory construction, instance method mutation, shared-pointer round trips,
+  referential aliasing, and explicit `delete()` disposal.
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
@@ -44,6 +46,8 @@ The focused Blobs test passes all four cases, including null shared pointers map
 `Uint8Array` for non-nullable results and `undefined` for nullable results. The immutable Blob
 value-object fixture remains skipped for JS because embind `value_object` bindings require a
 default-constructible, writable class without custom construction support.
+The focused Classes test passes both cases, including shared-pointer aliasing through nested class
+values and explicit disposal of embind handles.
 
 ## Generator Fixes Exercised
 
