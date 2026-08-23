@@ -114,12 +114,32 @@ Verification passes:
 Phase 5 harness OK
 ```
 
+## Item 4 - JavaScript Callables (`LimeLambda`)
+
+**Status**: Verified for synchronous single-threaded invocation
+
+`LimeLambda` parameters are adapted from `emscripten::val` to native
+`std::function` values. The generated adapter captures the JavaScript callable
+and invokes its `call` method with the generated native argument and return
+types. The persistent harness passes a JavaScript `String -> String` callable to
+native code and verifies the returned value.
+
+The callback is invoked synchronously on the WebAssembly thread that calls the
+native method. This item does not claim cross-thread `emscripten::val` safety;
+pthread behavior remains a separate Phase 5 item.
+
+Verification passes:
+
+```text
+./gradlew :gluecodium:compileKotlin -q
+Phase 5 harness OK
+```
+
 ## Remaining Phase 5 Items
 
-1. Add callable `LimeLambda` coverage and document callback thread behavior.
-2. Add exception and `Return<T, Error>` behavior where it belongs in the
+1. Add exception and `Return<T, Error>` behavior where it belongs in the
    generator/build plan.
-3. Add pthread callback and cross-thread `emscripten::val` spike coverage.
+2. Add pthread callback and cross-thread `emscripten::val` spike coverage.
 
 Each item should be independently verified and committed before the next item
 begins.

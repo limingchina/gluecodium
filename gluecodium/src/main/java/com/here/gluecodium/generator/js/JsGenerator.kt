@@ -408,7 +408,8 @@ internal class JsGenerator : Generator {
                 function.parameters.any { parameter ->
                     parameter.typeRef.isNullable ||
                         parameter.typeRef.type.actualType is LimeList ||
-                        parameter.typeRef.type.actualType is LimeMap
+                        parameter.typeRef.type.actualType is LimeMap ||
+                        parameter.typeRef.type.actualType is LimeLambda
                 }
         return mapOf(
             "model" to function,
@@ -437,7 +438,7 @@ internal class JsGenerator : Generator {
                     "jsName" to nameRules.getName(parameter),
                     "cppType" to embindNameResolver.resolveName(parameter.typeRef),
                     "adapterType" to
-                        if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap) {
+                        if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeLambda) {
                             "emscripten::val"
                         } else {
                             embindNameResolver.resolveName(parameter.typeRef)
@@ -458,12 +459,12 @@ internal class JsGenerator : Generator {
                 val actualType = parameter.typeRef.type.actualType
                 val nativeType = embindNameResolver.resolveName(parameter.typeRef)
                 val adapterType =
-                    if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap) {
+                    if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeLambda) {
                         "emscripten::val"
                     } else {
                         nativeType
                     }
-                val callName = if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap) {
+                val callName = if (parameter.typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeLambda) {
                     "${parameter.path.name}_value"
                 } else {
                     parameter.path.name
@@ -514,6 +515,7 @@ internal class JsGenerator : Generator {
         val actualType = typeRef.type.actualType
         val nativeType = embindNameResolver.resolveName(typeRef)
         return when {
+            actualType is LimeLambda -> lambdaAdapterPreparation(actualType, parameter.path.name, callName)
             typeRef.isNullable ->
                 "auto $callName = ${parameter.path.name}.isNull() || ${parameter.path.name}.isUndefined() ? $nativeType{} : $nativeType(${parameter.path.name}.as<${embindNameResolver.resolveName(typeRef.type)}>());"
             actualType is LimeList -> {
@@ -527,6 +529,20 @@ internal class JsGenerator : Generator {
             }
             else -> ""
         }
+    }
+
+    private fun lambdaAdapterPreparation(lambda: LimeLambda, parameterName: String, callName: String): String {
+        val function = lambda.asFunction()
+        val returnType = embindNameResolver.resolveName(function.returnType)
+        val parameters = function.parameters.map { parameter ->
+            val type = embindNameResolver.resolveName(parameter.typeRef)
+            val cppType = if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $type&" else type
+            "$cppType ${parameter.path.name}"
+        }
+        val arguments = function.parameters.joinToString(", ") { it.path.name }
+        val invocation = "${parameterName}.call<$returnType>(\"call\", $parameterName${if (arguments.isNotEmpty()) ", $arguments" else ""})"
+        val body = if (function.returnType.isVoid) "$invocation;" else "return $invocation;"
+        return "auto $callName = [$parameterName = std::move($parameterName)](${parameters.joinToString(", ")}) -> $returnType { $body };"
     }
 
     private fun adapterReturnConversion(

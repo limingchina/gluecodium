@@ -113,4 +113,11 @@ std::string MultipleInheritanceFactory::invoke_js_callback(
     return callback->invoke("native");
 }
 
+std::string MultipleInheritanceFactory::invoke_lambda(
+    const StringTransformer& callback,
+    const std::string& value
+) {
+    return callback(value);
+}
+
 }  // namespace phase5

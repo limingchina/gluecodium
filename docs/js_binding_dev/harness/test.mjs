@@ -51,6 +51,9 @@ const callback = JsCallback.implement({
 });
 assert.equal(MultipleInheritanceFactory.invokeJsCallback(callback), "js-native");
 
+const transformer = (value) => `js-${value}`;
+assert.equal(MultipleInheritanceFactory.invokeLambda(transformer, "lambda"), "js-lambda");
+
 multi.delete();
 narrow.delete();
 separateNarrow.delete();

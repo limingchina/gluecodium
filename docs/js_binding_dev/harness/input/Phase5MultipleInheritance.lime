@@ -1,5 +1,7 @@
 package phase5
 
+lambda StringTransformer = (String) -> String
+
 open class OpenClass {
     fun parentFunction(): String
     property parentProperty: String
@@ -24,4 +26,5 @@ class MultipleInheritanceFactory {
     static fun getMultiClassAsNarrow(): NarrowInterface
     static fun upcastToNarrow(instance: MultiClass): NarrowInterface
     static fun invokeJsCallback(callback: JsCallback): String
+    static fun invokeLambda(callback: StringTransformer, value: String): String
 }

@@ -23,7 +23,7 @@ void {{registerName}}(void) {
 {{#methods}}
 {{#isStatic}}
 {{#needsAdapter}}
-        .class_function<{{adapterReturnType}}({{adapterSignatureParameters}})>("{{jsName}}", []({{adapterParameters}}) -> {{adapterReturnType}} {
+        .class_function("{{jsName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
             {{adapterPreparations}}
                         {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
             {{adapterReturnConversion}}
