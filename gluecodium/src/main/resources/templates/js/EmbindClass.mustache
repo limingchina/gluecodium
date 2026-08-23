@@ -34,6 +34,14 @@ void {{registerName}}(void) {
 {{/needsAdapter}}
 {{/isStatic}}
 {{^isStatic}}
+{{#isFlattened}}
+        .function<{{flattenedFunctionSignature}}>("{{jsName}}", []({{flattenedLambdaParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+        }, allow_raw_pointer<arg<0>>())
+{{/isFlattened}}
+{{^isFlattened}}
 {{#needsAdapter}}
         .function<{{adapterReturnType}}({{cppFullName}}*, {{adapterSignatureParameters}})>("{{jsName}}", []({{cppFullName}}* self, {{adapterParameters}}) -> {{adapterReturnType}} {
             {{adapterPreparations}}
@@ -44,6 +52,7 @@ void {{registerName}}(void) {
 {{^needsAdapter}}
         .function("{{jsName}}", &{{cppFullName}}::{{cppName}})
 {{/needsAdapter}}
+{{/isFlattened}}
 {{/isStatic}}
 {{/methods}}
 {{#properties}}

@@ -1,0 +1,22 @@
+package phase5
+
+open class OpenClass {
+    fun parentFunction(): String
+    property parentProperty: String
+}
+
+narrow interface NarrowInterface {
+    fun parentFunctionLight(): String
+    property parentPropertyLight: String
+}
+
+class MultiClass: OpenClass, NarrowInterface {
+    fun childFunction(): String
+    property childProperty: String
+}
+
+class MultipleInheritanceFactory {
+    static fun getMultiClass(): MultiClass
+    static fun getMultiClassAsNarrow(): NarrowInterface
+    static fun upcastToNarrow(instance: MultiClass): NarrowInterface
+}

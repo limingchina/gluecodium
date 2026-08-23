@@ -1,6 +1,8 @@
 #include <emscripten/bind.h>
 
 #include "phase4/Harness.h"
+#include "phase5/MultiClass.h"
+#include "phase5/MultipleInheritanceFactory.h"
 
 namespace phase4 {
 
@@ -70,3 +72,38 @@ int32_t Harness::add(const int32_t first, const int32_t second) {
 }
 
 }  // namespace phase4
+
+namespace phase5 {
+
+namespace {
+
+class MultiClassImpl final : public MultiClass {
+public:
+    std::string parent_function() override { return "open-parent"; }
+    std::string get_parent_property() const override { return "open-parent"; }
+    void set_parent_property(const std::string&) override {}
+    std::string parent_function_light() override { return "narrow-parent"; }
+    std::string get_parent_property_light() const override { return "narrow-property"; }
+    void set_parent_property_light(const std::string&) override {}
+    std::string child_function() override { return "child"; }
+    std::string get_child_property() const override { return "child-property"; }
+    void set_child_property(const std::string&) override {}
+};
+
+}  // namespace
+
+std::shared_ptr<MultiClass> MultipleInheritanceFactory::get_multi_class() {
+    return std::make_shared<MultiClassImpl>();
+}
+
+std::shared_ptr<NarrowInterface> MultipleInheritanceFactory::get_multi_class_as_narrow() {
+    return std::make_shared<MultiClassImpl>();
+}
+
+std::shared_ptr<NarrowInterface> MultipleInheritanceFactory::upcast_to_narrow(
+    const std::shared_ptr<MultiClass>& instance
+) {
+    return instance;
+}
+
+}  // namespace phase5

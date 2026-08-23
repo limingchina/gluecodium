@@ -4,6 +4,7 @@ SPDX-License-Identifier: Apache-2.0
 }}
 void {{registerName}}(void) {
     class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{jsName}}")
+        .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{jsName}}")
 {{#methods}}
 {{#isStatic}}
 {{#needsAdapter}}

@@ -263,11 +263,38 @@ internal class JsGenerator : Generator {
         type: com.here.gluecodium.model.lime.LimeType,
         filteredModel: LimeModel,
     ): String? =
+        primaryBaseType(type, filteredModel)
+            ?.let { cppNameCache.getFullyQualifiedName(it) }
+
+    private fun primaryBaseType(
+        type: com.here.gluecodium.model.lime.LimeType,
+        filteredModel: LimeModel,
+    ): LimeContainerWithInheritance? =
         (type as? LimeContainerWithInheritance)?.parents
             ?.mapNotNull { it.type.actualType as? LimeContainerWithInheritance }
             ?.filter { filteredModel.referenceMap.containsKey(it.fullName) }
             ?.minByOrNull { it is com.here.gluecodium.model.lime.LimeInterface }
-            ?.let { cppNameCache.getFullyQualifiedName(it) }
+
+    private fun secondaryParentMembers(
+        type: com.here.gluecodium.model.lime.LimeType,
+        filteredModel: LimeModel,
+    ): Pair<List<LimeFunction>, List<LimeProperty>> {
+        val container = type as? LimeContainerWithInheritance ?: return emptyList<LimeFunction>() to emptyList()
+        val primaryBase = primaryBaseType(type, filteredModel)
+        val secondaryParents =
+            container.parents
+                .mapNotNull { it.type.actualType as? LimeContainerWithInheritance }
+                .filter { it !== primaryBase && filteredModel.referenceMap.containsKey(it.fullName) }
+        val functions =
+            secondaryParents
+                .flatMap { it.functions + it.inheritedFunctions }
+                .distinctBy { it.fullName }
+        val properties =
+            secondaryParents
+                .flatMap { it.properties + it.inheritedProperties }
+                .distinctBy { it.fullName }
+        return functions to properties
+    }
 
     /**
      * Builds the template data for one embind binding: the common identity fields plus
@@ -295,9 +322,22 @@ internal class JsGenerator : Generator {
         }
         val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return data
 
+        val (secondaryFunctions, secondaryProperties) = secondaryParentMembers(type, filteredModel)
         data["constructors"] = container.constructors.map { functionViewModel(it) }
-        data["methods"] = container.functions.filterNot { it.isConstructor }.map { functionViewModel(it) }
-        data["properties"] = container.properties.map { propertyViewModel(it) }
+        data["methods"] =
+            (container.functions.filterNot { it.isConstructor } + secondaryFunctions)
+                .distinctBy { it.fullName }
+                .map {
+                    functionViewModel(
+                        it,
+                        isFlattened = secondaryFunctions.contains(it),
+                        flattenedReceiverType = cppNameCache.getFullyQualifiedName(type),
+                    )
+                }
+        data["properties"] =
+            (container.properties + secondaryProperties)
+                .distinctBy { it.fullName }
+                .map { propertyViewModel(it) }
         if (type is LimeStruct) {
             data["fields"] = type.fields.map { fieldViewModel(type, it) }
         }
@@ -305,7 +345,11 @@ internal class JsGenerator : Generator {
         return data
     }
 
-    private fun functionViewModel(function: LimeFunction): Map<String, Any> {
+    private fun functionViewModel(
+        function: LimeFunction,
+        isFlattened: Boolean = false,
+        flattenedReceiverType: String? = null,
+    ): Map<String, Any> {
         val isOverloaded = CppSignatureResolver(limeReferenceMap, cppNameRules).isOverloaded(function)
         val returnType = function.returnType.typeRef
         val returnActualType = returnType.type.actualType
@@ -334,6 +378,7 @@ internal class JsGenerator : Generator {
             "returnIsMap" to (returnActualType is LimeMap),
             // Overloads are registered with explicit signatures via select_overload.
             "isOverloaded" to isOverloaded,
+            "isFlattened" to isFlattened,
             "parameters" to function.parameters.mapIndexed { index, parameter ->
                 val actualType = parameter.typeRef.type.actualType
                 mapOf(
@@ -393,6 +438,23 @@ internal class JsGenerator : Generator {
                 },
             )
             put("adapterReturnConversion", adapterReturnConversion(returnType, returnActualType))
+            if (isFlattened) {
+                val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
+                put(
+                    "flattenedFunctionSignature",
+                    listOf(
+                        "${if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap) "emscripten::val" else embindNameResolver.resolveName(returnType)}($receiverType*",
+                        *parameters.map { it["type"].toString() }.toTypedArray(),
+                    )
+                        .joinToString(", ")
+                        .let { "$it)" },
+                )
+                put(
+                    "flattenedLambdaParameters",
+                    listOf("$receiverType* self", *parameters.map { "${it["type"]} ${it["name"]}" }.toTypedArray())
+                        .joinToString(", "),
+                )
+            }
         }
     }
 
