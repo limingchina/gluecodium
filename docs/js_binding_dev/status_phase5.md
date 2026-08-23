@@ -223,8 +223,7 @@ ownership, and a public LimeIDL surface for this behavior remain future work.
 
 ## Remaining Phase 5 Items
 
-1. Design thread-aware callback marshalling for the pthread build.
-2. Extend collection adapters to nested and nullable `Set`/container cases, or
+1. Extend collection adapters to nested and nullable `Set`/container cases, or
    replace the inline adapters with a composable caster design.
 
 Each item should be independently verified and committed before the next item
