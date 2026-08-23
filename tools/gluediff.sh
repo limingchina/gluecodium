@@ -29,15 +29,19 @@ fi
 FILE1=${1}
 FILE2=${2}
 DIFF_TOOL=${3}
-shift 3 # Use the rest of args verbatim with $* below.
+shift 3
 
 TMP_DIR=$(mktemp -d 2>/dev/null || mktemp -d -t 'tmpdir')
 mkdir "${TMP_DIR}/1"
 mkdir "${TMP_DIR}/2"
 
 pushd "${SCRIPT_DIR}/launcher" > /dev/null
-gradle run --args="-input '${FILE1}' -output '${TMP_DIR}/1' $*"
-gradle run --args="-input '${FILE2}' -output '${TMP_DIR}/2' $*"
+GLUECODIUM_ARGS=(-input "${FILE1}" -output "${TMP_DIR}/1")
+GLUECODIUM_ARGS+=("$@")
+gradle run --args="$(printf '%q ' "${GLUECODIUM_ARGS[@]}")"
+GLUECODIUM_ARGS=(-input "${FILE2}" -output "${TMP_DIR}/2")
+GLUECODIUM_ARGS+=("$@")
+gradle run --args="$(printf '%q ' "${GLUECODIUM_ARGS[@]}")"
 popd > /dev/null
 
 ${DIFF_TOOL} "${TMP_DIR}/1" "${TMP_DIR}/2"
