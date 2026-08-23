@@ -649,6 +649,44 @@ exists partly because each `.cpp` becomes an independently useful translation un
 purely a compile-parallelism/organization choice, not a module-boundary one (see §7,
 Architecture Decision).
 
+#### 6.1 Lime package and JavaScript namespace semantics
+
+**Architecture clarification:** a Lime `package` is a source/model namespace, but it is not
+currently emitted as a nested JavaScript runtime namespace object.
+
+For a declaration such as:
+
+```lime
+package com.example.maps
+
+class Map { ... }
+```
+
+the package is represented independently at each output layer:
+
+- **TypeScript declarations:** the package becomes the output directory path
+  `js/com/example/maps/`, with `Map.d.ts` and a package-level `index.d.ts` containing re-exports.
+- **Native C++ bindings:** the package remains part of the fully qualified native symbol,
+  `::com::example::maps::Map`.
+- **Generated embind source:** the package components are flattened for the generated filename,
+  for example `js/embind/com_example_maps_Map.cpp`.
+- **Embind runtime exports:** the type is registered using its JavaScript leaf name, `Map`, not
+  `com.example.maps.Map`. Consumers therefore import the declaration from the package path, but
+  the instantiated embind type is exposed as `Map` on the generated module.
+
+This keeps package structure in the source tree, TypeScript module layout, and C++ type identity
+without inventing a JavaScript namespace object that embind does not provide automatically. Nested
+Lime types are a separate case: their TypeScript references are qualified through their parent
+types, such as `Outer.Inner`.
+
+The current contract has an important limitation: two Lime packages containing types with the same
+leaf name can collide in the embind runtime namespace. Package paths and C++ qualification do not
+prevent that collision. Until a runtime-name policy is introduced, generators and fixtures must
+avoid duplicate exported leaf names across packages, or use `@Js(Name = ...)` to give the types
+distinct JavaScript names. A future runtime namespace or package-qualified embind naming scheme
+would be an explicit architecture change, not an implied consequence of the Lime `package`
+declaration.
+
 ---
 
 ### Phase 7 — Build Integration (the largest infrastructure departure)
