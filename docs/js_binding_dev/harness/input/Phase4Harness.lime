@@ -11,19 +11,64 @@ struct Sample {
 }
 
 class Harness {
+    // Adds two integer values.
+    // @param[first] first value
+    // @param[second] second value
+    // @return the sum of the values
     static fun add(first: Int, second: Int): Int
+    // Creates a harness with an initial seed.
+    // @param[seed] initial value
     constructor create(seed: Int)
+    // @value current integer value
+    // @get gets the current integer value
+    // @set sets the current integer value
     property value: Int
+    // Increments the current value.
+    // @param[amount] amount to add
+    // @return the updated value
     fun increment(amount: Int): Int
+    // Returns this harness instance.
+    // @return this harness
     fun self(): Harness
+    // Returns a nullable integer value.
+    // @param[input] input value
+    // @return the nullable result
     fun nullableValue(input: Int?): Int?
+    // Sums all integer values.
+    // @param[values] values to sum
+    // @return the sum of the values
     fun sum(values: List<Int>): Int
+    // Looks up an integer by key.
+    // @param[values] values to search
+    // @param[key] key to find
+    // @return the matching value, if present
     fun lookup(values: Map<String, Int>, key: String): Int?
+    // Returns a set unchanged.
+    // @param[values] set to round-trip
+    // @return the round-tripped set
     fun roundTripSet(values: Set<String>): Set<String>
+    // Returns a nested set unchanged.
+    // @param[values] nested set to round-trip
+    // @return the round-tripped nested set
     fun roundTripNestedSet(values: Set<Set<Int>>): Set<Set<Int>>
+    // Returns an optional set unchanged.
+    // @param[values] optional set to round-trip
+    // @return the round-tripped optional set
     fun roundTripNullableSet(values: Set<Int>?): Set<Int>?
+    // Returns a nested nullable list unchanged.
+    // @param[values] nested list to round-trip
+    // @return the round-tripped nested list
     fun roundTripNestedNullableList(values: List<List<Int>?>): List<List<Int>?>
+    // Returns a sample unchanged.
+    // @param[sample] sample to round-trip
+    // @return the round-tripped sample
     fun roundTrip(sample: Sample): Sample
+    // Returns an enum value unchanged.
+    // @param[mode] mode to round-trip
+    // @return the round-tripped mode
     fun roundTripMode(mode: Mode): Mode
+    // Returns a long value unchanged.
+    // @param[value] value to round-trip
+    // @return the round-tripped value
     fun roundTripLong(value: Long): Long
 }

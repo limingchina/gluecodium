@@ -1,6 +1,9 @@
 package phase5
 
-lambda StringTransformer = (String) -> String
+// Transforms a string.
+// @param[value] input string
+// @return transformed string
+lambda StringTransformer = (value: String) -> String
 
 enum CallbackError {
     NONE,
@@ -13,32 +16,75 @@ struct CallbackPayload {
 }
 
 open class OpenClass {
+    // Returns a message from the parent class.
+    // @return parent message
     fun parentFunction(): String
+    // @value parent class property
+    // @get gets the parent class property
+    // @set sets the parent class property
     property parentProperty: String
 }
 
 narrow interface NarrowInterface {
+    // Returns a lightweight parent message.
+    // @return lightweight parent message
     fun parentFunctionLight(): String
+    // @value lightweight parent property
+    // @get gets the lightweight parent property
+    // @set sets the lightweight parent property
     property parentPropertyLight: String
 }
 
 interface JsCallback {
+    // Invokes the callback.
+    // @param[value] input string
+    // @return callback result
     fun invoke(value: String): String
 }
 
 class MultiClass: OpenClass, NarrowInterface {
+    // Returns a child message.
+    // @return child message
     fun childFunction(): String
+    // @value child class property
+    // @get gets the child class property
+    // @set sets the child class property
     property childProperty: String
 }
 
 class MultipleInheritanceFactory {
+    // Creates a multiple-inheritance class instance.
+    // @return the created instance
     static fun getMultiClass(): MultiClass
+    // Creates a multiple-inheritance instance as a narrow interface.
+    // @return the created narrow interface
     static fun getMultiClassAsNarrow(): NarrowInterface
+    // Converts a class instance to its narrow interface.
+    // @param[instance] class instance to convert
+    // @return the narrow interface
     static fun upcastToNarrow(instance: MultiClass): NarrowInterface
+    // Invokes a JavaScript callback.
+    // @param[callback] callback to invoke
+    // @return callback result
     static fun invokeJsCallback(callback: JsCallback): String
+    // Invokes a string lambda.
+    // @param[callback] lambda to invoke
+    // @param[value] input string
+    // @return lambda result
     static fun invokeLambda(callback: StringTransformer, value: String): String
+    // Invokes a throwing operation.
+    // @param[success] whether the operation should succeed
+    // @return the successful operation result
+    // @throws if the operation fails
     static fun invokeThrowing(success: Boolean): String throws Callback
+    // Invokes a throwing operation without a return value.
+    // @param[success] whether the operation should succeed
+    // @throws if the operation fails
     static fun invokeThrowingVoid(success: Boolean) throws Callback
+    // Invokes a throwing operation that reports a structured error payload.
+    // @param[success] whether the operation should succeed
+    // @return the successful operation result
+    // @throws if the operation fails
     static fun invokePayloadThrowing(success: Boolean): String throws CallbackWithPayload
 
     exception Callback(CallbackError)
