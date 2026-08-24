@@ -24,5 +24,5 @@ test("reference-returned strings are readable", () => {
   const type = module.CppRefReturnType;
 
   assert.equal(type.stringRef(), "nonsense");
-  assert.equal(type.stringProperty(), "nonsense");
+  assert.equal(type.stringProperty, "nonsense");
 });

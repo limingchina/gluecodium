@@ -36,7 +36,7 @@ void {{registerName}}(void) {
                 .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{embindName}}")
 {{#constructors}}
 {{#needsAdapter}}
-        .class_function<{{adapterReturnType}}({{adapterSignatureParameters}})>("{{jsName}}", []({{adapterParameters}}) -> {{adapterReturnType}} {
+        .class_function("{{jsName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
             {{adapterPreparations}}
                         {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
             {{adapterReturnConversion}}
@@ -69,7 +69,7 @@ void {{registerName}}(void) {
 {{/isFlattened}}
 {{^isFlattened}}
 {{#needsAdapter}}
-        .function<{{adapterReturnType}}({{cppFullName}}*, {{adapterSignatureParameters}})>("{{jsName}}", []({{cppFullName}}* self, {{adapterParameters}}) -> {{adapterReturnType}} {
+        .function<{{adapterReturnType}}({{cppFullName}}*{{#hasAdapterParameters}}, {{adapterSignatureParameters}}{{/hasAdapterParameters}})>("{{jsName}}", []({{cppFullName}}* self{{#hasAdapterParameters}}, {{adapterParameters}}{{/hasAdapterParameters}}) -> {{adapterReturnType}} {
             {{adapterPreparations}}
                         {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
             {{adapterReturnConversion}}
@@ -83,7 +83,6 @@ void {{registerName}}(void) {
 {{/methods}}
 {{#properties}}
 {{#isStatic}}
-{{#needsAdapter}}
         .class_function("{{adapterGetterName}}", +[]() -> emscripten::val {
                 return {{adapterGetter}};
         })
@@ -92,15 +91,6 @@ void {{registerName}}(void) {
                 {{adapterSetter}};
         })
 {{/hasSetter}}
-{{/needsAdapter}}
-{{^needsAdapter}}
-{{#hasSetter}}
-        .class_property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
-{{/hasSetter}}
-{{^hasSetter}}
-        .class_function("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
-{{/hasSetter}}
-{{/needsAdapter}}
 {{/isStatic}}
 {{^isStatic}}
 {{#needsAdapter}}

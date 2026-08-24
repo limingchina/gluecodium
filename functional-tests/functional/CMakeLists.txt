@@ -177,7 +177,7 @@ feature(Enums cpp android android-kotlin swift dart js SOURCES
     input/lime/EnumsTypeCollection.lime
 )
 
-feature(Properties cpp android android-kotlin swift dart SOURCES
+feature(Properties cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/AttributesInterfaceImpl.h
     input/src/cpp/AttributesInterfaceImpl.cpp
     input/src/cpp/AttributesInterfaceFactory.cpp
@@ -191,7 +191,7 @@ feature(Properties cpp android android-kotlin swift dart SOURCES
     input/lime/AttributesInterfaceFactory.lime
 )
 
-feature(Listeners cpp android android-kotlin swift dart SOURCES
+feature(Listeners cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StringListeners.cpp
     input/src/cpp/ListenerRoundtrip.cpp
     input/src/cpp/ListenerRoute.cpp
@@ -212,14 +212,14 @@ feature(Listeners cpp android android-kotlin swift dart SOURCES
     input/lime/ListenerAsConstructorParam.lime
 )
 
-feature(ComplexListeners cpp android android-kotlin swift dart SOURCES
+feature(ComplexListeners cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/ComplexListener.cpp
     input/src/cpp/ComplexListener.h
 
     input/lime/ComplexListeners.lime
 )
 
-feature(ListenersWithReturnValues cpp android android-kotlin swift dart SOURCES
+feature(ListenersWithReturnValues cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/ListenersReturnValues.cpp
     input/src/cpp/ListenersReturnValues.h
     input/src/cpp/ListenerWithAttributes.cpp

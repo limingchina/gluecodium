@@ -1,6 +1,6 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 1 implementation complete; all registered JavaScript functional coverage passes
+**Status**: Batch 2B implementation complete; all registered JavaScript functional coverage passes
 
 **Date**: 2026-08-24
 
@@ -38,6 +38,16 @@ the `js` generator:
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
+
+Batch 2B adds JavaScript coverage for interface listener and property trampolines:
+
+- `Listeners`: JavaScript implementations receive native callbacks and interface properties
+  dispatch through generated wrappers;
+- `ComplexListeners`: callbacks convert structs, collection aliases, enums, and blobs;
+- `ListenersWithReturnValues`: callbacks return strings, structs, classes, enums, arrays, maps,
+  and blobs through the native interface;
+- `Properties`: readable and writable interface properties are exercised through JavaScript
+  implementations.
 
 ## Verification
 
@@ -79,6 +89,9 @@ by the JavaScript generator.
 Locale maps to JavaScript `string`; generated
 adapters use the shared `gluecodium_locale_to_native` and `gluecodium_locale_to_js` helpers for
 methods, properties, value-object fields, defaults, and collections.
+The Batch 2B listener and property tests also pass in the clean Emscripten build. Callback
+trampolines use JavaScript-value adapters for collection and struct aliases, recursively convert
+callback arguments and return values, and expose native blobs as `Uint8Array` values.
 
 ## Generator Fixes Exercised
 
@@ -119,6 +132,12 @@ The first tests found several embind generation defects that are fixed in this c
   runtime uses a pointer-based alias fallback when Emscripten's `isAliasOf` cannot compare
   interface handles with non-writable internal `$$` properties, and preserves shared `__Wrapper`
   handles instead of eagerly deleting them during canonicalization.
+- Interface callback trampolines adapt collection and struct aliases through `emscripten::val`,
+  recursively convert callback arguments and return values, preserve `@Cpp(Const)` methods, and
+  construct callback blobs as JavaScript `Uint8Array` instances.
+- Static properties use named getter and setter functions for Emscripten compatibility, and
+  adapted static constructors and methods use function-pointer lambdas to resolve Embind
+  overloads reliably.
 
 ## Lessons Learned
 
@@ -156,7 +175,7 @@ directory argument to `node --test` as a module entry rather than a test collect
 
 ## Next Work
 
-The next iteration starts with `Interfaces` as the smallest unverified interface capability
+The next iteration starts with `Lambdas` as the next unverified interface capability
 probe. The Node versions tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all
 treat a directory argument to `node --test` as a module entry rather than a test collection, so
 the harness passes explicit test-file paths.
@@ -195,6 +214,10 @@ feature bundles fixtures from a later slice.
 | Durations | duration counts and value objects exposed as JavaScript `bigint` |
 | Locales | BCP-47 strings, nullable values, fields, defaults, and collections |
 | Interfaces | JS-created implementations, native dispatch, nested interface round trips, and properties |
+| Listeners | JS listener implementations and native callback dispatch |
+| ComplexListeners | struct, collection alias, enum, and blob callback arguments |
+| ListenersWithReturnValues | scalar, struct, class, enum, collection, and blob callback returns |
+| Properties | interface getter and setter dispatch through JS implementations |
 
 ### Dependency analysis
 
@@ -247,7 +270,7 @@ Add `js` to the `Interfaces` feature and use it as the first direct probe of gen
 nested interface references, shared-pointer round trips, and `InterfaceWithProperty`. Do not infer
 listener support from this batch; keep listener callbacks as the next gate.
 
-#### Batch 2B - listener and property trampolines
+#### Batch 2B - listener and property trampolines (complete)
 
 Features: `Listeners`, `ComplexListeners`, `ListenersWithReturnValues`, `Properties`.
 
@@ -256,6 +279,11 @@ referential equality through the wrapper cache, `ListenerWithMaps` combines call
 containers, and `ListenersWithReturnValues` exercises interface methods returning structs, enums,
 classes, collections, and blobs. `Properties` belongs here because `AttributesInterface.lime`
 requires an interface implementation with readable and writable properties.
+
+The implemented tests are `listeners.test.mjs`, `listener-maps.test.mjs`,
+`complex-listeners.test.mjs`, and `listener-return-values.test.mjs`. The generated callback
+trampolines use explicit JavaScript-value conversion whenever callback types include collection or
+struct aliases, and blob callback values are returned as `Uint8Array` instances.
 
 #### Batch 2C - lambda conversions
 

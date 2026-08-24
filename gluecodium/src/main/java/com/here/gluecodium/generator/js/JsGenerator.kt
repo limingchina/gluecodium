@@ -402,6 +402,7 @@ internal class JsGenerator : Generator {
                     .map { wrapperMethodViewModel(it) }
             data["wrapperProperties"] =
                 (container.properties + inheritedContainer.inheritedProperties)
+                    .filterNot { it.isStatic }
                     .distinctBy { it.fullName }
                     .map { wrapperPropertyViewModel(it) }
         }
@@ -433,21 +434,46 @@ internal class JsGenerator : Generator {
 
     private fun wrapperMethodViewModel(function: LimeFunction): Map<String, Any> {
         val returnType = embindNameResolver.resolveName(function.returnType)
+        val returnNeedsAdapter = requiresWrapperJsAdapter(function.returnType.typeRef)
         val parameters = function.parameters.map { parameter ->
             val nativeType = embindNameResolver.resolveName(parameter.typeRef)
             val parameterType =
                 if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $nativeType&" else nativeType
             "$parameterType ${parameter.path.name}"
         }
-        val arguments = function.parameters.joinToString(", ") { it.path.name }
-        val call = "call<$returnType>(\"${nameRules.getName(function)}\"${if (arguments.isNotEmpty()) ", $arguments" else ""})"
+        val parameterNeedsAdapters = function.parameters.any { requiresWrapperJsAdapter(it.typeRef) }
+        val needsAdapter = returnNeedsAdapter || parameterNeedsAdapters
+        val arguments = function.parameters.joinToString(", ") { parameter ->
+            if (needsAdapter) {
+                nativeToJs(parameter.typeRef, parameter.path.name)
+            } else {
+                parameter.path.name
+            }
+        }
+        val callArguments = if (arguments.isNotEmpty()) ", $arguments" else ""
+        val call = if (needsAdapter) {
+            val jsResult = "call<emscripten::val>(\"${nameRules.getName(function)}\"$callArguments)"
+            if (function.returnType.isVoid) "$jsResult;" else "return ${jsToNative(function.returnType.typeRef, jsResult)};"
+        } else {
+            "call<$returnType>(\"${nameRules.getName(function)}\"$callArguments)"
+        }
         return mapOf(
             "returnType" to returnType,
             "cppName" to embindNameResolver.resolveName(function),
             "parameters" to parameters.joinToString(", "),
             "call" to call,
             "isVoid" to function.returnType.isVoid,
+            "needsAdapter" to needsAdapter,
+            "isConst" to function.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.CONST),
         )
+    }
+
+    private fun requiresWrapperJsAdapter(typeRef: LimeTypeRef): Boolean {
+        if (requiresJsAdapter(typeRef)) return true
+        return when (typeRef.type.actualType) {
+            is LimeList, is LimeMap, is LimeSet, is LimeStruct -> true
+            else -> false
+        }
     }
 
     private fun wrapperPropertyViewModel(property: LimeProperty): Map<String, Any> {
@@ -628,7 +654,11 @@ internal class JsGenerator : Generator {
                 )
             }
             put("adapterParameters", parameters.joinToString(", ") { "${it["type"]} ${it["name"]}" })
-            put("adapterSignatureParameters", parameters.joinToString(", ") { it["type"].toString() })
+            put("hasAdapterParameters", parameters.isNotEmpty())
+            put(
+                "adapterSignatureParameters",
+                parameters.joinToString(", ") { it["type"].toString() }.let { if (it.isEmpty()) "void" else it },
+            )
             put("adapterCallArguments", parameters.joinToString(", ") { it["callName"].toString() })
             put(
                 "adapterPolicies",
@@ -842,6 +872,9 @@ internal class JsGenerator : Generator {
 
     private fun nativeToJs(typeRef: LimeTypeRef, source: String): String {
         if (typeRef.isNullable) {
+            if (typeRef.type.actualType is LimeClass || typeRef.type.actualType is LimeInterface) {
+                return "($source ? emscripten::val($source) : emscripten::val::undefined())"
+            }
             return "($source ? ${nativeToJsNonNullable(typeRef.type.actualType, typeRef, "*$source")} : emscripten::val::undefined())"
         }
         return nativeToJsNonNullable(typeRef.type.actualType, typeRef, source)
@@ -889,7 +922,7 @@ internal class JsGenerator : Generator {
                 } else if (actualType.typeId == TypeId.DURATION) {
                     "gluecodium_duration_to_js($source)"
                 } else if (actualType.typeId == TypeId.BLOB) {
-                    "($source ? emscripten::val::array(*$source) : emscripten::val::array(::std::vector<uint8_t>{}))"
+                    "emscripten::val::global(\"Uint8Array\").new_(emscripten::val::array($source ? *$source : ::std::vector<uint8_t>{}))"
                 } else {
                     "emscripten::val($source)"
                 }
@@ -1246,7 +1279,7 @@ internal class JsGenerator : Generator {
                                     .orEmpty(),
                                 "properties" to (element as? com.here.gluecodium.model.lime.LimeContainer)
                                     ?.properties
-                                    ?.filter { it.isStatic && requiresJsAdapter(it.typeRef) }
+                                    ?.filter { it.isStatic }
                                     ?.map { property ->
                                         mapOf(
                                             "jsName" to nameRules.getName(property),

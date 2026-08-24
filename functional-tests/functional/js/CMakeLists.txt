@@ -46,6 +46,14 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/immutable-structs.test.mjs"
     "${JS_TEST_DIR}/immutable-structs.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/interfaces.test.mjs"
     "${JS_TEST_DIR}/interfaces.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/listeners.test.mjs"
+    "${JS_TEST_DIR}/listeners.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/listener-maps.test.mjs"
+    "${JS_TEST_DIR}/listener-maps.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/complex-listeners.test.mjs"
+    "${JS_TEST_DIR}/complex-listeners.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/listener-return-values.test.mjs"
+    "${JS_TEST_DIR}/listener-return-values.test.mjs" COPYONLY)
 
 add_test(NAME unit_tests_javascript
     COMMAND ${NODE_EXECUTABLE} --test
@@ -57,6 +65,10 @@ add_test(NAME unit_tests_javascript
         "${JS_TEST_DIR}/classes.test.mjs"
         "${JS_TEST_DIR}/locales.test.mjs"
         "${JS_TEST_DIR}/immutable-structs.test.mjs"
-        "${JS_TEST_DIR}/interfaces.test.mjs")
+        "${JS_TEST_DIR}/interfaces.test.mjs"
+        "${JS_TEST_DIR}/listeners.test.mjs"
+        "${JS_TEST_DIR}/listener-maps.test.mjs"
+        "${JS_TEST_DIR}/complex-listeners.test.mjs"
+        "${JS_TEST_DIR}/listener-return-values.test.mjs")
 set_tests_properties(unit_tests_javascript PROPERTIES
     ENVIRONMENT "GLUECODIUM_JS_MODULE=$<TARGET_FILE:functional_bindings_js>")

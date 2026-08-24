@@ -26,8 +26,8 @@ class {{wrapperName}} : public emscripten::wrapper<{{cppFullName}}> {
 public:
     EMSCRIPTEN_WRAPPER({{wrapperName}});
 {{#wrapperMethods}}
-    {{returnType}} {{cppName}}({{parameters}}) override {
-        {{#isVoid}}{{call}};{{/isVoid}}{{^isVoid}}return {{call}};{{/isVoid}}
+    {{returnType}} {{cppName}}({{parameters}}){{#isConst}} const{{/isConst}} override {
+        {{#needsAdapter}}{{call}}{{/needsAdapter}}{{^needsAdapter}}{{#isVoid}}{{call}};{{/isVoid}}{{^isVoid}}return {{call}};{{/isVoid}}{{/needsAdapter}}
     }
 {{/wrapperMethods}}
 {{#wrapperProperties}}
@@ -66,7 +66,7 @@ void {{registerName}}(void) {
 {{/isStatic}}
 {{^isStatic}}
 {{#needsAdapter}}
-    .function<{{adapterReturnType}}({{cppFullName}}*, {{adapterSignatureParameters}})>("{{jsName}}", []({{cppFullName}}* self, {{adapterParameters}}) -> {{adapterReturnType}} {
+    .function<{{adapterReturnType}}({{cppFullName}}*{{#hasAdapterParameters}}, {{adapterSignatureParameters}}{{/hasAdapterParameters}})>("{{jsName}}", []({{cppFullName}}* self{{#hasAdapterParameters}}, {{adapterParameters}}{{/hasAdapterParameters}}) -> {{adapterReturnType}} {
         {{adapterPreparations}}
         {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
         {{adapterReturnConversion}}
@@ -79,7 +79,6 @@ void {{registerName}}(void) {
 {{/methods}}
 {{#properties}}
 {{#isStatic}}
-{{#needsAdapter}}
     .class_function("{{adapterGetterName}}", +[]() -> emscripten::val {
         return {{adapterGetter}};
     })
@@ -88,15 +87,6 @@ void {{registerName}}(void) {
         {{adapterSetter}};
     })
 {{/hasSetter}}
-{{/needsAdapter}}
-{{^needsAdapter}}
-{{#hasSetter}}
-    .class_property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
-{{/hasSetter}}
-{{^hasSetter}}
-    .class_function("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
-{{/hasSetter}}
-{{/needsAdapter}}
 {{/isStatic}}
 {{^isStatic}}
 {{#hasSetter}}
