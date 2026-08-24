@@ -141,6 +141,7 @@ All generators use Mustache templates (via Trimou engine) located in `gluecodium
   - Android SDK (for Android tests)
   - Swift SDK (for Swift tests)
   - Dart SDK (for Dart tests)
+    - Emscripten and Node.js (for JavaScript tests)
 
 ### Building the Project
 
@@ -202,6 +203,9 @@ functional-tests/scripts/build-cpp-functional --publish
 
 # Dart functional tests
 functional-tests/scripts/build-dart-functional --publish
+
+# JavaScript functional tests; removes build-functional-js before every run
+functional-tests/scripts/build-js-functional
 ```
 
 ### Using CMake Toolchain

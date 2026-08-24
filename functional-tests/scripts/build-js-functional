@@ -1,0 +1,19 @@
+#!/bin/bash -e
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+REPO_ROOT=$(cd "${SCRIPT_DIR}/../.." && pwd)
+BUILD_DIR=${REPO_ROOT}/build-functional-js
+
+rm -rf -- "${BUILD_DIR}"
+
+export GLUECODIUM_PATH="${REPO_ROOT}"
+
+emcmake cmake \
+    -S "${REPO_ROOT}/functional-tests" \
+    -B "${BUILD_DIR}" \
+    -G Ninja \
+    -DGLUECODIUM_GENERATORS_DEFAULT="cpp;js" \
+    -DFUNCTIONAL_BUILD_JS_TESTS=ON
+
+cmake --build "${BUILD_DIR}" --target functional_bindings_js
+ctest --test-dir "${BUILD_DIR}" --output-on-failure -R unit_tests_javascript
