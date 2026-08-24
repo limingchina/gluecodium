@@ -407,8 +407,9 @@ internal class JsGenerator : Generator {
                     .map { wrapperPropertyViewModel(it) }
         }
         data["constructors"] = container.constructors.map { functionViewModel(it) }
+        val primaryInheritedOverloads = primaryInheritedOverloads(type, filteredModel)
         data["methods"] =
-            (container.functions.filterNot { it.isConstructor } + secondaryFunctions)
+            (primaryInheritedOverloads + container.functions.filterNot { it.isConstructor } + secondaryFunctions)
                 .distinctBy { it.fullName }
                 .map {
                     functionViewModel(
@@ -416,6 +417,7 @@ internal class JsGenerator : Generator {
                         isFlattened = secondaryFunctions.contains(it),
                         flattenedReceiverType = cppNameCache.getFullyQualifiedName(type),
                         isPureVirtual = type is com.here.gluecodium.model.lime.LimeInterface,
+                        forceOverloadAdapter = primaryInheritedOverloads.contains(it),
                     )
                 }
         data["properties"] =
@@ -430,6 +432,22 @@ internal class JsGenerator : Generator {
         }
         data["constants"] = container.constants.filter(::isSupportedConstant).map { constantViewModel(it) }
         return data
+    }
+
+    private fun primaryInheritedOverloads(
+        type: com.here.gluecodium.model.lime.LimeType,
+        filteredModel: LimeModel,
+    ): List<LimeFunction> {
+        val container = type as? LimeContainerWithInheritance ?: return emptyList()
+        val primaryBase = primaryBaseType(type, filteredModel) ?: return emptyList()
+        val ownNames = container.functions
+            .filterNot { it.isStatic || it.isConstructor }
+            .map { nameRules.getName(it) }
+            .toSet()
+        if (ownNames.isEmpty()) return emptyList()
+        return (primaryBase.functions + primaryBase.inheritedFunctions)
+            .filter { !it.isStatic && nameRules.getName(it) in ownNames }
+            .distinctBy { it.fullName }
     }
 
     private fun wrapperMethodViewModel(function: LimeFunction): Map<String, Any> {
@@ -513,10 +531,11 @@ internal class JsGenerator : Generator {
         isFlattened: Boolean = false,
         flattenedReceiverType: String? = null,
         isPureVirtual: Boolean = false,
+        forceOverloadAdapter: Boolean = false,
     ): Map<String, Any> {
-        val isOverloaded = CppSignatureResolver(limeReferenceMap, cppNameRules).isOverloaded(function)
+        val isOverloaded = forceOverloadAdapter || isOverloadedInJsBindings(function)
         val embindName =
-            if (isOverloaded && function.isStatic && isJsOverloaded(function)) {
+            if (isOverloaded && (function.isStatic && isJsOverloaded(function) || !function.isStatic)) {
                 overloadRuntimeName(function)
             } else {
                 nameRules.getName(function)
@@ -1100,6 +1119,18 @@ internal class JsGenerator : Generator {
         return container.functions.count { !it.isConstructor && nameRules.getName(it) == jsName } > 1
     }
 
+    private fun isOverloadedInJsBindings(function: LimeFunction): Boolean {
+        val signatureResolver = CppSignatureResolver(limeReferenceMap, cppNameRules)
+        if (signatureResolver.isOverloadedInBindings(function)) return true
+
+        val container = limeReferenceMap[function.path.parent.toString()] as? LimeContainerWithInheritance
+            ?: return false
+        val functionName = nameRules.getName(function)
+        return container.inheritedFunctions.any {
+            !it.isStatic && nameRules.getName(it) == functionName
+        }
+    }
+
     private fun overloadPredicate(function: LimeFunction): String {
         val checks = function.parameters.mapIndexed { index, parameter ->
             val value = "args[$index]"
@@ -1356,6 +1387,7 @@ internal class JsGenerator : Generator {
                                         )
                                     }
                                     .orEmpty(),
+                                "instanceOverloadGroups" to instanceOverloadGroups(element, filteredModel),
                             )
                         }
                 val duplicateRuntimeExports = runtimeExports.groupBy { it["moduleName"] }.filterValues { it.size > 1 }.keys
@@ -1560,6 +1592,33 @@ internal class JsGenerator : Generator {
         } else {
             jsName
         }
+    }
+
+    private fun instanceOverloadGroups(
+        type: com.here.gluecodium.model.lime.LimeType,
+        filteredModel: LimeModel,
+    ): List<Map<String, Any>> {
+        val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return emptyList()
+        val (secondaryFunctions, _) = secondaryParentMembers(type, filteredModel)
+        val functions =
+            (primaryInheritedOverloads(type, filteredModel) +
+                container.functions.filterNot { it.isStatic || it.isConstructor } +
+                secondaryFunctions)
+                .distinctBy { it.fullName }
+        return functions
+            .groupBy { nameRules.getName(it) }
+            .filterValues { overloads -> overloads.size > 1 }
+            .map { (jsName, overloads) ->
+                mapOf(
+                    "jsName" to jsName,
+                    "overloads" to overloads.map { function ->
+                        mapOf(
+                            "runtimeName" to overloadRuntimeName(function),
+                            "predicate" to overloadPredicate(function),
+                        )
+                    },
+                )
+            }
     }
 
     // Topologically sorts register names so that every base class appears before its derived

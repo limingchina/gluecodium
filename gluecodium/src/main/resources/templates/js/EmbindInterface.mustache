@@ -95,14 +95,14 @@ void {{registerName}}(void) {
 {{/isStatic}}
 {{^isStatic}}
 {{#needsAdapter}}
-    .function<{{adapterReturnType}}({{cppFullName}}*{{#hasAdapterParameters}}, {{adapterSignatureParameters}}{{/hasAdapterParameters}})>("{{jsName}}", []({{cppFullName}}* self{{#hasAdapterParameters}}, {{adapterParameters}}{{/hasAdapterParameters}}) -> {{adapterReturnType}} {
+    .function<{{adapterReturnType}}({{cppFullName}}*{{#hasAdapterParameters}}, {{adapterSignatureParameters}}{{/hasAdapterParameters}})>("{{embindName}}", []({{cppFullName}}* self{{#hasAdapterParameters}}, {{adapterParameters}}{{/hasAdapterParameters}}) -> {{adapterReturnType}} {
         {{adapterPreparations}}
         {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
         {{adapterReturnConversion}}
     }, allow_raw_pointer<arg<0>>(){{#hasAdapterMemberPolicies}}, {{adapterMemberPolicies}}{{/hasAdapterMemberPolicies}})
 {{/needsAdapter}}
 {{^needsAdapter}}
-    .function("{{jsName}}", &{{cppFullName}}::{{cppName}}, pure_virtual())
+    .function("{{embindName}}", &{{cppFullName}}::{{cppName}}, pure_virtual())
 {{/needsAdapter}}
 {{/isStatic}}
 {{/methods}}

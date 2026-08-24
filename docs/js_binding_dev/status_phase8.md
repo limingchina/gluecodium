@@ -1,7 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 3A single-inheritance coverage complete; native lambda-return support remains
-deferred; the focused inheritance gate passes
+**Status**: Batch 3B inherited-overload coverage complete; native lambda-return support remains
+deferred; the complete JavaScript functional gate passes
 
 **Date**: 2026-08-24
 
@@ -77,6 +77,24 @@ added for those dependency types in this batch. The JS generator already emits e
 registration and inherited interface trampolines, so this batch required functional integration
 and runtime coverage rather than a generator-template change.
 
+#### Batch 3B - inherited method overloads (complete)
+
+The existing `MethodOverloading` feature remains unchanged and continues to target the non-JS
+generators. To preserve its LimeIDL inputs, JavaScript uses the isolated
+`MethodOverloadingJavaScript` feature with the existing `InheritanceOverloads.lime` model, a new
+helper Lime file containing only the native factory declaration, and a small C++ implementation
+that returns a concrete derived class. The focused Node test covers overloads inherited by a
+JavaScript interface implementation and overloads inherited by a native class, including
+same-arity `int` versus `string` dispatch.
+
+The JS generator now gives overloaded instance methods private Embind registration names and emits
+type-based prototype dispatchers in the package facade. Primary inherited methods are included in
+derived registrations, and the wrapper runtime preserves overload metadata when it wraps methods.
+The non-static Embind templates use the generated runtime names, allowing the facade dispatcher to
+call inherited parent overloads on derived instances. Existing
+`InheritanceJavaScriptDependencies.lime`, `InheritanceOverloads.lime`, and `MethodOverloads.lime`
+files remain unchanged.
+
 ## Verification
 
 With Emscripten 6.0.8 and Node.js available:
@@ -125,6 +143,9 @@ The Batch 2C lambda tests pass in a fresh Emscripten 6.0.8 build. Direct, nullab
 overloaded, and struct-defined JavaScript callbacks all use the same generated `emscripten::val`
 adapter path. Native-created lambda returns still fail as unbound `std::function` values and are
 explicitly deferred to the next lambda capability slice.
+The focused `method-overloading.test.mjs` module passes both inherited-interface and
+inherited-class cases. The complete `unit_tests_javascript` CTest target passes with all registered
+JavaScript functional tests.
 
 ## Generator Fixes Exercised
 
@@ -157,6 +178,9 @@ The first tests found several embind generation defects that are fixed in this c
   back through shared embind helpers, preserving seconds and milliseconds overrides. Same-arity
   static overloads use private embind registration names and a generated JavaScript type dispatcher;
   methods with distinct JavaScript names retain their public embind registrations.
+- Inherited and same-arity instance overloads use private Embind registration names plus generated
+  prototype type dispatchers. Derived bindings explicitly register primary inherited overloads so
+  parent methods remain callable through derived instances.
 - nested C++ type references in collection converters and external enum values use fully qualified
   C++ names; local CMake builds propagate owner-target include directories to the JS module target.
 - Locale adapters convert BCP-47 strings through the generated native `Locale` type, preserving
@@ -475,7 +499,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | 2C | Lambdas (JavaScript-input callbacks) | passing; native lambda returns deferred |
 | 2D | CallbacksWithThreads | passing; detached interface and lambda callbacks |
 | 3A | Inheritance | passing; single inheritance and fixture closure |
-| 3B | MethodOverloading | blocked on 3A and fixture closure |
+| 3B | MethodOverloading | passing; isolated JavaScript inherited-overload fixture |
 | 3C | Errors, Nullable | blocked on interface and optional conversion gates |
 | 3D | Equatable | blocked on nullable and immutable conversion gates |
 | 3E | MultipleInheritance | blocked on 3A |

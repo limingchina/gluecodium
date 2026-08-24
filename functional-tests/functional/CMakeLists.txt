@@ -91,6 +91,13 @@ feature(MethodOverloading cpp android android-kotlin swift dart SOURCES
     input/lime/InheritanceOverloads.lime
 )
 
+feature(MethodOverloadingJavaScript js SOURCES
+    input/src/cpp/InheritanceOverloadsJavaScript.cpp
+
+    input/lime/InheritanceOverloads.lime
+    input/lime/InheritanceOverloadsJavaScript.lime
+)
+
 feature(Blob cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Blobs.cpp
     input/src/cpp/StaticByteArrayMethods.cpp

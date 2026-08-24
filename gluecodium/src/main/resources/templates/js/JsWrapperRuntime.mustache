@@ -161,10 +161,14 @@ const wrapModule = (module, options = {}) => {
       if (typeof functionValue !== "function") {
         continue;
       }
-      prototype[key] = function (...args) {
+      const wrappedFunction = function (...args) {
         const canonicalArguments = args.map(canonicalize);
         return canonicalize(functionValue.apply(this, canonicalArguments));
       };
+      if (functionValue.overloadTable !== undefined) {
+        wrappedFunction.overloadTable = functionValue.overloadTable;
+      }
+      prototype[key] = wrappedFunction;
     }
   };
 

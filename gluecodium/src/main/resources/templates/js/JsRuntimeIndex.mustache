@@ -30,5 +30,13 @@ Object.defineProperty({{moduleName}}, "{{jsName}}", {
   throw new TypeError("No matching overload for {{jsName}}");
 };
 {{/overloadGroups}}
+{{#instanceOverloadGroups}}
+{{moduleName}}.prototype["{{jsName}}"] = function (...args) {
+{{#overloads}}
+  if ({{predicate}}) return this["{{runtimeName}}"](...args);
+{{/overloads}}
+  throw new TypeError("No matching overload for {{jsName}}");
+};
+{{/instanceOverloadGroups}}
 {{/runtimeExports}}
 export { pumpRuntimeQueue{{#runtimeExports}}, {{moduleName}}{{/runtimeExports}} };
