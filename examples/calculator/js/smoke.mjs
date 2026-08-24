@@ -42,7 +42,7 @@ assert.equal(calculator.max(null, null), undefined);
 const minimum = calculator.min(8, 3);
 assert.equal(minimum.getResult(), 3);
 minimum.delete();
-assert.ok(CalculatorError.RESULT_OUT_OF_BOUNDS);
+assert.equal(CalculatorError.RESULT_OUT_OF_BOUNDS, 0);
 
 calculator.delete();
 console.log("Calculator JS smoke test OK");
