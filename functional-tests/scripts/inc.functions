@@ -21,7 +21,7 @@
 # Collection of shared functions
 #
 
-GLUECODIUM_PATH="$(cd ${SCRIPT_DIR}/../.. && pwd)"
+GLUECODIUM_PATH="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
 function die {
     echo -e "$@"

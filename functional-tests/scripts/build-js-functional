@@ -1,8 +1,33 @@
 #!/bin/bash -e
 
 SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+. "${SCRIPT_DIR}/inc.functions"
 REPO_ROOT=$(cd "${SCRIPT_DIR}/../.." && pwd)
 BUILD_DIR=${REPO_ROOT}/build-functional-js
+
+USAGE=$(cat <<EOF
+$0 [options]
+    --publish    Build and publish Gluecodium locally and use it for code generation
+    --help       Print this message
+EOF
+)
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --publish)
+            publish_local
+            shift
+            ;;
+        --help)
+            echo "$USAGE"
+            exit 0
+            ;;
+        *)
+            echo "$USAGE" >&2
+            exit 1
+            ;;
+    esac
+done
 
 rm -rf -- "${BUILD_DIR}"
 
