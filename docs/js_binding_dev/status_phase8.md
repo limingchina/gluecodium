@@ -145,18 +145,26 @@ directory argument to `node --test` as a module entry rather than a test collect
 
 ## Next Work
 
-The next iteration should enable the next feature group one at a time. The Node versions tested
-locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all treat a directory argument to
-`node --test` as a module entry rather than a test collection, so the harness passes explicit
-test-file paths.
+The next iteration starts with `Interfaces` as the smallest unverified interface capability
+probe. The Node versions tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all
+treat a directory argument to `node --test` as a module entry rather than a test collection, so
+the harness passes explicit test-file paths.
+
+The original feature groups are not all dependency-isolated. The `Inheritance` CMake feature
+also includes listener-inheritance and interface-lambda fixtures, and `MethodOverloading`
+includes `InheritanceOverloads.lime`. The revised plan therefore uses capability slices and
+explicit preflight checks instead of assuming that a feature name is a single capability. If a
+feature bundle cannot be enabled without pulling in a later capability, split the fixture or add a
+focused test at the earlier capability gate before enabling the bundle.
 
 ## Feature Enablement Plan
 
-This is the working plan for enabling the remaining functional-test feature groups for the `js`
-generator. Each batch builds only on capabilities proven by the previous batches. Each batch ends
-with the feature's `feature(...)` line gaining `js`, a new `js/tests/<feature>.test.mjs` file
-registered in `functional-tests/functional/js/CMakeLists.txt`, and a green
-`ctest -R unit_tests_javascript` run.
+This is the working plan for enabling the remaining functional-test coverage for the `js`
+generator. Each capability slice builds only on behavior proven by an earlier slice. A slice ends
+with the relevant `feature(...)` line gaining `js`, a new focused
+`js/tests/<feature>.test.mjs` file registered in `functional-tests/functional/js/CMakeLists.txt`,
+and a green `ctest -R unit_tests_javascript` run. A slice may be split further when a legacy CMake
+feature bundles fixtures from a later slice.
 
 ### Current state (already enabled and passing)
 
@@ -178,105 +186,132 @@ registered in `functional-tests/functional/js/CMakeLists.txt`, and a green
 
 ### Dependency analysis
 
-The remaining features decompose into four dependency tiers. Tier boundaries are set by which
-generator capabilities each feature first exercises:
+The remaining work is best treated as four capability tiers with smaller gates inside the first
+two. Tier boundaries are set by the generated runtime behavior and by the actual LimeIDL fixture
+bundles, not only by the feature labels:
 
 ```mermaid
 graph TD
-    subgraph T1["Tier 1 - pure data and constants"]
-        Constants
-        TypeDefs
-        Defaults
-        GenericTypes["GenericTypes (collections)"]
-        Dates
-        Durations
-        Locales
+    subgraph T1["Tier 1 - data and constants (complete)"]
+        Batch1["Batch 1: data, collections, dates, durations, locales"]
     end
-    subgraph T2["Tier 2 - interfaces and listeners"]
-        Interfaces
-        Listeners
-        ComplexListeners
-        ListenersWithReturnValues
-        CallbacksWithThreads
+    subgraph T2["Tier 2 - interface boundary"]
+        InterfaceCore["2A: Interfaces"]
+        ListenerCore["2B: Listeners, Properties"]
+        LambdaCore["2C: Lambdas"]
+        ThreadCallbacks["2D: CallbacksWithThreads (optional)"]
     end
-    subgraph T3["Tier 3 - structural language features"]
-        Inheritance
-        MultipleInheritance
-        Nesting
-        Lambdas
-        Properties
-        Errors
-        Nullable
-        Equatable
-        MethodOverloading
+    subgraph T3["Tier 3 - structural and error behavior"]
+        InheritanceCore["3A: Inheritance"]
+        Overloads["3B: MethodOverloading"]
+        ErrorsNullable["3C: Errors, Nullable"]
+        Equatable["3D: Equatable"]
+        MultipleInheritance["3E: MultipleInheritance"]
+        Nesting["3F: Nesting"]
     end
     subgraph T4["Tier 4 - attributes, platform-specifics, and edge cases"]
-        Visibility
-        SkipAttribute
-        Comments
-        PlatformNames
-        EscapedNames
-        FieldConstructors
-        StructsImmutable
-        InstanceInStruct
-        CircularDependencies
-        NoCache
-        ExternalTypes
-        FullName
+        Naming["attributes and naming"]
+        StructEdges["struct and declaration edges"]
+        BuildEdges["external types, cycles, cache"]
     end
-    T1 --> T2 --> T3 --> T4
+    Batch1 --> InterfaceCore --> ListenerCore --> LambdaCore
+    LambdaCore --> InheritanceCore --> Overloads
+    ListenerCore --> ErrorsNullable
+    LambdaCore --> Nesting
+    InheritanceCore --> MultipleInheritance
+    ErrorsNullable --> Equatable
+    Overloads --> T4
+    MultipleInheritance --> T4
 ```
 
 Key dependencies observed in the fixtures:
 
-- **Interfaces before Listeners**: listener fixtures declare an interface implemented on the JS
-  side, requiring embind `allow_subclass<Wrapper>` trampolines. `Interfaces.lime` is the minimal
-  probe for this capability.
-- **Properties needs Interfaces**: `AttributesInterface.lime` defines an interface whose JS-side
-  implementation provides attribute values, so it belongs with the listener tier.
-- **Errors needs interfaces**: `ErrorsInInterface.lime` throws from an interface method, so error
-  mapping is verified together with or after trampoline work.
-- **Nullable needs struct and class support**: optional scalars, strings, structs, and instance
-  references build on the optional caster and registrations proven by the completed batches.
-- **MultipleInheritance follows Inheritance**: primary-base registration plus flattened
-  secondary-parent members must come after plain `Inheritance` proves `base<>` registration.
-- **ExternalTypes is late**: embind must bind pre-existing C++ types it does not own, together with
-  the relevant platform filtering behavior.
-- **Async is explicitly deferred**: enable it only after Asyncify/JSPI support lands.
+#### Batch 2A - interface core
 
-### Batch order
+Feature: `Interfaces`.
 
-#### Batch 2 - interfaces, listeners, and callbacks
+Add `js` to the `Interfaces` feature and use it as the first direct probe of generated
+`allow_subclass<Wrapper>` support. Cover JS-created implementations, pure virtual dispatch,
+nested interface references, shared-pointer round trips, and `InterfaceWithProperty`. Do not infer
+listener support from this batch; keep listener callbacks as the next gate.
 
-Features: `Interfaces`, `Listeners`, `ComplexListeners`, `ListenersWithReturnValues`,
-`CallbacksWithThreads`, `Properties`.
+#### Batch 2B - listener and property trampolines
 
-- New capability: JS-implemented interfaces via `allow_subclass<Wrapper>` trampolines and JS
-  function objects held in `emscripten::val`.
-- `ListenerRoundtrip` verifies referential equality through the wrapper cache when a JS-created
-  object round-trips C++ -> JS -> C++ -> JS.
-- `ListenerWithMaps` combines generic containers with callback parameters.
-- `Properties` is the first test of property access through trampolines.
-- Attempt `CallbacksWithThreads` last in this batch; defer it alone if pthread marshalling is not
-  wired into the harness.
+Features: `Listeners`, `ComplexListeners`, `ListenersWithReturnValues`, `Properties`.
 
-#### Batch 3 - inheritance and structural language features
+These fixtures depend on JS-side interface implementations. `ListenerRoundtrip` verifies
+referential equality through the wrapper cache, `ListenerWithMaps` combines callbacks with generic
+containers, and `ListenersWithReturnValues` exercises interface methods returning structs, enums,
+classes, collections, and blobs. `Properties` belongs here because `AttributesInterface.lime`
+requires an interface implementation with readable and writable properties.
 
-Features: `MethodOverloading`, `Errors`, `Nullable`, `Equatable`, `Inheritance`,
-`MultipleInheritance`, `Nesting`, `Lambdas`.
+#### Batch 2C - lambda conversions
 
-- `MethodOverloading` adds instance-method overloads through typed adapters; static overloads are
-  already proven in Strings.
-- `Errors` maps `Return<T, Error>` to a thrown JavaScript `Error` subclass, including interface
-  methods.
-- `Nullable` covers optional scalars, strings, structs, and instances.
-- `Equatable` covers `@Equatable` structs and reference-equality semantics through the wrapper cache.
-- `Inheritance` proves single-base registration, overridden methods, and cross-package parents.
-- `MultipleInheritance` uses primary-base registration plus flattened secondary members.
-- `Nesting` covers nested classes, enums, structs, lambdas, and typedefs as return values.
-- `Lambdas` builds on `emscripten::val` callable handling from the interface batch.
+Feature: `Lambdas`.
 
-#### Batch 4 - attributes, naming, and platform-specific behavior
+Cover callable values, nullable lambdas, lambdas in structs, and callbacks accepting interfaces or
+structured values. Before enabling the broader `Inheritance` feature, either move its
+`InterfaceWithLambda.lime` fixture into this slice or run it as an explicit lambda preflight;
+`Inheritance` currently bundles that fixture.
+
+#### Batch 2D - threaded callbacks
+
+Feature: `CallbacksWithThreads`.
+
+Attempt this only after ordinary listener and lambda conversions pass. It introduces worker-thread
+and pthread marshalling rather than a new ordinary callback conversion. Defer this slice alone if
+the Node/Emscripten harness does not provide the required thread runtime.
+
+#### Batch 3A - single inheritance
+
+Feature: `Inheritance`.
+
+Prove one primary `base<>`, overridden interface methods, class inheritance, cross-package parents,
+and wrapper identity. The existing feature also includes `ListenerInheritance.lime`,
+`ListenerInheritanceArrays.lime`, and `InterfaceWithLambda.lime`; treat those as dependency-closure
+checks, or split them before enabling the complete feature.
+
+#### Batch 3B - inherited method overloads
+
+Feature: `MethodOverloading`.
+
+Static overloads are already covered by earlier batches. This feature must follow inheritance
+because its CMake bundle includes `InheritanceOverloads.lime`; test instance overloads on interfaces
+and classes after primary-base dispatch is working.
+
+#### Batch 3C - errors and nullable values
+
+Features: `Errors`, `Nullable`.
+
+`ErrorsInInterface.lime` requires interface trampolines in addition to error conversion. Test
+`Return<T, Error>` to JavaScript exceptions for ordinary and interface methods. `Nullable` then
+covers optional scalars, strings, structs, enums, collections, instances, and nullable listener
+parameters/properties. Run the two feature tests separately even if they share a batch gate.
+
+#### Batch 3D - equality semantics
+
+Feature: `Equatable`.
+
+This is not intrinsically an inheritance feature, but its fixtures combine immutable structs,
+nullable fields, collections, and class references. Place it after the nullable and immutable
+conversion paths are stable; verify both value equality and referential equality.
+
+#### Batch 3E - multiple inheritance
+
+Feature: `MultipleInheritance`.
+
+Run after single inheritance. The JS generator supports one primary `base<>` registration and
+flattens secondary-parent functions and properties, so test both primary-base identity and the
+flattened secondary members.
+
+#### Batch 3F - nested declarations
+
+Feature: `Nesting`.
+
+Run after interface and lambda conversions. Its fixtures include nested interfaces, classes,
+structs, enums, typedefs, and lambdas exposed through interface-returned values.
+
+#### Batch 4 - attributes, naming, and structural edges
 
 Features: `Visibility`, `SkipAttribute`, `Comments`, `PlatformNames`, `EscapedNames`,
 `UnderscorePackage`, `CrossPackageNameClash`, `DeclarationOrder`, `StructsWithCompanion`,
@@ -296,7 +331,8 @@ Features: `Visibility`, `SkipAttribute`, `Comments`, `PlatformNames`, `EscapedNa
 Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `FullName`.
 
 - `ExternalTypes` binds pre-existing C++ types and requires the generator to emit bindings for types
-  it does not define.
+  it does not define; run it only after ordinary classes, structs, interfaces, and package facade
+  exports are stable.
 - `CircularDependencies` verifies include order and header resolution in generated embind sources.
 - `NoCache` verifies that regenerated output and the `.wasm` rebuild remain consistent.
 - `Serialization` is Android-only today; keep it deferred unless a JS serialization contract is
@@ -307,15 +343,18 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 
 ### Per-batch workflow
 
-1. Add `js` to the `feature(...)` lines for the batch in `functional-tests/functional/CMakeLists.txt`
-   and add required C++ test sources.
-2. Create `functional-tests/functional/js/tests/<feature>.test.mjs`, then register it in
-   `js/CMakeLists.txt` with both `configure_file` and the `add_test` file list.
-3. Rebuild with `cmake --build build-functional-js --target functional_bindings_js`; iterate on
-   generator and template defects until compilation succeeds.
-4. Run `ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascript` until
-   the registered suite is green.
-5. Record generator fixes and permanently skipped fixtures in this document.
+1. Resolve the fixture dependency closure. If a feature bundle includes a later capability, split
+  the fixture or record the explicit preflight that must pass first.
+2. Add `js` to the relevant `feature(...)` line in `functional-tests/functional/CMakeLists.txt`
+  and add required C++ test sources.
+3. Create `functional-tests/functional/js/tests/<feature>.test.mjs`, then register it in
+  `js/CMakeLists.txt` with both `configure_file` and the `add_test` file list.
+4. Rebuild with `cmake --build build-functional-js --target functional_bindings_js`; iterate on
+  generator and template defects until compilation succeeds.
+5. Run `ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascript` and, when
+  useful, run the new test module directly with `node --test`.
+6. Record generator fixes, fixture splits, deferred capabilities, and permanently skipped fixtures
+  in this document.
 
 ### Progress tracking
 
@@ -323,8 +362,16 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 |-------|----------|--------|
 | 0 | Strings, BuiltinTypes, Enums, Structs, Blobs, Classes | passing |
 | 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | passing |
-| 2 | Interfaces, Listeners, ComplexListeners, ListenersWithReturnValues, CallbacksWithThreads, Properties | not started |
-| 3 | MethodOverloading, Errors, Nullable, Equatable, Inheritance, MultipleInheritance, Nesting, Lambdas | not started |
+| 2A | Interfaces | not started |
+| 2B | Listeners, ComplexListeners, ListenersWithReturnValues, Properties | blocked on 2A |
+| 2C | Lambdas | blocked on interface boundary |
+| 2D | CallbacksWithThreads | optional; not started |
+| 3A | Inheritance | blocked on 2A-2C and fixture closure |
+| 3B | MethodOverloading | blocked on 3A and fixture closure |
+| 3C | Errors, Nullable | blocked on interface and optional conversion gates |
+| 3D | Equatable | blocked on nullable and immutable conversion gates |
+| 3E | MultipleInheritance | blocked on 3A |
+| 3F | Nesting | blocked on interface and lambda gates |
 | 4 | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash, DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
 | 5 | ExternalTypes, CircularDependencies, NoCache, Serialization, FullName | not started |
 | - | Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |
