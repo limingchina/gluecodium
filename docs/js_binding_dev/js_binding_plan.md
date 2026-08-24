@@ -769,6 +769,14 @@ Mirror `docs/python_pybind11_plan.md` §9:
 - Add `docs/js_binding_dev/` for phase-by-phase implementation notes, mirroring
   `docs/python_binding_dev/`.
 
+#### Known generated-stub limitation
+
+TypeDoc/TypeScript validation currently reports errors for the generated calculator declaration
+stub. In particular, the `subtract` callback signature is emitted in a form that TypeScript cannot
+parse, and it references `Calculator.CalculatorError` before that member is exported in the
+declaration namespace. These diagnostics are recorded here as a generated-stub limitation for
+follow-up; this documentation phase does not attempt to fix the generator output.
+
 ---
 
 ### Phase 10 — Gradle Plugin Support
