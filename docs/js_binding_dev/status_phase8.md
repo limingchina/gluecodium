@@ -115,6 +115,10 @@ The first tests found several embind generation defects that are fixed in this c
   C++ names; local CMake builds propagate owner-target include directories to the JS module target.
 - Locale adapters convert BCP-47 strings through the generated native `Locale` type, preserving
   language, script, and country components when returning a language tag.
+- Interface wrappers canonicalize initialized embind handles passed as arguments. The wrapper
+  runtime uses a pointer-based alias fallback when Emscripten's `isAliasOf` cannot compare
+  interface handles with non-writable internal `$$` properties, and preserves shared `__Wrapper`
+  handles instead of eagerly deleting them during canonicalization.
 
 ## Lessons Learned
 
@@ -128,6 +132,13 @@ The first tests found several embind generation defects that are fixed in this c
 - Direct Gluecodium generation updates `main/js`, but the package copied beside the Emscripten module
   is produced by the JS target's `POST_BUILD` step. Rebuild the module after generation, and use the
   same local-generator setting, or Node tests may import stale package indexes.
+- CMake copies Node test modules into the build tree during configuration and constructs the CTest
+  command from the configured file list. After adding or changing test registration, rerun the CMake
+  configure step, or use a clean build directory, before running CTest; a compile-only rerun can
+  execute an older copied test set.
+- The generated binding rule does not track Mustache template changes as Ninja dependencies. When a
+  runtime template changes, rebuild with `--clean-first` (or remove the build directory) before
+  interpreting test results, otherwise the Emscripten module may still contain stale generated code.
 - A type alias does not create an embind runtime object. The package facade must export the owning
   class or struct that contains alias-using methods; TypeScript alias declarations alone do not make
   a runtime `StaticTypedef` export appear.
@@ -183,6 +194,7 @@ feature bundles fixtures from a later slice.
 | Dates | epoch-millisecond conversion, nullable values, sets, static properties |
 | Durations | duration counts and value objects exposed as JavaScript `bigint` |
 | Locales | BCP-47 strings, nullable values, fields, defaults, and collections |
+| Interfaces | JS-created implementations, native dispatch, nested interface round trips, and properties |
 
 ### Dependency analysis
 
@@ -362,7 +374,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 |-------|----------|--------|
 | 0 | Strings, BuiltinTypes, Enums, Structs, Blobs, Classes | passing |
 | 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | passing |
-| 2A | Interfaces | not started |
+| 2A | Interfaces | passing |
 | 2B | Listeners, ComplexListeners, ListenersWithReturnValues, Properties | blocked on 2A |
 | 2C | Lambdas | blocked on interface boundary |
 | 2D | CallbacksWithThreads | optional; not started |

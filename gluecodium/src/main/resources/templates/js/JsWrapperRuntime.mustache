@@ -21,6 +21,7 @@
 const isEmbindHandle = (value) =>
   value !== null &&
   value !== undefined &&
+  value.$$ !== undefined &&
   typeof value.isAliasOf === "function" &&
   typeof value.isDeleted === "function" &&
   typeof value.delete === "function";
@@ -61,8 +62,22 @@ const wrapModule = (module, options = {}) => {
   };
 
   const disposeDuplicate = (value) => {
+    if (value.$$?.ptrType?.registeredClass?.name?.endsWith("__Wrapper")) {
+      return value;
+    }
     value.delete();
     return value;
+  };
+
+  const areAliases = (left, right) => {
+    try {
+      return left.isAliasOf(right);
+    } catch (error) {
+      if (!(error instanceof TypeError) || Object.getOwnPropertyDescriptor(right, "$$")?.writable !== false) {
+        throw error;
+      }
+      return left.$$?.ptr === right.$$?.ptr && left.$$?.ptrType?.registeredClass === right.$$?.ptrType?.registeredClass;
+    }
   };
 
   const canonicalize = (value) => {
@@ -87,7 +102,7 @@ const wrapModule = (module, options = {}) => {
       if (canonical === value) {
         return canonical;
       }
-      if (canonical.isAliasOf(value)) {
+      if (areAliases(canonical, value)) {
         disposeDuplicate(value);
         return canonical;
       }
@@ -147,7 +162,8 @@ const wrapModule = (module, options = {}) => {
         continue;
       }
       prototype[key] = function (...args) {
-        return canonicalize(functionValue.apply(this, args));
+        const canonicalArguments = args.map(canonicalize);
+        return canonicalize(functionValue.apply(this, canonicalArguments));
       };
     }
   };
@@ -166,7 +182,8 @@ const wrapModule = (module, options = {}) => {
         continue;
       }
       constructor[key] = function (...args) {
-        return canonicalize(functionValue.apply(this, args));
+        const canonicalArguments = args.map(canonicalize);
+        return canonicalize(functionValue.apply(this, canonicalArguments));
       };
     }
   };
