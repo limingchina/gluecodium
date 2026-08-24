@@ -1,0 +1,19 @@
+{{> js/JsStubDocumentation}}
+export interface {{jsName}} {
+{{#fields}}
+{{> js/JsStubDocumentation}}
+	{{jsName}}: {{jsType}};
+{{/fields}}
+}
+{{#hasConstants}}
+export const {{constantOwnerName}}: {
+{{#constants}}
+  {{jsName}}: {{jsType}};
+{{/constants}}
+};
+{{/hasConstants}}
+{{#nestedStructs}}
+export namespace {{parentJsName}} {
+{{> js/JsStubStructBody}}
+}
+{{/nestedStructs}}

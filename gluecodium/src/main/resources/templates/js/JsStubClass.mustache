@@ -28,7 +28,7 @@ SPDX-License-Identifier: Apache-2.0
 export class {{jsName}} {
 {{#constructors}}
 {{> js/JsStubFunctionDocumentation}}
-  static {{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{../jsName}};
+  static {{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{ownerJsName}};
 {{/constructors}}
 {{#functions}}
 {{^isConstructor}}
@@ -47,3 +47,8 @@ export class {{jsName}} {
   delete(): void;
   [Symbol.dispose](): void;
 }
+{{#nestedStructs}}
+export namespace {{parentJsName}} {
+{{> js/JsStubStructBody}}
+}
+{{/nestedStructs}}

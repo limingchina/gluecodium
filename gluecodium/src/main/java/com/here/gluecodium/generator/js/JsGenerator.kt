@@ -203,7 +203,9 @@ internal class JsGenerator : Generator {
         )
         val container = limeElement as? com.here.gluecodium.model.lime.LimeContainer
         if (container != null) {
-            data["constructors"] = container.constructors.map { functionStubViewModel(it) }
+            data["constructors"] = container.constructors.map {
+                functionStubViewModel(it) + ("ownerJsName" to nameRules.getName(limeElement))
+            }
             data["functions"] = container.functions.map { functionStubViewModel(it) }
             data["properties"] = container.properties.map {
                 mapOf(
@@ -226,6 +228,12 @@ internal class JsGenerator : Generator {
                     "additionalDescriptionComment" to LimeComment(),
                     "hasDocumentation" to hasJsDocumentation(it.comment),
                 )
+            }
+        }
+        if (limeElement is com.here.gluecodium.model.lime.LimeContainer) {
+            val ownerJsName = nameRules.getName(limeElement)
+            data["nestedStructs"] = limeElement.structs.map { nestedStruct ->
+                stubViewModel(nestedStruct) + ("parentJsName" to ownerJsName)
             }
         }
         if (limeElement is com.here.gluecodium.model.lime.LimeEnumeration) {

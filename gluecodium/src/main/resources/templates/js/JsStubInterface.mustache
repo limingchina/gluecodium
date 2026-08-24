@@ -42,6 +42,11 @@ export const {{constantOwnerName}}: {
 {{/constants}}
 };
 {{/hasConstants}}
+{{#nestedStructs}}
+export namespace {{parentJsName}} {
+{{> js/JsStubStructBody}}
+}
+{{/nestedStructs}}
   delete(): void;
   [Symbol.dispose](): void;
 }
