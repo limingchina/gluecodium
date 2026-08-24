@@ -1,6 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 2B implementation complete; all registered JavaScript functional coverage passes
+**Status**: Batch 2C JavaScript-input lambda coverage complete; native lambda-return support remains
+deferred; all registered JavaScript functional coverage passes
 
 **Date**: 2026-08-24
 
@@ -49,9 +50,19 @@ Batch 2B adds JavaScript coverage for interface listener and property trampoline
 - `Properties`: readable and writable interface properties are exercised through JavaScript
   implementations.
 
+Batch 2C adds the first lambda conversion slice:
+
+- JavaScript functions passed to native lambda parameters are retained through `emscripten::val`
+  captures and invoked with the generated C++ lambda signature;
+- nullable lambda parameters, lambdas nested in collection parameters, overloaded lambda
+  parameters, and lambda types declared inside structs are covered;
+- native lambda returns and lambda-valued fields remain deferred because Emscripten embind does not
+  register arbitrary `std::function` values as JavaScript-callable values. They require a separate
+  callable-wrapper design and are not represented as passing Batch 2C coverage.
+
 ## Verification
 
-With Emscripten and Node.js available:
+With Emscripten 6.0.8 and Node.js available:
 
 ```bash
 rm -rf build-functional-js
@@ -92,6 +103,10 @@ methods, properties, value-object fields, defaults, and collections.
 The Batch 2B listener and property tests also pass in the clean Emscripten build. Callback
 trampolines use JavaScript-value adapters for collection and struct aliases, recursively convert
 callback arguments and return values, and expose native blobs as `Uint8Array` values.
+The Batch 2C lambda tests pass in a fresh Emscripten 6.0.8 build. Direct, nullable, collection,
+overloaded, and struct-defined JavaScript callbacks all use the same generated `emscripten::val`
+adapter path. Native-created lambda returns still fail as unbound `std::function` values and are
+explicitly deferred to the next lambda capability slice.
 
 ## Generator Fixes Exercised
 
@@ -135,6 +150,9 @@ The first tests found several embind generation defects that are fixed in this c
 - Interface callback trampolines adapt collection and struct aliases through `emscripten::val`,
   recursively convert callback arguments and return values, preserve `@Cpp(Const)` methods, and
   construct callback blobs as JavaScript `Uint8Array` instances.
+- Lambda parameters use the recursive JavaScript-to-native conversion path, including nullable
+  lambdas and lambdas nested inside collections; native lambda returns remain outside this slice
+  until a callable embind wrapper is designed.
 - Static properties use named getter and setter functions for Emscripten compatibility, and
   adapted static constructors and methods use function-pointer lambdas to resolve Embind
   overloads reliably.
@@ -285,12 +303,16 @@ The implemented tests are `listeners.test.mjs`, `listener-maps.test.mjs`,
 trampolines use explicit JavaScript-value conversion whenever callback types include collection or
 struct aliases, and blob callback values are returned as `Uint8Array` instances.
 
-#### Batch 2C - lambda conversions
+#### Batch 2C - lambda conversions (initial input slice complete)
 
 Feature: `Lambdas`.
 
-Cover callable values, nullable lambdas, lambdas in structs, and callbacks accepting interfaces or
-structured values. Before enabling the broader `Inheritance` feature, either move its
+The initial slice covers JavaScript functions passed to native callable parameters, including
+nullable lambda parameters, lambdas nested in collections, overloaded lambda parameters, and
+lambda types declared inside structs. The generated adapters capture each function as an
+`emscripten::val` and invoke it through the native lambda signature. Native-created lambda returns
+and lambda-valued struct fields remain deferred because embind reports their raw `std::function`
+types as unbound. Before enabling the broader `Inheritance` feature, either move its
 `InterfaceWithLambda.lime` fixture into this slice or run it as an explicit lambda preflight;
 `Inheritance` currently bundles that fixture.
 
@@ -404,7 +426,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | passing |
 | 2A | Interfaces | passing |
 | 2B | Listeners, ComplexListeners, ListenersWithReturnValues, Properties | blocked on 2A |
-| 2C | Lambdas | blocked on interface boundary |
+| 2C | Lambdas (JavaScript-input callbacks) | passing; native lambda returns deferred |
 | 2D | CallbacksWithThreads | optional; not started |
 | 3A | Inheritance | blocked on 2A-2C and fixture closure |
 | 3B | MethodOverloading | blocked on 3A and fixture closure |

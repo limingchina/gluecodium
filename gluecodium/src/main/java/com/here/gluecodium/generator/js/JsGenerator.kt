@@ -739,7 +739,7 @@ internal class JsGenerator : Generator {
         val typeRef = parameter.typeRef
         val actualType = typeRef.type.actualType
         return when {
-            actualType is LimeLambda -> lambdaAdapterPreparation(actualType, parameter.path.name, callName)
+            actualType is LimeLambda -> "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) || isObjectStruct(typeRef) ->
                 "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             else -> ""
@@ -842,10 +842,11 @@ internal class JsGenerator : Generator {
                 } else {
                     "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
                 }
+            is LimeLambda -> lambdaAdapterExpression(actualType, source)
             else -> "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
         }
 
-    private fun lambdaAdapterPreparation(lambda: LimeLambda, parameterName: String, callName: String): String {
+    private fun lambdaAdapterExpression(lambda: LimeLambda, source: String, captureName: String = "__lambda"): String {
         val function = lambda.asFunction()
         val returnType = embindNameResolver.resolveName(function.returnType)
         val parameters = function.parameters.map { parameter ->
@@ -854,9 +855,10 @@ internal class JsGenerator : Generator {
             "$cppType ${parameter.path.name}"
         }
         val arguments = function.parameters.joinToString(", ") { it.path.name }
-        val invocation = "${parameterName}.call<$returnType>(\"call\", $parameterName${if (arguments.isNotEmpty()) ", $arguments" else ""})"
+        val invocation = "$captureName.call<$returnType>(\"call\", $captureName${if (arguments.isNotEmpty()) ", $arguments" else ""})"
         val body = if (function.returnType.isVoid) "$invocation;" else "return $invocation;"
-        return "auto $callName = [$parameterName = std::move($parameterName)](${parameters.joinToString(", ")}) -> $returnType { $body };"
+        val capturedSource = if (source.startsWith("std::move(")) source else "emscripten::val($source)"
+        return "[$captureName = $capturedSource](${parameters.joinToString(", ")}) -> $returnType { $body }"
     }
 
     private fun adapterReturnConversion(

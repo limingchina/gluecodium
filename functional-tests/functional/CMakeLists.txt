@@ -453,7 +453,7 @@ feature(Nesting cpp android android-kotlin swift dart SOURCES
     input/lime/NestedInheritance.lime
 )
 
-feature(Lambdas cpp android android-kotlin swift dart SOURCES
+feature(Lambdas cpp android android-kotlin swift dart js SOURCES
     input/lime/Lambdas.lime
 
     input/src/cpp/Lambdas.cpp
