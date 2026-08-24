@@ -204,8 +204,8 @@ functional-tests/scripts/build-cpp-functional --publish
 # Dart functional tests
 functional-tests/scripts/build-dart-functional --publish
 
-# JavaScript functional tests; removes build-functional-js before every run
-functional-tests/scripts/build-js-functional
+# JavaScript functional tests; publishes Gluecodium and removes build-functional-js before every run
+functional-tests/scripts/build-js-functional --publish
 ```
 
 ### Using CMake Toolchain
