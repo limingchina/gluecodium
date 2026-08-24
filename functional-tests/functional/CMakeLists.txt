@@ -263,6 +263,12 @@ feature(Errors cpp android android-kotlin swift dart SOURCES
     input/lime/ErrorsWithNonTrivialType.lime
 )
 
+feature(InheritanceJavaScriptDependencies js SOURCES
+    input/src/cpp/InheritanceJavaScriptDependencies.cpp
+
+    input/lime/InheritanceJavaScriptDependencies.lime
+)
+
 feature(Defaults cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Defaults.cpp
 
@@ -275,7 +281,7 @@ feature(Defaults cpp android android-kotlin swift dart js SOURCES
     input/lime/ConstantDefaults.lime
 )
 
-feature(Inheritance cpp android android-kotlin swift dart SOURCES
+feature(Inheritance cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/ChildClassImpl.cpp
     input/src/cpp/ChildClassImpl.h
     input/src/cpp/GrandchildClassImpl.cpp

@@ -58,6 +58,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/lambdas.test.mjs"
     "${JS_TEST_DIR}/lambdas.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/callbacks-with-threads.test.mjs"
     "${JS_TEST_DIR}/callbacks-with-threads.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/inheritance.test.mjs"
+    "${JS_TEST_DIR}/inheritance.test.mjs" COPYONLY)
 
 add_test(NAME unit_tests_javascript
     COMMAND ${NODE_EXECUTABLE} --test
@@ -75,6 +77,7 @@ add_test(NAME unit_tests_javascript
         "${JS_TEST_DIR}/complex-listeners.test.mjs"
         "${JS_TEST_DIR}/listener-return-values.test.mjs"
         "${JS_TEST_DIR}/lambdas.test.mjs"
-        "${JS_TEST_DIR}/callbacks-with-threads.test.mjs")
+        "${JS_TEST_DIR}/callbacks-with-threads.test.mjs"
+        "${JS_TEST_DIR}/inheritance.test.mjs")
 set_tests_properties(unit_tests_javascript PROPERTIES
     ENVIRONMENT "GLUECODIUM_JS_MODULE=$<TARGET_FILE:functional_bindings_js>")

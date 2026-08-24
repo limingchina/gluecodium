@@ -1,7 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 2D threaded callback coverage complete; native lambda-return support remains
-deferred; all registered JavaScript functional coverage passes
+**Status**: Batch 3A single-inheritance coverage complete; native lambda-return support remains
+deferred; the focused inheritance gate passes
 
 **Date**: 2026-08-24
 
@@ -60,6 +60,23 @@ Batch 2C adds the first lambda conversion slice:
   register arbitrary `std::function` values as JavaScript-callable values. They require a separate
   callable-wrapper design and are not represented as passing Batch 2C coverage.
 
+#### Batch 3A - single inheritance (complete)
+
+JavaScript coverage now enables the existing `Inheritance` fixture and verifies:
+
+- overridden methods dispatched through inherited interfaces;
+- primary-base class inheritance across multiple levels, including inherited methods and
+  properties on `ConcreteGrandChild`;
+- derived instances returned through an inherited interface type.
+
+The fixture dependency closure uses a small JS-only provider fixture for `ConstructorOverloads`
+and `ThrowingConstructor.Some`, which are referenced by `ChildConstructorOverloads` in
+`Inheritance.lime`. The broader `MethodOverloading` and `Errors` bundles remain disabled for JS
+because they include later-batch overload and interface-error fixtures. No separate JS test is
+added for those dependency types in this batch. The JS generator already emits embind `base<>`
+registration and inherited interface trampolines, so this batch required functional integration
+and runtime coverage rather than a generator-template change.
+
 ## Verification
 
 With Emscripten 6.0.8 and Node.js available:
@@ -77,8 +94,9 @@ ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascrip
 The generated module is compiled with `-sWASM_BIGINT=1`, and the Node tests assert `bigint` values
 for `Long` and `ULong` methods. The focused Structs test passes all three cases. The focused
 Classes test passes both cases, including instance mutation, shared-pointer round trips, and
-referential aliasing. The registered `unit_tests_javascript` target passes all enabled JavaScript
-functional test modules.
+referential aliasing. The Batch 3A `inheritance.test.mjs` module passes all three cases after a
+clean reconfigure, generation, and Emscripten build. The clean-build `lambdas.test.mjs` module
+passes all four cases, including collection and nullable lambda paths.
 The focused Blobs test passes all four cases, including null shared pointers mapping to an empty
 `Uint8Array` for non-nullable results and `undefined` for nullable results. Immutable structs and
 structs containing immutable fields use generated `emscripten::val` adapters instead of embind
@@ -456,7 +474,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | 2B | Listeners, ComplexListeners, ListenersWithReturnValues, Properties | blocked on 2A |
 | 2C | Lambdas (JavaScript-input callbacks) | passing; native lambda returns deferred |
 | 2D | CallbacksWithThreads | passing; detached interface and lambda callbacks |
-| 3A | Inheritance | blocked on 2A-2C and fixture closure |
+| 3A | Inheritance | passing; single inheritance and fixture closure |
 | 3B | MethodOverloading | blocked on 3A and fixture closure |
 | 3C | Errors, Nullable | blocked on interface and optional conversion gates |
 | 3D | Equatable | blocked on nullable and immutable conversion gates |
