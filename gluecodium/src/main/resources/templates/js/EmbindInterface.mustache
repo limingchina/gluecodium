@@ -22,24 +22,53 @@
 Copyright (C) 2026 HERE Europe B.V.
 SPDX-License-Identifier: Apache-2.0
 }}
-class {{wrapperName}} : public emscripten::wrapper<{{cppFullName}}> {
+class {{wrapperName}} : public {{cppFullName}} {
 public:
-    EMSCRIPTEN_WRAPPER({{wrapperName}});
+    template <typename... Args>
+    {{wrapperName}}(emscripten::val&& wrapped, Args&&... args)
+        : {{cppFullName}}(std::forward<Args>(args)...)
+        , m_wrapped(new gluecodium_js::RuntimeThreadVal(std::move(wrapped))) {}
+
+    void setNotifyJSOnDestruction(bool notify) {
+        m_notifyJSOnDestruction = notify;
+    }
+
+    ~{{wrapperName}}() override {
+        auto* wrapped = m_wrapped;
+        m_wrapped = nullptr;
+        const auto notify = m_notifyJSOnDestruction;
+        gluecodium_js::invoke_on_main_runtime_thread_void([wrapped, notify] {
+            if (notify) {
+                wrapped->call<void>("__destruct");
+            }
+            gluecodium_js::delete_runtime_thread_val(wrapped);
+        });
+    }
+
+    template <typename ReturnType, typename... Args>
+    ReturnType call(const char* name, Args&&... args) const {
+        return m_wrapped->call<ReturnType>(name, std::forward<Args>(args)...);
+    }
+
 {{#wrapperMethods}}
     {{returnType}} {{cppName}}({{parameters}}){{#isConst}} const{{/isConst}} override {
-        {{#needsAdapter}}{{call}}{{/needsAdapter}}{{^needsAdapter}}{{#isVoid}}{{call}};{{/isVoid}}{{^isVoid}}return {{call}};{{/isVoid}}{{/needsAdapter}}
+        {{#isVoid}}{{threadedCall}}{{/isVoid}}{{^isVoid}}{{threadedCall}}{{/isVoid}}
     }
 {{/wrapperMethods}}
 {{#wrapperProperties}}
     {{returnType}} {{cppGetterName}}() const override {
-        return call<{{returnType}}>("{{jsName}}");
+        {{threadedGetter}}
     }
 {{#hasSetter}}
     void {{cppSetterName}}({{setterParameter}}) override {
-        call<void>("{{jsName}}", value);
+        {{threadedSetter}}
     }
 {{/hasSetter}}
 {{/wrapperProperties}}
+
+private:
+    gluecodium_js::RuntimeThreadVal* m_wrapped;
+    bool m_notifyJSOnDestruction = false;
 };
 
 {{#constants}}

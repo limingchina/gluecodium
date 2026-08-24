@@ -7,6 +7,7 @@
 import { loadModule } from "{{runtimeImportPath}}";
 
 const module = await loadModule();
+const pumpRuntimeQueue = () => module.pumpRuntimeQueue();
 {{#runtimeExports}}
 const {{moduleName}} = module["{{runtimeName}}"]{{#isStruct}} ?? {}{{/isStruct}};
 {{#constants}}
@@ -29,5 +30,5 @@ Object.defineProperty({{moduleName}}, "{{jsName}}", {
   throw new TypeError("No matching overload for {{jsName}}");
 };
 {{/overloadGroups}}
-export { {{moduleName}} };
 {{/runtimeExports}}
+export { pumpRuntimeQueue{{#runtimeExports}}, {{moduleName}}{{/runtimeExports}} };

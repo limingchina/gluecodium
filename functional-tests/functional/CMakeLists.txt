@@ -372,7 +372,7 @@ feature(Nullable cpp android android-kotlin swift dart SOURCES
     input/lime/NullableCollections.lime
 )
 
-feature(CallbacksWithThreads cpp android dart SOURCES
+feature(CallbacksWithThreads cpp android dart js SOURCES
     input/src/cpp/ListenersThreads.cpp
 
     input/lime/ListenersThreads.lime

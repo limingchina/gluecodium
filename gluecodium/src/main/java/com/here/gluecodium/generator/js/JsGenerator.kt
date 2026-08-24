@@ -457,11 +457,26 @@ internal class JsGenerator : Generator {
         } else {
             "call<$returnType>(\"${nameRules.getName(function)}\"$callArguments)"
         }
+        val lambdaCaptures = function.parameters.joinToString(", ") { "&${it.path.name}" }
+        val lambdaCaptureList = if (lambdaCaptures.isEmpty()) "this" else "this, $lambdaCaptures"
+        val lambdaBody = if (needsAdapter) {
+            call
+        } else if (function.returnType.isVoid) {
+            "$call;"
+        } else {
+            "return $call;"
+        }
+        val threadedCall = if (function.returnType.isVoid) {
+            "gluecodium_js::invoke_on_main_runtime_thread_void([${lambdaCaptureList}]() { $lambdaBody });"
+        } else {
+            "return gluecodium_js::invoke_on_main_runtime_thread([${lambdaCaptureList}]() { $lambdaBody });"
+        }
         return mapOf(
             "returnType" to returnType,
             "cppName" to embindNameResolver.resolveName(function),
             "parameters" to parameters.joinToString(", "),
             "call" to call,
+            "threadedCall" to threadedCall,
             "isVoid" to function.returnType.isVoid,
             "needsAdapter" to needsAdapter,
             "isConst" to function.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.CONST),
@@ -488,6 +503,8 @@ internal class JsGenerator : Generator {
             "cppSetterName" to cppNameCache.getSetterName(property),
             "setterParameter" to setterParameter,
             "hasSetter" to (setter != null),
+            "threadedGetter" to "return gluecodium_js::invoke_on_main_runtime_thread([this] { return call<$propertyType>(\"${nameRules.getName(property)}\"); });",
+            "threadedSetter" to "gluecodium_js::invoke_on_main_runtime_thread_void([this, &value] { call<void>(\"${nameRules.getName(property)}\", value); });",
         )
     }
 
@@ -532,7 +549,9 @@ internal class JsGenerator : Generator {
                         isJsDate(parameter.typeRef) ||
                         isJsLocale(parameter.typeRef) ||
                         isJsDuration(parameter.typeRef) ||
-                        hasCppStringOverride(parameter.typeRef)
+                        hasCppStringOverride(parameter.typeRef) ||
+                        parameter.typeRef.type.actualType is LimeClass ||
+                        parameter.typeRef.type.actualType is LimeInterface
                 }
         return mapOf(
             "model" to function,
@@ -588,6 +607,8 @@ internal class JsGenerator : Generator {
                                 isBlob(parameter.typeRef) ||
                                 isObjectStruct(parameter.typeRef) ||
                                 actualType is LimeLambda
+                                    || actualType is LimeClass
+                                    || actualType is LimeInterface
                         ) {
                             "emscripten::val"
                         } else {
@@ -622,6 +643,8 @@ internal class JsGenerator : Generator {
                             isBlob(parameter.typeRef) ||
                             isObjectStruct(parameter.typeRef) ||
                             actualType is LimeLambda
+                                    || actualType is LimeClass
+                                    || actualType is LimeInterface
                     ) {
                         "emscripten::val"
                     } else {
@@ -639,7 +662,9 @@ internal class JsGenerator : Generator {
                         actualType is LimeSet ||
                         isBlob(parameter.typeRef) ||
                         isObjectStruct(parameter.typeRef) ||
-                        actualType is LimeLambda
+                        actualType is LimeLambda ||
+                        actualType is LimeClass ||
+                        actualType is LimeInterface
                 ) {
                     "${parameter.path.name}_value"
                 } else {
@@ -740,7 +765,7 @@ internal class JsGenerator : Generator {
         val actualType = typeRef.type.actualType
         return when {
             actualType is LimeLambda -> "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
-            typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) || isObjectStruct(typeRef) ->
+            typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) || isObjectStruct(typeRef) || actualType is LimeClass || actualType is LimeInterface ->
                 "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             else -> ""
         }
@@ -782,6 +807,7 @@ internal class JsGenerator : Generator {
     private fun requiresJsAdapter(typeRef: LimeTypeRef): Boolean {
         if (typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || isBlob(typeRef) || isObjectStruct(typeRef)) return true
         return when (val actualType = typeRef.type.actualType) {
+            is LimeClass, is LimeInterface -> true
             is LimeList -> requiresJsAdapter(actualType.elementType)
             is LimeMap -> requiresJsAdapter(actualType.keyType) || requiresJsAdapter(actualType.valueType)
             is LimeSet -> requiresJsAdapter(actualType.elementType)
@@ -802,6 +828,8 @@ internal class JsGenerator : Generator {
 
     private fun jsToNativeNonNullable(actualType: LimeType, typeRef: LimeTypeRef, source: String): String =
         when (actualType) {
+            is LimeClass, is LimeInterface ->
+                "gluecodium_js::shared_ptr_from_js<${cppNameCache.getFullyQualifiedName(actualType)}>(std::move($source))"
             is LimeList -> {
                 val element = jsToNative(actualType.elementType, "entry")
                 "([&]() { ${embindNameResolver.resolveName(typeRef.type)} converted; " +
@@ -855,10 +883,14 @@ internal class JsGenerator : Generator {
             "$cppType ${parameter.path.name}"
         }
         val arguments = function.parameters.joinToString(", ") { it.path.name }
-        val invocation = "$captureName.call<$returnType>(\"call\", $captureName${if (arguments.isNotEmpty()) ", $arguments" else ""})"
-        val body = if (function.returnType.isVoid) "$invocation;" else "return $invocation;"
+        val invocation = "$captureName->callFunction<$returnType>(${arguments})"
+        val body = if (function.returnType.isVoid) {
+            "gluecodium_js::invoke_on_main_runtime_thread_void([&] { $invocation; });"
+        } else {
+            "return gluecodium_js::invoke_on_main_runtime_thread([&] { return $invocation; });"
+        }
         val capturedSource = if (source.startsWith("std::move(")) source else "emscripten::val($source)"
-        return "[$captureName = $capturedSource](${parameters.joinToString(", ")}) -> $returnType { $body }"
+        return "[$captureName = std::shared_ptr<gluecodium_js::RuntimeThreadVal>(new gluecodium_js::RuntimeThreadVal($capturedSource), gluecodium_js::delete_runtime_thread_val)](${parameters.joinToString(", ")}) -> $returnType { $body }"
     }
 
     private fun adapterReturnConversion(
@@ -884,6 +916,8 @@ internal class JsGenerator : Generator {
 
     private fun nativeToJsNonNullable(actualType: LimeType, typeRef: LimeTypeRef, source: String): String =
         when (actualType) {
+            is LimeClass, is LimeInterface ->
+                "emscripten::val($source)"
             is LimeList -> {
                 val element = nativeToJs(actualType.elementType, "entry")
                 "([&]() { auto jsResult = emscripten::val::global(\"Array\").new_(); " +

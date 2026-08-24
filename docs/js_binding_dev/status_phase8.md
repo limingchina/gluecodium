@@ -1,6 +1,6 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 2C JavaScript-input lambda coverage complete; native lambda-return support remains
+**Status**: Batch 2D threaded callback coverage complete; native lambda-return support remains
 deferred; all registered JavaScript functional coverage passes
 
 **Date**: 2026-08-24
@@ -150,6 +150,10 @@ The first tests found several embind generation defects that are fixed in this c
 - Interface callback trampolines adapt collection and struct aliases through `emscripten::val`,
   recursively convert callback arguments and return values, preserve `@Cpp(Const)` methods, and
   construct callback blobs as JavaScript `Uint8Array` instances.
+- Threaded interface and lambda callbacks dispatch synchronously to the main Emscripten runtime
+  thread. Runtime-thread-owned value holders defer `emscripten::val` destruction, and interface
+  adapters preserve embind smart-pointer identity so JavaScript subclass prototypes survive native
+  round trips. Runtime-thread teardown calls `__destruct` to unregister inherited instances.
 - Lambda parameters use the recursive JavaScript-to-native conversion path, including nullable
   lambdas and lambdas nested inside collections; native lambda returns remain outside this slice
   until a callable embind wrapper is designed.
@@ -316,13 +320,37 @@ types as unbound. Before enabling the broader `Inheritance` feature, either move
 `InterfaceWithLambda.lime` fixture into this slice or run it as an explicit lambda preflight;
 `Inheritance` currently bundles that fixture.
 
-#### Batch 2D - threaded callbacks
+#### Batch 2D - threaded callbacks (implemented)
 
 Feature: `CallbacksWithThreads`.
 
-Attempt this only after ordinary listener and lambda conversions pass. It introduces worker-thread
-and pthread marshalling rather than a new ordinary callback conversion. Defer this slice alone if
-the Node/Emscripten harness does not provide the required thread runtime.
+The implementation handles callbacks originating on native worker/render threads while keeping
+JavaScript execution and `emscripten::val` ownership on the main Emscripten runtime thread.
+Generated interface trampolines and lambda adapters synchronously dispatch through
+`emscripten_sync_run_in_main_runtime_thread`, so native callers retain their normal return-value
+semantics while JavaScript callbacks run on the owning thread. Void and value-returning callbacks
+use separate helpers, avoiding invalid `std::optional<void>` instantiations.
+
+The runtime helpers address the two ownership hazards exposed by detached callbacks:
+
+- JavaScript functions and interface wrappers are held by runtime-thread-owned `emscripten::val`
+  containers. Their deleters dispatch destruction back to the main runtime thread instead of
+  releasing a thread-affine `val` on the worker.
+- Interface parameters preserve embind smart-pointer identity while their final destruction is
+  deferred. This keeps inherited JavaScript subclass instances and custom prototype properties
+  intact during native round trips, while avoiding embind's worker-thread `val` deleter. Interface
+  wrapper teardown invokes embind `__destruct` on the runtime thread so inherited-instance
+  registry entries are removed before native pointer addresses are reused.
+
+The `--no-entry` generated module exposes `pumpRuntimeQueue()` and the test host pumps it from a
+timer. This is the explicit queue boundary required by the current module configuration; it does
+not introduce a second callback-executor API. The JavaScript functional build enables
+`CallbacksWithThreads`, copies `callbacks-with-threads.test.mjs`, and registers detached interface
+and detached lambda callback cases with CTest.
+
+Validation with Emscripten 6.0.8 and Node.js passes the complete `unit_tests_javascript` target:
+all 38 tests pass, including existing listener round trips, interface properties, lambda input,
+and both native-thread callback paths.
 
 #### Batch 3A - single inheritance
 
@@ -427,7 +455,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | 2A | Interfaces | passing |
 | 2B | Listeners, ComplexListeners, ListenersWithReturnValues, Properties | blocked on 2A |
 | 2C | Lambdas (JavaScript-input callbacks) | passing; native lambda returns deferred |
-| 2D | CallbacksWithThreads | optional; not started |
+| 2D | CallbacksWithThreads | passing; detached interface and lambda callbacks |
 | 3A | Inheritance | blocked on 2A-2C and fixture closure |
 | 3B | MethodOverloading | blocked on 3A and fixture closure |
 | 3C | Errors, Nullable | blocked on interface and optional conversion gates |
