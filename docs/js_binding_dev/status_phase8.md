@@ -47,9 +47,12 @@ Classes test passes both cases, including instance mutation, shared-pointer roun
 referential aliasing. The registered `unit_tests_javascript` target passes all enabled JavaScript
 functional test modules.
 The focused Blobs test passes all four cases, including null shared pointers mapping to an empty
-`Uint8Array` for non-nullable results and `undefined` for nullable results. The immutable Blob
-value-object fixture remains skipped for JS because embind `value_object` bindings require a
-default-constructible, writable class without custom construction support.
+`Uint8Array` for non-nullable results and `undefined` for nullable results. Immutable structs and
+structs containing immutable fields use generated `emscripten::val` adapters instead of embind
+`value_object` registration. The adapters construct C++ structs from plain JavaScript objects and
+convert returned structs back recursively, including nested structs, blobs, nullable fields, and
+collection values. The `Blobs`, `Defaults`, and `PlainDataStructuresImmutable` fixtures are
+covered by the JavaScript functional tests.
 The Locale-only test passes all four cases. The class tests load the generated public package
 index, which maps the internal embind class names to the public JavaScript exports. The CMake
 functional-test registration is limited to the feature groups and test modules currently covered

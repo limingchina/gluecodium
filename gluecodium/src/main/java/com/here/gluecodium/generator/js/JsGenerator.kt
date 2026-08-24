@@ -377,6 +377,7 @@ internal class JsGenerator : Generator {
             "embindName" to nameRules.getEmbindRuntimeName(type),
             "cppFullName" to cppNameCache.getFullyQualifiedName(type),
             "registerName" to resolveRegisterName(type),
+            "isObjectStruct" to (type is LimeStruct && isObjectStruct(type)),
         )
         primaryBaseOf(type, filteredModel)?.let { data["primaryBase"] = it }
         if (type is com.here.gluecodium.model.lime.LimeEnumeration) {
@@ -489,12 +490,14 @@ internal class JsGenerator : Generator {
                 returnActualType is LimeMap ||
                 returnActualType is LimeSet ||
                 isBlob(returnType) ||
+                isObjectStruct(returnType) ||
                 function.parameters.any { parameter ->
                     parameter.typeRef.isNullable ||
                         parameter.typeRef.type.actualType is LimeList ||
                         parameter.typeRef.type.actualType is LimeMap ||
                         parameter.typeRef.type.actualType is LimeSet ||
                     isBlob(parameter.typeRef) ||
+                        isObjectStruct(parameter.typeRef) ||
                         parameter.typeRef.type.actualType is LimeLambda ||
                         isJsDate(parameter.typeRef) ||
                         isJsLocale(parameter.typeRef) ||
@@ -519,7 +522,8 @@ internal class JsGenerator : Generator {
                         returnActualType is LimeList ||
                         returnActualType is LimeMap ||
                         returnActualType is LimeSet ||
-                        isBlob(returnType)
+                        isBlob(returnType) ||
+                        isObjectStruct(returnType)
                 ) {
                     "emscripten::val"
                 } else {
@@ -552,6 +556,7 @@ internal class JsGenerator : Generator {
                                 actualType is LimeMap ||
                                 actualType is LimeSet ||
                                 isBlob(parameter.typeRef) ||
+                                isObjectStruct(parameter.typeRef) ||
                                 actualType is LimeLambda
                         ) {
                             "emscripten::val"
@@ -585,6 +590,7 @@ internal class JsGenerator : Generator {
                             actualType is LimeMap ||
                             actualType is LimeSet ||
                             isBlob(parameter.typeRef) ||
+                            isObjectStruct(parameter.typeRef) ||
                             actualType is LimeLambda
                     ) {
                         "emscripten::val"
@@ -602,6 +608,7 @@ internal class JsGenerator : Generator {
                         actualType is LimeMap ||
                         actualType is LimeSet ||
                         isBlob(parameter.typeRef) ||
+                        isObjectStruct(parameter.typeRef) ||
                         actualType is LimeLambda
                 ) {
                     "${parameter.path.name}_value"
@@ -644,7 +651,7 @@ internal class JsGenerator : Generator {
             put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
             put(
                 "adapterCallPrefix",
-                if (returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) || isJsDuration(returnType) || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet || isBlob(returnType)) {
+                if (returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) || isJsDuration(returnType) || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet || isBlob(returnType) || isObjectStruct(returnType)) {
                     "auto result = "
                 } else if (thrownException != null) {
                     "auto result = "
@@ -669,7 +676,8 @@ internal class JsGenerator : Generator {
                             returnActualType is LimeList ||
                             returnActualType is LimeMap ||
                             returnActualType is LimeSet ||
-                            isBlob(returnType)
+                            isBlob(returnType) ||
+                            isObjectStruct(returnType)
                     ) {
                         "emscripten::val"
                     } else {
@@ -698,7 +706,7 @@ internal class JsGenerator : Generator {
         val actualType = typeRef.type.actualType
         return when {
             actualType is LimeLambda -> lambdaAdapterPreparation(actualType, parameter.path.name, callName)
-            typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) ->
+            typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) || isObjectStruct(typeRef) ->
                 "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             else -> ""
         }
@@ -713,6 +721,13 @@ internal class JsGenerator : Generator {
 
     private fun isBlob(typeRef: LimeTypeRef): Boolean =
         (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.BLOB
+
+    private fun isObjectStruct(typeRef: LimeTypeRef): Boolean =
+        (typeRef.type.actualType as? LimeStruct)?.let(::isObjectStruct) == true
+
+    private fun isObjectStruct(struct: LimeStruct): Boolean =
+        struct.attributes.have(LimeAttributeType.IMMUTABLE) ||
+            struct.fields.any { isObjectStruct(it.typeRef) }
 
     private fun isJsDate(typeRef: LimeTypeRef): Boolean =
         (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.DATE &&
@@ -731,7 +746,7 @@ internal class JsGenerator : Generator {
     }
 
     private fun requiresJsAdapter(typeRef: LimeTypeRef): Boolean {
-        if (typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || isBlob(typeRef)) return true
+        if (typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || isBlob(typeRef) || isObjectStruct(typeRef)) return true
         return when (val actualType = typeRef.type.actualType) {
             is LimeList -> requiresJsAdapter(actualType.elementType)
             is LimeMap -> requiresJsAdapter(actualType.keyType) || requiresJsAdapter(actualType.valueType)
@@ -772,6 +787,14 @@ internal class JsGenerator : Generator {
                     "for (const auto& entry : $source.call<emscripten::val>(\"values\")) { " +
                     "converted.emplace($element); } return converted; }())"
             }
+            is LimeStruct -> if (isObjectStruct(actualType)) {
+                val arguments = actualType.fields.joinToString(", ") { field ->
+                    jsToNative(field.typeRef, "$source[\"${nameRules.getName(field)}\"]")
+                }
+                "${cppNameCache.getFullyQualifiedName(actualType)}($arguments)"
+            } else {
+                "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
+            }
             is LimeBasicType ->
                 if (actualType.typeId == TypeId.DATE && isJsDate(typeRef)) {
                     "gluecodium_date_to_native<${embindNameResolver.resolveName(typeRef.type)}>( $source )"
@@ -806,7 +829,7 @@ internal class JsGenerator : Generator {
         returnType: com.here.gluecodium.model.lime.LimeTypeRef,
         actualType: com.here.gluecodium.model.lime.LimeType,
     ): String {
-        return if (returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) || isJsDuration(returnType) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(returnType)) {
+        return if (returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) || isJsDuration(returnType) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(returnType) || isObjectStruct(returnType)) {
             "return ${nativeToJs(returnType, "result")};"
         } else {
             ""
@@ -840,6 +863,19 @@ internal class JsGenerator : Generator {
                 "([&]() { auto jsResult = emscripten::val::global(\"Set\").new_(); " +
                     "for (const auto& entry : $source) { jsResult.call<void>(\"add\", $element); } " +
                     "return jsResult; }())"
+            }
+            is LimeStruct -> if (isObjectStruct(actualType)) {
+                val fields = actualType.fields.joinToString(" ") { field ->
+                    val fieldSource = if (actualType.attributes.have(CPP, ACCESSORS)) {
+                        "$source.${cppNameCache.getGetterName(field)}()"
+                    } else {
+                        "$source.${cppNameCache.getName(field)}"
+                    }
+                    "jsResult.set(\"${nameRules.getName(field)}\", ${nativeToJs(field.typeRef, fieldSource)});"
+                }
+                "([&]() { auto jsResult = emscripten::val::object(); $fields return jsResult; }())"
+            } else {
+                "emscripten::val($source)"
             }
             is LimeBasicType ->
                 if (actualType.typeId == TypeId.DATE && isJsDate(typeRef)) {
@@ -915,6 +951,7 @@ internal class JsGenerator : Generator {
                 "cppFieldName" to if (hasAccessors) null else cppNameCache.getName(field),
                 "hasAccessors" to hasAccessors,
                 "hasBlob" to isBlob(field.typeRef),
+                "hasImmutableStruct" to isObjectStruct(field.typeRef),
             "hasDate" to isJsDate(field.typeRef),
             "hasLocale" to isJsLocale(field.typeRef),
             "hasDuration" to isJsDuration(field.typeRef),
@@ -927,6 +964,17 @@ internal class JsGenerator : Generator {
                     field.typeRef.type.actualType is LimeSet)),
                 "collectionGetter" to nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
                 "collectionSetter" to jsToNative(field.typeRef, "value"),
+                "immutableGetter" to nativeToJs(
+                    field.typeRef,
+                    if (hasAccessors) "self.${cppNameCache.getGetterName(field)}()" else "self.${cppNameCache.getName(field)}",
+                ),
+                "immutableSetter" to jsToNative(field.typeRef, "value").let { converted ->
+                    if (hasAccessors) {
+                        "self.${cppNameCache.getSetterName(field)}($converted)"
+                    } else {
+                        "self.${cppNameCache.getName(field)} = $converted"
+                    }
+                },
                 "dateGetter" to nativeToJs(field.typeRef, if (hasAccessors) {
                     "self.${cppGetterName(field)}()"
                 } else {

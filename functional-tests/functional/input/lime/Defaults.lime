@@ -35,7 +35,7 @@ class Defaults {
         @Dart(Default)
         field constructor(enumField)
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithDefaults {
         intField: Int = 42
         uintField: UInt
@@ -44,7 +44,7 @@ class Defaults {
         stringField: String = "some string"
         enumField: SomeEnum = SomeEnum.BarValue
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithCollections {
         nullableListField: List<Int>? = null
         emptyListField: List<Int> = []
@@ -58,7 +58,7 @@ class Defaults {
         emptySetField: Set<String> = []
         valuesSetField: Set<String> = ["bar", "baz"]
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithFieldConstructorAndCollections {
         nullableListField: List<Int>? = null
         emptyListField: List<Int> = []
@@ -80,16 +80,16 @@ class Defaults {
         @Dart("withIntegers")
         field constructor(someField, anotherField)
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct SomeImmutableStructWithDefaults {
         intField: Int = 42
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithFieldUsingImmutableStruct {
         someField1: SomeImmutableStructWithDefaults = {}
         someField2: ImmutableStructWithCollections = {}
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithFieldConstructorAndFieldUsingImmutableStruct {
         someField1: SomeImmutableStructWithDefaults = {}
         someField2: ImmutableStructWithCollections = {}
@@ -100,12 +100,12 @@ class Defaults {
         @Dart("withIntegers")
         field constructor(someField, anotherField)
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithNullableFieldUsingImmutableStruct {
         someField1: SomeImmutableStructWithDefaults? = {}
         someField2: ImmutableStructWithCollections? = {}
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct {
         someField1: SomeImmutableStructWithDefaults? = {}
         someField2: ImmutableStructWithCollections? = {}
@@ -176,7 +176,6 @@ class Defaults {
     ): Boolean
     // Get a default-initialized ImmutableStructWithDefaults object.
     // @return a default-initialized ImmutableStructWithDefaults object.
-    @Skip(JS)
     static fun getImmutableDefault(): ImmutableStructWithDefaults
     @Dart("floatIsNan")
     static fun isNan(

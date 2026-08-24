@@ -147,7 +147,7 @@ feature(StructsInTypes cpp android android-kotlin swift dart SOURCES
     input/lime/TypeCollection.lime
 )
 
-feature(StructsImmutable cpp android android-kotlin swift dart SOURCES
+feature(StructsImmutable cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/PlainDataStructuresImmutable.cpp
 
     input/lime/PlainDataStructuresImmutable.lime
@@ -263,7 +263,7 @@ feature(Errors cpp android android-kotlin swift dart SOURCES
     input/lime/ErrorsWithNonTrivialType.lime
 )
 
-feature(Defaults cpp android android-kotlin swift dart SOURCES
+feature(Defaults cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Defaults.cpp
 
     input/lime/Defaults.lime

@@ -23,7 +23,7 @@ class ArraysByteBuffer {
     struct StructWithByteBuffer {
         image: Blob
     }
-    @Skip(JS) @Immutable
+    @Immutable
     struct ImmutableStructWithByteBuffer {
         image: Blob
     }

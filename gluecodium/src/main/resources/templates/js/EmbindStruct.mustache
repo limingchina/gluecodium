@@ -31,11 +31,19 @@ LIME structs map to embind value_object (value semantics, all fields public).
 {{/constants}}
 
 void {{registerName}}(void) {
+{{^isObjectStruct}}
     value_object<{{cppFullName}}>("{{embindName}}")
 {{#fields}}
-{{^hasAccessors}}{{^hasBlob}}{{^hasDate}}{{^hasDuration}}{{^hasLocale}}{{^hasCollection}}
+{{^hasAccessors}}{{^hasBlob}}{{^hasImmutableStruct}}{{^hasDate}}{{^hasDuration}}{{^hasLocale}}{{^hasCollection}}
     .field("{{jsName}}", &{{cppFullName}}::{{cppFieldName}})
-{{/hasCollection}}{{/hasLocale}}{{/hasDuration}}{{/hasDate}}{{/hasBlob}}{{/hasAccessors}}
+{{/hasCollection}}{{/hasLocale}}{{/hasDuration}}{{/hasDate}}{{/hasImmutableStruct}}{{/hasBlob}}{{/hasAccessors}}
+{{#hasImmutableStruct}}
+  .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
+    return {{immutableGetter}};
+  }, +[] ({{cppFullName}}& self, emscripten::val value) {
+    {{immutableSetter}};
+  })
+{{/hasImmutableStruct}}
 {{#hasDate}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
     return {{dateGetter}};
@@ -85,6 +93,7 @@ void {{registerName}}(void) {
 {{/hasCollection}}
 {{/fields}}
         ;
+{{/isObjectStruct}}
 {{#constants}}
   function("{{runtimeName}}", &{{functionName}});
 {{/constants}}
