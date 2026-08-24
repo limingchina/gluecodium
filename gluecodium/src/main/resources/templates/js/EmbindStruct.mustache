@@ -33,9 +33,9 @@ LIME structs map to embind value_object (value semantics, all fields public).
 void {{registerName}}(void) {
     value_object<{{cppFullName}}>("{{embindName}}")
 {{#fields}}
-{{^hasAccessors}}{{^hasBlob}}{{^hasDate}}{{^hasDuration}}{{^hasCollection}}
+{{^hasAccessors}}{{^hasBlob}}{{^hasDate}}{{^hasDuration}}{{^hasLocale}}{{^hasCollection}}
     .field("{{jsName}}", &{{cppFullName}}::{{cppFieldName}})
-{{/hasCollection}}{{/hasDuration}}{{/hasDate}}{{/hasBlob}}{{/hasAccessors}}
+{{/hasCollection}}{{/hasLocale}}{{/hasDuration}}{{/hasDate}}{{/hasBlob}}{{/hasAccessors}}
 {{#hasDate}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
     return {{dateGetter}};
@@ -50,6 +50,13 @@ void {{registerName}}(void) {
     self.{{cppFieldName}} = gluecodium_duration_to_native<decltype(self.{{cppFieldName}})>(value);
   })
 {{/hasDuration}}
+{{#hasLocale}}
+  .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
+    return {{localeGetter}};
+  }, +[] ({{cppFullName}}& self, emscripten::val value) {
+    {{localeSetter}};
+  })
+{{/hasLocale}}
 {{#hasAccessors}}
 {{^hasDate}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> {{accessorType}} {

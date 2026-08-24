@@ -27,5 +27,4 @@ struct LocaleDefaults {
 
     field constructor()
 
-    static fun getCppDefaults(): LocaleDefaults
 }

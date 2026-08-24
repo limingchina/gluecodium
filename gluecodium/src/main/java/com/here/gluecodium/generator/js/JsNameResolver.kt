@@ -121,6 +121,7 @@ internal class JsNameResolver(
             LimeBasicType.TypeId.INT64, LimeBasicType.TypeId.UINT64 -> "bigint"
             LimeBasicType.TypeId.DATE -> "Date"
             LimeBasicType.TypeId.DURATION -> "bigint"
+            LimeBasicType.TypeId.LOCALE -> "string"
             else -> "number"
         }
 

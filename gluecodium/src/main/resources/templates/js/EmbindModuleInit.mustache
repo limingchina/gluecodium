@@ -56,6 +56,29 @@ Duration gluecodium_duration_to_native(emscripten::val value) {
   return Duration(value.as<typename Duration::rep>());
 }
 
+#include "{{localeInclude}}"
+
+{{localeTypeName}} gluecodium_locale_to_native(emscripten::val value) {
+  return {{localeTypeName}}(value.as<std::string>());
+}
+
+emscripten::val gluecodium_locale_to_js(const {{localeTypeName}}& value) {
+  if (value.language_tag) {
+    return emscripten::val(*value.language_tag);
+  }
+  std::string result;
+  if (value.language_code) result = *value.language_code;
+  if (value.script_code) {
+    if (!result.empty()) result += "-";
+    result += *value.script_code;
+  }
+  if (value.country_code) {
+    if (!result.empty()) result += "-";
+    result += *value.country_code;
+  }
+  return emscripten::val(result.empty() ? "und" : result);
+}
+
 {{#registerFunctions}}
 void {{name}}();
 {{/registerFunctions}}

@@ -401,6 +401,13 @@ feature(Durations cpp android android-kotlin swift dart js SOURCES
     input/lime/DurationDefaults.lime
 )
 
+feature(Locales cpp js SOURCES
+    input/src/cpp/Locales.cpp
+
+    input/lime/Locales.lime
+    input/lime/LocaleDefaults.lime
+)
+
 feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
     input/src/cpp/StructsWithMethods.cpp
     input/src/cpp/StructsWithConstants.cpp
