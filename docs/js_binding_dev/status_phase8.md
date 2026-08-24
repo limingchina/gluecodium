@@ -1,8 +1,8 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 1 implementation complete; Locale coverage passes, while two unrelated existing class tests remain failing in the registered suite
+**Status**: Batch 1 implementation complete; all registered JavaScript functional coverage passes
 
-**Date**: 2026-08-23
+**Date**: 2026-08-24
 
 ## Checkpoint Scope
 
@@ -42,15 +42,18 @@ ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascrip
 ```
 
 The generated module is compiled with `-sWASM_BIGINT=1`, and the Node tests assert `bigint` values
-for `Long` and `ULong` methods. The focused Structs test passes all three cases. The registered
-`unit_tests_javascript` target currently passes 19 of 21 tests; its two failures are the existing
-class tests in `classes.test.mjs`, not Locale-related.
+for `Long` and `ULong` methods. The focused Structs test passes all three cases. The focused
+Classes test passes both cases, including instance mutation, shared-pointer round trips, and
+referential aliasing. The registered `unit_tests_javascript` target passes all enabled JavaScript
+functional test modules.
 The focused Blobs test passes all four cases, including null shared pointers mapping to an empty
 `Uint8Array` for non-nullable results and `undefined` for nullable results. The immutable Blob
 value-object fixture remains skipped for JS because embind `value_object` bindings require a
 default-constructible, writable class without custom construction support.
-The Locale-only test passes all four cases. The class tests remain blocked by their existing
-`SimpleInstantiableOne` and `SimpleInstantiableTwo` export failures.
+The Locale-only test passes all four cases. The class tests load the generated public package
+index, which maps the internal embind class names to the public JavaScript exports. The CMake
+functional-test registration is limited to the feature groups and test modules currently covered
+by the JavaScript generator.
 Locale maps to JavaScript `string`; generated
 adapters use the shared `gluecodium_locale_to_native` and `gluecodium_locale_to_js` helpers for
 methods, properties, value-object fields, defaults, and collections.
@@ -78,8 +81,8 @@ The first tests found several embind generation defects that are fixed in this c
 
 ## Batch 1 Result
 
-Batch 1 implementation is complete for the JavaScript generator. Locale behavior is verified with
-the focused test command; the broader registered suite retains the two unrelated class failures
-described above. The Node.js harness passes explicit test-file paths
+Batch 1 implementation is complete for the JavaScript generator. Locale and class behavior are
+verified with focused test commands, and the broader registered suite passes in a clean build. The
+Node.js harness passes explicit test-file paths
 because the Node versions tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) treat a
 directory argument to `node --test` as a module entry rather than a test collection.
