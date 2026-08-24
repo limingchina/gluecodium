@@ -48,6 +48,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/defaults.test.mjs"
     "${JS_TEST_DIR}/defaults.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/generic-types.test.mjs"
     "${JS_TEST_DIR}/generic-types.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/dates.test.mjs"
+    "${JS_TEST_DIR}/dates.test.mjs" COPYONLY)
 
 add_test(NAME unit_tests_javascript
     COMMAND ${NODE_EXECUTABLE} --test
@@ -60,6 +62,7 @@ add_test(NAME unit_tests_javascript
         "${JS_TEST_DIR}/constants.test.mjs"
         "${JS_TEST_DIR}/type-defs.test.mjs"
         "${JS_TEST_DIR}/defaults.test.mjs"
-        "${JS_TEST_DIR}/generic-types.test.mjs")
+        "${JS_TEST_DIR}/generic-types.test.mjs"
+        "${JS_TEST_DIR}/dates.test.mjs")
 set_tests_properties(unit_tests_javascript PROPERTIES
     ENVIRONMENT "GLUECODIUM_JS_MODULE=$<TARGET_FILE:functional_bindings_js>")

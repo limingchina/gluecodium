@@ -12,5 +12,11 @@ const {{moduleName}} = module["{{runtimeName}}"]{{#isStruct}} ?? {}{{/isStruct}}
 {{#constants}}
 {{moduleName}}.{{jsName}} = module["{{runtimeName}}"]();
 {{/constants}}
+{{#properties}}
+Object.defineProperty({{moduleName}}, "{{jsName}}", {
+  get: () => {{moduleName}}["{{getterName}}"](){{#hasSetter}},
+  set: (value) => {{moduleName}}["{{setterName}}"](value){{/hasSetter}}
+});
+{{/properties}}
 export { {{moduleName}} };
 {{/runtimeExports}}

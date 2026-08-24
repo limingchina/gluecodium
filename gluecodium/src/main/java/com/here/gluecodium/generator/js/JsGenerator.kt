@@ -62,6 +62,7 @@ import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeSet
 import com.here.gluecodium.model.lime.LimeStruct
 import com.here.gluecodium.model.lime.LimeType
+import com.here.gluecodium.model.lime.LimeTypeAlias
 import com.here.gluecodium.model.lime.LimeTypeRef
 import com.here.gluecodium.model.lime.LimeBasicType.TypeId
 import java.util.logging.Logger
@@ -474,6 +475,7 @@ internal class JsGenerator : Generator {
             isOverloaded ||
             thrownException != null ||
                 returnType.isNullable ||
+                isJsDate(returnType) ||
                 returnActualType is LimeList ||
                 returnActualType is LimeMap ||
                 returnActualType is LimeSet ||
@@ -485,6 +487,7 @@ internal class JsGenerator : Generator {
                         parameter.typeRef.type.actualType is LimeSet ||
                     isBlob(parameter.typeRef) ||
                         parameter.typeRef.type.actualType is LimeLambda ||
+                        isJsDate(parameter.typeRef) ||
                         hasCppStringOverride(parameter.typeRef)
                 }
         return mapOf(
@@ -498,6 +501,7 @@ internal class JsGenerator : Generator {
                 if (
                     thrownException != null ||
                         returnType.isNullable ||
+                        isJsDate(returnType) ||
                         returnActualType is LimeList ||
                         returnActualType is LimeMap ||
                         returnActualType is LimeSet ||
@@ -527,6 +531,7 @@ internal class JsGenerator : Generator {
                             "::std::string"
                         } else if (
                             parameter.typeRef.isNullable ||
+                            isJsDate(parameter.typeRef) ||
                                 actualType is LimeList ||
                                 actualType is LimeMap ||
                                 actualType is LimeSet ||
@@ -557,6 +562,7 @@ internal class JsGenerator : Generator {
                         "::std::string"
                     } else if (
                         parameter.typeRef.isNullable ||
+                        isJsDate(parameter.typeRef) ||
                             actualType is LimeList ||
                             actualType is LimeMap ||
                             actualType is LimeSet ||
@@ -570,7 +576,8 @@ internal class JsGenerator : Generator {
                 val callName = if (hasCppStringOverride(parameter.typeRef)) {
                     "${parameter.path.name}.c_str()"
                 } else if (
-                    parameter.typeRef.isNullable ||
+                        parameter.typeRef.isNullable ||
+                        isJsDate(parameter.typeRef) ||
                         actualType is LimeList ||
                         actualType is LimeMap ||
                         actualType is LimeSet ||
@@ -617,7 +624,7 @@ internal class JsGenerator : Generator {
             put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
             put(
                 "adapterCallPrefix",
-                if (returnType.isNullable || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet || isBlob(returnType)) {
+                if (returnType.isNullable || isJsDate(returnType) || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet || isBlob(returnType)) {
                     "auto result = "
                 } else if (thrownException != null) {
                     "auto result = "
@@ -636,6 +643,7 @@ internal class JsGenerator : Generator {
                     if (
                         thrownException != null ||
                             returnType.isNullable ||
+                            isJsDate(returnType) ||
                             returnActualType is LimeList ||
                             returnActualType is LimeMap ||
                             returnActualType is LimeSet ||
@@ -668,7 +676,7 @@ internal class JsGenerator : Generator {
         val actualType = typeRef.type.actualType
         return when {
             actualType is LimeLambda -> lambdaAdapterPreparation(actualType, parameter.path.name, callName)
-            typeRef.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) ->
+            typeRef.isNullable || isJsDate(typeRef) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) ->
                 "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
             else -> ""
         }
@@ -683,6 +691,27 @@ internal class JsGenerator : Generator {
 
     private fun isBlob(typeRef: LimeTypeRef): Boolean =
         (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.BLOB
+
+    private fun isJsDate(typeRef: LimeTypeRef): Boolean =
+        (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.DATE &&
+            !hasCppTypeOverride(typeRef)
+
+    private fun hasCppTypeOverride(typeRef: LimeTypeRef): Boolean {
+        if (typeRef.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.TYPE)) return true
+        val alias = typeRef.type as? LimeTypeAlias ?: return false
+        return hasCppTypeOverride(alias.typeRef)
+    }
+
+    private fun requiresJsAdapter(typeRef: LimeTypeRef): Boolean {
+        if (typeRef.isNullable || isJsDate(typeRef) || isBlob(typeRef)) return true
+        return when (val actualType = typeRef.type.actualType) {
+            is LimeList -> requiresJsAdapter(actualType.elementType)
+            is LimeMap -> requiresJsAdapter(actualType.keyType) || requiresJsAdapter(actualType.valueType)
+            is LimeSet -> requiresJsAdapter(actualType.elementType)
+            is LimeLambda -> true
+            else -> false
+        }
+    }
 
     private fun jsToNative(typeRef: LimeTypeRef, source: String): String {
         if (typeRef.isNullable) {
@@ -716,7 +745,9 @@ internal class JsGenerator : Generator {
                     "converted.emplace($element); } return converted; }())"
             }
             is LimeBasicType ->
-                if (actualType.typeId == TypeId.BLOB) {
+                if (actualType.typeId == TypeId.DATE && isJsDate(typeRef)) {
+                    "gluecodium_date_to_native<${embindNameResolver.resolveName(typeRef.type)}>( $source )"
+                } else if (actualType.typeId == TypeId.BLOB) {
                     "::std::make_shared<::std::vector<uint8_t>>(emscripten::convertJSArrayToNumberVector<uint8_t>($source))"
                 } else {
                     "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
@@ -742,7 +773,7 @@ internal class JsGenerator : Generator {
         returnType: com.here.gluecodium.model.lime.LimeTypeRef,
         actualType: com.here.gluecodium.model.lime.LimeType,
     ): String {
-        return if (returnType.isNullable || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(returnType)) {
+        return if (returnType.isNullable || isJsDate(returnType) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(returnType)) {
             "return ${nativeToJs(returnType, "result")};"
         } else {
             ""
@@ -778,7 +809,9 @@ internal class JsGenerator : Generator {
                     "return jsResult; }())"
             }
             is LimeBasicType ->
-                if (actualType.typeId == TypeId.BLOB) {
+                if (actualType.typeId == TypeId.DATE && isJsDate(typeRef)) {
+                    "gluecodium_date_to_js($source)"
+                } else if (actualType.typeId == TypeId.BLOB) {
                     "($source ? emscripten::val::array(*$source) : emscripten::val::array(::std::vector<uint8_t>{}))"
                 } else {
                     "emscripten::val($source)"
@@ -808,6 +841,26 @@ internal class JsGenerator : Generator {
             "cppSetterName" to cppNameCache.getSetterName(property),
             "isStatic" to property.isStatic,
             "hasSetter" to (property.setter != null),
+            "cppFullName" to ((limeReferenceMap[property.path.parent.toString()] as? LimeNamedElement)
+                ?.let { cppNameCache.getFullyQualifiedName(it) } ?: ""),
+            "needsAdapter" to requiresJsAdapter(property.typeRef),
+            "adapterGetterName" to propertyAdapterName(property, "get"),
+            "adapterSetterName" to propertyAdapterName(property, "set"),
+            "adapterGetter" to nativeToJs(
+                property.typeRef,
+                if (property.isStatic) {
+                    "${cppNameCache.getFullyQualifiedName(limeReferenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getGetterName(property)}()"
+                } else {
+                    "self->${cppNameCache.getGetterName(property)}()"
+                },
+            ),
+            "adapterSetter" to jsToNative(property.typeRef, "value").let { converted ->
+                if (property.isStatic) {
+                    "${cppNameCache.getFullyQualifiedName(limeReferenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getSetterName(property)}($converted)"
+                } else {
+                    "self->${cppNameCache.getSetterName(property)}($converted)"
+                }
+            },
         )
 
     private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> =
@@ -825,6 +878,7 @@ internal class JsGenerator : Generator {
                 "cppFieldName" to if (hasAccessors) null else cppNameCache.getName(field),
                 "hasAccessors" to hasAccessors,
                 "hasBlob" to isBlob(field.typeRef),
+                "hasDate" to isJsDate(field.typeRef),
                 "cppGetterName" to cppNameCache.getGetterName(field),
                 "cppSetterName" to cppNameCache.getSetterName(field),
                 "accessorType" to accessorType,
@@ -834,8 +888,25 @@ internal class JsGenerator : Generator {
                     field.typeRef.type.actualType is LimeSet)),
                 "collectionGetter" to nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
                 "collectionSetter" to jsToNative(field.typeRef, "value"),
+                "dateGetter" to nativeToJs(field.typeRef, if (hasAccessors) {
+                    "self.${cppGetterName(field)}()"
+                } else {
+                    "self.${cppNameCache.getName(field)}"
+                }),
+                "dateSetter" to jsToNative(field.typeRef, "value").let { converted -> if (hasAccessors) {
+                    "self.${cppSetterName(field)}($converted)"
+                } else {
+                    "self.${cppNameCache.getName(field)} = $converted"
+                } },
             )
         }
+
+    private fun cppGetterName(field: LimeField) = cppNameCache.getGetterName(field)
+
+    private fun cppSetterName(field: LimeField) = cppNameCache.getSetterName(field)
+
+    private fun propertyAdapterName(property: LimeProperty, operation: String) =
+        "__gluecodium_${operation}_${property.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
 
     private fun enumeratorViewModel(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): Map<String, Any> =
         mapOf(
@@ -1026,6 +1097,18 @@ internal class JsGenerator : Generator {
                                         )
                                     }
                                     .orEmpty(),
+                                "properties" to (element as? com.here.gluecodium.model.lime.LimeContainer)
+                                    ?.properties
+                                    ?.filter { it.isStatic && requiresJsAdapter(it.typeRef) }
+                                    ?.map { property ->
+                                        mapOf(
+                                            "jsName" to nameRules.getName(property),
+                                            "getterName" to propertyAdapterName(property, "get"),
+                                            "setterName" to propertyAdapterName(property, "set"),
+                                            "hasSetter" to (property.setter != null),
+                                        )
+                                    }
+                                    .orEmpty(),
                             )
                         }
                 val duplicateRuntimeExports = runtimeExports.groupBy { it["moduleName"] }.filterValues { it.size > 1 }.keys
@@ -1104,9 +1187,11 @@ internal class JsGenerator : Generator {
             when (val type = typeRef.type) {
                 is LimeList -> {
                     collect(type.elementType)
-                    val elementType = embindNameResolver.resolveName(type.elementType)
-                    val name = "Vector_${sanitizeRegistrationName(elementType)}"
-                    registrations.putIfAbsent(name, mapOf("vector" to true, "type" to elementType, "name" to name))
+                    if (!requiresJsAdapter(typeRef)) {
+                        val elementType = embindNameResolver.resolveName(type.elementType)
+                        val name = "Vector_${sanitizeRegistrationName(elementType)}"
+                        registrations.putIfAbsent(name, mapOf("vector" to true, "type" to elementType, "name" to name))
+                    }
                 }
                 is LimeMap -> {
                     collect(type.keyType)
@@ -1115,7 +1200,7 @@ internal class JsGenerator : Generator {
                 is LimeSet -> collect(type.elementType)
                 else -> Unit
             }
-            if (typeRef.isNullable) {
+            if (typeRef.isNullable && !requiresJsAdapter(typeRef)) {
                 val typeName = resolveGenericRegistrationType(typeRef.type)
                 val name = "Optional_${sanitizeRegistrationName(typeName)}"
                 registrations.putIfAbsent(name, mapOf("optional" to true, "type" to typeName, "name" to name))

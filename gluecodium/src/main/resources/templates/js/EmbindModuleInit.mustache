@@ -23,6 +23,8 @@ Copyright (C) 2026 HERE Europe B.V.
 SPDX-License-Identifier: Apache-2.0
 }}
 #include <emscripten/bind.h>
+#include <chrono>
+#include <cstdint>
 {{#genericRegistrationIncludes}}
 {{#isSystem}}#include <{{fileName}}>{{/isSystem}}
 {{^isSystem}}#include "{{fileName}}"{{/isSystem}}
@@ -30,6 +32,19 @@ SPDX-License-Identifier: Apache-2.0
 {{#needsUnorderedSet}}
 #include <unordered_set>
 {{/needsUnorderedSet}}
+
+template<class Clock, class Duration>
+emscripten::val gluecodium_date_to_js(const std::chrono::time_point<Clock, Duration>& value) {
+  const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(value.time_since_epoch()).count();
+  return emscripten::val::global("Date").new_(emscripten::val::global("Number")(milliseconds));
+}
+
+template<class TimePoint>
+TimePoint gluecodium_date_to_native(emscripten::val value) {
+  const auto milliseconds = static_cast<std::int64_t>(value.call<double>("getTime"));
+  return TimePoint(
+      std::chrono::duration_cast<typename TimePoint::duration>(std::chrono::milliseconds(milliseconds)));
+}
 
 {{#registerFunctions}}
 void {{name}}();

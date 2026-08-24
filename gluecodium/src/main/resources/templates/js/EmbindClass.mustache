@@ -83,20 +83,41 @@ void {{registerName}}(void) {
 {{/methods}}
 {{#properties}}
 {{#isStatic}}
+{{#needsAdapter}}
+        .class_function("{{adapterGetterName}}", +[]() -> emscripten::val {
+                return {{adapterGetter}};
+        })
+{{#hasSetter}}
+        .class_function("{{adapterSetterName}}", +[](emscripten::val value) {
+                {{adapterSetter}};
+        })
+{{/hasSetter}}
+{{/needsAdapter}}
+{{^needsAdapter}}
 {{#hasSetter}}
         .class_property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
 {{/hasSetter}}
 {{^hasSetter}}
         .class_function("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
 {{/hasSetter}}
+{{/needsAdapter}}
 {{/isStatic}}
 {{^isStatic}}
+{{#needsAdapter}}
+        .property("{{jsName}}", +[]({{cppFullName}}* self) -> emscripten::val {
+                return {{adapterGetter}};
+        }, +[]({{cppFullName}}* self, emscripten::val value) {
+                {{adapterSetter}};
+        }, allow_raw_pointer<arg<0>>())
+{{/needsAdapter}}
+{{^needsAdapter}}
 {{#hasSetter}}
         .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
 {{/hasSetter}}
 {{^hasSetter}}
         .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
 {{/hasSetter}}
+{{/needsAdapter}}
 {{/isStatic}}
 {{/properties}}
         ;

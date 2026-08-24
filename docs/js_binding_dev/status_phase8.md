@@ -1,6 +1,8 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 1 JavaScript functional coverage is passing for Constants, TypeDefs, Defaults, and GenericTypes, in addition to the original Strings, BuiltinTypes, Enums, Structs, Blobs, and Classes coverage
+**Status**: Batch 1 JavaScript functional coverage is passing for Constants, TypeDefs, Defaults,
+GenericTypes, and Dates, in addition to the original Strings, BuiltinTypes, Enums, Structs, Blobs,
+and Classes coverage
 
 **Date**: 2026-08-23
 
@@ -27,6 +29,9 @@ the `js` generator:
   default-initialized struct behavior.
 - `GenericTypes`: nested arrays, maps, sets, maps of arrays, and collection values involving structs,
   enums, and class instances.
+- `Dates`: epoch-millisecond conversion for `Date`, nullable Date values, Date sets, and adapted
+  static Date properties. The monotonic `DatesSteady` fixture is skipped for JS because
+  `steady_clock::time_point` has no epoch-based JavaScript Date representation.
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
@@ -46,7 +51,7 @@ ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascrip
 ```
 
 The build and filtered CTest run pass for the checkpoint scope. The complete registered JavaScript
-suite contains 31 tests and passes through CTest. The generated module is compiled
+suite contains 35 tests and passes through CTest. The generated module is compiled
 with `-sWASM_BIGINT=1`, and the Node tests assert `bigint` values for `Long` and `ULong` methods.
 The focused Structs test passes all three cases, and `unit_tests_javascript` passes through CTest.
 The focused Blobs test passes all four cases, including null shared pointers mapping to an empty
@@ -59,6 +64,9 @@ The Defaults and GenericTypes tests pass with JavaScript arrays for Lime `List<T
 Lime maps, and JavaScript `Set<T>` for Lime sets. Immutable value-object fixtures remain skipped for
 JS because embind `value_object` cannot construct immutable, non-writable fields. The Defaults
 external enum is bound using its declared external C++ name.
+The Dates test passes for pre-epoch, epoch, and post-epoch values, nullable values, Date sets, and
+static Date properties. Native Date values are converted through epoch milliseconds, with explicit
+JavaScript numeric construction to avoid Emscripten `long long`/`bigint` coercion failures.
 
 ## Lessons Learned
 
@@ -102,6 +110,9 @@ The first tests found several embind generation defects that are fixed in this c
 - collection-bearing struct fields use explicit `emscripten::val` adapters, allowing native
   `std::vector`, `std::unordered_map`, and `std::unordered_set` fields to cross the JS boundary
   without relying on unsupported unordered-container embind registrations.
+- Date adapters convert `std::chrono::system_clock::time_point` through epoch milliseconds, map
+  nullable results to the existing JS `undefined` convention, and expose adapted static properties
+  through hidden embind accessors plus runtime `Object.defineProperty` descriptors.
 - nested C++ type references in collection converters and external enum values use fully qualified
   C++ names; local CMake builds propagate owner-target include directories to the JS module target.
 
@@ -325,7 +336,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | Batch | Features | Status |
 |-------|----------|--------|
 | 0 (done) | Strings, BuiltinTypes, Enums, Structs, Blobs, Classes | ✅ passing |
-| 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | partially complete: Constants, TypeDefs, Defaults, and GenericTypes passing; Dates, Durations, and Locales remain |
+| 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | partially complete: Constants, TypeDefs, Defaults, GenericTypes, and Dates passing; Durations and Locales remain |
 | 2 | Interfaces, Listeners, ComplexListeners, ListenersWithReturnValues, CallbacksWithThreads, Properties | not started |
 | 3 | MethodOverloading, Errors, Nullable, Equatable, Inheritance, MultipleInheritance, Nesting, Lambdas | not started |
 | 4 | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash, DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
