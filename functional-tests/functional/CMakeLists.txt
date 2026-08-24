@@ -161,11 +161,10 @@ feature(FieldConstructors cpp android android-kotlin swift dart SOURCES
     input/lime/FieldConstructorsNesting.lime
 )
 
-feature(TypeDefs cpp android android-kotlin swift dart js SOURCES
+feature(TypeDefs cpp android android-kotlin swift dart SOURCES
     input/src/cpp/StaticTypedef.cpp
 
     input/lime/StaticTypedef.lime
-    input/lime/TypeCollection.lime
 )
 
 feature(Enums cpp android android-kotlin swift dart js SOURCES
@@ -238,24 +237,17 @@ feature(WeakListeners swift SOURCES
     input/lime/WeakListeners.lime
 )
 
-feature(GenericTypes cpp android android-kotlin swift dart js SOURCES
+feature(GenericTypes cpp android android-kotlin swift dart SOURCES
     input/src/cpp/Arrays.cpp
-    input/src/cpp/Interfaces.cpp
-    input/src/cpp/InterfacesFactory.cpp
     input/src/cpp/SetType.cpp
     input/src/cpp/Maps.cpp
     input/src/cpp/NestedGenericTypes.cpp
+    input/src/cpp/OptimizedList.cpp
 
     input/lime/Arrays.lime
-    input/lime/Interfaces.lime
     input/lime/SetType.lime
     input/lime/Maps.lime
     input/lime/NestedGenericTypes.lime
-)
-
-feature(OptimizedList cpp android android-kotlin swift dart SOURCES
-    input/src/cpp/OptimizedList.cpp
-
     input/lime/OptimizedList.lime
 )
 
@@ -271,9 +263,8 @@ feature(Errors cpp android android-kotlin swift dart SOURCES
     input/lime/ErrorsWithNonTrivialType.lime
 )
 
-feature(Defaults cpp android android-kotlin swift dart js SOURCES
+feature(Defaults cpp android android-kotlin swift dart SOURCES
     input/src/cpp/Defaults.cpp
-    input/src/cpp/include/ExternalTypes.h
 
     input/lime/Defaults.lime
     input/lime/DefaultsWithFcStruct.lime
@@ -355,7 +346,7 @@ feature(UnderscorePackage cpp android android-kotlin swift dart SOURCES
     input/lime/UseUnderscorePackage.lime
 )
 
-feature(Constants cpp android android-kotlin swift dart js SOURCES
+feature(Constants cpp android android-kotlin swift dart SOURCES
     input/src/cpp/Constants.cpp
 
     input/lime/Constants.lime
@@ -387,14 +378,14 @@ feature(CallbacksWithThreads cpp android dart SOURCES
     input/lime/ListenersThreads.lime
 )
 
-feature(Dates cpp android android-kotlin swift dart js SOURCES
+feature(Dates cpp android android-kotlin swift dart SOURCES
     input/src/cpp/Dates.cpp
 
     input/lime/Dates.lime
     input/lime/DateDefaults.lime
 )
 
-feature(Durations cpp android android-kotlin swift dart js SOURCES
+feature(Durations cpp android android-kotlin swift dart SOURCES
     input/src/cpp/Durations.cpp
 
     input/lime/Durations.lime
