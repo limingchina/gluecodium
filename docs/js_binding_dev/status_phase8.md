@@ -1,8 +1,8 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
 **Status**: Batch 1 JavaScript functional coverage is passing for Constants, TypeDefs, Defaults,
-GenericTypes, and Dates, in addition to the original Strings, BuiltinTypes, Enums, Structs, Blobs,
-and Classes coverage
+GenericTypes, Dates, and Durations, in addition to the original Strings, BuiltinTypes, Enums,
+Structs, Blobs, and Classes coverage
 
 **Date**: 2026-08-23
 
@@ -32,6 +32,9 @@ the `js` generator:
 - `Dates`: epoch-millisecond conversion for `Date`, nullable Date values, Date sets, and adapted
   static Date properties. The monotonic `DatesSteady` fixture is skipped for JS because
   `steady_clock::time_point` has no epoch-based JavaScript Date representation.
+- `Durations`: native duration counts map to JavaScript `bigint` values, preserving parameter-level
+  C++ duration units such as seconds and milliseconds. Nullable durations map to `undefined`, and
+  duration fields, collections, and same-arity overloads are covered.
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
@@ -51,7 +54,7 @@ ctest --test-dir build-functional-js --output-on-failure -R unit_tests_javascrip
 ```
 
 The build and filtered CTest run pass for the checkpoint scope. The complete registered JavaScript
-suite contains 35 tests and passes through CTest. The generated module is compiled
+suite contains 39 tests and passes through CTest. The generated module is compiled
 with `-sWASM_BIGINT=1`, and the Node tests assert `bigint` values for `Long` and `ULong` methods.
 The focused Structs test passes all three cases, and `unit_tests_javascript` passes through CTest.
 The focused Blobs test passes all four cases, including null shared pointers mapping to an empty
@@ -67,6 +70,10 @@ external enum is bound using its declared external C++ name.
 The Dates test passes for pre-epoch, epoch, and post-epoch values, nullable values, Date sets, and
 static Date properties. Native Date values are converted through epoch milliseconds, with explicit
 JavaScript numeric construction to avoid Emscripten `long long`/`bigint` coercion failures.
+The Durations test passes for seconds and milliseconds, including sub-second millisecond values,
+nullable results, duration value objects, and JavaScript `bigint` overload dispatch. Native duration
+counts are exposed directly as `bigint`; generated embind helpers preserve the native duration type
+when converting inputs, including parameter-level C++ type overrides.
 
 ## Lessons Learned
 
@@ -113,6 +120,10 @@ The first tests found several embind generation defects that are fixed in this c
 - Date adapters convert `std::chrono::system_clock::time_point` through epoch milliseconds, map
   nullable results to the existing JS `undefined` convention, and expose adapted static properties
   through hidden embind accessors plus runtime `Object.defineProperty` descriptors.
+- Duration adapters convert native `std::chrono::duration` counts to JavaScript `bigint` values and
+  back through shared embind helpers, preserving seconds and milliseconds overrides. Same-arity
+  static overloads use private embind registration names and a generated JavaScript type dispatcher;
+  methods with distinct JavaScript names retain their public embind registrations.
 - nested C++ type references in collection converters and external enum values use fully qualified
   C++ names; local CMake builds propagate owner-target include directories to the JS module target.
 
@@ -336,7 +347,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | Batch | Features | Status |
 |-------|----------|--------|
 | 0 (done) | Strings, BuiltinTypes, Enums, Structs, Blobs, Classes | ✅ passing |
-| 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | partially complete: Constants, TypeDefs, Defaults, GenericTypes, and Dates passing; Durations and Locales remain |
+| 1 | Constants, TypeDefs, Defaults, GenericTypes, Dates, Durations, Locales | partially complete: Constants, TypeDefs, Defaults, GenericTypes, Dates, and Durations passing; Locales remain |
 | 2 | Interfaces, Listeners, ComplexListeners, ListenersWithReturnValues, CallbacksWithThreads, Properties | not started |
 | 3 | MethodOverloading, Errors, Nullable, Equatable, Inheritance, MultipleInheritance, Nesting, Lambdas | not started |
 | 4 | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash, DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |

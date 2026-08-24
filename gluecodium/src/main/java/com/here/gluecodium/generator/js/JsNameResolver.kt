@@ -120,6 +120,7 @@ internal class JsNameResolver(
             // 64-bit integers map to bigint (requires -sWASM_BIGINT=1 at link time).
             LimeBasicType.TypeId.INT64, LimeBasicType.TypeId.UINT64 -> "bigint"
             LimeBasicType.TypeId.DATE -> "Date"
+            LimeBasicType.TypeId.DURATION -> "bigint"
             else -> "number"
         }
 

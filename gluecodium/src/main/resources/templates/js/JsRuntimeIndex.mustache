@@ -18,5 +18,13 @@ Object.defineProperty({{moduleName}}, "{{jsName}}", {
   set: (value) => {{moduleName}}["{{setterName}}"](value){{/hasSetter}}
 });
 {{/properties}}
+{{#overloadGroups}}
+{{moduleName}}["{{jsName}}"] = (...args) => {
+{{#overloads}}
+  if ({{predicate}}) return {{moduleName}}["{{runtimeName}}"](...args);
+{{/overloads}}
+  throw new TypeError("No matching overload for {{jsName}}");
+};
+{{/overloadGroups}}
 export { {{moduleName}} };
 {{/runtimeExports}}

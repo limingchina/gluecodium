@@ -46,6 +46,16 @@ TimePoint gluecodium_date_to_native(emscripten::val value) {
       std::chrono::duration_cast<typename TimePoint::duration>(std::chrono::milliseconds(milliseconds)));
 }
 
+template<class Rep, class Period>
+emscripten::val gluecodium_duration_to_js(const std::chrono::duration<Rep, Period>& value) {
+  return emscripten::val(value.count());
+}
+
+template<class Duration>
+Duration gluecodium_duration_to_native(emscripten::val value) {
+  return Duration(value.as<typename Duration::rep>());
+}
+
 {{#registerFunctions}}
 void {{name}}();
 {{/registerFunctions}}

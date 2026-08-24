@@ -49,14 +49,14 @@ void {{registerName}}(void) {
 {{#methods}}
 {{#isStatic}}
 {{#needsAdapter}}
-        .class_function("{{jsName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
+        .class_function("{{embindName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
             {{adapterPreparations}}
                         {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
             {{adapterReturnConversion}}
                 }{{#hasAdapterPolicies}}, {{adapterPolicies}}{{/hasAdapterPolicies}})
 {{/needsAdapter}}
 {{^needsAdapter}}
-        .class_function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+        .class_function("{{embindName}}", &{{cppFullName}}::{{cppName}})
 {{/needsAdapter}}
 {{/isStatic}}
 {{^isStatic}}
