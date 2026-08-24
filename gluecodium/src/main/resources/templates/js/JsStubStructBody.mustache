@@ -12,6 +12,16 @@ export const {{constantOwnerName}}: {
 {{/constants}}
 };
 {{/hasConstants}}
+{{#hasStaticFunctions}}
+export namespace {{jsName}} {
+{{#functions}}
+{{#isStatic}}
+{{> js/JsStubFunctionDocumentation}}
+	function {{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{returnType}};
+{{/isStatic}}
+{{/functions}}
+}
+{{/hasStaticFunctions}}
 {{#nestedStructs}}
 export namespace {{parentJsName}} {
 {{> js/JsStubStructBody}}

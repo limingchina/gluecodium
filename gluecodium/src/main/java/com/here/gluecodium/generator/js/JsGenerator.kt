@@ -206,6 +206,7 @@ internal class JsGenerator : Generator {
         if (container != null) {
             data["constructors"] = container.constructors.map { functionStubViewModel(it) }
             data["functions"] = container.functions.map { functionStubViewModel(it) }
+            data["hasStaticFunctions"] = container.functions.any { it.isStatic && !it.isConstructor }
             data["properties"] = container.properties.map {
                 mapOf(
                     "jsName" to nameRules.getName(it),
@@ -422,6 +423,9 @@ internal class JsGenerator : Generator {
                 .map { propertyViewModel(it) }
         if (type is LimeStruct) {
             data["fields"] = type.fields.map { fieldViewModel(type, it) }
+            data["structFunctions"] = container.functions
+                .filter { it.isStatic && !it.isConstructor }
+                .map { functionViewModel(it).toMutableMap().apply { put("runtimeName", structFunctionRuntimeName(it)) } }
         }
         data["constants"] = container.constants.filter(::isSupportedConstant).map { constantViewModel(it) }
         return data
@@ -1013,6 +1017,13 @@ internal class JsGenerator : Generator {
         return "__gluecodium_overload_${functionName}_${parameterTypes}"
     }
 
+    private fun structFunctionRuntimeName(function: LimeFunction): String =
+        if (isJsOverloaded(function)) {
+            overloadRuntimeName(function)
+        } else {
+            "__gluecodium_struct_function_${function.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
+        }
+
     private fun isJsOverloaded(function: LimeFunction): Boolean {
         val container = limeReferenceMap[function.path.parent.toString()] as? com.here.gluecodium.model.lime.LimeContainer
             ?: return false
@@ -1242,6 +1253,20 @@ internal class JsGenerator : Generator {
                                             "getterName" to propertyAdapterName(property, "get"),
                                             "setterName" to propertyAdapterName(property, "set"),
                                             "hasSetter" to (property.setter != null),
+                                        )
+                                    }
+                                    .orEmpty(),
+                                "structFunctions" to (element as? LimeStruct)
+                                    ?.functions
+                                    ?.filter { it.isStatic && !it.isConstructor }
+                                    ?.filter { function ->
+                                        val jsName = nameRules.getName(function)
+                                        element.functions.count { nameRules.getName(it) == jsName && it.isStatic && !it.isConstructor } == 1
+                                    }
+                                    ?.map { function ->
+                                        mapOf(
+                                            "jsName" to nameRules.getName(function),
+                                            "runtimeName" to structFunctionRuntimeName(function),
                                         )
                                     }
                                     .orEmpty(),

@@ -18,6 +18,9 @@ Object.defineProperty({{moduleName}}, "{{jsName}}", {
   set: (value) => {{moduleName}}["{{setterName}}"](value){{/hasSetter}}
 });
 {{/properties}}
+{{#structFunctions}}
+{{moduleName}}.{{jsName}} = module["{{runtimeName}}"];
+{{/structFunctions}}
 {{#overloadGroups}}
 {{moduleName}}["{{jsName}}"] = (...args) => {
 {{#overloads}}

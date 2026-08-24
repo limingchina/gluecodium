@@ -78,7 +78,7 @@ Locales::get_locale_with_malformed_script() {
 }
 
 LocalesStruct
-Locales::locales_struct_round_trip(const LocalesStruct& input) {
+LocalesStruct::locales_struct_round_trip(const LocalesStruct& input) {
     return input;
 }
 
@@ -106,6 +106,6 @@ LocaleGenerics::locale_values_map_round_trip(const std::unordered_map<std::strin
 }
 
 LocaleDefaults
-Locales::get_cpp_defaults() { return {}; }
+LocaleDefaults::get_cpp_defaults() { return {}; }
 
 }

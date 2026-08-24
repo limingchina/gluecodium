@@ -19,14 +19,14 @@ test("round-trips nullable locales and locale properties", () => {
 });
 
 test("converts locale value objects and defaults", () => {
-  const result = module.Locales.localesStructRoundTrip({
+  const result = module.LocalesStruct.localesStructRoundTrip({
     primaryLocale: "en-US",
     secondaryLocale: "fr-CA",
   });
   assert.equal(result.primaryLocale, "en-US");
   assert.equal(result.secondaryLocale, "fr-CA");
 
-  const defaults = module.Locales.getCppDefaults();
+  const defaults = module.LocaleDefaults.getCppDefaults();
   assert.equal(defaults.english, "en");
   assert.equal(defaults.latAmSpanish, "es-419");
   assert.equal(defaults.serbianCyrillic, "sr-Cyrl");

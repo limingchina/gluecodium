@@ -27,15 +27,14 @@ class Locales {
     static property localeWithMalformedLanguage: Locale { get }
     static property localeWithMalformedCountry: Locale { get }
     static property localeWithMalformedScript: Locale { get }
-
-    static fun localesStructRoundTrip(input: LocalesStruct): LocalesStruct
-    static fun getCppDefaults(): LocaleDefaults
 }
 
 @Equatable
 struct LocalesStruct {
     primaryLocale: Locale
     secondaryLocale: Locale?
+
+    static fun localesStructRoundTrip(input: LocalesStruct): LocalesStruct
 
     field constructor(primaryLocale, secondaryLocale)
 }

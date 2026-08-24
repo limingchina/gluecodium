@@ -97,4 +97,16 @@ void {{registerName}}(void) {
 {{#constants}}
   function("{{runtimeName}}", &{{functionName}});
 {{/constants}}
+{{#structFunctions}}
+{{#needsAdapter}}
+  function("{{runtimeName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
+    {{adapterPreparations}}
+    {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
+    {{adapterReturnConversion}}
+  }{{#hasAdapterPolicies}}, {{adapterPolicies}}{{/hasAdapterPolicies}});
+{{/needsAdapter}}
+{{^needsAdapter}}
+  function("{{runtimeName}}", &{{cppFullName}}::{{cppName}});
+{{/needsAdapter}}
+{{/structFunctions}}
 }
