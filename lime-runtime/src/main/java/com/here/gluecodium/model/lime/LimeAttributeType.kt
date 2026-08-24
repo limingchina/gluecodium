@@ -33,6 +33,8 @@ enum class LimeAttributeType(
     DART("Dart", LimeAttributeValueType.NAME),
     PYTHON("Python", LimeAttributeValueType.NAME),
     ASYNC("Async"),
+    ASYNC_DECORATOR("AsyncDecorator"),
+    ASYNC_TASK_HANDLE("AsyncTaskHandle", LimeAttributeValueType.NAME),
     CACHED("Cached"),
     DEPRECATED("Deprecated", LimeAttributeValueType.MESSAGE),
     ENABLE_IF("EnableIf", LimeAttributeValueType.TAG),
