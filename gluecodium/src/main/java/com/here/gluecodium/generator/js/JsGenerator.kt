@@ -202,20 +202,8 @@ internal class JsGenerator : Generator {
         )
         val container = limeElement as? com.here.gluecodium.model.lime.LimeContainer
         if (container != null) {
-            data["constantOwnerName"] = nameRules.getName(limeElement)
-            val supportedConstants = container.constants.filter(::isSupportedConstant)
-            data["hasConstants"] = supportedConstants.isNotEmpty()
             data["constructors"] = container.constructors.map { functionStubViewModel(it) }
             data["functions"] = container.functions.map { functionStubViewModel(it) }
-            data["constants"] = supportedConstants.filterNot(::isCppSkipped).map {
-                mapOf(
-                    "jsName" to nameRules.getName(it),
-                    "jsType" to jsNameResolver.resolveName(it.typeRef),
-                    "comment" to it.comment,
-                    "additionalDescriptionComment" to LimeComment(),
-                    "hasDocumentation" to hasJsDocumentation(it.comment),
-                )
-            }
             data["properties"] = container.properties.map {
                 mapOf(
                     "jsName" to nameRules.getName(it),
@@ -731,9 +719,9 @@ internal class JsGenerator : Generator {
                 if (actualType.typeId == TypeId.BLOB) {
                     "::std::make_shared<::std::vector<uint8_t>>(emscripten::convertJSArrayToNumberVector<uint8_t>($source))"
                 } else {
-                    "$source.as<${embindNameResolver.resolveName(typeRef.type)}>()"
+                    "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
                 }
-            else -> "$source.as<${embindNameResolver.resolveName(typeRef.type)}>()"
+            else -> "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
         }
 
     private fun lambdaAdapterPreparation(lambda: LimeLambda, parameterName: String, callName: String): String {
@@ -840,6 +828,12 @@ internal class JsGenerator : Generator {
                 "cppGetterName" to cppNameCache.getGetterName(field),
                 "cppSetterName" to cppNameCache.getSetterName(field),
                 "accessorType" to accessorType,
+                "hasCollection" to (!hasAccessors &&
+                    (field.typeRef.type.actualType is LimeList ||
+                    field.typeRef.type.actualType is LimeMap ||
+                    field.typeRef.type.actualType is LimeSet)),
+                "collectionGetter" to nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
+                "collectionSetter" to jsToNative(field.typeRef, "value"),
             )
         }
 
@@ -848,7 +842,7 @@ internal class JsGenerator : Generator {
             "model" to enumerator,
             "jsName" to nameRules.getName(enumerator),
             "cppName" to
-                "${embindNameResolver.resolveFullName(getParentEnumeration(enumerator))}::${embindNameResolver.resolveName(enumerator)}",
+                "${cppNameCache.getFullyQualifiedName(getParentEnumeration(enumerator))}::${cppNameCache.getName(enumerator)}",
         )
 
     private fun getParentEnumeration(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): com.here.gluecodium.model.lime.LimeEnumeration =
@@ -998,23 +992,29 @@ internal class JsGenerator : Generator {
                             it is LimeStruct ||
                             it is com.here.gluecodium.model.lime.LimeEnumeration }
                         .distinctBy { it.fullName }
-                        .sortedBy { nameRules.getName(it) }
-                val duplicateRuntimeNames = runtimeElements.groupBy { nameRules.getName(it) }
-                    .filterValues { it.size > 1 }
-                    .keys
+                        .sortedWith(compareBy({ nameRules.getName(it) }, { it.fullName }))
+                val preferredNameCounts =
+                    runtimeElements
+                        .filter { it.path.hasParent }
+                        .groupingBy { nameRules.getName(it) }
+                        .eachCount()
                 val runtimeExports =
                     runtimeElements
                         .map { element ->
+                            val preferredName = nameRules.getName(element)
+                            val isNested = element.path.hasParent
                             val moduleName =
-                                if (nameRules.getName(element) in duplicateRuntimeNames) {
+                                if (isNested &&
+                                    (preferredNameCounts[preferredName] ?: 0) > 1
+                                ) {
                                     nameRules.getFlattenedName(element)
                                 } else {
-                                    nameRules.getName(element)
+                                    preferredName
                                 }
                             mapOf(
                                 "moduleName" to moduleName,
                                 "runtimeName" to nameRules.getEmbindRuntimeName(element),
-                                "isEmptyStruct" to (element is LimeStruct && element.fields.isEmpty()),
+                                "isStruct" to (element is LimeStruct),
                                 "constants" to (element as? com.here.gluecodium.model.lime.LimeContainer)
                                     ?.constants
                                     ?.filter(::isSupportedConstant)
@@ -1268,7 +1268,7 @@ internal class JsGenerator : Generator {
             else -> null
         }
 
-    private fun isSupportedConstant(constant: com.here.gluecodium.model.lime.LimeConstant) =
+    private fun isSupportedConstant(constant: LimeConstant) =
         when (constant.typeRef.type.actualType) {
             is LimeList, is LimeSet, is LimeMap -> false
             else -> true

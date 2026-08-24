@@ -238,17 +238,24 @@ feature(WeakListeners swift SOURCES
     input/lime/WeakListeners.lime
 )
 
-feature(GenericTypes cpp android android-kotlin swift dart SOURCES
+feature(GenericTypes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Arrays.cpp
+    input/src/cpp/Interfaces.cpp
+    input/src/cpp/InterfacesFactory.cpp
     input/src/cpp/SetType.cpp
     input/src/cpp/Maps.cpp
     input/src/cpp/NestedGenericTypes.cpp
-    input/src/cpp/OptimizedList.cpp
 
     input/lime/Arrays.lime
+    input/lime/Interfaces.lime
     input/lime/SetType.lime
     input/lime/Maps.lime
     input/lime/NestedGenericTypes.lime
+)
+
+feature(OptimizedList cpp android android-kotlin swift dart SOURCES
+    input/src/cpp/OptimizedList.cpp
+
     input/lime/OptimizedList.lime
 )
 
@@ -264,8 +271,9 @@ feature(Errors cpp android android-kotlin swift dart SOURCES
     input/lime/ErrorsWithNonTrivialType.lime
 )
 
-feature(Defaults cpp android android-kotlin swift dart SOURCES
+feature(Defaults cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Defaults.cpp
+    input/src/cpp/include/ExternalTypes.h
 
     input/lime/Defaults.lime
     input/lime/DefaultsWithFcStruct.lime

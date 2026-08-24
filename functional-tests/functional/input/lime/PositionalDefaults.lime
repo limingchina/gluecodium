@@ -70,13 +70,13 @@ struct StructWithNullableCollectionDefaults {
     nullableSetField: Set<String>? = null
 }
 
-@Immutable
+@Skip(JS) @Immutable
 @Java(Skip) @Swift(Skip) @Kotlin(Skip)
 struct AnotherImmutableStructWithDefaults {
     intField: Int = 42
 }
 
-@Dart(PositionalDefaults)
+@Skip(JS) @Dart(PositionalDefaults)
 @Java(Skip) @Swift(Skip) @Kotlin(Skip)
 struct PosDefaultStructWithFieldUsingImmutableStruct {
     someField1: AnotherImmutableStructWithDefaults = {}
@@ -90,7 +90,7 @@ struct SomeMutableCustomStructWithDefaults {
     listField: List<Int> = [1, 2, 3]
 }
 
-@Dart(PositionalDefaults)
+@Skip(JS) @Dart(PositionalDefaults)
 @Java(Skip) @Swift(Skip) @Kotlin(Skip)
 struct PosDefaultStructWithCustomStructsFields {
     constCtorField0: AnotherImmutableStructWithDefaults = {}

@@ -80,6 +80,10 @@ function(gluecodium_target_js_sources _target)
   target_include_directories(${_module_target} PRIVATE
     "${_unity_dir}/cpp/include"
     "${_unity_dir}/js")
+  get_target_property(_target_include_dirs ${_target} INCLUDE_DIRECTORIES)
+  if(_target_include_dirs)
+    target_include_directories(${_module_target} PRIVATE ${_target_include_dirs})
+  endif()
   target_link_libraries(${_module_target} PRIVATE ${_target})
 
   target_compile_options(${_target} PRIVATE
