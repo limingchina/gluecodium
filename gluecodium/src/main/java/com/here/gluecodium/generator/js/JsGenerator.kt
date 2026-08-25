@@ -501,13 +501,8 @@ internal class JsGenerator : Generator {
         )
     }
 
-    private fun requiresWrapperJsAdapter(typeRef: LimeTypeRef): Boolean {
-        if (requiresJsAdapter(typeRef)) return true
-        return when (typeRef.type.actualType) {
-            is LimeList, is LimeMap, is LimeSet, is LimeStruct -> true
-            else -> false
-        }
-    }
+    private fun requiresWrapperJsAdapter(typeRef: LimeTypeRef): Boolean =
+        typeRef.type.actualType is LimeStruct || needsValParameterAdapter(typeRef)
 
     private fun wrapperPropertyViewModel(property: LimeProperty): Map<String, Any> {
         val propertyType = embindNameResolver.resolveName(property.typeRef)
@@ -548,29 +543,9 @@ internal class JsGenerator : Generator {
         val needsAdapter =
             isOverloaded ||
             thrownException != null ||
-                returnType.isNullable ||
-                isJsDate(returnType) ||
-                isJsLocale(returnType) ||
-                isJsDuration(returnType) ||
-                returnActualType is LimeList ||
-                returnActualType is LimeMap ||
-                returnActualType is LimeSet ||
-                isBlob(returnType) ||
-                isObjectStruct(returnType) ||
+                returnsViaVal(returnType) ||
                 function.parameters.any { parameter ->
-                    parameter.typeRef.isNullable ||
-                        parameter.typeRef.type.actualType is LimeList ||
-                        parameter.typeRef.type.actualType is LimeMap ||
-                        parameter.typeRef.type.actualType is LimeSet ||
-                    isBlob(parameter.typeRef) ||
-                        isObjectStruct(parameter.typeRef) ||
-                        parameter.typeRef.type.actualType is LimeLambda ||
-                        isJsDate(parameter.typeRef) ||
-                        isJsLocale(parameter.typeRef) ||
-                        isJsDuration(parameter.typeRef) ||
-                        hasCppStringOverride(parameter.typeRef) ||
-                        parameter.typeRef.type.actualType is LimeClass ||
-                        parameter.typeRef.type.actualType is LimeInterface
+                    hasCppStringOverride(parameter.typeRef) || needsValParameterAdapter(parameter.typeRef)
                 }
         return mapOf(
             "model" to function,
@@ -581,18 +556,7 @@ internal class JsGenerator : Generator {
             "isStatic" to function.isStatic,
             "needsAdapter" to needsAdapter,
             "adapterReturnType" to
-                if (
-                    thrownException != null ||
-                        returnType.isNullable ||
-                        isJsDate(returnType) ||
-                        isJsLocale(returnType) ||
-                        isJsDuration(returnType) ||
-                        returnActualType is LimeList ||
-                        returnActualType is LimeMap ||
-                        returnActualType is LimeSet ||
-                        isBlob(returnType) ||
-                        isObjectStruct(returnType)
-                ) {
+                if (thrownException != null || returnsViaVal(returnType)) {
                     "emscripten::val"
                 } else {
                     embindNameResolver.resolveName(returnType)
@@ -615,20 +579,7 @@ internal class JsGenerator : Generator {
                     "adapterType" to
                         if (hasCppStringOverride(parameter.typeRef)) {
                             "::std::string"
-                        } else if (
-                            parameter.typeRef.isNullable ||
-                            isJsDate(parameter.typeRef) ||
-                            isJsLocale(parameter.typeRef) ||
-                            isJsDuration(parameter.typeRef) ||
-                                actualType is LimeList ||
-                                actualType is LimeMap ||
-                                actualType is LimeSet ||
-                                isBlob(parameter.typeRef) ||
-                                isObjectStruct(parameter.typeRef) ||
-                                actualType is LimeLambda
-                                    || actualType is LimeClass
-                                    || actualType is LimeInterface
-                        ) {
+                        } else if (needsValParameterAdapter(parameter.typeRef)) {
                             "emscripten::val"
                         } else {
                             embindNameResolver.resolveName(parameter.typeRef)
@@ -646,45 +597,18 @@ internal class JsGenerator : Generator {
             },
         ).toMutableMap().apply {
             val parameters = function.parameters.mapIndexed { index, parameter ->
-                val actualType = parameter.typeRef.type.actualType
                 val nativeType = embindNameResolver.resolveName(parameter.typeRef)
                 val adapterType =
                     if (hasCppStringOverride(parameter.typeRef)) {
                         "::std::string"
-                    } else if (
-                        parameter.typeRef.isNullable ||
-                        isJsDate(parameter.typeRef) ||
-                        isJsLocale(parameter.typeRef) ||
-                        isJsDuration(parameter.typeRef) ||
-                            actualType is LimeList ||
-                            actualType is LimeMap ||
-                            actualType is LimeSet ||
-                            isBlob(parameter.typeRef) ||
-                            isObjectStruct(parameter.typeRef) ||
-                            actualType is LimeLambda
-                                    || actualType is LimeClass
-                                    || actualType is LimeInterface
-                    ) {
+                    } else if (needsValParameterAdapter(parameter.typeRef)) {
                         "emscripten::val"
                     } else {
                         nativeType
                     }
                 val callName = if (hasCppStringOverride(parameter.typeRef)) {
                     "${parameter.path.name}.c_str()"
-                } else if (
-                        parameter.typeRef.isNullable ||
-                        isJsDate(parameter.typeRef) ||
-                        isJsLocale(parameter.typeRef) ||
-                    isJsDuration(parameter.typeRef) ||
-                        actualType is LimeList ||
-                        actualType is LimeMap ||
-                        actualType is LimeSet ||
-                        isBlob(parameter.typeRef) ||
-                        isObjectStruct(parameter.typeRef) ||
-                        actualType is LimeLambda ||
-                        actualType is LimeClass ||
-                        actualType is LimeInterface
-                ) {
+                } else if (needsValParameterAdapter(parameter.typeRef)) {
                     "${parameter.path.name}_value"
                 } else {
                     parameter.path.name
@@ -729,9 +653,7 @@ internal class JsGenerator : Generator {
             put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
             put(
                 "adapterCallPrefix",
-                if (returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) || isJsDuration(returnType) || returnActualType is LimeList || returnActualType is LimeMap || returnActualType is LimeSet || isBlob(returnType) || isObjectStruct(returnType)) {
-                    "auto result = "
-                } else if (thrownException != null) {
+                if (thrownException != null || returnsViaVal(returnType)) {
                     "auto result = "
                 } else {
                     "return "
@@ -740,23 +662,12 @@ internal class JsGenerator : Generator {
             put("adapterReturnConversion", if (thrownException != null) {
                 thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid, returnType)
             } else {
-                adapterReturnConversion(returnType, returnActualType)
+                adapterReturnConversion(returnType)
             })
             if (isFlattened) {
                 val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
                 val flattenedReturnType =
-                    if (
-                        thrownException != null ||
-                            returnType.isNullable ||
-                            isJsDate(returnType) ||
-                            isJsLocale(returnType) ||
-                            isJsDuration(returnType) ||
-                            returnActualType is LimeList ||
-                            returnActualType is LimeMap ||
-                            returnActualType is LimeSet ||
-                            isBlob(returnType) ||
-                            isObjectStruct(returnType)
-                    ) {
+                    if (thrownException != null || returnsViaVal(returnType)) {
                         "emscripten::val"
                     } else {
                         embindNameResolver.resolveName(returnType)
@@ -781,12 +692,10 @@ internal class JsGenerator : Generator {
 
     private fun adapterParameterPreparation(parameter: com.here.gluecodium.model.lime.LimeParameter, callName: String): String {
         val typeRef = parameter.typeRef
-        val actualType = typeRef.type.actualType
-        return when {
-            actualType is LimeLambda -> "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
-            typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(typeRef) || isObjectStruct(typeRef) || actualType is LimeClass || actualType is LimeInterface ->
-                "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
-            else -> ""
+        return if (needsValParameterAdapter(typeRef)) {
+            "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
+        } else {
+            ""
         }
     }
 
@@ -912,16 +821,36 @@ internal class JsGenerator : Generator {
         return "[$captureName = std::shared_ptr<gluecodium_js::RuntimeThreadVal>(new gluecodium_js::RuntimeThreadVal($capturedSource), gluecodium_js::delete_runtime_thread_val)](${parameters.joinToString(", ")}) -> $returnType { $body }"
     }
 
-    private fun adapterReturnConversion(
-        returnType: com.here.gluecodium.model.lime.LimeTypeRef,
-        actualType: com.here.gluecodium.model.lime.LimeType,
-    ): String {
-        return if (returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) || isJsDuration(returnType) || actualType is LimeList || actualType is LimeMap || actualType is LimeSet || isBlob(returnType) || isObjectStruct(returnType)) {
+    /** Return types whose native `result` must be converted to JS before returning. */
+    private fun returnsViaVal(returnType: LimeTypeRef): Boolean =
+        returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) ||
+            isJsDuration(returnType) || isBlob(returnType) || isObjectStruct(returnType) ||
+            returnType.type.actualType is LimeList ||
+            returnType.type.actualType is LimeMap ||
+            returnType.type.actualType is LimeSet
+
+    /**
+     * Non-recursive check used for function parameters: types that cannot pass through
+     * embind directly and must travel as `emscripten::val`.
+     */
+    private fun needsValParameterAdapter(typeRef: LimeTypeRef): Boolean {
+        if (typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) ||
+            isJsDuration(typeRef) || isBlob(typeRef) || isObjectStruct(typeRef)
+        ) return true
+        return when (typeRef.type.actualType) {
+            is LimeClass, is LimeInterface, is LimeLambda,
+            is LimeList, is LimeMap, is LimeSet,
+            -> true
+            else -> false
+        }
+    }
+
+    private fun adapterReturnConversion(returnType: com.here.gluecodium.model.lime.LimeTypeRef): String =
+        if (returnsViaVal(returnType)) {
             "return ${nativeToJs(returnType, "result")};"
         } else {
             ""
         }
-    }
 
     private fun nativeToJs(typeRef: LimeTypeRef, source: String): String {
         if (typeRef.isNullable) {
