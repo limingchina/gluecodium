@@ -88,6 +88,7 @@ internal class JsGenerator : Generator {
     private lateinit var embindNameResolver: EmbindNameResolver
     private lateinit var cppNameCache: CppNameCache
     private lateinit var conversions: EmbindConversionEmitter
+    private lateinit var embindViewModelBuilder: JsEmbindViewModelBuilder
 
     override val shortName = "js"
 
@@ -133,6 +134,21 @@ internal class JsGenerator : Generator {
             )
         conversions =
             EmbindConversionEmitter(embindNameResolver, cppNameCache, nameRules)
+        embindViewModelBuilder =
+            JsEmbindViewModelBuilder(
+                internalNamespace = internalNamespace,
+                referenceMap = limeReferenceMap,
+                nameRules = nameRules,
+                cppNameRules = cppNameRules,
+                embindNameResolver = embindNameResolver,
+                cppNameCache = cppNameCache,
+                conversions = conversions,
+                resolveRegisterName = ::resolveRegisterName,
+                primaryBaseType = ::primaryBaseType,
+                secondaryParentMembers = ::secondaryParentMembers,
+                primaryInheritedOverloads = ::primaryInheritedOverloads,
+                isSupportedConstant = ::isSupportedConstant,
+            )
 
         val nameResolvers =
             mapOf(
@@ -194,7 +210,7 @@ internal class JsGenerator : Generator {
                 val templateName = selectEmbindTemplate(type) ?: return@mapNotNull null
                 TemplateEngine.render(
                     templateName,
-                    buildEmbindViewModel(type, filteredModel),
+                    embindViewModelBuilder.build(type, filteredModel),
                     nameResolvers,
                 )
             }
@@ -250,79 +266,6 @@ internal class JsGenerator : Generator {
         return functions to properties
     }
 
-    /**
-     * Builds the template data for one embind binding: the common identity fields plus
-     * member view models (constructors, functions, properties, fields, enumerators,
-     * constants) resolved against both the C++ names (for the binding body) and the JS
-     * names (for the registered identifiers).
-     */
-    private fun buildEmbindViewModel(
-        type: com.here.gluecodium.model.lime.LimeType,
-        filteredModel: LimeModel,
-    ): Map<String, Any> {
-        val data = mutableMapOf<String, Any>(
-            "model" to type,
-            "internalNamespace" to internalNamespace,
-            "jsName" to nameRules.getName(type),
-            "embindName" to nameRules.getEmbindRuntimeName(type),
-            "cppFullName" to cppNameCache.getFullyQualifiedName(type),
-            "registerName" to resolveRegisterName(type),
-            "isObjectStruct" to (type is LimeStruct && conversions.isObjectStruct(type)),
-        )
-        primaryBaseOf(type, filteredModel)?.let { data["primaryBase"] = it }
-        if (type is com.here.gluecodium.model.lime.LimeEnumeration) {
-            val enumerators = type.enumerators.map { enumeratorViewModel(it) }
-            data["enumeratorBindings"] = enumerators.joinToString("\n") {
-                "    .value(\"${it["jsName"]}\", ${it["cppName"]})"
-            }
-        }
-        val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return data
-
-        val (secondaryFunctions, secondaryProperties) = secondaryParentMembers(type, filteredModel)
-        if (type is com.here.gluecodium.model.lime.LimeInterface) {
-            val inheritedContainer = type as LimeContainerWithInheritance
-            data["wrapperName"] = "${resolveRegisterName(type)}Wrapper"
-            data["wrapperEmbindName"] = "${nameRules.getEmbindRuntimeName(type)}__Wrapper"
-            data["wrapperPtrEmbindName"] = "${nameRules.getEmbindRuntimeName(type)}__WrapperPtr"
-            data["wrapperMethods"] =
-                (container.functions + inheritedContainer.inheritedFunctions)
-                    .filterNot { it.isStatic || it.isConstructor }
-                    .distinctBy { it.fullName }
-                    .map { wrapperMethodViewModel(it) }
-            data["wrapperProperties"] =
-                (container.properties + inheritedContainer.inheritedProperties)
-                    .filterNot { it.isStatic }
-                    .distinctBy { it.fullName }
-                    .map { wrapperPropertyViewModel(it) }
-        }
-        data["constructors"] = container.constructors.map { functionViewModel(it) }
-        val primaryInheritedOverloads = primaryInheritedOverloads(type, filteredModel)
-        data["methods"] =
-            (primaryInheritedOverloads + container.functions.filterNot { it.isConstructor } + secondaryFunctions)
-                .distinctBy { it.fullName }
-                .map {
-                    functionViewModel(
-                        it,
-                        isFlattened = secondaryFunctions.contains(it),
-                        flattenedReceiverType = cppNameCache.getFullyQualifiedName(type),
-                        isPureVirtual = type is com.here.gluecodium.model.lime.LimeInterface,
-                        forceOverloadAdapter = primaryInheritedOverloads.contains(it),
-                    )
-                }
-        data["properties"] =
-            (container.properties + secondaryProperties)
-                .distinctBy { it.fullName }
-                .map { propertyViewModel(it) }
-        if (type is LimeStruct) {
-            data["fields"] = type.fields.map { fieldViewModel(type, it) }
-            data["structFunctions"] = container.functions
-                .filter { it.isStatic && !it.isConstructor }
-                .map { functionViewModel(it).toMutableMap().apply { put("runtimeName", structFunctionRuntimeName(it)) } }
-        }
-        data["constants"] = container.constants.filter(::isSupportedConstant).map { constantViewModel(it) }
-        return data
-    }
-
     private fun primaryInheritedOverloads(
         type: com.here.gluecodium.model.lime.LimeType,
         filteredModel: LimeModel,
@@ -338,453 +281,6 @@ internal class JsGenerator : Generator {
             .filter { !it.isStatic && nameRules.getName(it) in ownNames }
             .distinctBy { it.fullName }
     }
-
-    private fun wrapperMethodViewModel(function: LimeFunction): Map<String, Any> {
-        val returnType = embindNameResolver.resolveName(function.returnType)
-        val returnNeedsAdapter = requiresWrapperJsAdapter(function.returnType.typeRef)
-        val parameters = function.parameters.map { parameter ->
-            val nativeType = embindNameResolver.resolveName(parameter.typeRef)
-            val parameterType =
-                if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $nativeType&" else nativeType
-            "$parameterType ${parameter.path.name}"
-        }
-        val parameterNeedsAdapters = function.parameters.any { requiresWrapperJsAdapter(it.typeRef) }
-        val needsAdapter = returnNeedsAdapter || parameterNeedsAdapters
-        val arguments = function.parameters.joinToString(", ") { parameter ->
-            if (needsAdapter) {
-                conversions.nativeToJs(parameter.typeRef, parameter.path.name)
-            } else {
-                parameter.path.name
-            }
-        }
-        val callArguments = if (arguments.isNotEmpty()) ", $arguments" else ""
-        val call = if (needsAdapter) {
-            val jsResult = "call<emscripten::val>(\"${nameRules.getName(function)}\"$callArguments)"
-            if (function.returnType.isVoid) "$jsResult;" else "return ${conversions.jsToNative(function.returnType.typeRef, jsResult)};"
-        } else {
-            "call<$returnType>(\"${nameRules.getName(function)}\"$callArguments)"
-        }
-        val lambdaCaptures = function.parameters.joinToString(", ") { "&${it.path.name}" }
-        val lambdaCaptureList = if (lambdaCaptures.isEmpty()) "this" else "this, $lambdaCaptures"
-        val lambdaBody = if (needsAdapter) {
-            call
-        } else if (function.returnType.isVoid) {
-            "$call;"
-        } else {
-            "return $call;"
-        }
-        val threadedCall = if (function.returnType.isVoid) {
-            "gluecodium_js::invoke_on_main_runtime_thread_void([${lambdaCaptureList}]() { $lambdaBody });"
-        } else {
-            "return gluecodium_js::invoke_on_main_runtime_thread([${lambdaCaptureList}]() { $lambdaBody });"
-        }
-        return mapOf(
-            "returnType" to returnType,
-            "cppName" to embindNameResolver.resolveName(function),
-            "parameters" to parameters.joinToString(", "),
-            "call" to call,
-            "threadedCall" to threadedCall,
-            "isVoid" to function.returnType.isVoid,
-            "needsAdapter" to needsAdapter,
-            "isConst" to function.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.CONST),
-        )
-    }
-
-    private fun requiresWrapperJsAdapter(typeRef: LimeTypeRef): Boolean =
-        typeRef.type.actualType is LimeStruct || conversions.needsValParameterAdapter(typeRef)
-
-    private fun wrapperPropertyViewModel(property: LimeProperty): Map<String, Any> {
-        val propertyType = embindNameResolver.resolveName(property.typeRef)
-        val setter = property.setter
-        val setterParameter =
-            if (CppNameResolver.needsRefSuffix(property.typeRef)) "const $propertyType& value" else "$propertyType value"
-        return mapOf(
-            "returnType" to propertyType,
-            "jsName" to nameRules.getName(property),
-            "cppGetterName" to cppNameCache.getGetterName(property),
-            "cppSetterName" to cppNameCache.getSetterName(property),
-            "setterParameter" to setterParameter,
-            "hasSetter" to (setter != null),
-            "threadedGetter" to "return gluecodium_js::invoke_on_main_runtime_thread([this] { return call<$propertyType>(\"${nameRules.getName(property)}\"); });",
-            "threadedSetter" to "gluecodium_js::invoke_on_main_runtime_thread_void([this, &value] { call<void>(\"${nameRules.getName(property)}\", value); });",
-        )
-    }
-
-    private fun functionViewModel(
-        function: LimeFunction,
-        isFlattened: Boolean = false,
-        flattenedReceiverType: String? = null,
-        isPureVirtual: Boolean = false,
-        forceOverloadAdapter: Boolean = false,
-    ): Map<String, Any> {
-        val context =
-            FunctionViewModelContext(
-                function = function,
-                isOverloaded = forceOverloadAdapter || isOverloadedInJsBindings(function),
-                returnType = function.returnType.typeRef,
-                thrownException = function.exception,
-            )
-        val data = mutableMapOf<String, Any>(
-            "model" to function,
-            "jsName" to nameRules.getName(function),
-            "embindName" to overloadEmbindName(context),
-            "cppName" to embindNameResolver.resolveName(function),
-            "isConstructor" to function.isConstructor,
-            "isStatic" to function.isStatic,
-            "needsAdapter" to needsFunctionAdapter(context),
-            "adapterReturnType" to
-                if (context.needsValReturn) {
-                    "emscripten::val"
-                } else {
-                    embindNameResolver.resolveName(context.returnType)
-                },
-            "isThrown" to context.isThrown,
-            "thrownErrorIsEnum" to context.thrownErrorIsEnum,
-            "returnIsNullable" to context.returnType.isNullable,
-            "returnIsList" to (context.returnActualType is LimeList),
-            "returnIsMap" to (context.returnActualType is LimeMap),
-            // Overloads are registered with explicit signatures via select_overload.
-            "isOverloaded" to context.isOverloaded,
-            "isFlattened" to isFlattened,
-            "isPureVirtual" to isPureVirtual,
-            "parameters" to function.parameters.mapIndexed { index, parameter ->
-                parameterViewModel(parameter, index == function.parameters.lastIndex)
-            },
-        )
-        data.putAll(adapterViewModel(context))
-        if (isFlattened) {
-            data.putAll(flattenedViewModel(context, flattenedReceiverType, adapterParameterTypes(function)))
-        }
-        return data
-    }
-
-    /** Shared per-function facts used by all parts of the function view model. */
-    private inner class FunctionViewModelContext(
-        val function: LimeFunction,
-        val isOverloaded: Boolean,
-        val returnType: com.here.gluecodium.model.lime.LimeTypeRef,
-        val thrownException: com.here.gluecodium.model.lime.LimeException?,
-    ) {
-        val returnActualType: com.here.gluecodium.model.lime.LimeType = returnType.type.actualType
-        val isThrown: Boolean = thrownException != null
-        val thrownErrorIsEnum: Boolean =
-            thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
-
-        /** Whether the native call result must be captured in a variable for JS conversion. */
-        val needsValReturn: Boolean = isThrown || conversions.returnsViaVal(returnType)
-    }
-
-    private fun overloadEmbindName(context: FunctionViewModelContext): String {
-        val function = context.function
-        return if (context.isOverloaded && (function.isStatic && isJsOverloaded(function) || !function.isStatic)) {
-            overloadRuntimeName(function)
-        } else {
-            nameRules.getName(function)
-        }
-    }
-
-    private fun needsFunctionAdapter(context: FunctionViewModelContext): Boolean =
-        context.isOverloaded ||
-            context.isThrown ||
-            conversions.returnsViaVal(context.returnType) ||
-            context.function.parameters.any { parameter ->
-                conversions.hasCppStringOverride(parameter.typeRef) ||
-                    conversions.needsValParameterAdapter(parameter.typeRef)
-            }
-
-    private fun parameterViewModel(
-        parameter: com.here.gluecodium.model.lime.LimeParameter,
-        last: Boolean,
-    ): Map<String, Any?> {
-        val actualType = parameter.typeRef.type.actualType
-        return mapOf(
-            "model" to parameter,
-            "jsName" to nameRules.getName(parameter),
-            "cppType" to embindNameResolver.resolveName(parameter.typeRef),
-            "adapterType" to
-                if (conversions.hasCppStringOverride(parameter.typeRef)) {
-                    "::std::string"
-                } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
-                    "emscripten::val"
-                } else {
-                    embindNameResolver.resolveName(parameter.typeRef)
-                },
-            "nativeName" to parameter.path.name,
-            "nativeType" to embindNameResolver.resolveName(parameter.typeRef),
-            "underlyingType" to embindNameResolver.resolveName(parameter.typeRef.type),
-            "isNullable" to parameter.typeRef.isNullable,
-            "isList" to (actualType is LimeList),
-            "isMap" to (actualType is LimeMap),
-            "mapKeyType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.keyType) },
-            "mapValueType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.valueType) },
-            "last" to last,
-        )
-    }
-
-    /** Adapter parameter descriptors shared by the adapter and flattened view models. */
-    private class AdapterParameter(
-        val type: String,
-        val name: String,
-        val callName: String,
-        val preparation: String,
-    )
-
-    private fun adapterParameters(function: LimeFunction): List<AdapterParameter> =
-        function.parameters.map { parameter ->
-            val type =
-                if (conversions.hasCppStringOverride(parameter.typeRef)) {
-                    "::std::string"
-                } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
-                    "emscripten::val"
-                } else {
-                    embindNameResolver.resolveName(parameter.typeRef)
-                }
-            val callName =
-                if (conversions.hasCppStringOverride(parameter.typeRef)) {
-                    "${parameter.path.name}.c_str()"
-                } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
-                    "${parameter.path.name}_value"
-                } else {
-                    parameter.path.name
-                }
-            AdapterParameter(type, parameter.path.name, callName, conversions.parameterPreparation(parameter, callName))
-        }
-
-    private fun adapterParameterTypes(function: LimeFunction): List<String> =
-        adapterParameters(function).map { it.type }
-
-    /** Builds the C++ adapter-function fields (`adapter*`) for one method binding. */
-    private fun adapterViewModel(context: FunctionViewModelContext): Map<String, Any> {
-        val parameters = adapterParameters(context.function)
-        val data = mutableMapOf<String, Any>(
-            "adapterParameters" to parameters.joinToString(", ") { "${it.type} ${it.name}" },
-            "hasAdapterParameters" to parameters.isNotEmpty(),
-            "adapterSignatureParameters" to
-                parameters.joinToString(", ") { it.type }.let { if (it.isEmpty()) "void" else it },
-            "adapterCallArguments" to parameters.joinToString(", ") { it.callName },
-            "adapterPolicies" to rawPointerPolicies(parameters) { index -> index },
-            "hasAdapterPolicies" to hasRawPointer(parameters),
-            "adapterMemberPolicies" to rawPointerPolicies(parameters) { index -> index + 1 },
-            "hasAdapterMemberPolicies" to hasRawPointer(parameters),
-            "adapterPreparations" to
-                parameters.map { it.preparation }.filter { it.isNotEmpty() }.joinToString("\n"),
-            "adapterCallPrefix" to if (context.needsValReturn) "auto result = " else "return ",
-            "adapterReturnConversion" to
-                if (context.isThrown) {
-                    conversions.thrownReturnConversion(
-                        context.thrownErrorIsEnum,
-                        context.function.returnType.isVoid,
-                        context.returnType,
-                    )
-                } else {
-                    conversions.adapterReturnConversion(context.returnType)
-                },
-        )
-        return data
-    }
-
-    private fun rawPointerPolicies(parameters: List<AdapterParameter>, argIndex: (Int) -> Int): String =
-        parameters.mapIndexedNotNull { index, parameter ->
-            if (parameter.type.endsWith("*")) {
-                "allow_raw_pointer<arg<${argIndex(index)}>>()"
-            } else {
-                null
-            }
-        }.joinToString(", ")
-
-    private fun hasRawPointer(parameters: List<AdapterParameter>): Boolean =
-        parameters.any { it.type.endsWith("*") }
-
-    /** Builds the flattened-member fields for methods inherited from secondary parents. */
-    private fun flattenedViewModel(
-        context: FunctionViewModelContext,
-        flattenedReceiverType: String?,
-        parameterTypes: List<String>,
-    ): Map<String, Any> {
-        val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
-        val flattenedReturnType: String =
-            if (context.needsValReturn) {
-                "emscripten::val"
-            } else {
-                embindNameResolver.resolveName(context.returnType)
-            }
-        return mapOf(
-            "flattenedFunctionSignature" to
-                listOf("$flattenedReturnType($receiverType*", *parameterTypes.toTypedArray())
-                    .joinToString(", ")
-                    .let { "$it)" },
-            "flattenedLambdaParameters" to
-                listOf("$receiverType* self", *parameterTypes.zip(context.function.parameters) { type, parameter -> "$type ${parameter.path.name}" }.toTypedArray())
-                    .joinToString(", "),
-        )
-    }
-
-
-    private fun propertyViewModel(property: LimeProperty): Map<String, Any> =
-        mapOf(
-            "model" to property,
-            "jsName" to nameRules.getName(property),
-            "cppGetterName" to cppNameCache.getGetterName(property),
-            "cppSetterName" to cppNameCache.getSetterName(property),
-            "isStatic" to property.isStatic,
-            "hasSetter" to (property.setter != null),
-            "cppFullName" to ((limeReferenceMap[property.path.parent.toString()] as? LimeNamedElement)
-                ?.let { cppNameCache.getFullyQualifiedName(it) } ?: ""),
-            "needsAdapter" to conversions.requiresJsAdapter(property.typeRef),
-            "adapterGetterName" to propertyAdapterName(property, "get"),
-            "adapterSetterName" to propertyAdapterName(property, "set"),
-            "adapterGetter" to conversions.nativeToJs(
-                property.typeRef,
-                if (property.isStatic) {
-                    "${cppNameCache.getFullyQualifiedName(limeReferenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getGetterName(property)}()"
-                } else {
-                    "self->${cppNameCache.getGetterName(property)}()"
-                },
-            ),
-            "adapterSetter" to conversions.jsToNative(property.typeRef, "value").let { converted ->
-                if (property.isStatic) {
-                    "${cppNameCache.getFullyQualifiedName(limeReferenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getSetterName(property)}($converted)"
-                } else {
-                    "self->${cppNameCache.getSetterName(property)}($converted)"
-                }
-            },
-        )
-
-    private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> =
-        run {
-            val cppType = embindNameResolver.resolveName(field.typeRef)
-            val hasAccessors =
-                struct.attributes.have(CPP, ACCESSORS) ||
-                    field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null
-            val accessorType = if (CppNameResolver.needsRefSuffix(field.typeRef)) "const $cppType&" else cppType
-            val directSource =
-                if (hasAccessors) "self.${cppNameCache.getGetterName(field)}()" else "self.${cppNameCache.getName(field)}"
-            mapOf(
-                "model" to field,
-                "jsName" to nameRules.getName(field),
-                "cppFullName" to cppNameCache.getFullyQualifiedName(struct),
-                "cppType" to cppType,
-                "cppFieldName" to if (hasAccessors) null else cppNameCache.getName(field),
-                "hasAccessors" to hasAccessors,
-                "hasBlob" to conversions.isBlob(field.typeRef),
-                "hasImmutableStruct" to conversions.isObjectStruct(field.typeRef),
-                "hasDate" to conversions.isJsDate(field.typeRef),
-                "hasLocale" to conversions.isJsLocale(field.typeRef),
-                "hasDuration" to conversions.isJsDuration(field.typeRef),
-                "cppGetterName" to cppNameCache.getGetterName(field),
-                "cppSetterName" to cppNameCache.getSetterName(field),
-                "accessorType" to accessorType,
-                "hasCollection" to (!hasAccessors &&
-                    (field.typeRef.type.actualType is LimeList ||
-                    field.typeRef.type.actualType is LimeMap ||
-                    field.typeRef.type.actualType is LimeSet)),
-                "collectionGetter" to conversions.nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
-                "collectionSetter" to conversions.jsToNative(field.typeRef, "value"),
-                "immutableGetter" to conversions.nativeToJs(field.typeRef, directSource),
-                "immutableSetter" to convertedFieldSetter(field, hasAccessors),
-                "dateGetter" to conversions.nativeToJs(field.typeRef, directSource),
-                "dateSetter" to convertedFieldSetter(field, hasAccessors),
-                "localeGetter" to conversions.nativeToJs(field.typeRef, directSource),
-                "localeSetter" to convertedFieldSetter(field, hasAccessors),
-            )
-        }
-
-    /** Emits the C++ assignment converting a JS `value` into one struct field. */
-    private fun convertedFieldSetter(field: LimeField, hasAccessors: Boolean): String =
-        conversions.jsToNative(field.typeRef, "value").let { converted ->
-            if (hasAccessors) {
-                "self.${cppNameCache.getSetterName(field)}($converted)"
-            } else {
-                "self.${cppNameCache.getName(field)} = $converted"
-            }
-        }
-
-    private fun propertyAdapterName(property: LimeProperty, operation: String) =
-        "__gluecodium_${operation}_${property.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
-
-    private fun overloadRuntimeName(function: LimeFunction): String {
-        val functionName = function.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")
-        val parameterTypes = function.parameters.joinToString("_") {
-            embindNameResolver.resolveName(it.typeRef).replace(Regex("[^A-Za-z0-9_]"), "_")
-        }
-        return "__gluecodium_overload_${functionName}_${parameterTypes}"
-    }
-
-    private fun structFunctionRuntimeName(function: LimeFunction): String =
-        if (isJsOverloaded(function)) {
-            overloadRuntimeName(function)
-        } else {
-            "__gluecodium_struct_function_${function.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
-        }
-
-    private fun isJsOverloaded(function: LimeFunction): Boolean {
-        val container = limeReferenceMap[function.path.parent.toString()] as? com.here.gluecodium.model.lime.LimeContainer
-            ?: return false
-        val jsName = nameRules.getName(function)
-        return container.functions.count { !it.isConstructor && nameRules.getName(it) == jsName } > 1
-    }
-
-    private fun isOverloadedInJsBindings(function: LimeFunction): Boolean {
-        val signatureResolver = CppSignatureResolver(limeReferenceMap, cppNameRules)
-        if (signatureResolver.isOverloadedInBindings(function)) return true
-
-        val container = limeReferenceMap[function.path.parent.toString()] as? LimeContainerWithInheritance
-            ?: return false
-        val functionName = nameRules.getName(function)
-        return container.inheritedFunctions.any {
-            !it.isStatic && nameRules.getName(it) == functionName
-        }
-    }
-
-    private fun overloadPredicate(function: LimeFunction): String {
-        val checks = function.parameters.mapIndexed { index, parameter ->
-            val value = "args[$index]"
-            val actualType = parameter.typeRef.type.actualType
-            when (actualType) {
-                is LimeBasicType -> when (actualType.typeId) {
-                    TypeId.STRING -> "typeof $value === \"string\""
-                    TypeId.BOOLEAN -> "typeof $value === \"boolean\""
-                    TypeId.INT64, TypeId.UINT64, TypeId.DURATION -> "typeof $value === \"bigint\""
-                    TypeId.DATE -> "$value instanceof Date"
-                    TypeId.BLOB -> "$value instanceof Uint8Array"
-                    else -> "typeof $value === \"number\""
-                }
-                is LimeList -> "Array.isArray($value)"
-                is LimeMap -> "$value instanceof Map"
-                is LimeSet -> "$value instanceof Set"
-                else -> "$value !== null && typeof $value === \"object\""
-            }
-        }
-        return listOf("args.length === ${function.parameters.size}", *checks.toTypedArray()).joinToString(" && ")
-    }
-
-    private fun enumeratorViewModel(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): Map<String, Any> =
-        mapOf(
-            "model" to enumerator,
-            "jsName" to nameRules.getName(enumerator),
-            "cppName" to
-                "${cppNameCache.getFullyQualifiedName(getParentEnumeration(enumerator))}::${cppNameCache.getName(enumerator)}",
-        )
-
-    private fun getParentEnumeration(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): com.here.gluecodium.model.lime.LimeEnumeration =
-        limeReferenceMap[enumerator.path.parent.toString()] as? com.here.gluecodium.model.lime.LimeEnumeration
-            ?: throw IllegalStateException("Unable to resolve parent enumeration for ${enumerator.fullName}")
-
-    private fun constantViewModel(constant: LimeConstant): Map<String, Any> =
-        mapOf(
-            "model" to constant,
-            "jsName" to nameRules.getName(constant),
-            "cppFullName" to cppNameCache.getFullyQualifiedName(constant),
-            "cppType" to embindNameResolver.resolveName(constant.typeRef),
-            "functionName" to constantFunctionName(constant),
-            "runtimeName" to constantRuntimeName(constant),
-        )
-
-    private fun constantFunctionName(constant: LimeConstant) =
-        "gluecodium_constant_${constant.fullName.replace('.', '_')}"
-
-    private fun constantRuntimeName(constant: LimeConstant) =
-        "gluecodium_constant_${constant.fullName.replace(".", "__")}"
 
     /**
      * Recursively collects all types (top-level + nested) that should emit an embind binding,
@@ -892,10 +388,10 @@ internal class JsGenerator : Generator {
                 collectEmbindTypes = ::collectEmbindTypes,
                 isSupportedConstant = ::isSupportedConstant,
                 isCppSkipped = ::isCppSkipped,
-                propertyAdapterName = ::propertyAdapterName,
-                overloadRuntimeName = ::overloadRuntimeName,
-                structFunctionRuntimeName = ::structFunctionRuntimeName,
-                overloadPredicate = ::overloadPredicate,
+                propertyAdapterName = embindViewModelBuilder::propertyAdapterName,
+                overloadRuntimeName = embindViewModelBuilder::overloadRuntimeName,
+                structFunctionRuntimeName = embindViewModelBuilder::structFunctionRuntimeName,
+                overloadPredicate = embindViewModelBuilder::overloadPredicate,
                 instanceOverloadGroups = ::instanceOverloadGroups,
             ).generate(jsFilteredModel)
         return packageFiles + listOf(
@@ -955,8 +451,8 @@ internal class JsGenerator : Generator {
                     "jsName" to jsName,
                     "overloads" to overloads.map { function ->
                         mapOf(
-                            "runtimeName" to overloadRuntimeName(function),
-                            "predicate" to overloadPredicate(function),
+                            "runtimeName" to embindViewModelBuilder.overloadRuntimeName(function),
+                            "predicate" to embindViewModelBuilder.overloadPredicate(function),
                         )
                     },
                 )
