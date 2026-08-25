@@ -24,15 +24,11 @@ import com.here.gluecodium.common.LimeLogger
 import com.here.gluecodium.generator.common.GeneratedFile
 import com.here.gluecodium.generator.common.Generator
 import com.here.gluecodium.generator.common.GeneratorOptions
-import com.here.gluecodium.generator.common.GenericImportsCollector
-import com.here.gluecodium.generator.common.GenericIncludesCollector
-import com.here.gluecodium.generator.common.NameResolver
 import com.here.gluecodium.generator.common.nameRuleSetFromConfig
 import com.here.gluecodium.generator.cpp.CppNameCache
 import com.here.gluecodium.generator.cpp.CppNameResolver
 import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.generator.cpp.CppSignatureResolver
-import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeAttributeType
 import com.here.gluecodium.model.lime.LimeAttributeType.CPP
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
@@ -86,6 +82,7 @@ internal class JsGenerator : Generator {
     private lateinit var commonFileGenerator: JsCommonFileGenerator
     private lateinit var inheritanceResolver: JsInheritanceResolver
     private lateinit var overloadGroupGenerator: JsOverloadGroupGenerator
+    private lateinit var outputGenerator: JsOutputGenerator
 
     override val shortName = "js"
 
@@ -173,46 +170,23 @@ internal class JsGenerator : Generator {
                 overloadPredicate = embindViewModelBuilder::overloadPredicate,
                 instanceOverloadGroups = overloadGroupGenerator::generate,
             )
-
-        val nameResolvers =
-            mapOf(
-                "" to jsNameResolver,
-                "Embind" to embindNameResolver,
-                "C++" to embindNameResolver,
+        outputGenerator =
+            JsOutputGenerator(
+                nameRules = nameRules,
+                jsNameResolver = jsNameResolver,
+                embindNameResolver = embindNameResolver,
+                jsModuleName = jsModuleName,
+                emitTypeScriptStubs = emitTypeScriptStubs,
+                referenceMap = limeReferenceMap,
+                embindFileGenerator = embindFileGenerator,
+                commonFileGenerator = commonFileGenerator,
             )
-
-        val importsCollector =
-            GenericImportsCollector(
-                JsImportResolver(limeReferenceMap, nameRules),
-                collectTypeRefImports = true,
-                collectValueImports = false,
-                parentTypeFilter = { true },
-                collectTypeAliasImports = true,
-            )
-
-        val stubFiles =
-            if (emitTypeScriptStubs) {
-                JsStubGenerator(
-                    nameRules,
-                    jsNameResolver,
-                    jsModuleName,
-                    importsCollector,
-                    nameResolvers,
-                ).generate(jsFilteredModel.topElements.filterIsInstance<LimeNamedElement>())
-            } else {
-                emptyList()
-            }
-        val embindFiles =
-            embindFilteredModel.topElements.flatMap {
-                embindFileGenerator.generate(it, nameResolvers, embindFilteredModel)
-            }
 
         if (commentsProcessor.hasError) {
             throw GluecodiumExecutionException("Validation errors found, see log for details.")
         }
 
-        return stubFiles + embindFiles +
-            commonFileGenerator.generate(embindFilteredModel, jsFilteredModel, nameResolvers)
+        return outputGenerator.generate(embindFilteredModel, jsFilteredModel)
     }
 
     private fun resolveRegisterName(limeElement: LimeNamedElement): String {
