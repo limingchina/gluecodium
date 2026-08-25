@@ -66,13 +66,13 @@ void {{registerName}}(void) {
   })
 {{/hasLocale}}
 {{#hasAccessors}}
-{{^hasDate}}
+{{^hasDate}}{{^hasCollection}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> {{accessorType}} {
     return self.{{cppGetterName}}();
   }, +[] ({{cppFullName}}& self, {{accessorType}} value) {
     self.{{cppSetterName}}(value);
   })
-{{/hasDate}}
+{{/hasCollection}}{{/hasDate}}
 {{/hasAccessors}}
 {{#hasBlob}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
@@ -83,13 +83,11 @@ void {{registerName}}(void) {
   })
 {{/hasBlob}}
 {{#hasCollection}}
-{{^hasAccessors}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
     return {{collectionGetter}};
   }, +[] ({{cppFullName}}& self, emscripten::val value) {
-    self.{{cppFieldName}} = {{collectionSetter}};
+    {{collectionSetter}};
   })
-{{/hasAccessors}}
 {{/hasCollection}}
 {{/fields}}
         ;

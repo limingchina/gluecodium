@@ -33,7 +33,7 @@ public:
         m_notifyJSOnDestruction = notify;
     }
 
-    ~{{wrapperName}}() override {
+    ~{{wrapperName}}() {
         auto* wrapped = m_wrapped;
         m_wrapped = nullptr;
         const auto notify = m_notifyJSOnDestruction;

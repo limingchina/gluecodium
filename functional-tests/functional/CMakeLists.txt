@@ -321,7 +321,7 @@ feature(CircularDependencies cpp android android-kotlin swift dart SOURCES
     input/lime/Circular.lime
 )
 
-feature(ExternalTypes cpp android android-kotlin swift dart SOURCES
+feature(ExternalTypes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/include/ExternalTypes.h
     input/src/cpp/include/MyClass.h
     input/src/cpp/src/ExternalTypes.cpp

@@ -282,6 +282,8 @@ internal class JsEmbindViewModelBuilder(
         val returnType: LimeTypeRef,
         val thrownException: LimeException?,
     ) {
+        val isExternal: Boolean =
+            (referenceMap[function.path.parent.toString()] as? LimeNamedElement)?.external?.cpp != null
         val returnActualType: LimeType = returnType.type.actualType
         val isThrown: Boolean = thrownException != null
         val thrownErrorIsEnum: Boolean = thrownException?.errorType?.type?.actualType is LimeEnumeration
@@ -298,7 +300,7 @@ internal class JsEmbindViewModelBuilder(
     }
 
     private fun needsFunctionAdapter(context: FunctionViewModelContext): Boolean =
-        context.isOverloaded || context.isThrown || conversions.returnsViaVal(context.returnType) ||
+        context.isExternal || context.isOverloaded || context.isThrown || conversions.returnsViaVal(context.returnType) ||
             context.function.parameters.any { conversions.hasCppStringOverride(it.typeRef) || conversions.needsValParameterAdapter(it.typeRef) }
 
     private fun parameterViewModel(parameter: LimeParameter, last: Boolean): Map<String, Any?> {
@@ -370,10 +372,12 @@ internal class JsEmbindViewModelBuilder(
 
     private fun propertyViewModel(property: LimeProperty): Map<String, Any> =
         run {
-            val needsAdapter = conversions.requiresJsAdapter(property.typeRef)
             val owner = (referenceMap[property.path.parent.toString()] as? LimeNamedElement)
+            val needsAdapter = conversions.requiresJsAdapter(property.typeRef) || owner?.external?.cpp != null
             val getterSource = if (property.isStatic) {
                 "${cppNameCache.getFullyQualifiedName(owner as LimeNamedElement)}::${cppNameCache.getGetterName(property)}()"
+            } else if (owner?.external?.cpp != null) {
+                "const_cast<${cppNameCache.getFullyQualifiedName(owner)}&>(self).${cppNameCache.getGetterName(property)}()"
             } else {
                 "self.${cppNameCache.getGetterName(property)}()"
             }
@@ -401,7 +405,8 @@ internal class JsEmbindViewModelBuilder(
     private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> {
         val cppType = embindNameResolver.resolveName(field.typeRef)
         val hasAccessors = struct.attributes.have(CPP, ACCESSORS) || field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null
-        val accessorType = if (CppNameResolver.needsRefSuffix(field.typeRef)) "const $cppType&" else cppType
+        val hasExternalGetter = field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null
+        val accessorType = if (hasExternalGetter) cppType else if (CppNameResolver.needsRefSuffix(field.typeRef)) "const $cppType&" else cppType
         val directSource = if (hasAccessors) "self.${cppNameCache.getGetterName(field)}()" else "self.${cppNameCache.getName(field)}"
         return mapOf(
             "model" to field,
@@ -419,9 +424,9 @@ internal class JsEmbindViewModelBuilder(
             "cppGetterName" to cppNameCache.getGetterName(field),
             "cppSetterName" to cppNameCache.getSetterName(field),
             "accessorType" to accessorType,
-            "hasCollection" to (!hasAccessors && (field.typeRef.type.actualType is LimeList || field.typeRef.type.actualType is LimeMap || field.typeRef.type.actualType is LimeSet)),
-            "collectionGetter" to conversions.nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
-            "collectionSetter" to conversions.jsToNative(field.typeRef, "value"),
+            "hasCollection" to (field.typeRef.type.actualType is LimeList || field.typeRef.type.actualType is LimeMap || field.typeRef.type.actualType is LimeSet),
+            "collectionGetter" to conversions.nativeToJs(field.typeRef, directSource),
+            "collectionSetter" to convertedFieldSetter(field, hasAccessors),
             "immutableGetter" to conversions.nativeToJs(field.typeRef, directSource),
             "immutableSetter" to convertedFieldSetter(field, hasAccessors),
             "dateGetter" to conversions.nativeToJs(field.typeRef, directSource),

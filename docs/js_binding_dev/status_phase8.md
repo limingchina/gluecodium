@@ -1,6 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 5B constructor and struct-shape coverage complete; Batch 5A declaration-order
+**Status**: Batch 6A external-type coverage complete; Batch 6B circular-dependency coverage not
+started; Batch 5B constructor and struct-shape coverage complete; Batch 5A declaration-order
 and companion-surface coverage complete; Batch 4B
 documentation and public naming coverage complete; Batch 4C package identity and collision
 coverage remains complete; native lambda-return support remains deferred; the complete JavaScript
@@ -186,6 +187,10 @@ registered tests after a clean Emscripten 6.0.8 rebuild. Batch 4A adds
 registered tests with the `Visibility` and `SkipAttribute` fixtures enabled for JS. Batch 4B adds
 `naming-and-docs.test.mjs`; its focused module passes all 3 cases after a clean local-generator
 Emscripten 6.0.8 rebuild, and the refreshed JavaScript gate passes all 69 registered tests.
+Batch 6A adds `external-types.test.mjs`; its focused module passes all 3 cases after a clean
+local-generator Emscripten 6.0.8 rebuild. External value objects, enums, accessor-backed
+collections, and cross-package extraction are covered through the existing `ExternalTypes`
+fixture and its separately supplied native headers and implementations.
 
 ## Generator Fixes Exercised
 
@@ -258,6 +263,14 @@ The first tests found several embind generation defects that are fixed in this c
 - Package-local JavaScript exports retain directory-based package paths, including underscore
   package components, while embind registrations use canonical full-path runtime names to avoid
   cross-package leaf-name collisions.
+- External-owned methods use typed adapter lambdas so native overloads that are not represented in
+  LimeIDL cannot make embind member-pointer registration ambiguous. External interface properties
+  use adapter getters, including a narrowly scoped const-cast for legacy non-const native getters;
+  generated wrappers do not mark their destructor `override` when an external base destructor is
+  non-virtual.
+- External accessor-backed collection fields use the JavaScript `emscripten::val` collection
+  conversion path. External getters that return values emit value-returning field adapters, which
+  avoids dangling references from temporary strings, vectors, and nested external structs.
 - TypeScript declaration imports are resolved relative to the declaring package directory, keeping
   same-package references local and correctly traversing between nested package directories.
 
@@ -303,7 +316,7 @@ directory argument to `node --test` as a module entry rather than a test collect
 
 ## Next Work
 
-The next iteration starts with Batch 5A declaration order and companion surfaces. The Node versions
+The next iteration starts with Batch 6B circular dependency coverage. The Node versions
 tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all
 treat a directory argument to `node --test` as a module entry rather than a test collection, so
 the harness passes explicit test-file paths.
@@ -692,6 +705,12 @@ paths while putting ownership of the native definition outside Gluecodium. Add a
 with a separately supplied native header and implementation, and verify both generated bindings
 and public package exports.
 
+Batch 6A is complete. The existing `ExternalTypes` fixture supplies the native header and
+implementation; no duplicate JS-only native fixture was needed. Runtime coverage is intentionally
+limited to external value types, enums, collections, and cross-package extraction. Abstract
+external classes and interfaces without fixture factories are compile and public-lookup surfaces,
+not JavaScript construction cases.
+
 #### Batch 6B - dependency ordering
 
 Feature: `CircularDependencies`.
@@ -752,6 +771,6 @@ separate JavaScript runtime contract exists.
 | 5C | StructsImmutable | passing; recursive emscripten::val adapters and nested immutable values |
 | 5D | InstanceInStruct | passing; nested class identity and nullable value-object fields |
 | 5E | CppConst, CppNoexcept | passing; qualifier-preserving interface proxies and focused runtime coverage |
-| 6A | ExternalTypes | not started |
+| 6A | ExternalTypes | passing; external value types, enums, collections, and cross-package extraction |
 | 6B | CircularDependencies | not started |
 | - | NoCache, Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |
