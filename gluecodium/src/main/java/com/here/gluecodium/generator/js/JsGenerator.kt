@@ -91,6 +91,7 @@ internal class JsGenerator : Generator {
     private lateinit var embindViewModelBuilder: JsEmbindViewModelBuilder
     private lateinit var embindFileGenerator: JsEmbindFileGenerator
     private lateinit var commonFileGenerator: JsCommonFileGenerator
+    private lateinit var inheritanceResolver: JsInheritanceResolver
 
     override val shortName = "js"
 
@@ -136,6 +137,7 @@ internal class JsGenerator : Generator {
             )
         conversions =
             EmbindConversionEmitter(embindNameResolver, cppNameCache, nameRules)
+        inheritanceResolver = JsInheritanceResolver(nameRules, cppNameCache)
         embindViewModelBuilder =
             JsEmbindViewModelBuilder(
                 internalNamespace = internalNamespace,
@@ -146,9 +148,9 @@ internal class JsGenerator : Generator {
                 cppNameCache = cppNameCache,
                 conversions = conversions,
                 resolveRegisterName = ::resolveRegisterName,
-                primaryBaseType = ::primaryBaseType,
-                secondaryParentMembers = ::secondaryParentMembers,
-                primaryInheritedOverloads = ::primaryInheritedOverloads,
+                primaryBaseType = inheritanceResolver::primaryBaseType,
+                secondaryParentMembers = inheritanceResolver::secondaryParentMembers,
+                primaryInheritedOverloads = inheritanceResolver::primaryInheritedOverloads,
                 isSupportedConstant = ::isSupportedConstant,
             )
         embindFileGenerator =
@@ -222,60 +224,6 @@ internal class JsGenerator : Generator {
             commonFileGenerator.generate(embindFilteredModel, jsFilteredModel, nameResolvers)
     }
 
-    /** Prefers an `open class` parent over a narrow interface as the single embind `base<>`. */
-    private fun primaryBaseOf(
-        type: com.here.gluecodium.model.lime.LimeType,
-        filteredModel: LimeModel,
-    ): String? =
-        primaryBaseType(type, filteredModel)
-            ?.let { cppNameCache.getFullyQualifiedName(it) }
-
-    private fun primaryBaseType(
-        type: com.here.gluecodium.model.lime.LimeType,
-        filteredModel: LimeModel,
-    ): LimeContainerWithInheritance? =
-        (type as? LimeContainerWithInheritance)?.parents
-            ?.mapNotNull { it.type.actualType as? LimeContainerWithInheritance }
-            ?.filter { filteredModel.referenceMap.containsKey(it.fullName) }
-            ?.minByOrNull { it is com.here.gluecodium.model.lime.LimeInterface }
-
-    private fun secondaryParentMembers(
-        type: com.here.gluecodium.model.lime.LimeType,
-        filteredModel: LimeModel,
-    ): Pair<List<LimeFunction>, List<LimeProperty>> {
-        val container = type as? LimeContainerWithInheritance ?: return emptyList<LimeFunction>() to emptyList()
-        val primaryBase = primaryBaseType(type, filteredModel)
-        val secondaryParents =
-            container.parents
-                .mapNotNull { it.type.actualType as? LimeContainerWithInheritance }
-                .filter { it !== primaryBase && filteredModel.referenceMap.containsKey(it.fullName) }
-        val functions =
-            secondaryParents
-                .flatMap { it.functions + it.inheritedFunctions }
-                .distinctBy { it.fullName }
-        val properties =
-            secondaryParents
-                .flatMap { it.properties + it.inheritedProperties }
-                .distinctBy { it.fullName }
-        return functions to properties
-    }
-
-    private fun primaryInheritedOverloads(
-        type: com.here.gluecodium.model.lime.LimeType,
-        filteredModel: LimeModel,
-    ): List<LimeFunction> {
-        val container = type as? LimeContainerWithInheritance ?: return emptyList()
-        val primaryBase = primaryBaseType(type, filteredModel) ?: return emptyList()
-        val ownNames = container.functions
-            .filterNot { it.isStatic || it.isConstructor }
-            .map { nameRules.getName(it) }
-            .toSet()
-        if (ownNames.isEmpty()) return emptyList()
-        return (primaryBase.functions + primaryBase.inheritedFunctions)
-            .filter { !it.isStatic && nameRules.getName(it) in ownNames }
-            .distinctBy { it.fullName }
-    }
-
     private fun sanitizeRegistrationName(typeName: String) =
         typeName.replace(Regex("[^A-Za-z0-9_]"), "_").trim('_').ifEmpty { "Type" }
 
@@ -290,9 +238,9 @@ internal class JsGenerator : Generator {
         filteredModel: LimeModel,
     ): List<Map<String, Any>> {
         val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return emptyList()
-        val (secondaryFunctions, _) = secondaryParentMembers(type, filteredModel)
+        val (secondaryFunctions, _) = inheritanceResolver.secondaryParentMembers(type, filteredModel)
         val functions =
-            (primaryInheritedOverloads(type, filteredModel) +
+            (inheritanceResolver.primaryInheritedOverloads(type, filteredModel) +
                 container.functions.filterNot { it.isStatic || it.isConstructor } +
                 secondaryFunctions)
                 .distinctBy { it.fullName }
