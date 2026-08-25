@@ -25,6 +25,7 @@ import com.here.gluecodium.generator.common.NameResolver
 import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeClass
 import com.here.gluecodium.model.lime.LimeComment
+import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeException
 import com.here.gluecodium.model.lime.LimeInterface
@@ -73,10 +74,15 @@ internal class JsStubGenerator(
         )
         val container = limeElement as? com.here.gluecodium.model.lime.LimeContainer
         if (container != null) {
+            val inheritedContainer = container as? LimeContainerWithInheritance
+            val functions = (container.functions + inheritedContainer?.inheritedFunctions.orEmpty())
+                .distinctBy { it.fullName }
+            val properties = (container.properties + inheritedContainer?.inheritedProperties.orEmpty())
+                .distinctBy { it.fullName }
             data["constructors"] = container.constructors.map(::functionViewModel)
-            data["functions"] = container.functions.map(::functionViewModel)
-            data["hasStaticFunctions"] = container.functions.any { it.isStatic && !it.isConstructor }
-            data["properties"] = container.properties.map {
+            data["functions"] = functions.map(::functionViewModel)
+            data["hasStaticFunctions"] = functions.any { it.isStatic && !it.isConstructor }
+            data["properties"] = properties.map {
                 mapOf(
                     "jsName" to nameRules.getName(it),
                     "jsType" to jsNameResolver.resolveName(it.typeRef),

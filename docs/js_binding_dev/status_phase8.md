@@ -1,7 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 3D equality coverage complete; native lambda-return support remains deferred;
-the complete JavaScript functional gate passes
+**Status**: Batch 3E multiple-inheritance coverage complete; native lambda-return support remains
+deferred; the complete JavaScript functional gate passes
 
 **Date**: 2026-08-25
 
@@ -95,6 +95,26 @@ call inherited parent overloads on derived instances. Existing
 `InheritanceJavaScriptDependencies.lime`, `InheritanceOverloads.lime`, and `MethodOverloads.lime`
 files remain unchanged.
 
+#### Batch 3E - multiple inheritance (complete)
+
+Feature: `MultipleInheritance`.
+
+The JavaScript functional build now enables the existing multiple-inheritance fixture and registers
+`multiple-inheritance.test.mjs`. The focused tests cover:
+
+- `MultiClass` with `OpenClass` as the primary Embind `base<>` and `NarrowInterface` members
+  flattened onto the derived binding;
+- `MultiInterface` with `RegularInterface` as the primary Embind `base<>` and
+  `NarrowInterface` methods and properties flattened onto the derived binding;
+- native dynamic-cast detection, direct secondary-interface views, and shared-pointer identity
+  through a supported narrow-interface round trip.
+
+Embind supports only one registered `base<>` in this generator. Secondary parents are therefore
+represented by direct derived-type member registrations, not by a second Embind base conversion.
+The fixture's helper that returns a `NarrowInterface` from a `MultiInterface` cannot be called from
+JavaScript because Embind has no registered smart-pointer conversion for that secondary-base cast;
+that unsupported pointer conversion is deliberately outside this batch's contract.
+
 ## Verification
 
 With Emscripten 6.0.8 and Node.js available:
@@ -149,7 +169,10 @@ referential equality for equatable classes and interfaces. The JS overload dispa
 public struct field names to distinguish same-arity plain-object overloads.
 The focused `method-overloading.test.mjs` module passes both inherited-interface and
 inherited-class cases. The complete `unit_tests_javascript` CTest target passes with all registered
-JavaScript functional tests.
+JavaScript functional tests. The focused `multiple-inheritance.test.mjs` module passes all three
+cases after a clean local-generator rebuild, including flattened secondary methods and properties
+on both classes and interfaces. The full `unit_tests_javascript` CTest target passes with all 52
+registered tests.
 
 ## Generator Fixes Exercised
 
@@ -185,6 +208,9 @@ The first tests found several embind generation defects that are fixed in this c
 - Inherited and same-arity instance overloads use private Embind registration names plus generated
   prototype type dispatchers. Derived bindings explicitly register primary inherited overloads so
   parent methods remain callable through derived instances.
+- Multiple-inheritance bindings select one primary Embind `base<>`, flatten secondary-parent
+  methods and properties onto the derived registration, and use raw-pointer lambda adapters for
+  flattened interface methods. JavaScript declarations include inherited functions and properties.
 - nested C++ type references in collection converters and external enum values use fully qualified
   C++ names; local CMake builds propagate owner-target include directories to the JS module target.
 - Locale adapters convert BCP-47 strings through the generated native `Locale` type, preserving
@@ -232,6 +258,9 @@ The first tests found several embind generation defects that are fixed in this c
 - Register every new Node test in both parts of `functional-tests/functional/js/CMakeLists.txt`:
   `configure_file` copies the test into the build tree, while the `add_test` file list is what executes
   it.
+- Embind's single `base<>` registration does not provide smart-pointer conversions through a
+  secondary C++ base. Multiple-inheritance coverage must distinguish flattened member dispatch
+  and native cast checks from unsupported secondary-base pointer returns.
 
 ## Batch 1 Result
 
@@ -457,35 +486,61 @@ Feature: `Nesting`.
 Run after interface and lambda conversions. Its fixtures include nested interfaces, classes,
 structs, enums, typedefs, and lambdas exposed through interface-returned values.
 
-#### Batch 4 - attributes, naming, and structural edges
+#### Batch 4A - attributes, naming, and package boundaries
 
 Features: `Visibility`, `SkipAttribute`, `Comments`, `PlatformNames`, `EscapedNames`,
-`UnderscorePackage`, `CrossPackageNameClash`, `DeclarationOrder`, `StructsWithCompanion`,
-`FieldConstructors`, `StructsInTypes`, `StructsImmutable`, `InstanceInStruct`, `CppConst`,
-`CppNoexcept`.
+`UnderscorePackage`, `CrossPackageNameClash`.
 
-- Verify filtering and naming correctness: `@Js(Skip)`/`@EnableIf`, internal visibility, JSDoc,
-  keyword escaping, package paths, and duplicate leaf names across packages.
-- `FieldConstructors` and `StructsImmutable` now use the generated `emscripten::val` adapter path
-  for immutable structs rather than relying on default-constructible embind `value_object`s.
-- `InstanceInStruct` verifies shared-pointer field conversion inside value objects.
-- `CppConst` and `CppNoexcept` can join this batch because the qualifiers are transparent to embind
-  signatures.
+This gate verifies that JavaScript generation preserves the model's visibility and naming
+contract before adding more structural fixtures. Cover `@Js(Skip)` and `@EnableIf`, internal
+declarations, generated JSDoc, platform-specific names, JavaScript keyword escaping, package
+paths, and duplicate leaf names from different packages. The focused test should exercise both
+the generated public package facade and the declarations used to compile it, so a name collision
+cannot be hidden by an embind-only internal name.
 
-#### Batch 5 - external types, circular dependencies, and deferred items
+#### Batch 4B - declaration and struct edges
 
-Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `FullName`.
+Features: `DeclarationOrder`, `StructsWithCompanion`, `FieldConstructors`, `StructsInTypes`,
+`StructsImmutable`, `InstanceInStruct`, `CppConst`, `CppNoexcept`.
 
-- `ExternalTypes` binds pre-existing C++ types and requires the generator to emit bindings for types
-  it does not define; run it only after ordinary classes, structs, interfaces, and package facade
-  exports are stable.
-- `CircularDependencies` verifies include order and header resolution in generated embind sources.
-- `NoCache` verifies that regenerated output and the `.wasm` rebuild remain consistent.
-- `Serialization` is Android-only today; keep it deferred unless a JS serialization contract is
-  defined.
-- `FullName` is Dart-only today; enable it only if JS naming-rule coverage needs it.
-- Defer `Async`, `WeakListeners`, and platform-specific external-type fixtures until their runtime
-  capabilities are available.
+Run this gate after package and name resolution are stable. Verify declaration-order independence,
+companion-generated APIs, field constructors, structs nested in method types, immutable struct
+construction and return conversion, and shared-pointer instance fields inside value objects.
+`CppConst` and `CppNoexcept` are compile-contract checks: the generated embind signatures must
+accept the qualified native methods without changing their JavaScript surface. The immutable
+struct cases must continue to use the generated `emscripten::val` adapter path rather than relying
+on default-constructible embind `value_object`s.
+
+#### Batch 5A - external type bindings
+
+Feature: `ExternalTypes`.
+
+Bind pre-existing C++ classes, structs, enums, and collection element types without generating
+their native definitions. This gate belongs after ordinary classes, value objects, interfaces,
+and package facade exports are stable because external declarations exercise all of those lookup
+paths while putting ownership of the native definition outside Gluecodium. Add a focused fixture
+with a separately supplied native header and implementation, and verify both generated bindings
+and public package exports.
+
+#### Batch 5B - dependency ordering
+
+Feature: `CircularDependencies`.
+
+`CircularDependencies` verifies that generated embind sources resolve mutually dependent headers,
+forward declarations, and registration order without relying on incidental file ordering.
+
+`NoCache` is outside the initial JavaScript POC. It is a runtime identity policy rather than a
+generated-output cache check: repeated native handles must produce distinct JavaScript wrappers,
+and JavaScript-created interface wrappers must not be reused for native identity. The current JS
+runtime intentionally canonicalizes embind handles and the generator has no `NoCache`-specific
+path, so enabling the existing fixture would require a separate wrapper-cache and ownership
+design. Revisit it only after ordinary class and interface identity behavior is stable.
+
+`Serialization` and `FullName` are outside the JavaScript binding plan. Serialization is an
+Android-specific contract rather than a JavaScript/embind capability, and `FullName` is a
+Dart-specific naming option; neither should be enabled or tracked as a JavaScript functional gate.
+`Async`, `WeakListeners`, and platform-specific external-type fixtures remain deferred until a
+separate JavaScript runtime contract exists.
 
 ### Per-batch workflow
 
@@ -517,8 +572,10 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | 3B | MethodOverloading | passing; isolated JavaScript inherited-overload fixture |
 | 3C | Errors, Nullable | passing; error envelopes, interface error propagation, and nullable values |
 | 3D | Equatable | passing; value equality, same-hash, and referential equality |
-| 3E | MultipleInheritance | blocked on 3A |
+| 3E | MultipleInheritance | passing; primary base, flattened secondary members, and supported identity checks |
 | 3F | Nesting | blocked on interface and lambda gates |
-| 4 | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash, DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
-| 5 | ExternalTypes, CircularDependencies, NoCache, Serialization, FullName | not started |
-| - | Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |
+| 4A | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash | not started |
+| 4B | DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
+| 5A | ExternalTypes | not started |
+| 5B | CircularDependencies | not started |
+| - | NoCache, Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |

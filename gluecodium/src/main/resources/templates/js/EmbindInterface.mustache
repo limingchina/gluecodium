@@ -102,6 +102,14 @@ void {{registerName}}(void) {
 {{/needsAdapter}}
 {{/isStatic}}
 {{^isStatic}}
+{{#isFlattened}}
+    .function<{{flattenedFunctionSignature}}>("{{embindName}}", []({{flattenedLambdaParameters}}) -> {{adapterReturnType}} {
+        {{adapterPreparations}}
+        {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
+        {{adapterReturnConversion}}
+    }, allow_raw_pointer<arg<0>>())
+{{/isFlattened}}
+{{^isFlattened}}
 {{#needsAdapter}}
     .function<{{adapterReturnType}}({{cppFullName}}*{{#hasAdapterParameters}}, {{adapterSignatureParameters}}{{/hasAdapterParameters}})>("{{embindName}}", []({{cppFullName}}* self{{#hasAdapterParameters}}, {{adapterParameters}}{{/hasAdapterParameters}}) -> {{adapterReturnType}} {
         {{adapterPreparations}}
@@ -112,6 +120,7 @@ void {{registerName}}(void) {
 {{^needsAdapter}}
     .function("{{embindName}}", &{{cppFullName}}::{{cppName}}, pure_virtual())
 {{/needsAdapter}}
+{{/isFlattened}}
 {{/isStatic}}
 {{/methods}}
 {{#properties}}
