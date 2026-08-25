@@ -513,49 +513,77 @@ lambda returns remain deferred as documented in Batch 2C.
 
 Features: `Visibility`, `SkipAttribute`.
 
-Isolate the JavaScript dependency closure before adding `js` to these fixtures. Verify that internal
-declarations are available for generated type references but are not exported by the public package
-facade. Verify `@Js(Skip)`, `@Js(EnableIf)`, and predefined skip tags in both TypeScript declarations
-and embind registrations. Test enabled and disabled tag configurations; the disabled case must not
-leave stale declarations or private runtime exports behind.
+Isolate the JavaScript dependency closure before adding `js` to these fixtures. Verify internal
+declarations and platform visibility in generated TypeScript declarations and embind registrations.
+Verify `@Js(Skip)`, `@Js(EnableIf)`, and predefined skip tags with enabled and disabled tag
+configurations. A skipped declaration must not remain callable through a private runtime export, and
+an internal declaration must remain available for generated type references without being exported
+by the public package facade.
 
-#### Batch 4B - documentation, naming, and package identity
+#### Batch 4B - documentation and public naming
 
-Features: `Comments`, `PlatformNames`, `EscapedNames`, `UnderscorePackage`,
-`CrossPackageNameClash`.
+Features: `Comments`, `PlatformNames`, `EscapedNames`.
 
 Verify that Lime documentation, parameter and return comments, links, and multiline text produce
-valid JSDoc in generated `.d.ts` files. Verify that `@Js(Name = ...)`, JavaScript keyword escaping,
-and underscore-prefixed package paths preserve the intended public names while generated C++
-bindings resolve the native declarations. Equal public leaf names from different packages must
-remain distinct in the internal embind runtime and be exported from the correct package facade.
-Inspect both runtime exports and generated `.d.ts` output; a successful compile alone is
+valid JSDoc in generated `.d.ts` files. Verify that `@Js(Name = ...)` and JavaScript/TypeScript
+keyword escaping preserve the intended public names while generated C++ bindings resolve the native
+declarations. Inspect generated `.d.ts` output and runtime exports; a successful compile alone is
 insufficient.
 
-#### Batch 5A - declaration and struct-shape edges
+#### Batch 4C - package identity and collisions
 
-Features: `DeclarationOrder`, `StructsWithCompanion`, `FieldConstructors`, `StructsInTypes`.
+Features: `UnderscorePackage`, `CrossPackageNameClash`.
+
+Verify that underscore-prefixed package paths remain valid module paths and do not collide with
+generated helper names. Equal public leaf names from different packages must remain distinct in the
+internal embind runtime and be exported from the correct package facade. Require checks against both
+runtime exports and generated `.d.ts` output.
+
+#### Batch 5A - declaration order and companion surfaces
+
+Features: `DeclarationOrder`, `StructsWithCompanion`.
 
 Verify that forward references and embind registration order do not depend on Lime declaration
 order. Verify that companion-generated constants and functions are attached to the owning
-JavaScript export, and that structs used through type collections and nested method signatures use
-the required recursive JavaScript value conversion. Determine whether `FieldConstructors` has a
-meaningful JavaScript surface; if JavaScript uses object literals or adapters instead, record the
-legacy fixture as intentionally unsupported rather than enabling it unchanged. Require clean
-generation, Emscripten compilation, and a focused Node test for the supported surfaces.
+JavaScript export rather than emitted only under an internal embind name. Require clean generation,
+Emscripten compilation, and a focused Node test for both surfaces.
 
-#### Batch 5B - immutable values and native qualifiers
+#### Batch 5B - constructors and struct type shapes
 
-Features: `StructsImmutable`, `InstanceInStruct`, `CppConst`, `CppNoexcept`.
+Features: `FieldConstructors`, `StructsInTypes`.
 
-Keep the existing immutable-struct plain-object, nested-field, and returned-value checks as the
-baseline. Verify shared-pointer class fields inside value objects and preserve wrapper identity.
-Immutable fields must continue through the generated `emscripten::val` adapter path rather than
-default-constructible embind `value_object` registration. Isolate only the `CppConst` and
-`CppNoexcept` methods needed to prove that const-qualified, noexcept-qualified, inherited, and
+Determine whether `FieldConstructors` has a meaningful JavaScript surface. If JavaScript uses object
+literals or adapters instead of generated field constructors, record the legacy fixture as
+intentionally unsupported rather than enabling it unchanged. Verify structs used through type
+collections and nested method signatures, including recursive JavaScript value conversion where a
+direct embind field pointer is unavailable. Require a focused test for the supported constructor
+and struct-in-type surfaces.
+
+#### Batch 5C - immutable struct values
+
+Feature: `StructsImmutable`.
+
+Keep the existing plain-object input, nested-field conversion, and returned-value checks as the
+baseline. Immutable and nested immutable fields must continue through the generated
+`emscripten::val` adapter path rather than default-constructible embind `value_object` registration.
+Require runtime coverage plus a clean generation and Emscripten compile.
+
+#### Batch 5D - instances inside value objects
+
+Feature: `InstanceInStruct`.
+
+Verify shared-pointer class fields inside value objects and confirm that wrapper identity is
+preserved through the round trip. Keep this separate from immutable struct coverage because it
+exercises class ownership and canonicalization in addition to value conversion.
+
+#### Batch 5E - native method qualifiers
+
+Features: `CppConst`, `CppNoexcept`.
+
+Isolate only the methods needed to prove that const-qualified, noexcept-qualified, inherited, and
 interface-dispatched declarations compile through embind and retain the expected JavaScript
-surface. Record this batch as passing only after runtime coverage and the qualifier compile checks
-both succeed.
+surface. These are compile-focused checks unless the fixture adds distinct runtime behavior; do
+not expand them into a native qualifier model or duplicate the non-JS platform tests.
 
 #### Batch 6A - external type bindings
 
@@ -621,9 +649,13 @@ separate JavaScript runtime contract exists.
 | 3E | MultipleInheritance | passing; primary base, flattened secondary members, and supported identity checks |
 | 3F | Nesting | passing; nested declarations, interface dispatch, and nested runtime conversions |
 | 4A | Visibility, SkipAttribute | not started |
-| 4B | Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash | not started |
-| 5A | DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes | not started |
-| 5B | StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
+| 4B | Comments, PlatformNames, EscapedNames | not started |
+| 4C | UnderscorePackage, CrossPackageNameClash | not started |
+| 5A | DeclarationOrder, StructsWithCompanion | not started |
+| 5B | FieldConstructors, StructsInTypes | not started |
+| 5C | StructsImmutable | not started |
+| 5D | InstanceInStruct | not started |
+| 5E | CppConst, CppNoexcept | not started |
 | 6A | ExternalTypes | not started |
 | 6B | CircularDependencies | not started |
 | - | NoCache, Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |
