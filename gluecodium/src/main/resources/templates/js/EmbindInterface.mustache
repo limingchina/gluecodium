@@ -59,16 +59,16 @@ public:
     }
 
 {{#wrapperMethods}}
-    {{returnType}} {{cppName}}({{parameters}}){{#isConst}} const{{/isConst}} override {
+    {{returnType}} {{cppName}}({{parameters}}){{#isConst}} const{{/isConst}}{{#isNoexcept}} noexcept{{/isNoexcept}} override {
         {{threadedCall}}
     }
 {{/wrapperMethods}}
 {{#wrapperProperties}}
-    {{returnType}} {{cppGetterName}}() const override {
+    {{returnType}} {{cppGetterName}}() const{{#isNoexcept}} noexcept{{/isNoexcept}} override {
         {{threadedGetter}}
     }
 {{#hasSetter}}
-    void {{cppSetterName}}({{setterParameter}}) override {
+    void {{cppSetterName}}({{setterParameter}}){{#isNoexcept}} noexcept{{/isNoexcept}} override {
         {{threadedSetter}}
     }
 {{/hasSetter}}

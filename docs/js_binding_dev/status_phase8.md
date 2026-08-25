@@ -673,6 +673,14 @@ interface-dispatched declarations compile through embind and retain the expected
 surface. These are compile-focused checks unless the fixture adds distinct runtime behavior; do
 not expand them into a native qualifier model or duplicate the non-JS platform tests.
 
+Batch 5E is complete. `CppConst` and `CppNoexcept` are enabled for JavaScript and register
+`cpp-qualifiers.test.mjs`. The focused module covers const-qualified class and interface dispatch,
+noexcept inherited class and interface methods, properties, and a static property. The embind
+interface proxy now propagates `CppNoexcept` to generated method, getter, and setter overrides,
+allowing the native `noexcept` override and `static_assert` checks to compile. The focused module
+passes both cases, and the complete `unit_tests_javascript` CTest gate passes after a
+local-generator Emscripten 6.0.8 rebuild.
+
 #### Batch 6A - external type bindings
 
 Feature: `ExternalTypes`.
@@ -743,7 +751,7 @@ separate JavaScript runtime contract exists.
 | 5B | FieldConstructors, StructsInTypes | passing; recursive struct-in-type conversion; FieldConstructors intentionally deferred |
 | 5C | StructsImmutable | passing; recursive emscripten::val adapters and nested immutable values |
 | 5D | InstanceInStruct | passing; nested class identity and nullable value-object fields |
-| 5E | CppConst, CppNoexcept | not started |
+| 5E | CppConst, CppNoexcept | passing; qualifier-preserving interface proxies and focused runtime coverage |
 | 6A | ExternalTypes | not started |
 | 6B | CircularDependencies | not started |
 | - | NoCache, Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |

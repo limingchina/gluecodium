@@ -26,6 +26,7 @@ import com.here.gluecodium.generator.cpp.CppSignatureResolver
 import com.here.gluecodium.model.lime.LimeAttributeType.CPP
 import com.here.gluecodium.model.lime.LimeAttributeValueType.ACCESSORS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.CONST
+import com.here.gluecodium.model.lime.LimeAttributeValueType.NOEXCEPT
 import com.here.gluecodium.model.lime.LimeBasicType
 import com.here.gluecodium.model.lime.LimeClass
 import com.here.gluecodium.model.lime.LimeConstant
@@ -199,6 +200,7 @@ internal class JsEmbindViewModelBuilder(
             "isVoid" to function.returnType.isVoid,
             "needsAdapter" to needsAdapter,
             "isConst" to function.attributes.have(CPP, CONST),
+            "isNoexcept" to function.attributes.have(CPP, NOEXCEPT),
             "isThrown" to (exception != null),
         )
     }
@@ -229,6 +231,7 @@ internal class JsEmbindViewModelBuilder(
             "cppSetterName" to cppNameCache.getSetterName(property),
             "setterParameter" to setterParameter,
             "hasSetter" to (property.setter != null),
+            "isNoexcept" to property.attributes.have(CPP, NOEXCEPT),
             "threadedGetter" to threadedGetter,
             "threadedSetter" to threadedSetter,
         )

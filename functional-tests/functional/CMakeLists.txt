@@ -499,13 +499,13 @@ feature(SkipAttribute cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/EnableIfEnabled.cpp
 )
 
-feature(CppConst cpp android android-kotlin swift dart SOURCES
+feature(CppConst cpp android android-kotlin swift dart js SOURCES
     input/lime/CppConstMethods.lime
 
     input/src/cpp/CppConstMethods.cpp
 )
 
-feature(CppNoexcept cpp android android-kotlin swift dart SOURCES
+feature(CppNoexcept cpp android android-kotlin swift dart js SOURCES
     input/lime/CppNoexceptMethods.lime
 
     input/src/cpp/CppNoexceptMethods.cpp
