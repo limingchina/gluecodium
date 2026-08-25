@@ -1265,28 +1265,10 @@ internal class JsGenerator : Generator {
     private fun sanitizeRegistrationName(typeName: String) =
         typeName.replace(Regex("[^A-Za-z0-9_]"), "_").trim('_').ifEmpty { "Type" }
 
-    private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {
-        var current = element
-        while (current.path.hasParent) {
-            val parent = limeReferenceMap[current.path.parent.toString()] as? LimeNamedElement ?: return current
-            current = parent
-        }
-        return current
-    }
-
     private fun resolveRegisterName(limeElement: LimeNamedElement): String {
         val name = nameRules.getFlattenedName(limeElement)
         val packagePath = limeElement.path.head.joinToString("_")
         return if (packagePath.isNotEmpty()) "${packagePath}_$name" else name
-    }
-
-    private fun embindPublicName(type: com.here.gluecodium.model.lime.LimeType): String {
-        val jsName = nameRules.getName(type)
-        return if (jsName in setOf("InternalError", "BindingError", "UnboundTypeError")) {
-            "${resolveRegisterName(type)}Type"
-        } else {
-            jsName
-        }
     }
 
     private fun instanceOverloadGroups(
