@@ -90,6 +90,7 @@ internal class JsGenerator : Generator {
     private lateinit var conversions: EmbindConversionEmitter
     private lateinit var embindViewModelBuilder: JsEmbindViewModelBuilder
     private lateinit var embindFileGenerator: JsEmbindFileGenerator
+    private lateinit var commonFileGenerator: JsCommonFileGenerator
 
     override val shortName = "js"
 
@@ -159,6 +160,26 @@ internal class JsGenerator : Generator {
                 embindViewModelBuilder = embindViewModelBuilder,
                 resolveRegisterName = ::resolveRegisterName,
             )
+        commonFileGenerator =
+            JsCommonFileGenerator(
+                internalNamespace = internalNamespace,
+                referenceMap = limeReferenceMap,
+                cppNameRules = cppNameRules,
+                embindNameResolver = embindNameResolver,
+                requiresJsAdapter = conversions::requiresJsAdapter,
+                collectEmbindTypes = embindFileGenerator::collectTypes,
+                resolveRegisterName = ::resolveRegisterName,
+                nameRules = nameRules,
+                jsModuleName = jsModuleName,
+                emitTypeScriptStubs = emitTypeScriptStubs,
+                isSupportedConstant = ::isSupportedConstant,
+                isCppSkipped = ::isCppSkipped,
+                propertyAdapterName = embindViewModelBuilder::propertyAdapterName,
+                overloadRuntimeName = embindViewModelBuilder::overloadRuntimeName,
+                structFunctionRuntimeName = embindViewModelBuilder::structFunctionRuntimeName,
+                overloadPredicate = embindViewModelBuilder::overloadPredicate,
+                instanceOverloadGroups = ::instanceOverloadGroups,
+            )
 
         val nameResolvers =
             mapOf(
@@ -198,7 +219,7 @@ internal class JsGenerator : Generator {
         }
 
         return stubFiles + embindFiles +
-            generateCommonFiles(embindFilteredModel, jsFilteredModel, nameResolvers)
+            commonFileGenerator.generate(embindFilteredModel, jsFilteredModel, nameResolvers)
     }
 
     /** Prefers an `open class` parent over a narrow interface as the single embind `base<>`. */
@@ -255,127 +276,6 @@ internal class JsGenerator : Generator {
             .distinctBy { it.fullName }
     }
 
-    private fun generateCommonFiles(
-        filteredModel: LimeModel,
-        jsFilteredModel: LimeModel,
-        nameResolvers: Map<String, NameResolver>,
-    ): List<GeneratedFile> {
-        // Module init: aggregates every per-top-level-element register_* call inside one
-        // EMSCRIPTEN_BINDINGS block, in dependency order (bases before derived types).
-        val topLevelBoundTypes =
-            filteredModel.topElements
-                .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
-                .filter { it !is com.here.gluecodium.model.lime.LimeTypeAlias && it !is LimeLambda }
-        val boundTypes = topLevelBoundTypes.flatMap(embindFileGenerator::collectTypes)
-        val boundTypeNames = boundTypes.map(::resolveRegisterName).toSet()
-        val registerNameToDeps =
-            boundTypes.associate { type ->
-                val registerName = resolveRegisterName(type)
-                val nestedTypeDeps =
-                    if (type in topLevelBoundTypes) {
-                        embindFileGenerator.collectTypes(type).drop(1).map(::resolveRegisterName)
-                    } else {
-                        emptyList()
-                    }
-                val parentDeps =
-                    (type as? LimeContainerWithInheritance)?.parents
-                        ?.mapNotNull { it.type.actualType }
-                        ?.map(::resolveRegisterName)
-                        .orEmpty()
-                registerName to (nestedTypeDeps + parentDeps)
-                    .filter { it != registerName && it in boundTypeNames }
-                    .distinct()
-            }
-        val genericRegistrations =
-            JsGenericRegistrationCollector(
-                referenceMap = limeReferenceMap,
-                cppNameRules = cppNameRules,
-                internalNamespace = internalNamespace,
-                embindNameResolver = embindNameResolver,
-                requiresJsAdapter = conversions::requiresJsAdapter,
-                collectEmbindTypes = embindFileGenerator::collectTypes,
-            ).collect(filteredModel)
-        val moduleInitContent =
-            TemplateEngine.render(
-                "js/EmbindModuleInit",
-                mapOf(
-                    "moduleName" to jsModuleName,
-                    "registerFunctions" to topologicalSort(registerNameToDeps).map { mapOf("name" to it) },
-                    "genericRegistrations" to genericRegistrations.entries,
-                    "genericRegistrationIncludes" to genericRegistrations.includes,
-                    "needsUnorderedSet" to containsNullableSet(filteredModel),
-                    "localeTypeName" to embindNameResolver.resolveName(TypeId.LOCALE),
-                    "localeInclude" to (internalNamespace + "Locale.h").joinToString("/"),
-                ),
-                nameResolvers,
-            )
-        val wrapperTypeNames =
-            filteredModel.topElements
-                .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
-                .flatMap(embindFileGenerator::collectTypes)
-                .filter { it is LimeClass || it is LimeInterface }
-                .map { nameRules.getEmbindRuntimeName(it) }
-                .distinct()
-        val wrapperTypes =
-            wrapperTypeNames.mapIndexed { index, name ->
-                mapOf("name" to name, "last" to (index == wrapperTypeNames.lastIndex))
-            }
-        val wrapperRuntimeContent =
-            TemplateEngine.render(
-                "js/JsWrapperRuntime",
-                mapOf("wrapperTypes" to wrapperTypes),
-                nameResolvers,
-            )
-        val moduleRuntimeContent =
-            TemplateEngine.render(
-                "js/JsModuleRuntime",
-                mapOf("moduleFileName" to jsModuleName),
-                nameResolvers,
-            )
-        val packageFiles =
-            JsPackageGenerator(
-                nameRules = nameRules,
-                jsModuleName = jsModuleName,
-                emitTypeScriptStubs = emitTypeScriptStubs,
-                nameResolvers = nameResolvers,
-                collectEmbindTypes = embindFileGenerator::collectTypes,
-                isSupportedConstant = ::isSupportedConstant,
-                isCppSkipped = ::isCppSkipped,
-                propertyAdapterName = embindViewModelBuilder::propertyAdapterName,
-                overloadRuntimeName = embindViewModelBuilder::overloadRuntimeName,
-                structFunctionRuntimeName = embindViewModelBuilder::structFunctionRuntimeName,
-                overloadPredicate = embindViewModelBuilder::overloadPredicate,
-                instanceOverloadGroups = ::instanceOverloadGroups,
-            ).generate(jsFilteredModel)
-        return packageFiles + listOf(
-            GeneratedFile(moduleInitContent, JsNameRules.MODULE_INIT_FILE),
-            GeneratedFile(wrapperRuntimeContent, JsNameRules.WRAPPER_RUNTIME_FILE),
-            GeneratedFile(moduleRuntimeContent, JsNameRules.MODULE_RUNTIME_FILE),
-        )
-    }
-
-    private fun containsNullableSet(filteredModel: LimeModel): Boolean {
-        fun contains(typeRef: com.here.gluecodium.model.lime.LimeTypeRef): Boolean {
-            val type = typeRef.type
-            if (typeRef.isNullable && type.actualType is LimeSet) return true
-            return type.childTypes.any(::contains)
-        }
-
-        return filteredModel.topElements
-            .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
-            .flatMap(embindFileGenerator::collectTypes)
-            .filterIsInstance<com.here.gluecodium.model.lime.LimeContainer>()
-            .any { container ->
-                container.functions.any { function ->
-                    function.parameters.any { contains(it.typeRef) } || contains(function.returnType.typeRef)
-                } ||
-                    container.properties.any { contains(it.typeRef) } ||
-                    container.constants.any { contains(it.typeRef) } ||
-                    container.constructors.any { constructor -> constructor.parameters.any { contains(it.typeRef) } } ||
-                    (container as? LimeStruct)?.fields?.any { contains(it.typeRef) } == true
-            }
-    }
-
     private fun sanitizeRegistrationName(typeName: String) =
         typeName.replace(Regex("[^A-Za-z0-9_]"), "_").trim('_').ifEmpty { "Type" }
 
@@ -410,22 +310,6 @@ internal class JsGenerator : Generator {
                     },
                 )
             }
-    }
-
-    // Topologically sorts register names so that every base class appears before its derived
-    // classes. A stable sort is used for ties so the output stays deterministic.
-    private fun topologicalSort(parents: Map<String, List<String>>): List<String> {
-        val visited = mutableSetOf<String>()
-        val result = mutableListOf<String>()
-
-        fun visit(name: String) {
-            if (name in visited) return
-            visited.add(name)
-            parents[name].orEmpty().forEach { visit(it) }
-            result.add(name)
-        }
-        parents.keys.sorted().forEach { visit(it) }
-        return result
     }
 
     private fun selectStubTemplate(limeElement: LimeNamedElement) =
