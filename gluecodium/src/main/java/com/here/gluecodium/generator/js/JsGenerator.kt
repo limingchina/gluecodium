@@ -531,166 +531,206 @@ internal class JsGenerator : Generator {
         isPureVirtual: Boolean = false,
         forceOverloadAdapter: Boolean = false,
     ): Map<String, Any> {
-        val isOverloaded = forceOverloadAdapter || isOverloadedInJsBindings(function)
-        val embindName =
-            if (isOverloaded && (function.isStatic && isJsOverloaded(function) || !function.isStatic)) {
-                overloadRuntimeName(function)
-            } else {
-                nameRules.getName(function)
-            }
-        val returnType = function.returnType.typeRef
-        val returnActualType = returnType.type.actualType
-        val thrownException = function.exception
-        val thrownErrorIsEnum =
-            thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
-        val needsAdapter =
-            isOverloaded ||
-            thrownException != null ||
-                conversions.returnsViaVal(returnType) ||
-                function.parameters.any { parameter ->
-                    conversions.hasCppStringOverride(parameter.typeRef) || conversions.needsValParameterAdapter(parameter.typeRef)
-                }
-        return mapOf(
+        val context =
+            FunctionViewModelContext(
+                function = function,
+                isOverloaded = forceOverloadAdapter || isOverloadedInJsBindings(function),
+                returnType = function.returnType.typeRef,
+                thrownException = function.exception,
+            )
+        val data = mutableMapOf<String, Any>(
             "model" to function,
             "jsName" to nameRules.getName(function),
-            "embindName" to embindName,
+            "embindName" to overloadEmbindName(context),
             "cppName" to embindNameResolver.resolveName(function),
             "isConstructor" to function.isConstructor,
             "isStatic" to function.isStatic,
-            "needsAdapter" to needsAdapter,
+            "needsAdapter" to needsFunctionAdapter(context),
             "adapterReturnType" to
-                if (thrownException != null || conversions.returnsViaVal(returnType)) {
+                if (context.needsValReturn) {
                     "emscripten::val"
                 } else {
-                    embindNameResolver.resolveName(returnType)
+                    embindNameResolver.resolveName(context.returnType)
                 },
-            "isThrown" to (thrownException != null),
-            "thrownErrorIsEnum" to thrownErrorIsEnum,
-            "returnIsNullable" to returnType.isNullable,
-            "returnIsList" to (returnActualType is LimeList),
-            "returnIsMap" to (returnActualType is LimeMap),
+            "isThrown" to context.isThrown,
+            "thrownErrorIsEnum" to context.thrownErrorIsEnum,
+            "returnIsNullable" to context.returnType.isNullable,
+            "returnIsList" to (context.returnActualType is LimeList),
+            "returnIsMap" to (context.returnActualType is LimeMap),
             // Overloads are registered with explicit signatures via select_overload.
-            "isOverloaded" to isOverloaded,
+            "isOverloaded" to context.isOverloaded,
             "isFlattened" to isFlattened,
             "isPureVirtual" to isPureVirtual,
             "parameters" to function.parameters.mapIndexed { index, parameter ->
-                val actualType = parameter.typeRef.type.actualType
-                mapOf(
-                    "model" to parameter,
-                    "jsName" to nameRules.getName(parameter),
-                    "cppType" to embindNameResolver.resolveName(parameter.typeRef),
-                    "adapterType" to
-                        if (conversions.hasCppStringOverride(parameter.typeRef)) {
-                            "::std::string"
-                        } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
-                            "emscripten::val"
-                        } else {
-                            embindNameResolver.resolveName(parameter.typeRef)
-                        },
-                    "nativeName" to parameter.path.name,
-                    "nativeType" to embindNameResolver.resolveName(parameter.typeRef),
-                    "underlyingType" to embindNameResolver.resolveName(parameter.typeRef.type),
-                    "isNullable" to parameter.typeRef.isNullable,
-                    "isList" to (actualType is LimeList),
-                    "isMap" to (actualType is LimeMap),
-                    "mapKeyType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.keyType) },
-                    "mapValueType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.valueType) },
-                    "last" to (index == function.parameters.lastIndex),
-                )
+                parameterViewModel(parameter, index == function.parameters.lastIndex)
             },
-        ).toMutableMap().apply {
-            val parameters = function.parameters.mapIndexed { index, parameter ->
-                val nativeType = embindNameResolver.resolveName(parameter.typeRef)
-                val adapterType =
-                    if (conversions.hasCppStringOverride(parameter.typeRef)) {
-                        "::std::string"
-                    } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
-                        "emscripten::val"
-                    } else {
-                        nativeType
-                    }
-                val callName = if (conversions.hasCppStringOverride(parameter.typeRef)) {
+        )
+        data.putAll(adapterViewModel(context))
+        if (isFlattened) {
+            data.putAll(flattenedViewModel(context, flattenedReceiverType, adapterParameterTypes(function)))
+        }
+        return data
+    }
+
+    /** Shared per-function facts used by all parts of the function view model. */
+    private inner class FunctionViewModelContext(
+        val function: LimeFunction,
+        val isOverloaded: Boolean,
+        val returnType: com.here.gluecodium.model.lime.LimeTypeRef,
+        val thrownException: com.here.gluecodium.model.lime.LimeException?,
+    ) {
+        val returnActualType: com.here.gluecodium.model.lime.LimeType = returnType.type.actualType
+        val isThrown: Boolean = thrownException != null
+        val thrownErrorIsEnum: Boolean =
+            thrownException?.errorType?.type?.actualType is com.here.gluecodium.model.lime.LimeEnumeration
+
+        /** Whether the native call result must be captured in a variable for JS conversion. */
+        val needsValReturn: Boolean = isThrown || conversions.returnsViaVal(returnType)
+    }
+
+    private fun overloadEmbindName(context: FunctionViewModelContext): String {
+        val function = context.function
+        return if (context.isOverloaded && (function.isStatic && isJsOverloaded(function) || !function.isStatic)) {
+            overloadRuntimeName(function)
+        } else {
+            nameRules.getName(function)
+        }
+    }
+
+    private fun needsFunctionAdapter(context: FunctionViewModelContext): Boolean =
+        context.isOverloaded ||
+            context.isThrown ||
+            conversions.returnsViaVal(context.returnType) ||
+            context.function.parameters.any { parameter ->
+                conversions.hasCppStringOverride(parameter.typeRef) ||
+                    conversions.needsValParameterAdapter(parameter.typeRef)
+            }
+
+    private fun parameterViewModel(
+        parameter: com.here.gluecodium.model.lime.LimeParameter,
+        last: Boolean,
+    ): Map<String, Any?> {
+        val actualType = parameter.typeRef.type.actualType
+        return mapOf(
+            "model" to parameter,
+            "jsName" to nameRules.getName(parameter),
+            "cppType" to embindNameResolver.resolveName(parameter.typeRef),
+            "adapterType" to
+                if (conversions.hasCppStringOverride(parameter.typeRef)) {
+                    "::std::string"
+                } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
+                    "emscripten::val"
+                } else {
+                    embindNameResolver.resolveName(parameter.typeRef)
+                },
+            "nativeName" to parameter.path.name,
+            "nativeType" to embindNameResolver.resolveName(parameter.typeRef),
+            "underlyingType" to embindNameResolver.resolveName(parameter.typeRef.type),
+            "isNullable" to parameter.typeRef.isNullable,
+            "isList" to (actualType is LimeList),
+            "isMap" to (actualType is LimeMap),
+            "mapKeyType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.keyType) },
+            "mapValueType" to (actualType as? LimeMap)?.let { embindNameResolver.resolveName(it.valueType) },
+            "last" to last,
+        )
+    }
+
+    /** Adapter parameter descriptors shared by the adapter and flattened view models. */
+    private class AdapterParameter(
+        val type: String,
+        val name: String,
+        val callName: String,
+        val preparation: String,
+    )
+
+    private fun adapterParameters(function: LimeFunction): List<AdapterParameter> =
+        function.parameters.map { parameter ->
+            val type =
+                if (conversions.hasCppStringOverride(parameter.typeRef)) {
+                    "::std::string"
+                } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
+                    "emscripten::val"
+                } else {
+                    embindNameResolver.resolveName(parameter.typeRef)
+                }
+            val callName =
+                if (conversions.hasCppStringOverride(parameter.typeRef)) {
                     "${parameter.path.name}.c_str()"
                 } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
                     "${parameter.path.name}_value"
                 } else {
                     parameter.path.name
                 }
-                mapOf(
-                    "type" to adapterType,
-                    "name" to parameter.path.name,
-                    "last" to (index == function.parameters.lastIndex),
-                    "callName" to callName,
-                    "preparation" to conversions.parameterPreparation(parameter, callName),
-                )
-            }
-            put("adapterParameters", parameters.joinToString(", ") { "${it["type"]} ${it["name"]}" })
-            put("hasAdapterParameters", parameters.isNotEmpty())
-            put(
-                "adapterSignatureParameters",
-                parameters.joinToString(", ") { it["type"].toString() }.let { if (it.isEmpty()) "void" else it },
-            )
-            put("adapterCallArguments", parameters.joinToString(", ") { it["callName"].toString() })
-            put(
-                "adapterPolicies",
-                parameters.mapIndexedNotNull { index, parameter ->
-                    if (parameter["type"].toString().endsWith("*")) {
-                        "allow_raw_pointer<arg<$index>>()"
-                    } else {
-                        null
-                    }
-                }.joinToString(", "),
-            )
-            put("hasAdapterPolicies", parameters.any { it["type"].toString().endsWith("*") })
-            put(
-                "adapterMemberPolicies",
-                parameters.mapIndexedNotNull { index, parameter ->
-                    if (parameter["type"].toString().endsWith("*")) {
-                        "allow_raw_pointer<arg<${index + 1}>>()"
-                    } else {
-                        null
-                    }
-                }.joinToString(", "),
-            )
-            put("hasAdapterMemberPolicies", parameters.any { it["type"].toString().endsWith("*") })
-            put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
-            put(
-                "adapterCallPrefix",
-                if (thrownException != null || conversions.returnsViaVal(returnType)) {
-                    "auto result = "
-                } else {
-                    "return "
-                },
-            )
-            put("adapterReturnConversion", if (thrownException != null) {
-                conversions.thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid, returnType)
-            } else {
-                conversions.adapterReturnConversion(returnType)
-            })
-            if (isFlattened) {
-                val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
-                val flattenedReturnType =
-                    if (thrownException != null || conversions.returnsViaVal(returnType)) {
-                        "emscripten::val"
-                    } else {
-                        embindNameResolver.resolveName(returnType)
-                    }
-                put(
-                    "flattenedFunctionSignature",
-                    listOf(
-                        "$flattenedReturnType($receiverType*",
-                        *parameters.map { it["type"].toString() }.toTypedArray(),
-                    )
-                        .joinToString(", ")
-                        .let { "$it)" },
-                )
-                put(
-                    "flattenedLambdaParameters",
-                    listOf("$receiverType* self", *parameters.map { "${it["type"]} ${it["name"]}" }.toTypedArray())
-                        .joinToString(", "),
-                )
-            }
+            AdapterParameter(type, parameter.path.name, callName, conversions.parameterPreparation(parameter, callName))
         }
+
+    private fun adapterParameterTypes(function: LimeFunction): List<String> =
+        adapterParameters(function).map { it.type }
+
+    /** Builds the C++ adapter-function fields (`adapter*`) for one method binding. */
+    private fun adapterViewModel(context: FunctionViewModelContext): Map<String, Any> {
+        val parameters = adapterParameters(context.function)
+        val data = mutableMapOf<String, Any>(
+            "adapterParameters" to parameters.joinToString(", ") { "${it.type} ${it.name}" },
+            "hasAdapterParameters" to parameters.isNotEmpty(),
+            "adapterSignatureParameters" to
+                parameters.joinToString(", ") { it.type }.let { if (it.isEmpty()) "void" else it },
+            "adapterCallArguments" to parameters.joinToString(", ") { it.callName },
+            "adapterPolicies" to rawPointerPolicies(parameters) { index -> index },
+            "hasAdapterPolicies" to hasRawPointer(parameters),
+            "adapterMemberPolicies" to rawPointerPolicies(parameters) { index -> index + 1 },
+            "hasAdapterMemberPolicies" to hasRawPointer(parameters),
+            "adapterPreparations" to
+                parameters.map { it.preparation }.filter { it.isNotEmpty() }.joinToString("\n"),
+            "adapterCallPrefix" to if (context.needsValReturn) "auto result = " else "return ",
+            "adapterReturnConversion" to
+                if (context.isThrown) {
+                    conversions.thrownReturnConversion(
+                        context.thrownErrorIsEnum,
+                        context.function.returnType.isVoid,
+                        context.returnType,
+                    )
+                } else {
+                    conversions.adapterReturnConversion(context.returnType)
+                },
+        )
+        return data
+    }
+
+    private fun rawPointerPolicies(parameters: List<AdapterParameter>, argIndex: (Int) -> Int): String =
+        parameters.mapIndexedNotNull { index, parameter ->
+            if (parameter.type.endsWith("*")) {
+                "allow_raw_pointer<arg<${argIndex(index)}>>()"
+            } else {
+                null
+            }
+        }.joinToString(", ")
+
+    private fun hasRawPointer(parameters: List<AdapterParameter>): Boolean =
+        parameters.any { it.type.endsWith("*") }
+
+    /** Builds the flattened-member fields for methods inherited from secondary parents. */
+    private fun flattenedViewModel(
+        context: FunctionViewModelContext,
+        flattenedReceiverType: String?,
+        parameterTypes: List<String>,
+    ): Map<String, Any> {
+        val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
+        val flattenedReturnType: String =
+            if (context.needsValReturn) {
+                "emscripten::val"
+            } else {
+                embindNameResolver.resolveName(context.returnType)
+            }
+        return mapOf(
+            "flattenedFunctionSignature" to
+                listOf("$flattenedReturnType($receiverType*", *parameterTypes.toTypedArray())
+                    .joinToString(", ")
+                    .let { "$it)" },
+            "flattenedLambdaParameters" to
+                listOf("$receiverType* self", *parameterTypes.zip(context.function.parameters) { type, parameter -> "$type ${parameter.path.name}" }.toTypedArray())
+                    .joinToString(", "),
+        )
     }
 
 
