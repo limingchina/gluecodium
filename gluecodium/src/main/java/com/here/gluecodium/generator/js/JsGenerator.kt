@@ -41,24 +41,19 @@ import com.here.gluecodium.model.lime.LimeAttributeType.JS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.ACCESSORS
 import com.here.gluecodium.model.lime.LimeAttributeValueType.SKIP
 import com.here.gluecodium.model.lime.LimeBasicType
-import com.here.gluecodium.model.lime.LimeClass
 import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeElement
-import com.here.gluecodium.model.lime.LimeException
 import com.here.gluecodium.model.lime.LimeExternalDescriptor
 import com.here.gluecodium.model.lime.LimeField
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeFunction
-import com.here.gluecodium.model.lime.LimeInterface
-import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeList
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeSet
-import com.here.gluecodium.model.lime.LimeStruct
 import com.here.gluecodium.model.lime.LimeType
 import com.here.gluecodium.model.lime.LimeTypeRef
 import com.here.gluecodium.model.lime.LimeDirectTypeRef
@@ -92,6 +87,7 @@ internal class JsGenerator : Generator {
     private lateinit var embindFileGenerator: JsEmbindFileGenerator
     private lateinit var commonFileGenerator: JsCommonFileGenerator
     private lateinit var inheritanceResolver: JsInheritanceResolver
+    private lateinit var overloadGroupGenerator: JsOverloadGroupGenerator
 
     override val shortName = "js"
 
@@ -153,6 +149,13 @@ internal class JsGenerator : Generator {
                 primaryInheritedOverloads = inheritanceResolver::primaryInheritedOverloads,
                 isSupportedConstant = ::isSupportedConstant,
             )
+        overloadGroupGenerator =
+            JsOverloadGroupGenerator(
+                nameRules = nameRules,
+                inheritanceResolver = inheritanceResolver,
+                overloadRuntimeName = embindViewModelBuilder::overloadRuntimeName,
+                overloadPredicate = embindViewModelBuilder::overloadPredicate,
+            )
         embindFileGenerator =
             JsEmbindFileGenerator(
                 internalNamespace = internalNamespace,
@@ -180,7 +183,7 @@ internal class JsGenerator : Generator {
                 overloadRuntimeName = embindViewModelBuilder::overloadRuntimeName,
                 structFunctionRuntimeName = embindViewModelBuilder::structFunctionRuntimeName,
                 overloadPredicate = embindViewModelBuilder::overloadPredicate,
-                instanceOverloadGroups = ::instanceOverloadGroups,
+                instanceOverloadGroups = overloadGroupGenerator::generate,
             )
 
         val nameResolvers =
@@ -224,63 +227,11 @@ internal class JsGenerator : Generator {
             commonFileGenerator.generate(embindFilteredModel, jsFilteredModel, nameResolvers)
     }
 
-    private fun sanitizeRegistrationName(typeName: String) =
-        typeName.replace(Regex("[^A-Za-z0-9_]"), "_").trim('_').ifEmpty { "Type" }
-
     private fun resolveRegisterName(limeElement: LimeNamedElement): String {
         val name = nameRules.getFlattenedName(limeElement)
         val packagePath = limeElement.path.head.joinToString("_")
         return if (packagePath.isNotEmpty()) "${packagePath}_$name" else name
     }
-
-    private fun instanceOverloadGroups(
-        type: com.here.gluecodium.model.lime.LimeType,
-        filteredModel: LimeModel,
-    ): List<Map<String, Any>> {
-        val container = type as? com.here.gluecodium.model.lime.LimeContainer ?: return emptyList()
-        val (secondaryFunctions, _) = inheritanceResolver.secondaryParentMembers(type, filteredModel)
-        val functions =
-            (inheritanceResolver.primaryInheritedOverloads(type, filteredModel) +
-                container.functions.filterNot { it.isStatic || it.isConstructor } +
-                secondaryFunctions)
-                .distinctBy { it.fullName }
-        return functions
-            .groupBy { nameRules.getName(it) }
-            .filterValues { overloads -> overloads.size > 1 }
-            .map { (jsName, overloads) ->
-                mapOf(
-                    "jsName" to jsName,
-                    "overloads" to overloads.map { function ->
-                        mapOf(
-                            "runtimeName" to embindViewModelBuilder.overloadRuntimeName(function),
-                            "predicate" to embindViewModelBuilder.overloadPredicate(function),
-                        )
-                    },
-                )
-            }
-    }
-
-    private fun selectStubTemplate(limeElement: LimeNamedElement) =
-        when (limeElement) {
-            is com.here.gluecodium.model.lime.LimeTypeAlias -> "js/JsStubTypeAlias"
-            is LimeException -> "js/JsStubException"
-            is LimeLambda -> "js/JsStubLambda"
-            is com.here.gluecodium.model.lime.LimeEnumeration -> "js/JsStubEnumeration"
-            is LimeStruct -> "js/JsStubStruct"
-            is com.here.gluecodium.model.lime.LimeClass -> "js/JsStubClass"
-            is com.here.gluecodium.model.lime.LimeInterface -> "js/JsStubInterface"
-            else -> null
-        }
-
-    private fun selectEmbindTemplate(limeElement: LimeNamedElement) =
-        when (limeElement) {
-            is LimeException -> "js/EmbindException"
-            is com.here.gluecodium.model.lime.LimeEnumeration -> "js/EmbindEnum"
-            is LimeStruct -> "js/EmbindStruct"
-            is com.here.gluecodium.model.lime.LimeClass -> "js/EmbindClass"
-            is com.here.gluecodium.model.lime.LimeInterface -> "js/EmbindInterface"
-            else -> null
-        }
 
     private fun isSupportedConstant(constant: LimeConstant) =
         when (constant.typeRef.type.actualType) {
