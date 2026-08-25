@@ -94,11 +94,11 @@ void {{registerName}}(void) {
 {{/isStatic}}
 {{^isStatic}}
 {{#needsAdapter}}
-        .property("{{jsName}}", +[]({{cppFullName}}* self) -> emscripten::val {
+        .property<emscripten::val>("{{jsName}}", +[](const {{cppFullName}}& self) -> emscripten::val {
                 return {{adapterGetter}};
-        }, +[]({{cppFullName}}* self, emscripten::val value) {
+        }, +[]({{cppFullName}}& self, emscripten::val value) {
                 {{adapterSetter}};
-        }, allow_raw_pointer<arg<0>>())
+        })
 {{/needsAdapter}}
 {{^needsAdapter}}
 {{#hasSetter}}

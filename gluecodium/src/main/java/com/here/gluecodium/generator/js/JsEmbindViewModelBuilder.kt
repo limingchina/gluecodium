@@ -129,7 +129,20 @@ internal class JsEmbindViewModelBuilder(
     }
 
     private fun wrapperMethodViewModel(function: LimeFunction): Map<String, Any> {
-        val returnType = embindNameResolver.resolveName(function.returnType)
+        val exception = function.exception
+        val errorType = exception?.errorType?.let(embindNameResolver::resolveName)
+        val errorActualType = exception?.errorType?.type?.actualType
+        val returnType = if (exception != null) {
+            val valueType = if (function.returnType.isVoid) "void" else embindNameResolver.resolveName(function.returnType)
+            if (errorActualType is LimeEnumeration && function.returnType.isVoid) {
+                "::std::error_code"
+            } else {
+                val nativeErrorType = if (errorActualType is LimeEnumeration) "::std::error_code" else errorType
+                "::${internalNamespace.joinToString("::")}::Return<$valueType, $nativeErrorType>"
+            }
+        } else {
+            embindNameResolver.resolveName(function.returnType)
+        }
         val returnNeedsAdapter = requiresWrapperJsAdapter(function.returnType.typeRef)
         val parameters = function.parameters.map { parameter ->
             val nativeType = embindNameResolver.resolveName(parameter.typeRef)
@@ -142,7 +155,20 @@ internal class JsEmbindViewModelBuilder(
             if (needsAdapter) conversions.nativeToJs(parameter.typeRef, parameter.path.name) else parameter.path.name
         }
         val callArguments = if (arguments.isNotEmpty()) ", $arguments" else ""
-        val call = if (needsAdapter) {
+        val call = if (exception != null) {
+            val valueType = if (function.returnType.isVoid) "void" else embindNameResolver.resolveName(function.returnType)
+            val helper = when {
+                errorActualType is LimeEnumeration && function.returnType.isVoid -> "return_from_js_enum_void"
+                errorActualType is LimeEnumeration -> "return_from_js_enum"
+                else -> "return_from_js"
+            }
+            val helperTypes = if (errorActualType is LimeEnumeration && function.returnType.isVoid) {
+                errorType
+            } else {
+                "$valueType, $errorType"
+            }
+            "gluecodium_js::$helper<$helperTypes>([&] { return call<emscripten::val>(\"${nameRules.getName(function)}\"$callArguments); })"
+        } else if (needsAdapter) {
             val jsResult = "call<emscripten::val>(\"${nameRules.getName(function)}\"$callArguments)"
             if (function.returnType.isVoid) "$jsResult;" else "return ${conversions.jsToNative(function.returnType.typeRef, jsResult)};"
         } else {
@@ -150,14 +176,16 @@ internal class JsEmbindViewModelBuilder(
         }
         val lambdaCaptures = function.parameters.joinToString(", ") { "&${it.path.name}" }
         val lambdaCaptureList = if (lambdaCaptures.isEmpty()) "this" else "this, $lambdaCaptures"
-        val lambdaBody = if (needsAdapter) {
+        val lambdaBody = if (exception != null) {
+            "return $call;"
+        } else if (needsAdapter) {
             call
         } else if (function.returnType.isVoid) {
             "$call;"
         } else {
             "return $call;"
         }
-        val threadedCall = if (function.returnType.isVoid) {
+        val threadedCall = if (function.returnType.isVoid && exception == null) {
             "gluecodium_js::invoke_on_main_runtime_thread_void([${lambdaCaptureList}]() { $lambdaBody });"
         } else {
             "return gluecodium_js::invoke_on_main_runtime_thread([${lambdaCaptureList}]() { $lambdaBody });"
@@ -171,6 +199,7 @@ internal class JsEmbindViewModelBuilder(
             "isVoid" to function.returnType.isVoid,
             "needsAdapter" to needsAdapter,
             "isConst" to function.attributes.have(CPP, CONST),
+            "isThrown" to (exception != null),
         )
     }
 
@@ -181,6 +210,18 @@ internal class JsEmbindViewModelBuilder(
         val propertyType = embindNameResolver.resolveName(property.typeRef)
         val setterParameter =
             if (CppNameResolver.needsRefSuffix(property.typeRef)) "const $propertyType& value" else "$propertyType value"
+        val needsAdapter = conversions.requiresJsAdapter(property.typeRef)
+        val getterCall = "get(\"${nameRules.getName(property)}\")"
+        val threadedGetter = if (needsAdapter) {
+            "return gluecodium_js::invoke_on_main_runtime_thread([this] { return ${conversions.jsToNative(property.typeRef, getterCall)}; });"
+        } else {
+            "return gluecodium_js::invoke_on_main_runtime_thread([this] { return get(\"${nameRules.getName(property)}\").as<$propertyType>(); });"
+        }
+        val threadedSetter = if (needsAdapter) {
+            "gluecodium_js::invoke_on_main_runtime_thread_void([this, &value] { set(\"${nameRules.getName(property)}\", ${conversions.nativeToJs(property.typeRef, "value")}); });"
+        } else {
+            "gluecodium_js::invoke_on_main_runtime_thread_void([this, &value] { set(\"${nameRules.getName(property)}\", emscripten::val(value)); });"
+        }
         return mapOf(
             "returnType" to propertyType,
             "jsName" to nameRules.getName(property),
@@ -188,8 +229,8 @@ internal class JsEmbindViewModelBuilder(
             "cppSetterName" to cppNameCache.getSetterName(property),
             "setterParameter" to setterParameter,
             "hasSetter" to (property.setter != null),
-            "threadedGetter" to "return gluecodium_js::invoke_on_main_runtime_thread([this] { return call<$propertyType>(\"${nameRules.getName(property)}\"); });",
-            "threadedSetter" to "gluecodium_js::invoke_on_main_runtime_thread_void([this, &value] { call<void>(\"${nameRules.getName(property)}\", value); });",
+            "threadedGetter" to threadedGetter,
+            "threadedSetter" to threadedSetter,
         )
     }
 
@@ -325,20 +366,34 @@ internal class JsEmbindViewModelBuilder(
     }
 
     private fun propertyViewModel(property: LimeProperty): Map<String, Any> =
-        mapOf(
-            "model" to property,
-            "jsName" to nameRules.getName(property),
-            "cppGetterName" to cppNameCache.getGetterName(property),
-            "cppSetterName" to cppNameCache.getSetterName(property),
-            "isStatic" to property.isStatic,
-            "hasSetter" to (property.setter != null),
-            "cppFullName" to ((referenceMap[property.path.parent.toString()] as? LimeNamedElement)?.let { cppNameCache.getFullyQualifiedName(it) } ?: ""),
-            "needsAdapter" to conversions.requiresJsAdapter(property.typeRef),
-            "adapterGetterName" to propertyAdapterName(property, "get"),
-            "adapterSetterName" to propertyAdapterName(property, "set"),
-            "adapterGetter" to conversions.nativeToJs(property.typeRef, if (property.isStatic) "${cppNameCache.getFullyQualifiedName(referenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getGetterName(property)}()" else "self->${cppNameCache.getGetterName(property)}()"),
-            "adapterSetter" to conversions.jsToNative(property.typeRef, "value").let { converted -> if (property.isStatic) "${cppNameCache.getFullyQualifiedName(referenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getSetterName(property)}($converted)" else "self->${cppNameCache.getSetterName(property)}($converted)" },
-        )
+        run {
+            val needsAdapter = conversions.requiresJsAdapter(property.typeRef)
+            val owner = (referenceMap[property.path.parent.toString()] as? LimeNamedElement)
+            val getterSource = if (property.isStatic) {
+                "${cppNameCache.getFullyQualifiedName(owner as LimeNamedElement)}::${cppNameCache.getGetterName(property)}()"
+            } else {
+                "self.${cppNameCache.getGetterName(property)}()"
+            }
+            val adapterGetter = if (needsAdapter) {
+                "([&]() { auto result = $getterSource; return ${conversions.nativeToJs(property.typeRef, "result")}; }())"
+            } else {
+                conversions.nativeToJs(property.typeRef, getterSource)
+            }
+            mapOf(
+                "model" to property,
+                "jsName" to nameRules.getName(property),
+                "cppGetterName" to cppNameCache.getGetterName(property),
+                "cppSetterName" to cppNameCache.getSetterName(property),
+                "isStatic" to property.isStatic,
+                "hasSetter" to (property.setter != null),
+                "cppFullName" to (owner?.let(cppNameCache::getFullyQualifiedName) ?: ""),
+                "needsAdapter" to needsAdapter,
+                "adapterGetterName" to propertyAdapterName(property, "get"),
+                "adapterSetterName" to propertyAdapterName(property, "set"),
+                "adapterGetter" to adapterGetter,
+                "adapterSetter" to conversions.jsToNative(property.typeRef, "value").let { converted -> if (property.isStatic) "${cppNameCache.getFullyQualifiedName(owner as LimeNamedElement)}::${cppNameCache.getSetterName(property)}($converted)" else "self.${cppNameCache.getSetterName(property)}($converted)" },
+            )
+        }
 
     private fun fieldViewModel(struct: LimeStruct, field: LimeField): Map<String, Any?> {
         val cppType = embindNameResolver.resolveName(field.typeRef)
@@ -353,6 +408,7 @@ internal class JsEmbindViewModelBuilder(
             "cppFieldName" to if (hasAccessors) null else cppNameCache.getName(field),
             "hasAccessors" to hasAccessors,
             "hasBlob" to conversions.isBlob(field.typeRef),
+            "isNullable" to field.typeRef.isNullable,
             "hasImmutableStruct" to conversions.isObjectStruct(field.typeRef),
             "hasDate" to conversions.isJsDate(field.typeRef),
             "hasLocale" to conversions.isJsLocale(field.typeRef),

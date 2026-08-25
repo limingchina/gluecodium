@@ -418,7 +418,13 @@ Features: `Errors`, `Nullable`.
 `ErrorsInInterface.lime` requires interface trampolines in addition to error conversion. Test
 `Return<T, Error>` to JavaScript exceptions for ordinary and interface methods. `Nullable` then
 covers optional scalars, strings, structs, enums, collections, instances, and nullable listener
-parameters/properties. Run the two feature tests separately even if they share a batch gate.
+parameters/properties. The batch is complete. `errors.test.mjs` covers successful error-bearing
+calls, enum and payload exceptions, and errors rethrown by JavaScript interface implementations.
+`nullable.test.mjs` covers scalar, string, enum, struct, collection, blob, and nullable interface
+method/property round trips. The generator and runtime now reconstruct callback errors, wrap thrown
+`Return<T, Error>` results in facade exceptions, register nullable vector types, and forward adapted
+property access through interface wrappers. Both tests pass directly, and the complete
+`unit_tests_javascript` CTest gate passes with 49 tests under Emscripten 6.0.8 and Node.js 23.6.1.
 
 #### Batch 3D - equality semantics
 
@@ -498,9 +504,10 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | 2B | Listeners, ComplexListeners, ListenersWithReturnValues, Properties | blocked on 2A |
 | 2C | Lambdas (JavaScript-input callbacks) | passing; native lambda returns deferred |
 | 2D | CallbacksWithThreads | passing; detached interface and lambda callbacks |
+| 3C | Errors, Nullable | passing; error envelopes, interface error propagation, and nullable values |
 | 3A | Inheritance | passing; single inheritance and fixture closure |
 | 3B | MethodOverloading | passing; isolated JavaScript inherited-overload fixture |
-| 3C | Errors, Nullable | blocked on interface and optional conversion gates |
+| 3C | Errors, Nullable | passing; error envelopes, interface error propagation, and nullable values |
 | 3D | Equatable | blocked on nullable and immutable conversion gates |
 | 3E | MultipleInheritance | blocked on 3A |
 | 3F | Nesting | blocked on interface and lambda gates |

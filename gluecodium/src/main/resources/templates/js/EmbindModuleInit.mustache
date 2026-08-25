@@ -101,9 +101,51 @@ public:
     return m_value.call<ReturnType>("call", m_value, std::forward<Args>(args)...);
   }
 
+  emscripten::val get(const char* name) const {
+    return m_value[name];
+  }
+
+  void set(const char* name, emscripten::val value) {
+    m_value.set(name, std::move(value));
+  }
+
 private:
   emscripten::val m_value;
 };
+
+template <typename Value, typename Error, typename Function>
+auto return_from_js(Function&& function) -> {{#internalNamespace}}::{{.}}{{/internalNamespace}}::Return<Value, Error> {
+  try {
+    emscripten::val result = function();
+    if constexpr (std::is_same_v<Value, void>) {
+      return {};
+    } else {
+      return result.as<Value>();
+    }
+  } catch (const emscripten::val& error) {
+    return error["error"].as<Error>();
+  }
+}
+
+template <typename Value, typename ErrorEnum, typename Function>
+auto return_from_js_enum(Function&& function) -> {{#internalNamespace}}::{{.}}{{/internalNamespace}}::Return<Value, ::std::error_code> {
+  try {
+    emscripten::val result = function();
+    return result.as<Value>();
+  } catch (const emscripten::val& error) {
+    return make_error_code(static_cast<ErrorEnum>(error["error"].as<int>()));
+  }
+}
+
+template <typename ErrorEnum, typename Function>
+auto return_from_js_enum_void(Function&& function) -> ::std::error_code {
+  try {
+    function();
+    return {};
+  } catch (const emscripten::val& error) {
+    return make_error_code(static_cast<ErrorEnum>(error["error"].as<int>()));
+  }
+}
 
 void delete_runtime_thread_val(RuntimeThreadVal* value) {
   if (emscripten_is_main_runtime_thread()) {

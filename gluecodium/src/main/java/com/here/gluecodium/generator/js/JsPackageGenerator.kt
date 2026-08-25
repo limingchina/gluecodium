@@ -184,8 +184,29 @@ internal class JsPackageGenerator(
                     }
                     .orEmpty(),
                 "instanceOverloadGroups" to instanceOverloadGroups(element, filteredModel),
+                "thrownFunctions" to thrownFunctions(element),
             )
         }
+    }
+
+    private fun thrownFunctions(element: LimeType): List<Map<String, Any>> {
+        val container = element as? LimeContainer ?: return emptyList()
+        return container.functions
+            .filter { it.exception != null }
+            .map { function ->
+                mapOf(
+                    "jsName" to nameRules.getName(function),
+                    "runtimeName" to if (function.isStatic || !isOverloaded(function, element)) nameRules.getName(function) else overloadRuntimeName(function),
+                    "ownerRuntimeName" to nameRules.getEmbindRuntimeName(element),
+                    "isStatic" to function.isStatic,
+                    "exceptionName" to nameRules.getName(function.exception!!),
+                )
+            }
+    }
+
+    private fun isOverloaded(function: LimeFunction, element: LimeType): Boolean {
+        val container = element as? LimeContainer ?: return false
+        return container.functions.count { !it.isConstructor && nameRules.getName(it) == nameRules.getName(function) } > 1
     }
 
     private fun packageMetadataFiles(packagePaths: Set<List<String>>): List<GeneratedFile> {

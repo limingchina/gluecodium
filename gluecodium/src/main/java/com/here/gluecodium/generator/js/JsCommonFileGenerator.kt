@@ -103,6 +103,7 @@ internal class JsCommonFileGenerator(
                 "js/EmbindModuleInit",
                 mapOf(
                     "moduleName" to jsModuleName,
+                    "internalNamespace" to internalNamespace,
                     "registerFunctions" to topologicalSort(registerNameToDeps).map { mapOf("name" to it) },
                     "genericRegistrations" to genericRegistrations.entries,
                     "genericRegistrationIncludes" to genericRegistrations.includes,

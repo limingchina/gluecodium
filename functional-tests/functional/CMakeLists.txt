@@ -258,11 +258,12 @@ feature(GenericTypes cpp android android-kotlin swift dart SOURCES
     input/lime/OptimizedList.lime
 )
 
-feature(Errors cpp android android-kotlin swift dart SOURCES
+feature(Errors cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Errors.cpp
     input/src/cpp/ErrorsInInterface.cpp
     input/src/cpp/ErrorsInInterface.h
     input/src/cpp/ErrorsWithNonTrivialType.cpp
+    input/src/cpp/src/ExternalTypes.cpp
 
     input/lime/Errors.lime
     input/lime/Errors2.lime
@@ -375,7 +376,7 @@ feature(Equatable cpp android android-kotlin swift dart SOURCES
     input/lime/SimpleEquality.lime
 )
 
-feature(Nullable cpp android android-kotlin swift dart SOURCES
+feature(Nullable cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/NullableInstances.cpp
     input/src/cpp/NullableInterfaceImpl.cpp
     input/src/cpp/NullableCollections.cpp

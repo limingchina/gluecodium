@@ -50,9 +50,17 @@ public:
         return m_wrapped->call<ReturnType>(name, std::forward<Args>(args)...);
     }
 
+    emscripten::val get(const char* name) const {
+        return m_wrapped->get(name);
+    }
+
+    void set(const char* name, emscripten::val value) {
+        m_wrapped->set(name, std::move(value));
+    }
+
 {{#wrapperMethods}}
     {{returnType}} {{cppName}}({{parameters}}){{#isConst}} const{{/isConst}} override {
-        {{#isVoid}}{{threadedCall}}{{/isVoid}}{{^isVoid}}{{threadedCall}}{{/isVoid}}
+        {{threadedCall}}
     }
 {{/wrapperMethods}}
 {{#wrapperProperties}}
@@ -118,12 +126,21 @@ void {{registerName}}(void) {
 {{/hasSetter}}
 {{/isStatic}}
 {{^isStatic}}
+{{#needsAdapter}}
+    .property<emscripten::val>("{{jsName}}", +[](const {{cppFullName}}& self) -> emscripten::val {
+        return {{adapterGetter}};
+    }, +[]({{cppFullName}}& self, emscripten::val value) {
+        {{adapterSetter}};
+    })
+{{/needsAdapter}}
+{{^needsAdapter}}
 {{#hasSetter}}
     .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
 {{/hasSetter}}
 {{^hasSetter}}
     .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
 {{/hasSetter}}
+{{/needsAdapter}}
 {{/isStatic}}
 {{/properties}}
     .allow_subclass<{{wrapperName}}, std::shared_ptr<{{wrapperName}}>>("{{wrapperEmbindName}}", "{{wrapperPtrEmbindName}}")

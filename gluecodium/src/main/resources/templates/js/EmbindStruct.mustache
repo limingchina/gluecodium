@@ -76,10 +76,10 @@ void {{registerName}}(void) {
 {{/hasAccessors}}
 {{#hasBlob}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
-    return self.{{cppFieldName}} ? emscripten::val::array(*self.{{cppFieldName}}) : emscripten::val::undefined();
+    return self.{{cppFieldName}} ? emscripten::val::array({{#isNullable}}**{{/isNullable}}{{^isNullable}}*{{/isNullable}}self.{{cppFieldName}}) : emscripten::val::undefined();
   }, +[] ({{cppFullName}}& self, emscripten::val value) {
-    self.{{cppFieldName}} = ::std::make_shared<::std::vector<uint8_t>>(
-        emscripten::convertJSArrayToNumberVector<uint8_t>(value));
+    self.{{cppFieldName}} = {{#isNullable}}(value.isNull() || value.isUndefined() ? decltype(self.{{cppFieldName}}){} : {{/isNullable}}::std::make_shared<::std::vector<uint8_t>>(
+        emscripten::convertJSArrayToNumberVector<uint8_t>(value)){{#isNullable}}){{/isNullable}};
   })
 {{/hasBlob}}
 {{#hasCollection}}

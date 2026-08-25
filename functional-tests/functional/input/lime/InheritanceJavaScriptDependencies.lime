@@ -25,16 +25,6 @@ open class ConstructorOverloads {
     constructor create(input: List<Double>)
     constructor create(result: ULong)
 }
-
-class ThrowingConstructor {
-    enum ErrorEnum {
-        NONE,
-        CRASHED
-    }
-
-    constructor create(input: Double) throws Some
-    exception Some(ErrorEnum)
-}
 # End of JavaScript-only inheritance dependencies.
 # These declarations provide only the types referenced by the inheritance fixture.
 # The implementations live in the accompanying C++ fixture source.
