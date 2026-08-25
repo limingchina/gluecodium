@@ -90,6 +90,7 @@ internal class JsGenerator : Generator {
     private lateinit var jsNameResolver: JsNameResolver
     private lateinit var embindNameResolver: EmbindNameResolver
     private lateinit var cppNameCache: CppNameCache
+    private lateinit var conversions: EmbindConversionEmitter
 
     override val shortName = "js"
 
@@ -133,6 +134,8 @@ internal class JsGenerator : Generator {
                 cppNameCache,
                 cppNameRules,
             )
+        conversions =
+            EmbindConversionEmitter(embindNameResolver, cppNameCache, nameRules)
 
         val nameResolvers =
             mapOf(
@@ -378,7 +381,7 @@ internal class JsGenerator : Generator {
             "embindName" to nameRules.getEmbindRuntimeName(type),
             "cppFullName" to cppNameCache.getFullyQualifiedName(type),
             "registerName" to resolveRegisterName(type),
-            "isObjectStruct" to (type is LimeStruct && isObjectStruct(type)),
+            "isObjectStruct" to (type is LimeStruct && conversions.isObjectStruct(type)),
         )
         primaryBaseOf(type, filteredModel)?.let { data["primaryBase"] = it }
         if (type is com.here.gluecodium.model.lime.LimeEnumeration) {
@@ -463,7 +466,7 @@ internal class JsGenerator : Generator {
         val needsAdapter = returnNeedsAdapter || parameterNeedsAdapters
         val arguments = function.parameters.joinToString(", ") { parameter ->
             if (needsAdapter) {
-                nativeToJs(parameter.typeRef, parameter.path.name)
+                conversions.nativeToJs(parameter.typeRef, parameter.path.name)
             } else {
                 parameter.path.name
             }
@@ -471,7 +474,7 @@ internal class JsGenerator : Generator {
         val callArguments = if (arguments.isNotEmpty()) ", $arguments" else ""
         val call = if (needsAdapter) {
             val jsResult = "call<emscripten::val>(\"${nameRules.getName(function)}\"$callArguments)"
-            if (function.returnType.isVoid) "$jsResult;" else "return ${jsToNative(function.returnType.typeRef, jsResult)};"
+            if (function.returnType.isVoid) "$jsResult;" else "return ${conversions.jsToNative(function.returnType.typeRef, jsResult)};"
         } else {
             "call<$returnType>(\"${nameRules.getName(function)}\"$callArguments)"
         }
@@ -502,7 +505,7 @@ internal class JsGenerator : Generator {
     }
 
     private fun requiresWrapperJsAdapter(typeRef: LimeTypeRef): Boolean =
-        typeRef.type.actualType is LimeStruct || needsValParameterAdapter(typeRef)
+        typeRef.type.actualType is LimeStruct || conversions.needsValParameterAdapter(typeRef)
 
     private fun wrapperPropertyViewModel(property: LimeProperty): Map<String, Any> {
         val propertyType = embindNameResolver.resolveName(property.typeRef)
@@ -543,9 +546,9 @@ internal class JsGenerator : Generator {
         val needsAdapter =
             isOverloaded ||
             thrownException != null ||
-                returnsViaVal(returnType) ||
+                conversions.returnsViaVal(returnType) ||
                 function.parameters.any { parameter ->
-                    hasCppStringOverride(parameter.typeRef) || needsValParameterAdapter(parameter.typeRef)
+                    conversions.hasCppStringOverride(parameter.typeRef) || conversions.needsValParameterAdapter(parameter.typeRef)
                 }
         return mapOf(
             "model" to function,
@@ -556,7 +559,7 @@ internal class JsGenerator : Generator {
             "isStatic" to function.isStatic,
             "needsAdapter" to needsAdapter,
             "adapterReturnType" to
-                if (thrownException != null || returnsViaVal(returnType)) {
+                if (thrownException != null || conversions.returnsViaVal(returnType)) {
                     "emscripten::val"
                 } else {
                     embindNameResolver.resolveName(returnType)
@@ -577,9 +580,9 @@ internal class JsGenerator : Generator {
                     "jsName" to nameRules.getName(parameter),
                     "cppType" to embindNameResolver.resolveName(parameter.typeRef),
                     "adapterType" to
-                        if (hasCppStringOverride(parameter.typeRef)) {
+                        if (conversions.hasCppStringOverride(parameter.typeRef)) {
                             "::std::string"
-                        } else if (needsValParameterAdapter(parameter.typeRef)) {
+                        } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
                             "emscripten::val"
                         } else {
                             embindNameResolver.resolveName(parameter.typeRef)
@@ -599,16 +602,16 @@ internal class JsGenerator : Generator {
             val parameters = function.parameters.mapIndexed { index, parameter ->
                 val nativeType = embindNameResolver.resolveName(parameter.typeRef)
                 val adapterType =
-                    if (hasCppStringOverride(parameter.typeRef)) {
+                    if (conversions.hasCppStringOverride(parameter.typeRef)) {
                         "::std::string"
-                    } else if (needsValParameterAdapter(parameter.typeRef)) {
+                    } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
                         "emscripten::val"
                     } else {
                         nativeType
                     }
-                val callName = if (hasCppStringOverride(parameter.typeRef)) {
+                val callName = if (conversions.hasCppStringOverride(parameter.typeRef)) {
                     "${parameter.path.name}.c_str()"
-                } else if (needsValParameterAdapter(parameter.typeRef)) {
+                } else if (conversions.needsValParameterAdapter(parameter.typeRef)) {
                     "${parameter.path.name}_value"
                 } else {
                     parameter.path.name
@@ -618,7 +621,7 @@ internal class JsGenerator : Generator {
                     "name" to parameter.path.name,
                     "last" to (index == function.parameters.lastIndex),
                     "callName" to callName,
-                    "preparation" to adapterParameterPreparation(parameter, callName),
+                    "preparation" to conversions.parameterPreparation(parameter, callName),
                 )
             }
             put("adapterParameters", parameters.joinToString(", ") { "${it["type"]} ${it["name"]}" })
@@ -653,21 +656,21 @@ internal class JsGenerator : Generator {
             put("adapterPreparations", parameters.map { it["preparation"] }.filter { it is String && it.isNotEmpty() }.joinToString("\n"))
             put(
                 "adapterCallPrefix",
-                if (thrownException != null || returnsViaVal(returnType)) {
+                if (thrownException != null || conversions.returnsViaVal(returnType)) {
                     "auto result = "
                 } else {
                     "return "
                 },
             )
             put("adapterReturnConversion", if (thrownException != null) {
-                thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid, returnType)
+                conversions.thrownReturnConversion(thrownErrorIsEnum, function.returnType.isVoid, returnType)
             } else {
-                adapterReturnConversion(returnType)
+                conversions.adapterReturnConversion(returnType)
             })
             if (isFlattened) {
                 val receiverType = flattenedReceiverType ?: error("Missing flattened receiver type")
                 val flattenedReturnType =
-                    if (thrownException != null || returnsViaVal(returnType)) {
+                    if (thrownException != null || conversions.returnsViaVal(returnType)) {
                         "emscripten::val"
                     } else {
                         embindNameResolver.resolveName(returnType)
@@ -690,242 +693,6 @@ internal class JsGenerator : Generator {
         }
     }
 
-    private fun adapterParameterPreparation(parameter: com.here.gluecodium.model.lime.LimeParameter, callName: String): String {
-        val typeRef = parameter.typeRef
-        return if (needsValParameterAdapter(typeRef)) {
-            "auto $callName = ${jsToNative(typeRef, parameter.path.name)};"
-        } else {
-            ""
-        }
-    }
-
-    private fun hasCppStringOverride(typeRef: LimeTypeRef): Boolean {
-        val actualType = typeRef.type.actualType
-        return actualType is LimeBasicType &&
-            actualType.typeId == TypeId.STRING &&
-            typeRef.attributes.get(com.here.gluecodium.model.lime.LimeAttributeType.CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.TYPE) != null
-    }
-
-    private fun isBlob(typeRef: LimeTypeRef): Boolean =
-        (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.BLOB
-
-    private fun isObjectStruct(typeRef: LimeTypeRef): Boolean =
-        (typeRef.type.actualType as? LimeStruct)?.let(::isObjectStruct) == true
-
-    private fun isObjectStruct(struct: LimeStruct): Boolean =
-        struct.attributes.have(LimeAttributeType.IMMUTABLE) ||
-            struct.fields.any { isObjectStruct(it.typeRef) }
-
-    private fun isJsDate(typeRef: LimeTypeRef): Boolean =
-        (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.DATE &&
-            !hasCppTypeOverride(typeRef)
-
-    private fun isJsDuration(typeRef: LimeTypeRef): Boolean =
-        (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.DURATION
-
-    private fun isJsLocale(typeRef: LimeTypeRef): Boolean =
-        (typeRef.type.actualType as? LimeBasicType)?.typeId == TypeId.LOCALE
-
-    private fun hasCppTypeOverride(typeRef: LimeTypeRef): Boolean {
-        if (typeRef.attributes.have(CPP, com.here.gluecodium.model.lime.LimeAttributeValueType.TYPE)) return true
-        val alias = typeRef.type as? LimeTypeAlias ?: return false
-        return hasCppTypeOverride(alias.typeRef)
-    }
-
-    private fun requiresJsAdapter(typeRef: LimeTypeRef): Boolean {
-        if (typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) || isJsDuration(typeRef) || isBlob(typeRef) || isObjectStruct(typeRef)) return true
-        return when (val actualType = typeRef.type.actualType) {
-            is LimeClass, is LimeInterface -> true
-            is LimeList -> requiresJsAdapter(actualType.elementType)
-            is LimeMap -> requiresJsAdapter(actualType.keyType) || requiresJsAdapter(actualType.valueType)
-            is LimeSet -> requiresJsAdapter(actualType.elementType)
-            is LimeLambda -> true
-            else -> false
-        }
-    }
-
-    private fun jsToNative(typeRef: LimeTypeRef, source: String): String {
-        if (typeRef.isNullable) {
-            val nativeType = embindNameResolver.resolveName(typeRef)
-            val value = jsToNativeNonNullable(typeRef.type.actualType, typeRef, source)
-            return "($source.isNull() || $source.isUndefined() ? " +
-                "$nativeType{} : $nativeType($value))"
-        }
-        return jsToNativeNonNullable(typeRef.type.actualType, typeRef, source)
-    }
-
-    private fun jsToNativeNonNullable(actualType: LimeType, typeRef: LimeTypeRef, source: String): String =
-        when (actualType) {
-            is LimeClass, is LimeInterface ->
-                "gluecodium_js::shared_ptr_from_js<${cppNameCache.getFullyQualifiedName(actualType)}>(std::move($source))"
-            is LimeList -> {
-                val element = jsToNative(actualType.elementType, "entry")
-                "([&]() { ${embindNameResolver.resolveName(typeRef.type)} converted; " +
-                    "for (const auto& entry : $source.call<emscripten::val>(\"values\")) { " +
-                    "converted.emplace_back($element); } return converted; }())"
-            }
-            is LimeMap -> {
-                val key = jsToNative(actualType.keyType, "entry[0]")
-                val value = jsToNative(actualType.valueType, "entry[1]")
-                "([&]() { ${embindNameResolver.resolveName(typeRef.type)} converted; " +
-                    "for (const auto& entry : $source.call<emscripten::val>(\"entries\")) { " +
-                    "converted.emplace($key, $value); } return converted; }())"
-            }
-            is LimeSet -> {
-                val element = jsToNative(actualType.elementType, "entry")
-                "([&]() { ${embindNameResolver.resolveName(typeRef.type)} converted; " +
-                    "for (const auto& entry : $source.call<emscripten::val>(\"values\")) { " +
-                    "converted.emplace($element); } return converted; }())"
-            }
-            is LimeStruct -> if (isObjectStruct(actualType)) {
-                val arguments = actualType.fields.joinToString(", ") { field ->
-                    jsToNative(field.typeRef, "$source[\"${nameRules.getName(field)}\"]")
-                }
-                "${cppNameCache.getFullyQualifiedName(actualType)}($arguments)"
-            } else {
-                "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
-            }
-            is LimeBasicType ->
-                if (actualType.typeId == TypeId.DATE && isJsDate(typeRef)) {
-                    "gluecodium_date_to_native<${embindNameResolver.resolveName(typeRef.type)}>( $source )"
-                } else if (actualType.typeId == TypeId.LOCALE) {
-                    "gluecodium_locale_to_native($source)"
-                } else if (actualType.typeId == TypeId.DURATION) {
-                    val nativeTypeRef = LimeDirectTypeRef(typeRef.type, false, typeRef.attributes)
-                    "gluecodium_duration_to_native<${embindNameResolver.resolveName(nativeTypeRef)}>( $source )"
-                } else if (actualType.typeId == TypeId.BLOB) {
-                    "::std::make_shared<::std::vector<uint8_t>>(emscripten::convertJSArrayToNumberVector<uint8_t>($source))"
-                } else {
-                    "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
-                }
-            is LimeLambda -> lambdaAdapterExpression(actualType, source)
-            else -> "$source.as<${embindNameResolver.resolveName(typeRef)}>()"
-        }
-
-    private fun lambdaAdapterExpression(lambda: LimeLambda, source: String, captureName: String = "__lambda"): String {
-        val function = lambda.asFunction()
-        val returnType = embindNameResolver.resolveName(function.returnType)
-        val parameters = function.parameters.map { parameter ->
-            val type = embindNameResolver.resolveName(parameter.typeRef)
-            val cppType = if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $type&" else type
-            "$cppType ${parameter.path.name}"
-        }
-        val arguments = function.parameters.joinToString(", ") { it.path.name }
-        val invocation = "$captureName->callFunction<$returnType>(${arguments})"
-        val body = if (function.returnType.isVoid) {
-            "gluecodium_js::invoke_on_main_runtime_thread_void([&] { $invocation; });"
-        } else {
-            "return gluecodium_js::invoke_on_main_runtime_thread([&] { return $invocation; });"
-        }
-        val capturedSource = if (source.startsWith("std::move(")) source else "emscripten::val($source)"
-        return "[$captureName = std::shared_ptr<gluecodium_js::RuntimeThreadVal>(new gluecodium_js::RuntimeThreadVal($capturedSource), gluecodium_js::delete_runtime_thread_val)](${parameters.joinToString(", ")}) -> $returnType { $body }"
-    }
-
-    /** Return types whose native `result` must be converted to JS before returning. */
-    private fun returnsViaVal(returnType: LimeTypeRef): Boolean =
-        returnType.isNullable || isJsDate(returnType) || isJsLocale(returnType) ||
-            isJsDuration(returnType) || isBlob(returnType) || isObjectStruct(returnType) ||
-            returnType.type.actualType is LimeList ||
-            returnType.type.actualType is LimeMap ||
-            returnType.type.actualType is LimeSet
-
-    /**
-     * Non-recursive check used for function parameters: types that cannot pass through
-     * embind directly and must travel as `emscripten::val`.
-     */
-    private fun needsValParameterAdapter(typeRef: LimeTypeRef): Boolean {
-        if (typeRef.isNullable || isJsDate(typeRef) || isJsLocale(typeRef) ||
-            isJsDuration(typeRef) || isBlob(typeRef) || isObjectStruct(typeRef)
-        ) return true
-        return when (typeRef.type.actualType) {
-            is LimeClass, is LimeInterface, is LimeLambda,
-            is LimeList, is LimeMap, is LimeSet,
-            -> true
-            else -> false
-        }
-    }
-
-    private fun adapterReturnConversion(returnType: com.here.gluecodium.model.lime.LimeTypeRef): String =
-        if (returnsViaVal(returnType)) {
-            "return ${nativeToJs(returnType, "result")};"
-        } else {
-            ""
-        }
-
-    private fun nativeToJs(typeRef: LimeTypeRef, source: String): String {
-        if (typeRef.isNullable) {
-            if (typeRef.type.actualType is LimeClass || typeRef.type.actualType is LimeInterface) {
-                return "($source ? emscripten::val($source) : emscripten::val::undefined())"
-            }
-            return "($source ? ${nativeToJsNonNullable(typeRef.type.actualType, typeRef, "*$source")} : emscripten::val::undefined())"
-        }
-        return nativeToJsNonNullable(typeRef.type.actualType, typeRef, source)
-    }
-
-    private fun nativeToJsNonNullable(actualType: LimeType, typeRef: LimeTypeRef, source: String): String =
-        when (actualType) {
-            is LimeClass, is LimeInterface ->
-                "emscripten::val($source)"
-            is LimeList -> {
-                val element = nativeToJs(actualType.elementType, "entry")
-                "([&]() { auto jsResult = emscripten::val::global(\"Array\").new_(); " +
-                    "for (const auto& entry : $source) { jsResult.call<void>(\"push\", $element); } " +
-                    "return jsResult; }())"
-            }
-            is LimeMap -> {
-                val key = nativeToJs(actualType.keyType, "entry.first")
-                val value = nativeToJs(actualType.valueType, "entry.second")
-                "([&]() { auto jsResult = emscripten::val::global(\"Map\").new_(); " +
-                    "for (const auto& entry : $source) { jsResult.call<void>(\"set\", $key, $value); } " +
-                    "return jsResult; }())"
-            }
-            is LimeSet -> {
-                val element = nativeToJs(actualType.elementType, "entry")
-                "([&]() { auto jsResult = emscripten::val::global(\"Set\").new_(); " +
-                    "for (const auto& entry : $source) { jsResult.call<void>(\"add\", $element); } " +
-                    "return jsResult; }())"
-            }
-            is LimeStruct -> if (isObjectStruct(actualType)) {
-                val fields = actualType.fields.joinToString(" ") { field ->
-                    val fieldSource = if (actualType.attributes.have(CPP, ACCESSORS)) {
-                        "$source.${cppNameCache.getGetterName(field)}()"
-                    } else {
-                        "$source.${cppNameCache.getName(field)}"
-                    }
-                    "jsResult.set(\"${nameRules.getName(field)}\", ${nativeToJs(field.typeRef, fieldSource)});"
-                }
-                "([&]() { auto jsResult = emscripten::val::object(); $fields return jsResult; }())"
-            } else {
-                "emscripten::val($source)"
-            }
-            is LimeBasicType ->
-                if (actualType.typeId == TypeId.DATE && isJsDate(typeRef)) {
-                    "gluecodium_date_to_js($source)"
-                } else if (actualType.typeId == TypeId.LOCALE) {
-                    "gluecodium_locale_to_js($source)"
-                } else if (actualType.typeId == TypeId.DURATION) {
-                    "gluecodium_duration_to_js($source)"
-                } else if (actualType.typeId == TypeId.BLOB) {
-                    "emscripten::val::global(\"Uint8Array\").new_(emscripten::val::array($source ? *$source : ::std::vector<uint8_t>{}))"
-                } else {
-                    "emscripten::val($source)"
-                }
-            else -> "emscripten::val($source)"
-        }
-
-    private fun thrownReturnConversion(errorIsEnum: Boolean, returnIsVoid: Boolean, returnType: LimeTypeRef): String {
-        if (errorIsEnum && returnIsVoid) {
-            return "auto jsResult = emscripten::val::object(); " +
-                "if (result.value() != 0) { jsResult.set(\"error\", result.value()); } " +
-                "return jsResult;"
-        }
-        val errorExpression = if (errorIsEnum) "result.error().value()" else "result.error()"
-        val successExpression =
-            if (returnIsVoid) "" else " jsResult.set(\"value\", ${nativeToJs(returnType, "result.unsafe_value()")});"
-        return "auto jsResult = emscripten::val::object(); " +
-            "if (result) {$successExpression} else { jsResult.set(\"error\", $errorExpression); } " +
-            "return jsResult;"
-    }
 
     private fun propertyViewModel(property: LimeProperty): Map<String, Any> =
         mapOf(
@@ -937,10 +704,10 @@ internal class JsGenerator : Generator {
             "hasSetter" to (property.setter != null),
             "cppFullName" to ((limeReferenceMap[property.path.parent.toString()] as? LimeNamedElement)
                 ?.let { cppNameCache.getFullyQualifiedName(it) } ?: ""),
-            "needsAdapter" to requiresJsAdapter(property.typeRef),
+            "needsAdapter" to conversions.requiresJsAdapter(property.typeRef),
             "adapterGetterName" to propertyAdapterName(property, "get"),
             "adapterSetterName" to propertyAdapterName(property, "set"),
-            "adapterGetter" to nativeToJs(
+            "adapterGetter" to conversions.nativeToJs(
                 property.typeRef,
                 if (property.isStatic) {
                     "${cppNameCache.getFullyQualifiedName(limeReferenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getGetterName(property)}()"
@@ -948,7 +715,7 @@ internal class JsGenerator : Generator {
                     "self->${cppNameCache.getGetterName(property)}()"
                 },
             ),
-            "adapterSetter" to jsToNative(property.typeRef, "value").let { converted ->
+            "adapterSetter" to conversions.jsToNative(property.typeRef, "value").let { converted ->
                 if (property.isStatic) {
                     "${cppNameCache.getFullyQualifiedName(limeReferenceMap[property.path.parent.toString()] as LimeNamedElement)}::${cppNameCache.getSetterName(property)}($converted)"
                 } else {
@@ -971,11 +738,11 @@ internal class JsGenerator : Generator {
                 "cppType" to cppType,
                 "cppFieldName" to if (hasAccessors) null else cppNameCache.getName(field),
                 "hasAccessors" to hasAccessors,
-                "hasBlob" to isBlob(field.typeRef),
-                "hasImmutableStruct" to isObjectStruct(field.typeRef),
-            "hasDate" to isJsDate(field.typeRef),
-            "hasLocale" to isJsLocale(field.typeRef),
-            "hasDuration" to isJsDuration(field.typeRef),
+                "hasBlob" to conversions.isBlob(field.typeRef),
+                "hasImmutableStruct" to conversions.isObjectStruct(field.typeRef),
+            "hasDate" to conversions.isJsDate(field.typeRef),
+            "hasLocale" to conversions.isJsLocale(field.typeRef),
+            "hasDuration" to conversions.isJsDuration(field.typeRef),
                 "cppGetterName" to cppNameCache.getGetterName(field),
                 "cppSetterName" to cppNameCache.getSetterName(field),
                 "accessorType" to accessorType,
@@ -983,35 +750,35 @@ internal class JsGenerator : Generator {
                     (field.typeRef.type.actualType is LimeList ||
                     field.typeRef.type.actualType is LimeMap ||
                     field.typeRef.type.actualType is LimeSet)),
-                "collectionGetter" to nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
-                "collectionSetter" to jsToNative(field.typeRef, "value"),
-                "immutableGetter" to nativeToJs(
+                "collectionGetter" to conversions.nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
+                "collectionSetter" to conversions.jsToNative(field.typeRef, "value"),
+                "immutableGetter" to conversions.nativeToJs(
                     field.typeRef,
                     if (hasAccessors) "self.${cppNameCache.getGetterName(field)}()" else "self.${cppNameCache.getName(field)}",
                 ),
-                "immutableSetter" to jsToNative(field.typeRef, "value").let { converted ->
+                "immutableSetter" to conversions.jsToNative(field.typeRef, "value").let { converted ->
                     if (hasAccessors) {
                         "self.${cppNameCache.getSetterName(field)}($converted)"
                     } else {
                         "self.${cppNameCache.getName(field)} = $converted"
                     }
                 },
-                "dateGetter" to nativeToJs(field.typeRef, if (hasAccessors) {
+                "dateGetter" to conversions.nativeToJs(field.typeRef, if (hasAccessors) {
                     "self.${cppGetterName(field)}()"
                 } else {
                     "self.${cppNameCache.getName(field)}"
                 }),
-                "dateSetter" to jsToNative(field.typeRef, "value").let { converted -> if (hasAccessors) {
+                "dateSetter" to conversions.jsToNative(field.typeRef, "value").let { converted -> if (hasAccessors) {
                     "self.${cppSetterName(field)}($converted)"
                 } else {
                     "self.${cppNameCache.getName(field)} = $converted"
                 } },
-                "localeGetter" to nativeToJs(field.typeRef, if (hasAccessors) {
+                "localeGetter" to conversions.nativeToJs(field.typeRef, if (hasAccessors) {
                     "self.${cppGetterName(field)}()"
                 } else {
                     "self.${cppNameCache.getName(field)}"
                 }),
-                "localeSetter" to jsToNative(field.typeRef, "value").let { converted -> if (hasAccessors) {
+                "localeSetter" to conversions.jsToNative(field.typeRef, "value").let { converted -> if (hasAccessors) {
                     "self.${cppSetterName(field)}($converted)"
                 } else {
                     "self.${cppNameCache.getName(field)} = $converted"
@@ -1395,7 +1162,7 @@ internal class JsGenerator : Generator {
             when (val type = typeRef.type) {
                 is LimeList -> {
                     collect(type.elementType)
-                    if (!requiresJsAdapter(typeRef)) {
+                    if (!conversions.requiresJsAdapter(typeRef)) {
                         val elementType = embindNameResolver.resolveName(type.elementType)
                         val name = "Vector_${sanitizeRegistrationName(elementType)}"
                         registrations.putIfAbsent(name, mapOf("vector" to true, "type" to elementType, "name" to name))
@@ -1408,7 +1175,7 @@ internal class JsGenerator : Generator {
                 is LimeSet -> collect(type.elementType)
                 else -> Unit
             }
-            if (typeRef.isNullable && !requiresJsAdapter(typeRef)) {
+            if (typeRef.isNullable && !conversions.requiresJsAdapter(typeRef)) {
                 val typeName = resolveGenericRegistrationType(typeRef.type)
                 val name = "Optional_${sanitizeRegistrationName(typeName)}"
                 registrations.putIfAbsent(name, mapOf("optional" to true, "type" to typeName, "name" to name))
