@@ -952,15 +952,14 @@ internal class JsGenerator : Generator {
                     .distinct()
             }
         val genericRegistrations = collectGenericRegistrations(filteredModel)
-        val genericRegistrationIncludes = collectGenericRegistrationIncludes(filteredModel)
         val moduleInitContent =
             TemplateEngine.render(
                 "js/EmbindModuleInit",
                 mapOf(
                     "moduleName" to jsModuleName,
                     "registerFunctions" to topologicalSort(registerNameToDeps).map { mapOf("name" to it) },
-                    "genericRegistrations" to genericRegistrations,
-                    "genericRegistrationIncludes" to genericRegistrationIncludes,
+                    "genericRegistrations" to genericRegistrations.entries,
+                    "genericRegistrationIncludes" to genericRegistrations.includes,
                     "needsUnorderedSet" to containsNullableSet(filteredModel),
                     "localeTypeName" to embindNameResolver.resolveName(TypeId.LOCALE),
                     "localeInclude" to (internalNamespace + "Locale.h").joinToString("/"),
@@ -1178,10 +1177,19 @@ internal class JsGenerator : Generator {
             .replace("\r", "\\r")
             .replace("\t", "\\t")
 
-    private fun collectGenericRegistrations(filteredModel: LimeModel): List<Map<String, Any>> {
+    /** Generic `Vector_`/`Optional_` embind registrations plus the includes they need. */
+    private class GenericRegistrations(
+        val entries: List<Map<String, Any>>,
+        val includes: List<Map<String, Any>>,
+    )
+
+    private fun collectGenericRegistrations(filteredModel: LimeModel): GenericRegistrations {
         val registrations = linkedMapOf<String, Map<String, Any>>()
+        val includes = linkedSetOf<Include>()
+        val includeResolver = EmbindIncludeResolver(limeReferenceMap, cppNameRules, internalNamespace)
 
         fun collect(typeRef: com.here.gluecodium.model.lime.LimeTypeRef) {
+            includes += includeResolver.resolveElementImports(typeRef)
             when (val type = typeRef.type) {
                 is LimeList -> {
                     collect(type.elementType)
@@ -1205,40 +1213,6 @@ internal class JsGenerator : Generator {
             }
         }
 
-        fun collectFromContainer(container: com.here.gluecodium.model.lime.LimeContainer) {
-            container.functions.flatMap { it.parameters.map { parameter -> parameter.typeRef } + it.returnType.typeRef }.forEach(::collect)
-            container.properties.map { it.typeRef }.forEach(::collect)
-            container.constants.map { it.typeRef }.forEach(::collect)
-            container.constructors.flatMap { constructor -> constructor.parameters.map { it.typeRef } }.forEach(::collect)
-            (container as? LimeStruct)?.fields?.map { it.typeRef }?.forEach(::collect)
-        }
-
-        filteredModel.topElements
-            .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
-            .flatMap(::collectEmbindTypes)
-            .forEach { type ->
-                (type as? com.here.gluecodium.model.lime.LimeContainer)?.let(::collectFromContainer)
-            }
-        return registrations.values.toList()
-    }
-
-    private fun collectGenericRegistrationIncludes(filteredModel: LimeModel): List<Map<String, Any>> {
-        val includes = linkedSetOf<Include>()
-
-        fun collect(typeRef: com.here.gluecodium.model.lime.LimeTypeRef) {
-            includes += EmbindIncludeResolver(limeReferenceMap, cppNameRules, internalNamespace)
-                .resolveElementImports(typeRef)
-            when (val type = typeRef.type) {
-                is LimeList -> collect(type.elementType)
-                is LimeMap -> {
-                    collect(type.keyType)
-                    collect(type.valueType)
-                }
-                is LimeSet -> collect(type.elementType)
-                else -> Unit
-            }
-        }
-
         filteredModel.topElements
             .filterIsInstance<com.here.gluecodium.model.lime.LimeType>()
             .flatMap(::collectEmbindTypes)
@@ -1248,12 +1222,14 @@ internal class JsGenerator : Generator {
                         .forEach(::collect)
                     container.properties.map { it.typeRef }.forEach(::collect)
                     container.constants.map { it.typeRef }.forEach(::collect)
-                    container.constructors.flatMap { it.parameters.map { parameter -> parameter.typeRef } }.forEach(::collect)
+                    container.constructors.flatMap { constructor -> constructor.parameters.map { it.typeRef } }.forEach(::collect)
                     (container as? LimeStruct)?.fields?.map { it.typeRef }?.forEach(::collect)
                 }
             }
-
-        return includes.map { mapOf("fileName" to it.fileName, "isSystem" to it.isSystem) }
+        return GenericRegistrations(
+            registrations.values.toList(),
+            includes.map { mapOf("fileName" to it.fileName, "isSystem" to it.isSystem) },
+        )
     }
 
     private fun resolveGenericRegistrationType(type: com.here.gluecodium.model.lime.LimeType): String =
