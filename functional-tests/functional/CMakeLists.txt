@@ -133,7 +133,7 @@ feature(Interfaces cpp android android-kotlin swift dart js SOURCES
     input/lime/Interfaces.lime
 )
 
-feature(InstanceInStruct cpp android android-kotlin swift dart SOURCES
+feature(InstanceInStruct cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/InstanceInStruct.cpp
 
     input/lime/StructWithInstance.lime

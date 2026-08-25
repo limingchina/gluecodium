@@ -657,6 +657,13 @@ Verify shared-pointer class fields inside value objects and confirm that wrapper
 preserved through the round trip. Keep this separate from immutable struct coverage because it
 exercises class ownership and canonicalization in addition to value conversion.
 
+Batch 5D is complete. `InstanceInStruct` is enabled for JavaScript and registers
+`instances-in-struct.test.mjs`. The focused test verifies that a class instance nested in a struct
+can be read and mutated through its generated wrapper, and covers nullable and non-nullable holder
+fields, including the legacy empty non-nullable result. The focused module passes both cases, and
+the complete `unit_tests_javascript` CTest gate passes after a local-generator Emscripten 6.0.8
+rebuild.
+
 #### Batch 5E - native method qualifiers
 
 Features: `CppConst`, `CppNoexcept`.
@@ -735,7 +742,7 @@ separate JavaScript runtime contract exists.
 | 5A | DeclarationOrder, StructsWithCompanion | passing; declaration order and companion exports |
 | 5B | FieldConstructors, StructsInTypes | passing; recursive struct-in-type conversion; FieldConstructors intentionally deferred |
 | 5C | StructsImmutable | passing; recursive emscripten::val adapters and nested immutable values |
-| 5D | InstanceInStruct | not started |
+| 5D | InstanceInStruct | passing; nested class identity and nullable value-object fields |
 | 5E | CppConst, CppNoexcept | not started |
 | 6A | ExternalTypes | not started |
 | 6B | CircularDependencies | not started |

@@ -82,6 +82,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/declaration-order-companion.te
     "${JS_TEST_DIR}/declaration-order-companion.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/structs-in-types.test.mjs"
     "${JS_TEST_DIR}/structs-in-types.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/instances-in-struct.test.mjs"
+    "${JS_TEST_DIR}/instances-in-struct.test.mjs" COPYONLY)
 
 add_test(NAME unit_tests_javascript
     COMMAND ${NODE_EXECUTABLE} --test
@@ -111,6 +113,7 @@ add_test(NAME unit_tests_javascript
         "${JS_TEST_DIR}/package-identity.test.mjs"
         "${JS_TEST_DIR}/naming-and-docs.test.mjs"
         "${JS_TEST_DIR}/declaration-order-companion.test.mjs"
-        "${JS_TEST_DIR}/structs-in-types.test.mjs")
+        "${JS_TEST_DIR}/structs-in-types.test.mjs"
+        "${JS_TEST_DIR}/instances-in-struct.test.mjs")
 set_tests_properties(unit_tests_javascript PROPERTIES
     ENVIRONMENT "GLUECODIUM_JS_MODULE=$<TARGET_FILE:functional_bindings_js>")
