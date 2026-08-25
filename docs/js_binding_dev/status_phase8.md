@@ -1,7 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 4A filtering and visibility coverage complete; native lambda-return support
-remains deferred; the complete JavaScript functional gate passes
+**Status**: Batch 4C package identity and collision coverage complete; native lambda-return
+support remains deferred; the complete JavaScript functional gate passes
 
 **Date**: 2026-08-25
 
@@ -250,6 +250,9 @@ The first tests found several embind generation defects that are fixed in this c
   Generic `@Skip` and `@EnableIf` tags are applied independently of platform-specific attributes,
   so `@Java`, `@Swift`, `@Dart`, and `@Kotlin` visibility annotations do not accidentally change
   the JavaScript surface.
+- Package-local JavaScript exports retain directory-based package paths, including underscore
+  package components, while embind registrations use canonical full-path runtime names to avoid
+  cross-package leaf-name collisions.
 
 ## Lessons Learned
 
@@ -548,10 +551,17 @@ insufficient.
 
 Features: `UnderscorePackage`, `CrossPackageNameClash`.
 
-Verify that underscore-prefixed package paths remain valid module paths and do not collide with
-generated helper names. Equal public leaf names from different packages must remain distinct in the
-internal embind runtime and be exported from the correct package facade. Require checks against both
-runtime exports and generated `.d.ts` output.
+The JavaScript functional build now enables both package-identity fixtures and registers
+`package-identity.test.mjs`. The focused coverage verifies that the `test_off` package path and
+its exported types remain importable, including a native call whose signature references that
+package. It also verifies that equal public leaf names from `test`, `test.foo`, and `test.bar`
+remain distinct runtime exports while retaining their package-local names in generated `.d.ts`
+files.
+
+Each colliding type uses a canonical embind runtime name derived from its full Lime path, so the
+shared Emscripten module does not conflate package-local types. The package facades export those
+internal registrations from the correct directory-based module paths. The refreshed JavaScript
+functional gate passes all 66 tests after a local-generator Emscripten 6.0.8 build.
 
 #### Batch 5A - declaration order and companion surfaces
 

@@ -353,7 +353,7 @@ feature(DartExternalTypes dart SOURCES
     input/lime/DartExternalTypes.lime
 )
 
-feature(UnderscorePackage cpp android android-kotlin swift dart SOURCES
+feature(UnderscorePackage cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/UseUnderscorePackage.cpp
 
     input/lime/UnderscorePackage.lime
@@ -518,7 +518,7 @@ feature(Locales cpp android android-kotlin swift dart SOURCES
     input/lime/LocaleDefaults.lime
 )
 
-feature(CrossPackageNameClash cpp android android-kotlin swift dart SOURCES
+feature(CrossPackageNameClash cpp android android-kotlin swift dart js SOURCES
     input/lime/CrossPackageNameClashA.lime
     input/lime/CrossPackageNameClashB.lime
     input/lime/CrossPackageNameClashC.lime
