@@ -771,6 +771,8 @@ internal class JsGenerator : Generator {
                 struct.attributes.have(CPP, ACCESSORS) ||
                     field.external?.cpp?.get(LimeExternalDescriptor.Companion.GETTER_NAME_NAME) != null
             val accessorType = if (CppNameResolver.needsRefSuffix(field.typeRef)) "const $cppType&" else cppType
+            val directSource =
+                if (hasAccessors) "self.${cppNameCache.getGetterName(field)}()" else "self.${cppNameCache.getName(field)}"
             mapOf(
                 "model" to field,
                 "jsName" to nameRules.getName(field),
@@ -780,9 +782,9 @@ internal class JsGenerator : Generator {
                 "hasAccessors" to hasAccessors,
                 "hasBlob" to conversions.isBlob(field.typeRef),
                 "hasImmutableStruct" to conversions.isObjectStruct(field.typeRef),
-            "hasDate" to conversions.isJsDate(field.typeRef),
-            "hasLocale" to conversions.isJsLocale(field.typeRef),
-            "hasDuration" to conversions.isJsDuration(field.typeRef),
+                "hasDate" to conversions.isJsDate(field.typeRef),
+                "hasLocale" to conversions.isJsLocale(field.typeRef),
+                "hasDuration" to conversions.isJsDuration(field.typeRef),
                 "cppGetterName" to cppNameCache.getGetterName(field),
                 "cppSetterName" to cppNameCache.getSetterName(field),
                 "accessorType" to accessorType,
@@ -792,43 +794,24 @@ internal class JsGenerator : Generator {
                     field.typeRef.type.actualType is LimeSet)),
                 "collectionGetter" to conversions.nativeToJs(field.typeRef, "self.${cppNameCache.getName(field)}"),
                 "collectionSetter" to conversions.jsToNative(field.typeRef, "value"),
-                "immutableGetter" to conversions.nativeToJs(
-                    field.typeRef,
-                    if (hasAccessors) "self.${cppNameCache.getGetterName(field)}()" else "self.${cppNameCache.getName(field)}",
-                ),
-                "immutableSetter" to conversions.jsToNative(field.typeRef, "value").let { converted ->
-                    if (hasAccessors) {
-                        "self.${cppNameCache.getSetterName(field)}($converted)"
-                    } else {
-                        "self.${cppNameCache.getName(field)} = $converted"
-                    }
-                },
-                "dateGetter" to conversions.nativeToJs(field.typeRef, if (hasAccessors) {
-                    "self.${cppGetterName(field)}()"
-                } else {
-                    "self.${cppNameCache.getName(field)}"
-                }),
-                "dateSetter" to conversions.jsToNative(field.typeRef, "value").let { converted -> if (hasAccessors) {
-                    "self.${cppSetterName(field)}($converted)"
-                } else {
-                    "self.${cppNameCache.getName(field)} = $converted"
-                } },
-                "localeGetter" to conversions.nativeToJs(field.typeRef, if (hasAccessors) {
-                    "self.${cppGetterName(field)}()"
-                } else {
-                    "self.${cppNameCache.getName(field)}"
-                }),
-                "localeSetter" to conversions.jsToNative(field.typeRef, "value").let { converted -> if (hasAccessors) {
-                    "self.${cppSetterName(field)}($converted)"
-                } else {
-                    "self.${cppNameCache.getName(field)} = $converted"
-                } },
+                "immutableGetter" to conversions.nativeToJs(field.typeRef, directSource),
+                "immutableSetter" to convertedFieldSetter(field, hasAccessors),
+                "dateGetter" to conversions.nativeToJs(field.typeRef, directSource),
+                "dateSetter" to convertedFieldSetter(field, hasAccessors),
+                "localeGetter" to conversions.nativeToJs(field.typeRef, directSource),
+                "localeSetter" to convertedFieldSetter(field, hasAccessors),
             )
         }
 
-    private fun cppGetterName(field: LimeField) = cppNameCache.getGetterName(field)
-
-    private fun cppSetterName(field: LimeField) = cppNameCache.getSetterName(field)
+    /** Emits the C++ assignment converting a JS `value` into one struct field. */
+    private fun convertedFieldSetter(field: LimeField, hasAccessors: Boolean): String =
+        conversions.jsToNative(field.typeRef, "value").let { converted ->
+            if (hasAccessors) {
+                "self.${cppNameCache.getSetterName(field)}($converted)"
+            } else {
+                "self.${cppNameCache.getName(field)} = $converted"
+            }
+        }
 
     private fun propertyAdapterName(property: LimeProperty, operation: String) =
         "__gluecodium_${operation}_${property.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
