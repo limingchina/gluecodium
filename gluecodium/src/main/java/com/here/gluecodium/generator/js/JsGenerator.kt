@@ -21,8 +21,6 @@ package com.here.gluecodium.generator.js
 
 import com.here.gluecodium.cli.GluecodiumExecutionException
 import com.here.gluecodium.common.LimeLogger
-import com.here.gluecodium.common.LimeModelFilter
-import com.here.gluecodium.common.LimeModelSkipPredicates
 import com.here.gluecodium.generator.common.GeneratedFile
 import com.here.gluecodium.generator.common.Generator
 import com.here.gluecodium.generator.common.GeneratorOptions
@@ -105,19 +103,9 @@ internal class JsGenerator : Generator {
     override fun generate(limeModel: LimeModel): List<GeneratedFile> {
         val limeLogger = LimeLogger(logger, limeModel.fileNameMap)
 
-        // Filter the model for the embind C++ binding output: retain functions/fields (needed
-        // for binding bodies). External types are NOT skipped — embind still needs to `#include`
-        // and bind external C++ types referenced by other bound types.
-        val embindFilteredModel =
-            LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, JS, retainFunctionsAndFields = true) &&
-                    !isCppSkipped(it)
-            }
-        // Filter the model for the TypeScript `.d.ts` stub output.
-        val jsFilteredModel =
-            LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, JS, retainFunctionsAndFields = false)
-            }
+        val filteredModels = JsModelFilter(activeTags, ::isCppSkipped).filter(limeModel)
+        val embindFilteredModel = filteredModels.embind
+        val jsFilteredModel = filteredModels.stubs
 
         jsNameResolver = JsNameResolver(embindFilteredModel.referenceMap, nameRules, limeLogger, commentsProcessor)
 
