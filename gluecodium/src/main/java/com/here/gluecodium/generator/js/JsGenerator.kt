@@ -830,7 +830,7 @@ internal class JsGenerator : Generator {
                     }
                 val parentDeps =
                     (type as? LimeContainerWithInheritance)?.parents
-                        ?.mapNotNull { it.type.actualType as? LimeNamedElement }
+                        ?.mapNotNull { it.type.actualType }
                         ?.map(::resolveRegisterName)
                         .orEmpty()
                 registerName to (nestedTypeDeps + parentDeps)
