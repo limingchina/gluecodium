@@ -147,7 +147,7 @@ feature(Structs cpp android android-kotlin swift dart js SOURCES
     input/lime/Accessors.lime
 )
 
-feature(StructsInTypes cpp android android-kotlin swift dart SOURCES
+feature(StructsInTypes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StructsFromTypeCollection.cpp
 
     input/lime/StructsFromTypeCollection.lime

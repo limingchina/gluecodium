@@ -1,6 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 5A declaration-order and companion-surface coverage complete; Batch 4B
+**Status**: Batch 5B constructor and struct-shape coverage complete; Batch 5A declaration-order
+and companion-surface coverage complete; Batch 4B
 documentation and public naming coverage complete; Batch 4C package identity and collision
 coverage remains complete; native lambda-return support remains deferred; the complete JavaScript
 functional gate passes
@@ -614,6 +615,23 @@ collections and nested method signatures, including recursive JavaScript value c
 direct embind field pointer is unavailable. Require a focused test for the supported constructor
 and struct-in-type surfaces.
 
+Batch 5B is complete. `StructsInTypes` is enabled for JavaScript and registers
+`structs-in-types.test.mjs`. The focused test verifies point creation and coordinate swapping,
+recursive conversion of `Line` and `ColoredLine` values, and recursive conversion of every field
+in `AllTypesStruct`, including 64-bit integer `bigint` values and a nested `Point`.
+
+`FieldConstructors` remains intentionally unsupported for JavaScript. Its generated field
+constructor API does not map to the object-literal and `emscripten::val` adapter contract used by
+the JavaScript struct bindings, so the fixture remains enabled only for the existing native and
+platform generators. The `StructsInTypes` native fixture also had a duplicate
+`SomeOpenNumberWrapperClass` helper implementation when its dependency closure was enabled; the
+duplicate implementation was removed from the fixture source while the canonical helper remains
+in its dedicated source file.
+
+The focused `structs-in-types.test.mjs` module passes all 3 cases. After a local-generator
+Emscripten 6.0.8 rebuild with `GLUECODIUM_PATH="$PWD"`, the complete
+`unit_tests_javascript` CTest gate passes.
+
 #### Batch 5C - immutable struct values
 
 Feature: `StructsImmutable`.
@@ -707,7 +725,7 @@ separate JavaScript runtime contract exists.
 | 4B | Comments, PlatformNames, EscapedNames | passing; JSDoc, public naming, keyword escaping, and relative declaration imports |
 | 4C | UnderscorePackage, CrossPackageNameClash | passing; package paths and collision-safe runtime names |
 | 5A | DeclarationOrder, StructsWithCompanion | passing; declaration order and companion exports |
-| 5B | FieldConstructors, StructsInTypes | not started |
+| 5B | FieldConstructors, StructsInTypes | passing; recursive struct-in-type conversion; FieldConstructors intentionally deferred |
 | 5C | StructsImmutable | not started |
 | 5D | InstanceInStruct | not started |
 | 5E | CppConst, CppNoexcept | not started |
