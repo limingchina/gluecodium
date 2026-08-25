@@ -1,6 +1,6 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 3E multiple-inheritance coverage complete; native lambda-return support remains
+**Status**: Batch 3F nested-declaration coverage complete; native lambda-return support remains
 deferred; the complete JavaScript functional gate passes
 
 **Date**: 2026-08-25
@@ -173,6 +173,10 @@ JavaScript functional tests. The focused `multiple-inheritance.test.mjs` module 
 cases after a clean local-generator rebuild, including flattened secondary methods and properties
 on both classes and interfaces. The full `unit_tests_javascript` CTest target passes with all 52
 registered tests.
+The focused `nesting.test.mjs` module passes all five cases, including nested declaration exports,
+flattened-name collision handling, nested interface dispatch, adapted read-only properties, and
+nested struct error wrapping. The full `unit_tests_javascript` CTest target passes all 61
+registered tests after a clean Emscripten 6.0.8 rebuild.
 
 ## Generator Fixes Exercised
 
@@ -211,6 +215,11 @@ The first tests found several embind generation defects that are fixed in this c
 - Multiple-inheritance bindings select one primary Embind `base<>`, flatten secondary-parent
   methods and properties onto the derived registration, and use raw-pointer lambda adapters for
   flattened interface methods. JavaScript declarations include inherited functions and properties.
+- Nested package exports preserve the established flattened names for duplicate nested leaves and
+  fall back to a unique embind runtime name when flattened names collide. Nested adapted read-only
+  class and interface properties emit getter-only registrations. Thrown static struct functions
+  wrap their module-level embind registrations, and generated interface declarations keep disposal
+  members inside the interface body.
 - nested C++ type references in collection converters and external enum values use fully qualified
   C++ names; local CMake builds propagate owner-target include directories to the JS module target.
 - Locale adapters convert BCP-47 strings through the generated native `Locale` type, preserving
@@ -486,32 +495,69 @@ Feature: `Nesting`.
 Run after interface and lambda conversions. Its fixtures include nested interfaces, classes,
 structs, enums, typedefs, and lambdas exposed through interface-returned values.
 
-#### Batch 4A - attributes, naming, and package boundaries
+The JavaScript functional build now enables the existing nested-declaration fixture and registers
+`nesting.test.mjs`. The focused tests cover:
 
-Features: `Visibility`, `SkipAttribute`, `Comments`, `PlatformNames`, `EscapedNames`,
-`UnderscorePackage`, `CrossPackageNameClash`.
+- nested class, struct, enum, typedef, and lambda declarations in the public package facade;
+- distinct flattened exports for nested declarations with the same leaf name;
+- JavaScript implementation and dispatch of a nested interface;
+- a nested class returned through a native read-only property and a nested struct static function;
+- error wrapping for a nested struct static function.
 
-This gate verifies that JavaScript generation preserves the model's visibility and naming
-contract before adding more structural fixtures. Cover `@Js(Skip)` and `@EnableIf`, internal
-declarations, generated JSDoc, platform-specific names, JavaScript keyword escaping, package
-paths, and duplicate leaf names from different packages. The focused test should exercise both
-the generated public package facade and the declarations used to compile it, so a name collision
-cannot be hidden by an embind-only internal name.
+The fixture's interface-return declarations for nested classes, structs, typedefs, and lambdas are
+also compiled as part of the dependency closure. Their native sources intentionally provide header
+inclusion checks rather than factories for invoking those interface methods at runtime. Native
+lambda returns remain deferred as documented in Batch 2C.
 
-#### Batch 4B - declaration and struct edges
+#### Batch 4A - filtering and visibility
 
-Features: `DeclarationOrder`, `StructsWithCompanion`, `FieldConstructors`, `StructsInTypes`,
-`StructsImmutable`, `InstanceInStruct`, `CppConst`, `CppNoexcept`.
+Features: `Visibility`, `SkipAttribute`.
 
-Run this gate after package and name resolution are stable. Verify declaration-order independence,
-companion-generated APIs, field constructors, structs nested in method types, immutable struct
-construction and return conversion, and shared-pointer instance fields inside value objects.
-`CppConst` and `CppNoexcept` are compile-contract checks: the generated embind signatures must
-accept the qualified native methods without changing their JavaScript surface. The immutable
-struct cases must continue to use the generated `emscripten::val` adapter path rather than relying
-on default-constructible embind `value_object`s.
+Isolate the JavaScript dependency closure before adding `js` to these fixtures. Verify that internal
+declarations are available for generated type references but are not exported by the public package
+facade. Verify `@Js(Skip)`, `@Js(EnableIf)`, and predefined skip tags in both TypeScript declarations
+and embind registrations. Test enabled and disabled tag configurations; the disabled case must not
+leave stale declarations or private runtime exports behind.
 
-#### Batch 5A - external type bindings
+#### Batch 4B - documentation, naming, and package identity
+
+Features: `Comments`, `PlatformNames`, `EscapedNames`, `UnderscorePackage`,
+`CrossPackageNameClash`.
+
+Verify that Lime documentation, parameter and return comments, links, and multiline text produce
+valid JSDoc in generated `.d.ts` files. Verify that `@Js(Name = ...)`, JavaScript keyword escaping,
+and underscore-prefixed package paths preserve the intended public names while generated C++
+bindings resolve the native declarations. Equal public leaf names from different packages must
+remain distinct in the internal embind runtime and be exported from the correct package facade.
+Inspect both runtime exports and generated `.d.ts` output; a successful compile alone is
+insufficient.
+
+#### Batch 5A - declaration and struct-shape edges
+
+Features: `DeclarationOrder`, `StructsWithCompanion`, `FieldConstructors`, `StructsInTypes`.
+
+Verify that forward references and embind registration order do not depend on Lime declaration
+order. Verify that companion-generated constants and functions are attached to the owning
+JavaScript export, and that structs used through type collections and nested method signatures use
+the required recursive JavaScript value conversion. Determine whether `FieldConstructors` has a
+meaningful JavaScript surface; if JavaScript uses object literals or adapters instead, record the
+legacy fixture as intentionally unsupported rather than enabling it unchanged. Require clean
+generation, Emscripten compilation, and a focused Node test for the supported surfaces.
+
+#### Batch 5B - immutable values and native qualifiers
+
+Features: `StructsImmutable`, `InstanceInStruct`, `CppConst`, `CppNoexcept`.
+
+Keep the existing immutable-struct plain-object, nested-field, and returned-value checks as the
+baseline. Verify shared-pointer class fields inside value objects and preserve wrapper identity.
+Immutable fields must continue through the generated `emscripten::val` adapter path rather than
+default-constructible embind `value_object` registration. Isolate only the `CppConst` and
+`CppNoexcept` methods needed to prove that const-qualified, noexcept-qualified, inherited, and
+interface-dispatched declarations compile through embind and retain the expected JavaScript
+surface. Record this batch as passing only after runtime coverage and the qualifier compile checks
+both succeed.
+
+#### Batch 6A - external type bindings
 
 Feature: `ExternalTypes`.
 
@@ -522,7 +568,7 @@ paths while putting ownership of the native definition outside Gluecodium. Add a
 with a separately supplied native header and implementation, and verify both generated bindings
 and public package exports.
 
-#### Batch 5B - dependency ordering
+#### Batch 6B - dependency ordering
 
 Feature: `CircularDependencies`.
 
@@ -573,9 +619,11 @@ separate JavaScript runtime contract exists.
 | 3C | Errors, Nullable | passing; error envelopes, interface error propagation, and nullable values |
 | 3D | Equatable | passing; value equality, same-hash, and referential equality |
 | 3E | MultipleInheritance | passing; primary base, flattened secondary members, and supported identity checks |
-| 3F | Nesting | blocked on interface and lambda gates |
-| 4A | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash | not started |
-| 4B | DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
-| 5A | ExternalTypes | not started |
-| 5B | CircularDependencies | not started |
+| 3F | Nesting | passing; nested declarations, interface dispatch, and nested runtime conversions |
+| 4A | Visibility, SkipAttribute | not started |
+| 4B | Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash | not started |
+| 5A | DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes | not started |
+| 5B | StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |
+| 6A | ExternalTypes | not started |
+| 6B | CircularDependencies | not started |
 | - | NoCache, Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |

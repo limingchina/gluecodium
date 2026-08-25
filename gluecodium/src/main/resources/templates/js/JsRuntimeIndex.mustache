@@ -49,7 +49,12 @@ Object.defineProperty({{moduleName}}, "{{jsName}}", {
 {{/instanceOverloadGroups}}
 {{#thrownFunctions}}
 {{#isStatic}}
+{{#isStruct}}
+{{moduleName}}["{{jsName}}"] = ((original) => (...args) => unwrapThrownResult(original(...args), "{{exceptionName}}"))(module["{{structRuntimeName}}"]);
+{{/isStruct}}
+{{^isStruct}}
 {{moduleName}}["{{jsName}}"] = ((original) => (...args) => unwrapThrownResult(original(...args), "{{exceptionName}}"))(module["{{ownerRuntimeName}}"]["{{runtimeName}}"]);
+{{/isStruct}}
 {{/isStatic}}
 {{^isStatic}}
 {{moduleName}}.prototype["{{jsName}}"] = ((original) => function (...args) {

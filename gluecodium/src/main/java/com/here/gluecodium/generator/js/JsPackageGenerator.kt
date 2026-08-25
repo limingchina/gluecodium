@@ -117,14 +117,17 @@ internal class JsPackageGenerator(
                 .filter { it.path.hasParent }
                 .groupingBy { nameRules.getName(it) }
                 .eachCount()
+        val moduleNames = mutableSetOf<String>()
         return runtimeElements.map { element ->
             val preferredName = nameRules.getName(element)
-            val moduleName =
+            val preferredModuleName =
                 if (element.path.hasParent && (preferredNameCounts[preferredName] ?: 0) > 1) {
                     nameRules.getFlattenedName(element)
                 } else {
                     preferredName
                 }
+            val moduleName = uniqueModuleName(element, preferredModuleName, moduleNames)
+            moduleNames += moduleName
             mapOf(
                 "moduleName" to moduleName,
                 "runtimeName" to nameRules.getEmbindRuntimeName(element),
@@ -189,6 +192,17 @@ internal class JsPackageGenerator(
         }
     }
 
+    private fun uniqueModuleName(
+        element: LimeNamedElement,
+        preferredName: String,
+        usedNames: Set<String>,
+    ): String {
+        if (preferredName !in usedNames) return preferredName
+        val flattenedName = nameRules.getFlattenedName(element)
+        if (flattenedName !in usedNames) return flattenedName
+        return nameRules.getEmbindRuntimeName(element)
+    }
+
     private fun thrownFunctions(element: LimeType): List<Map<String, Any>> {
         val container = element as? LimeContainer ?: return emptyList()
         return container.functions
@@ -197,8 +211,10 @@ internal class JsPackageGenerator(
                 mapOf(
                     "jsName" to nameRules.getName(function),
                     "runtimeName" to if (function.isStatic || !isOverloaded(function, element)) nameRules.getName(function) else overloadRuntimeName(function),
+                    "structRuntimeName" to structFunctionRuntimeName(function),
                     "ownerRuntimeName" to nameRules.getEmbindRuntimeName(element),
                     "isStatic" to function.isStatic,
+                    "isStruct" to (element is LimeStruct),
                     "exceptionName" to nameRules.getName(function.exception!!),
                 )
             }

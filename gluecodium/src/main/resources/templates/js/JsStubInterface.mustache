@@ -34,6 +34,8 @@ export interface {{jsName}} {
 {{> js/JsStubDocumentation}}
   {{jsName}}: {{jsType}};
 {{/properties}}
+  delete(): void;
+  [Symbol.dispose](): void;
 }
 {{#hasConstants}}
 export const {{constantOwnerName}}: {
@@ -47,6 +49,3 @@ export namespace {{parentJsName}} {
 {{> js/JsStubStructBody}}
 }
 {{/nestedStructs}}
-  delete(): void;
-  [Symbol.dispose](): void;
-}

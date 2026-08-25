@@ -136,11 +136,18 @@ void {{registerName}}(void) {
 {{/isStatic}}
 {{^isStatic}}
 {{#needsAdapter}}
+{{#hasSetter}}
     .property<emscripten::val>("{{jsName}}", +[](const {{cppFullName}}& self) -> emscripten::val {
         return {{adapterGetter}};
     }, +[]({{cppFullName}}& self, emscripten::val value) {
         {{adapterSetter}};
     })
+{{/hasSetter}}
+{{^hasSetter}}
+    .property<emscripten::val>("{{jsName}}", +[](const {{cppFullName}}& self) -> emscripten::val {
+        return {{adapterGetter}};
+    })
+{{/hasSetter}}
 {{/needsAdapter}}
 {{^needsAdapter}}
 {{#hasSetter}}
