@@ -46,7 +46,11 @@ internal class JsStubGenerator(
 
     private fun generateFile(limeElement: LimeNamedElement): List<GeneratedFile> {
         val templateName = selectTemplate(limeElement) ?: return emptyList()
-        val selfModulePath = "./" + (limeElement.path.head + nameRules.getName(limeElement)).joinToString("/")
+        val selfModulePath = relativeModulePath(
+            limeElement.path.head,
+            limeElement.path.head,
+            nameRules.getName(limeElement),
+        )
         val imports =
             importsCollector.collectImports(limeElement)
                 .filterNot { it.modulePath == selfModulePath }
@@ -63,6 +67,17 @@ internal class JsStubGenerator(
                 nameResolvers,
             )
         return listOf(GeneratedFile(content, nameRules.getJsStubFileName(limeElement)))
+    }
+
+    private fun relativeModulePath(
+        currentPackage: List<String>,
+        targetPackage: List<String>,
+        targetName: String,
+    ): String {
+        val commonLength = currentPackage.zip(targetPackage).takeWhile { (current, target) -> current == target }.count()
+        val parentPath = "../".repeat(currentPackage.size - commonLength)
+        val targetPath = targetPackage.drop(commonLength).joinToString("/")
+        return "./" + parentPath + targetPath.takeIf { it.isNotEmpty() }?.let { "$it/" }.orEmpty() + targetName
     }
 
     private fun viewModel(limeElement: LimeNamedElement): Map<String, Any> {

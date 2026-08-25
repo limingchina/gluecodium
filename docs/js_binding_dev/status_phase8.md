@@ -1,7 +1,8 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 4C package identity and collision coverage complete; native lambda-return
-support remains deferred; the complete JavaScript functional gate passes
+**Status**: Batch 4B documentation and public naming coverage complete; Batch 4C package identity
+and collision coverage remains complete; native lambda-return support remains deferred; the
+complete JavaScript functional gate passes
 
 **Date**: 2026-08-25
 
@@ -180,7 +181,9 @@ flattened-name collision handling, nested interface dispatch, adapted read-only 
 nested struct error wrapping. The full `unit_tests_javascript` CTest target passes all 61
 registered tests after a clean Emscripten 6.0.8 rebuild. Batch 4A adds
 `visibility-skip.test.mjs`, and the refreshed `unit_tests_javascript` CTest target passes all 64
-registered tests with the `Visibility` and `SkipAttribute` fixtures enabled for JS.
+registered tests with the `Visibility` and `SkipAttribute` fixtures enabled for JS. Batch 4B adds
+`naming-and-docs.test.mjs`; its focused module passes all 3 cases after a clean local-generator
+Emscripten 6.0.8 rebuild, and the refreshed JavaScript gate passes all 69 registered tests.
 
 ## Generator Fixes Exercised
 
@@ -253,6 +256,8 @@ The first tests found several embind generation defects that are fixed in this c
 - Package-local JavaScript exports retain directory-based package paths, including underscore
   package components, while embind registrations use canonical full-path runtime names to avoid
   cross-package leaf-name collisions.
+- TypeScript declaration imports are resolved relative to the declaring package directory, keeping
+  same-package references local and correctly traversing between nested package directories.
 
 ## Lessons Learned
 
@@ -296,7 +301,7 @@ directory argument to `node --test` as a module entry rather than a test collect
 
 ## Next Work
 
-The next iteration starts with Batch 4B documentation and public naming coverage. The Node versions
+The next iteration starts with Batch 5A declaration order and companion surfaces. The Node versions
 tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all
 treat a directory argument to `node --test` as a module entry rather than a test collection, so
 the harness passes explicit test-file paths.
@@ -541,11 +546,23 @@ clean local-generator Emscripten 6.0.8 build.
 
 Features: `Comments`, `PlatformNames`, `EscapedNames`.
 
-Verify that Lime documentation, parameter and return comments, links, and multiline text produce
-valid JSDoc in generated `.d.ts` files. Verify that `@Js(Name = ...)` and JavaScript/TypeScript
-keyword escaping preserve the intended public names while generated C++ bindings resolve the native
-declarations. Inspect generated `.d.ts` output and runtime exports; a successful compile alone is
-insufficient.
+The JavaScript functional build now enables all three existing naming/documentation fixtures and
+registers `naming-and-docs.test.mjs`. The focused coverage verifies class, parameter, return,
+property, multiline, and resolved-link comments in generated `.d.ts` JSDoc. It also verifies that
+non-JavaScript platform naming attributes do not rename the JavaScript surface, while the package
+facade retains the expected public exports for value objects, enums, classes, and interfaces. Lime
+identifiers that are keywords remain available through valid declaration and runtime exports such
+as `Class`, `Types`, `Enum`, and `Struct`.
+
+The existing `PlatformNames` fixture does not contain `@Js(Name = ...)` attributes; its Java,
+Kotlin, Swift, Dart, and C++ names therefore provide a JavaScript isolation check rather than a
+JavaScript rename check. The package facade is the public naming boundary for nested declarations,
+so the test inspects the facade and runtime exports in addition to individual `.d.ts` stubs.
+
+Batch 4B also fixes TypeScript declaration imports. Imports are now calculated relative to the
+current declaration package and the referenced type's package, so same-package references use
+`./Type` and cross-package references use the required `../` path instead of incorrectly including
+the current package directory in the module path.
 
 #### Batch 4C - package identity and collisions
 
@@ -673,8 +690,8 @@ separate JavaScript runtime contract exists.
 | 3E | MultipleInheritance | passing; primary base, flattened secondary members, and supported identity checks |
 | 3F | Nesting | passing; nested declarations, interface dispatch, and nested runtime conversions |
 | 4A | Visibility, SkipAttribute | passing; public visibility filtering, generic tags, and platform isolation |
-| 4B | Comments, PlatformNames, EscapedNames | not started |
-| 4C | UnderscorePackage, CrossPackageNameClash | not started |
+| 4B | Comments, PlatformNames, EscapedNames | passing; JSDoc, public naming, keyword escaping, and relative declaration imports |
+| 4C | UnderscorePackage, CrossPackageNameClash | passing; package paths and collision-safe runtime names |
 | 5A | DeclarationOrder, StructsWithCompanion | not started |
 | 5B | FieldConstructors, StructsInTypes | not started |
 | 5C | StructsImmutable | not started |

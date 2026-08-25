@@ -71,8 +71,19 @@ internal class JsImportResolver(
 
     private fun createImport(limeElement: LimeNamedElement): JsImport {
         val topLevel = findTopLevelElement(limeElement)
-        val modulePath = "./" + (topLevel.path.head + nameRules.getName(topLevel)).joinToString("/")
+        val modulePath = relativeModulePath(limeElement.path.head, topLevel.path.head, nameRules.getName(topLevel))
         return JsImport(modulePath, nameRules.getName(topLevel))
+    }
+
+    private fun relativeModulePath(
+        currentPackage: List<String>,
+        targetPackage: List<String>,
+        targetName: String,
+    ): String {
+        val commonLength = currentPackage.zip(targetPackage).takeWhile { (current, target) -> current == target }.count()
+        val parentPath = "../".repeat(currentPackage.size - commonLength)
+        val targetPath = targetPackage.drop(commonLength).joinToString("/")
+        return "./" + parentPath + targetPath.takeIf { it.isNotEmpty() }?.let { "$it/" }.orEmpty() + targetName
     }
 
     private fun findTopLevelElement(element: LimeNamedElement): LimeNamedElement {

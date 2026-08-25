@@ -428,20 +428,20 @@ feature(DeclarationOrder cpp android android-kotlin swift dart SOURCES
     input/lime/StructsWithMethodsDeclarationOrder.lime
 )
 
-feature(Comments cpp android android-kotlin swift dart SOURCES
+feature(Comments cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Comments.cpp
 
     input/lime/Comments.lime
     input/lime/CommentsInterface.lime
 )
 
-feature(PlatformNames cpp android android-kotlin swift dart SOURCES
+feature(PlatformNames cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/PlatformNames.cpp
 
     input/lime/PlatformNames.lime
 )
 
-feature(EscapedNames cpp android android-kotlin swift dart SOURCES
+feature(EscapedNames cpp android android-kotlin swift dart js SOURCES
     input/lime/KeywordNames.lime
 )
 
