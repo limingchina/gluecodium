@@ -96,7 +96,6 @@ function(gluecodium_target_js_sources _target)
     -lembind
     -fexceptions
     -pthread
-    -sWASM_BIGINT=1
     -sPTHREAD_POOL_SIZE=4
     -sMODULARIZE=1
     -sEXPORT_ES6=1

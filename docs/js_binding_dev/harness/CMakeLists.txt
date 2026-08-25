@@ -43,7 +43,6 @@ target_link_options(phase4_harness PRIVATE
     "-fexceptions"
     "-sMODULARIZE=1"
     "-sEXPORT_ES6=1"
-    "-sWASM_BIGINT=1"
     "-sALLOW_MEMORY_GROWTH=1"
 )
 set_target_properties(phase4_harness PROPERTIES
