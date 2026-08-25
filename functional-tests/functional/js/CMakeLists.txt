@@ -72,6 +72,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/multiple-inheritance.test.mjs"
     "${JS_TEST_DIR}/multiple-inheritance.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/nesting.test.mjs"
     "${JS_TEST_DIR}/nesting.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/visibility-skip.test.mjs"
+    "${JS_TEST_DIR}/visibility-skip.test.mjs" COPYONLY)
 
 add_test(NAME unit_tests_javascript
     COMMAND ${NODE_EXECUTABLE} --test
@@ -96,6 +98,7 @@ add_test(NAME unit_tests_javascript
         "${JS_TEST_DIR}/nullable.test.mjs"
         "${JS_TEST_DIR}/equatable.test.mjs"
         "${JS_TEST_DIR}/multiple-inheritance.test.mjs"
-        "${JS_TEST_DIR}/nesting.test.mjs")
+        "${JS_TEST_DIR}/nesting.test.mjs"
+        "${JS_TEST_DIR}/visibility-skip.test.mjs")
 set_tests_properties(unit_tests_javascript PROPERTIES
     ENVIRONMENT "GLUECODIUM_JS_MODULE=$<TARGET_FILE:functional_bindings_js>")

@@ -1,7 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 3F nested-declaration coverage complete; native lambda-return support remains
-deferred; the complete JavaScript functional gate passes
+**Status**: Batch 4A filtering and visibility coverage complete; native lambda-return support
+remains deferred; the complete JavaScript functional gate passes
 
 **Date**: 2026-08-25
 
@@ -36,6 +36,8 @@ the `js` generator:
   C++ type overrides.
 - `Locales`: BCP-47 strings, nullable values, adapted static properties, Locale fields in value
   objects, defaults, and Locale list/set/map collections.
+- `Visibility` and `SkipAttribute`: internal declarations, member-level visibility, generic skip
+  tags, enabled and disabled conditional tags, and platform-specific skip isolation.
 
 The harness uses Node's built-in `node:test` runner and CTest. CMake copies the test modules into
 the build tree and passes the generated Emscripten module through `GLUECODIUM_JS_MODULE`.
@@ -176,7 +178,9 @@ registered tests.
 The focused `nesting.test.mjs` module passes all five cases, including nested declaration exports,
 flattened-name collision handling, nested interface dispatch, adapted read-only properties, and
 nested struct error wrapping. The full `unit_tests_javascript` CTest target passes all 61
-registered tests after a clean Emscripten 6.0.8 rebuild.
+registered tests after a clean Emscripten 6.0.8 rebuild. Batch 4A adds
+`visibility-skip.test.mjs`, and the refreshed `unit_tests_javascript` CTest target passes all 64
+registered tests with the `Visibility` and `SkipAttribute` fixtures enabled for JS.
 
 ## Generator Fixes Exercised
 
@@ -241,6 +245,11 @@ The first tests found several embind generation defects that are fixed in this c
 - Static properties use named getter and setter functions for Emscripten compatibility, and
   adapted static constructors and methods use function-pointer lambdas to resolve Embind
   overloads reliably.
+- JavaScript model filtering keeps internal declarations in the embind model when they are needed
+  by native signatures, while removing them from public package and TypeScript stub generation.
+  Generic `@Skip` and `@EnableIf` tags are applied independently of platform-specific attributes,
+  so `@Java`, `@Swift`, `@Dart`, and `@Kotlin` visibility annotations do not accidentally change
+  the JavaScript surface.
 
 ## Lessons Learned
 
@@ -267,6 +276,9 @@ The first tests found several embind generation defects that are fixed in this c
 - Register every new Node test in both parts of `functional-tests/functional/js/CMakeLists.txt`:
   `configure_file` copies the test into the build tree, while the `add_test` file list is what executes
   it.
+- Batch 4A keeps the embind and public-stub filters separate: filtering internal declarations out
+  of embind would break visible signatures that refer to internal types, while leaving them in the
+  public model leaks declarations through package indexes.
 - Embind's single `base<>` registration does not provide smart-pointer conversions through a
   secondary C++ base. Multiple-inheritance coverage must distinguish flattened member dispatch
   and native cast checks from unsupported secondary-base pointer returns.
@@ -281,8 +293,8 @@ directory argument to `node --test` as a module entry rather than a test collect
 
 ## Next Work
 
-The next iteration starts with `Lambdas` as the next unverified interface capability
-probe. The Node versions tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all
+The next iteration starts with Batch 4B documentation and public naming coverage. The Node versions
+tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all
 treat a directory argument to `node --test` as a module entry rather than a test collection, so
 the harness passes explicit test-file paths.
 
@@ -513,12 +525,14 @@ lambda returns remain deferred as documented in Batch 2C.
 
 Features: `Visibility`, `SkipAttribute`.
 
-Isolate the JavaScript dependency closure before adding `js` to these fixtures. Verify internal
-declarations and platform visibility in generated TypeScript declarations and embind registrations.
-Verify `@Js(Skip)`, `@Js(EnableIf)`, and predefined skip tags with enabled and disabled tag
-configurations. A skipped declaration must not remain callable through a private runtime export, and
-an internal declaration must remain available for generated type references without being exported
-by the public package facade.
+The existing `Visibility` and `SkipAttribute` fixtures are now enabled for JS, with
+`visibility-skip.test.mjs` registered in the Node/CTest harness. The focused coverage verifies
+that generic `@Internal` declarations and members are absent from public package exports while
+internal embind types remain available for generated native signatures. It also verifies active
+`@Skip(Lite)` and disabled `@EnableIf(ExperimentalBar)` filtering, enabled
+`@EnableIf(ExperimentalFoo)` declarations, and the fact that platform-specific skip and visibility
+attributes do not affect JS. The complete JavaScript gate passes all 64 registered tests after a
+clean local-generator Emscripten 6.0.8 build.
 
 #### Batch 4B - documentation and public naming
 
@@ -648,7 +662,7 @@ separate JavaScript runtime contract exists.
 | 3D | Equatable | passing; value equality, same-hash, and referential equality |
 | 3E | MultipleInheritance | passing; primary base, flattened secondary members, and supported identity checks |
 | 3F | Nesting | passing; nested declarations, interface dispatch, and nested runtime conversions |
-| 4A | Visibility, SkipAttribute | not started |
+| 4A | Visibility, SkipAttribute | passing; public visibility filtering, generic tags, and platform isolation |
 | 4B | Comments, PlatformNames, EscapedNames | not started |
 | 4C | UnderscorePackage, CrossPackageNameClash | not started |
 | 5A | DeclarationOrder, StructsWithCompanion | not started |

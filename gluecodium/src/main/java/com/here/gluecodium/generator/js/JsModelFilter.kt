@@ -21,6 +21,7 @@ package com.here.gluecodium.generator.js
 
 import com.here.gluecodium.common.LimeModelFilter
 import com.here.gluecodium.common.LimeModelSkipPredicates
+import com.here.gluecodium.generator.common.CommonGeneratorPredicates
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
@@ -42,7 +43,8 @@ internal class JsModelFilter(
             }
         val stubs =
             LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, JS, retainFunctionsAndFields = false)
+                    !CommonGeneratorPredicates.isInternal(it, JS) &&
+                        LimeModelSkipPredicates.shouldRetainElement(it, activeTags, JS, retainFunctionsAndFields = false)
             }
         return FilteredModels(embind, stubs)
     }

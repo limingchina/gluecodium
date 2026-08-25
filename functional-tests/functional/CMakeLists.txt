@@ -473,7 +473,7 @@ feature(Lambdas cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Lambdas.cpp
 )
 
-feature(Visibility android android-kotlin swift dart SOURCES
+feature(Visibility android android-kotlin swift dart js SOURCES
     input/lime/VisibilityAttribute.lime
     input/lime/VisibilityInternal.lime
     input/lime/VisibilityPlatform.lime
@@ -484,7 +484,7 @@ feature(Visibility android android-kotlin swift dart SOURCES
     input/src/cpp/VisibilityInternal.cpp
 )
 
-feature(SkipAttribute cpp android android-kotlin swift dart SOURCES
+feature(SkipAttribute cpp android android-kotlin swift dart js SOURCES
     input/lime/Skip.lime
     input/lime/SkipTags.lime
     input/lime/SkipTagsInPlatform.lime
