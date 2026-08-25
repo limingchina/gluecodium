@@ -186,7 +186,8 @@ internal class JsPackageGenerator(
                         )
                     }
                     .orEmpty(),
-                "instanceOverloadGroups" to instanceOverloadGroups(element, filteredModel),
+                "instanceOverloadGroups" to
+                    if (element is LimeStruct) emptyList() else instanceOverloadGroups(element, filteredModel),
                 "thrownFunctions" to thrownFunctions(element),
             )
         }
@@ -207,6 +208,7 @@ internal class JsPackageGenerator(
         val container = element as? LimeContainer ?: return emptyList()
         return container.functions
             .filter { it.exception != null }
+            .filterNot { element is LimeStruct && !it.isStatic }
             .map { function ->
                 mapOf(
                     "jsName" to nameRules.getName(function),

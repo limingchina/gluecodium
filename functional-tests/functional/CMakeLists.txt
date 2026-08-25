@@ -413,7 +413,7 @@ feature(Locales cpp js SOURCES
     input/lime/LocaleDefaults.lime
 )
 
-feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
+feature(StructsWithCompanion cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StructsWithMethods.cpp
     input/src/cpp/StructsWithConstants.cpp
 
@@ -421,7 +421,7 @@ feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
     input/lime/StructsWithConstants.lime
 )
 
-feature(DeclarationOrder cpp android android-kotlin swift dart SOURCES
+feature(DeclarationOrder cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StructsWithMethodsDeclarationOrder.cpp
 
     input/lime/OrderWithInterface.lime

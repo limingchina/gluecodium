@@ -1,8 +1,9 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 4B documentation and public naming coverage complete; Batch 4C package identity
-and collision coverage remains complete; native lambda-return support remains deferred; the
-complete JavaScript functional gate passes
+**Status**: Batch 5A declaration-order and companion-surface coverage complete; Batch 4B
+documentation and public naming coverage complete; Batch 4C package identity and collision
+coverage remains complete; native lambda-return support remains deferred; the complete JavaScript
+functional gate passes
 
 **Date**: 2026-08-25
 
@@ -564,6 +565,11 @@ current declaration package and the referenced type's package, so same-package r
 `./Type` and cross-package references use the required `../` path instead of incorrectly including
 the current package directory in the module path.
 
+Batch 5A also excludes non-static struct methods and instance overload groups from the JavaScript
+package facade because `EmbindStruct` registers value fields and static companion functions, not
+prototype methods. Static throwing struct functions and companion overloads continue to use the
+generated facade adapters.
+
 #### Batch 4C - package identity and collisions
 
 Features: `UnderscorePackage`, `CrossPackageNameClash`.
@@ -588,6 +594,14 @@ Verify that forward references and embind registration order do not depend on Li
 order. Verify that companion-generated constants and functions are attached to the owning
 JavaScript export rather than emitted only under an internal embind name. Require clean generation,
 Emscripten compilation, and a focused Node test for both surfaces.
+
+The JavaScript functional build now enables `StructsWithCompanion` and `DeclarationOrder` and
+registers `declaration-order-companion.test.mjs`. The focused coverage verifies that the
+declaration-order value-object registrations initialize successfully, and that constants and
+static functions on top-level and nested structs are attached to the public facade exports.
+The declaration-order fixture also contains non-static struct methods, but the current embind
+struct template exposes fields and static companion functions only; those instance methods remain
+outside the JavaScript contract and are not wrapped by the package facade.
 
 #### Batch 5B - constructors and struct type shapes
 
@@ -692,7 +706,7 @@ separate JavaScript runtime contract exists.
 | 4A | Visibility, SkipAttribute | passing; public visibility filtering, generic tags, and platform isolation |
 | 4B | Comments, PlatformNames, EscapedNames | passing; JSDoc, public naming, keyword escaping, and relative declaration imports |
 | 4C | UnderscorePackage, CrossPackageNameClash | passing; package paths and collision-safe runtime names |
-| 5A | DeclarationOrder, StructsWithCompanion | not started |
+| 5A | DeclarationOrder, StructsWithCompanion | passing; declaration order and companion exports |
 | 5B | FieldConstructors, StructsInTypes | not started |
 | 5C | StructsImmutable | not started |
 | 5D | InstanceInStruct | not started |
