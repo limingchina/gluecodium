@@ -1,9 +1,9 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 3B inherited-overload coverage complete; native lambda-return support remains
-deferred; the complete JavaScript functional gate passes
+**Status**: Batch 3D equality coverage complete; native lambda-return support remains deferred;
+the complete JavaScript functional gate passes
 
-**Date**: 2026-08-24
+**Date**: 2026-08-25
 
 ## Checkpoint Scope
 
@@ -143,6 +143,10 @@ The Batch 2C lambda tests pass in a fresh Emscripten 6.0.8 build. Direct, nullab
 overloaded, and struct-defined JavaScript callbacks all use the same generated `emscripten::val`
 adapter path. Native-created lambda returns still fail as unbound `std::function` values and are
 explicitly deferred to the next lambda capability slice.
+The Batch 3D `equatable.test.mjs` module passes all four cases, covering nested value equality,
+nullable and immutable fields, same-hash behavior for equal values, equatable pointer fields, and
+referential equality for equatable classes and interfaces. The JS overload dispatcher now uses
+public struct field names to distinguish same-arity plain-object overloads.
 The focused `method-overloading.test.mjs` module passes both inherited-interface and
 inherited-class cases. The complete `unit_tests_javascript` CTest target passes with all registered
 JavaScript functional tests.
@@ -431,8 +435,12 @@ property access through interface wrappers. Both tests pass directly, and the co
 Feature: `Equatable`.
 
 This is not intrinsically an inheritance feature, but its fixtures combine immutable structs,
-nullable fields, collections, and class references. Place it after the nullable and immutable
-conversion paths are stable; verify both value equality and referential equality.
+nullable fields, collections, and class references. The batch is complete. The focused
+`equatable.test.mjs` module verifies nested value equality, nullable and immutable fields,
+equatable pointer fields, same-hash behavior for equal values, and referential equality for
+equatable classes and interfaces. Struct-aware overload predicates are required because the
+fixture has same-arity `areEqual` and `haveSameHash` overloads with plain JavaScript object
+arguments.
 
 #### Batch 3E - multiple inheritance
 
@@ -508,7 +516,7 @@ Features: `ExternalTypes`, `CircularDependencies`, `NoCache`, `Serialization`, `
 | 3A | Inheritance | passing; single inheritance and fixture closure |
 | 3B | MethodOverloading | passing; isolated JavaScript inherited-overload fixture |
 | 3C | Errors, Nullable | passing; error envelopes, interface error propagation, and nullable values |
-| 3D | Equatable | blocked on nullable and immutable conversion gates |
+| 3D | Equatable | passing; value equality, same-hash, and referential equality |
 | 3E | MultipleInheritance | blocked on 3A |
 | 3F | Nesting | blocked on interface and lambda gates |
 | 4 | Visibility, SkipAttribute, Comments, PlatformNames, EscapedNames, UnderscorePackage, CrossPackageNameClash, DeclarationOrder, StructsWithCompanion, FieldConstructors, StructsInTypes, StructsImmutable, InstanceInStruct, CppConst, CppNoexcept | not started |

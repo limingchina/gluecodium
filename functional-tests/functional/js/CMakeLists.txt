@@ -66,6 +66,8 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/errors.test.mjs"
     "${JS_TEST_DIR}/errors.test.mjs" COPYONLY)
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/nullable.test.mjs"
     "${JS_TEST_DIR}/nullable.test.mjs" COPYONLY)
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tests/equatable.test.mjs"
+    "${JS_TEST_DIR}/equatable.test.mjs" COPYONLY)
 
 add_test(NAME unit_tests_javascript
     COMMAND ${NODE_EXECUTABLE} --test
@@ -87,6 +89,7 @@ add_test(NAME unit_tests_javascript
         "${JS_TEST_DIR}/inheritance.test.mjs"
         "${JS_TEST_DIR}/method-overloading.test.mjs"
         "${JS_TEST_DIR}/errors.test.mjs"
-        "${JS_TEST_DIR}/nullable.test.mjs")
+        "${JS_TEST_DIR}/nullable.test.mjs"
+        "${JS_TEST_DIR}/equatable.test.mjs")
 set_tests_properties(unit_tests_javascript PROPERTIES
     ENVIRONMENT "GLUECODIUM_JS_MODULE=$<TARGET_FILE:functional_bindings_js>")

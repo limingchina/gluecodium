@@ -470,10 +470,18 @@ internal class JsEmbindViewModelBuilder(
                 is LimeList -> "Array.isArray($value)"
                 is LimeMap -> "$value instanceof Map"
                 is LimeSet -> "$value instanceof Set"
+                is com.here.gluecodium.model.lime.LimeStruct -> structOverloadPredicate(value, actualType)
                 else -> "$value !== null && typeof $value === \"object\""
             }
         }
         return listOf("args.length === ${function.parameters.size}", *checks.toTypedArray()).joinToString(" && ")
+    }
+
+    private fun structOverloadPredicate(value: String, struct: com.here.gluecodium.model.lime.LimeStruct): String {
+        val fieldNames = struct.fields.map { nameRules.getName(it) }
+        if (fieldNames.isEmpty()) return "$value !== null && typeof $value === \"object\""
+        val names = fieldNames.joinToString(", ") { "\"${it.replace("\\", "\\\\").replace("\"", "\\\"")}\"" }
+        return "$value !== null && typeof $value === \"object\" && Object.keys($value).every((key) => [$names].includes(key))"
     }
 
     private fun enumeratorViewModel(enumerator: com.here.gluecodium.model.lime.LimeEnumerator): Map<String, Any> =
