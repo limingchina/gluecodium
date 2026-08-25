@@ -641,6 +641,14 @@ baseline. Immutable and nested immutable fields must continue through the genera
 `emscripten::val` adapter path rather than default-constructible embind `value_object` registration.
 Require runtime coverage plus a clean generation and Emscripten compile.
 
+Batch 5C is complete. Immutable structs and mutable structs containing immutable fields use
+recursive `emscripten::val` adapters instead of embind `value_object` registration. The adapters
+construct fully qualified C++ values from plain JavaScript objects and convert returned values
+recursively across nested structs, blobs, nullable fields, and collection values. The focused
+`immutable-structs.test.mjs` module covers immutable defaults and nested immutable round trips,
+including 64-bit integer `bigint` fields, and passes both cases. The complete
+`unit_tests_javascript` CTest gate also passes after a local-generator Emscripten 6.0.8 rebuild.
+
 #### Batch 5D - instances inside value objects
 
 Feature: `InstanceInStruct`.
@@ -726,7 +734,7 @@ separate JavaScript runtime contract exists.
 | 4C | UnderscorePackage, CrossPackageNameClash | passing; package paths and collision-safe runtime names |
 | 5A | DeclarationOrder, StructsWithCompanion | passing; declaration order and companion exports |
 | 5B | FieldConstructors, StructsInTypes | passing; recursive struct-in-type conversion; FieldConstructors intentionally deferred |
-| 5C | StructsImmutable | not started |
+| 5C | StructsImmutable | passing; recursive emscripten::val adapters and nested immutable values |
 | 5D | InstanceInStruct | not started |
 | 5E | CppConst, CppNoexcept | not started |
 | 6A | ExternalTypes | not started |
