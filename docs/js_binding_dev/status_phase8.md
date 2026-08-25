@@ -1,7 +1,7 @@
 # JavaScript/Embind Generator - Phase 8 Status
 
-**Status**: Batch 6A external-type coverage complete; Batch 6B circular-dependency coverage not
-started; Batch 5B constructor and struct-shape coverage complete; Batch 5A declaration-order
+**Status**: Batch 6B circular-dependency coverage complete; Batch 6A external-type coverage
+complete; Batch 5B constructor and struct-shape coverage complete; Batch 5A declaration-order
 and companion-surface coverage complete; Batch 4B
 documentation and public naming coverage complete; Batch 4C package identity and collision
 coverage remains complete; native lambda-return support remains deferred; the complete JavaScript
@@ -191,6 +191,11 @@ Batch 6A adds `external-types.test.mjs`; its focused module passes all 3 cases a
 local-generator Emscripten 6.0.8 rebuild. External value objects, enums, accessor-backed
 collections, and cross-package extraction are covered through the existing `ExternalTypes`
 fixture and its separately supplied native headers and implementations.
+Batch 6B adds `circular-dependencies.test.mjs`; its focused module passes the compile/load smoke
+case after a clean local-generator Emscripten 6.0.8 configure and build. The mutually dependent
+`Alice` and `Bob` declarations generate, link, initialize, and remain available through the public
+package facade with both method surfaces and disposal members. The fixture has no native factories,
+so runtime method invocation is outside this slice.
 
 ## Generator Fixes Exercised
 
@@ -316,7 +321,7 @@ directory argument to `node --test` as a module entry rather than a test collect
 
 ## Next Work
 
-The next iteration starts with Batch 6B circular dependency coverage. The Node versions
+The next iteration starts with the deferred runtime-contract slices documented below. The Node versions
 tested locally (22.13.1, 22.19.0, 23.6.1, 24.16.0, and 25.7.0) all
 treat a directory argument to `node --test` as a module entry rather than a test collection, so
 the harness passes explicit test-file paths.
@@ -718,6 +723,11 @@ Feature: `CircularDependencies`.
 `CircularDependencies` verifies that generated embind sources resolve mutually dependent headers,
 forward declarations, and registration order without relying on incidental file ordering.
 
+Batch 6B is complete. The existing `Circular.lime` fixture has no native implementation source, so
+the JavaScript gate verifies generated declaration imports, public package exports, embind module
+initialization, and the mutually dependent method/disposal surfaces rather than invoking native
+methods.
+
 `NoCache` is outside the initial JavaScript POC. It is a runtime identity policy rather than a
 generated-output cache check: repeated native handles must produce distinct JavaScript wrappers,
 and JavaScript-created interface wrappers must not be reused for native identity. The current JS
@@ -772,5 +782,5 @@ separate JavaScript runtime contract exists.
 | 5D | InstanceInStruct | passing; nested class identity and nullable value-object fields |
 | 5E | CppConst, CppNoexcept | passing; qualifier-preserving interface proxies and focused runtime coverage |
 | 6A | ExternalTypes | passing; external value types, enums, collections, and cross-package extraction |
-| 6B | CircularDependencies | not started |
+| 6B | CircularDependencies | passing; mutually dependent declarations compile and load |
 | - | NoCache, Async, WeakListeners, JavaKotlin/Dart/Swift ExternalTypes | deferred / not applicable |

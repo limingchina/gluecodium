@@ -317,7 +317,7 @@ feature(Serialization android android-kotlin swift SOURCES
     input/lime/Serialization.lime
 )
 
-feature(CircularDependencies cpp android android-kotlin swift dart SOURCES
+feature(CircularDependencies cpp android android-kotlin swift dart js SOURCES
     input/lime/Circular.lime
 )
 
