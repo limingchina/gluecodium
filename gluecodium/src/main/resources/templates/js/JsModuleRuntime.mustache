@@ -11,7 +11,7 @@ let modulePromise;
 
 const loadModule = (options = {}) => {
   if (modulePromise === undefined) {
-    modulePromise = createModule().then((module) => wrapModule(module, options));
+    modulePromise = createModule(options).then((module) => wrapModule(module, options));
   }
   return modulePromise;
 };

@@ -171,8 +171,9 @@ internal class JsPackageGenerator(
                     }
                     .orEmpty(),
                 "overloadGroups" to (element as? LimeContainer)
-                    ?.functions
-                    ?.filter { it.isStatic && !it.isConstructor }
+                    ?.let { container ->
+                        (container.constructors + container.functions.filter { it.isStatic && !it.isConstructor })
+                    }
                     ?.groupBy { nameRules.getName(it) }
                     ?.filterValues { it.size > 1 }
                     ?.map { (jsName, overloads) ->

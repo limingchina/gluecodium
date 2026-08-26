@@ -248,7 +248,8 @@ internal class JsEmbindViewModelBuilder(
     ): Map<String, Any> {
         val context = FunctionViewModelContext(
             function = function,
-            isOverloaded = forceOverloadAdapter || isOverloadedInJsBindings(function),
+            isOverloaded = forceOverloadAdapter || isOverloadedInJsBindings(function) ||
+                (function.isConstructor && isConstructorOverloaded(function)),
             returnType = function.returnType.typeRef,
             thrownException = function.exception,
         )
@@ -294,7 +295,10 @@ internal class JsEmbindViewModelBuilder(
 
     private fun overloadEmbindName(context: FunctionViewModelContext): String {
         val function = context.function
-        return if (context.isOverloaded && (function.isStatic && isJsOverloaded(function) || !function.isStatic)) {
+        return if (context.isOverloaded &&
+            (function.isConstructor && isConstructorOverloaded(function) ||
+                function.isStatic && isJsOverloaded(function) || !function.isStatic)
+        ) {
             overloadRuntimeName(function)
         } else {
             nameRules.getName(function)
@@ -456,6 +460,12 @@ internal class JsEmbindViewModelBuilder(
         val container = referenceMap[function.path.parent.toString()] as? LimeContainer ?: return false
         val jsName = nameRules.getName(function)
         return container.functions.count { !it.isConstructor && nameRules.getName(it) == jsName } > 1
+    }
+
+    private fun isConstructorOverloaded(function: LimeFunction): Boolean {
+        val container = referenceMap[function.path.parent.toString()] as? LimeContainer ?: return false
+        val jsName = nameRules.getName(function)
+        return container.constructors.count { nameRules.getName(it) == jsName } > 1
     }
 
     private fun isOverloadedInJsBindings(function: LimeFunction): Boolean {

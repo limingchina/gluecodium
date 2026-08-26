@@ -36,14 +36,14 @@ void {{registerName}}(void) {
                 .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{embindName}}")
 {{#constructors}}
 {{#needsAdapter}}
-        .class_function("{{jsName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
+        .class_function("{{embindName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
             {{adapterPreparations}}
                         {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
             {{adapterReturnConversion}}
         })
 {{/needsAdapter}}
 {{^needsAdapter}}
-        .class_function("{{jsName}}", &{{cppFullName}}::{{cppName}})
+        .class_function("{{embindName}}", &{{cppFullName}}::{{cppName}})
 {{/needsAdapter}}
 {{/constructors}}
 {{#methods}}
