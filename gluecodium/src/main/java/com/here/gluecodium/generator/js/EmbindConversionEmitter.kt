@@ -171,12 +171,13 @@ internal class EmbindConversionEmitter(
             }
             is LimeStruct -> if (isObjectStruct(actualType)) {
                 val fields = actualType.fields.joinToString(" ") { field ->
-                    val fieldSource = if (actualType.attributes.have(CPP, ACCESSORS)) {
-                        "$source.${cppNameCache.getGetterName(field)}()"
+                    val fieldSource = "($source)"
+                    val fieldValue = if (actualType.attributes.have(CPP, ACCESSORS)) {
+                        "$fieldSource.${cppNameCache.getGetterName(field)}()"
                     } else {
-                        "$source.${cppNameCache.getName(field)}"
+                        "$fieldSource.${cppNameCache.getName(field)}"
                     }
-                    "jsResult.set(\"${nameRules.getName(field)}\", ${nativeToJs(field.typeRef, fieldSource)});"
+                    "jsResult.set(\"${nameRules.getName(field)}\", ${nativeToJs(field.typeRef, fieldValue)});"
                 }
                 "([&]() { auto jsResult = emscripten::val::object(); $fields return jsResult; }())"
             } else {
