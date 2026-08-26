@@ -50,7 +50,11 @@ Object.defineProperty({{moduleName}}, "{{jsName}}", {
 {{#thrownFunctions}}
 {{#isStatic}}
 {{#isOverloaded}}
-{{moduleName}}["{{jsName}}"] = ((original) => (...args) => unwrapThrownResult(original(...args), "{{exceptionName}}"))({{moduleName}}["{{jsName}}"]);
+{{moduleName}}["{{jsName}}"] = ((original) => {
+  const wrapped = (...args) => unwrapThrownResult(original(...args), "{{exceptionName}}");
+  wrapped.overloadTable = original.overloadTable;
+  return wrapped;
+})({{moduleName}}["{{jsName}}"]);
 {{/isOverloaded}}
 {{^isOverloaded}}
 {{#isStruct}}

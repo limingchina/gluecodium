@@ -209,7 +209,7 @@ internal class JsPackageGenerator(
         val container = element as? LimeContainer ?: return emptyList()
         val functions = container.functions
             .filter { it.exception != null }
-            .filterNot { element is LimeStruct && !it.isStatic }
+            .filterNot { element is LimeStruct }
         val staticFunctionNames = container.functions
             .filter { it.isStatic }
             .groupingBy { nameRules.getName(it) }
