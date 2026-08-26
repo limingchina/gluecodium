@@ -1,13 +1,16 @@
 {{> js/JsStubDocumentation}}
+{{#hasInstanceDeclaration}}
 export interface {{jsName}} {
 {{#fields}}
 {{> js/JsStubDocumentation}}
 	{{jsName}}: {{jsType}};
 {{/fields}}
 }
+{{/hasInstanceDeclaration}}
 {{#hasConstants}}
 export const {{constantOwnerName}}: {
 {{#constants}}
+{{> js/JsStubDocumentation}}
   {{jsName}}: {{jsType}};
 {{/constants}}
 };

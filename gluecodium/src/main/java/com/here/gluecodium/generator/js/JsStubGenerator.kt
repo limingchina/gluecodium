@@ -107,11 +107,18 @@ internal class JsStubGenerator(
                     mapOf(
                         "jsName" to nameRules.getName(constant),
                         "jsType" to jsNameResolver.resolveName(constant.typeRef),
+                        "comment" to constant.comment,
+                        "additionalDescriptionComment" to LimeComment(),
+                        "hasDocumentation" to hasDocumentation(constant.comment),
                     )
                 }
             data["constants"] = constants
             data["hasConstants"] = constants.isNotEmpty()
             data["constantOwnerName"] = nameRules.getName(limeElement)
+            data["hasInstanceDeclaration"] =
+                limeElement is LimeStruct && limeElement.fields.isNotEmpty() ||
+                    properties.isNotEmpty() ||
+                    functions.any { !it.isStatic || it.isConstructor }
             data["properties"] = properties.map {
                 mapOf(
                     "jsName" to nameRules.getName(it),

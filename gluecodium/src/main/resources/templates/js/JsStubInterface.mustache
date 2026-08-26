@@ -25,6 +25,7 @@ SPDX-License-Identifier: Apache-2.0
 {{> js/JsStubHeader}}
 
 {{> js/JsStubDocumentation}}
+{{#hasInstanceDeclaration}}
 export interface {{jsName}} {
 {{#functions}}
 {{> js/JsStubFunctionDocumentation}}
@@ -37,9 +38,11 @@ export interface {{jsName}} {
   delete(): void;
   [Symbol.dispose](): void;
 }
+{{/hasInstanceDeclaration}}
 {{#hasConstants}}
 export const {{constantOwnerName}}: {
 {{#constants}}
+{{> js/JsStubDocumentation}}
   {{jsName}}: {{jsType}};
 {{/constants}}
 };
