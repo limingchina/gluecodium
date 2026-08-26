@@ -260,7 +260,7 @@ internal class JsPackageGenerator(
     }
 
     private fun constantRuntimeName(constant: LimeConstant) =
-        "gluecodium_constant_${constant.fullName.replace(".", "__")}"
+        "gluecodium_constant_${constant.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
 
     private fun jsonString(value: String) =
         value
