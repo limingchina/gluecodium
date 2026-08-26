@@ -207,17 +207,31 @@ internal class JsPackageGenerator(
 
     private fun thrownFunctions(element: LimeType): List<Map<String, Any>> {
         val container = element as? LimeContainer ?: return emptyList()
-        return container.functions
+        val functions = container.functions
             .filter { it.exception != null }
             .filterNot { element is LimeStruct && !it.isStatic }
+        val staticFunctionNames = container.functions
+            .filter { it.isStatic }
+            .groupingBy { nameRules.getName(it) }
+            .eachCount()
+        return functions
+            .distinctBy { function ->
+                if (function.isStatic && (staticFunctionNames[nameRules.getName(function)] ?: 0) > 1) {
+                    nameRules.getName(function)
+                } else {
+                    function.fullName
+                }
+            }
             .map { function ->
+                val isOverloaded = function.isStatic && (staticFunctionNames[nameRules.getName(function)] ?: 0) > 1
                 mapOf(
                     "jsName" to nameRules.getName(function),
-                    "runtimeName" to if (function.isStatic || !isOverloaded(function, element)) nameRules.getName(function) else overloadRuntimeName(function),
+                    "runtimeName" to if (!isOverloaded) nameRules.getName(function) else overloadRuntimeName(function),
                     "structRuntimeName" to structFunctionRuntimeName(function),
                     "ownerRuntimeName" to nameRules.getEmbindRuntimeName(element),
                     "isStatic" to function.isStatic,
                     "isStruct" to (element is LimeStruct),
+                    "isOverloaded" to isOverloaded,
                     "exceptionName" to nameRules.getName(function.exception!!),
                 )
             }
@@ -225,7 +239,7 @@ internal class JsPackageGenerator(
 
     private fun isOverloaded(function: LimeFunction, element: LimeType): Boolean {
         val container = element as? LimeContainer ?: return false
-        return container.functions.count { !it.isConstructor && nameRules.getName(it) == nameRules.getName(function) } > 1
+        return container.functions.count { nameRules.getName(it) == nameRules.getName(function) } > 1
     }
 
     private fun packageMetadataFiles(packagePaths: Set<List<String>>): List<GeneratedFile> {

@@ -189,6 +189,9 @@ const wrapModule = (module, options = {}) => {
         const canonicalArguments = args.map(canonicalize);
         return canonicalize(functionValue.apply(this, canonicalArguments));
       };
+      if (functionValue.overloadTable !== undefined) {
+        constructor[key].overloadTable = functionValue.overloadTable;
+      }
     }
   };
 

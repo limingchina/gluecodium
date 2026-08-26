@@ -121,7 +121,8 @@ internal class JsEmbindViewModelBuilder(
                 .distinctBy { it.fullName }
                 .map(::propertyViewModel)
         if (type is LimeStruct) {
-            data["fields"] = type.fields.map { fieldViewModel(type, it) }
+            val filteredType = filteredModel.referenceMap[type.path.toString()] as? LimeStruct ?: type
+            data["fields"] = filteredType.fields.map { fieldViewModel(filteredType, it) }
             data["structFunctions"] = container.functions
                 .filter { it.isStatic && !it.isConstructor }
                 .map { functionViewModel(it).toMutableMap().apply { put("runtimeName", structFunctionRuntimeName(it)) } }

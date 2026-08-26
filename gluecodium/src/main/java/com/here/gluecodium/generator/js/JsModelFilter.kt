@@ -23,7 +23,9 @@ import com.here.gluecodium.common.LimeModelFilter
 import com.here.gluecodium.common.LimeModelSkipPredicates
 import com.here.gluecodium.generator.common.CommonGeneratorPredicates
 import com.here.gluecodium.model.lime.LimeModel
+import com.here.gluecodium.model.lime.LimeFunction
 import com.here.gluecodium.model.lime.LimeNamedElement
+import com.here.gluecodium.model.lime.LimeProperty
 import com.here.gluecodium.model.lime.LimeAttributeType.JS
 
 internal class JsModelFilter(
@@ -38,7 +40,12 @@ internal class JsModelFilter(
     fun filter(limeModel: LimeModel): FilteredModels {
         val embind =
             LimeModelFilter.filter(limeModel) {
-                LimeModelSkipPredicates.shouldRetainElement(it, activeTags, JS, retainFunctionsAndFields = true) &&
+                LimeModelSkipPredicates.shouldRetainElement(
+                    it,
+                    activeTags,
+                    JS,
+                    retainFunctionsAndFields = it is LimeFunction || it is LimeProperty,
+                ) &&
                     !isCppSkipped(it)
             }
         val stubs =
