@@ -39,16 +39,16 @@ class JsNameRules(nameRuleSet: NameRuleSet) : NameRules(nameRuleSet) {
             ?: super.getName(limeElement)
 
     /**
-     * Returns the flattened (concatenated) name for embind registration identifiers.
-     * Nested types like `Outer.Inner` become `OuterInner` so the resulting C++ function name
-     * (e.g. `register_pkg_OuterInner`) is a valid, dot-free identifier.
+     * Returns the flattened name for embind registration identifiers.
+     * Nested types like `Outer.Inner` become `Outer_Inner` so the resulting C++ function name
+     * is a valid, dot-free identifier that cannot collide with a top-level `OuterInner` type.
      */
     fun getFlattenedName(limeElement: LimeNamedElement): String {
         val platformName = getPlatformName(limeElement)
         if (platformName != null) return platformName
         val baseName =
             if (limeElement is LimeType && limeElement.path.hasParent) {
-                limeElement.path.tail.joinToString("")
+                limeElement.path.tail.joinToString("_")
             } else {
                 super.getName(limeElement)
             }
