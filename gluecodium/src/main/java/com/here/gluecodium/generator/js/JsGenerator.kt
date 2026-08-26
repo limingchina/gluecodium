@@ -103,6 +103,19 @@ internal class JsGenerator : Generator {
         val filteredModels = JsModelFilter(activeTags, ::isCppSkipped).filter(limeModel)
         val embindFilteredModel = filteredModels.embind
         val jsFilteredModel = filteredModels.stubs
+        val constantsByCanonicalName = embindFilteredModel.referenceMap.values
+            .filterIsInstance<LimeConstant>()
+            .distinctBy { it.fullName }
+            .groupingBy { it.path.toAmbiguousString() }
+            .eachCount()
+        val constantRuntimeNames = embindFilteredModel.referenceMap.values
+            .filterIsInstance<LimeConstant>()
+            .distinctBy { it.fullName }
+            .associate { constant ->
+                val canonicalName = constant.path.toAmbiguousString()
+                val runtimeName = if (constantsByCanonicalName[canonicalName] == 1) canonicalName else constant.fullName
+                constant.fullName to "gluecodium_constant_${runtimeName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
+            }
 
         jsNameResolver = JsNameResolver(embindFilteredModel.referenceMap, nameRules, limeLogger, commentsProcessor)
 
@@ -132,6 +145,7 @@ internal class JsGenerator : Generator {
                 secondaryParentMembers = inheritanceResolver::secondaryParentMembers,
                 primaryInheritedOverloads = inheritanceResolver::primaryInheritedOverloads,
                 isSupportedConstant = ::isSupportedConstant,
+                constantRuntimeName = { constant -> constantRuntimeNames.getValue(constant.fullName) },
             )
         overloadGroupGenerator =
             JsOverloadGroupGenerator(
@@ -163,6 +177,7 @@ internal class JsGenerator : Generator {
                 emitTypeScriptStubs = emitTypeScriptStubs,
                 isSupportedConstant = ::isSupportedConstant,
                 isCppSkipped = ::isCppSkipped,
+                constantRuntimeName = { constant -> constantRuntimeNames.getValue(constant.fullName) },
                 propertyAdapterName = embindViewModelBuilder::propertyAdapterName,
                 overloadRuntimeName = embindViewModelBuilder::overloadRuntimeName,
                 structFunctionRuntimeName = embindViewModelBuilder::structFunctionRuntimeName,

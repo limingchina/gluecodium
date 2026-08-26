@@ -43,6 +43,7 @@ internal class JsPackageGenerator(
     private val collectEmbindTypes: (LimeType) -> List<LimeType>,
     private val isSupportedConstant: (LimeConstant) -> Boolean,
     private val isCppSkipped: (LimeNamedElement) -> Boolean,
+    private val constantRuntimeName: (LimeConstant) -> String,
     private val propertyAdapterName: (LimeProperty, String) -> String,
     private val overloadRuntimeName: (LimeFunction) -> String,
     private val structFunctionRuntimeName: (LimeFunction) -> String,
@@ -258,9 +259,6 @@ internal class JsPackageGenerator(
         }
         return files
     }
-
-    private fun constantRuntimeName(constant: LimeConstant) =
-        "gluecodium_constant_${constant.fullName.replace(Regex("[^A-Za-z0-9_]"), "_")}"
 
     private fun jsonString(value: String) =
         value

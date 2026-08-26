@@ -63,6 +63,7 @@ internal class JsEmbindViewModelBuilder(
     private val secondaryParentMembers: (LimeType, LimeModel) -> Pair<List<LimeFunction>, List<LimeProperty>>,
     private val primaryInheritedOverloads: (LimeType, LimeModel) -> List<LimeFunction>,
     private val isSupportedConstant: (LimeConstant) -> Boolean,
+    private val constantRuntimeName: (LimeConstant) -> String,
 ) {
     private val signatureResolver = CppSignatureResolver(referenceMap, cppNameRules)
 
@@ -504,14 +505,12 @@ internal class JsEmbindViewModelBuilder(
             ?: throw IllegalStateException("Unable to resolve parent enumeration for ${enumerator.fullName}")
 
     private fun constantViewModel(constant: LimeConstant): Map<String, Any> =
-        constant.fullName.replace(Regex("[^A-Za-z0-9_]"), "_").let { constantName ->
         mapOf(
             "model" to constant,
             "jsName" to nameRules.getName(constant),
             "cppFullName" to cppNameCache.getFullyQualifiedName(constant),
             "cppType" to embindNameResolver.resolveName(constant.typeRef),
-            "functionName" to "gluecodium_constant_$constantName",
-            "runtimeName" to "gluecodium_constant_$constantName",
+            "functionName" to constantRuntimeName(constant),
+            "runtimeName" to constantRuntimeName(constant),
         )
-        }
 }
