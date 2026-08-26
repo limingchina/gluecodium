@@ -62,7 +62,7 @@ internal class EmbindConversionEmitter(
     private fun jsToNativeNonNullable(actualType: LimeType, typeRef: LimeTypeRef, source: String): String =
         when (actualType) {
             is LimeClass, is LimeInterface ->
-                "gluecodium_js::shared_ptr_from_js<${cppNameCache.getFullyQualifiedName(actualType)}>(std::move($source))"
+                "gluecodium_js::shared_ptr_from_js<${cppNameCache.getFullyQualifiedName(actualType)}>($source)"
             is LimeList -> {
                 val element = jsToNative(actualType.elementType, "entry")
                 "([&]() { ${nameResolver.resolveName(typeRef.type)} converted; " +
