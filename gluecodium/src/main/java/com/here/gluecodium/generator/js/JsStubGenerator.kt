@@ -26,6 +26,7 @@ import com.here.gluecodium.generator.common.templates.TemplateEngine
 import com.here.gluecodium.model.lime.LimeClass
 import com.here.gluecodium.model.lime.LimeComment
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
+import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeException
 import com.here.gluecodium.model.lime.LimeInterface
@@ -40,6 +41,8 @@ internal class JsStubGenerator(
     private val jsModuleName: String,
     private val importsCollector: GenericImportsCollector<JsImport>,
     private val nameResolvers: Map<String, NameResolver>,
+    private val isSupportedConstant: (LimeConstant) -> Boolean,
+    private val isCppSkipped: (LimeNamedElement) -> Boolean,
 ) {
     fun generate(elements: List<LimeNamedElement>): List<GeneratedFile> =
         elements.flatMap(::generateFile)
@@ -97,6 +100,18 @@ internal class JsStubGenerator(
             data["constructors"] = container.constructors.map(::functionViewModel)
             data["functions"] = functions.map(::functionViewModel)
             data["hasStaticFunctions"] = functions.any { it.isStatic && !it.isConstructor }
+            val constants = container.constants
+                .filter(isSupportedConstant)
+                .filterNot(isCppSkipped)
+                .map { constant ->
+                    mapOf(
+                        "jsName" to nameRules.getName(constant),
+                        "jsType" to jsNameResolver.resolveName(constant.typeRef),
+                    )
+                }
+            data["constants"] = constants
+            data["hasConstants"] = constants.isNotEmpty()
+            data["constantOwnerName"] = nameRules.getName(limeElement)
             data["properties"] = properties.map {
                 mapOf(
                     "jsName" to nameRules.getName(it),

@@ -23,6 +23,7 @@ import com.here.gluecodium.generator.common.GeneratedFile
 import com.here.gluecodium.generator.common.GenericImportsCollector
 import com.here.gluecodium.generator.common.NameResolver
 import com.here.gluecodium.generator.common.templates.TemplateEngine
+import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
@@ -33,6 +34,8 @@ internal class JsOutputGenerator(
     private val embindNameResolver: EmbindNameResolver,
     private val jsModuleName: String,
     private val emitTypeScriptStubs: Boolean,
+    private val isSupportedConstant: (LimeConstant) -> Boolean,
+    private val isCppSkipped: (LimeNamedElement) -> Boolean,
     private val referenceMap: Map<String, LimeElement>,
     private val embindFileGenerator: JsEmbindFileGenerator,
     private val commonFileGenerator: JsCommonFileGenerator,
@@ -63,6 +66,8 @@ internal class JsOutputGenerator(
                     jsModuleName,
                     importsCollector,
                     nameResolvers,
+                    isSupportedConstant,
+                    isCppSkipped,
                 ).generate(stubsModel.topElements.filterIsInstance<LimeNamedElement>())
             } else {
                 emptyList()

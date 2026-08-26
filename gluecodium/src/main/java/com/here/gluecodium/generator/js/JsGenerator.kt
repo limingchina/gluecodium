@@ -176,6 +176,8 @@ internal class JsGenerator : Generator {
                 embindNameResolver = embindNameResolver,
                 jsModuleName = jsModuleName,
                 emitTypeScriptStubs = emitTypeScriptStubs,
+                isSupportedConstant = ::isSupportedConstant,
+                isCppSkipped = ::isCppSkipped,
                 referenceMap = limeReferenceMap,
                 embindFileGenerator = embindFileGenerator,
                 commonFileGenerator = commonFileGenerator,
