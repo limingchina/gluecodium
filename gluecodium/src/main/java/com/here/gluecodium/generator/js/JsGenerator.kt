@@ -114,7 +114,6 @@ internal class JsGenerator : Generator {
                 embindFilteredModel.referenceMap,
                 internalNamespace,
                 cppNameCache,
-                cppNameRules,
             )
         conversions =
             EmbindConversionEmitter(embindNameResolver, cppNameCache, nameRules)

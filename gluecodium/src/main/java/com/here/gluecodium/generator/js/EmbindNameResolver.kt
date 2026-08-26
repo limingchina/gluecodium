@@ -40,8 +40,7 @@ import com.here.gluecodium.model.lime.LimeTypeRef
 internal class EmbindNameResolver(
     limeReferenceMap: Map<String, LimeElement>,
     internalNamespace: List<String>,
-    nameCache: CppNameCache,
-    cppNameRules: CppNameRules,
+    private val nameCache: CppNameCache,
 ) : NameResolver {
     private val cppNameResolver =
         CppNameResolver(limeReferenceMap, internalNamespace, nameCache, forceFollowThrough = true)
@@ -61,10 +60,7 @@ internal class EmbindNameResolver(
      * Resolve the fully-qualified C++ name (with namespace) for a named element, e.g.
      * `com::example::lifecycle::Producer`.
      */
-    fun resolveFullName(element: LimeNamedElement): String {
-        val parts: List<String> = listOf("") + element.path.head + element.path.tail
-        return parts.joinToString("::")
-    }
+    fun resolveFullName(element: LimeNamedElement): String = nameCache.getFullyQualifiedName(element)
 
     /**
      * Lambdas are emitted as C++ aliases; embind must see their underlying `std::function`
