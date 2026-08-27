@@ -26,6 +26,7 @@ import com.here.gluecodium.model.lime.LimeException
 import com.here.gluecodium.model.lime.LimeEnumeration
 import com.here.gluecodium.model.lime.LimeGenericType
 import com.here.gluecodium.model.lime.LimeList
+import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
@@ -53,12 +54,14 @@ internal class JsGenericRegistrationCollector(
         val includes = linkedSetOf<Include>()
         val includeResolver = EmbindIncludeResolver(referenceMap, cppNameRules, internalNamespace)
 
-        fun collect(typeRef: LimeTypeRef) {
+        fun collect(typeRef: LimeTypeRef, forceNativeRegistration: Boolean = false) {
             includes += includeResolver.resolveElementImports(typeRef)
             when (val type = typeRef.type) {
                 is LimeList -> {
-                    collect(type.elementType)
-                    if (!requiresJsAdapter(typeRef) || (typeRef.isNullable && !requiresJsAdapter(type.elementType))) {
+                    collect(type.elementType, forceNativeRegistration)
+                    if (forceNativeRegistration || !requiresJsAdapter(typeRef) ||
+                        (typeRef.isNullable && !requiresJsAdapter(type.elementType))
+                    ) {
                         val elementType = embindNameResolver.resolveName(type.elementType)
                         val name = "Vector_${sanitizeRegistrationName(elementType)}"
                         registrations.putIfAbsent(name, mapOf("vector" to true, "type" to elementType, "name" to name))
@@ -69,9 +72,13 @@ internal class JsGenericRegistrationCollector(
                     collect(type.valueType)
                 }
                 is LimeSet -> collect(type.elementType)
+                is LimeLambda -> {
+                    type.parameters.map { it.typeRef }.forEach { collect(it, true) }
+                    collect(type.returnType.typeRef, true)
+                }
                 else -> Unit
             }
-            if (needsOptionalRegistration(typeRef)) {
+            if (needsOptionalRegistration(typeRef, forceNativeRegistration)) {
                 val typeName = resolveGenericRegistrationType(typeRef.type)
                 val name = "Optional_${sanitizeRegistrationName(typeName)}"
                 registrations.putIfAbsent(name, mapOf("optional" to true, "type" to typeName, "name" to name))
@@ -105,8 +112,9 @@ internal class JsGenericRegistrationCollector(
             else -> embindNameResolver.resolveFullName(type.actualType as LimeNamedElement)
         }
 
-    private fun needsOptionalRegistration(typeRef: LimeTypeRef): Boolean {
+    private fun needsOptionalRegistration(typeRef: LimeTypeRef, forceNativeRegistration: Boolean): Boolean {
         if (!typeRef.isNullable) return false
+        if (forceNativeRegistration && typeRef.type.actualType is LimeList) return true
         return when (val type = typeRef.type.actualType) {
             is LimeBasicType -> type.typeId !in setOf(LimeBasicType.TypeId.BLOB, LimeBasicType.TypeId.DATE, LimeBasicType.TypeId.DURATION, LimeBasicType.TypeId.LOCALE)
             is LimeEnumeration -> true

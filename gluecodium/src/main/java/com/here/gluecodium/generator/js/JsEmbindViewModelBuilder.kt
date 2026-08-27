@@ -40,6 +40,7 @@ import com.here.gluecodium.model.lime.LimeField
 import com.here.gluecodium.model.lime.LimeFunction
 import com.here.gluecodium.model.lime.LimeInterface
 import com.here.gluecodium.model.lime.LimeList
+import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeMap
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
@@ -492,6 +493,7 @@ internal class JsEmbindViewModelBuilder(
                 is LimeList -> "Array.isArray($value)"
                 is LimeMap -> "$value instanceof Map"
                 is LimeSet -> "$value instanceof Set"
+                is LimeLambda -> "typeof $value === \"function\""
                 is com.here.gluecodium.model.lime.LimeStruct -> structOverloadPredicate(value, actualType)
                 else -> "$value !== null && typeof $value === \"object\""
             }
