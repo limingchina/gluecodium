@@ -50,14 +50,19 @@ internal class JsPackageGenerator(
     private val overloadPredicate: (LimeFunction) -> String,
     private val instanceOverloadGroups: (LimeType, LimeModel) -> List<Map<String, Any>>,
 ) {
-    fun generate(filteredModel: LimeModel): List<GeneratedFile> {
+    fun generate(embindModel: LimeModel, stubsModel: LimeModel): List<GeneratedFile> {
         val packageTypes =
-            filteredModel.topElements
+            embindModel.topElements
                 .filterIsInstance<LimeNamedElement>()
                 .groupBy { it.path.head }
                 .toSortedMap(compareBy { it.joinToString(".") })
         val indexFiles = packageTypes.map { (packagePath, elements) ->
-            packageIndexFiles(packagePath, elements, filteredModel)
+            packageIndexFiles(
+                packagePath,
+                elements,
+                embindModel,
+                stubsModel,
+            )
         }
         val declarationIndexFiles = indexFiles.map { it.first }
         val runtimeIndexFiles = indexFiles.map { it.second }
@@ -68,11 +73,16 @@ internal class JsPackageGenerator(
 
     private fun packageIndexFiles(
         packagePath: List<String>,
-        elements: List<LimeNamedElement>,
-        filteredModel: LimeModel,
+        embindElements: List<LimeNamedElement>,
+        embindModel: LimeModel,
+        stubsModel: LimeModel,
     ): Pair<GeneratedFile, GeneratedFile> {
+        val declarationElements =
+            stubsModel.topElements
+                .filterIsInstance<LimeNamedElement>()
+                .filter { it.path.head == packagePath }
         val exports =
-            elements
+            declarationElements
                 .sortedBy { nameRules.getName(it) }
                 .map { mapOf("moduleName" to nameRules.getName(it)) }
         val directory = packagePath.joinToString(File.separator)
@@ -81,7 +91,7 @@ internal class JsPackageGenerator(
                 TemplateEngine.render("js/JsIndex", mapOf("exports" to exports), nameResolvers),
                 JsNameRules.JS_TARGET_DIRECTORY + directory + File.separator + "index.d.ts",
             )
-        val runtimeExports = runtimeExports(elements, filteredModel)
+        val runtimeExports = runtimeExports(embindElements, embindModel)
         val duplicateRuntimeExports = runtimeExports.groupBy { it["moduleName"] }.filterValues { it.size > 1 }.keys
         check(duplicateRuntimeExports.isEmpty()) {
             "Duplicate JavaScript exports in package ${packagePath.joinToString(".")}: " +

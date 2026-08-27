@@ -152,7 +152,7 @@ internal class JsCommonFileGenerator(
                 structFunctionRuntimeName = structFunctionRuntimeName,
                 overloadPredicate = overloadPredicate,
                 instanceOverloadGroups = instanceOverloadGroups,
-            ).generate(jsFilteredModel)
+            ).generate(filteredModel, jsFilteredModel)
         return packageFiles + listOf(
             GeneratedFile(moduleInitContent, JsNameRules.MODULE_INIT_FILE),
             GeneratedFile(wrapperRuntimeContent, JsNameRules.WRAPPER_RUNTIME_FILE),
