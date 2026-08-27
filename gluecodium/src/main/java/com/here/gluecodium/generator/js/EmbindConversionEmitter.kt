@@ -115,14 +115,25 @@ internal class EmbindConversionEmitter(
             val cppType = if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $type&" else type
             "$cppType ${parameter.path.name}"
         }
-        val arguments = function.parameters.joinToString(", ") { parameter ->
-            nativeToJs(parameter.typeRef, parameter.path.name)
+        val callbackArgumentNames = function.parameters.indices.map { "__native_arg_$it" }
+        val argumentPreparations = function.parameters.mapIndexed { index, parameter ->
+            "auto ${callbackArgumentNames[index]} = ${parameter.path.name};"
         }
-        val invocation = "$captureName->callFunction<$returnType>(${arguments})"
         val body = if (function.returnType.isVoid) {
-            "gluecodium_js::invoke_on_main_runtime_thread_void([&] { $invocation; });"
+            val arguments = function.parameters.mapIndexed { index, parameter ->
+                nativeToJs(parameter.typeRef, callbackArgumentNames[index])
+            }.joinToString(", ")
+            val invocation = "$captureName->callFunction<$returnType>($arguments)"
+            val movedCaptures = callbackArgumentNames.joinToString(", ") { "$it = std::move($it)" }
+            val captures = if (movedCaptures.isEmpty()) captureName else "$captureName, $movedCaptures"
+            "${argumentPreparations.joinToString(" ")} " +
+                "gluecodium_js::invoke_on_main_runtime_thread_async([$captures] { $invocation; });"
         } else {
-            "return gluecodium_js::invoke_on_main_runtime_thread([&] { return $invocation; });"
+            val synchronousArguments = function.parameters.joinToString(", ") { parameter ->
+                nativeToJs(parameter.typeRef, parameter.path.name)
+            }
+            val synchronousInvocation = "$captureName->callFunction<$returnType>($synchronousArguments)"
+            "return gluecodium_js::invoke_on_main_runtime_thread([&] { return $synchronousInvocation; });"
         }
         val capturedSource = if (source.startsWith("std::move(")) source else "emscripten::val($source)"
         return "[$captureName = std::shared_ptr<gluecodium_js::RuntimeThreadVal>(new gluecodium_js::RuntimeThreadVal($capturedSource), gluecodium_js::delete_runtime_thread_val)](${parameters.joinToString(", ")}) -> $returnType { $body }"
