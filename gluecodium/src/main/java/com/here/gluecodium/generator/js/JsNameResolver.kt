@@ -68,6 +68,9 @@ internal class JsNameResolver(
                         actualType is LimeBasicType -> resolveBasicType(actualType)
                         actualType is LimeLambda -> resolveLambdaType(actualType)
                         actualType is LimeTypeAlias -> resolveType(actualType.typeRef)
+                        actualType is LimeList -> resolveType(actualType)
+                        actualType is LimeMap -> resolveType(actualType)
+                        actualType is LimeSet -> resolveType(actualType)
                         actualType.path.hasParent -> resolveQualifiedTypeName(actualType)
                         else -> nameRules.getName(actualType)
                     }

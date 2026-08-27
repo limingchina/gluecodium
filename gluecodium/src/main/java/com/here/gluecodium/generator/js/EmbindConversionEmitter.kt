@@ -115,7 +115,9 @@ internal class EmbindConversionEmitter(
             val cppType = if (CppNameResolver.needsRefSuffix(parameter.typeRef)) "const $type&" else type
             "$cppType ${parameter.path.name}"
         }
-        val arguments = function.parameters.joinToString(", ") { it.path.name }
+        val arguments = function.parameters.joinToString(", ") { parameter ->
+            nativeToJs(parameter.typeRef, parameter.path.name)
+        }
         val invocation = "$captureName->callFunction<$returnType>(${arguments})"
         val body = if (function.returnType.isVoid) {
             "gluecodium_js::invoke_on_main_runtime_thread_void([&] { $invocation; });"
