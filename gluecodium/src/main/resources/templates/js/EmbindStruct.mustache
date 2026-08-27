@@ -53,9 +53,9 @@ void {{registerName}}(void) {
 {{/hasDate}}
 {{#hasDuration}}
   .field("{{jsName}}", +[] (const {{cppFullName}}& self) -> emscripten::val {
-    return gluecodium_duration_to_js(self.{{cppFieldName}});
+    return {{durationGetter}};
   }, +[] ({{cppFullName}}& self, emscripten::val value) {
-    self.{{cppFieldName}} = gluecodium_duration_to_native<decltype(self.{{cppFieldName}})>(value);
+    {{durationSetter}};
   })
 {{/hasDuration}}
 {{#hasLocale}}

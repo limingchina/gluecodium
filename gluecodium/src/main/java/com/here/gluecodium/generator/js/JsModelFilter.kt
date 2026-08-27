@@ -31,6 +31,7 @@ import com.here.gluecodium.model.lime.LimeAttributeType.JS
 internal class JsModelFilter(
     private val activeTags: Set<String>,
     private val isCppSkipped: (LimeNamedElement) -> Boolean,
+    private val exposeInternals: Boolean,
 ) {
     data class FilteredModels(
         val embind: LimeModel,
@@ -50,7 +51,7 @@ internal class JsModelFilter(
             }
         val stubs =
             LimeModelFilter.filter(limeModel) {
-                    !CommonGeneratorPredicates.isInternal(it, JS) &&
+                    (exposeInternals || !CommonGeneratorPredicates.isInternal(it, JS)) &&
                         LimeModelSkipPredicates.shouldRetainElement(it, activeTags, JS, retainFunctionsAndFields = false)
             }
         return FilteredModels(embind, stubs)

@@ -437,6 +437,8 @@ internal class JsEmbindViewModelBuilder(
             "immutableSetter" to convertedFieldSetter(field, hasAccessors),
             "dateGetter" to conversions.nativeToJs(field.typeRef, directSource),
             "dateSetter" to convertedFieldSetter(field, hasAccessors),
+            "durationGetter" to conversions.nativeToJs(field.typeRef, directSource),
+            "durationSetter" to convertedFieldSetter(field, hasAccessors),
             "localeGetter" to conversions.nativeToJs(field.typeRef, directSource),
             "localeSetter" to convertedFieldSetter(field, hasAccessors),
         )

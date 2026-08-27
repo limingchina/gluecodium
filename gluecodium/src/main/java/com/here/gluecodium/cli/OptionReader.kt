@@ -106,6 +106,12 @@ object OptionReader {
                 false,
                 "Emit TypeScript .d.ts declaration stubs alongside the JS output.",
             )
+            addOption(
+                "jsexposeinternals",
+                "js-expose-internals",
+                false,
+                "Expose internal functions and classes in the generated JS/TS API.",
+            )
             addOption("help", false, "Shows this help and exits.")
             addOption("version", false, "Prints version info and exits.")
             addOption(
@@ -301,6 +307,7 @@ object OptionReader {
         if (getFlagValue("jsemittestubs")) {
             generatorOptions.jsEmitTypeScriptStubs = true
         }
+        generatorOptions.jsExposeInternals = getFlagValue("jsexposeinternals")
         generatorOptions.jsNameRules =
             readConfigFile(getStringValue("jsnamerules"), generatorOptions.jsNameRules)
 

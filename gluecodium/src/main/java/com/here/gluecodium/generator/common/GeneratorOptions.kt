@@ -75,6 +75,7 @@ data class GeneratorOptions(
     var jsInternalPackages: List<String> = listOf(),
     var jsModuleName: String = "generated",
     var jsEmitTypeScriptStubs: Boolean = true,
+    var jsExposeInternals: Boolean = false,
     var jsNameRules: Configuration =
         ConfigurationProperties.fromResource(
             Gluecodium::class.java,

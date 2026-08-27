@@ -71,6 +71,7 @@ internal class JsGenerator : Generator {
     private lateinit var jsModuleName: String
     private lateinit var activeTags: Set<String>
     private var emitTypeScriptStubs = true
+    private var exposeInternals = false
 
     private lateinit var limeReferenceMap: Map<String, LimeElement>
     private lateinit var jsNameResolver: JsNameResolver
@@ -95,12 +96,13 @@ internal class JsGenerator : Generator {
         jsModuleName = options.jsModuleName
         activeTags = options.tags
         emitTypeScriptStubs = options.jsEmitTypeScriptStubs
+        exposeInternals = options.jsExposeInternals
     }
 
     override fun generate(limeModel: LimeModel): List<GeneratedFile> {
         val limeLogger = LimeLogger(logger, limeModel.fileNameMap)
 
-        val filteredModels = JsModelFilter(activeTags, ::isCppSkipped).filter(limeModel)
+        val filteredModels = JsModelFilter(activeTags, ::isCppSkipped, exposeInternals).filter(limeModel)
         val embindFilteredModel = filteredModels.embind
         val jsFilteredModel = filteredModels.stubs
         val constantsByCanonicalName = embindFilteredModel.referenceMap.values
