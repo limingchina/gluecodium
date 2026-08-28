@@ -115,6 +115,7 @@ internal class JsStubGenerator(
             data["constants"] = constants
             data["hasConstants"] = constants.isNotEmpty()
             data["constantOwnerName"] = nameRules.getName(limeElement)
+            data["parentJsName"] = nameRules.getName(limeElement)
             data["hasInstanceDeclaration"] =
                 limeElement is LimeStruct && limeElement.fields.isNotEmpty() ||
                     properties.isNotEmpty() ||
@@ -128,6 +129,21 @@ internal class JsStubGenerator(
                     "additionalDescriptionComment" to it.additionalDescriptionComment,
                     "hasDocumentation" to
                         (hasDocumentation(it.comment) || hasDocumentation(it.additionalDescriptionComment)),
+                )
+            }
+            data["nestedEnumerations"] = container.enumerations.map { enumeration ->
+                mapOf(
+                    "jsName" to nameRules.getName(enumeration),
+                    "comment" to enumeration.comment,
+                    "hasDocumentation" to hasDocumentation(enumeration.comment),
+                    "enumerators" to enumeration.enumerators.map { enumerator ->
+                        mapOf(
+                            "jsName" to nameRules.getName(enumerator),
+                            "comment" to enumerator.comment,
+                            "additionalDescriptionComment" to LimeComment(),
+                            "hasDocumentation" to hasDocumentation(enumerator.comment),
+                        )
+                    },
                 )
             }
         }

@@ -23,8 +23,32 @@ export namespace {{jsName}} {
 	function {{jsName}}({{#parameters}}{{jsName}}: {{jsType}}{{^last}}, {{/last}}{{/parameters}}): {{returnType}};
 {{/isStatic}}
 {{/functions}}
+{{#nestedEnumerations}}
+{{> js/JsStubDocumentation}}
+	export enum {{jsName}} {
+{{#enumerators}}
+{{> js/JsStubDocumentation}}
+		{{jsName}},
+{{/enumerators}}
+	}
+{{/nestedEnumerations}}
 }
 {{/hasStaticFunctions}}
+{{#nestedEnumerations}}
+{{^hasStaticFunctions}}
+export namespace {{parentJsName}} {
+{{#nestedEnumerations}}
+{{> js/JsStubDocumentation}}
+	export enum {{jsName}} {
+{{#enumerators}}
+{{> js/JsStubDocumentation}}
+		{{jsName}},
+{{/enumerators}}
+	}
+{{/nestedEnumerations}}
+}
+{{/hasStaticFunctions}}
+{{/nestedEnumerations}}
 {{#nestedStructs}}
 export namespace {{parentJsName}} {
 {{> js/JsStubStructBody}}
