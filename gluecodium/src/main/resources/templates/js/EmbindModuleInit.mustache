@@ -1,0 +1,273 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+}}
+#include <emscripten/bind.h>
+#include <emscripten.h>
+#include <emscripten/threading.h>
+#include <chrono>
+#include <cstdint>
+#include <optional>
+#include <memory>
+#include <type_traits>
+#include <utility>
+{{#genericRegistrationIncludes}}
+{{#isSystem}}#include <{{fileName}}>{{/isSystem}}
+{{^isSystem}}#include "{{fileName}}"{{/isSystem}}
+{{/genericRegistrationIncludes}}
+{{#needsUnorderedSet}}
+#include <unordered_set>
+{{/needsUnorderedSet}}
+
+template<class Clock, class Duration>
+emscripten::val gluecodium_date_to_js(const std::chrono::time_point<Clock, Duration>& value) {
+  const auto milliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(value.time_since_epoch()).count();
+  return emscripten::val::global("Date").new_(emscripten::val::global("Number")(milliseconds));
+}
+
+template<class TimePoint>
+TimePoint gluecodium_date_to_native(emscripten::val value) {
+  const auto milliseconds = static_cast<std::int64_t>(value.call<double>("getTime"));
+  return TimePoint(
+      std::chrono::duration_cast<typename TimePoint::duration>(std::chrono::milliseconds(milliseconds)));
+}
+
+template<class Rep, class Period>
+emscripten::val gluecodium_duration_to_js(const std::chrono::duration<Rep, Period>& value) {
+  return emscripten::val(value.count());
+}
+
+template<class Duration>
+Duration gluecodium_duration_to_native(emscripten::val value) {
+  return Duration(value.as<typename Duration::rep>());
+}
+
+#include "{{localeInclude}}"
+
+{{localeTypeName}} gluecodium_locale_to_native(emscripten::val value) {
+  return {{localeTypeName}}(value.as<std::string>());
+}
+
+emscripten::val gluecodium_locale_to_js(const {{localeTypeName}}& value) {
+  if (value.language_tag) {
+    return emscripten::val(*value.language_tag);
+  }
+  std::string result;
+  if (value.language_code) result = *value.language_code;
+  if (value.script_code) {
+    if (!result.empty()) result += "-";
+    result += *value.script_code;
+  }
+  if (value.country_code) {
+    if (!result.empty()) result += "-";
+    result += *value.country_code;
+  }
+  return emscripten::val(result.empty() ? "und" : result);
+}
+
+namespace gluecodium_js {
+class RuntimeThreadVal {
+public:
+  explicit RuntimeThreadVal(emscripten::val value) : m_value(std::move(value)) {}
+
+  ~RuntimeThreadVal() = default;
+
+  template <typename ReturnType, typename... Args>
+  ReturnType call(const char* name, Args&&... args) const {
+    return m_value.call<ReturnType>(name, std::forward<Args>(args)...);
+  }
+
+  template <typename ReturnType, typename... Args>
+  ReturnType callFunction(Args&&... args) const {
+    return m_value.call<ReturnType>("call", m_value, std::forward<Args>(args)...);
+  }
+
+  emscripten::val get(const char* name) const {
+    return m_value[name];
+  }
+
+  void set(const char* name, emscripten::val value) {
+    m_value.set(name, std::move(value));
+  }
+
+private:
+  emscripten::val m_value;
+};
+
+template <typename Value, typename Error, typename Function>
+auto return_from_js(Function&& function) -> {{#internalNamespace}}::{{.}}{{/internalNamespace}}::Return<Value, Error> {
+  try {
+    emscripten::val result = function();
+    if constexpr (std::is_same_v<Value, void>) {
+      return {};
+    } else {
+      return result.as<Value>();
+    }
+  } catch (const emscripten::val& error) {
+    return error["error"].as<Error>();
+  }
+}
+
+template <typename Value, typename ErrorEnum, typename Function>
+auto return_from_js_enum(Function&& function) -> {{#internalNamespace}}::{{.}}{{/internalNamespace}}::Return<Value, ::std::error_code> {
+  try {
+    emscripten::val result = function();
+    return result.as<Value>();
+  } catch (const emscripten::val& error) {
+    return make_error_code(static_cast<ErrorEnum>(error["error"].as<int>()));
+  }
+}
+
+template <typename ErrorEnum, typename Function>
+auto return_from_js_enum_void(Function&& function) -> ::std::error_code {
+  try {
+    function();
+    return {};
+  } catch (const emscripten::val& error) {
+    return make_error_code(static_cast<ErrorEnum>(error["error"].as<int>()));
+  }
+}
+
+void delete_runtime_thread_val(RuntimeThreadVal* value) {
+  if (emscripten_is_main_runtime_thread()) {
+    delete value;
+    return;
+  }
+  emscripten_sync_run_in_main_runtime_thread(EM_FUNC_SIG_VI, +[](void* argument) {
+    delete static_cast<RuntimeThreadVal*>(argument);
+  }, value);
+}
+
+template <typename NativeType>
+class RuntimeThreadSharedPtr {
+public:
+  RuntimeThreadSharedPtr(emscripten::val value, std::shared_ptr<NativeType> pointer)
+      : m_value(std::move(value)), m_pointer(std::move(pointer)) {}
+
+  emscripten::val m_value;
+  std::shared_ptr<NativeType> m_pointer;
+};
+
+template <typename NativeType>
+void delete_runtime_thread_shared_ptr(RuntimeThreadSharedPtr<NativeType>* value) {
+  if (emscripten_is_main_runtime_thread()) {
+    delete value;
+    return;
+  }
+  emscripten_sync_run_in_main_runtime_thread(EM_FUNC_SIG_VI, +[](void* argument) {
+    delete static_cast<RuntimeThreadSharedPtr<NativeType>*>(argument);
+  }, value);
+}
+
+template <typename NativeType>
+std::shared_ptr<NativeType> shared_ptr_from_js(emscripten::val value) {
+  return value.as<std::shared_ptr<NativeType>>();
+}
+
+template <typename Function>
+auto invoke_on_main_runtime_thread(Function&& function) -> std::decay_t<decltype(function())> {
+  using Result = std::decay_t<decltype(function())>;
+  if (emscripten_is_main_runtime_thread()) {
+    return std::forward<Function>(function)();
+  }
+
+  struct State {
+    std::decay_t<Function> function;
+    std::optional<Result> result;
+  } state{std::forward<Function>(function), std::nullopt};
+
+  auto invoke = +[](void* argument) {
+    auto* state = static_cast<State*>(argument);
+    state->result.emplace(state->function());
+  };
+  emscripten_sync_run_in_main_runtime_thread(EM_FUNC_SIG_VI, invoke, &state);
+  return std::move(*state.result);
+}
+
+template <typename Function>
+void invoke_on_main_runtime_thread_void(Function&& function) {
+  if (emscripten_is_main_runtime_thread()) {
+    std::forward<Function>(function)();
+    return;
+  }
+
+  struct State {
+    std::decay_t<Function> function;
+  } state{std::forward<Function>(function)};
+
+  auto invoke = +[](void* argument) {
+    auto* state = static_cast<State*>(argument);
+    state->function();
+  };
+  emscripten_sync_run_in_main_runtime_thread(EM_FUNC_SIG_VI, invoke, &state);
+}
+
+template <typename Function>
+void invoke_on_main_runtime_thread_async(Function&& function) {
+  using FunctionType = std::decay_t<Function>;
+  struct State {
+    FunctionType function;
+  };
+
+  auto* state = new State{std::forward<Function>(function)};
+  auto schedule = +[](void* argument) {
+    auto* state = static_cast<State*>(argument);
+    emscripten_async_call(+[](void* callbackArgument) {
+      std::unique_ptr<State> state(static_cast<State*>(callbackArgument));
+      state->function();
+    }, state, 0);
+  };
+
+  if (emscripten_is_main_runtime_thread()) {
+    schedule(state);
+    return;
+  }
+  emscripten_sync_run_in_main_runtime_thread(EM_FUNC_SIG_VI, schedule, state);
+}
+}
+
+void gluecodium_js_pump_runtime_queue() {
+  emscripten_current_thread_process_queued_calls();
+}
+
+{{#registerFunctions}}
+void {{name}}();
+{{/registerFunctions}}
+{{#constantFunctions}}
+{{cppType}} {{runtimeName}}();
+{{/constantFunctions}}
+
+EMSCRIPTEN_BINDINGS({{moduleName}}) {
+{{#registerFunctions}}
+    {{name}}();
+{{/registerFunctions}}
+{{#constantFunctions}}
+  function("{{runtimeName}}", &{{runtimeName}});
+{{/constantFunctions}}
+{{#genericRegistrations}}
+  {{#optional}}emscripten::register_optional<{{type}}>();{{/optional}}
+  {{#vector}}emscripten::register_vector<{{type}}>("{{name}}");{{/vector}}
+  {{#map}}emscripten::register_map<{{keyType}}, {{valueType}}>("{{name}}");{{/map}}
+{{/genericRegistrations}}
+  emscripten::function("pumpRuntimeQueue", &gluecodium_js_pump_runtime_queue);
+}

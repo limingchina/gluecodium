@@ -1,0 +1,5 @@
+# Spike build artifacts
+spikes/emcmake_spike/build/
+spikes/*/*.wasm
+spikes/*/calculator.js
+spikes/*/mi_spike.js

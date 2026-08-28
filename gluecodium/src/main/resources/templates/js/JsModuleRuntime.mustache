@@ -1,0 +1,19 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  ! SPDX-License-Identifier: Apache-2.0
+  !
+  !}}
+import createModule from "../{{moduleFileName}}.mjs";
+import { wrapModule } from "./WrapperRuntime.mjs";
+
+let modulePromise;
+
+const loadModule = (options = {}) => {
+  if (modulePromise === undefined) {
+    modulePromise = createModule(options).then((module) => wrapModule(module, options));
+  }
+  return modulePromise;
+};
+
+export { loadModule };

@@ -34,5 +34,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/Gluecodium.cmake)
 # iOS modules
 include(${CMAKE_CURRENT_LIST_DIR}/Swift.cmake)
 
+# JavaScript/WebAssembly (embind) module
+include(${CMAKE_CURRENT_LIST_DIR}/Js.cmake)
+
 # Packaging functions
 include(${CMAKE_CURRENT_LIST_DIR}/Packaging.cmake)

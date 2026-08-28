@@ -50,6 +50,39 @@ cmake path/to/example -GXcode
 ```
 Optionally parameter `-DENABLE_APP=OFF` can be passed to skip building the test application. In this case only framework is built which can be used in another existing Xcode project.
 
+## JavaScript/WebAssembly
+
+With the Emscripten SDK activated, configure the calculator with `emcmake` and enable the embind
+module:
+
+```
+emcmake cmake path/to/example -G Ninja -DENABLE_APP=OFF -DENABLE_JS=ON
+cmake --build . --target mylibrary_js
+node calculator-js-smoke.mjs
+```
+
+The generated module is emitted as `generated.mjs` with its accompanying `.wasm` file. The generated
+`js/gluecodium/calculator/index.mjs` package facade is the public ES-module entrypoint. Browser
+deployment of the pthread-enabled build requires `Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp` response headers.
+
+The same build directory contains `index.html` and `app.mjs`, a browser calculator application that
+imports `Calculator` from the package facade and uses the generated class for addition, subtraction,
+multiplication, division, minimum, and maximum. Press the on-screen number and operator buttons,
+then press `=` to get a result. The number keys, decimal point, operators, `Enter`, `Escape`, and
+`Backspace` also work from the keyboard; `m` selects minimum and `M` selects maximum. `C` resets
+the current calculation, and **Clear history** resets the five most recent calculations.
+The build also copies `serve.py`, which starts a static server with the required headers:
+
+```
+cd build-calculator-js
+python3 serve.py
+```
+
+Open `http://localhost:8000/index.html` in a browser. The page loads the generated ES module,
+creates one `Calculator` instance, dispatches the selected operation through the generated embind
+API, and releases native handles when the page is closed or an operation completes.
+
 To build framework from console:
 ```
 # Build debug

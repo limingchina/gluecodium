@@ -1,0 +1,75 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  ! SPDX-License-Identifier: Apache-2.0
+  !
+  !}}
+import { loadModule } from "{{runtimeImportPath}}";
+
+const module = await loadModule();
+const pumpRuntimeQueue = () => module.pumpRuntimeQueue();
+const unwrapThrownResult = (result, exceptionName) => {
+  if (result.error === undefined) {
+    return result.value;
+  }
+  const error = new Error();
+  error.name = exceptionName;
+  error.error = result.error;
+  throw error;
+};
+{{#runtimeExports}}
+const {{moduleName}} = module["{{runtimeName}}"]{{#isStruct}} ?? {}{{/isStruct}};
+{{#constants}}
+{{moduleName}}.{{jsName}} = module["{{runtimeName}}"]();
+{{/constants}}
+{{#properties}}
+Object.defineProperty({{moduleName}}, "{{jsName}}", {
+  get: () => {{moduleName}}["{{getterName}}"](){{#hasSetter}},
+  set: (value) => {{moduleName}}["{{setterName}}"](value){{/hasSetter}}
+});
+{{/properties}}
+{{#structFunctions}}
+{{moduleName}}.{{jsName}} = module["{{runtimeName}}"];
+{{/structFunctions}}
+{{#overloadGroups}}
+{{moduleName}}["{{jsName}}"] = (...args) => {
+{{#overloads}}
+  if ({{predicate}}) return {{moduleName}}["{{runtimeName}}"](...args);
+{{/overloads}}
+  throw new TypeError("No matching overload for {{jsName}}");
+};
+{{/overloadGroups}}
+{{#instanceOverloadGroups}}
+{{moduleName}}.prototype["{{jsName}}"] = function (...args) {
+{{#overloads}}
+  if ({{predicate}}) return this["{{runtimeName}}"](...args);
+{{/overloads}}
+  throw new TypeError("No matching overload for {{jsName}}");
+};
+{{/instanceOverloadGroups}}
+{{#thrownFunctions}}
+{{#isStatic}}
+{{#isOverloaded}}
+{{moduleName}}["{{jsName}}"] = ((original) => {
+  const wrapped = (...args) => unwrapThrownResult(original(...args), "{{exceptionName}}");
+  wrapped.overloadTable = original.overloadTable;
+  return wrapped;
+})({{moduleName}}["{{jsName}}"]);
+{{/isOverloaded}}
+{{^isOverloaded}}
+{{#isStruct}}
+{{moduleName}}["{{jsName}}"] = ((original) => (...args) => unwrapThrownResult(original(...args), "{{exceptionName}}"))(module["{{structRuntimeName}}"]);
+{{/isStruct}}
+{{^isStruct}}
+{{moduleName}}["{{jsName}}"] = ((original) => (...args) => unwrapThrownResult(original(...args), "{{exceptionName}}"))(module["{{ownerRuntimeName}}"]["{{runtimeName}}"]);
+{{/isStruct}}
+{{/isOverloaded}}
+{{/isStatic}}
+{{^isStatic}}
+{{moduleName}}.prototype["{{jsName}}"] = ((original) => function (...args) {
+  return unwrapThrownResult(original.apply(this, args), "{{exceptionName}}");
+})({{moduleName}}.prototype["{{runtimeName}}"]);
+{{/isStatic}}
+{{/thrownFunctions}}
+{{/runtimeExports}}
+export { pumpRuntimeQueue{{#runtimeExports}}, {{moduleName}}{{/runtimeExports}} };

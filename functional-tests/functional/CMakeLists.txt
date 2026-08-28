@@ -74,7 +74,7 @@ function(feature feature_name)
     set(FUNCTIONAL_LIME_SOURCES "${FUNCTIONAL_LIME_SOURCES};${lime_sources}" PARENT_SCOPE)
 endfunction()
 
-feature(Strings cpp android android-kotlin swift dart SOURCES
+feature(Strings cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StaticStringMethods.cpp
     input/src/cpp/StringsWithCstring.cpp
     input/src/cpp/CppRefReturnType.cpp
@@ -91,15 +91,23 @@ feature(MethodOverloading cpp android android-kotlin swift dart SOURCES
     input/lime/InheritanceOverloads.lime
 )
 
-feature(Blob cpp android android-kotlin swift dart SOURCES
+feature(MethodOverloadingJavaScript js SOURCES
+    input/src/cpp/InheritanceOverloadsJavaScript.cpp
+
+    input/lime/InheritanceOverloads.lime
+    input/lime/InheritanceOverloadsJavaScript.lime
+)
+
+feature(Blob cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Blobs.cpp
     input/src/cpp/StaticByteArrayMethods.cpp
 
     input/lime/Blobs.lime
+    input/lime/Errors2.lime
     input/lime/StaticByteArrayMethods.lime
 )
 
-feature(BuiltinTypes cpp android android-kotlin swift dart SOURCES
+feature(BuiltinTypes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StaticBooleanMethods.cpp
     input/src/cpp/StaticFloatDoubleMethods.cpp
     input/src/cpp/StaticIntMethods.cpp
@@ -109,7 +117,7 @@ feature(BuiltinTypes cpp android android-kotlin swift dart SOURCES
     input/lime/StaticIntMethods.lime
 )
 
-feature(Classes cpp android android-kotlin swift dart SOURCES
+feature(Classes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Instances.h
     input/src/cpp/Instances.cpp
     input/src/cpp/InstancesFactory.cpp
@@ -117,7 +125,7 @@ feature(Classes cpp android android-kotlin swift dart SOURCES
     input/lime/Instances.lime
 )
 
-feature(Interfaces cpp android android-kotlin swift dart SOURCES
+feature(Interfaces cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Interfaces.h
     input/src/cpp/Interfaces.cpp
     input/src/cpp/InterfacesFactory.cpp
@@ -125,27 +133,28 @@ feature(Interfaces cpp android android-kotlin swift dart SOURCES
     input/lime/Interfaces.lime
 )
 
-feature(InstanceInStruct cpp android android-kotlin swift dart SOURCES
+feature(InstanceInStruct cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/InstanceInStruct.cpp
 
     input/lime/StructWithInstance.lime
 )
 
-feature(Structs cpp android android-kotlin swift dart SOURCES
+feature(Structs cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/PlainDataStructures.cpp
+    input/src/cpp/SomeOpenNumberWrapperClass.cpp
 
     input/lime/Structs.lime
     input/lime/Accessors.lime
 )
 
-feature(StructsInTypes cpp android android-kotlin swift dart SOURCES
+feature(StructsInTypes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StructsFromTypeCollection.cpp
 
     input/lime/StructsFromTypeCollection.lime
     input/lime/TypeCollection.lime
 )
 
-feature(StructsImmutable cpp android android-kotlin swift dart SOURCES
+feature(StructsImmutable cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/PlainDataStructuresImmutable.cpp
 
     input/lime/PlainDataStructuresImmutable.lime
@@ -165,7 +174,7 @@ feature(TypeDefs cpp android android-kotlin swift dart SOURCES
     input/lime/StaticTypedef.lime
 )
 
-feature(Enums cpp android android-kotlin swift dart SOURCES
+feature(Enums cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Enums.cpp
     input/src/cpp/EnumsTypeCollection.cpp
 
@@ -175,7 +184,7 @@ feature(Enums cpp android android-kotlin swift dart SOURCES
     input/lime/EnumsTypeCollection.lime
 )
 
-feature(Properties cpp android android-kotlin swift dart SOURCES
+feature(Properties cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/AttributesInterfaceImpl.h
     input/src/cpp/AttributesInterfaceImpl.cpp
     input/src/cpp/AttributesInterfaceFactory.cpp
@@ -189,7 +198,7 @@ feature(Properties cpp android android-kotlin swift dart SOURCES
     input/lime/AttributesInterfaceFactory.lime
 )
 
-feature(Listeners cpp android android-kotlin swift dart SOURCES
+feature(Listeners cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StringListeners.cpp
     input/src/cpp/ListenerRoundtrip.cpp
     input/src/cpp/ListenerRoute.cpp
@@ -210,14 +219,14 @@ feature(Listeners cpp android android-kotlin swift dart SOURCES
     input/lime/ListenerAsConstructorParam.lime
 )
 
-feature(ComplexListeners cpp android android-kotlin swift dart SOURCES
+feature(ComplexListeners cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/ComplexListener.cpp
     input/src/cpp/ComplexListener.h
 
     input/lime/ComplexListeners.lime
 )
 
-feature(ListenersWithReturnValues cpp android android-kotlin swift dart SOURCES
+feature(ListenersWithReturnValues cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/ListenersReturnValues.cpp
     input/src/cpp/ListenersReturnValues.h
     input/src/cpp/ListenerWithAttributes.cpp
@@ -249,11 +258,12 @@ feature(GenericTypes cpp android android-kotlin swift dart SOURCES
     input/lime/OptimizedList.lime
 )
 
-feature(Errors cpp android android-kotlin swift dart SOURCES
+feature(Errors cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Errors.cpp
     input/src/cpp/ErrorsInInterface.cpp
     input/src/cpp/ErrorsInInterface.h
     input/src/cpp/ErrorsWithNonTrivialType.cpp
+    input/src/cpp/src/ExternalTypes.cpp
 
     input/lime/Errors.lime
     input/lime/Errors2.lime
@@ -261,7 +271,13 @@ feature(Errors cpp android android-kotlin swift dart SOURCES
     input/lime/ErrorsWithNonTrivialType.lime
 )
 
-feature(Defaults cpp android android-kotlin swift dart SOURCES
+feature(InheritanceJavaScriptDependencies js SOURCES
+    input/src/cpp/InheritanceJavaScriptDependencies.cpp
+
+    input/lime/InheritanceJavaScriptDependencies.lime
+)
+
+feature(Defaults cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Defaults.cpp
 
     input/lime/Defaults.lime
@@ -273,7 +289,7 @@ feature(Defaults cpp android android-kotlin swift dart SOURCES
     input/lime/ConstantDefaults.lime
 )
 
-feature(Inheritance cpp android android-kotlin swift dart SOURCES
+feature(Inheritance cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/ChildClassImpl.cpp
     input/src/cpp/ChildClassImpl.h
     input/src/cpp/GrandchildClassImpl.cpp
@@ -292,7 +308,7 @@ feature(Inheritance cpp android android-kotlin swift dart SOURCES
     input/lime/ConstructorOverride.lime
 )
 
-feature(MultipleInheritance cpp android android-kotlin swift dart SOURCES
+feature(MultipleInheritance cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/MultipleInheritance.cpp
     input/lime/MultipleInheritance.lime
 )
@@ -301,11 +317,11 @@ feature(Serialization android android-kotlin swift SOURCES
     input/lime/Serialization.lime
 )
 
-feature(CircularDependencies cpp android android-kotlin swift dart SOURCES
+feature(CircularDependencies cpp android android-kotlin swift dart js SOURCES
     input/lime/Circular.lime
 )
 
-feature(ExternalTypes cpp android android-kotlin swift dart SOURCES
+feature(ExternalTypes cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/include/ExternalTypes.h
     input/src/cpp/include/MyClass.h
     input/src/cpp/src/ExternalTypes.cpp
@@ -337,7 +353,7 @@ feature(DartExternalTypes dart SOURCES
     input/lime/DartExternalTypes.lime
 )
 
-feature(UnderscorePackage cpp android android-kotlin swift dart SOURCES
+feature(UnderscorePackage cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/UseUnderscorePackage.cpp
 
     input/lime/UnderscorePackage.lime
@@ -350,7 +366,7 @@ feature(Constants cpp android android-kotlin swift dart SOURCES
     input/lime/Constants.lime
 )
 
-feature(Equatable cpp android android-kotlin swift dart SOURCES
+feature(Equatable cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/EquatableImpl.cpp
     input/src/cpp/RefEquality.cpp
     input/src/cpp/SimpleEquality.cpp
@@ -360,7 +376,7 @@ feature(Equatable cpp android android-kotlin swift dart SOURCES
     input/lime/SimpleEquality.lime
 )
 
-feature(Nullable cpp android android-kotlin swift dart SOURCES
+feature(Nullable cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/NullableInstances.cpp
     input/src/cpp/NullableInterfaceImpl.cpp
     input/src/cpp/NullableCollections.cpp
@@ -370,7 +386,7 @@ feature(Nullable cpp android android-kotlin swift dart SOURCES
     input/lime/NullableCollections.lime
 )
 
-feature(CallbacksWithThreads cpp android dart SOURCES
+feature(CallbacksWithThreads cpp android dart js SOURCES
     input/src/cpp/ListenersThreads.cpp
 
     input/lime/ListenersThreads.lime
@@ -390,7 +406,14 @@ feature(Durations cpp android android-kotlin swift dart SOURCES
     input/lime/DurationDefaults.lime
 )
 
-feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
+feature(Locales cpp js SOURCES
+    input/src/cpp/Locales.cpp
+
+    input/lime/Locales.lime
+    input/lime/LocaleDefaults.lime
+)
+
+feature(StructsWithCompanion cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StructsWithMethods.cpp
     input/src/cpp/StructsWithConstants.cpp
 
@@ -398,27 +421,27 @@ feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
     input/lime/StructsWithConstants.lime
 )
 
-feature(DeclarationOrder cpp android android-kotlin swift dart SOURCES
+feature(DeclarationOrder cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/StructsWithMethodsDeclarationOrder.cpp
 
     input/lime/OrderWithInterface.lime
     input/lime/StructsWithMethodsDeclarationOrder.lime
 )
 
-feature(Comments cpp android android-kotlin swift dart SOURCES
+feature(Comments cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/Comments.cpp
 
     input/lime/Comments.lime
     input/lime/CommentsInterface.lime
 )
 
-feature(PlatformNames cpp android android-kotlin swift dart SOURCES
+feature(PlatformNames cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/PlatformNames.cpp
 
     input/lime/PlatformNames.lime
 )
 
-feature(EscapedNames cpp android android-kotlin swift dart SOURCES
+feature(EscapedNames cpp android android-kotlin swift dart js SOURCES
     input/lime/KeywordNames.lime
 )
 
@@ -426,7 +449,7 @@ feature(FullName dart SOURCES
     input/lime/FullName.lime
 )
 
-feature(Nesting cpp android android-kotlin swift dart SOURCES
+feature(Nesting cpp android android-kotlin swift dart js SOURCES
     input/src/cpp/TopLevelTypes.cpp
     input/src/cpp/NestedContainers.cpp
     input/src/cpp/NestedClassWithProperty.cpp
@@ -444,13 +467,13 @@ feature(Nesting cpp android android-kotlin swift dart SOURCES
     input/lime/NestedInheritance.lime
 )
 
-feature(Lambdas cpp android android-kotlin swift dart SOURCES
+feature(Lambdas cpp android android-kotlin swift dart js SOURCES
     input/lime/Lambdas.lime
 
     input/src/cpp/Lambdas.cpp
 )
 
-feature(Visibility android android-kotlin swift dart SOURCES
+feature(Visibility android android-kotlin swift dart js SOURCES
     input/lime/VisibilityAttribute.lime
     input/lime/VisibilityInternal.lime
     input/lime/VisibilityPlatform.lime
@@ -461,7 +484,7 @@ feature(Visibility android android-kotlin swift dart SOURCES
     input/src/cpp/VisibilityInternal.cpp
 )
 
-feature(SkipAttribute cpp android android-kotlin swift dart SOURCES
+feature(SkipAttribute cpp android android-kotlin swift dart js SOURCES
     input/lime/Skip.lime
     input/lime/SkipTags.lime
     input/lime/SkipTagsInPlatform.lime
@@ -476,13 +499,13 @@ feature(SkipAttribute cpp android android-kotlin swift dart SOURCES
     input/src/cpp/EnableIfEnabled.cpp
 )
 
-feature(CppConst cpp android android-kotlin swift dart SOURCES
+feature(CppConst cpp android android-kotlin swift dart js SOURCES
     input/lime/CppConstMethods.lime
 
     input/src/cpp/CppConstMethods.cpp
 )
 
-feature(CppNoexcept cpp android android-kotlin swift dart SOURCES
+feature(CppNoexcept cpp android android-kotlin swift dart js SOURCES
     input/lime/CppNoexceptMethods.lime
 
     input/src/cpp/CppNoexceptMethods.cpp
@@ -495,7 +518,7 @@ feature(Locales cpp android android-kotlin swift dart SOURCES
     input/lime/LocaleDefaults.lime
 )
 
-feature(CrossPackageNameClash cpp android android-kotlin swift dart SOURCES
+feature(CrossPackageNameClash cpp android android-kotlin swift dart js SOURCES
     input/lime/CrossPackageNameClashA.lime
     input/lime/CrossPackageNameClashB.lime
     input/lime/CrossPackageNameClashC.lime
@@ -574,6 +597,11 @@ gluecodium_target_lime_sources(functional_bindings PRIVATE ${FUNCTIONAL_LIME_SOU
 
 add_library(functional SHARED)
 target_link_libraries(functional PUBLIC functional_bindings)
+
+if(js IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
+    include(gluecodium/Js)
+    gluecodium_target_js_sources(functional_bindings)
+endif()
 
 # Target platform specific rules to follow...
 if(swift IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
@@ -663,3 +691,4 @@ set(CPP_INPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/input/src/cpp")
 
 add_subdirectory(cpp)
 add_subdirectory(dart)
+add_subdirectory(js)

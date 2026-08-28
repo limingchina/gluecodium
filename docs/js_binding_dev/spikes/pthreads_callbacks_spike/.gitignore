@@ -1,0 +1,6 @@
+node_modules/
+package-lock.json
+pthreads_callbacks_spike.mjs
+pthreads_callbacks_spike.wasm
+pthreads_callbacks_spike.worker.js
+pthreads_callbacks_spike.data

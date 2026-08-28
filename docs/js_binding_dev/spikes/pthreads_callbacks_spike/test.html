@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>pthreads callbacks spike</title>
+</head>
+<body>
+<script type="module">
+window.__spikeResult = [];
+
+addEventListener("unhandledrejection", (event) => {
+    window.__spikeResult.push(`unhandled: ${event.reason?.message ?? event.reason}`);
+});
+addEventListener("error", (event) => {
+    window.__spikeResult.push(`error: ${event.message}`);
+});
+
+try {
+    if (!crossOriginIsolated) {
+        window.__spikeResult.push("isolation: crossOriginIsolated is false; SharedArrayBuffer unavailable");
+    }
+    const createModule = (await import("./pthreads_callbacks_spike.mjs")).default;
+    const Module = await createModule();
+    const pump = setInterval(() => Module.pumpRuntimeQueue(), 0);
+    const result = await new Promise((resolve, reject) => {
+        Module.invokeFromWorkerAsync((value) => ({
+            ok: true,
+            value: `js-${value}`,
+        }), resolve, reject);
+    });
+    clearInterval(pump);
+    window.__spikeResult.push(result === "js-worker"
+        ? "PASS: callback marshalled to the runtime thread"
+        : `FAIL: unexpected callback result ${result}`);
+} catch (exception) {
+    window.__spikeResult.push(`caught: ${exception?.message ?? exception}`);
+}
+document.title = "done";
+console.log(window.__spikeResult.join("\n"));
+</script>
+</body>
+</html>

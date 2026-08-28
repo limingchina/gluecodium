@@ -77,8 +77,6 @@ Locales::get_locale_with_malformed_script() {
     return Locale("foo", "bar", nonsense);
 }
 
-// LocalesStruct
-
 LocalesStruct
 LocalesStruct::locales_struct_round_trip(const LocalesStruct& input) {
     return input;
@@ -106,8 +104,6 @@ std::unordered_map<std::string, Locale>
 LocaleGenerics::locale_values_map_round_trip(const std::unordered_map<std::string, Locale>& input) {
     return input;
 }
-
-// LocaleDefaults
 
 LocaleDefaults
 LocaleDefaults::get_cpp_defaults() { return {}; }

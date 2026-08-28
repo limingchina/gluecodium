@@ -18,8 +18,17 @@
 package test
 
 class Lambdas {
+    // @param[p0] the first string to concatenate
+    // @param[p1] the second string to concatenate
+    // @return the concatenated string
     lambda Concatenator = (@Java("first") String, @Java("second") String) -> String
+    // @param[p0] the first string to concatenate
+    // @param[p1] the second string to concatenate
+    // @param[p2] the third string to concatenate
+    // @return the concatenated string
     lambda Tricatenator = (String, String, String) -> String
+    // @param[p0] the nullable string to process
+    // @return the nullable producer result
     @Java(Name = "NullableConfounder", FunctionName = "confuse")
     @Kotlin(Name = "NullableConfounder", FunctionName = "confuse")
     @Swift("NullableConvoluter")
@@ -29,35 +38,76 @@ class Lambdas {
         concatenator: Concatenator
     }
 
+    // Creates a concatenator that uses the specified delimiter
+    // @param[delimiter] the delimiter to use for concatenation
+    // @return a concatenator function
     static fun getConcatenator(delimiter: String): Concatenator
+    // Concatenates two strings using the provided concatenator
+    // @param[string1] the first string to concatenate
+    // @param[string2] the second string to concatenate
+    // @param[concatenator] the concatenator function to use
+    // @return the concatenated result
     static fun concatenate(string1: String, string2: String, concatenator: Concatenator): String
+    // Composes two concatenators into a tricatenator
+    // @param[concatenator1] the first concatenator
+    // @param[concatenator2] the second concatenator
+    // @return a tricatenator function
     static fun composeConcatenators(concatenator1: Concatenator, concatenator2: Concatenator): Tricatenator
     // Strings list should be at least one element longer than concatenators list.
+    // @param[strings] the list of strings to concatenate
+    // @param[concatenators] the list of concatenators to use
+    // @return the concatenated result
     static fun concatenateList(strings: List<String>, concatenators: List<Concatenator>): String
 
+    // Creates a lambda holder with the specified delimiter
+    // @param[delimiter] the delimiter to use for concatenation
+    // @return a lambda holder containing the concatenator
     static fun getConcatenatorInStruct(delimiter: String): LambdaHolder
+    // Concatenates two strings using the concatenator from a lambda holder
+    // @param[string1] the first string to concatenate
+    // @param[string2] the second string to concatenate
+    // @param[concatenator] the lambda holder containing the concatenator
+    // @return the concatenated result
     static fun concatenateInStruct(string1: String, string2: String, concatenator: LambdaHolder): String
 
+    // Creates a concatenator that uses the specified delimiter, or null if delimiter is null
+    // @param[delimiter] the nullable delimiter to use for concatenation
+    // @return a concatenator function or null
     static fun getConcatenatorOrNull(delimiter: String?): Concatenator?
+    // Concatenates two strings using the provided concatenator, or returns null if concatenator is null
+    // @param[string1] the first string to concatenate
+    // @param[string2] the second string to concatenate
+    // @param[concatenator] the nullable concatenator function to use
+    // @return the concatenated result or null
     static fun concatenateOrNot(string1: String, string2: String, concatenator: Concatenator?): String?
 
     static property realConcatenator: Concatenator
     static fun resetRealConcatenator()
 
+    // Gets a nullable confuser function
+    // @return a nullable confuser function
     static fun getNullableConfuser(): NullableConfuser
+    // Applies a nullable confuser to a nullable string value
+    // @param[confuser] the confuser function to apply
+    // @param[value] the nullable string value to process
+    // @return the result of applying the confuser
     static fun applyNullableConfuser(confuser: NullableConfuser, value: String?): StandaloneProducer?
 }
 
 // This is some lambda named StandaloneProducer.
 // It produces serious data.
 // This sentence is used while validating generated documentation.
+// @return the produced string
 lambda StandaloneProducer = () -> String
 
+// @param[p0] the integer to process
+// @return the result as a string
 @Overloaded
 @Skip(Swift, Dart)
 lambda OverloadedLambda = (Int) -> String
 
 class LambdasDeclarationOrder {
+    // @param[p0] the struct parameter
     lambda SomeCallback = (SomeStruct) -> Void
 
     struct SomeStruct {
@@ -66,35 +116,59 @@ class LambdasDeclarationOrder {
 }
 
 struct StructWithLambda {
+    // @param[p0] the nullable string parameter
+    // @return the nullable string result
     lambda LambdaCallback = (String?) -> String?
 
+    // Invokes a callback with a nullable string
+    // @param[callback] the nullable callback to invoke
+    // @return the result from the callback
     static fun invoke_callback(callback: LambdaCallback?): String?
 }
 
 interface LambdasInterface {
+    // @param[p0] the nullable blob result
     lambda TakeScreenshotCallback = (Blob?) -> Void
 
+    // Takes a screenshot using the provided callback
+    // @param[callback] the callback to handle the screenshot result
     fun take_screenshot(callback: TakeScreenshotCallback)
 }
 
 class LambdasWithStructuredTypes {
+    // @param[p0] the interface parameter
     lambda ClassCallback = (LambdasInterface) -> Void
+    // @param[p0] the struct parameter
     lambda StructCallback = (Lambdas.LambdaHolder) -> Void
 
+    // Performs class-related operations using the callback
+    // @param[callback] the callback to invoke
     fun do_class_stuff(callback : ClassCallback)
+    // Performs struct-related operations using the callback
+    // @param[callback] the callback to invoke
     fun do_struct_stuff(callback : StructCallback)
 }
 
 class ClassWithInternalLambda {
+    // @param[p0] the string input
+    // @return true if the lambda returns true, false otherwise
     @Internal
     lambda InternalLambda = (String) -> Boolean
+    // @param[lambda] the internal lambda to invoke
+    // @param[value] the string value to pass to the lambda
+    // @return true if the lambda returns true, false otherwise
     @Internal
     static fun invokeInternalLambda(`lambda`: InternalLambda, value: String): Boolean
 }
 
+// @return the string result
 lambda SignatureClashLambda = () -> String
 
 @Skip(Swift, Dart)
 class CallOverloadedLambda {
+    // Invokes an overloaded lambda with the given value
+    // @param[lambda] the lambda to invoke
+    // @param[value] the integer value to pass to the lambda
+    // @return the result from the lambda
     static fun invokeOverloadedLambda(`lambda`: OverloadedLambda, value: Int): String
 }

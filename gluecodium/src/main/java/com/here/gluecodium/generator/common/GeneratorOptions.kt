@@ -71,6 +71,16 @@ data class GeneratorOptions(
             Gluecodium::class.java,
             "/namerules/dart.properties",
         ),
+    var jsPackages: List<String> = listOf(),
+    var jsInternalPackages: List<String> = listOf(),
+    var jsModuleName: String = "generated",
+    var jsEmitTypeScriptStubs: Boolean = true,
+    var jsExposeInternals: Boolean = false,
+    var jsNameRules: Configuration =
+        ConfigurationProperties.fromResource(
+            Gluecodium::class.java,
+            "/namerules/js.properties",
+        ),
     var tags: Set<String> = emptySet(),
 ) {
     companion object {

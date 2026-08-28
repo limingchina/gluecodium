@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gluecodium Calculator</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: ui-sans-serif, system-ui, sans-serif;
+        background: #eef4f1;
+        color: #18312b;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #eef4f1, #d7e6df);
+      }
+
+      main {
+        width: min(92vw, 28rem);
+        padding: 2.5rem;
+        border: 1px solid #c3d8cf;
+        border-radius: 0.75rem;
+        background: #fffdf8;
+        box-shadow: 0 1.5rem 4rem rgb(24 49 43 / 14%);
+      }
+
+      h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(2rem, 5vw, 3rem);
+        line-height: 1;
+      }
+
+      p {
+        color: #526b63;
+      }
+
+      button {
+        min-height: 3.5rem;
+        box-sizing: border-box;
+        border: 0;
+        border-radius: 0.4rem;
+        font: inherit;
+        border: 0;
+        background: #176b5b;
+        color: #ffffff;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.55;
+      }
+
+      .calculator {
+        margin-top: 2rem;
+      }
+
+      .display {
+        overflow: hidden;
+        padding: 1rem 1.25rem;
+        border-radius: 0.5rem;
+        background: #18312b;
+        color: #ffffff;
+        text-align: right;
+      }
+
+      #expression {
+        min-height: 1.25rem;
+        color: #a9c4b8;
+        font-size: 0.9rem;
+      }
+
+      #display {
+        overflow: hidden;
+        margin-top: 0.35rem;
+        font-size: clamp(2rem, 10vw, 3.25rem);
+        font-variant-numeric: tabular-nums;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .keypad {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.65rem;
+        margin-top: 0.75rem;
+      }
+
+      .keypad button {
+        background: #e2eee9;
+        color: #18312b;
+      }
+
+      .keypad .operator {
+        background: #e39b35;
+        color: #ffffff;
+      }
+
+      .keypad .utility {
+        background: #c3d8cf;
+      }
+
+      .keypad .equals {
+        background: #176b5b;
+        color: #ffffff;
+      }
+
+      .keypad .wide {
+        grid-column: span 2;
+      }
+
+      .comparison-keypad {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.65rem;
+        margin-top: 0.65rem;
+      }
+
+      .comparison-keypad button {
+        min-height: 2.75rem;
+        background: #c3d8cf;
+        color: #18312b;
+      }
+
+      .history {
+        margin-top: 1.75rem;
+        border-top: 1px solid #c3d8cf;
+      }
+
+      .history h2 {
+        margin: 1.25rem 0 0.75rem;
+        font-size: 1rem;
+      }
+
+      #history-list {
+        display: grid;
+        gap: 0.5rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        color: #526b63;
+      }
+
+      #history-list li {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.6rem 0.75rem;
+        border-radius: 0.35rem;
+        background: #eef4f1;
+      }
+
+      .empty-history {
+        color: #789087;
+        font-style: italic;
+      }
+
+      @media (max-width: 30rem) {
+        main {
+          padding: 1.5rem;
+        }
+
+        #history-list li {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 0.25rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Calculator</h1>
+      <p>Use the generated <code>Calculator</code> class through embind and WebAssembly.</p>
+      <section class="calculator" aria-label="Calculator">
+        <div class="display" aria-live="polite">
+          <div id="expression">Loading the WebAssembly module...</div>
+          <div id="display">0</div>
+        </div>
+        <div id="keypad" class="keypad">
+          <button class="utility" data-value="C" type="button">C</button>
+          <button class="utility" data-value="±" type="button">±</button>
+          <button class="utility" data-value="⌫" type="button" aria-label="Backspace">⌫</button>
+          <button class="operator" data-value="÷" type="button" aria-label="Divide">÷</button>
+          <button data-value="7" type="button">7</button>
+          <button data-value="8" type="button">8</button>
+          <button data-value="9" type="button">9</button>
+          <button class="operator" data-value="×" type="button" aria-label="Multiply">×</button>
+          <button data-value="4" type="button">4</button>
+          <button data-value="5" type="button">5</button>
+          <button data-value="6" type="button">6</button>
+          <button class="operator" data-value="-" type="button" aria-label="Subtract">-</button>
+          <button data-value="1" type="button">1</button>
+          <button data-value="2" type="button">2</button>
+          <button data-value="3" type="button">3</button>
+          <button class="operator" data-value="+" type="button" aria-label="Add">+</button>
+          <button class="wide" data-value="0" type="button">0</button>
+          <button data-value="." type="button">.</button>
+          <button class="equals" data-value="=" type="button" aria-label="Equals">=</button>
+        </div>
+        <div id="comparison-keypad" class="comparison-keypad" aria-label="Comparison operations">
+          <button data-value="min" type="button" aria-label="Minimum">min</button>
+          <button data-value="max" type="button" aria-label="Maximum">max</button>
+        </div>
+        <button id="clear" class="utility" type="button">Clear history</button>
+      </section>
+      <section class="history" aria-labelledby="history-heading">
+        <h2 id="history-heading">Recent calculations</h2>
+        <ol id="history-list">
+          <li class="empty-history">No calculations yet.</li>
+        </ol>
+      </section>
+    </main>
+    <script type="module" src="./app.mjs"></script>
+  </body>
+</html>

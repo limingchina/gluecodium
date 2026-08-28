@@ -38,6 +38,7 @@ class Dates {
     static property dateSet: Set<Date>
 }
 
+@Skip(JS)
 class DatesSteady {
     typealias MonotonicDate = @Cpp(Type = "std::chrono::steady_clock::time_point") Date
 

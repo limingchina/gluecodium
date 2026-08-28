@@ -20,8 +20,14 @@
 SRCDIR=$(cd `dirname "$0"` && pwd)
 cd "$SRCDIR"
 
-if [ -z "$*" ]; then
+if [ "$#" -eq 0 ]; then
     exec ./gradlew -q run
 else
-    exec ./gradlew -q run --args="$*"
+    gradle_args=
+    for argument in "$@"; do
+        escaped_argument=${argument//\\/\\\\}
+        escaped_argument=${escaped_argument//\'/\\\'\'\'}
+        gradle_args="$gradle_args '$escaped_argument'"
+    done
+    exec ./gradlew -q run "--args=$gradle_args"
 fi

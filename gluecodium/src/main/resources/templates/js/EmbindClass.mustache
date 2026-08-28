@@ -1,0 +1,124 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{!
+Copyright (C) 2026 HERE Europe B.V.
+SPDX-License-Identifier: Apache-2.0
+
+Embind registration for a LIME class. Only one `base<>` is supported (see plan §5.3);
+secondary parents are flattened by binding their members on the derived type.
+}}
+{{#constants}}
+{{cppType}} {{functionName}}() {
+        return {{cppFullName}};
+}
+{{/constants}}
+
+void {{registerName}}(void) {
+        class_<{{cppFullName}}{{#primaryBase}}, base<{{primaryBase}}>{{/primaryBase}}>("{{embindName}}")
+                .smart_ptr<std::shared_ptr<{{cppFullName}}>>("{{embindName}}")
+{{#constructors}}
+{{#needsAdapter}}
+        .class_function("{{embindName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+        })
+{{/needsAdapter}}
+{{^needsAdapter}}
+        .class_function("{{embindName}}", &{{cppFullName}}::{{cppName}})
+{{/needsAdapter}}
+{{/constructors}}
+{{#methods}}
+{{#isStatic}}
+{{#needsAdapter}}
+        .class_function("{{embindName}}", +[]({{adapterParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}{{cppFullName}}::{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+                }{{#hasAdapterPolicies}}, {{adapterPolicies}}{{/hasAdapterPolicies}})
+{{/needsAdapter}}
+{{^needsAdapter}}
+        .class_function("{{embindName}}", &{{cppFullName}}::{{cppName}})
+{{/needsAdapter}}
+{{/isStatic}}
+{{^isStatic}}
+{{#isFlattened}}
+        .function<{{flattenedFunctionSignature}}>("{{embindName}}", []({{flattenedLambdaParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+        }, allow_raw_pointer<arg<0>>())
+{{/isFlattened}}
+{{^isFlattened}}
+{{#needsAdapter}}
+        .function<{{adapterReturnType}}({{cppFullName}}*{{#hasAdapterParameters}}, {{adapterSignatureParameters}}{{/hasAdapterParameters}})>("{{embindName}}", []({{cppFullName}}* self{{#hasAdapterParameters}}, {{adapterParameters}}{{/hasAdapterParameters}}) -> {{adapterReturnType}} {
+            {{adapterPreparations}}
+                        {{adapterCallPrefix}}self->{{cppName}}({{adapterCallArguments}});
+            {{adapterReturnConversion}}
+                }, allow_raw_pointer<arg<0>>(){{#hasAdapterMemberPolicies}}, {{adapterMemberPolicies}}{{/hasAdapterMemberPolicies}})
+{{/needsAdapter}}
+{{^needsAdapter}}
+        .function("{{embindName}}", &{{cppFullName}}::{{cppName}})
+{{/needsAdapter}}
+{{/isFlattened}}
+{{/isStatic}}
+{{/methods}}
+{{#properties}}
+{{#isStatic}}
+        .class_function("{{adapterGetterName}}", +[]() -> emscripten::val {
+                return {{adapterGetter}};
+        })
+{{#hasSetter}}
+        .class_function("{{adapterSetterName}}", +[](emscripten::val value) {
+                {{adapterSetter}};
+        })
+{{/hasSetter}}
+{{/isStatic}}
+{{^isStatic}}
+{{#needsAdapter}}
+{{#hasSetter}}
+        .property<emscripten::val>("{{jsName}}", +[](const {{cppFullName}}& self) -> emscripten::val {
+                return {{adapterGetter}};
+        }, +[]({{cppFullName}}& self, emscripten::val value) {
+                {{adapterSetter}};
+        })
+{{/hasSetter}}
+{{^hasSetter}}
+        .property<emscripten::val>("{{jsName}}", +[](const {{cppFullName}}& self) -> emscripten::val {
+                return {{adapterGetter}};
+        })
+{{/hasSetter}}
+{{/needsAdapter}}
+{{^needsAdapter}}
+{{#hasSetter}}
+        .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}}, &{{cppFullName}}::{{cppSetterName}})
+{{/hasSetter}}
+{{^hasSetter}}
+        .property("{{jsName}}", &{{cppFullName}}::{{cppGetterName}})
+{{/hasSetter}}
+{{/needsAdapter}}
+{{/isStatic}}
+{{/properties}}
+        ;
+{{#constants}}
+        function("{{runtimeName}}", &{{functionName}});
+{{/constants}}
+}
