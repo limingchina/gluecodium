@@ -181,14 +181,7 @@ void delete_runtime_thread_shared_ptr(RuntimeThreadSharedPtr<NativeType>* value)
 
 template <typename NativeType>
 std::shared_ptr<NativeType> shared_ptr_from_js(emscripten::val value) {
-  auto pointer = value.as<std::shared_ptr<NativeType>>();
-  auto value_holder = std::shared_ptr<RuntimeThreadSharedPtr<NativeType>>(
-      new RuntimeThreadSharedPtr<NativeType>(std::move(value), std::move(pointer)),
-      delete_runtime_thread_shared_ptr<NativeType>);
-  return std::shared_ptr<NativeType>(value_holder->m_pointer.get(),
-      [value_holder = std::move(value_holder)](NativeType*) mutable {
-        value_holder.reset();
-      });
+  return value.as<std::shared_ptr<NativeType>>();
 }
 
 template <typename Function>
