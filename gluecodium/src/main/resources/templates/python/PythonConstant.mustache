@@ -19,5 +19,5 @@
   !
   !}}
 {{! Python constant: emitted as an indented class attribute. }}
-{{#ifPredicate this "hasAnyComment"}}{{#resolveName comment}}    #: {{prefix this "    " skipFirstLine=true}}
+{{#ifPredicate this "hasAnyComment"}}{{#resolveName comment}}    #: {{prefix this "    #: " skipFirstLine=true}}
 {{/resolveName}}{{/ifPredicate}}    {{resolveName}} = {{resolveName value}}
