@@ -68,7 +68,16 @@ class SmokeTest(
                 commandLineOptions.readText()
                     .replace("\$INPUT_FOLDER", inputDirectory.toString())
                     .replace("\$AUX_FOLDER", auxDirectory.toString())
-                    .split("\\s".toRegex())
+                    .lines()
+                    .filter { it.isNotBlank() }
+                    .flatMap { line ->
+                        val trimmed = line.trim()
+                        if (trimmed.startsWith("-")) {
+                            trimmed.split("\\s+".toRegex(), 2)
+                        } else {
+                            listOf(trimmed)
+                        }
+                    }
             val options = OptionReader.read(commands.toTypedArray())
             TestCase.assertNotNull("Failed to read commandlineoptions.txt", options)
             return options!!
