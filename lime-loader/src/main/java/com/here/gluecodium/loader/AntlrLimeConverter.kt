@@ -319,6 +319,8 @@ internal object AntlrLimeConverter {
         when (val id = ctx.simpleId().text) {
             "AfterConstruction" -> LimeAttributeType.AFTER_CONSTRUCTION
             "Async" -> LimeAttributeType.ASYNC
+            "AsyncDecorator" -> LimeAttributeType.ASYNC_DECORATOR
+            "AsyncTaskHandle" -> LimeAttributeType.ASYNC_TASK_HANDLE
             "Cached" -> LimeAttributeType.CACHED
             "Cpp" -> LimeAttributeType.CPP
             "Dart" -> LimeAttributeType.DART
@@ -352,10 +354,12 @@ internal object AntlrLimeConverter {
             "Name" -> LimeAttributeValueType.NAME
             "Accessors" -> LimeAttributeValueType.ACCESSORS
             "Attribute" -> LimeAttributeValueType.ATTRIBUTE
+            "Callback" -> LimeAttributeValueType.CALLBACK
             "Const" -> LimeAttributeValueType.CONST
             "Default" -> LimeAttributeValueType.DEFAULT
             "EnableIf" -> LimeAttributeValueType.ENABLE_IF
             "EnumValues" -> LimeAttributeValueType.ENUM_VALUES
+            "Error" -> LimeAttributeValueType.ERROR
             "FullName" -> LimeAttributeValueType.FULL_NAME
             "FunctionName" -> LimeAttributeValueType.FUNCTION_NAME
             "Internal" -> LimeAttributeValueType.INTERNAL
@@ -367,6 +371,7 @@ internal object AntlrLimeConverter {
             "PositionalDefaults" -> LimeAttributeValueType.POSITIONAL_DEFAULTS
             "Public" -> LimeAttributeValueType.PUBLIC
             "Ref" -> LimeAttributeValueType.REF
+            "Result" -> LimeAttributeValueType.RESULT
             "Skip" -> LimeAttributeValueType.SKIP
             "Tag" -> LimeAttributeValueType.TAG
             "Type" -> LimeAttributeValueType.TYPE

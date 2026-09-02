@@ -54,6 +54,8 @@ internal class CppIncludeResolver(
 
     val hashInclude = cppIncludesCache.createInternalNamespaceInclude("Hash.h")
     val typeRepositoryInclude = cppIncludesCache.createInternalNamespaceInclude("TypeRepository.h")
+    val optionalInclude = cppIncludesCache.createInternalNamespaceInclude("Optional.h")
+    private val stringViewInclude = cppIncludesCache.createInternalNamespaceInclude("StringView.h")
 
     private val returnInclude = cppIncludesCache.createInternalNamespaceInclude("Return.h")
     private val timePointHashInclude = cppIncludesCache.createInternalNamespaceInclude("TimePointHash.h")
@@ -73,7 +75,7 @@ internal class CppIncludeResolver(
             is LimeLambda -> cppIncludesCache.resolveIncludes(limeElement) + CppLibraryIncludes.FUNCTIONAL
             is LimeNamedElement ->
                 cppIncludesCache.resolveIncludes(limeElement) +
-                    listOfNotNull(CppLibraryIncludes.STRING_VIEW.takeIf { limeElement.attributes.have(CPP, TO_STRING) }) +
+                    listOfNotNull(stringViewInclude.takeIf { limeElement.attributes.have(CPP, TO_STRING) }) +
                     listOfNotNull(CppLibraryIncludes.ARRAY.takeIf { limeElement.attributes.have(CPP, ENUM_VALUES) })
             else -> emptyList()
         }
@@ -111,7 +113,7 @@ internal class CppIncludeResolver(
             listOfNotNull(CppLibraryIncludes.MEMORY.takeIf { limeTypeRef.attributes.have(OPTIMIZED) }) +
             when {
                 limeTypeRef.type.actualType is LimeContainerWithInheritance -> listOf(CppLibraryIncludes.MEMORY)
-                limeTypeRef.isNullable -> listOf(CppLibraryIncludes.OPTIONAL)
+                limeTypeRef.isNullable -> listOf(optionalInclude)
                 else -> emptyList()
             }
 
