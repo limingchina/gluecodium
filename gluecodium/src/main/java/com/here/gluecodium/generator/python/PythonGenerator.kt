@@ -493,13 +493,14 @@ internal class PythonGenerator : Generator {
 
             // Render binding body (py::class_ / py::enum_ / exception translator).
             val isExternal = type.external?.cpp?.isNotEmpty() == true
+            val generateExternalScope = type === allTypes.first() && allTypes.size > 1
             val bindingData =
                 mapOf(
                     "model" to type,
                     "scope" to scope,
                     "pybindName" to pybindName,
                     "varName" to varName,
-                    "generateBinding" to (!isExternal || type.path.hasParent),
+                    "generateBinding" to (!isExternal || type.path.hasParent || !generateExternalScope),
                     "internalNamespaceStr" to internalNamespace.joinToString("::"),
                     "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
                     "baseClasses" to
@@ -509,7 +510,7 @@ internal class PythonGenerator : Generator {
                             ?.filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
                             ?.map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
                             .orEmpty(),
-                    "generateExternalScope" to (type === allTypes.first() && allTypes.size > 1),
+                    "generateExternalScope" to generateExternalScope,
                     "pybind11AttrChain" to pythonNameResolver.resolvePybind11AttrChain(type),
                 )
             bindings.append(TemplateEngine.render(bindingTemplateName, bindingData, nameResolvers, predicates))
