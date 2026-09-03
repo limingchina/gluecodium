@@ -1,0 +1,45 @@
+
+
+from __future__ import annotations
+
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
+from typing import Optional
+import generated
+
+
+class JavaDeprecatedPosDefaultsCustom(_NativeBase):
+    """Foo Bar this is a comment"""
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_JavaDeprecatedPosDefaultsCustom):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.smoke_JavaDeprecatedPosDefaultsCustom(
+                *[_unwrap(arg) for arg in args],
+                **{k: _unwrap(v) for k, v in kwargs.items()}
+            ))
+
+    @property
+    def first_init_field(self) -> int:
+        """first init!"""
+        return _wrap(self._native.first_init_field, int)
+    @first_init_field.setter
+    def first_init_field(self, value: int):
+      self._native.first_init_field = _unwrap(value, int)
+
+
+    @property
+    def first_free_field(self) -> str:
+        """first free!"""
+        return _wrap(self._native.first_free_field, str)
+    @first_free_field.setter
+    def first_free_field(self, value: str):
+      self._native.first_free_field = _unwrap(value, str)
+
+
+    @staticmethod
+    def custom() -> JavaDeprecatedPosDefaultsCustom:
+        native_result = generated.smoke_JavaDeprecatedPosDefaultsCustom.custom()
+        return _get_or_create_wrapper(native_result, JavaDeprecatedPosDefaultsCustom)
+
+

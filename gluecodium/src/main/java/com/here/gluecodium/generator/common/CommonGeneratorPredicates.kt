@@ -133,7 +133,7 @@ internal object CommonGeneratorPredicates {
         return hookFun.exception?.path == ctor.exception?.path
     }
 
-    private fun getAllFieldTypes(limeType: LimeType) = getAllFieldTypesRec(getLeafType(limeType), mutableSetOf())
+    internal fun getAllFieldTypes(limeType: LimeType) = getAllFieldTypesRec(getLeafType(limeType), mutableSetOf())
 
     private fun getAllFieldTypesRec(
         leafType: LimeType,

@@ -1,0 +1,231 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{!
+  ! Copyright (C) 2016-2025 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !}}
+{{#if copyrightHeader}}{{prefix copyrightHeader "// "}}{{/if}}
+
+// Custom pybind11 type_caster for Gluecodium's Return<T, Error> adapter.
+//
+// On success (has_value): the inner value is returned to Python automatically
+// (delegating to pybind11's built-in casters for the value type).
+// On failure: a Python exception is raised carrying the error description.
+//
+// The error string is derived via a small traits helper so the same caster
+// works for both std::error_code and user-defined error types. The specific
+// Python exception class (e.g. WithPayloadError) is looked up from a global
+// registry populated by the per-exception register_* functions.
+
+#pragma once
+
+#include <pybind11/pybind11.h>
+#include <cstdint>
+#include <memory>
+#include <string>
+#include <system_error>
+#include <type_traits>
+#include <typeindex>
+#include <unordered_map>
+#include <vector>
+
+#include "_wrapper_cache.h"
+#include <{{returnInclude}}>
+
+namespace pybind11::detail {
+
+// Gluecodium blobs are represented in C++ as shared vectors and in Python as bytes.
+template <>
+struct type_caster<std::shared_ptr<std::vector<uint8_t>>> {
+    PYBIND11_TYPE_CASTER(std::shared_ptr<std::vector<uint8_t>>, _("bytes"));
+
+    bool load(handle source, bool) {
+        if (!pybind11::isinstance<pybind11::bytes>(source)) return false;
+        const std::string data = pybind11::cast<std::string>(source);
+        value = std::make_shared<std::vector<uint8_t>>(data.begin(), data.end());
+        return true;
+    }
+
+    static handle cast(const std::shared_ptr<std::vector<uint8_t>>& source,
+                       return_value_policy,
+                       handle) {
+        if (!source) return pybind11::none().release();
+        return pybind11::bytes(reinterpret_cast<const char*>(source->data()), source->size()).release();
+    }
+};
+
+// Helper trait: detects whether Error has a callable `message()` method.
+template <typename Error, typename = void>
+struct HasMessageMethod : std::false_type {};
+
+template <typename Error>
+struct HasMessageMethod<Error, std::void_t<decltype(std::declval<Error>().message())>>
+    : std::true_type {};
+
+// Traits to stringify an error of arbitrary type.
+template <typename Error, typename = void>
+struct ReturnErrorToString {
+    static std::string convert(const Error&) { return "unknown error"; }
+};
+
+// Specialization for types with a `message()` method (e.g. std::error_code).
+template <typename Error>
+struct ReturnErrorToString<
+    Error, std::void_t<decltype(std::declval<Error>().message())>> {
+    static std::string convert(const Error& e) { return e.message(); }
+};
+
+// Specialization for types with a `message` data member (e.g. Payload struct).
+// Only matches when `message` is NOT a callable method (the method case is
+// handled by the specialization above). This ensures struct error types with
+// a `message` field produce the actual error message instead of "unknown error".
+template <typename Error>
+struct ReturnErrorToString<
+    Error, std::enable_if_t<
+        !HasMessageMethod<Error>::value &&
+        std::is_convertible_v<decltype(std::declval<Error>().message), std::string>>> {
+    static std::string convert(const Error& e) { return e.message; }
+};
+
+template <>
+struct ReturnErrorToString<std::error_code> {
+    static std::string convert(const std::error_code& e) {
+        return e.message().empty() ? "error" : e.message();
+    }
+};
+
+// Global registry mapping a C++ error type (by std::type_index) to the
+// corresponding Python exception object. Each per-exception register_*
+// function (generated by Pybind11Exception.mustache) registers its Python
+// exception here so that the Return<T, Error> type caster can raise the
+// correct, specific exception (e.g. WithPayloadError) instead of a generic
+// RuntimeError. If no mapping is registered for an error type, the caster
+// falls back to PyExc_RuntimeError.
+inline std::unordered_map<std::type_index, PyObject*>& returnErrorRegistry() {
+    static std::unordered_map<std::type_index, PyObject*> registry;
+    return registry;
+}
+
+using ReturnErrorResolver = PyObject* (*)();
+
+inline std::unordered_map<std::type_index, ReturnErrorResolver>& returnErrorResolverRegistry() {
+    static std::unordered_map<std::type_index, ReturnErrorResolver> registry;
+    return registry;
+}
+
+// Registers a Python exception object for a given C++ error type. Called from
+// the per-exception register_* functions generated by Pybind11Exception.mustache.
+template <typename Error>
+void registerReturnError(PyObject* exc) {
+    returnErrorRegistry()[std::type_index(typeid(Error))] = exc;
+}
+
+// Registers a lazy resolver for exception classes whose Python wrapper imports
+// this native module. Resolving those exceptions during module initialization
+// would otherwise create a circular import.
+template <typename Error>
+void registerReturnError(ReturnErrorResolver resolver) {
+    returnErrorResolverRegistry()[std::type_index(typeid(Error))] = resolver;
+}
+
+// Looks up the Python exception object for a given C++ error type. Returns
+// nullptr if no mapping has been registered.
+template <typename Error>
+PyObject* lookupReturnError() {
+    auto& registry = returnErrorRegistry();
+    auto it = registry.find(std::type_index(typeid(Error)));
+    if (it != registry.end()) {
+        return it->second;
+    }
+    auto& resolverRegistry = returnErrorResolverRegistry();
+    auto resolver = resolverRegistry.find(std::type_index(typeid(Error)));
+    return resolver != resolverRegistry.end() ? resolver->second() : nullptr;
+}
+
+template <typename Value, typename Error>
+struct type_caster<{{returnTypeFullName}}<Value, Error>> {
+    using ReturnT = {{returnTypeFullName}}<Value, Error>;
+    PYBIND11_TYPE_CASTER(ReturnT, _("Return[T, Error]"));
+
+    // Convert C++ Return -> Python.
+    static handle cast(const {{returnTypeFullName}}<Value, Error>& src,
+                       return_value_policy policy, handle parent) {
+        if (src.has_value()) {
+            if constexpr (std::is_void_v<Value>) {
+                return pybind11::none().release();
+            } else {
+                return type_caster<Value>::cast(src.unsafe_value(), policy, parent);
+            }
+        }
+        // Failure: set a Python exception carrying the error description, then
+        // throw error_already_set so pybind11 propagates it (instead of wrapping
+        // a null handle as a generic TypeError). Prefer the specific Python
+        // exception class registered for this Error type (e.g. WithPayloadError);
+        // fall back to RuntimeError if no mapping is registered.
+        const std::string msg = ReturnErrorToString<Error>::convert(src.error());
+        PyObject* exc = lookupReturnError<Error>();
+        PyErr_SetString(exc != nullptr ? exc : PyExc_RuntimeError, msg.c_str());
+        throw pybind11::error_already_set();
+    }
+
+    // Python -> C++: a Python override of a throwing method returns the bare
+    // value T (errors are signalled by raising a Python exception, which the
+    // C++ -> Python `cast` direction turns into a failed Return). Wrap that
+    // value into a successful Return<T, Error> so the trampoline override can
+    // return it to the C++ base class, whose signature is
+    // `Return<T, Error> method(...)`.
+    bool load(handle src, bool convert) {
+        if constexpr (std::is_void_v<Value>) {
+            // Void-returning throwing functions still use `Return<void, Error>`
+            // as their C++ return type (the base signature), and a Python
+            // override returns None. Construct a successful Return.
+            if (!src.is_none() && !convert) return false;
+            // `Return` has no copy/move assignment operator, so construct the
+            // caster's `value` member in place.
+            value.~ReturnT();
+            new (&value) ReturnT(true);
+            return true;
+        } else {
+            type_caster<Value> value_caster;
+            if (!value_caster.load(src, convert)) return false;
+            // `Return` has no copy/move assignment operator, so construct the
+            // caster's `value` member in place from the loaded value.
+            value.~ReturnT();
+            new (&value) ReturnT(static_cast<Value&&>(static_cast<Value&>(value_caster)));
+            return true;
+        }
+    }
+};
+
+}  // namespace pybind11::detail

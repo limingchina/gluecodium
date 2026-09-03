@@ -1,0 +1,37 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/DateInterval.h"
+#include "smoke/Persistence.h"
+#include "smoke/PseudoColor.h"
+#include "smoke/SwiftSeason.h"
+#include "smoke/UseSwiftExternalTypes.h"
+
+using UseSwiftExternalTypes = ::smoke::UseSwiftExternalTypes;
+
+
+
+void register_smoke_UseSwiftExternalTypes(py::module_& module) {
+auto cls_UseSwiftExternalTypes = py::class_<UseSwiftExternalTypes, std::shared_ptr<UseSwiftExternalTypes>>(module, "smoke_UseSwiftExternalTypes")
+        .def("__gluecodium_id__", [](const UseSwiftExternalTypes& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
+        .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
+        .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
+        .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
+        ;
+
+
+}

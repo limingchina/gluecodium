@@ -1,0 +1,21 @@
+
+
+from __future__ import annotations
+
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
+from typing import Optional
+import generated
+
+
+class SomethingEnum(Enum):
+
+    REALLY_FIRST = generated.smoke_SomethingEnum.REALLY_FIRST
+    EXPLICIT = generated.smoke_SomethingEnum.EXPLICIT
+    LAST = generated.smoke_SomethingEnum.LAST
+
+    @property
+    def _native(self):
+        return self.value
+
+

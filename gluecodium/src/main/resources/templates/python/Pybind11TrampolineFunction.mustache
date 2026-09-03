@@ -1,0 +1,52 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{! Forwarding trampoline override for a single interface method. }}
+{{! The trampoline is C++ code that must match the generated C++ base signature exactly, including
+    the `Return<T, Error>` wrapper for throwing functions. `cpp/CppReturnType.mustache` already
+    emits that wrapper (it is the same partial the C++ generator uses for the base class), so we
+    reuse it here instead of the unwrapped Pybind11 return type.
+    When a native implementation is adopted (via the `init_alias` adoption constructor), `m_impl`
+    is non-null and we forward the call straight to it. Only when no impl is held (i.e. a Python
+    subclass is being instantiated) do we fall back to `PYBIND11_OVERRIDE_PURE` so a Python
+    override can be dispatched. This is what makes `RootInterface(native_result)` actually call the
+    returned C++ implementation instead of the pure-virtual stub. }}
+{{#ifPredicate this "returnTypeHasComma"}}
+    using {{resolveName this "Pybind11"}}_return_type = {{>cpp/CppReturnType}};
+{{/ifPredicate}}
+    {{>cpp/CppReturnType}} {{resolveName this "Pybind11"}}(
+            {{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ){{#ifPredicate "isCppConst"}} const{{/ifPredicate}}{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
+        py::gil_scoped_acquire gil;
+        if (m_impl) {
+{{#ifPredicate this "isCppVoid"}}
+            m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+            return;
+{{/ifPredicate}}
+{{#unlessPredicate this "isCppVoid"}}
+            return m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+{{/unlessPredicate}}
+        }
+{{#ifPredicate this "returnTypeHasComma"}}
+        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
+{{/ifPredicate}}
+{{#unlessPredicate this "returnTypeHasComma"}}
+        PYBIND11_OVERRIDE_PURE({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
+{{/unlessPredicate}}
+    }

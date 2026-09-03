@@ -1,0 +1,60 @@
+
+
+from __future__ import annotations
+
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from enum import Enum
+from typing import Optional
+import generated
+
+from smoke.ParentNarrowOne import ParentNarrowOne
+from smoke.ParentNarrowTwo import ParentNarrowTwo
+
+class FirstParentIsNarrowClass(generated.smoke_FirstParentIsNarrowClass):
+    def __init__(self, native=None):
+        # Subclass the native pybind11 type so a Python override of an inherited virtual
+        # method (from a parent interface or open base class) is dispatched through the
+        # generated trampoline. When `native` is an existing native instance (returned by
+        # a factory), adopt it via the generated adoption constructor; otherwise construct a
+        # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
+        # generated code can reach the native object uniformly.
+        if native is not None and isinstance(native, generated.smoke_FirstParentIsNarrowClass):
+            super().__init__(native)
+        else:
+            super().__init__()
+        self._native = self
+
+    def child_function(self):
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.child_function(self), None)
+
+    def parent_function_one(self):
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_function_one(self), None)
+
+    def parent_function_two(self):
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_function_two(self), None)
+
+    @property
+    def child_property(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.child_property.fget(self), str)
+
+    @child_property.setter
+    def child_property(self, value: str):
+        generated.smoke_FirstParentIsNarrowClass.child_property.fset(self, _unwrap(value, str))
+
+    @property
+    def parent_property_one(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_property_one.fget(self), str)
+
+    @parent_property_one.setter
+    def parent_property_one(self, value: str):
+        generated.smoke_FirstParentIsNarrowClass.parent_property_one.fset(self, _unwrap(value, str))
+
+    @property
+    def parent_property_two(self) -> str:
+        return _wrap(generated.smoke_FirstParentIsNarrowClass.parent_property_two.fget(self), str)
+
+    @parent_property_two.setter
+    def parent_property_two(self, value: str):
+        generated.smoke_FirstParentIsNarrowClass.parent_property_two.fset(self, _unwrap(value, str))
+
+

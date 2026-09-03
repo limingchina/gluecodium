@@ -74,7 +74,7 @@ function(feature feature_name)
     set(FUNCTIONAL_LIME_SOURCES "${FUNCTIONAL_LIME_SOURCES};${lime_sources}" PARENT_SCOPE)
 endfunction()
 
-feature(Strings cpp android android-kotlin swift dart SOURCES
+feature(Strings cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StaticStringMethods.cpp
     input/src/cpp/StringsWithCstring.cpp
     input/src/cpp/CppRefReturnType.cpp
@@ -84,7 +84,7 @@ feature(Strings cpp android android-kotlin swift dart SOURCES
     input/lime/CppRefReturnType.lime
 )
 
-feature(MethodOverloading cpp android android-kotlin swift dart SOURCES
+feature(MethodOverloading cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/MethodOverloads.cpp
 
     input/lime/MethodOverloads.lime
@@ -99,7 +99,7 @@ feature(Blob cpp android android-kotlin swift dart SOURCES
     input/lime/StaticByteArrayMethods.lime
 )
 
-feature(BuiltinTypes cpp android android-kotlin swift dart SOURCES
+feature(BuiltinTypes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StaticBooleanMethods.cpp
     input/src/cpp/StaticFloatDoubleMethods.cpp
     input/src/cpp/StaticIntMethods.cpp
@@ -109,7 +109,7 @@ feature(BuiltinTypes cpp android android-kotlin swift dart SOURCES
     input/lime/StaticIntMethods.lime
 )
 
-feature(Classes cpp android android-kotlin swift dart SOURCES
+feature(Classes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Instances.h
     input/src/cpp/Instances.cpp
     input/src/cpp/InstancesFactory.cpp
@@ -117,7 +117,7 @@ feature(Classes cpp android android-kotlin swift dart SOURCES
     input/lime/Instances.lime
 )
 
-feature(Interfaces cpp android android-kotlin swift dart SOURCES
+feature(Interfaces cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Interfaces.h
     input/src/cpp/Interfaces.cpp
     input/src/cpp/InterfacesFactory.cpp
@@ -125,33 +125,33 @@ feature(Interfaces cpp android android-kotlin swift dart SOURCES
     input/lime/Interfaces.lime
 )
 
-feature(InstanceInStruct cpp android android-kotlin swift dart SOURCES
+feature(InstanceInStruct cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/InstanceInStruct.cpp
 
     input/lime/StructWithInstance.lime
 )
 
-feature(Structs cpp android android-kotlin swift dart SOURCES
+feature(Structs cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/PlainDataStructures.cpp
 
     input/lime/Structs.lime
     input/lime/Accessors.lime
 )
 
-feature(StructsInTypes cpp android android-kotlin swift dart SOURCES
+feature(StructsInTypes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StructsFromTypeCollection.cpp
 
     input/lime/StructsFromTypeCollection.lime
     input/lime/TypeCollection.lime
 )
 
-feature(StructsImmutable cpp android android-kotlin swift dart SOURCES
+feature(StructsImmutable cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/PlainDataStructuresImmutable.cpp
 
     input/lime/PlainDataStructuresImmutable.lime
 )
 
-feature(FieldConstructors cpp android android-kotlin swift dart SOURCES
+feature(FieldConstructors cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/FieldConstructors.cpp
 
     input/lime/FieldConstructors.lime
@@ -159,13 +159,14 @@ feature(FieldConstructors cpp android android-kotlin swift dart SOURCES
     input/lime/FieldConstructorsNesting.lime
 )
 
-feature(TypeDefs cpp android android-kotlin swift dart SOURCES
+feature(TypeDefs cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StaticTypedef.cpp
 
     input/lime/StaticTypedef.lime
+    input/lime/TypeCollection.lime
 )
 
-feature(Enums cpp android android-kotlin swift dart SOURCES
+feature(Enums cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Enums.cpp
     input/src/cpp/EnumsTypeCollection.cpp
 
@@ -175,7 +176,7 @@ feature(Enums cpp android android-kotlin swift dart SOURCES
     input/lime/EnumsTypeCollection.lime
 )
 
-feature(Properties cpp android android-kotlin swift dart SOURCES
+feature(Properties cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/AttributesInterfaceImpl.h
     input/src/cpp/AttributesInterfaceImpl.cpp
     input/src/cpp/AttributesInterfaceFactory.cpp
@@ -189,7 +190,7 @@ feature(Properties cpp android android-kotlin swift dart SOURCES
     input/lime/AttributesInterfaceFactory.lime
 )
 
-feature(Listeners cpp android android-kotlin swift dart SOURCES
+feature(Listeners cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StringListeners.cpp
     input/src/cpp/ListenerRoundtrip.cpp
     input/src/cpp/ListenerRoute.cpp
@@ -210,14 +211,14 @@ feature(Listeners cpp android android-kotlin swift dart SOURCES
     input/lime/ListenerAsConstructorParam.lime
 )
 
-feature(ComplexListeners cpp android android-kotlin swift dart SOURCES
+feature(ComplexListeners cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/ComplexListener.cpp
     input/src/cpp/ComplexListener.h
 
     input/lime/ComplexListeners.lime
 )
 
-feature(ListenersWithReturnValues cpp android android-kotlin swift dart SOURCES
+feature(ListenersWithReturnValues cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/ListenersReturnValues.cpp
     input/src/cpp/ListenersReturnValues.h
     input/src/cpp/ListenerWithAttributes.cpp
@@ -235,7 +236,7 @@ feature(WeakListeners swift SOURCES
     input/lime/WeakListeners.lime
 )
 
-feature(GenericTypes cpp android android-kotlin swift dart SOURCES
+feature(GenericTypes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Arrays.cpp
     input/src/cpp/SetType.cpp
     input/src/cpp/Maps.cpp
@@ -249,7 +250,7 @@ feature(GenericTypes cpp android android-kotlin swift dart SOURCES
     input/lime/OptimizedList.lime
 )
 
-feature(Errors cpp android android-kotlin swift dart SOURCES
+feature(Errors cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Errors.cpp
     input/src/cpp/ErrorsInInterface.cpp
     input/src/cpp/ErrorsInInterface.h
@@ -261,7 +262,7 @@ feature(Errors cpp android android-kotlin swift dart SOURCES
     input/lime/ErrorsWithNonTrivialType.lime
 )
 
-feature(Defaults cpp android android-kotlin swift dart SOURCES
+feature(Defaults cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Defaults.cpp
 
     input/lime/Defaults.lime
@@ -273,7 +274,7 @@ feature(Defaults cpp android android-kotlin swift dart SOURCES
     input/lime/ConstantDefaults.lime
 )
 
-feature(Inheritance cpp android android-kotlin swift dart SOURCES
+feature(Inheritance cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/ChildClassImpl.cpp
     input/src/cpp/ChildClassImpl.h
     input/src/cpp/GrandchildClassImpl.cpp
@@ -292,7 +293,7 @@ feature(Inheritance cpp android android-kotlin swift dart SOURCES
     input/lime/ConstructorOverride.lime
 )
 
-feature(MultipleInheritance cpp android android-kotlin swift dart SOURCES
+feature(MultipleInheritance cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/MultipleInheritance.cpp
     input/lime/MultipleInheritance.lime
 )
@@ -301,11 +302,11 @@ feature(Serialization android android-kotlin swift SOURCES
     input/lime/Serialization.lime
 )
 
-feature(CircularDependencies cpp android android-kotlin swift dart SOURCES
+feature(CircularDependencies cpp android android-kotlin swift dart python SOURCES
     input/lime/Circular.lime
 )
 
-feature(ExternalTypes cpp android android-kotlin swift dart SOURCES
+feature(ExternalTypes cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/include/ExternalTypes.h
     input/src/cpp/include/MyClass.h
     input/src/cpp/src/ExternalTypes.cpp
@@ -337,20 +338,20 @@ feature(DartExternalTypes dart SOURCES
     input/lime/DartExternalTypes.lime
 )
 
-feature(UnderscorePackage cpp android android-kotlin swift dart SOURCES
+feature(UnderscorePackage cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/UseUnderscorePackage.cpp
 
     input/lime/UnderscorePackage.lime
     input/lime/UseUnderscorePackage.lime
 )
 
-feature(Constants cpp android android-kotlin swift dart SOURCES
+feature(Constants cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Constants.cpp
 
     input/lime/Constants.lime
 )
 
-feature(Equatable cpp android android-kotlin swift dart SOURCES
+feature(Equatable cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/EquatableImpl.cpp
     input/src/cpp/RefEquality.cpp
     input/src/cpp/SimpleEquality.cpp
@@ -360,7 +361,7 @@ feature(Equatable cpp android android-kotlin swift dart SOURCES
     input/lime/SimpleEquality.lime
 )
 
-feature(Nullable cpp android android-kotlin swift dart SOURCES
+feature(Nullable cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/NullableInstances.cpp
     input/src/cpp/NullableInterfaceImpl.cpp
     input/src/cpp/NullableCollections.cpp
@@ -376,21 +377,21 @@ feature(CallbacksWithThreads cpp android dart SOURCES
     input/lime/ListenersThreads.lime
 )
 
-feature(Dates cpp android android-kotlin swift dart SOURCES
+feature(Dates cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Dates.cpp
 
     input/lime/Dates.lime
     input/lime/DateDefaults.lime
 )
 
-feature(Durations cpp android android-kotlin swift dart SOURCES
+feature(Durations cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Durations.cpp
 
     input/lime/Durations.lime
     input/lime/DurationDefaults.lime
 )
 
-feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
+feature(StructsWithCompanion cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StructsWithMethods.cpp
     input/src/cpp/StructsWithConstants.cpp
 
@@ -398,35 +399,35 @@ feature(StructsWithCompanion cpp android android-kotlin swift dart SOURCES
     input/lime/StructsWithConstants.lime
 )
 
-feature(DeclarationOrder cpp android android-kotlin swift dart SOURCES
+feature(DeclarationOrder cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/StructsWithMethodsDeclarationOrder.cpp
 
     input/lime/OrderWithInterface.lime
     input/lime/StructsWithMethodsDeclarationOrder.lime
 )
 
-feature(Comments cpp android android-kotlin swift dart SOURCES
+feature(Comments cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Comments.cpp
 
     input/lime/Comments.lime
     input/lime/CommentsInterface.lime
 )
 
-feature(PlatformNames cpp android android-kotlin swift dart SOURCES
+feature(PlatformNames cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/PlatformNames.cpp
 
     input/lime/PlatformNames.lime
 )
 
-feature(EscapedNames cpp android android-kotlin swift dart SOURCES
+feature(EscapedNames cpp android android-kotlin swift dart python SOURCES
     input/lime/KeywordNames.lime
 )
 
-feature(FullName dart SOURCES
+feature(FullName dart python SOURCES
     input/lime/FullName.lime
 )
 
-feature(Nesting cpp android android-kotlin swift dart SOURCES
+feature(Nesting cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/TopLevelTypes.cpp
     input/src/cpp/NestedContainers.cpp
     input/src/cpp/NestedClassWithProperty.cpp
@@ -444,13 +445,13 @@ feature(Nesting cpp android android-kotlin swift dart SOURCES
     input/lime/NestedInheritance.lime
 )
 
-feature(Lambdas cpp android android-kotlin swift dart SOURCES
+feature(Lambdas cpp android android-kotlin swift dart python SOURCES
     input/lime/Lambdas.lime
 
     input/src/cpp/Lambdas.cpp
 )
 
-feature(Visibility android android-kotlin swift dart SOURCES
+feature(Visibility android android-kotlin swift dart python SOURCES
     input/lime/VisibilityAttribute.lime
     input/lime/VisibilityInternal.lime
     input/lime/VisibilityPlatform.lime
@@ -461,6 +462,7 @@ feature(Visibility android android-kotlin swift dart SOURCES
     input/src/cpp/VisibilityInternal.cpp
 )
 
+feature(SkipAttribute cpp android android-kotlin swift dart python SOURCES
 feature(ConstructorVisibility cpp dart SOURCES
     input/src/cpp/ConstructorVisibility.cpp
 
@@ -482,32 +484,32 @@ feature(SkipAttribute cpp android android-kotlin swift dart SOURCES
     input/src/cpp/EnableIfEnabled.cpp
 )
 
-feature(CppConst cpp android android-kotlin swift dart SOURCES
+feature(CppConst cpp android android-kotlin swift dart python SOURCES
     input/lime/CppConstMethods.lime
 
     input/src/cpp/CppConstMethods.cpp
 )
 
-feature(CppNoexcept cpp android android-kotlin swift dart SOURCES
+feature(CppNoexcept cpp android android-kotlin swift dart python SOURCES
     input/lime/CppNoexceptMethods.lime
 
     input/src/cpp/CppNoexceptMethods.cpp
 )
 
-feature(Locales cpp android android-kotlin swift dart SOURCES
+feature(Locales cpp android android-kotlin swift dart python SOURCES
     input/src/cpp/Locales.cpp
 
     input/lime/Locales.lime
     input/lime/LocaleDefaults.lime
 )
 
-feature(CrossPackageNameClash cpp android android-kotlin swift dart SOURCES
+feature(CrossPackageNameClash cpp android android-kotlin swift dart python SOURCES
     input/lime/CrossPackageNameClashA.lime
     input/lime/CrossPackageNameClashB.lime
     input/lime/CrossPackageNameClashC.lime
 )
 
-feature(NoCache android android-kotlin swift dart SOURCES
+feature(NoCache android android-kotlin swift dart python SOURCES
     input/src/cpp/NoCache.cpp
 
     input/lime/NoCache.lime
@@ -565,6 +567,7 @@ set_target_properties(functional_bindings PROPERTIES
     GLUECODIUM_CBRIDGE_INTERNAL_PREFIX "libfunctional_"
     GLUECODIUM_DART_LIBRARY_NAME "functional"
     GLUECODIUM_DART_NAMERULES "${CMAKE_CURRENT_SOURCE_DIR}/../config/dart.properties"
+    GLUECODIUM_PYTHON_MODULE_NAME "functional"
     GLUECODIUM_COPYRIGHT_HEADER "${CMAKE_CURRENT_SOURCE_DIR}/../config/COPYRIGHT"
     GLUECODIUM_DOCS_PLACEHOLDERS_FILES "${CMAKE_CURRENT_SOURCE_DIR}/../config/placeholders.properties"
     GLUECODIUM_TAGS "${CUSTOM_GLUECODIUM_TAGS}"
@@ -663,9 +666,48 @@ elseif(dart IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
         COMMAND ${CMAKE_COMMAND}
             -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/input/src/dart ${CMAKE_CURRENT_BINARY_DIR}/dart-merged/lib/src
         )
+elseif(python IN_LIST GLUECODIUM_GENERATORS_DEFAULT)
+    gluecodium_read_required_properties(functional_bindings
+        OUTPUT_MAIN_DIR _main_output)
+
+    # Build the CPython extension module from the generated pybind11 sources.
+    # The generate command lives on `functional_bindings`, so that is the target
+    # whose output directory holds the python/pybind11/*.cpp sources.
+    gluecodium_target_python_sources(functional_bindings
+        OUTPUT_DIR ${_main_output}
+        OUTPUT functional_python)
+
+    # Copy the generated Python wrapper package next to the built extension module so that
+    # `import functional` (the .so) and `from test.X import Y` (the wrappers) both resolve.
+    # Also copy any additional generated Python packages (e.g. another, external) that contain
+    # types referenced by wrapper modules in the test package.
+    add_custom_command(TARGET ${functional_python} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/test
+                "$<TARGET_FILE_DIR:${functional_python}>/test"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/test_off
+                "$<TARGET_FILE_DIR:${functional_python}>/test_off"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/another
+                "$<TARGET_FILE_DIR:${functional_python}>/another"
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${_main_output}/python/external
+                "$<TARGET_FILE_DIR:${functional_python}>/external"
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${_main_output}/python/__init__.py
+                ${_main_output}/python/_native_base.py
+                "$<TARGET_FILE_DIR:${functional_python}>/"
+        COMMENT "Copying Python wrapper package next to the extension module")
+
+    # The generated pybind11 sources reference the functional tests' hand-written C++ headers
+    # (e.g. external types under input/src/cpp/include/), so expose that directory too.
+    target_include_directories(${functional_python} PRIVATE
+        "${CMAKE_CURRENT_SOURCE_DIR}/input/src/cpp")
 endif()
 
 set(CPP_INPUT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/input/src/cpp")
 
 add_subdirectory(cpp)
 add_subdirectory(dart)
+add_subdirectory(python)

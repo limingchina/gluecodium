@@ -1,0 +1,67 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{! pybind11 class binding body — the py::class_ construction and .def() calls. }}
+{{! Trampoline is emitted separately by Pybind11ClassTrampoline.mustache. }}
+{{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
+{{#model}}
+{{#generateExternalScope}}{{#external.cpp}}
+auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}");
+{{/external.cpp}}{{/generateExternalScope}}
+{{#generateBinding}}
+auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>{{#ifPredicate model "needsTrampoline"}}, {{resolveName}}Trampoline{{/ifPredicate}}>({{scope}}, "{{pybindName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
+        .def("__gluecodium_id__", [](const {{resolveName model "Pybind11"}}& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+{{#ifPredicate model "needsTrampoline"}}        // Adoption constructor: adopt an existing native instance returned by a factory into
+        // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
+        // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
+        // here because the returned instance is a foreign (non-trampoline) implementation;
+        // instead we build a fresh trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<{{resolveName model "Pybind11"}}> native) {
+            auto self = std::make_shared<{{resolveName}}Trampoline>();
+            self->m_impl = native;
+            return self;
+        }))
+{{/ifPredicate}}
+{{#generateBinding}}
+{{#functions}}
+{{>python/Pybind11Function}}{{/functions}}
+{{#properties}}
+{{>python/Pybind11Property}}{{/properties}}
+{{#inheritedFunctions}}
+{{#unless isStatic}}
+{{#unless isConstructor}}
+{{>python/Pybind11Function}}{{/unless}}
+{{/unless}}
+{{/inheritedFunctions}}
+{{#inheritedProperties}}
+{{#unless isStatic}}
+{{>python/Pybind11Property}}{{/unless}}
+{{/inheritedProperties}}
+{{/generateBinding}}
+        ;
+{{#generateBinding}}{{#properties}}
+{{#if isStatic}}{{#ifPredicate typeRef "isLambdaType"}}{{#ifPredicate "hasSetter"}}
+    py::module_::import("atexit").attr("register")(py::cpp_function([]() { {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}({}); }));
+{{/ifPredicate}}{{/ifPredicate}}{{/if}}
+{{/properties}}{{/generateBinding}}
+{{/generateBinding}}
+{{/model}}

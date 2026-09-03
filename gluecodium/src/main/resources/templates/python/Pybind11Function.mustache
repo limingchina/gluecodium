@@ -1,0 +1,100 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{! pybind11 method binding. }}
+{{! pybind11 method binding. Throwing functions (Return<T, Error>) are bound
+    directly; the generated _return_caster translates the error into a Python
+    exception, so they are not skipped. }}
+{{! This function may still be present in the model (retained so an interface's
+    trampoline class can override every pure-virtual C++ method), but if it is
+    itself skipped for Python it must not get an actual pybind11 binding. }}
+{{#unlessPredicate "isSkippedForPython"}}
+{{#ifPredicate "isRawErrorCodeReturn"}}
+{{#if isStatic}}
+        .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
+                const auto error = {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+                if (error) {
+                    throw error;
+                }
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/if}}
+{{#unless isStatic}}
+        .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
+                const auto error = self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+                if (error) {
+                    throw error;
+                }
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unless}}
+{{/ifPredicate}}
+{{#unlessPredicate "isRawErrorCodeReturn"}}
+{{#if isConstructor}}
+{{#ifPredicate "needsCollectionLambdaBinding"}}
+        .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
+                return {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+            }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}
+{{#unlessPredicate "needsCollectionLambdaBinding"}}
+{{#ifPredicate "isCppOverloaded"}}
+        .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>({{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
+        .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unlessPredicate}}
+{{/unlessPredicate}}
+{{! Non-constructor static methods (including static factory functions and regular static methods). }}
+{{/if}}{{#unless isConstructor}}
+{{#ifPredicate "needsCollectionLambdaBinding"}}
+{{#if isStatic}}
+                .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}} -> py::object{{/ifPredicate}} {
+                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}py::cast({{/ifPredicate}}{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
+                }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/if}}
+{{#unless isStatic}}
+                .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}} -> py::object{{/ifPredicate}} {
+                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}py::cast({{/ifPredicate}}self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
+                }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unless}}
+{{/ifPredicate}}{{#unlessPredicate "needsCollectionLambdaBinding"}}{{#if isStatic}}{{#ifPredicate "isCppOverloaded"}}
+        .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
+        .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unlessPredicate}}
+{{/if}}{{#unless isStatic}}{{#ifPredicate "isCppOverloaded"}}
+{{#ifPredicate "needsInterfaceLambdaBinding"}}
+        .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
+            return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
+        .def("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#ifPredicate "isCppConst"}}, py::const_{{/ifPredicate}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unlessPredicate}}
+{{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
+{{#ifPredicate "needsInterfaceLambdaBinding"}}
+        .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
+            return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+        }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
+        .def("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+{{/unlessPredicate}}
+{{/unlessPredicate}}
+{{/unless}}
+{{/unlessPredicate}}
+{{/unless}}
+{{/unlessPredicate}}
+{{/unlessPredicate}}

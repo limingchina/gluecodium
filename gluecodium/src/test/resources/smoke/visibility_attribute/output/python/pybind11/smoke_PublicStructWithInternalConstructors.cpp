@@ -1,0 +1,31 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/PublicStructWithInternalConstructors.h"
+#include "cstdint"
+
+using PublicStructWithInternalConstructors = ::smoke::PublicStructWithInternalConstructors;
+
+
+
+void register_smoke_PublicStructWithInternalConstructors(py::module_& module) {
+auto cls_PublicStructWithInternalConstructors = py::class_<PublicStructWithInternalConstructors>(module, "smoke_PublicStructWithInternalConstructors")
+        .def_readwrite("some_var", &PublicStructWithInternalConstructors::some_var)
+        .def(py::init<>())
+        .def(py::init<int32_t>(), py::arg("some_var"))
+        .def_static("_make", &PublicStructWithInternalConstructors::make)
+        ;
+
+
+}

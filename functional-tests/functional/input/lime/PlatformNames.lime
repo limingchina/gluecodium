@@ -22,26 +22,31 @@ package test
 @Kotlin("barTypes")
 @Swift("bazTypes")
 @Dart("weeTypes")
+@Python(Name = "QuxTypes")
 struct PlatformNames {
     @Cpp("fooStruct")
     @Java("barStruct")
     @Kotlin("barStruct")
     @Swift("bazStruct")
     @Dart("weeStruct")
+    @Python(Name = "QuxStruct")
     struct BasicStruct {
         @Cpp("FOO_FIELD")
         @Java("BAR_FIELD")
         @Kotlin("BAR_FIELD")
         @Swift("BAZ_FIELD")
         @Dart("WEE_FIELD")
+        @Python(Name = "qux_field")
         stringField: String
         @Cpp("create")
+        @Python(Name = "qux_make")
         constructor make(
             @Cpp("FooParameter")
             @Java("BarParameter")
             @Kotlin("BarParameter")
             @Swift("BazParameter", Label = "_")
             @Dart("WeeParameter")
+            @Python(Name = "qux_parameter")
             basicParameter: String
         )
     }
@@ -50,21 +55,25 @@ struct PlatformNames {
     @Kotlin("barEnum")
     @Swift("bazEnum")
     @Dart("weeEnum")
+    @Python(Name = "QuxEnum")
     enum BasicEnum {
         @Cpp("foo_item")
         @Java("bar_item")
         @Kotlin("bar_item")
         @Swift("BAZ_ITEM")
         @Dart("WEE_ITEM")
+        @Python(Name = "QUX_ITEM")
         BASIC_ITEM
     }
     @Cpp("fooTypedef")
     @Swift("bazTypedef")
+    @Python(Name = "QuxTypedef")
     typealias BasicTypedef = Double
     @Cpp("fooArray")
     @Java("barArray")
     @Kotlin("barArray")
     @Swift("bazArray")
+    @Python(Name = "QuxArray")
     typealias BasicArray = List<Float>
 }
 
@@ -73,18 +82,21 @@ struct PlatformNames {
 @Kotlin("barInterface")
 @Swift("bazInterface")
 @Dart("wwInterface")
+@Python(Name = "QuxInterface")
 class PlatformNamesInterface {
     @Cpp("FooMethod")
     @Java("BarMethod")
     @Kotlin("BarMethod")
     @Swift("BazMethod")
     @Dart("WeeMethod")
+    @Python(Name = "qux_method")
     static fun basicMethod(
         @Cpp("FooParameter")
         @Java("BarParameter")
         @Kotlin("BarParameter")
         @Swift("BazParameter", Label = "_")
         @Dart("WeeParameter")
+        @Python(Name = "qux_parameter")
         basicParameter: String
     ): PlatformNames.BasicStruct
     @Cpp("make")
@@ -92,17 +104,20 @@ class PlatformNamesInterface {
     @Kotlin("make")
     @Swift("make")
     @Dart("make")
+    @Python(Name = "qux_create")
     constructor create(
         @Cpp("makeParameter")
         @Java("makeParameter")
         @Kotlin("makeParameter")
         @Swift("makeParameter", Label = "_")
         @Dart("makeParameter")
+        @Python(Name = "make_parameter")
         basicParameter: String
     )
     @Swift("BAZ_ATTRIBUTE")
     @Dart("WEE_ATTRIBUTE")
     @Kotlin("BAR_ATTRIBUTE")
+    @Python(Name = "qux_attribute")
     property basicAttribute: UInt {
         @Cpp("GET_FOO_ATTRIBUTE")
         @Java("GET_BAR_ATTRIBUTE")
@@ -120,18 +135,21 @@ class PlatformNamesInterface {
 @Kotlin("barListener")
 @Swift("bazListener")
 @Dart("WeeListener")
+@Python(Name = "QuxListener")
 interface PlatformNamesListener {
     @Cpp("FooMethod")
     @Java("BarMethod")
     @Kotlin("BarMethod")
     @Swift("BazMethod")
     @Dart("WeeMethod")
+    @Python(Name = "qux_method")
     fun basicMethod(
         @Cpp("FooParameter")
         @Java("BarParameter")
         @Kotlin("BarParameter")
         @Swift("BazParameter", Label = "_")
         @Dart("WeeParameter")
+        @Python(Name = "qux_parameter")
         basicParameter: String
     )
 }
