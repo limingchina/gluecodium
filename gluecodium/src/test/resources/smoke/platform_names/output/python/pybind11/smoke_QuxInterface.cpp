@@ -25,7 +25,7 @@ using fooInterface = ::smoke::fooInterface;
 void register_smoke_QuxInterface(py::module_& module) {
 auto cls_QuxInterface = py::class_<fooInterface, std::shared_ptr<fooInterface>>(module, "smoke_QuxInterface")
         .def("__gluecodium_id__", [](const fooInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("qux_method", &fooInterface::FooMethod, py::arg("qux_parameter"))
         .def_static("qux_create", &fooInterface::make, py::arg("make_parameter"))

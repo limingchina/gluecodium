@@ -23,6 +23,7 @@
 #include "test/DummyParentClass.h"
 #include "test/DummyFactory.h"
 #include "test/DummyInterface.h"
+#include "test/DummyChildInterface.h"
 
 namespace test
 {
@@ -37,6 +38,11 @@ public:
     ~DummyInterfaceImpl() = default;
 };
 
+class DummyChildInterfaceImpl : public DummyChildInterface {
+public:
+    ~DummyChildInterfaceImpl() = default;
+};
+
 class DummyChildClassImpl : public DummyChildClass {
 public:
     ~DummyChildClassImpl() = default;
@@ -44,6 +50,7 @@ public:
 
 std::shared_ptr<DummyClass> s_dummy_class = std::make_shared<DummyClassImpl>();
 std::shared_ptr<DummyInterface> s_dummy_interface = std::make_shared<DummyInterfaceImpl>();
+std::shared_ptr<DummyChildInterface> s_dummy_child_interface = std::make_shared<DummyChildInterfaceImpl>();
 std::shared_ptr<DummyChildClass> s_dummy_child_class = std::make_shared<DummyChildClassImpl>();
 }
 
@@ -80,6 +87,16 @@ DummyFactory::get_dummy_interface_singleton() {
 std::shared_ptr<DummyInterface>
 DummyFactory::create_dummy_interface() {
     return std::make_shared<DummyInterfaceImpl>();
+}
+
+std::shared_ptr<DummyChildInterface>
+DummyFactory::get_dummy_child_interface_singleton() {
+    return s_dummy_child_interface;
+}
+
+std::shared_ptr<DummyInterface>
+DummyFactory::get_dummy_child_interface_singleton_as_parent() {
+    return s_dummy_child_interface;
 }
 
 std::shared_ptr<DummyChildClass>

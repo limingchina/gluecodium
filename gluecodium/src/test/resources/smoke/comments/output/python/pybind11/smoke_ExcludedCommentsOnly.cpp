@@ -26,7 +26,7 @@ using SomeEnum = ::smoke::ExcludedCommentsOnly::SomeEnum;
 void register_smoke_ExcludedCommentsOnly(py::module_& module) {
 auto cls_ExcludedCommentsOnly = py::class_<ExcludedCommentsOnly, std::shared_ptr<ExcludedCommentsOnly>>(module, "smoke_ExcludedCommentsOnly")
         .def("__gluecodium_id__", [](const ExcludedCommentsOnly& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("some_method_with_all_comments", &ExcludedCommentsOnly::some_method_with_all_comments, py::arg("input_parameter"))
         .def("some_method_without_return_type_or_input_parameters", &ExcludedCommentsOnly::some_method_without_return_type_or_input_parameters)

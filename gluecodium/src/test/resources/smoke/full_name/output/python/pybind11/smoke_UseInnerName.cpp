@@ -22,7 +22,7 @@ using UseInnerName = ::smoke::UseInnerName;
 void register_smoke_UseInnerName(py::module_& module) {
 auto cls_UseInnerName = py::class_<UseInnerName, std::shared_ptr<UseInnerName>>(module, "smoke_UseInnerName")
         .def("__gluecodium_id__", [](const UseInnerName& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("do_foo", &UseInnerName::do_foo)
         ;

@@ -23,7 +23,7 @@ using ClassWithInternalLambda = ::smoke::ClassWithInternalLambda;
 void register_smoke_ClassWithInternalLambda(py::module_& module) {
 auto cls_ClassWithInternalLambda = py::class_<ClassWithInternalLambda, std::shared_ptr<ClassWithInternalLambda>>(module, "smoke_ClassWithInternalLambda")
         .def("__gluecodium_id__", [](const ClassWithInternalLambda& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
                 .def_static("invoke_internal_lambda", [](const ::std::function<bool(const ::std::string&)>& lambda_, const ::std::string& value) {
                         return ClassWithInternalLambda::invoke_internal_lambda(lambda_, value);

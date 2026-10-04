@@ -108,7 +108,22 @@ public:
 void register_smoke_FirstParentIsClassClass(py::module_& module) {
 auto cls_FirstParentIsClassClass = py::class_<FirstParentIsClassClass, ::smoke::ParentClass, ::smoke::ParentNarrowOne, std::shared_ptr<FirstParentIsClassClass>, FirstParentIsClassClassTrampoline>(module, "smoke_FirstParentIsClassClass", py::multiple_inheritance())
         .def("__gluecodium_id__", [](const FirstParentIsClassClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentClass>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<FirstParentIsClassClass>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentNarrowOne>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<FirstParentIsClassClass>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

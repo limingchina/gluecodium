@@ -28,7 +28,7 @@ using NotInKotlin = ::smoke::SkipTypes::NotInKotlin;
 void register_smoke_SkipTypes(py::module_& module) {
 auto cls_SkipTypes = py::class_<SkipTypes, std::shared_ptr<SkipTypes>>(module, "smoke_SkipTypes")
         .def("__gluecodium_id__", [](const SkipTypes& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

@@ -22,7 +22,6 @@ using InnerInterface = ::smoke::OuterInterface::InnerInterface;
 class OuterInterfaceTrampoline : public OuterInterface {
 public:
     using OuterInterface::OuterInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -43,7 +42,6 @@ public:
 class InnerInterfaceTrampoline : public InnerInterface {
 public:
     using InnerInterface::InnerInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -66,7 +64,7 @@ public:
 void register_smoke_OuterInterface(py::module_& module) {
 auto cls_OuterInterface = py::class_<OuterInterface, std::shared_ptr<OuterInterface>, OuterInterfaceTrampoline>(module, "smoke_OuterInterface")
         .def("__gluecodium_id__", [](const OuterInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -87,14 +85,14 @@ auto cls_OuterInterface = py::class_<OuterInterface, std::shared_ptr<OuterInterf
 
 auto cls_OuterInterfaceInnerClass = py::class_<InnerClass, std::shared_ptr<InnerClass>>(cls_OuterInterface, "InnerClass")
         .def("__gluecodium_id__", [](const InnerClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("foo", &InnerClass::foo, py::arg("input"))
         ;
 
 auto cls_OuterInterfaceInnerInterface = py::class_<InnerInterface, std::shared_ptr<InnerInterface>, InnerInterfaceTrampoline>(cls_OuterInterface, "InnerInterface")
         .def("__gluecodium_id__", [](const InnerInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

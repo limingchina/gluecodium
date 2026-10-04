@@ -39,7 +39,7 @@ public:
 void register_smoke_Constructors(py::module_& module) {
 auto cls_Constructors = py::class_<Constructors, std::shared_ptr<Constructors>, ConstructorsTrampoline>(module, "smoke_Constructors")
         .def("__gluecodium_id__", [](const Constructors& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

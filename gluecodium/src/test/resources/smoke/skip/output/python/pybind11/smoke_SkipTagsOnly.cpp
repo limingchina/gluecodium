@@ -21,7 +21,7 @@ using SkipTagsOnly = ::smoke::SkipTagsOnly;
 void register_smoke_SkipTagsOnly(py::module_& module) {
 auto cls_SkipTagsOnly = py::class_<SkipTagsOnly, std::shared_ptr<SkipTagsOnly>>(module, "smoke_SkipTagsOnly")
         .def("__gluecodium_id__", [](const SkipTagsOnly& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

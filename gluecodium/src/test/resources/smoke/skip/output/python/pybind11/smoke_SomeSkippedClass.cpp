@@ -22,7 +22,7 @@ using SomeSkippedClass = ::smoke::SomeSkippedClass;
 void register_smoke_SomeSkippedClass(py::module_& module) {
 auto cls_SomeSkippedClass = py::class_<SomeSkippedClass, std::shared_ptr<SomeSkippedClass>>(module, "smoke_SomeSkippedClass")
         .def("__gluecodium_id__", [](const SomeSkippedClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("do_foo", &SomeSkippedClass::do_foo)
         ;

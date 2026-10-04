@@ -24,7 +24,7 @@ using KotlinMethodOverloads = ::smoke::KotlinMethodOverloads;
 void register_smoke_KotlinMethodOverloads(py::module_& module) {
 auto cls_KotlinMethodOverloads = py::class_<KotlinMethodOverloads, std::shared_ptr<KotlinMethodOverloads>>(module, "smoke_KotlinMethodOverloads")
         .def("__gluecodium_id__", [](const KotlinMethodOverloads& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("one", &KotlinMethodOverloads::one, py::arg("input"))
                 .def("two", [](KotlinMethodOverloads& self, const ::std::vector< ::std::string >& input) {

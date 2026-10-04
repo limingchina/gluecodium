@@ -29,19 +29,19 @@ using LevelFourEnum = ::smoke::LevelOne::LevelTwo::LevelThree::LevelFourEnum;
 void register_smoke_LevelOne(py::module_& module) {
 auto cls_LevelOne = py::class_<LevelOne, std::shared_ptr<LevelOne>>(module, "smoke_LevelOne")
         .def("__gluecodium_id__", [](const LevelOne& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 
 auto cls_LevelOneLevelTwo = py::class_<LevelTwo, std::shared_ptr<LevelTwo>>(cls_LevelOne, "LevelTwo")
         .def("__gluecodium_id__", [](const LevelTwo& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 
 auto cls_LevelOneLevelTwoLevelThree = py::class_<LevelThree, std::shared_ptr<LevelThree>>(cls_LevelOneLevelTwo, "LevelThree")
         .def("__gluecodium_id__", [](const LevelThree& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("foo", &LevelThree::foo, py::arg("input"))
         ;

@@ -20,14 +20,35 @@
 package com.here.gluecodium.generator.python
 
 import com.here.gluecodium.generator.common.GeneratorOptions
+import com.here.gluecodium.model.lime.LimeClass
 import com.here.gluecodium.model.lime.LimeExternalDescriptor
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimePath
 import com.here.gluecodium.model.lime.LimeStruct
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class PythonGeneratorTest {
+    @Test
+    fun `canonical wrappers use configured external Python imports`() {
+        val type =
+            LimeClass(
+                LimePath(listOf("test"), listOf("External")),
+                external =
+                    LimeExternalDescriptor.Builder()
+                        .addValue("cpp", "name", "external::External")
+                        .addValue("cpp", "include", "External.h")
+                        .addValue("python", "importPath", "client.external")
+                        .build(),
+            )
+        val model = LimeModel(mapOf(type.path.toString() to type), listOf(type))
+        val generator = PythonGenerator().apply { initialize(GeneratorOptions()) }
+        val runtime = generator.generate(model).single { it.targetFile.path == "python/_native_base.py" }.content
+
+        assertTrue(runtime.contains("\"test_External\", \"client.external\", \"External\", False"))
+    }
+
     @Test
     fun `opaque declarations are independent of reference map order`() {
         val structs =

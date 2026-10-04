@@ -23,7 +23,7 @@ using OuterClassWithLambdaAndProperty = ::smoke::OuterClassWithLambdaAndProperty
 void register_smoke_OuterClassWithLambdaAndProperty(py::module_& module) {
 auto cls_OuterClassWithLambdaAndProperty = py::class_<OuterClassWithLambdaAndProperty, std::shared_ptr<OuterClassWithLambdaAndProperty>>(module, "smoke_OuterClassWithLambdaAndProperty")
         .def("__gluecodium_id__", [](const OuterClassWithLambdaAndProperty& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_property("some_integer", py::overload_cast<>(&OuterClassWithLambdaAndProperty::get_some_integer, py::const_), py::overload_cast<const int32_t>(&OuterClassWithLambdaAndProperty::set_some_integer))
         .def_static("another_integer", &OuterClassWithLambdaAndProperty::get_another_integer)

@@ -22,7 +22,6 @@ using SomeEnum = ::smoke::DeprecationComments::SomeEnum;
 class DeprecationCommentsTrampoline : public DeprecationComments {
 public:
     using DeprecationComments::DeprecationComments;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -75,7 +74,7 @@ public:
 void register_smoke_DeprecationComments(py::module_& module) {
 auto cls_DeprecationComments = py::class_<DeprecationComments, std::shared_ptr<DeprecationComments>, DeprecationCommentsTrampoline>(module, "smoke_DeprecationComments")
         .def("__gluecodium_id__", [](const DeprecationComments& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

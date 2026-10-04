@@ -24,7 +24,7 @@ using SwiftMethodOverloads = ::smoke::SwiftMethodOverloads;
 void register_smoke_SwiftMethodOverloads(py::module_& module) {
 auto cls_SwiftMethodOverloads = py::class_<SwiftMethodOverloads, std::shared_ptr<SwiftMethodOverloads>>(module, "smoke_SwiftMethodOverloads")
         .def("__gluecodium_id__", [](const SwiftMethodOverloads& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("one", &SwiftMethodOverloads::one, py::arg("input"))
                 .def("two", [](SwiftMethodOverloads& self, const ::std::vector< ::std::string >& input) {

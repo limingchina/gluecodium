@@ -22,7 +22,6 @@ using ChildInterfaceOverloads = ::smoke::ChildInterfaceOverloads;
 class ChildInterfaceOverloadsTrampoline : public ChildInterfaceOverloads {
 public:
     using ChildInterfaceOverloads::ChildInterfaceOverloads;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -91,7 +90,16 @@ public:
 void register_smoke_ChildInterfaceOverloads(py::module_& module) {
 auto cls_ChildInterfaceOverloads = py::class_<ChildInterfaceOverloads, ::smoke::ParentInterface, std::shared_ptr<ChildInterfaceOverloads>, ChildInterfaceOverloadsTrampoline>(module, "smoke_ChildInterfaceOverloads")
         .def("__gluecodium_id__", [](const ChildInterfaceOverloads& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentInterface>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<ChildInterfaceOverloads>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

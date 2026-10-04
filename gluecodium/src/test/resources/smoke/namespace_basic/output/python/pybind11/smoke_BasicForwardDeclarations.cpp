@@ -23,7 +23,7 @@ using BasicForwardDeclarations = ::root::space::smoke::BasicForwardDeclarations;
 void register_smoke_BasicForwardDeclarations(py::module_& module) {
 auto cls_BasicForwardDeclarations = py::class_<BasicForwardDeclarations, std::shared_ptr<BasicForwardDeclarations>>(module, "smoke_BasicForwardDeclarations")
         .def("__gluecodium_id__", [](const BasicForwardDeclarations& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("use_basic", &BasicForwardDeclarations::use_basic)
         ;

@@ -47,7 +47,6 @@ public:
 class _InnerInterface1Trampoline : public InnerInterface1 {
 public:
     using InnerInterface1::InnerInterface1;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -60,7 +59,6 @@ public:
 class InnerInterface2Trampoline : public InnerInterface2 {
 public:
     using InnerInterface2::InnerInterface2;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -73,7 +71,6 @@ public:
 class InnerInterface3Trampoline : public InnerInterface3 {
 public:
     using InnerInterface3::InnerInterface3;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -88,13 +85,13 @@ public:
 void register_smoke_forward_InnerClassForwardDeclarations(py::module_& module) {
 auto cls_InnerClassForwardDeclarations = py::class_<InnerClassForwardDeclarations, std::shared_ptr<InnerClassForwardDeclarations>>(module, "smoke_forward_InnerClassForwardDeclarations")
         .def("__gluecodium_id__", [](const InnerClassForwardDeclarations& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 
 auto cls_InnerClassForwardDeclarationsInnerClass1 = py::class_<InnerClass1, std::shared_ptr<InnerClass1>, InnerClass1Trampoline>(cls_InnerClassForwardDeclarations, "InnerClass1")
         .def("__gluecodium_id__", [](const InnerClass1& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
@@ -111,27 +108,27 @@ auto cls_InnerClassForwardDeclarationsInnerClass1 = py::class_<InnerClass1, std:
 
 auto cls_InnerClassForwardDeclarationsInnerClass2 = py::class_<InnerClass2, std::shared_ptr<InnerClass2>>(cls_InnerClassForwardDeclarations, "InnerClass2")
         .def("__gluecodium_id__", [](const InnerClass2& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 
 auto cls_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1 = py::class_<InnerInnerClass1, std::shared_ptr<InnerInnerClass1>>(cls_InnerClassForwardDeclarationsInnerClass2, "InnerInnerClass1")
         .def("__gluecodium_id__", [](const InnerInnerClass1& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("foo", &InnerInnerClass1::foo)
         ;
 
 auto cls_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2 = py::class_<InnerInnerClass2, std::shared_ptr<InnerInnerClass2>>(cls_InnerClassForwardDeclarationsInnerClass2, "InnerInnerClass2")
         .def("__gluecodium_id__", [](const InnerInnerClass2& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("bar", &InnerInnerClass2::bar, py::arg("arg"))
         ;
 
 auto cls__InnerClassForwardDeclarationsInnerInterface1 = py::class_<InnerInterface1, std::shared_ptr<InnerInterface1>, _InnerInterface1Trampoline>(cls_InnerClassForwardDeclarations, "_InnerInterface1")
         .def("__gluecodium_id__", [](const InnerInterface1& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -149,7 +146,7 @@ auto cls__InnerClassForwardDeclarationsInnerInterface1 = py::class_<InnerInterfa
 
 auto cls_InnerClassForwardDeclarationsInnerInterface2 = py::class_<InnerInterface2, std::shared_ptr<InnerInterface2>, InnerInterface2Trampoline>(cls_InnerClassForwardDeclarations, "InnerInterface2")
         .def("__gluecodium_id__", [](const InnerInterface2& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a
@@ -167,7 +164,7 @@ auto cls_InnerClassForwardDeclarationsInnerInterface2 = py::class_<InnerInterfac
 
 auto cls_InnerClassForwardDeclarationsInnerInterface3 = py::class_<InnerInterface3, std::shared_ptr<InnerInterface3>, InnerInterface3Trampoline>(cls_InnerClassForwardDeclarations, "InnerInterface3")
         .def("__gluecodium_id__", [](const InnerInterface3& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

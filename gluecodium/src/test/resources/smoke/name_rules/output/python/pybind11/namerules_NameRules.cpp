@@ -28,7 +28,7 @@ using ExampleErrorCode = ::namerules::NameRules::ExampleErrorCode;
 void register_namerules_NameRules(py::module_& module) {
 auto cls_NameRules = py::class_<NameRules, std::shared_ptr<NameRules>>(module, "namerules_NameRules")
         .def("__gluecodium_id__", [](const NameRules& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("create", &NameRules::create)
         .def("some_method", &NameRules::someMethod, py::arg("some_argument"))

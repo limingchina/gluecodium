@@ -32,7 +32,7 @@ public:
 void register_smoke_ExternalWithNoFunctions(py::module_& module) {
 auto cls_ExternalWithNoFunctions = py::class_<::some::path::Bar, std::shared_ptr<::some::path::Bar>, ExternalWithNoFunctionsTrampoline>(module, "smoke_ExternalWithNoFunctions")
         .def("__gluecodium_id__", [](const ::some::path::Bar& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

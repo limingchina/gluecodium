@@ -32,7 +32,7 @@ using DurationStruct = ::smoke::DurationSeconds::DurationStruct;
 void register_smoke_DurationSeconds(py::module_& module) {
 auto cls_DurationSeconds = py::class_<DurationSeconds, std::shared_ptr<DurationSeconds>>(module, "smoke_DurationSeconds")
         .def("__gluecodium_id__", [](const DurationSeconds& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("duration_function", &DurationSeconds::duration_function, py::arg("input"))
         .def("nullable_duration_function", &DurationSeconds::nullable_duration_function, py::arg("input"))

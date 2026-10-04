@@ -21,7 +21,7 @@ using EnableIfSkipped = ::smoke::EnableIfSkipped;
 void register_smoke_EnableIfSkipped(py::module_& module) {
 auto cls_EnableIfSkipped = py::class_<EnableIfSkipped, std::shared_ptr<EnableIfSkipped>>(module, "smoke_EnableIfSkipped")
         .def("__gluecodium_id__", [](const EnableIfSkipped& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

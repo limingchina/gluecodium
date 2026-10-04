@@ -29,7 +29,7 @@ using InternalErrorCode = ::smoke::Enums::InternalErrorCode;
 void register_smoke_Enums(py::module_& module) {
 auto cls_Enums = py::class_<Enums, std::shared_ptr<Enums>>(module, "smoke_Enums")
         .def("__gluecodium_id__", [](const Enums& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("method_with_enumeration", &Enums::method_with_enumeration, py::arg("input"))
         .def_static("flip_enum_value", &Enums::flip_enum_value, py::arg("input"))

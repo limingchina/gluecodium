@@ -24,7 +24,7 @@ using External_Enum = ::smoke::Enums::External_Enum;
 void register_smoke_Enums(py::module_& module) {
 auto cls_Enums = py::class_<Enums, std::shared_ptr<Enums>>(module, "smoke_Enums")
         .def("__gluecodium_id__", [](const Enums& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("method_with_external_enum", &Enums::method_with_external_enum, py::arg("input"))
         ;

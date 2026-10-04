@@ -24,7 +24,7 @@ using DurationOverloads = ::smoke::DurationOverloads;
 void register_smoke_DurationOverloads(py::module_& module) {
 auto cls_DurationOverloads = py::class_<DurationOverloads, std::shared_ptr<DurationOverloads>>(module, "smoke_DurationOverloads")
         .def("__gluecodium_id__", [](const DurationOverloads& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("duration_function", py::overload_cast<const ::std::chrono::seconds>(&DurationOverloads::duration_function), py::arg("input"))
         .def("duration_function", py::overload_cast<const ::std::string&>(&DurationOverloads::duration_function), py::arg("input"))

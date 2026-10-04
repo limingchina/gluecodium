@@ -21,7 +21,6 @@ using InternalStruct = ::smoke::PublicInterface::InternalStruct;
 class PublicInterfaceTrampoline : public PublicInterface {
 public:
     using PublicInterface::PublicInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -36,7 +35,7 @@ public:
 void register_smoke_PublicInterface(py::module_& module) {
 auto cls_PublicInterface = py::class_<PublicInterface, std::shared_ptr<PublicInterface>, PublicInterfaceTrampoline>(module, "smoke_PublicInterface")
         .def("__gluecodium_id__", [](const PublicInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

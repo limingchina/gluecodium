@@ -21,7 +21,7 @@ using CommentsTable = ::smoke::CommentsTable;
 void register_smoke_CommentsTable(py::module_& module) {
 auto cls_CommentsTable = py::class_<CommentsTable, std::shared_ptr<CommentsTable>>(module, "smoke_CommentsTable")
         .def("__gluecodium_id__", [](const CommentsTable& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

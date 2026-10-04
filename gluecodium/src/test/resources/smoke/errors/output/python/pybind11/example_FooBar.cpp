@@ -23,7 +23,7 @@ using FooBar = ::example::FooBar;
 void register_example_FooBar(py::module_& module) {
 auto cls_FooBar = py::class_<FooBar, std::shared_ptr<FooBar>>(module, "example_FooBar")
         .def("__gluecodium_id__", [](const FooBar& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("method_with_internal_error", []() {
                 const auto error = FooBar::method_with_internal_error();

@@ -22,7 +22,7 @@ using AsyncWithSkips = ::smoke::AsyncWithSkips;
 void register_smoke_AsyncWithSkips(py::module_& module) {
 auto cls_AsyncWithSkips = py::class_<AsyncWithSkips, std::shared_ptr<AsyncWithSkips>>(module, "smoke_AsyncWithSkips")
         .def("__gluecodium_id__", [](const AsyncWithSkips& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("make_shared_instance", py::overload_cast<const ::std::string&>(&AsyncWithSkips::make_shared_instance), py::arg("android_context"))
         .def_static("make_shared_instance", py::overload_cast<>(&AsyncWithSkips::make_shared_instance))

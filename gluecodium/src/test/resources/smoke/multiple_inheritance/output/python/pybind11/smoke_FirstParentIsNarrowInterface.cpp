@@ -22,7 +22,6 @@ using FirstParentIsNarrowInterface = ::smoke::FirstParentIsNarrowInterface;
 class FirstParentIsNarrowInterfaceTrampoline : public FirstParentIsNarrowInterface {
 public:
     using FirstParentIsNarrowInterface::FirstParentIsNarrowInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -109,7 +108,22 @@ public:
 void register_smoke_FirstParentIsNarrowInterface(py::module_& module) {
 auto cls_FirstParentIsNarrowInterface = py::class_<FirstParentIsNarrowInterface, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowInterface>, FirstParentIsNarrowInterfaceTrampoline>(module, "smoke_FirstParentIsNarrowInterface", py::multiple_inheritance())
         .def("__gluecodium_id__", [](const FirstParentIsNarrowInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentNarrowOne>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<FirstParentIsNarrowInterface>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentNarrowTwo>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<FirstParentIsNarrowInterface>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

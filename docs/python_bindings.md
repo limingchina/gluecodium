@@ -209,8 +209,11 @@ keys or set elements use hashable representations: lists become tuples, sets
 become frozensets, and maps become frozensets of key/value tuples.
 Structs cross the boundary as values; changing a returned struct does not mutate
 a previously passed C++ value. Classes and interfaces use shared ownership.
-The wrapper cache reuses class/interface wrappers by native identity; its current
-strong references can keep objects alive until interpreter shutdown.
+The wrapper cache reuses class/interface wrappers by native identity and selects
+the most specific bound wrapper for regular inherited views. Polymorphic base
+subobjects share the same identity. Narrow-interface requests keep their declared
+view and a separate cache entry. The cache's current strong references can keep
+objects alive until interpreter shutdown.
 
 ### Callbacks
 

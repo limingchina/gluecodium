@@ -21,7 +21,6 @@ using TemperatureObserver = ::smoke::TemperatureObserver;
 class TemperatureObserverTrampoline : public TemperatureObserver {
 public:
     using TemperatureObserver::TemperatureObserver;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -45,7 +44,7 @@ public:
 void register_smoke_TemperatureObserver(py::module_& module) {
 auto cls_TemperatureObserver = py::class_<TemperatureObserver, std::shared_ptr<TemperatureObserver>, TemperatureObserverTrampoline>(module, "smoke_TemperatureObserver")
         .def("__gluecodium_id__", [](const TemperatureObserver& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

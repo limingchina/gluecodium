@@ -25,7 +25,7 @@ using InternalErrorCode = ::smoke::Errors::InternalErrorCode;
 void register_smoke_Errors(py::module_& module) {
 auto cls_Errors = py::class_<Errors, std::shared_ptr<Errors>>(module, "smoke_Errors")
         .def("__gluecodium_id__", [](const Errors& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("method_with_errors", []() {
                 const auto error = Errors::method_with_errors();

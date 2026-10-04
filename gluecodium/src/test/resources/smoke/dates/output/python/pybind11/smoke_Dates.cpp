@@ -32,7 +32,7 @@ using DateStruct = ::smoke::Dates::DateStruct;
 void register_smoke_Dates(py::module_& module) {
 auto cls_Dates = py::class_<Dates, std::shared_ptr<Dates>>(module, "smoke_Dates")
         .def("__gluecodium_id__", [](const Dates& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("date_method", &Dates::date_method, py::arg("input"))
         .def("nullable_date_method", &Dates::nullable_date_method, py::arg("input"))

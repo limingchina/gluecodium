@@ -21,7 +21,7 @@ using DartInternalClassEnabled = ::smoke::DartInternalClassEnabled;
 void register_smoke_DartInternalClassEnabled(py::module_& module) {
 auto cls_DartInternalClassEnabled = py::class_<DartInternalClassEnabled, std::shared_ptr<DartInternalClassEnabled>>(module, "smoke_DartInternalClassEnabled")
         .def("__gluecodium_id__", [](const DartInternalClassEnabled& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

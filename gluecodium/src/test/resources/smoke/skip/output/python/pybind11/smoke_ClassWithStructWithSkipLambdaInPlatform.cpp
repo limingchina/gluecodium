@@ -24,7 +24,7 @@ using SkipLambdaInPlatform = ::smoke::ClassWithStructWithSkipLambdaInPlatform::S
 void register_smoke_ClassWithStructWithSkipLambdaInPlatform(py::module_& module) {
 auto cls_ClassWithStructWithSkipLambdaInPlatform = py::class_<ClassWithStructWithSkipLambdaInPlatform, std::shared_ptr<ClassWithStructWithSkipLambdaInPlatform>>(module, "smoke_ClassWithStructWithSkipLambdaInPlatform")
         .def("__gluecodium_id__", [](const ClassWithStructWithSkipLambdaInPlatform& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

@@ -26,7 +26,7 @@ using CachedProperties = ::smoke::CachedProperties;
 void register_smoke_CachedProperties(py::module_& module) {
 auto cls_CachedProperties = py::class_<CachedProperties, std::shared_ptr<CachedProperties>>(module, "smoke_CachedProperties")
         .def("__gluecodium_id__", [](const CachedProperties& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_property_readonly("cached_property", py::overload_cast<>(&CachedProperties::get_cached_property, py::const_))
         .def_property_readonly("_internal_cached_property", py::overload_cast<>(&CachedProperties::get_internal_cached_property, py::const_))

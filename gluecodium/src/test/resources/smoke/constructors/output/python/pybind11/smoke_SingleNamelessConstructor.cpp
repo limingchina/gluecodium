@@ -22,7 +22,7 @@ using SingleNamelessConstructor = ::smoke::SingleNamelessConstructor;
 void register_smoke_SingleNamelessConstructor(py::module_& module) {
 auto cls_SingleNamelessConstructor = py::class_<SingleNamelessConstructor, std::shared_ptr<SingleNamelessConstructor>>(module, "smoke_SingleNamelessConstructor")
         .def("__gluecodium_id__", [](const SingleNamelessConstructor& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("create", &SingleNamelessConstructor::create)
         ;

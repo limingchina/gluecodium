@@ -24,7 +24,7 @@ using SomeStruct = ::smoke::LambdasDeclarationOrder::SomeStruct;
 void register_smoke_LambdasDeclarationOrder(py::module_& module) {
 auto cls_LambdasDeclarationOrder = py::class_<LambdasDeclarationOrder, std::shared_ptr<LambdasDeclarationOrder>>(module, "smoke_LambdasDeclarationOrder")
         .def("__gluecodium_id__", [](const LambdasDeclarationOrder& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

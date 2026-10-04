@@ -21,7 +21,7 @@ using AmbiguousConstants = ::smoke::AmbiguousConstants;
 void register_smoke_AmbiguousConstants(py::module_& module) {
 auto cls_AmbiguousConstants = py::class_<AmbiguousConstants, std::shared_ptr<AmbiguousConstants>>(module, "smoke_AmbiguousConstants")
         .def("__gluecodium_id__", [](const AmbiguousConstants& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

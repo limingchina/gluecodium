@@ -21,7 +21,7 @@ using AsyncRenamed = ::smoke::AsyncRenamed;
 void register_smoke_AsyncRenamed(py::module_& module) {
 auto cls_AsyncRenamed = py::class_<AsyncRenamed, std::shared_ptr<AsyncRenamed>>(module, "smoke_AsyncRenamed")
         .def("__gluecodium_id__", [](const AsyncRenamed& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("dispose", &AsyncRenamed::callDispose)
         ;

@@ -27,7 +27,7 @@ using EquatableStruct = ::smoke::EquatableClass::EquatableStruct;
 void register_smoke_EquatableClass(py::module_& module) {
 auto cls_EquatableClass = py::class_<EquatableClass, std::shared_ptr<EquatableClass>>(module, "smoke_EquatableClass")
         .def("__gluecodium_id__", [](const EquatableClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

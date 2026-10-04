@@ -32,6 +32,12 @@ import pytest
 
 
 class TestMultipleInheritance:
+    def test_native_identity_is_independent_of_base_subobject(self):
+        instance = functional.test_MultipleInheritanceFactory.get_multi_class()
+        assert functional.test_OpenClass.__gluecodium_id__(instance) == (
+            functional.test_NarrowInterface.__gluecodium_id__(instance)
+        )
+
     def test_multi_class_inherits_open_class(self):
         instance = MultipleInheritanceFactory.get_multi_class()
         # Inherited from OpenClass (a regular open base class): the method must be callable and

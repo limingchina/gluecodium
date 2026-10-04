@@ -35,7 +35,16 @@ public:
 void register_smoke_ChildClassWithLambda(py::module_& module) {
 auto cls_ChildClassWithLambda = py::class_<ChildClassWithLambda, ::smoke::InterfaceWithLambda, std::shared_ptr<ChildClassWithLambda>, ChildClassWithLambdaTrampoline>(module, "smoke_ChildClassWithLambda")
         .def("__gluecodium_id__", [](const ChildClassWithLambda& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::InterfaceWithLambda>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<ChildClassWithLambda>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

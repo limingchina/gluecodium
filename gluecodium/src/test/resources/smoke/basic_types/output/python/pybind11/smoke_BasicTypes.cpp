@@ -23,7 +23,7 @@ using BasicTypes = ::smoke::BasicTypes;
 void register_smoke_BasicTypes(py::module_& module) {
 auto cls_BasicTypes = py::class_<BasicTypes, std::shared_ptr<BasicTypes>>(module, "smoke_BasicTypes")
         .def("__gluecodium_id__", [](const BasicTypes& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("string_function", &BasicTypes::string_function, py::arg("input"))
         .def_static("bool_function", &BasicTypes::bool_function, py::arg("input"))

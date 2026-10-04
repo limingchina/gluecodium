@@ -21,7 +21,7 @@ using MultipleAttributesDart = ::smoke::MultipleAttributesDart;
 void register_smoke_MultipleAttributesDart(py::module_& module) {
 auto cls_MultipleAttributesDart = py::class_<MultipleAttributesDart, std::shared_ptr<MultipleAttributesDart>>(module, "smoke_MultipleAttributesDart")
         .def("__gluecodium_id__", [](const MultipleAttributesDart& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("no_lists2", &MultipleAttributesDart::no_lists2)
         .def("no_lists3", &MultipleAttributesDart::no_lists3)

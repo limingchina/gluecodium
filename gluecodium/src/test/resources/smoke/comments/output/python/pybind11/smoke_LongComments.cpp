@@ -22,7 +22,7 @@ using LongComments = ::smoke::LongComments;
 void register_smoke_LongComments(py::module_& module) {
 auto cls_LongComments = py::class_<LongComments, std::shared_ptr<LongComments>>(module, "smoke_LongComments")
         .def("__gluecodium_id__", [](const LongComments& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("some_method_with_long_comment", &LongComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
         ;

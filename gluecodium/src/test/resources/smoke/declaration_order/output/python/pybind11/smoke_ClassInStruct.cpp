@@ -28,7 +28,7 @@ auto cls_ClassInStruct = py::class_<ClassInStruct>(module, "smoke_ClassInStruct"
 
 auto cls_ClassInStructFooChecker = py::class_<FooChecker, std::shared_ptr<FooChecker>>(cls_ClassInStruct, "FooChecker")
         .def("__gluecodium_id__", [](const FooChecker& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

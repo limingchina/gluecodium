@@ -59,7 +59,16 @@ public:
 void register_foobar_CrossPackageChildClass(py::module_& module) {
 auto cls_CrossPackageChildClass = py::class_<CrossPackageChildClass, ::smoke::ParentInterface, std::shared_ptr<CrossPackageChildClass>, CrossPackageChildClassTrampoline>(module, "foobar_CrossPackageChildClass")
         .def("__gluecodium_id__", [](const CrossPackageChildClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentInterface>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<CrossPackageChildClass>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

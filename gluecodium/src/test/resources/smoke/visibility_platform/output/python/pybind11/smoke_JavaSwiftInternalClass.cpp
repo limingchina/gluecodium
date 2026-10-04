@@ -21,7 +21,7 @@ using JavaSwiftInternalClass = ::smoke::JavaSwiftInternalClass;
 void register_smoke_JavaSwiftInternalClass(py::module_& module) {
 auto cls_JavaSwiftInternalClass = py::class_<JavaSwiftInternalClass, std::shared_ptr<JavaSwiftInternalClass>>(module, "smoke_JavaSwiftInternalClass")
         .def("__gluecodium_id__", [](const JavaSwiftInternalClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

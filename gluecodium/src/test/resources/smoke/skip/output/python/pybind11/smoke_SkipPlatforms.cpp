@@ -22,7 +22,7 @@ using SkipPlatforms = ::smoke::SkipPlatforms;
 void register_smoke_SkipPlatforms(py::module_& module) {
 auto cls_SkipPlatforms = py::class_<SkipPlatforms, std::shared_ptr<SkipPlatforms>>(module, "smoke_SkipPlatforms")
         .def("__gluecodium_id__", [](const SkipPlatforms& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("not_in_java", &SkipPlatforms::not_in_java, py::arg("input"))
         .def_static("not_in_swift", &SkipPlatforms::not_in_swift, py::arg("input"))

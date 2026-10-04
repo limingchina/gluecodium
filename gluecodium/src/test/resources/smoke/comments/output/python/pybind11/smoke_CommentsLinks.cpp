@@ -24,7 +24,7 @@ using RandomStruct = ::smoke::CommentsLinks::RandomStruct;
 void register_smoke_CommentsLinks(py::module_& module) {
 auto cls_CommentsLinks = py::class_<CommentsLinks, std::shared_ptr<CommentsLinks>>(module, "smoke_CommentsLinks")
         .def("__gluecodium_id__", [](const CommentsLinks& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("random_method", py::overload_cast<const ::smoke::Comments::SomeEnum>(&CommentsLinks::random_method), py::arg("input_parameter"))
         .def("random_method", py::overload_cast<const ::std::string&, const bool>(&CommentsLinks::random_method), py::arg("text"), py::arg("flag"))

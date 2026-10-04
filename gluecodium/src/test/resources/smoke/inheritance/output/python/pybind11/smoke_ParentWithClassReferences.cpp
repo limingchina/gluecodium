@@ -22,7 +22,6 @@ using ParentWithClassReferences = ::smoke::ParentWithClassReferences;
 class ParentWithClassReferencesTrampoline : public ParentWithClassReferences {
 public:
     using ParentWithClassReferences::ParentWithClassReferences;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -60,7 +59,7 @@ public:
 void register_smoke_ParentWithClassReferences(py::module_& module) {
 auto cls_ParentWithClassReferences = py::class_<ParentWithClassReferences, std::shared_ptr<ParentWithClassReferences>, ParentWithClassReferencesTrampoline>(module, "smoke_ParentWithClassReferences")
         .def("__gluecodium_id__", [](const ParentWithClassReferences& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

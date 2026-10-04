@@ -21,7 +21,7 @@ using SwiftInternalClassRev = ::smoke::SwiftInternalClassRev;
 void register_smoke_SwiftInternalClassRev(py::module_& module) {
 auto cls_SwiftInternalClassRev = py::class_<SwiftInternalClassRev, std::shared_ptr<SwiftInternalClassRev>>(module, "smoke_SwiftInternalClassRev")
         .def("__gluecodium_id__", [](const SwiftInternalClassRev& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

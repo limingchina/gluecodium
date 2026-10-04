@@ -22,7 +22,7 @@ using MultiLineComments = ::smoke::MultiLineComments;
 void register_smoke_MultiLineComments(py::module_& module) {
 auto cls_MultiLineComments = py::class_<MultiLineComments, std::shared_ptr<MultiLineComments>>(module, "smoke_MultiLineComments")
         .def("__gluecodium_id__", [](const MultiLineComments& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("some_method_with_long_comment", &MultiLineComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
         ;

@@ -29,7 +29,7 @@ using Lambdas = ::smoke::Lambdas;
 void register_smoke_Lambdas(py::module_& module) {
 auto cls_Lambdas = py::class_<Lambdas, std::shared_ptr<Lambdas>>(module, "smoke_Lambdas")
         .def("__gluecodium_id__", [](const Lambdas& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
                 .def("deconfuse", [](Lambdas& self, const ::std::string& value, const ::std::function<::std::function<::std::string()>(const ::std::string&)>& confuser) -> py::object {
                         return py::cast(self.deconfuse(value, confuser));

@@ -21,7 +21,7 @@ using MultipleAttributesSwift = ::smoke::MultipleAttributesSwift;
 void register_smoke_MultipleAttributesSwift(py::module_& module) {
 auto cls_MultipleAttributesSwift = py::class_<MultipleAttributesSwift, std::shared_ptr<MultipleAttributesSwift>>(module, "smoke_MultipleAttributesSwift")
         .def("__gluecodium_id__", [](const MultipleAttributesSwift& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("no_lists2", &MultipleAttributesSwift::no_lists2)
         .def("no_lists3", &MultipleAttributesSwift::no_lists3)

@@ -22,7 +22,7 @@ using Basic = ::root::space::smoke::Basic;
 void register_smoke_Basic(py::module_& module) {
 auto cls_Basic = py::class_<Basic, std::shared_ptr<Basic>>(module, "smoke_Basic")
         .def("__gluecodium_id__", [](const Basic& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("basic_method", &Basic::basic_method, py::arg("input_string"))
         ;

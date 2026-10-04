@@ -40,8 +40,10 @@ import com.here.gluecodium.model.lime.LimeConstant
 import com.here.gluecodium.model.lime.LimeContainerWithInheritance
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeEnumeration
+import com.here.gluecodium.model.lime.LimeExternalDescriptor
 import com.here.gluecodium.model.lime.LimeFieldConstructor
 import com.here.gluecodium.model.lime.LimeGenericType
+import com.here.gluecodium.model.lime.LimeInterface
 import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeModel
 import com.here.gluecodium.model.lime.LimeNamedElement
@@ -509,6 +511,10 @@ internal class PythonGenerator : Generator {
                     "generateBinding" to (!isExternal || type.path.hasParent || !generateExternalScope),
                     "internalNamespaceStr" to internalNamespace.joinToString("::"),
                     "returnTypeFullName" to (internalNamespace + "Return").joinToString("::"),
+                    "downcastBases" to
+                        allPythonParents(type)
+                            .filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
+                            .map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) },
                     "baseClasses" to
                         (type as? LimeContainerWithInheritance)
                             ?.parents
@@ -567,6 +573,13 @@ internal class PythonGenerator : Generator {
             result.addAll(collectPybind11Types(nested, referenceMap))
         }
         return result
+    }
+
+    private fun allPythonParents(type: LimeNamedElement): List<LimeContainerWithInheritance> {
+        val parents =
+            (type as? LimeContainerWithInheritance)?.parents.orEmpty()
+                .mapNotNull { it.type.actualType as? LimeContainerWithInheritance }
+        return (parents + parents.flatMap { allPythonParents(it) }).distinctBy { it.fullName }
     }
 
     private fun selectPybind11TrampolineTemplate(limeElement: LimeNamedElement) =
@@ -669,7 +682,43 @@ internal class PythonGenerator : Generator {
                 nameResolvers,
                 predicates,
             )
-        val nativeBaseContent = TemplateEngine.render("python/PythonNativeBase", emptyMap<String, Any>(), nameResolvers, predicates)
+        val wrapperTypes =
+            pythonFilteredModel.referenceMap.values.filterIsInstance<LimeContainerWithInheritance>()
+                .filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
+                .distinctBy { it.fullName }
+                .sortedWith(compareByDescending<LimeContainerWithInheritance> { allPythonParents(it).size }.thenBy { it.fullName })
+                .map { type ->
+                    var top: LimeNamedElement = type
+                    while (top.path.hasParent) {
+                        top = pythonFilteredModel.referenceMap[top.path.parent.toString()] as? LimeNamedElement ?: break
+                    }
+                    val nativePath = pythonNameResolver.resolvePybind11AccessPath(type)
+                    val externalModule = type.external?.python?.get(LimeExternalDescriptor.IMPORT_PATH_NAME)
+                    val wrapperPath =
+                        if (!externalModule.isNullOrBlank()) {
+                            pythonNameResolver.resolveName(type)
+                        } else {
+                            pythonNameResolver.resolveName(top) +
+                                if (nativePath.contains(".")) "." + nativePath.substringAfter(".") else ""
+                        }
+                    mapOf(
+                        "nativePath" to nativePath,
+                        "modulePath" to
+                            (
+                                externalModule?.takeIf { it.isNotBlank() }
+                                    ?: (top.path.head + pythonNameResolver.resolveName(top)).joinToString(".")
+                            ),
+                        "wrapperPath" to wrapperPath,
+                        "isNarrow" to (type is LimeInterface && type.isNarrow),
+                    )
+                }
+        val nativeBaseContent =
+            TemplateEngine.render(
+                "python/PythonNativeBase",
+                mapOf("nativeModule" to pythonModule, "wrapperTypes" to wrapperTypes),
+                nameResolvers,
+                predicates,
+            )
 
         // Per-package __init__.py files so the generated wrappers form an importable package
         // hierarchy (e.g. com/__init__.py, com/example/__init__.py, com/example/greeter/__init__.py).
