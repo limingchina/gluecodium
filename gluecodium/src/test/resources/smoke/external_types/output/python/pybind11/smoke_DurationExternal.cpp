@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include "_opaque_types.h"
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
@@ -20,7 +21,9 @@ namespace py = pybind11;
 
 void register_smoke_DurationExternal(py::module_& module) {
 auto cls_DurationExternal = py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "smoke_DurationExternal")
-        .def_property_readonly("value", static_cast<uint64_t (std::chrono::duration<uint64_t, std::ratio<1,1000>>::*)() const>(&std::chrono::duration<uint64_t, std::ratio<1,1000>>::count))
+        .def_property_readonly("value", [](const std::chrono::duration<uint64_t, std::ratio<1,1000>>& self) {
+            return self.count();
+        })
         .def(py::init<uint64_t>(), py::arg("value"))
         ;
 

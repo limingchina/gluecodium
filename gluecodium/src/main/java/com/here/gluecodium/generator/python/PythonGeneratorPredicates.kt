@@ -93,6 +93,19 @@ internal class PythonGeneratorPredicates(
                 prop?.setter?.comment?.getFor("Python")?.isNotBlank() == true
             },
             "isInterface" to { it is com.here.gluecodium.model.lime.LimeInterface },
+            "needsExternalSetterConstructor" to { element: Any ->
+                element is LimeStruct && element.external?.cpp?.isNotEmpty() == true &&
+                    !CommonGeneratorPredicates.hasImmutableFields(element) &&
+                    element.fields.any { pybind11NameResolver.resolveGetterName(it) != null }
+            },
+            "hasExternalFieldAccessors" to { element: Any ->
+                element is LimeField &&
+                    (
+                        element.external?.cpp?.isNotEmpty() == true ||
+                            (pybind11ReferenceMap[element.path.parent.toString()] as? LimeType)
+                                ?.external?.cpp?.isNotEmpty() == true
+                    )
+            },
             // Whether the container needs a pybind11 trampoline class so it can be subclassed from
             // Python. Mirrors Pybind11Helpers.needsTrampoline: interfaces always need one, and a
             // class needs one when it is open or inherits from another container (so inherited
@@ -247,7 +260,10 @@ internal class PythonGeneratorPredicates(
                         is com.here.gluecodium.model.lime.LimeProperty ->
                             limeReferenceMap[limeElement.path.parent.toString()]
                         else -> null
-                    } is com.here.gluecodium.model.lime.LimeInterface
+                    }.let { container ->
+                        container is com.here.gluecodium.model.lime.LimeInterface ||
+                            (container as? LimeType)?.external?.cpp?.isNotEmpty() == true
+                    }
             },
             // Whether a type reference refers to a user-defined (generated-wrapper) type that must be
             // unwrapped to its native `_native` handle before being passed to a pybind11 call.

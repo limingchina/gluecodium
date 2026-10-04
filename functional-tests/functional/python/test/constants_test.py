@@ -42,3 +42,20 @@ class TestConstants:
 
     def test_bool_constant(self):
         assert ConstantsSkipCpp.BOOL_CONSTANT is True
+
+
+class TestCollectionConstants:
+    def test_collection_literals_and_hashable_map_keys(self):
+        from test.CollectionConstants import CollectionConstants
+
+        assert CollectionConstants.LIST_CONSTANT == ["foo", "bar"]
+        assert CollectionConstants.SET_CONSTANT == {"foo", "bar"}
+        assert CollectionConstants.MAP_CONSTANT == {"foo": "bar"}
+        assert CollectionConstants.MIXED_CONSTANT == {("foo",): {"bar"}}
+
+    def test_struct_constant_constructors(self):
+        from test.StructConstants import StructConstants
+
+        assert StructConstants.STRUCT_CONSTANT.string_field == "bar Buzz"
+        assert StructConstants.STRUCT_CONSTANT.float_field == pytest.approx(1.41)
+        assert StructConstants.NESTING_STRUCT_CONSTANT.struct_field.string_field == "nonsense"

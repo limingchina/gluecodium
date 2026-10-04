@@ -38,6 +38,20 @@
 {{/unlessPredicate}}
 {{/ifPredicate}}
 {{#ifPredicate model "needsAllFieldsConstructor"}}
+{{#ifPredicate model "needsExternalSetterConstructor"}}
+        .def(py::init([]({{#filter fields predicate="isPublic"}}{{#this}}const {{resolveName typeRef "Pybind11"}}& {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}) {
+            {{resolveName model "Pybind11"}} result{};
+{{#filter fields predicate="isPublic"}}{{#this}}
+{{#ifPredicate "hasFieldAccessors"}}
+            result.{{resolveName this "Pybind11" "setter"}}({{resolveName}});
+{{/ifPredicate}}{{#unlessPredicate "hasFieldAccessors"}}
+            result.{{resolveName this "Pybind11"}} = {{resolveName}};
+{{/unlessPredicate}}
+{{/this}}{{/filter}}
+            return result;
+        }){{#filter fields predicate="isPublic"}}{{#this}}, py::arg("{{resolveName}}"){{/this}}{{/filter}})
+{{/ifPredicate}}
+{{#unlessPredicate model "needsExternalSetterConstructor"}}
 {{#ifPredicate model "hasInternalFields"}}
         .def(py::init([]({{#filter fields predicate="isPublic"}}{{#this}}const {{resolveName typeRef "Pybind11"}}& {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/this}}{{/filter}}) {
             return {{resolveName model "Pybind11"}}({{#fields}}{{#ifPredicate "isInternalOrSkipped"}}{{#ifPredicate "needsExplicitDefaultConstruction"}}{{resolveName defaultValue "C++"}}{{/ifPredicate}}{{#unlessPredicate "needsExplicitDefaultConstruction"}}{{resolveName typeRef "Pybind11"}}{}{{/unlessPredicate}}{{/ifPredicate}}{{#unlessPredicate "isInternalOrSkipped"}}{{resolveName}}{{/unlessPredicate}}{{#if iter.hasNext}}, {{/if}}{{/fields}});
@@ -45,6 +59,7 @@
 {{/ifPredicate}}
 {{#unlessPredicate model "hasInternalFields"}}
         .def(py::init<{{#fields}}{{resolveName typeRef "Pybind11"}}{{#if iter.hasNext}}, {{/if}}{{/fields}}>(), {{#fields}}py::arg("{{resolveName}}"){{#if iter.hasNext}}, {{/if}}{{/fields}})
+{{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/ifPredicate}}
 {{#fieldConstructors}}

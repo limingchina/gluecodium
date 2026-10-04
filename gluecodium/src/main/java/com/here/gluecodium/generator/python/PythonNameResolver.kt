@@ -333,8 +333,46 @@ internal class PythonNameResolver(
         return current
     }
 
-    private fun resolveValue(limeValue: LimeValue): String =
+    private fun resolveValue(
+        limeValue: LimeValue,
+        requiresHashable: Boolean = false,
+    ): String =
         when (limeValue) {
+            is LimeValue.Null -> "None"
+            is LimeValue.InitializerList -> {
+                when (limeValue.typeRef.type.actualType) {
+                    is LimeSet -> {
+                        val values = limeValue.values.joinToString(", ") { resolveValue(it, true) }
+                        if (requiresHashable) {
+                            "frozenset([$values])"
+                        } else if (values.isEmpty()) {
+                            "set()"
+                        } else {
+                            "{$values}"
+                        }
+                    }
+                    is LimeMap -> {
+                        val pairs = limeValue.values.map { it as LimeValue.KeyValuePair }
+                        if (requiresHashable) {
+                            pairs.joinToString(", ", "frozenset([", "])") {
+                                "(${resolveValue(it.key, true)}, ${resolveValue(it.value, true)})"
+                            }
+                        } else {
+                            pairs.joinToString(", ", "{", "}") {
+                                "${resolveValue(it.key, true)}: ${resolveValue(it.value)}"
+                            }
+                        }
+                    }
+                    else -> {
+                        val values = limeValue.values.joinToString(", ") { resolveValue(it, requiresHashable) }
+                        if (requiresHashable) "tuple([$values])" else "[$values]"
+                    }
+                }
+            }
+            is LimeValue.StructInitializer -> {
+                val name = resolvePythonTypeShort(limeValue.typeRef, contextElement = currentContext.get())
+                limeValue.values.joinToString(", ", "$name(", ")") { resolveValue(it) }
+            }
             is LimeValue.Special -> {
                 when (limeValue.value) {
                     LimeValue.Special.ValueId.NAN -> "float('nan')"

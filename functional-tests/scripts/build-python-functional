@@ -95,6 +95,16 @@ BUILD_LOCAL_GLUECODIUM=false
 CMAKE_EXTRA_PARAMETERS=
 VERBOSE_BUILD=ON   # default ON: the Gradle code-generation step is the usual hang point
 PYTHON_BIN_OVERRIDE=""
+CMAKE_TOOL_PARAMETERS=()
+if command -v ccache >/dev/null 2>&1; then
+    CMAKE_TOOL_PARAMETERS+=(-DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache)
+fi
+if [[ -z "${CC:-}" ]] && command -v clang >/dev/null 2>&1; then
+    CMAKE_TOOL_PARAMETERS+=("-DCMAKE_C_COMPILER=$(command -v clang)")
+fi
+if [[ -z "${CXX:-}" ]] && command -v clang++ >/dev/null 2>&1; then
+    CMAKE_TOOL_PARAMETERS+=("-DCMAKE_CXX_COMPILER=$(command -v clang++)")
+fi
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -185,16 +195,13 @@ step "CMake configure (generators: cpp;python)"
 tee cmake_output.log < "$tmppipe" &
 safe cmake \
     -DBUILD_SHARED_LIBS=ON \
-    -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-    -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-    -DCMAKE_C_COMPILER="$(which clang)" \
-    -DCMAKE_CXX_COMPILER="$(which clang++)" \
+    "${CMAKE_TOOL_PARAMETERS[@]}" \
     -DCMAKE_INSTALL_PREFIX="${INSTALL_DIR}" \
     -DCMAKE_VERBOSE_MAKEFILE=ON \
     -DGLUECODIUM_GENERATORS_DEFAULT="cpp;python" \
     -DGLUECODIUM_VERSION_DEFAULT="${GLUECODIUM_VERSION}" \
     -DFUNCTIONAL_BUILD_PYTHON_TESTS=ON \
-    -DPython_EXECUTABLE="${PYTHON_BIN}" \
+    -DPython3_EXECUTABLE="${PYTHON_BIN}" \
     -Dpybind11_DIR="${PYBIND11_CMAKE_DIR}" \
     -G Ninja \
     ${CMAKE_EXTRA_PARAMETERS} \
