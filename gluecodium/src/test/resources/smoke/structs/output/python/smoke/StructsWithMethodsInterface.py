@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
@@ -55,7 +55,7 @@ class StructsWithMethodsInterface(_NativeBase):
     
         @staticmethod
         def validate(x: float, y: float, z: float) -> bool:
-            return generated.smoke_StructsWithMethodsInterface.Vector3.validate(_unwrap(x, float), _unwrap(y, float), _unwrap(z, float))
+            return _wrap(generated.smoke_StructsWithMethodsInterface.Vector3.validate(_unwrap(x, float), _unwrap(y, float), _unwrap(z, float)), bool)
     
         @staticmethod
         def create(*args, **kwargs) -> StructsWithMethodsInterface.Vector3:

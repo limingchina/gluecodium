@@ -41,6 +41,9 @@ public:
             m_impl->on_calculation_result(calculation_result);
             return;
         }
+        if (py::get_override(static_cast<const CalculatorListener*>(this), "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, CalculatorListener, "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74", on_calculation_result, calculation_result);
+        }
         PYBIND11_OVERRIDE_PURE(void, CalculatorListener, on_calculation_result, calculation_result);
     }
     void on_calculation_result_const(
@@ -49,6 +52,9 @@ public:
         if (m_impl) {
             m_impl->on_calculation_result_const(calculation_result);
             return;
+        }
+        if (py::get_override(static_cast<const CalculatorListener*>(this), "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74436f6e7374")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, CalculatorListener, "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74436f6e7374", on_calculation_result_const, calculation_result);
         }
         PYBIND11_OVERRIDE_PURE(void, CalculatorListener, on_calculation_result_const, calculation_result);
     }
@@ -59,6 +65,9 @@ public:
             m_impl->on_calculation_result_struct(calculation_result);
             return;
         }
+        if (py::get_override(static_cast<const CalculatorListener*>(this), "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74537472756374")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, CalculatorListener, "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74537472756374", on_calculation_result_struct, calculation_result);
+        }
         PYBIND11_OVERRIDE_PURE(void, CalculatorListener, on_calculation_result_struct, calculation_result);
     }
     void on_calculation_result_array(
@@ -67,6 +76,9 @@ public:
         if (m_impl) {
             m_impl->on_calculation_result_array(calculation_result);
             return;
+        }
+        if (py::get_override(static_cast<const CalculatorListener*>(this), "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c744172726179")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, CalculatorListener, "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c744172726179", on_calculation_result_array, calculation_result);
         }
         PYBIND11_OVERRIDE_PURE(void, CalculatorListener, on_calculation_result_array, calculation_result);
     }
@@ -77,6 +89,9 @@ public:
             m_impl->on_calculation_result_map(calculation_results);
             return;
         }
+        if (py::get_override(static_cast<const CalculatorListener*>(this), "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c744d6170")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, CalculatorListener, "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c744d6170", on_calculation_result_map, calculation_results);
+        }
         PYBIND11_OVERRIDE_PURE(void, CalculatorListener, on_calculation_result_map, calculation_results);
     }
     void on_calculation_result_instance(
@@ -85,6 +100,9 @@ public:
         if (m_impl) {
             m_impl->on_calculation_result_instance(calculation_result);
             return;
+        }
+        if (py::get_override(static_cast<const CalculatorListener*>(this), "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74496e7374616e6365")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, CalculatorListener, "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74496e7374616e6365", on_calculation_result_instance, calculation_result);
         }
         PYBIND11_OVERRIDE_PURE(void, CalculatorListener, on_calculation_result_instance, calculation_result);
     }

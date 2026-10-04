@@ -23,6 +23,7 @@ an enum, and a Blob), and a notifier that triggers the callback from C++.
 """
 
 import functional
+from test.DistanceMetric import DistanceMetric
 from test.ComplexListener import ComplexListener
 from test.ComplexListenerFactory import ComplexListenerFactory
 from test.NamedPoint3D import NamedPoint3D
@@ -61,6 +62,10 @@ class TestComplexListeners:
                 super().__init__()
 
             def on_trajectory_completed(self, distance_metric, traj, quality, image):
+                assert isinstance(distance_metric, DistanceMetric)
+                assert all(isinstance(point, NamedPoint3D) for point in traj)
+                assert all(isinstance(point.pt, Point3D) for point in traj)
+                assert isinstance(quality, TrajectoryQuality)
                 length = distance_metric.get_length(traj)
                 listener_log["from"] = traj[0].name
                 listener_log["to"] = traj[-1].name
@@ -74,9 +79,7 @@ class TestComplexListeners:
 
         assert listener_log["from"] == "zero point"
         assert listener_log["to"] == "final destination"
-        # The callback receives the native pybind11 enum value (not the Python wrapper
-        # enum), so compare by .value which is the native enum.
-        assert listener_log["quality"] == TrajectoryQuality.TRAJECTORY_AVERAGE.value
+        assert listener_log["quality"] is TrajectoryQuality.TRAJECTORY_AVERAGE
         # Manhattan distance: |0-10|*3 + |10-20|*3 = 30 + 30 = 60
         assert listener_log["length"] == 60.0
         assert listener_log["image"] == IMAGE
@@ -144,5 +147,4 @@ class TestComplexListeners:
             trajectory = [NamedPoint3D("a", Point3D())]
             notifier.trajectory_completed(trajectory, quality, b"", listener)
 
-            # The callback receives the native pybind11 enum (not the Python wrapper enum).
-            assert received_quality["value"] == quality.value
+            assert received_quality["value"] is quality

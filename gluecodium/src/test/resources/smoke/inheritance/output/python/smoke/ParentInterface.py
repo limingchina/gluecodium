@@ -2,13 +2,25 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
 
 
+@_mark_callback_base
 class ParentInterface(generated.smoke_ParentInterface):
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        _install_callback_adapters(cls, __class__, [
+            ("root_method", "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f744d6574686f64", "method", None,
+             lambda: ([], None)),
+            ("root_property", "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_get", "get", "get_root_property",
+             lambda: ([], str)),
+            ("root_property", "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_set", "set", "set_root_property",
+             lambda: ([str], None)),
+        ])
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an

@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
 
 
+@_mark_callback_base
 class ParentWithCustomConstructor(generated.smoke_ParentWithCustomConstructor):
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        _install_callback_adapters(cls, __class__, [
+        ])
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the

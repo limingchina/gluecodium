@@ -38,6 +38,9 @@ public:
             m_impl->use_it(param1, param2, simple_class, simple_interface);
             return;
         }
+        if (py::get_override(static_cast<const UseForward*>(this), "__gluecodium_callback_736d6f6b652e666f72776172642e557365466f72776172642e7573655f6974")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, UseForward, "__gluecodium_callback_736d6f6b652e666f72776172642e557365466f72776172642e7573655f6974", use_it, param1, param2, simple_class, simple_interface);
+        }
         PYBIND11_OVERRIDE_PURE(void, UseForward, use_it, param1, param2, simple_class, simple_interface);
     }
 };

@@ -40,12 +40,18 @@ public:
         if (m_impl) {
             return m_impl->root_method(input1, input2);
         }
+        if (py::get_override(static_cast<const ChildClassWithImports*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c61737357697468496d706f7274732e726f6f744d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::IncludableClass >, ChildClassWithImports, "__gluecodium_callback_736d6f6b652e506172656e74436c61737357697468496d706f7274732e726f6f744d6574686f64", root_method, input1, input2);
+        }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::IncludableClass >, ChildClassWithImports, root_method, input1, input2);
     }
     ::std::function<void(const int64_t)> get_root_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
+        }
+        if (py::get_override(static_cast<const ChildClassWithImports*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c61737357697468496d706f7274732e726f6f7450726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::function<void(const int64_t)>, ChildClassWithImports, "__gluecodium_callback_736d6f6b652e506172656e74436c61737357697468496d706f7274732e726f6f7450726f7065727479_get", get_root_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::function<void(const int64_t)>, ChildClassWithImports, get_root_property);
     }
@@ -54,6 +60,9 @@ public:
         if (m_impl) {
             m_impl->set_root_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const ChildClassWithImports*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c61737357697468496d706f7274732e726f6f7450726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithImports, "__gluecodium_callback_736d6f6b652e506172656e74436c61737357697468496d706f7274732e726f6f7450726f7065727479_set", set_root_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, ChildClassWithImports, set_root_property, value);
     }

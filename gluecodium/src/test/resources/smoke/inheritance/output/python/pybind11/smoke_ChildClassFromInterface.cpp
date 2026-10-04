@@ -35,6 +35,9 @@ public:
             m_impl->child_class_method();
             return;
         }
+        if (py::get_override(static_cast<const ChildClassFromInterface*>(this), "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d496e746572666163652e6368696c64436c6173734d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromInterface, "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d496e746572666163652e6368696c64436c6173734d6574686f64", child_class_method);
+        }
         PYBIND11_OVERRIDE_PURE(void, ChildClassFromInterface, child_class_method);
     }
     void root_method(
@@ -44,12 +47,18 @@ public:
             m_impl->root_method();
             return;
         }
+        if (py::get_override(static_cast<const ChildClassFromInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f744d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f744d6574686f64", root_method);
+        }
         PYBIND11_OVERRIDE_PURE(void, ChildClassFromInterface, root_method);
     }
     ::std::string get_root_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
+        }
+        if (py::get_override(static_cast<const ChildClassFromInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, ChildClassFromInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_get", get_root_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ChildClassFromInterface, get_root_property);
     }
@@ -58,6 +67,9 @@ public:
         if (m_impl) {
             m_impl->set_root_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const ChildClassFromInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_set", set_root_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, ChildClassFromInterface, set_root_property, value);
     }

@@ -42,7 +42,9 @@
 
 import atexit
 import importlib
+import inspect
 import types
+import weakref
 from collections.abc import Callable
 from datetime import date, datetime, timedelta
 from typing import Any, Union, get_args, get_origin
@@ -61,6 +63,8 @@ def _unwrap(value: Any, type_hint: Any = Any) -> Any:
         return value
     origin = get_origin(type_hint)
     args = get_args(type_hint)
+    if origin is Callable:
+        return _adapt_callable(value, args, to_native=True)
     if origin in (Union, types.UnionType):
         non_null_args = [arg for arg in args if arg is not type(None)]
         return _unwrap(value, non_null_args[0]) if non_null_args else value
@@ -90,7 +94,7 @@ def _wrap(value: Any, type_hint: Any) -> Any:
     origin = get_origin(type_hint)
     args = get_args(type_hint)
     if origin is Callable:
-        return value
+        return _adapt_callable(value, args, to_native=False)
     if origin is list:
         return [_wrap(item, args[0]) for item in value]
     if origin is set:
@@ -110,6 +114,134 @@ def _wrap(value: Any, type_hint: Any) -> Any:
     if type_hint in (bool, int, float, str, bytes, date, datetime, timedelta):
         return value
     return _get_or_create_wrapper(value, type_hint)
+
+
+def _callable_shape_matches(value, hint):
+    if value is None or hint is Any:
+        return True
+    origin, args = get_origin(hint), get_args(hint)
+    if origin in (Union, types.UnionType):
+        return any(_callable_shape_matches(value, candidate) for candidate in args if candidate is not type(None))
+    if origin is Callable:
+        return callable(value)
+    if origin is dict:
+        return isinstance(value, dict) and all(
+            _callable_shape_matches(key, args[0]) and _callable_shape_matches(item, args[1])
+            for key, item in value.items()
+        )
+    if origin in (list, set, frozenset, tuple):
+        if not isinstance(value, (list, set, frozenset, tuple)):
+            return False
+        if origin is tuple and len(args) > 1 and args[1] is not Ellipsis:
+            return all(_callable_shape_matches(item, item_hint) for item, item_hint in zip(value, args))
+        return all(_callable_shape_matches(item, args[0]) for item in value)
+    # Resolve only the callable/non-callable distinction; pybind11 selects ordinary overloads.
+    return not callable(value) or (isinstance(hint, type) and isinstance(value, hint))
+
+
+def _contains_callable_value(value):
+    if hasattr(value, "_native"):
+        return False
+    if callable(value):
+        return True
+    if isinstance(value, dict):
+        return any(_contains_callable_value(key) or _contains_callable_value(item) for key, item in value.items())
+    if isinstance(value, (list, set, frozenset, tuple)):
+        return any(_contains_callable_value(item) for item in value)
+    return False
+
+
+def _unwrap_struct_args(args, kwargs, signatures, hints):
+    def field_hint(name, value):
+        # Constants may construct nested structs before their enclosing class exists.
+        # Resolve lambda hints lazily, only when an actual callable needs conversion.
+        return hints[name]() if name in hints and _contains_callable_value(value) else Any
+
+    for fields in signatures:
+        if len(args) + len(kwargs) != len(fields) or set(kwargs) != set(fields[len(args):]):
+            continue
+        values = list(zip(fields, args)) + list(kwargs.items())
+        if any(name not in hints and _contains_callable_value(value) for name, value in values):
+            continue
+        if all(_callable_shape_matches(value, field_hint(name, value)) for name, value in values):
+            return (
+                [_unwrap(value, field_hint(name, value)) for name, value in zip(fields, args)],
+                {name: _unwrap(value, field_hint(name, value)) for name, value in kwargs.items()},
+            )
+    # Leave invalid signatures to pybind11 for its usual argument diagnostics.
+    return ([_unwrap(value) for value in args], {name: _unwrap(value) for name, value in kwargs.items()})
+
+
+def _adapt_callable(callback, hints, *, to_native):
+    if not callable(callback):
+        return callback
+    parameter_hints, return_hint = hints
+
+    def adapted(*args):
+        convert_args = _wrap if to_native else _unwrap
+        convert_return = _unwrap if to_native else _wrap
+        converted = [
+            convert_args(value, parameter_hints[index]) if index < len(parameter_hints) else value
+            for index, value in enumerate(args)
+        ]
+        return convert_return(callback(*converted), return_hint)
+
+    return adapted
+
+
+_generated_callback_functions = weakref.WeakSet()
+
+
+def _mark_callback_base(cls):
+    # Generated forwarding accessors are not user overrides, including borrowed base properties.
+    for descriptor in cls.__dict__.values():
+        functions = (descriptor.fget, descriptor.fset) if isinstance(descriptor, property) else (descriptor,)
+        for function in functions:
+            if isinstance(function, (staticmethod, classmethod)):
+                function = function.__func__
+            if inspect.isfunction(function):
+                _generated_callback_functions.add(function)
+    return cls
+
+
+def _is_public_override(descriptor):
+    function = descriptor.__func__ if isinstance(descriptor, (staticmethod, classmethod)) else descriptor
+    return inspect.isfunction(function) and function not in _generated_callback_functions
+
+
+def _install_callback_adapters(cls, owner, specifications):
+    """Bridge genuine public overrides without changing ordinary Python method calls."""
+    for name, bridge_name, kind, legacy_name, hints in specifications:
+        descriptor = inspect.getattr_static(cls, name, None)
+        original = inspect.getattr_static(owner, name, None)
+        override = None
+        if descriptor is not original:
+            if kind == "method" and _is_public_override(descriptor):
+                override = descriptor
+            elif isinstance(descriptor, property):
+                candidate = descriptor.fget if kind == "get" else descriptor.fset
+                inherited = (original.fget if kind == "get" else original.fset) if isinstance(original, property) else None
+                if _is_public_override(candidate) and candidate is not inherited:
+                    override = candidate
+        if override is None and legacy_name:
+            descriptor = inspect.getattr_static(cls, legacy_name, None)
+            if _is_public_override(descriptor):
+                override = descriptor
+        if override is None:
+            continue
+
+        def bridge(self, *args, _override=override, _hints=hints):
+            parameters, return_type = _hints()
+            values = [_wrap(value, hint) for value, hint in zip(args, parameters)]
+            if isinstance(_override, staticmethod):
+                result = _override.__func__(*values)
+            elif isinstance(_override, classmethod):
+                result = _override.__func__(type(self), *values)
+            else:
+                result = _override(self, *values)
+            return _unwrap(result, return_type)
+
+        setattr(cls, bridge_name, bridge)
 
 
 # Wrapper cache: preserves referential equality across the C++ <-> Python boundary.

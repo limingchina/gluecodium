@@ -34,6 +34,9 @@ public:
         if (m_impl) {
             return m_impl->get_string_value();
         }
+        if (py::get_override(static_cast<const SimpleInterface*>(this), "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e676574537472696e6756616c7565")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, SimpleInterface, "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e676574537472696e6756616c7565", get_string_value);
+        }
         PYBIND11_OVERRIDE_PURE(::std::string, SimpleInterface, get_string_value);
     }
     ::std::shared_ptr< ::smoke::SimpleInterface > use_simple_interface(
@@ -41,6 +44,9 @@ public:
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->use_simple_interface(input);
+        }
+        if (py::get_override(static_cast<const SimpleInterface*>(this), "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e75736553696d706c65496e74657266616365")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::SimpleInterface >, SimpleInterface, "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e75736553696d706c65496e74657266616365", use_simple_interface, input);
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::SimpleInterface >, SimpleInterface, use_simple_interface, input);
     }

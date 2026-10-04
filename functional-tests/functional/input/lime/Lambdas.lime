@@ -177,3 +177,38 @@ class CallOverloadedLambda {
     // @return the result from the lambda
     static fun invokeOverloadedLambda(`lambda`: OverloadedLambda, value: Int): String
 }
+
+@Skip(Java, Kotlin, Swift, Dart)
+lambda PublicPayloadCallback = (NullablePayload?) -> NullablePayload?
+
+// Exercises the public Python callback contract through actual native calls.
+@Skip(Java, Kotlin, Swift, Dart)
+interface PublicStructuredCallback {
+    fun roundTrip(input: Map<String, List<NullablePayload?>>): Map<String, List<NullablePayload?>>
+    property payload: NullablePayload?
+    fun onLambda(callback: PublicPayloadCallback, value: NullablePayload?): NullablePayload?
+}
+
+@Skip(Java, Kotlin, Swift, Dart)
+interface DerivedPublicStructuredCallback: PublicStructuredCallback {
+}
+
+@Skip(Java, Kotlin, Swift, Dart)
+class PublicCallbackContract {
+    lambda PayloadCallback = (NullablePayload?) -> NullablePayload?
+    struct CallbackHolder {
+        callback: PayloadCallback
+    }
+    struct CallbackChoice {
+        integer: Int = 0
+        callback: PayloadCallback? = null
+        field constructor(integer)
+        field constructor(callback)
+    }
+    static fun invoke(callback: DerivedPublicStructuredCallback, value: NullablePayload?): Map<String, List<NullablePayload?>>
+    static fun propertyRoundTrip(callback: PublicStructuredCallback, value: NullablePayload?): NullablePayload?
+    static fun invokeLambda(callback: PayloadCallback, value: NullablePayload?): NullablePayload?
+    static fun getLambda(): PayloadCallback
+    static fun invokeHolder(holder: CallbackHolder, value: NullablePayload?): NullablePayload?
+    static fun invokeInheritedLambda(callback: DerivedPublicStructuredCallback, value: NullablePayload?): NullablePayload?
+}

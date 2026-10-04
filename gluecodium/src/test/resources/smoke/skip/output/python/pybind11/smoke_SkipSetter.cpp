@@ -32,6 +32,9 @@ public:
         if (m_impl) {
             return m_impl->get_foo();
         }
+        if (py::get_override(static_cast<const SkipSetter*>(this), "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, SkipSetter, "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_get", get_foo);
+        }
         PYBIND11_OVERRIDE_PURE(::std::string, SkipSetter, get_foo);
     }
     void set_foo(const ::std::string& value) override {
@@ -39,6 +42,9 @@ public:
         if (m_impl) {
             m_impl->set_foo(value);
             return;
+        }
+        if (py::get_override(static_cast<const SkipSetter*>(this), "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, SkipSetter, "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_set", set_foo, value);
         }
         PYBIND11_OVERRIDE_PURE(void, SkipSetter, set_foo, value);
     }

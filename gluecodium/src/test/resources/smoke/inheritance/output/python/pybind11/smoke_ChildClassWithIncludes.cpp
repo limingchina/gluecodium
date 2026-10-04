@@ -41,6 +41,9 @@ public:
         if (m_impl) {
             return m_impl->root_method(input1, input2);
         }
+        if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f744d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::IncludableClass >, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f744d6574686f64", root_method, input1, input2);
+        }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::IncludableClass >, ChildClassWithIncludes, root_method, input1, input2);
     }
     ::smoke::ShouldNotInclude not_in_java(
@@ -49,12 +52,18 @@ public:
         if (m_impl) {
             return m_impl->not_in_java();
         }
+        if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a617661")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::smoke::ShouldNotInclude, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a617661", not_in_java);
+        }
         PYBIND11_OVERRIDE_PURE(::smoke::ShouldNotInclude, ChildClassWithIncludes, not_in_java);
     }
     ::std::function<void(const int64_t)> get_root_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
+        }
+        if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::function<void(const int64_t)>, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_get", get_root_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::function<void(const int64_t)>, ChildClassWithIncludes, get_root_property);
     }
@@ -64,12 +73,18 @@ public:
             m_impl->set_root_property(value);
             return;
         }
+        if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_set", set_root_property, value);
+        }
         PYBIND11_OVERRIDE_PURE(void, ChildClassWithIncludes, set_root_property, value);
     }
     ::smoke::ShouldNotInclude get_not_in_java_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_not_in_java_property();
+        }
+        if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::smoke::ShouldNotInclude, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_get", get_not_in_java_property);
         }
         PYBIND11_OVERRIDE_PURE(::smoke::ShouldNotInclude, ChildClassWithIncludes, get_not_in_java_property);
     }
@@ -78,6 +93,9 @@ public:
         if (m_impl) {
             m_impl->set_not_in_java_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_set", set_not_in_java_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, ChildClassWithIncludes, set_not_in_java_property, value);
     }

@@ -51,6 +51,9 @@ public:
         if (m_impl) {
             return m_impl->bar_baz();
         }
+        if (py::get_override(static_cast<const InnerInterface*>(this), "__gluecodium_callback_736d6f6b652e4f757465725374727563742e496e6e6572496e746572666163652e62617242617a")) {
+        PYBIND11_OVERRIDE_PURE_NAME(bar_baz_return_type, InnerInterface, "__gluecodium_callback_736d6f6b652e4f757465725374727563742e496e6e6572496e746572666163652e62617242617a", bar_baz);
+        }
         PYBIND11_OVERRIDE_PURE(bar_baz_return_type, InnerInterface, bar_baz);
     }
 };

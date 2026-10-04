@@ -22,15 +22,9 @@ interface methods and that C++ can call them through the trampoline
 and receive the correct return values for various types (String, struct,
 enum, list, map, Blob, class instances).
 
-Key pattern: the trampoline uses PYBIND11_OVERRIDE_PURE with the C++ method
-name (e.g. ``get_message``).  A Python subclass overrides that *method* (not
-the Python property, if any) so the trampoline can discover and dispatch to
-it.  Return values must be native pybind11 objects (not Python wrapper
-objects) because the trampoline's type caster only recognises the pybind11
-types.
+Callback implementations use public wrapper types for arguments and return values.
 """
 
-import functional
 from test.ListenerWithReturn import ListenerWithReturn
 from test.MessageDelivery import MessageDelivery
 from test.MessagePackage import MessagePackage
@@ -61,18 +55,13 @@ class _TestListener(ListenerWithReturn):
         return _TestMessagePackage()
 
     def get_boxed_message(self):
-        # MessageBox extends _NativeBase (not the pybind11 class), so return
-        # the native pybind11 object directly for the trampoline type caster.
-        return functional.test_MessageBox.create()
+        return MessageBox.create()
 
     def get_structured_message(self):
-        # Return the native pybind11 struct, not the Python wrapper, because the
-        # trampoline's type caster only recognises pybind11 struct instances.
-        return functional.test_ListenerWithReturn.MessageStruct("Works")
+        return ListenerWithReturn.MessageStruct("Works")
 
     def get_enumerated_message(self):
-        # Return the native pybind11 enum value, not the Python wrapper enum.
-        return functional.test_ListenerWithReturn.MessageEnum.YES
+        return ListenerWithReturn.MessageEnum.YES
 
     def get_arrayed_message(self) -> list:
         return ["Works"]

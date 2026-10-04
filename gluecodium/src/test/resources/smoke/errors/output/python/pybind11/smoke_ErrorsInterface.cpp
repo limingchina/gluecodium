@@ -37,7 +37,16 @@ public:
         if (m_impl) {
             return m_impl->method_with_errors();
         }
-        PYBIND11_OVERRIDE_PURE(method_with_errors_return_type, ErrorsInterface, method_with_errors);
+        if (py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273")) {
+            auto callback = py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273");
+            auto result = callback();
+            return result.is_none() ? std::error_code{} : result.cast<std::error_code>();
+        }
+        if (auto callback = py::get_override(static_cast<const ErrorsInterface*>(this), "method_with_errors")) {
+            auto result = callback();
+            return result.is_none() ? std::error_code{} : result.cast<std::error_code>();
+        }
+        py::pybind11_fail("Tried to call pure virtual function \"ErrorsInterface::method_with_errors\"");
     }
     using method_with_external_errors_return_type = ::std::error_code;
     ::std::error_code method_with_external_errors(
@@ -46,7 +55,16 @@ public:
         if (m_impl) {
             return m_impl->method_with_external_errors();
         }
-        PYBIND11_OVERRIDE_PURE(method_with_external_errors_return_type, ErrorsInterface, method_with_external_errors);
+        if (py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f645769746845787465726e616c4572726f7273")) {
+            auto callback = py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f645769746845787465726e616c4572726f7273");
+            auto result = callback();
+            return result.is_none() ? std::error_code{} : result.cast<std::error_code>();
+        }
+        if (auto callback = py::get_override(static_cast<const ErrorsInterface*>(this), "method_with_external_errors")) {
+            auto result = callback();
+            return result.is_none() ? std::error_code{} : result.cast<std::error_code>();
+        }
+        py::pybind11_fail("Tried to call pure virtual function \"ErrorsInterface::method_with_external_errors\"");
     }
     using method_with_errors_and_return_value_return_type = ::gluecodium::Return< ::std::string, ::std::error_code >;
     ::gluecodium::Return< ::std::string, ::std::error_code > method_with_errors_and_return_value(
@@ -54,6 +72,9 @@ public:
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_errors_and_return_value();
+        }
+        if (py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273416e6452657475726e56616c7565")) {
+        PYBIND11_OVERRIDE_PURE_NAME(method_with_errors_and_return_value_return_type, ErrorsInterface, "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273416e6452657475726e56616c7565", method_with_errors_and_return_value);
         }
         PYBIND11_OVERRIDE_PURE(method_with_errors_and_return_value_return_type, ErrorsInterface, method_with_errors_and_return_value);
     }

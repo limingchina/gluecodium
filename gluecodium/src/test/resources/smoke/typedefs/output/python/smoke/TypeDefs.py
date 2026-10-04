@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
@@ -15,7 +15,7 @@ class TypeDefs(_NativeBase):
 
     @staticmethod
     def method_with_primitive_type_def(input: float) -> float:
-        return generated.smoke_TypeDefs.method_with_primitive_type_def(_unwrap(input, float))
+        return _wrap(generated.smoke_TypeDefs.method_with_primitive_type_def(_unwrap(input, float)), float)
 
     @staticmethod
     def method_with_complex_type_def(input: list[TypeDefs.TestStruct]) -> list[TypeDefs.TestStruct]:
@@ -23,7 +23,7 @@ class TypeDefs(_NativeBase):
 
     @staticmethod
     def return_nested_int_type_def(input: float) -> float:
-        return generated.smoke_TypeDefs.return_nested_int_type_def(_unwrap(input, float))
+        return _wrap(generated.smoke_TypeDefs.return_nested_int_type_def(_unwrap(input, float)), float)
 
     @staticmethod
     def return_test_struct_type_def(input: TypeDefs.TestStruct) -> TypeDefs.TestStruct:

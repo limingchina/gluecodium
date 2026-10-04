@@ -2,13 +2,25 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
 
 
+@_mark_callback_base
 class InterfaceWithStatic(generated.smoke_InterfaceWithStatic):
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        _install_callback_adapters(cls, __class__, [
+            ("regular_function", "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617246756e6374696f6e", "method", None,
+             lambda: ([], str)),
+            ("regular_property", "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_get", "get", "get_regular_property",
+             lambda: ([], str)),
+            ("regular_property", "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_set", "set", "set_regular_property",
+             lambda: ([str], None)),
+        ])
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
@@ -27,7 +39,7 @@ class InterfaceWithStatic(generated.smoke_InterfaceWithStatic):
 
     @staticmethod
     def static_function() -> str:
-        return generated.smoke_InterfaceWithStatic.static_function()
+        return _wrap(generated.smoke_InterfaceWithStatic.static_function(), str)
 
     @property
     def regular_property(self) -> str:

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
@@ -18,11 +18,11 @@ class CppRefReturnType(_NativeBase):
 
     @staticmethod
     def bool_ref() -> bool:
-        return generated.smoke_CppRefReturnType.bool_ref()
+        return _wrap(generated.smoke_CppRefReturnType.bool_ref(), bool)
 
     @staticmethod
     def string_ref() -> str:
-        return generated.smoke_CppRefReturnType.string_ref()
+        return _wrap(generated.smoke_CppRefReturnType.string_ref(), str)
 
     @staticmethod
     def struct_ref() -> CppRefReturnType.SomeStruct:
@@ -36,7 +36,7 @@ class CppRefReturnType(_NativeBase):
 
     @staticmethod
     def nullable_ref() -> Optional[str]:
-        return generated.smoke_CppRefReturnType.nullable_ref()
+        return _wrap(generated.smoke_CppRefReturnType.nullable_ref(), Optional[str])
 
     @staticmethod
     def throwing_enum_with_void():
@@ -44,7 +44,7 @@ class CppRefReturnType(_NativeBase):
 
     @staticmethod
     def throwing_enum_with_string() -> str:
-        return generated.smoke_CppRefReturnType.throwing_enum_with_string()
+        return _wrap(generated.smoke_CppRefReturnType.throwing_enum_with_string(), str)
 
     @staticmethod
     def throwing_struct_with_void():
@@ -52,7 +52,7 @@ class CppRefReturnType(_NativeBase):
 
     @staticmethod
     def throwing_struct_with_string() -> str:
-        return generated.smoke_CppRefReturnType.throwing_struct_with_string()
+        return _wrap(generated.smoke_CppRefReturnType.throwing_struct_with_string(), str)
 
     @staticmethod
     def string_property() -> str:

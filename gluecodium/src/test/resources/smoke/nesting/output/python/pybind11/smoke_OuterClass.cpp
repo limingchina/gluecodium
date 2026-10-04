@@ -35,6 +35,9 @@ public:
         if (m_impl) {
             return m_impl->foo(input);
         }
+        if (py::get_override(static_cast<const InnerInterface*>(this), "__gluecodium_callback_736d6f6b652e4f75746572436c6173732e496e6e6572496e746572666163652e666f6f")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, InnerInterface, "__gluecodium_callback_736d6f6b652e4f75746572436c6173732e496e6e6572496e746572666163652e666f6f", foo, input);
+        }
         PYBIND11_OVERRIDE_PURE(::std::string, InnerInterface, foo, input);
     }
 };

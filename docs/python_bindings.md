@@ -233,6 +233,12 @@ calculator.set_listener(listener)
 calculator.multiply(6.0, 7.0)
 ```
 
+Callback arguments and return values use the same public wrapper types as ordinary
+method calls, including wrappers inside nullable values and collections. Override
+interface methods or Python properties with public types; callable parameters and
+results also convert their arguments and returns when invoked through C++.
+Direct Python calls to your overrides retain ordinary Python behavior.
+
 The generated trampoline dispatches C++ virtual calls to Python and acquires the
 GIL for those calls. Keep the Python callback object alive while C++ may invoke it;
 shared ownership of a C++ object alone is not a substitute for managing the Python

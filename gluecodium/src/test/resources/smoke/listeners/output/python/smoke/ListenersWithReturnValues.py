@@ -2,14 +2,34 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
 
 from smoke.CalculationResult import CalculationResult
 
+@_mark_callback_base
 class ListenersWithReturnValues(generated.smoke_ListenersWithReturnValues):
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        _install_callback_adapters(cls, __class__, [
+            ("fetch_data_double", "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461446f75626c65", "method", None,
+             lambda: ([], float)),
+            ("fetch_data_string", "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461537472696e67", "method", None,
+             lambda: ([], str)),
+            ("fetch_data_struct", "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461537472756374", "method", None,
+             lambda: ([], ListenersWithReturnValues.ResultStruct)),
+            ("fetch_data_enum", "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461456e756d", "method", None,
+             lambda: ([], ListenersWithReturnValues.ResultEnum)),
+            ("fetch_data_array", "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e6665746368446174614172726179", "method", None,
+             lambda: ([], list[float])),
+            ("fetch_data_map", "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e6665746368446174614d6170", "method", None,
+             lambda: ([], dict[str, float])),
+            ("fetch_data_instance", "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461496e7374616e6365", "method", None,
+             lambda: ([], CalculationResult)),
+        ])
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an

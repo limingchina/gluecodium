@@ -34,12 +34,18 @@ public:
             m_impl->very_fun(param);
             return;
         }
+        if (py::get_override(static_cast<const AttributesInterface*>(this), "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e7665727946756e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, AttributesInterface, "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e7665727946756e", very_fun, param);
+        }
         PYBIND11_OVERRIDE_PURE(void, AttributesInterface, very_fun, param);
     }
     ::std::string get_prop() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_prop();
+        }
+        if (py::get_override(static_cast<const AttributesInterface*>(this), "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, AttributesInterface, "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_get", get_prop);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, AttributesInterface, get_prop);
     }
@@ -48,6 +54,9 @@ public:
         if (m_impl) {
             m_impl->set_prop(value);
             return;
+        }
+        if (py::get_override(static_cast<const AttributesInterface*>(this), "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, AttributesInterface, "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_set", set_prop, value);
         }
         PYBIND11_OVERRIDE_PURE(void, AttributesInterface, set_prop, value);
     }

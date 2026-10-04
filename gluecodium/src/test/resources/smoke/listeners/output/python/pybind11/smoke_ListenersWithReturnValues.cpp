@@ -41,6 +41,9 @@ public:
         if (m_impl) {
             return m_impl->fetch_data_double();
         }
+        if (py::get_override(static_cast<const ListenersWithReturnValues*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461446f75626c65")) {
+        PYBIND11_OVERRIDE_PURE_NAME(double, ListenersWithReturnValues, "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461446f75626c65", fetch_data_double);
+        }
         PYBIND11_OVERRIDE_PURE(double, ListenersWithReturnValues, fetch_data_double);
     }
     ::std::string fetch_data_string(
@@ -48,6 +51,9 @@ public:
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->fetch_data_string();
+        }
+        if (py::get_override(static_cast<const ListenersWithReturnValues*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461537472696e67")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, ListenersWithReturnValues, "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461537472696e67", fetch_data_string);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ListenersWithReturnValues, fetch_data_string);
     }
@@ -57,6 +63,9 @@ public:
         if (m_impl) {
             return m_impl->fetch_data_struct();
         }
+        if (py::get_override(static_cast<const ListenersWithReturnValues*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461537472756374")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::smoke::ListenersWithReturnValues::ResultStruct, ListenersWithReturnValues, "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461537472756374", fetch_data_struct);
+        }
         PYBIND11_OVERRIDE_PURE(::smoke::ListenersWithReturnValues::ResultStruct, ListenersWithReturnValues, fetch_data_struct);
     }
     ::smoke::ListenersWithReturnValues::ResultEnum fetch_data_enum(
@@ -65,6 +74,9 @@ public:
         if (m_impl) {
             return m_impl->fetch_data_enum();
         }
+        if (py::get_override(static_cast<const ListenersWithReturnValues*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461456e756d")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::smoke::ListenersWithReturnValues::ResultEnum, ListenersWithReturnValues, "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461456e756d", fetch_data_enum);
+        }
         PYBIND11_OVERRIDE_PURE(::smoke::ListenersWithReturnValues::ResultEnum, ListenersWithReturnValues, fetch_data_enum);
     }
     ::std::vector< double > fetch_data_array(
@@ -72,6 +84,9 @@ public:
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->fetch_data_array();
+        }
+        if (py::get_override(static_cast<const ListenersWithReturnValues*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e6665746368446174614172726179")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::vector< double >, ListenersWithReturnValues, "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e6665746368446174614172726179", fetch_data_array);
         }
         PYBIND11_OVERRIDE_PURE(::std::vector< double >, ListenersWithReturnValues, fetch_data_array);
     }
@@ -82,6 +97,9 @@ public:
         if (m_impl) {
             return m_impl->fetch_data_map();
         }
+        if (py::get_override(static_cast<const ListenersWithReturnValues*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e6665746368446174614d6170")) {
+        PYBIND11_OVERRIDE_PURE_NAME(fetch_data_map_return_type, ListenersWithReturnValues, "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e6665746368446174614d6170", fetch_data_map);
+        }
         PYBIND11_OVERRIDE_PURE(fetch_data_map_return_type, ListenersWithReturnValues, fetch_data_map);
     }
     ::std::shared_ptr< ::smoke::CalculationResult > fetch_data_instance(
@@ -89,6 +107,9 @@ public:
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->fetch_data_instance();
+        }
+        if (py::get_override(static_cast<const ListenersWithReturnValues*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461496e7374616e6365")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::CalculationResult >, ListenersWithReturnValues, "__gluecodium_callback_736d6f6b652e4c697374656e6572735769746852657475726e56616c7565732e666574636844617461496e7374616e6365", fetch_data_instance);
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::CalculationResult >, ListenersWithReturnValues, fetch_data_instance);
     }

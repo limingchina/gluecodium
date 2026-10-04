@@ -31,6 +31,14 @@
         if (m_impl) {
             return m_impl->{{resolveName this "Pybind11" "getter"}}();
         }
+        if (py::get_override(static_cast<const {{resolveName model "Pybind11"}}*>(this), "{{resolveName this "Callback" "getter"}}")) {
+{{#ifPredicate typeRef "returnTypeHasComma"}}
+        PYBIND11_OVERRIDE_PURE_NAME({{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback" "getter"}}", {{resolveName this "Pybind11" "getter"}});
+{{/ifPredicate}}
+{{#unlessPredicate typeRef "returnTypeHasComma"}}
+        PYBIND11_OVERRIDE_PURE_NAME({{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback" "getter"}}", {{resolveName this "Pybind11" "getter"}});
+{{/unlessPredicate}}
+        }
 {{#ifPredicate typeRef "returnTypeHasComma"}}
         PYBIND11_OVERRIDE_PURE({{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "getter"}});
 {{/ifPredicate}}
@@ -44,6 +52,9 @@
         if (m_impl) {
             m_impl->{{resolveName this "Pybind11" "setter"}}(value);
             return;
+        }
+        if (py::get_override(static_cast<const {{resolveName model "Pybind11"}}*>(this), "{{resolveName this "Callback" "setter"}}")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback" "setter"}}", {{resolveName this "Pybind11" "setter"}}, value);
         }
         PYBIND11_OVERRIDE_PURE(void, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "setter"}}, value);
     }
