@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class OuterClassWithLambdaAndProperty:
@@ -23,6 +24,3 @@ class OuterClassWithLambdaAndProperty:
         ...
 
     SomeInternalLambda = Callable[[int], int]
-    
-    
-

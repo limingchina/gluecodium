@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -35,30 +35,27 @@ class MethodOverloads(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def x(self) -> float:
             return _wrap(self._native.x, float)
         @x.setter
         def x(self, value: float):
           self._native.x = _unwrap(value, float)
-    
-    
+
+
         @property
         def y(self) -> float:
             return _wrap(self._native.y, float)
         @y.setter
         def y(self, value: float):
           self._native.y = _unwrap(value, float)
-    
-    
-    
-    
-    StringArray = list[str]
-    
-    
-    
-    IntArray = list[int]
-    
-    
 
+
+
+
+    StringArray = list[str]
+
+
+
+    IntArray = list[int]

@@ -3,6 +3,7 @@
 from smoke.Constructors import Constructors
 from enum import Enum
 import typing
+from typing import Optional
 
 class ChildConstructors(
     Constructors):
@@ -16,5 +17,3 @@ class ChildConstructors(
     @staticmethod
     def create(other: Constructors) -> ChildConstructors:
         ...
-
-

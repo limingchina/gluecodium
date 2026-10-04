@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class SimpleClass:
 
@@ -10,5 +11,3 @@ class SimpleClass:
 
     def use_simple_class(self, input: SimpleClass) -> SimpleClass:
         ...
-
-

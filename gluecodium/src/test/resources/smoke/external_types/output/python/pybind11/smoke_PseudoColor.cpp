@@ -27,8 +27,9 @@ auto cls_PseudoColor = py::class_<PseudoColor>(module, "smoke_PseudoColor")
         .def_readwrite("alpha", &PseudoColor::alpha)
         .def(py::init<>())
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
-        .def("__eq__", [](const PseudoColor& lhs, const PseudoColor& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const PseudoColor& self) { return gluecodium::hash<PseudoColor>{}(self); })
+        .def("__gluecodium_copy__", [](const PseudoColor& self) { return PseudoColor(self); })
+        .def("__gluecodium_equals__", [](const PseudoColor& lhs, const PseudoColor& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const PseudoColor& self) { return gluecodium::hash<PseudoColor>{}(self); })
         ;
 
 

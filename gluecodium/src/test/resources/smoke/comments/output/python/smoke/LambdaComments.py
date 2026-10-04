@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 from typing import Callable
@@ -15,29 +15,26 @@ class LambdaComments(_NativeBase):
 
     #: The first line of the doc.
     WithNoNamedParameters = Callable[[str], str]
-    
-    
-    
+
+
+
     #: The first line of the doc.
     WithNoDocsForParameters = Callable[[str], str]
-    
-    
-    
+
+
+
     #: The first line of the doc.
     WithNamedParameters = Callable[[str], str]
-    
-    
-    
+
+
+
     #: The first line of the doc.
     MixedDocNameParameters = Callable[[str, str], str]
-    
-    
-    
-    NoCommentsNoNamedParams = Callable[[str, str], str]
-    
-    
-    
-    NoCommentsWithNamedParams = Callable[[str, str], str]
-    
-    
 
+
+
+    NoCommentsNoNamedParams = Callable[[str, str], str]
+
+
+
+    NoCommentsWithNamedParams = Callable[[str, str], str]

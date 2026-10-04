@@ -98,22 +98,63 @@ def _wrap(value: Any, type_hint: Any) -> Any:
     if origin is list:
         return [_wrap(item, args[0]) for item in value]
     if origin is set:
-        return {_wrap(item, args[0]) for item in value}
+        return {_hashable_key(_wrap(item, args[0])) for item in value}
     if origin is frozenset:
-        return frozenset(_wrap(item, args[0]) for item in value)
+        return frozenset(_hashable_key(_wrap(item, args[0])) for item in value)
     if origin is tuple:
         item_hint = args[0]
         if len(args) > 1 and args[1] is not Ellipsis:
             return tuple(_wrap(item, hint) for item, hint in zip(value, args))
         return tuple(_wrap(item, item_hint) for item in value)
     if origin is dict:
-        return {_wrap(key, args[0]): _wrap(item, args[1]) for key, item in value.items()}
+        return {_hashable_key(_wrap(key, args[0])): _wrap(item, args[1]) for key, item in value.items()}
     if origin in (Union, types.UnionType):
         non_null_args = [arg for arg in args if arg is not type(None)]
         return _wrap(value, non_null_args[0]) if non_null_args else value
     if type_hint in (bool, int, float, str, bytes, date, datetime, timedelta):
         return value
     return _get_or_create_wrapper(value, type_hint)
+
+
+_struct_key_types = weakref.WeakKeyDictionary()
+
+
+def _struct_key(value, owner):
+    key_type = _struct_key_types.get(owner)
+    if key_type is None:
+        class StructKey(owner):
+            def __init__(self, source):
+                if hasattr(self, "_StructKey__snapshot"):
+                    raise AttributeError("Struct key snapshots are immutable")
+                object.__setattr__(self, "_StructKey__snapshot", source._native.__gluecodium_copy__())
+
+            @property
+            def _native(self):
+                # Never expose the stored value: getters and instance methods operate on copies.
+                return self.__snapshot.__gluecodium_copy__()
+
+            def __setattr__(self, name, value):
+                raise AttributeError("Struct key snapshots are immutable")
+
+            def __hash__(self):
+                return self.__snapshot.__gluecodium_hash__()
+
+            def as_key(self):
+                return self
+
+        key_type = StructKey
+        _struct_key_types[owner] = key_type
+    return value if isinstance(value, key_type) else key_type(value)
+
+
+def _hashable_key(value):
+    if isinstance(value, _NativeBase) and type(value).__hash__ is None and hasattr(value, "as_key"):
+        return value.as_key()
+    if isinstance(value, tuple):
+        return tuple(_hashable_key(item) for item in value)
+    if isinstance(value, frozenset):
+        return frozenset(_hashable_key(item) for item in value)
+    return value
 
 
 def _callable_shape_matches(value, hint):

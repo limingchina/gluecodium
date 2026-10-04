@@ -3,6 +3,7 @@
 import datetime
 from enum import Enum
 import typing
+from typing import Optional
 
 class DurationOverloads:
 
@@ -13,5 +14,3 @@ class DurationOverloads:
     @typing.overload
     def duration_function(self, input: str) -> str:
         ...
-
-

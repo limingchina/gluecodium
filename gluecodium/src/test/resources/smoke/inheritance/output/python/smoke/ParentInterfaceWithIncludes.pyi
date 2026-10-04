@@ -7,6 +7,7 @@ from smoke.IncludableStruct import IncludableStruct
 from smoke.ShouldNotInclude import ShouldNotInclude
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class ParentInterfaceWithIncludes:
@@ -32,5 +33,3 @@ class ParentInterfaceWithIncludes:
     @not_in_java_property.setter
     def not_in_java_property(self, value: ShouldNotInclude) -> None:
         ...
-
-

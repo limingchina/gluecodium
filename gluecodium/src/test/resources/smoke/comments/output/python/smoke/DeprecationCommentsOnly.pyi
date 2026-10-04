@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class DeprecationCommentsOnly:
     """"""
@@ -21,24 +22,23 @@ class DeprecationCommentsOnly:
 
     class SomeStruct:
         """"""
-    
-        #: 
+
+        #:
         some_field: bool
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
         """"""
-    
+
         USELESS = 0
-    
-    
-    
-    #: 
+
+
+
+    #:
     Usefulness = bool
-    
-    
 
-    #: 
+
+
+    #:
     VERY_USEFUL = True
-

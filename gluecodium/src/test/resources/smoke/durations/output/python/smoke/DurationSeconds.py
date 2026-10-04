@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -36,34 +36,31 @@ class DurationSeconds(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def duration_field(self) -> datetime.timedelta:
             return _wrap(self._native.duration_field, datetime.timedelta)
         @duration_field.setter
         def duration_field(self, value: datetime.timedelta):
           self._native.duration_field = _unwrap(value, datetime.timedelta)
-    
-    
-    
-    
-    DurationTypeAlias = datetime.timedelta
-    
-    
-    
-    DurationList = list[datetime.timedelta]
-    
-    
-    
-    DurationSet = set[datetime.timedelta]
-    
-    
-    
-    DurationMap = dict[str, datetime.timedelta]
-    
-    
-    
-    DurationKeyMap = dict[datetime.timedelta, str]
-    
-    
 
+
+
+
+    DurationTypeAlias = datetime.timedelta
+
+
+
+    DurationList = list[datetime.timedelta]
+
+
+
+    DurationSet = set[datetime.timedelta]
+
+
+
+    DurationMap = dict[str, datetime.timedelta]
+
+
+
+    DurationKeyMap = dict[datetime.timedelta, str]

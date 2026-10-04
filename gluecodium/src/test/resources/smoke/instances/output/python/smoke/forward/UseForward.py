@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -36,5 +36,3 @@ class UseForward(generated.smoke_forward_UseForward):
 
     def use_it(self, param1: Class1, param2: Class2, simple_class: SimpleClass, simple_interface: SimpleInterface):
         return _wrap(generated.smoke_forward_UseForward.use_it(self, _unwrap(param1, Class1), _unwrap(param2, Class2), _unwrap(simple_class, SimpleClass), _unwrap(simple_interface, SimpleInterface)), None)
-
-

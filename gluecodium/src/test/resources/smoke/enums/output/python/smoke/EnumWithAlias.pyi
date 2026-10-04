@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class EnumWithAlias(Enum):
 
@@ -10,5 +11,3 @@ class EnumWithAlias(Enum):
     THREE = 2
     FIRST = 3
     THE_BEST = 4
-
-

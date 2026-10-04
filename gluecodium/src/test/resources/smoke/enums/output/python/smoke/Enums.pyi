@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class Enums:
 
@@ -22,28 +23,25 @@ class Enums:
         ...
 
     class ErrorStruct:
-    
+
         type: Enums.InternalErrorCode
-    
+
         message: str
-    
-    
-    
+
+
+
     class SimpleEnum(Enum):
-    
+
         FIRST = 0
         SECOND = 1
-    
-    
-    
+
+
+
     class InternalErrorCode(Enum):
-    
+
         ERROR_NONE = 0
         ERROR_FATAL = 1
-    
-    
-    
-    ExampleMap = dict[SimpleEnum, int]
-    
-    
 
+
+
+    ExampleMap = dict[SimpleEnum, int]

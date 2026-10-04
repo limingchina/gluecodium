@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class SwiftExternalCtor:
 
@@ -10,5 +11,3 @@ class SwiftExternalCtor:
     @staticmethod
     def make(field: str) -> SwiftExternalCtor:
         ...
-
-

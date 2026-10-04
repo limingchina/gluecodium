@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class JavaDeprecatedPosDefaultsCustom:
     """Foo Bar this is a comment"""
@@ -15,5 +16,3 @@ class JavaDeprecatedPosDefaultsCustom:
     @staticmethod
     def custom() -> JavaDeprecatedPosDefaultsCustom:
         ...
-
-

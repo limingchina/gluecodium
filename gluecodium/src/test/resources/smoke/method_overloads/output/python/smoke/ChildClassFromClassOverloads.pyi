@@ -3,6 +3,7 @@
 from smoke.ParentClass import ParentClass
 from enum import Enum
 import typing
+from typing import Optional
 
 class ChildClassFromClassOverloads(
     ParentClass):
@@ -22,5 +23,3 @@ class ChildClassFromClassOverloads(
     @typing.overload
     def bar(self, input: float):
         ...
-
-

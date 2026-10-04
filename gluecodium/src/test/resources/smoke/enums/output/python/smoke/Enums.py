@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -41,48 +41,45 @@ class Enums(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def type(self) -> Enums.InternalErrorCode:
             return _wrap(self._native.type, Enums.InternalErrorCode)
         @type.setter
         def type(self, value: Enums.InternalErrorCode):
           self._native.type = _unwrap(value, Enums.InternalErrorCode)
-    
-    
+
+
         @property
         def message(self) -> str:
             return _wrap(self._native.message, str)
         @message.setter
         def message(self, value: str):
           self._native.message = _unwrap(value, str)
-    
-    
-    
-    
+
+
+
+
     class SimpleEnum(Enum):
-    
+
         FIRST = generated.smoke_Enums.SimpleEnum.FIRST
         SECOND = generated.smoke_Enums.SimpleEnum.SECOND
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class InternalErrorCode(Enum):
-    
+
         ERROR_NONE = generated.smoke_Enums.InternalErrorCode.ERROR_NONE
         ERROR_FATAL = generated.smoke_Enums.InternalErrorCode.ERROR_FATAL
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
-    ExampleMap = dict[SimpleEnum, int]
-    
-    
 
+
+
+    ExampleMap = dict[SimpleEnum, int]

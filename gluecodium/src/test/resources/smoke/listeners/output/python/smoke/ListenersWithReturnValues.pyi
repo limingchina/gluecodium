@@ -3,6 +3,7 @@
 from smoke.CalculationResult import CalculationResult
 from enum import Enum
 import typing
+from typing import Optional
 
 class ListenersWithReturnValues:
 
@@ -28,19 +29,16 @@ class ListenersWithReturnValues:
         ...
 
     class ResultStruct:
-    
+
         result: float
-    
-    
-    
+
+
+
     class ResultEnum(Enum):
-    
+
         NONE = 0
         RESULT = 1
-    
-    
-    
-    StringToDouble = dict[str, float]
-    
-    
 
+
+
+    StringToDouble = dict[str, float]

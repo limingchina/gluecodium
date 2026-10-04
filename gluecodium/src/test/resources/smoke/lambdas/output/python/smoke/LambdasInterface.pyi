@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class LambdasInterface:
@@ -10,6 +11,3 @@ class LambdasInterface:
         ...
 
     TakeScreenshotCallback = Callable[[Optional[bytes]], None]
-    
-    
-

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -21,5 +21,3 @@ class SkippedOverloads(_NativeBase):
     def make_for_dart(input: str) -> SkippedOverloads:
         native_result = generated.smoke_SkippedOverloads.make_for_dart(_unwrap(input, str))
         return _get_or_create_wrapper(native_result, SkippedOverloads)
-
-

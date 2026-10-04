@@ -3,6 +3,7 @@
 from smoke.Comments import Comments
 from enum import Enum
 import typing
+from typing import Optional
 
 class CommentsLinks:
     """The nested types like `CommentsLinks.random_method` don't need full name prefix, but it's
@@ -58,9 +59,6 @@ Not working for Swift:
 
     class RandomStruct:
         """Links also work in:"""
-    
+
         #: Some random field `Comments.SomeStruct`
         random_field: Comments.SomeStruct
-    
-    
-

@@ -3,6 +3,7 @@
 from smoke.FooBarEnum import FooBarEnum
 from enum import Enum
 import typing
+from typing import Optional
 
 class InternalEnumDefaults:
 
@@ -13,5 +14,3 @@ class InternalEnumDefaults:
     _internal_field: FooBarEnum
 
     _internal_list_field: list[FooBarEnum]
-
-

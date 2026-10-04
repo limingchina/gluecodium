@@ -7,36 +7,34 @@ from fire.Enum4 import Enum4
 from smoke.EnumWrapper import EnumWrapper
 from enum import Enum
 import typing
+from typing import Optional
 
 class EnumDefaults:
 
     class SimpleEnum:
-    
-        enum_field: Enum1
-    
-    
-    
-    class NullableEnum:
-    
-        enum_field1: Optional[Enum2]
-    
-        enum_field1: Optional[Enum2]
-    
-    
-    
-    class AliasEnum:
-    
-        enum_field: Enum3
-    
-    
-    
-    class WrappedEnum:
-    
-        struct_field: EnumWrapper
-    
-    
-    
-    EnumAlias = Enum3
-    
-    
 
+        enum_field: Enum1
+
+
+
+    class NullableEnum:
+
+        enum_field1: Optional[Enum2]
+
+        enum_field1: Optional[Enum2]
+
+
+
+    class AliasEnum:
+
+        enum_field: Enum3
+
+
+
+    class WrappedEnum:
+
+        struct_field: EnumWrapper
+
+
+
+    EnumAlias = Enum3

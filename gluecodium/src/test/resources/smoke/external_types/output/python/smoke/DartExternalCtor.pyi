@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class DartExternalCtor:
 
@@ -10,5 +11,3 @@ class DartExternalCtor:
     @staticmethod
     def make(field: str) -> DartExternalCtor:
         ...
-
-

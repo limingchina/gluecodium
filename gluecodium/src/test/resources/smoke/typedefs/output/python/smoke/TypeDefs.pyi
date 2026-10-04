@@ -3,6 +3,7 @@
 from smoke.TypeCollection import TypeCollection
 from enum import Enum
 import typing
+from typing import Optional
 
 class TypeDefs:
 
@@ -39,38 +40,35 @@ class TypeDefs:
         ...
 
     class StructHavingAliasFieldDefinedBelow:
-    
-        field: float
-    
-    
-    
-    class TestStruct:
-    
-        something: str
-    
-    
-    
-    NestedIntTypeDef = float
-    
-    
-    
-    PrimitiveTypeDef = float
-    
-    
-    
-    StructArray = list[TestStruct]
-    
-    
-    
-    ComplexTypeDef = list[TestStruct]
-    
-    
-    
-    TestStructTypeDef = TestStruct
-    
-    
-    
-    NestedStructTypeDef = TestStruct
-    
-    
 
+        field: float
+
+
+
+    class TestStruct:
+
+        something: str
+
+
+
+    NestedIntTypeDef = float
+
+
+
+    PrimitiveTypeDef = float
+
+
+
+    StructArray = list[TestStruct]
+
+
+
+    ComplexTypeDef = list[TestStruct]
+
+
+
+    TestStructTypeDef = TestStruct
+
+
+
+    NestedStructTypeDef = TestStruct

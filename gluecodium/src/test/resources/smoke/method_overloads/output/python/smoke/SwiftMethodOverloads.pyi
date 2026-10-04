@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class SwiftMethodOverloads:
 
@@ -10,5 +11,3 @@ class SwiftMethodOverloads:
 
     def two(self, input: list[str]):
         ...
-
-

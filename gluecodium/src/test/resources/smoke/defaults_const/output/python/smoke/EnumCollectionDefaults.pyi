@@ -6,6 +6,7 @@ from fire.Enum3 import Enum3
 from fire.Enum4 import Enum4
 from enum import Enum
 import typing
+from typing import Optional
 
 class EnumCollectionDefaults:
 
@@ -14,5 +15,3 @@ class EnumCollectionDefaults:
     set_field: set[Enum2]
 
     map_field: dict[Enum3, Enum4]
-
-

@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class SpecialNamesInterface:
@@ -10,6 +11,3 @@ class SpecialNamesInterface:
         ...
 
     Callback = Callable[[], None]
-    
-    
-

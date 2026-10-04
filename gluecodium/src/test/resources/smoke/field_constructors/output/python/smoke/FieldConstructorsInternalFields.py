@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -40,6 +40,3 @@ class FieldConstructorsInternalFields(_NativeBase):
     @_bool_field.setter
     def _bool_field(self, value: bool):
       self._native._bool_field = _unwrap(value, bool)
-
-
-

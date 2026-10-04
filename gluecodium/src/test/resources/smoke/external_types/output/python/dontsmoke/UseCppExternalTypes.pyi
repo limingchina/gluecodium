@@ -5,6 +5,7 @@ from smoke.Enums import Enums
 from smoke.Structs import Structs
 from enum import Enum
 import typing
+from typing import Optional
 
 class UseCppExternalTypes:
 
@@ -19,5 +20,3 @@ class UseCppExternalTypes:
     @staticmethod
     def use_class(input: ClassWithOverloads):
         ...
-
-

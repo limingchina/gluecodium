@@ -184,6 +184,27 @@ class Service {
 control. An explicit `Name` takes priority over the internal prefix.
 See [naming conventions](naming_conventions.md) for naming-rule properties.
 
+### Equatable structs and collection keys
+
+Equatable structs compare by value. Mutable structs are unhashable, including
+immutable outer structs that contain mutable state. A deeply immutable struct
+with immutable scalar or struct fields retains value hashing.
+
+Use `value.as_key()` to create an immutable snapshot for a dictionary or set.
+The snapshot compares by value with the original struct and owns a native copy;
+nested getters and instance methods operate on detached copies. Native map and
+set results automatically expose struct keys as snapshots. For example:
+
+```python
+key = Maps.EquatableStruct("id").as_key()
+values = Maps.struct_to_string_round_trip({key: "saved"})
+```
+
+Snapshots reject graphs containing shared value-equatable class or interface
+references, or shared blobs, because copying the struct cannot isolate their
+mutable value state. Private native struct objects use identity equality and
+hashing for transport; public wrappers provide the documented value semantics.
+
 ### Type mappings
 
 | LimeIDL | Python representation |

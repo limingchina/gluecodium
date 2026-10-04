@@ -3,6 +3,7 @@
 from smoke.ScalarKeyframe import ScalarKeyframe
 from enum import Enum
 import typing
+from typing import Optional
 
 class ScalarKeyframeTrack:
 
@@ -11,5 +12,3 @@ class ScalarKeyframeTrack:
     easing_function: str
 
     interpolation_mode: str
-
-

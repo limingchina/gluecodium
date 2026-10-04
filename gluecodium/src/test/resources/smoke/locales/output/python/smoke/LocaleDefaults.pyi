@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class LocaleDefaults:
 
@@ -16,5 +17,3 @@ class LocaleDefaults:
     traditional_chinese_taiwan: str
 
     zuerich_german: str
-
-

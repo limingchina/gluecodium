@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class ClassWithOverloads:
 
@@ -19,5 +20,3 @@ class ClassWithOverloads:
     @typing.overload
     def all_overloads_exposed(self, input_string: str, input_bool: bool) -> str:
         ...
-
-

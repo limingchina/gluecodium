@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class JavaMethodOverloads:
 
@@ -10,5 +11,3 @@ class JavaMethodOverloads:
 
     def two(self, input: list[str]):
         ...
-
-

@@ -4,6 +4,7 @@ import datetime
 from smoke.TemperatureObserver import TemperatureObserver
 from enum import Enum
 import typing
+from typing import Optional
 
 class Thermometer:
     """A class, which reads temperature and updates observers according to the given interval.
@@ -57,26 +58,23 @@ class Thermometer:
 
     class SomeThermometerErrorCode(Enum):
         """Some error code for thermometer."""
-    
+
         ERROR_NONE = 0
         ERROR_FATAL = 1
-    
-    
-    
+
+
+
     class NotificationError(Exception):
         """This error indicates problems with notification of observers.
     May be thrown if observers cannot be notified."""
         message: str
-    
+
         def __init__(self, message: str) -> None: ...
-    
-    
-    
+
+
+
     class AnotherNotificationError(Exception):
         """This error indicates other problems with notification of observers."""
         message: str
-    
-        def __init__(self, message: str) -> None: ...
-    
-    
 
+        def __init__(self, message: str) -> None: ...

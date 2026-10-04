@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class StructWithJavaPositionalDefaults:
     """Foo Bar this is a comment"""
@@ -20,5 +21,3 @@ class StructWithJavaPositionalDefaults:
 
     #: third should be last!
     third_init_field: str
-
-

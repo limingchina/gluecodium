@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class InterfaceWithStatic:
 
@@ -27,5 +28,3 @@ class InterfaceWithStatic:
     @static_property.setter
     def static_property(self, value: str) -> None:
         ...
-
-

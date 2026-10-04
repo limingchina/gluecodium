@@ -3,6 +3,7 @@
 from smoke._DartInternalClassWithInternalTypedef import _DartInternalClassWithInternalTypedef
 from enum import Enum
 import typing
+from typing import Optional
 
 class SomeDartClassThatUsesInternal:
 
@@ -11,6 +12,3 @@ class SomeDartClassThatUsesInternal:
         ...
 
     _ListOfInternals = list[_DartInternalClassWithInternalTypedef]
-    
-    
-

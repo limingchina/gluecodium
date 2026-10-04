@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class NameRules:
 
@@ -37,28 +38,25 @@ class NameRules:
         ...
 
     class ExampleStruct:
-    
+
         value: float
-    
+
         int_value: list[int]
-    
-    
-    
+
+
+
     class ExampleErrorCode(Enum):
-    
+
         NONE = 0
         FATAL = 1
-    
-    
-    
+
+
+
     class ExampleError(Exception):
         message: str
-    
-        def __init__(self, message: str) -> None: ...
-    
-    
-    
-    StringArray = list[str]
-    
-    
 
+        def __init__(self, message: str) -> None: ...
+
+
+
+    StringArray = list[str]

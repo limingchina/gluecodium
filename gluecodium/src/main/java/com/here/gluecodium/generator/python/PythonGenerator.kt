@@ -289,6 +289,17 @@ internal class PythonGenerator : Generator {
                     "usesCallable" to usesCallableForFile(limeElement),
                     "content" to contentBody,
                     "stubContent" to stubBody,
+                    "structKeyStubs" to
+                        LimeTypeHelper.getAllTypes(limeElement)
+                            .filterIsInstance<LimeStruct>()
+                            .filter { it.attributes.have(LimeAttributeType.EQUATABLE) }
+                            .map {
+                                mapOf(
+                                    "name" to structKeyStubName(it),
+                                    "owner" to pythonNameResolver.resolveName(com.here.gluecodium.model.lime.LimeDirectTypeRef(it)),
+                                    "needsHashOverrideIgnore" to !hasImmutableHashState(it),
+                                )
+                            },
                 )
             val content = TemplateEngine.render("python/PythonFile", templateData + ("isStub" to false), nameResolvers, predicates)
             val stubContent = TemplateEngine.render("python/PythonStub", templateData + ("isStub" to true), nameResolvers, predicates)
@@ -361,6 +372,9 @@ internal class PythonGenerator : Generator {
                     "typeName" to pythonNameResolver.resolvePybind11AccessPath(element),
                     "nativeTypeName" to pythonNameResolver.resolvePybind11AccessPath(element),
                     "nestedTypes" to nestedTypesStr,
+                    "hasImmutableHashState" to (element is LimeStruct && hasImmutableHashState(element)),
+                    "structKeyStubName" to (element as? LimeStruct)?.let(::structKeyStubName),
+                    "canSnapshotHashState" to (element is LimeStruct && canSnapshotHashState(element)),
                     "hasCallbackFields" to
                         (element as? LimeStruct)?.fields.orEmpty().any {
                             predicates.getValue("isPublic")(it) && containsLambda(it.typeRef)
@@ -881,6 +895,50 @@ internal class PythonGenerator : Generator {
             is LimeGenericType -> limeType.childTypes.any(::containsLambda)
             else -> limeType.actualType is LimeLambda
         }
+
+    private fun structKeyStubName(type: LimeStruct): String =
+        "_gluecodium_key_" + type.fullName.toByteArray(Charsets.UTF_8).joinToString("") { "%02x".format(it) }
+
+    // Struct copies own nested values, but shared value-equatable objects and blobs can
+    // retain mutable state outside the copy. Reject those graphs rather than offer unstable keys.
+    private fun canSnapshotHashState(
+        type: LimeType,
+        visited: Set<LimeType> = emptySet(),
+    ): Boolean {
+        val actual = type.actualType
+        if (actual in visited) return false
+        val next = visited + actual
+        return when (actual) {
+            is com.here.gluecodium.model.lime.LimeBasicType ->
+                actual.typeId != com.here.gluecodium.model.lime.LimeBasicType.TypeId.BLOB
+            is LimeEnumeration -> true
+            is LimeStruct -> actual.fields.all { canSnapshotHashState(it.typeRef.type, next) }
+            is LimeGenericType -> actual.childTypes.all { canSnapshotHashState(it.type, next) }
+            is LimeContainerWithInheritance -> !actual.attributes.have(LimeAttributeType.EQUATABLE)
+            else -> false
+        }
+    }
+
+    private fun hasImmutableHashState(
+        type: LimeType,
+        visited: Set<LimeType> = emptySet(),
+    ): Boolean {
+        val actual = type.actualType
+        if (actual in visited) return false
+        val next = visited + actual
+        return when (actual) {
+            is com.here.gluecodium.model.lime.LimeBasicType ->
+                actual.typeId != com.here.gluecodium.model.lime.LimeBasicType.TypeId.BLOB
+            is LimeEnumeration -> true
+            is LimeStruct ->
+                actual.attributes.have(LimeAttributeType.IMMUTABLE) &&
+                    actual.fields.all { hasImmutableHashState(it.typeRef.type, next) } &&
+                    actual.functions.none { !it.isStatic && !it.isConstructor } &&
+                    actual.properties.none { !it.isStatic && it.setter != null }
+            // Container access can expose nested mutable values. Offer an explicit snapshot instead.
+            else -> false
+        }
+    }
 
     private fun selectPythonTemplate(limeElement: LimeNamedElement) =
         when (limeElement) {

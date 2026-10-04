@@ -2,10 +2,12 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class DartColor:
     def __eq__(self, other: object) -> bool: ...
-    def __hash__(self) -> int: ...
+    __hash__ = None  # type: ignore[assignment]
+    def as_key(self) -> _gluecodium_key_736d6f6b652e44617274436f6c6f72: ...
 
     red: float
 
@@ -16,3 +18,6 @@ class DartColor:
     alpha: float
 
 
+
+class _gluecodium_key_736d6f6b652e44617274436f6c6f72(DartColor):
+    def __hash__(self) -> int: ...  # type: ignore[override]

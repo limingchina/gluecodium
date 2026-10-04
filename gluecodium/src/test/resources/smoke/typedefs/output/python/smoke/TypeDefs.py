@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -57,17 +57,17 @@ class TypeDefs(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def field(self) -> float:
             return _wrap(self._native.field, float)
         @field.setter
         def field(self, value: float):
           self._native.field = _unwrap(value, float)
-    
-    
-    
-    
+
+
+
+
     class TestStruct(_NativeBase):
         def __init__(self, *args, **kwargs):
             if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_TypeDefs.TestStruct):
@@ -77,38 +77,35 @@ class TypeDefs(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def something(self) -> str:
             return _wrap(self._native.something, str)
         @something.setter
         def something(self, value: str):
           self._native.something = _unwrap(value, str)
-    
-    
-    
-    
-    NestedIntTypeDef = float
-    
-    
-    
-    PrimitiveTypeDef = float
-    
-    
-    
-    StructArray = list[TestStruct]
-    
-    
-    
-    ComplexTypeDef = list[TestStruct]
-    
-    
-    
-    TestStructTypeDef = TestStruct
-    
-    
-    
-    NestedStructTypeDef = TestStruct
-    
-    
 
+
+
+
+    NestedIntTypeDef = float
+
+
+
+    PrimitiveTypeDef = float
+
+
+
+    StructArray = list[TestStruct]
+
+
+
+    ComplexTypeDef = list[TestStruct]
+
+
+
+    TestStructTypeDef = TestStruct
+
+
+
+    NestedStructTypeDef = TestStruct

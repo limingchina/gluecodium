@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class CachedProperties:
 
@@ -23,6 +24,3 @@ class CachedProperties:
     @property
     def _internal_static_cached_property(self) -> bytes:
         ...
-
-
-

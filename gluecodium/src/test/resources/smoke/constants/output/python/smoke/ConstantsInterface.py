@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -13,15 +13,15 @@ class ConstantsInterface(_NativeBase):
         super().__init__(native)
 
     class StateEnum(Enum):
-    
+
         OFF = generated.smoke_ConstantsInterface.StateEnum.OFF
         ON = generated.smoke_ConstantsInterface.StateEnum.ON
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
+
+
 
     BOOL_CONSTANT = True
 
@@ -36,4 +36,3 @@ class ConstantsInterface(_NativeBase):
     STRING_CONSTANT = "Foo bar"
 
     ENUM_CONSTANT = StateEnum.ON
-

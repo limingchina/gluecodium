@@ -48,8 +48,9 @@ auto cls_EquatableEquatableStruct = py::class_<EquatableStruct>(cls_Equatable, "
         .def_readwrite("map_field", &EquatableStruct::map_field)
         .def(py::init<>())
         .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
-        .def("__eq__", [](const EquatableStruct& lhs, const EquatableStruct& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const EquatableStruct& self) { return gluecodium::hash<EquatableStruct>{}(self); })
+        .def("__gluecodium_copy__", [](const EquatableStruct& self) { return EquatableStruct(self); })
+        .def("__gluecodium_equals__", [](const EquatableStruct& lhs, const EquatableStruct& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const EquatableStruct& self) { return gluecodium::hash<EquatableStruct>{}(self); })
         ;
 
 auto cls_EquatableEquatableNullableStruct = py::class_<EquatableNullableStruct>(cls_Equatable, "EquatableNullableStruct")
@@ -64,16 +65,18 @@ auto cls_EquatableEquatableNullableStruct = py::class_<EquatableNullableStruct>(
         .def_readwrite("map_field", &EquatableNullableStruct::map_field)
         .def(py::init<>())
         .def(py::init<::gluecodium::optional< bool >, ::gluecodium::optional< int32_t >, ::gluecodium::optional< uint16_t >, ::gluecodium::optional< float >, ::gluecodium::optional< ::std::string >, ::gluecodium::optional< ::smoke::Equatable::NestedEquatableStruct >, ::gluecodium::optional< ::smoke::Equatable::SomeEnum >, ::gluecodium::optional< ::std::vector< ::std::string > >, ::gluecodium::optional< ::std::unordered_map< int32_t, ::std::string > >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
-        .def("__eq__", [](const EquatableNullableStruct& lhs, const EquatableNullableStruct& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const EquatableNullableStruct& self) { return gluecodium::hash<EquatableNullableStruct>{}(self); })
+        .def("__gluecodium_copy__", [](const EquatableNullableStruct& self) { return EquatableNullableStruct(self); })
+        .def("__gluecodium_equals__", [](const EquatableNullableStruct& lhs, const EquatableNullableStruct& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const EquatableNullableStruct& self) { return gluecodium::hash<EquatableNullableStruct>{}(self); })
         ;
 
 auto cls_EquatableNestedEquatableStruct = py::class_<NestedEquatableStruct>(cls_Equatable, "NestedEquatableStruct")
         .def_readwrite("foo_field", &NestedEquatableStruct::foo_field)
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
-        .def("__eq__", [](const NestedEquatableStruct& lhs, const NestedEquatableStruct& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const NestedEquatableStruct& self) { return gluecodium::hash<NestedEquatableStruct>{}(self); })
+        .def("__gluecodium_copy__", [](const NestedEquatableStruct& self) { return NestedEquatableStruct(self); })
+        .def("__gluecodium_equals__", [](const NestedEquatableStruct& lhs, const NestedEquatableStruct& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const NestedEquatableStruct& self) { return gluecodium::hash<NestedEquatableStruct>{}(self); })
         ;
 
 auto cls_EquatableSomeEnum = py::enum_<SomeEnum>(cls_Equatable, "SomeEnum")

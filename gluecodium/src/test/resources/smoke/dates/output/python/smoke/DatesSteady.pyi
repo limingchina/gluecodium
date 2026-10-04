@@ -3,6 +3,7 @@
 import datetime
 from enum import Enum
 import typing
+from typing import Optional
 
 class DatesSteady:
 
@@ -16,22 +17,19 @@ class DatesSteady:
         ...
 
     class DateStruct:
-    
-        date_field: datetime.datetime
-    
-        nullable_date_field: Optional[datetime.datetime]
-    
-    
-    
-    MonotonicDate = datetime.datetime
-    
-    
-    
-    DateList = list[datetime.datetime]
-    
-    
-    
-    DateMap = dict[datetime.datetime, str]
-    
-    
 
+        date_field: datetime.datetime
+
+        nullable_date_field: Optional[datetime.datetime]
+
+
+
+    MonotonicDate = datetime.datetime
+
+
+
+    DateList = list[datetime.datetime]
+
+
+
+    DateMap = dict[datetime.datetime, str]

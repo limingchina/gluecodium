@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class Comments:
@@ -82,51 +83,50 @@ class Comments:
 
     class SomeStruct:
         """This is some very useful struct."""
-    
+
         #: How useful this struct is
         #: remains to be seen
         some_field: bool
-    
+
         #: Can be `None`
         nullable_field: Optional[str]
-    
+
         def some_struct_method(self):
             """This is some struct method that does nothing."""
             ...
-    
+
         @staticmethod
         def some_static_struct_method():
             """This is some static struct method that does nothing."""
             ...
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
         """This is some very useful enum."""
-    
+
         USELESS = 0
         USEFUL = 1
-    
-    
-    
+
+
+
     class SomethingWrongError(Exception):
         """This is some very useful exception."""
         message: str
-    
+
         def __init__(self, message: str) -> None: ...
-    
-    
-    
+
+
+
     #: This is some very useful typedef.
     Usefulness = bool
-    
-    
-    
+
+
+
     #: This is some very useful lambda that does it.
     SomeLambda = Callable[[str, int], float]
-    
-    
+
+
 
     #: This is some very useful constant.
     VERY_USEFUL = True
-

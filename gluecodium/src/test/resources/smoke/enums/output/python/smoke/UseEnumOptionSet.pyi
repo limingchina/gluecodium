@@ -3,6 +3,7 @@
 from smoke.EnumOptionSet import EnumOptionSet
 from enum import Enum
 import typing
+from typing import Optional
 
 class UseEnumOptionSet:
 
@@ -15,5 +16,3 @@ class UseEnumOptionSet:
     @staticmethod
     def round_trip(input: set[EnumOptionSet]) -> set[EnumOptionSet]:
         ...
-
-

@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class DartDeprecatedPosDefaultsCustom:
     """Foo Bar this is a comment"""
@@ -13,5 +14,3 @@ class DartDeprecatedPosDefaultsCustom:
     @staticmethod
     def custom() -> DartDeprecatedPosDefaultsCustom:
         ...
-
-

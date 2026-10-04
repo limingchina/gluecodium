@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class Structs:
 
@@ -14,20 +15,17 @@ class Structs:
         ...
 
     class ExternalStruct:
-    
-        string_field: str
-    
-        external_string_field: str
-    
-        external_array_field: list[int]
-    
-        external_struct_field: Structs.AnotherExternalStruct
-    
-    
-    
-    class AnotherExternalStruct:
-    
-        int_field: int
-    
-    
 
+        string_field: str
+
+        external_string_field: str
+
+        external_array_field: list[int]
+
+        external_struct_field: Structs.AnotherExternalStruct
+
+
+
+    class AnotherExternalStruct:
+
+        int_field: int

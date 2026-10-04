@@ -62,8 +62,9 @@ auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{py
 {{#properties}}
 {{>python/Pybind11Property}}{{/properties}}
 {{#ifPredicate "isEquatable"}}
-        .def("__eq__", [](const {{resolveName model "Pybind11"}}& lhs, const {{resolveName model "Pybind11"}}& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const {{resolveName model "Pybind11"}}& self) { return {{internalNamespaceStr}}::hash<{{resolveName model "Pybind11"}}>{}(self); })
+        .def("__gluecodium_copy__", [](const {{resolveName model "Pybind11"}}& self) { return {{resolveName model "Pybind11"}}(self); })
+        .def("__gluecodium_equals__", [](const {{resolveName model "Pybind11"}}& lhs, const {{resolveName model "Pybind11"}}& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const {{resolveName model "Pybind11"}}& self) { return {{internalNamespaceStr}}::hash<{{resolveName model "Pybind11"}}>{}(self); })
 {{/ifPredicate}}
 {{/generateBinding}}
         ;

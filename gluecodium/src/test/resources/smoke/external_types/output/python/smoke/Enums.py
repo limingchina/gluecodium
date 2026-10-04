@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -17,24 +17,21 @@ class Enums(_NativeBase):
         generated.smoke_Enums.method_with_external_enum(_unwrap(input, Enums.ExternalEnum))
 
     class ExternalEnum(Enum):
-    
+
         FOO_VALUE = generated.smoke_Enums.ExternalEnum.FOO_VALUE
         BAR_VALUE = generated.smoke_Enums.ExternalEnum.BAR_VALUE
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class VeryExternalEnum(Enum):
-    
+
         FOO = generated.smoke_Enums.VeryExternalEnum.FOO
         BAR = generated.smoke_Enums.VeryExternalEnum.BAR
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-

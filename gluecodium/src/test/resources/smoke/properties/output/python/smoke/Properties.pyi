@@ -3,6 +3,7 @@
 from smoke.PropertiesInterface import PropertiesInterface
 from enum import Enum
 import typing
+from typing import Optional
 
 class Properties:
 
@@ -81,15 +82,12 @@ class Properties:
 
 
     class ExampleStruct:
-    
+
         value: float
-    
-    
-    
+
+
+
     class InternalErrorCode(Enum):
-    
+
         ERROR_NONE = 0
         ERROR_FATAL = 1
-    
-    
-

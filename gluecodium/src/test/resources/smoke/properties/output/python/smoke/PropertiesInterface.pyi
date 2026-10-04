@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class PropertiesInterface:
 
@@ -14,8 +15,5 @@ class PropertiesInterface:
         ...
 
     class ExampleStruct:
-    
-        value: float
-    
-    
 
+        value: float

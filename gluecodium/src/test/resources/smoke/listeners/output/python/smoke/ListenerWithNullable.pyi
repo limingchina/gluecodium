@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class ListenerWithNullable:
 
@@ -39,5 +40,3 @@ class ListenerWithNullable:
     @typing.overload
     def method_with_double(self, input: Optional[float]) -> Optional[float]:
         ...
-
-

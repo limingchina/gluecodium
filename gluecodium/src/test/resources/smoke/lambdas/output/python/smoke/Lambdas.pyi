@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class Lambdas:
@@ -14,23 +15,20 @@ class Lambdas:
         ...
 
     Producer = Callable[[], str]
-    
-    
-    
+
+
+
     #: Should confuse everyone thoroughly
     Confuser = Callable[[str], Callable[[], str]]
-    
-    
-    
-    Consumer = Callable[[str], None]
-    
-    
-    
-    Indexer = Callable[[str, float], int]
-    
-    
-    
-    NullableConfuser = Callable[[Optional[str]], Optional[Callable[[], str]]]
-    
-    
 
+
+
+    Consumer = Callable[[str], None]
+
+
+
+    Indexer = Callable[[str, float], int]
+
+
+
+    NullableConfuser = Callable[[Optional[str]], Optional[Callable[[], str]]]

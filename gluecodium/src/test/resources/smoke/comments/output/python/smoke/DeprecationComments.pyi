@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class DeprecationComments:
     """This is some very useful interface."""
@@ -31,32 +32,31 @@ class DeprecationComments:
 
     class SomeStruct:
         """This is some very useful struct."""
-    
+
         #: How useful this struct is.
         some_field: bool
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
         """This is some very useful enum."""
-    
+
         USELESS = 0
-    
-    
-    
+
+
+
     class SomethingWrongError(Exception):
         """"""
         message: str
-    
+
         def __init__(self, message: str) -> None: ...
-    
-    
-    
+
+
+
     #: This is some very useful typedef.
     Usefulness = bool
-    
-    
+
+
 
     #: This is some very useful constant.
     VERY_USEFUL = True
-

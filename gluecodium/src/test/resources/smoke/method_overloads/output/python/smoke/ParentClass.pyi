@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class ParentClass:
 
@@ -18,5 +19,3 @@ class ParentClass:
 
     def baz(self):
         ...
-
-

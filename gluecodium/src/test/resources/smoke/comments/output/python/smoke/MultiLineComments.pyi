@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class MultiLineComments:
     """This is some very useful interface.
@@ -23,5 +24,3 @@ And now comes a list:
 It has very important parameters.
 It has side effects."""
         ...
-
-

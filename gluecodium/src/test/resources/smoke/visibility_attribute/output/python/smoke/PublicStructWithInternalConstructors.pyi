@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class PublicStructWithInternalConstructors:
 
@@ -10,5 +11,3 @@ class PublicStructWithInternalConstructors:
     @staticmethod
     def _make() -> PublicStructWithInternalConstructors:
         ...
-
-

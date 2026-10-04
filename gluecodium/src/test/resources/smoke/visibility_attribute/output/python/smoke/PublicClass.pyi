@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class PublicClass:
 
@@ -17,41 +18,38 @@ class PublicClass:
         ...
 
     class _InternalStruct:
-    
+
         string_field: str
-    
-    
-    
+
+
+
     class PublicStruct:
-    
+
         _internal_field: PublicClass._InternalStruct
-    
-    
-    
+
+
+
     class PublicStructWithInternalDefaults:
-    
+
         _internal_field: str
-    
+
         public_field: float
-    
-    
-    
+
+
+
     class _InternalEnum(Enum):
-    
+
         FOO = 0
         BAR = 1
-    
-    
-    
-    _InternalArray = list[_InternalStruct]
-    
-    
-    
-    _InternalStructTypeDef = _InternalStruct
-    
-    
-    
-    _StringToInternalStructMap = dict[str, _InternalStruct]
-    
-    
 
+
+
+    _InternalArray = list[_InternalStruct]
+
+
+
+    _InternalStructTypeDef = _InternalStruct
+
+
+
+    _StringToInternalStructMap = dict[str, _InternalStruct]

@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class ClassWithInternalLambda:
@@ -11,6 +12,3 @@ class ClassWithInternalLambda:
         ...
 
     _InternalNestedLambda = Callable[[str], bool]
-    
-    
-

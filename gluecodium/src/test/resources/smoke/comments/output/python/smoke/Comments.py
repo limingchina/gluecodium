@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 from typing import Callable
@@ -97,7 +97,7 @@ class Comments(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def some_field(self) -> bool:
             """How useful this struct is
@@ -106,8 +106,8 @@ class Comments(_NativeBase):
         @some_field.setter
         def some_field(self, value: bool):
           self._native.some_field = _unwrap(value, bool)
-    
-    
+
+
         @property
         def nullable_field(self):
             """Can be `None`"""
@@ -115,50 +115,49 @@ class Comments(_NativeBase):
         @nullable_field.setter
         def nullable_field(self, value):
           self._native.nullable_field = _unwrap(value, Optional[str])
-    
-    
+
+
         def some_struct_method(self):
             """This is some struct method that does nothing."""
             return _wrap(self._native.some_struct_method(), None)
-    
+
         @staticmethod
         def some_static_struct_method():
             """This is some static struct method that does nothing."""
             generated.smoke_Comments.SomeStruct.some_static_struct_method()
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
         """This is some very useful enum."""
-    
+
         USELESS = generated.smoke_Comments.SomeEnum.USELESS
         USEFUL = generated.smoke_Comments.SomeEnum.USEFUL
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class SomethingWrongError(Exception):
         """This is some very useful exception."""
-    
+
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
-    
-    
-    
+
+
+
     #: This is some very useful typedef.
     Usefulness = bool
-    
-    
-    
+
+
+
     #: This is some very useful lambda that does it.
     SomeLambda = Callable[[str, int], float]
-    
-    
+
+
 
     #: This is some very useful constant.
     VERY_USEFUL = True
-

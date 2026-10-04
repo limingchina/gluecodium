@@ -7,6 +7,7 @@ from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
 from enum import Enum
 import typing
+from typing import Optional
 
 class JavaExternalTypesStruct:
 
@@ -19,5 +20,3 @@ class JavaExternalTypesStruct:
     color: SystemColor
 
     season: Season
-
-

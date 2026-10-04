@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class NullableOverloads:
 
@@ -12,5 +13,3 @@ class NullableOverloads:
     @typing.overload
     def foo(self, input: Optional[str]):
         ...
-
-

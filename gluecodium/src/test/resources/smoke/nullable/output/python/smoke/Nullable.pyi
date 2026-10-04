@@ -3,6 +3,7 @@
 from smoke.SomeInterface import SomeInterface
 from enum import Enum
 import typing
+from typing import Optional
 
 class Nullable:
 
@@ -117,65 +118,62 @@ class Nullable:
         ...
 
     class SomeStruct:
-    
+
         string_field: str
-    
-    
-    
+
+
+
     class NullableStruct:
-    
+
         string_field: Optional[str]
-    
+
         bool_field: Optional[bool]
-    
+
         double_field: Optional[float]
-    
+
         struct_field: Optional[Nullable.SomeStruct]
-    
+
         enum_field: Optional[Nullable.SomeEnum]
-    
+
         array_field: Optional[list[str]]
-    
+
         inline_array_field: Optional[list[str]]
-    
+
         map_field: Optional[dict[int, str]]
-    
+
         instance_field: Optional[SomeInterface]
-    
-    
-    
+
+
+
     class NullableIntsStruct:
-    
+
         int8_field: Optional[int]
-    
+
         int16_field: Optional[int]
-    
+
         int32_field: Optional[int]
-    
+
         int64_field: Optional[int]
-    
+
         uint8_field: Optional[int]
-    
+
         uint16_field: Optional[int]
-    
+
         uint32_field: Optional[int]
-    
+
         uint64_field: Optional[int]
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
-    
+
         ON = 0
         OFF = 1
-    
-    
-    
-    SomeArray = list[str]
-    
-    
-    
-    SomeMap = dict[int, str]
-    
-    
 
+
+
+    SomeArray = list[str]
+
+
+
+    SomeMap = dict[int, str]

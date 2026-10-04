@@ -48,7 +48,13 @@
 {{/importedName}}{{/deferredImports}}
 from enum import Enum
 import typing
+from typing import Optional
 {{#usesCallable}}from typing import Callable
 {{/usesCallable}}
 
 {{{stubContent}}}
+
+{{#structKeyStubs}}
+class {{name}}({{owner}}):
+    def __hash__(self) -> int: ...{{#needsHashOverrideIgnore}}  # type: ignore[override]{{/needsHashOverrideIgnore}}
+{{/structKeyStubs}}

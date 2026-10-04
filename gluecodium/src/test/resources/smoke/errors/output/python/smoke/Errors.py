@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -35,41 +35,38 @@ class Errors(_NativeBase):
         return _wrap(generated.smoke_Errors.method_with_payload_error_and_return_value(), str)
 
     class InternalErrorCode(Enum):
-    
+
         ERROR_NONE = generated.smoke_Errors.InternalErrorCode.ERROR_NONE
         ERROR_FATAL = generated.smoke_Errors.InternalErrorCode.ERROR_FATAL
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class ExternalErrors(Enum):
-    
+
         NONE = generated.smoke_Errors.ExternalErrors.NONE
         BOOM = generated.smoke_Errors.ExternalErrors.BOOM
         BUST = generated.smoke_Errors.ExternalErrors.BUST
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
-    class InternalError(Exception):
-    
-        def __init__(self, message: str):
-            super().__init__(message)
-            self.message = message
-    
-    
-    
-    class ExternalError(Exception):
-    
-        def __init__(self, message: str):
-            super().__init__(message)
-            self.message = message
-    
-    
 
+
+
+    class InternalError(Exception):
+
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message
+
+
+
+    class ExternalError(Exception):
+
+        def __init__(self, message: str):
+            super().__init__(message)
+            self.message = message

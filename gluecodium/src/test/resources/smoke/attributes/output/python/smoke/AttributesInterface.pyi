@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class AttributesInterface:
 
@@ -16,6 +17,5 @@ class AttributesInterface:
     def prop(self, value: str) -> None:
         ...
 
+
     PI = False
-
-

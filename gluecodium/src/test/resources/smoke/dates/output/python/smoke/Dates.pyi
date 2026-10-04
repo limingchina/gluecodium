@@ -3,6 +3,7 @@
 import datetime
 from enum import Enum
 import typing
+from typing import Optional
 
 class Dates:
 
@@ -29,22 +30,19 @@ class Dates:
         ...
 
     class DateStruct:
-    
-        date_field: datetime.datetime
-    
-        nullable_date_field: Optional[datetime.datetime]
-    
-    
-    
-    DateTypeDef = datetime.datetime
-    
-    
-    
-    DateArray = list[datetime.datetime]
-    
-    
-    
-    DateMap = dict[str, datetime.datetime]
-    
-    
 
+        date_field: datetime.datetime
+
+        nullable_date_field: Optional[datetime.datetime]
+
+
+
+    DateTypeDef = datetime.datetime
+
+
+
+    DateArray = list[datetime.datetime]
+
+
+
+    DateMap = dict[str, datetime.datetime]

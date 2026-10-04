@@ -37,8 +37,9 @@ auto cls_EquatableStructWithInternalFields = py::class_<EquatableStructWithInter
         .def(py::init([](const ::std::string& public_field) {
             return EquatableStructWithInternalFields(public_field, ::std::string{}, ::std::vector< ::std::string >{}, ::std::unordered_map< ::std::string, ::std::string >{}, ::std::unordered_set< ::std::string >{});
         }), py::arg("public_field"))
-        .def("__eq__", [](const EquatableStructWithInternalFields& lhs, const EquatableStructWithInternalFields& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const EquatableStructWithInternalFields& self) { return gluecodium::hash<EquatableStructWithInternalFields>{}(self); })
+        .def("__gluecodium_copy__", [](const EquatableStructWithInternalFields& self) { return EquatableStructWithInternalFields(self); })
+        .def("__gluecodium_equals__", [](const EquatableStructWithInternalFields& lhs, const EquatableStructWithInternalFields& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const EquatableStructWithInternalFields& self) { return gluecodium::hash<EquatableStructWithInternalFields>{}(self); })
         ;
 
 

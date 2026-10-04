@@ -3,6 +3,7 @@
 from smoke.ParentInterface import ParentInterface
 from enum import Enum
 import typing
+from typing import Optional
 
 class ChildInterfaceOverloads:
 
@@ -11,5 +12,3 @@ class ChildInterfaceOverloads:
 
     def bar(self, input: str):
         ...
-
-
