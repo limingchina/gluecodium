@@ -20,9 +20,11 @@
   !}}
 {{! Python interface: subclass of the native pybind11 type so the trampoline binds to the Python instance. Imports are at the file level. }}
 {{#model}}
+@_mark_callback_base
 class {{resolveName}}({{nativeModule}}.{{typeName}}):
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}
+{{>python/PythonCallbackAdapters}}
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an

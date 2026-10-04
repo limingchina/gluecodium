@@ -33,6 +33,9 @@ public:
             m_impl->foo();
             return;
         }
+        if (py::get_override(static_cast<const NoCacheInterface*>(this), "__gluecodium_callback_736d6f6b652e4e6f4361636865496e746572666163652e666f6f")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, NoCacheInterface, "__gluecodium_callback_736d6f6b652e4e6f4361636865496e746572666163652e666f6f", foo);
+        }
         PYBIND11_OVERRIDE_PURE(void, NoCacheInterface, foo);
     }
 };

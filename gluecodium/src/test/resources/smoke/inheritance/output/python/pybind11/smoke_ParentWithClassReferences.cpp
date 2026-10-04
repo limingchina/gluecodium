@@ -35,12 +35,18 @@ public:
         if (m_impl) {
             return m_impl->class_function();
         }
+        if (py::get_override(static_cast<const ParentWithClassReferences*>(this), "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737346756e6374696f6e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::ChildClassFromClass >, ParentWithClassReferences, "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737346756e6374696f6e", class_function);
+        }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ChildClassFromClass >, ParentWithClassReferences, class_function);
     }
     ::std::shared_ptr< ::smoke::ParentClass > get_class_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_class_property();
+        }
+        if (py::get_override(static_cast<const ParentWithClassReferences*>(this), "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::ParentClass >, ParentWithClassReferences, "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_get", get_class_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ParentClass >, ParentWithClassReferences, get_class_property);
     }
@@ -49,6 +55,9 @@ public:
         if (m_impl) {
             m_impl->set_class_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const ParentWithClassReferences*>(this), "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, ParentWithClassReferences, "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_set", set_class_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, ParentWithClassReferences, set_class_property, value);
     }

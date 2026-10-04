@@ -34,6 +34,9 @@ public:
             m_impl->FooMethod(qux_parameter);
             return;
         }
+        if (py::get_override(static_cast<const fooListener*>(this), "__gluecodium_callback_736d6f6b652e506c6174666f726d4e616d65734c697374656e65722e62617369634d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, fooListener, "__gluecodium_callback_736d6f6b652e506c6174666f726d4e616d65734c697374656e65722e62617369634d6574686f64", qux_method, qux_parameter);
+        }
         PYBIND11_OVERRIDE_PURE(void, fooListener, qux_method, qux_parameter);
     }
 };

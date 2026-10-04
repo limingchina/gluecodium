@@ -7,6 +7,7 @@ from smoke.IncludableStruct import IncludableStruct
 from smoke.ParentClassWithImports import ParentClassWithImports
 from enum import Enum
 import typing
+from typing import Callable
 
 class ChildClassWithImports(
     ParentClassWithImports):

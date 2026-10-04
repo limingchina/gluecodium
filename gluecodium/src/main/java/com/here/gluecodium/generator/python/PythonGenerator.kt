@@ -163,6 +163,7 @@ internal class PythonGenerator : Generator {
             mapOf(
                 "" to pythonNameResolver,
                 "Pybind11" to pybind11NameResolver,
+                "Callback" to PythonCallbackNameResolver(),
                 // The pybind11 trampoline is C++ code that must match the generated C++ base
                 // signature exactly (including the `Return<T, Error>` wrapper for throwing
                 // functions). Reusing the C++ name resolver lets the trampoline templates pull
@@ -232,7 +233,7 @@ internal class PythonGenerator : Generator {
         // which is a circular import and breaks direct importability of the wrapper.
         val selfModulePath = (limeElement.path.head + pythonNameResolver.resolveName(limeElement)).joinToString(".")
         val allImports =
-            pythonImportsCollector.collectImports(limeElement)
+            collectPythonImports(limeElement)
                 .filterNot { it.modulePath == selfModulePath }
                 .distinct()
                 .sorted()
@@ -300,6 +301,15 @@ internal class PythonGenerator : Generator {
         }
     }
 
+    private fun collectPythonImports(element: LimeNamedElement): List<PythonImport> {
+        val inherited =
+            limeReferenceMap.values.filterIsInstance<LimeContainerWithInheritance>()
+                .filter { it.path.head == element.path.head && it.path.container == element.path.container }
+                .flatMap { it.inheritedFunctions + it.inheritedProperties }
+                .flatMap { pythonImportsCollector.collectImports(it) }
+        return pythonImportsCollector.collectImports(element) + inherited
+    }
+
     /**
      * Builds a directed import graph: for each top-level element, maps its module path to
      * the set of module paths it imports. Used to detect circular (bidirectional) imports
@@ -310,7 +320,7 @@ internal class PythonGenerator : Generator {
         for (element in topElements) {
             val modulePath = (element.path.head + pythonNameResolver.resolveName(element)).joinToString(".")
             val importedPaths =
-                pythonImportsCollector.collectImports(element)
+                collectPythonImports(element)
                     .map { it.modulePath }
                     .filter { it != modulePath }
                     .toMutableSet()
@@ -351,6 +361,33 @@ internal class PythonGenerator : Generator {
                     "typeName" to pythonNameResolver.resolvePybind11AccessPath(element),
                     "nativeTypeName" to pythonNameResolver.resolvePybind11AccessPath(element),
                     "nestedTypes" to nestedTypesStr,
+                    "hasCallbackFields" to
+                        (element as? LimeStruct)?.fields.orEmpty().any {
+                            predicates.getValue("isPublic")(it) && containsLambda(it.typeRef)
+                        },
+                    "callbackFields" to
+                        (element as? LimeStruct)?.fields.orEmpty().filter {
+                            predicates.getValue("isPublic")(it) && containsLambda(it.typeRef)
+                        },
+                    "constructorSignatures" to
+                        (element as? LimeStruct)?.let { struct ->
+                            val signatures = mutableListOf<List<com.here.gluecodium.model.lime.LimeField>>()
+                            if (predicates.getValue("hasDefaultConstructor")(struct)) signatures.add(emptyList())
+                            if (predicates.getValue("hasPartialDefaults")(struct)) signatures.add(struct.uninitializedFields)
+                            if (predicates.getValue("needsAllFieldsConstructor")(struct)) signatures.add(struct.fields)
+                            signatures.addAll(struct.fieldConstructors.map { it.fields })
+                            signatures.map { fields -> mapOf("fields" to fields.filter { predicates.getValue("isPublic")(it) }) }
+                        }.orEmpty(),
+                    "callbackFunctions" to
+                        (element as? LimeContainerWithInheritance)?.let {
+                            (it.functions + it.inheritedFunctions).filter { function -> !function.isStatic && !function.isConstructor }
+                                .distinctBy { function -> function.path }
+                        }.orEmpty(),
+                    "callbackProperties" to
+                        (element as? LimeContainerWithInheritance)?.let {
+                            (it.properties + it.inheritedProperties).filter { property -> !property.isStatic }
+                                .distinctBy { property -> property.path }
+                        }.orEmpty(),
                     "hasStubClassBody" to (
                         predicates.getValue("hasAnyComment")(element) || nestedTypesStr.isNotBlank() ||
                             (element as? com.here.gluecodium.model.lime.LimeContainer)?.let {
@@ -827,6 +864,10 @@ internal class PythonGenerator : Generator {
                         function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)
                     } ||
                     limeElement.properties.any { containsLambda(it.typeRef) }
+            is LimeContainerWithInheritance ->
+                (limeElement.functions + limeElement.inheritedFunctions).any { function ->
+                    function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)
+                } || (limeElement.properties + limeElement.inheritedProperties).any { containsLambda(it.typeRef) }
             is com.here.gluecodium.model.lime.LimeContainer ->
                 limeElement.functions.any { function ->
                     function.parameters.any { containsLambda(it.typeRef) } || containsLambda(function.returnType.typeRef)

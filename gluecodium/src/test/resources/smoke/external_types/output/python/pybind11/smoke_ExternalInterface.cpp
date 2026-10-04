@@ -37,12 +37,18 @@ public:
             m_impl->some_Method(some_parameter);
             return;
         }
+        if (py::get_override(static_cast<const ExternalInterface*>(this), "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f4d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ExternalInterface, "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f4d6574686f64", some_method, some_parameter);
+        }
         PYBIND11_OVERRIDE_PURE(void, ExternalInterface, some_method, some_parameter);
     }
     ::std::string get_Me() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_Me();
+        }
+        if (py::get_override(static_cast<const ExternalInterface*>(this), "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f50726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, ExternalInterface, "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f50726f7065727479_get", get_Me);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ExternalInterface, get_Me);
     }

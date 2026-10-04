@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
@@ -12,7 +12,15 @@ class InnerClassForwardDeclarations(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
+    @_mark_callback_base
     class InnerClass1(generated.smoke_forward_InnerClassForwardDeclarations.InnerClass1):
+        @classmethod
+        def __init_subclass__(cls, **kwargs):
+            super().__init_subclass__(**kwargs)
+            _install_callback_adapters(cls, __class__, [
+                ("_get_inner_interface", "__gluecodium_callback_736d6f6b652e666f72776172642e496e6e6572436c617373466f72776172644465636c61726174696f6e732e496e6e6572436c617373312e676574496e6e6572496e74657266616365", "method", None,
+                 lambda: ([], InnerClassForwardDeclarations._InnerInterface1)),
+            ])
         def __init__(self, native=None):
             # Subclass the native pybind11 type so a Python override of an inherited virtual
             # method (from a parent interface or open base class) is dispatched through the
@@ -54,7 +62,13 @@ class InnerClassForwardDeclarations(_NativeBase):
     
     
     
+    @_mark_callback_base
     class _InnerInterface1(generated.smoke_forward_InnerClassForwardDeclarations._InnerInterface1):
+        @classmethod
+        def __init_subclass__(cls, **kwargs):
+            super().__init_subclass__(**kwargs)
+            _install_callback_adapters(cls, __class__, [
+            ])
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an
@@ -70,7 +84,13 @@ class InnerClassForwardDeclarations(_NativeBase):
     
     
     
+    @_mark_callback_base
     class InnerInterface2(generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface2):
+        @classmethod
+        def __init_subclass__(cls, **kwargs):
+            super().__init_subclass__(**kwargs)
+            _install_callback_adapters(cls, __class__, [
+            ])
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an
@@ -86,7 +106,13 @@ class InnerClassForwardDeclarations(_NativeBase):
     
     
     
+    @_mark_callback_base
     class InnerInterface3(generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface3):
+        @classmethod
+        def __init_subclass__(cls, **kwargs):
+            super().__init_subclass__(**kwargs)
+            _install_callback_adapters(cls, __class__, [
+            ])
         def __init__(self, native=None):
             # Subclass the native pybind11 type so that a Python override of an interface
             # method is dispatched through the generated trampoline. When `native` is an

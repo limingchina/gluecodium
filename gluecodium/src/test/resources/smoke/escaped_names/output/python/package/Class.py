@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
@@ -10,7 +10,19 @@ import generated
 from package.Interface import Interface
 from package.Types import Types
 
+@_mark_callback_base
 class Class(generated.package_Class):
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        _install_callback_adapters(cls, __class__, [
+            ("fun", "__gluecodium_callback_7061636b6167652e636c6173732e66756e", "method", None,
+             lambda: ([list[Types.Struct]], Types.Struct)),
+            ("property", "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_get", "get", "get_property",
+             lambda: ([], Types.Enum)),
+            ("property", "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_set", "set", "set_property",
+             lambda: ([Types.Enum], None)),
+        ])
     def __init__(self, native=None):
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the

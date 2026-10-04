@@ -2,14 +2,32 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
 from enum import Enum
 from typing import Optional
 import generated
 
 from smoke.CalculationResult import CalculationResult
 
+@_mark_callback_base
 class CalculatorListener(generated.smoke_CalculatorListener):
+    @classmethod
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        _install_callback_adapters(cls, __class__, [
+            ("on_calculation_result", "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74", "method", None,
+             lambda: ([float], None)),
+            ("on_calculation_result_const", "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74436f6e7374", "method", None,
+             lambda: ([float], None)),
+            ("on_calculation_result_struct", "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74537472756374", "method", None,
+             lambda: ([CalculatorListener.ResultStruct], None)),
+            ("on_calculation_result_array", "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c744172726179", "method", None,
+             lambda: ([list[float]], None)),
+            ("on_calculation_result_map", "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c744d6170", "method", None,
+             lambda: ([dict[str, float]], None)),
+            ("on_calculation_result_instance", "__gluecodium_callback_736d6f6b652e43616c63756c61746f724c697374656e65722e6f6e43616c63756c6174696f6e526573756c74496e7374616e6365", "method", None,
+             lambda: ([CalculationResult], None)),
+        ])
     def __init__(self, native=None):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an

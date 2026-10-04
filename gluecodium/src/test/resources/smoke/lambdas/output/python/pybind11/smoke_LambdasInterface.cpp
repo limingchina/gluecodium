@@ -38,6 +38,9 @@ public:
             m_impl->take_screenshot(callback);
             return;
         }
+        if (py::get_override(static_cast<const LambdasInterface*>(this), "__gluecodium_callback_736d6f6b652e4c616d62646173496e746572666163652e74616b655f73637265656e73686f74")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, LambdasInterface, "__gluecodium_callback_736d6f6b652e4c616d62646173496e746572666163652e74616b655f73637265656e73686f74", take_screenshot, callback);
+        }
         PYBIND11_OVERRIDE_PURE(void, LambdasInterface, take_screenshot, callback);
     }
 };

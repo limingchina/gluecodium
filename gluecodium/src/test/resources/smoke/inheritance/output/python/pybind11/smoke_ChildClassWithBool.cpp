@@ -34,6 +34,9 @@ public:
             m_impl->root_method(input1);
             return;
         }
+        if (py::get_override(static_cast<const ChildClassWithBool*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468426f6f6c2e726f6f744d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithBool, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468426f6f6c2e726f6f744d6574686f64", root_method, input1);
+        }
         PYBIND11_OVERRIDE_PURE(void, ChildClassWithBool, root_method, input1);
     }
 };

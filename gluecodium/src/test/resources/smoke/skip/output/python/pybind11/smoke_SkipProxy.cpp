@@ -35,6 +35,9 @@ public:
         if (m_impl) {
             return m_impl->not_in_java(input);
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e4a617661")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e4a617661", not_in_java, input);
+        }
         PYBIND11_OVERRIDE_PURE(::std::string, SkipProxy, not_in_java, input);
     }
     bool not_in_swift(
@@ -42,6 +45,9 @@ public:
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->not_in_swift(input);
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e5377696674")) {
+        PYBIND11_OVERRIDE_PURE_NAME(bool, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e5377696674", not_in_swift, input);
         }
         PYBIND11_OVERRIDE_PURE(bool, SkipProxy, not_in_swift, input);
     }
@@ -51,6 +57,9 @@ public:
         if (m_impl) {
             return m_impl->not_in_dart(input);
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e44617274")) {
+        PYBIND11_OVERRIDE_PURE_NAME(float, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e44617274", not_in_dart, input);
+        }
         PYBIND11_OVERRIDE_PURE(float, SkipProxy, not_in_dart, input);
     }
     float not_in_kotlin(
@@ -59,12 +68,18 @@ public:
         if (m_impl) {
             return m_impl->not_in_kotlin(input);
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e4b6f746c696e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(float, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e6e6f74496e4b6f746c696e", not_in_kotlin, input);
+        }
         PYBIND11_OVERRIDE_PURE(float, SkipProxy, not_in_kotlin, input);
     }
     ::std::string get_skipped_in_java() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_skipped_in_java();
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4a617661_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4a617661_get", get_skipped_in_java);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, SkipProxy, get_skipped_in_java);
     }
@@ -74,12 +89,18 @@ public:
             m_impl->set_skipped_in_java(value);
             return;
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4a617661_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4a617661_set", set_skipped_in_java, value);
+        }
         PYBIND11_OVERRIDE_PURE(void, SkipProxy, set_skipped_in_java, value);
     }
     bool is_skipped_in_swift() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->is_skipped_in_swift();
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e5377696674_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(bool, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e5377696674_get", is_skipped_in_swift);
         }
         PYBIND11_OVERRIDE_PURE(bool, SkipProxy, is_skipped_in_swift);
     }
@@ -89,12 +110,18 @@ public:
             m_impl->set_skipped_in_swift(value);
             return;
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e5377696674_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e5377696674_set", set_skipped_in_swift, value);
+        }
         PYBIND11_OVERRIDE_PURE(void, SkipProxy, set_skipped_in_swift, value);
     }
     float get_skipped_in_dart() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_skipped_in_dart();
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e44617274_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(float, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e44617274_get", get_skipped_in_dart);
         }
         PYBIND11_OVERRIDE_PURE(float, SkipProxy, get_skipped_in_dart);
     }
@@ -104,12 +131,18 @@ public:
             m_impl->set_skipped_in_dart(value);
             return;
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e44617274_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e44617274_set", set_skipped_in_dart, value);
+        }
         PYBIND11_OVERRIDE_PURE(void, SkipProxy, set_skipped_in_dart, value);
     }
     float get_skipped_in_kotlin() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_skipped_in_kotlin();
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4b6f746c696e_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(float, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4b6f746c696e_get", get_skipped_in_kotlin);
         }
         PYBIND11_OVERRIDE_PURE(float, SkipProxy, get_skipped_in_kotlin);
     }
@@ -119,12 +152,18 @@ public:
             m_impl->set_skipped_in_kotlin(value);
             return;
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4b6f746c696e_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b6970706564496e4b6f746c696e_set", set_skipped_in_kotlin, value);
+        }
         PYBIND11_OVERRIDE_PURE(void, SkipProxy, set_skipped_in_kotlin, value);
     }
     ::smoke::SkippedEverywhere get_skipped_everywhere() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_skipped_everywhere();
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::smoke::SkippedEverywhere, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265_get", get_skipped_everywhere);
         }
         PYBIND11_OVERRIDE_PURE(::smoke::SkippedEverywhere, SkipProxy, get_skipped_everywhere);
     }
@@ -134,12 +173,18 @@ public:
             m_impl->set_skipped_everywhere(value);
             return;
         }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265_set", set_skipped_everywhere, value);
+        }
         PYBIND11_OVERRIDE_PURE(void, SkipProxy, set_skipped_everywhere, value);
     }
     ::smoke::SkippedEverywhereEnum get_skipped_everywhere_too() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_skipped_everywhere_too();
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265546f6f_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::smoke::SkippedEverywhereEnum, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265546f6f_get", get_skipped_everywhere_too);
         }
         PYBIND11_OVERRIDE_PURE(::smoke::SkippedEverywhereEnum, SkipProxy, get_skipped_everywhere_too);
     }
@@ -148,6 +193,9 @@ public:
         if (m_impl) {
             m_impl->set_skipped_everywhere_too(value);
             return;
+        }
+        if (py::get_override(static_cast<const SkipProxy*>(this), "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265546f6f_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, SkipProxy, "__gluecodium_callback_736d6f6b652e536b697050726f78792e736b697070656445766572797768657265546f6f_set", set_skipped_everywhere_too, value);
         }
         PYBIND11_OVERRIDE_PURE(void, SkipProxy, set_skipped_everywhere_too, value);
     }

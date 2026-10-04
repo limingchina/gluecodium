@@ -34,6 +34,9 @@ public:
             m_impl->dispatch(callback);
             return;
         }
+        if (py::get_override(static_cast<const SpecialNamesInterface*>(this), "__gluecodium_callback_736d6f6b652e5370656369616c4e616d6573496e746572666163652e6469737061746368")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, SpecialNamesInterface, "__gluecodium_callback_736d6f6b652e5370656369616c4e616d6573496e746572666163652e6469737061746368", dispatch, callback);
+        }
         PYBIND11_OVERRIDE_PURE(void, SpecialNamesInterface, dispatch, callback);
     }
 };

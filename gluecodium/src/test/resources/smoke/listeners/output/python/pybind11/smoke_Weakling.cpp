@@ -33,6 +33,9 @@ public:
         if (m_impl) {
             return m_impl->get_listener();
         }
+        if (py::get_override(static_cast<const Weakling*>(this), "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::ListenerInterface >, Weakling, "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_get", get_listener);
+        }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ListenerInterface >, Weakling, get_listener);
     }
     void set_listener(const ::std::shared_ptr< ::smoke::ListenerInterface >& value) override {
@@ -40,6 +43,9 @@ public:
         if (m_impl) {
             m_impl->set_listener(value);
             return;
+        }
+        if (py::get_override(static_cast<const Weakling*>(this), "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, Weakling, "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_set", set_listener, value);
         }
         PYBIND11_OVERRIDE_PURE(void, Weakling, set_listener, value);
     }

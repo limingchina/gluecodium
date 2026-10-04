@@ -35,6 +35,9 @@ public:
         if (m_impl) {
             return m_impl->duration_function(input);
         }
+        if (py::get_override(static_cast<const DurationInterface*>(this), "__gluecodium_callback_736d6f6b652e4475726174696f6e496e746572666163652e6475726174696f6e46756e6374696f6e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, DurationInterface, "__gluecodium_callback_736d6f6b652e4475726174696f6e496e746572666163652e6475726174696f6e46756e6374696f6e", duration_function, input);
+        }
         PYBIND11_OVERRIDE_PURE(::std::string, DurationInterface, duration_function, input);
     }
 };

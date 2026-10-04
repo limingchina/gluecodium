@@ -34,6 +34,9 @@ public:
             m_impl->parent_method();
             return;
         }
+        if (py::get_override(static_cast<const InterfaceWithOverloads*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f64")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, InterfaceWithOverloads, "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f64", parent_method);
+        }
         PYBIND11_OVERRIDE_PURE(void, InterfaceWithOverloads, parent_method);
     }
     void parent_method(
@@ -42,6 +45,9 @@ public:
         if (m_impl) {
             m_impl->parent_method(input);
             return;
+        }
+        if (py::get_override(static_cast<const InterfaceWithOverloads*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f643a31")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, InterfaceWithOverloads, "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f643a31", parent_method, input);
         }
         PYBIND11_OVERRIDE_PURE(void, InterfaceWithOverloads, parent_method, input);
     }

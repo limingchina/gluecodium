@@ -36,6 +36,9 @@ public:
             m_impl->parent_function();
             return;
         }
+        if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7446756e6374696f6e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7446756e6374696f6e", parent_function);
+        }
         PYBIND11_OVERRIDE_PURE(void, ParentInterface, parent_function);
     }
     void some_function_that_uses_type_from_another_package(
@@ -45,12 +48,18 @@ public:
             m_impl->some_function_that_uses_type_from_another_package(some_param);
             return;
         }
+        if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e736f6d655f66756e6374696f6e5f746861745f757365735f747970655f66726f6d5f616e6f746865725f7061636b616765")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e736f6d655f66756e6374696f6e5f746861745f757365735f747970655f66726f6d5f616e6f746865725f7061636b616765", some_function_that_uses_type_from_another_package, some_param);
+        }
         PYBIND11_OVERRIDE_PURE(void, ParentInterface, some_function_that_uses_type_from_another_package, some_param);
     }
     ::std::string get_parent_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_parent_property();
+        }
+        if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_get", get_parent_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ParentInterface, get_parent_property);
     }
@@ -59,6 +68,9 @@ public:
         if (m_impl) {
             m_impl->set_parent_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_set", set_parent_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, ParentInterface, set_parent_property, value);
     }

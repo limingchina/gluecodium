@@ -40,6 +40,9 @@ public:
         if (m_impl) {
             return m_impl->get_inner_interface();
         }
+        if (py::get_override(static_cast<const InnerClass1*>(this), "__gluecodium_callback_736d6f6b652e666f72776172642e496e6e6572436c617373466f72776172644465636c61726174696f6e732e496e6e6572436c617373312e676574496e6e6572496e74657266616365")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1 >, InnerClass1, "__gluecodium_callback_736d6f6b652e666f72776172642e496e6e6572436c617373466f72776172644465636c61726174696f6e732e496e6e6572436c617373312e676574496e6e6572496e74657266616365", _get_inner_interface);
+        }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1 >, InnerClass1, _get_inner_interface);
     }
 };

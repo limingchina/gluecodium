@@ -32,6 +32,9 @@ public:
         if (m_impl) {
             return m_impl->get_struct_property();
         }
+        if (py::get_override(static_cast<const PropertiesInterface*>(this), "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::smoke::PropertiesInterface::ExampleStruct, PropertiesInterface, "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_get", get_struct_property);
+        }
         PYBIND11_OVERRIDE_PURE(::smoke::PropertiesInterface::ExampleStruct, PropertiesInterface, get_struct_property);
     }
     void set_struct_property(const ::smoke::PropertiesInterface::ExampleStruct& value) override {
@@ -39,6 +42,9 @@ public:
         if (m_impl) {
             m_impl->set_struct_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const PropertiesInterface*>(this), "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, PropertiesInterface, "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_set", set_struct_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, PropertiesInterface, set_struct_property, value);
     }

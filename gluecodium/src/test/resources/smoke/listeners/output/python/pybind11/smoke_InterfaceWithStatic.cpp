@@ -33,12 +33,18 @@ public:
         if (m_impl) {
             return m_impl->regular_function();
         }
+        if (py::get_override(static_cast<const InterfaceWithStatic*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617246756e6374696f6e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, InterfaceWithStatic, "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617246756e6374696f6e", regular_function);
+        }
         PYBIND11_OVERRIDE_PURE(::std::string, InterfaceWithStatic, regular_function);
     }
     ::std::string get_regular_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_regular_property();
+        }
+        if (py::get_override(static_cast<const InterfaceWithStatic*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, InterfaceWithStatic, "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_get", get_regular_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, InterfaceWithStatic, get_regular_property);
     }
@@ -47,6 +53,9 @@ public:
         if (m_impl) {
             m_impl->set_regular_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const InterfaceWithStatic*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, InterfaceWithStatic, "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_set", set_regular_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, InterfaceWithStatic, set_regular_property, value);
     }

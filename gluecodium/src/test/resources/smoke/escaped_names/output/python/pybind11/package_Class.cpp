@@ -38,12 +38,18 @@ public:
         if (m_impl) {
             return m_impl->fun(double);
         }
+        if (py::get_override(static_cast<const Class*>(this), "__gluecodium_callback_7061636b6167652e636c6173732e66756e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(fun_return_type, Class, "__gluecodium_callback_7061636b6167652e636c6173732e66756e", fun, double);
+        }
         PYBIND11_OVERRIDE_PURE(fun_return_type, Class, fun, double);
     }
     ::package::Types::Enum get_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_property();
+        }
+        if (py::get_override(static_cast<const Class*>(this), "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::package::Types::Enum, Class, "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_get", get_property);
         }
         PYBIND11_OVERRIDE_PURE(::package::Types::Enum, Class, get_property);
     }
@@ -52,6 +58,9 @@ public:
         if (m_impl) {
             m_impl->set_property(value);
             return;
+        }
+        if (py::get_override(static_cast<const Class*>(this), "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, Class, "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_set", set_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, Class, set_property, value);
     }

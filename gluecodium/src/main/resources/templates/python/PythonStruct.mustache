@@ -27,10 +27,22 @@ class {{resolveName}}(_NativeBase):
         if len(args) == 1 and not kwargs and isinstance(args[0], {{nativeModule}}.{{typeName}}):
             super().__init__(args[0])
         else:
+{{#hasCallbackFields}}
+            field_hints = {
+{{#callbackFields}}                "{{resolveName}}": lambda: {{resolveName typeRef}},
+{{/callbackFields}}            }
+            signatures = [
+{{#constructorSignatures}}                [{{#fields}}"{{resolveName}}", {{/fields}}],
+{{/constructorSignatures}}            ]
+            args, kwargs = _unwrap_struct_args(args, kwargs, signatures, field_hints)
+            super().__init__({{nativeModule}}.{{typeName}}(*args, **kwargs))
+{{/hasCallbackFields}}
+{{^hasCallbackFields}}
             super().__init__({{nativeModule}}.{{typeName}}(
                 *[_unwrap(arg) for arg in args],
                 **{k: _unwrap(v) for k, v in kwargs.items()}
             ))
+{{/hasCallbackFields}}
 {{#ifPredicate "isEquatable"}}
 
     def __eq__(self, other: object) -> bool:

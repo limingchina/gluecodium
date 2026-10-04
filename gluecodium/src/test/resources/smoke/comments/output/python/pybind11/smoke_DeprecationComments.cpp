@@ -35,12 +35,18 @@ public:
         if (m_impl) {
             return m_impl->some_method_with_all_comments(input);
         }
+        if (py::get_override(static_cast<const DeprecationComments*>(this), "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e736f6d654d6574686f6457697468416c6c436f6d6d656e7473")) {
+        PYBIND11_OVERRIDE_PURE_NAME(bool, DeprecationComments, "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e736f6d654d6574686f6457697468416c6c436f6d6d656e7473", some_method_with_all_comments, input);
+        }
         PYBIND11_OVERRIDE_PURE(bool, DeprecationComments, some_method_with_all_comments, input);
     }
     bool is_some_property() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->is_some_property();
+        }
+        if (py::get_override(static_cast<const DeprecationComments*>(this), "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e536f6d6550726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(bool, DeprecationComments, "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e536f6d6550726f7065727479_get", is_some_property);
         }
         PYBIND11_OVERRIDE_PURE(bool, DeprecationComments, is_some_property);
     }
@@ -50,12 +56,18 @@ public:
             m_impl->set_some_property(value);
             return;
         }
+        if (py::get_override(static_cast<const DeprecationComments*>(this), "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e536f6d6550726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, DeprecationComments, "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e536f6d6550726f7065727479_set", set_some_property, value);
+        }
         PYBIND11_OVERRIDE_PURE(void, DeprecationComments, set_some_property, value);
     }
     ::std::string get_property_but_not_accessors() const override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_property_but_not_accessors();
+        }
+        if (py::get_override(static_cast<const DeprecationComments*>(this), "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e50726f70657274794275744e6f744163636573736f7273_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, DeprecationComments, "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e50726f70657274794275744e6f744163636573736f7273_get", get_property_but_not_accessors);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, DeprecationComments, get_property_but_not_accessors);
     }
@@ -64,6 +76,9 @@ public:
         if (m_impl) {
             m_impl->set_property_but_not_accessors(value);
             return;
+        }
+        if (py::get_override(static_cast<const DeprecationComments*>(this), "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e50726f70657274794275744e6f744163636573736f7273_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, DeprecationComments, "__gluecodium_callback_736d6f6b652e4465707265636174696f6e436f6d6d656e74732e50726f70657274794275744e6f744163636573736f7273_set", set_property_but_not_accessors, value);
         }
         PYBIND11_OVERRIDE_PURE(void, DeprecationComments, set_property_but_not_accessors, value);
     }

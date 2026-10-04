@@ -35,6 +35,9 @@ public:
             m_impl->on_temperature_update(thermometer);
             return;
         }
+        if (py::get_override(static_cast<const TemperatureObserver*>(this), "__gluecodium_callback_736d6f6b652e54656d70657261747572654f627365727665722e6f6e54656d7065726174757265557064617465")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, TemperatureObserver, "__gluecodium_callback_736d6f6b652e54656d70657261747572654f627365727665722e6f6e54656d7065726174757265557064617465", on_temperature_update, thermometer);
+        }
         PYBIND11_OVERRIDE_PURE(void, TemperatureObserver, on_temperature_update, thermometer);
     }
 };
