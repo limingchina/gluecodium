@@ -12,8 +12,8 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "smoke/FieldConstructorsNullableTypes.h"
-#include "optional"
 
 using FieldConstructorsNullableTypes = ::smoke::FieldConstructorsNullableTypes;
 using StructWithParameters = ::smoke::FieldConstructorsNullableTypes::StructWithParameters;
@@ -25,7 +25,7 @@ void register_smoke_FieldConstructorsNullableTypes(py::module_& module) {
 auto cls_FieldConstructorsNullableTypes = py::class_<FieldConstructorsNullableTypes>(module, "smoke_FieldConstructorsNullableTypes")
         .def_readwrite("nullable_field", &FieldConstructorsNullableTypes::nullable_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >>(), py::arg("nullable_field"))
+        .def(py::init<::gluecodium::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >>(), py::arg("nullable_field"))
         ;
 
 auto cls_FieldConstructorsNullableTypesStructWithParameters = py::class_<StructWithParameters>(cls_FieldConstructorsNullableTypes, "StructWithParameters")

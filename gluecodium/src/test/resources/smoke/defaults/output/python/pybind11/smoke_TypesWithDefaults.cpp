@@ -12,12 +12,12 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/UnorderedSetHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/TypesWithDefaults.h"
 #include "cstdint"
-#include "optional"
 #include "string"
 #include "unordered_map"
 #include "unordered_set"
@@ -74,7 +74,7 @@ auto cls_TypesWithDefaultsImmutableStructWithCollections = py::class_<ImmutableS
         .def_readonly("empty_set_field", &ImmutableStructWithCollections::empty_set_field)
         .def_readonly("values_set_field", &ImmutableStructWithCollections::values_set_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::std::vector< int32_t > >, ::std::vector< int32_t >, ::std::vector< int32_t >, std::optional< ::std::unordered_map< int32_t, ::std::string > >, ::std::unordered_map< int32_t, ::std::string >, ::std::unordered_map< int32_t, ::std::string >, std::optional< ::std::unordered_set< ::std::string > >, ::std::unordered_set< ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("nullable_list_field"), py::arg("empty_list_field"), py::arg("values_list_field"), py::arg("nullable_map_field"), py::arg("empty_map_field"), py::arg("values_map_field"), py::arg("nullable_set_field"), py::arg("empty_set_field"), py::arg("values_set_field"))
+        .def(py::init<::gluecodium::optional< ::std::vector< int32_t > >, ::std::vector< int32_t >, ::std::vector< int32_t >, ::gluecodium::optional< ::std::unordered_map< int32_t, ::std::string > >, ::std::unordered_map< int32_t, ::std::string >, ::std::unordered_map< int32_t, ::std::string >, ::gluecodium::optional< ::std::unordered_set< ::std::string > >, ::std::unordered_set< ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("nullable_list_field"), py::arg("empty_list_field"), py::arg("values_list_field"), py::arg("nullable_map_field"), py::arg("empty_map_field"), py::arg("values_map_field"), py::arg("nullable_set_field"), py::arg("empty_set_field"), py::arg("values_set_field"))
         ;
 
 auto cls_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections = py::class_<ImmutableStructWithFieldConstructorAndCollections>(cls_TypesWithDefaults, "ImmutableStructWithFieldConstructorAndCollections")
@@ -90,7 +90,7 @@ auto cls_TypesWithDefaultsImmutableStructWithFieldConstructorAndCollections = py
         .def_readonly("some_field", &ImmutableStructWithFieldConstructorAndCollections::some_field)
         .def_readonly("another_field", &ImmutableStructWithFieldConstructorAndCollections::another_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::std::vector< int32_t > >, ::std::vector< int32_t >, ::std::vector< int32_t >, std::optional< ::std::unordered_map< int32_t, ::std::string > >, ::std::unordered_map< int32_t, ::std::string >, ::std::unordered_map< int32_t, ::std::string >, std::optional< ::std::unordered_set< ::std::string > >, ::std::unordered_set< ::std::string >, ::std::unordered_set< ::std::string >, int32_t, int32_t>(), py::arg("nullable_list_field"), py::arg("empty_list_field"), py::arg("values_list_field"), py::arg("nullable_map_field"), py::arg("empty_map_field"), py::arg("values_map_field"), py::arg("nullable_set_field"), py::arg("empty_set_field"), py::arg("values_set_field"), py::arg("some_field"), py::arg("another_field"))
+        .def(py::init<::gluecodium::optional< ::std::vector< int32_t > >, ::std::vector< int32_t >, ::std::vector< int32_t >, ::gluecodium::optional< ::std::unordered_map< int32_t, ::std::string > >, ::std::unordered_map< int32_t, ::std::string >, ::std::unordered_map< int32_t, ::std::string >, ::gluecodium::optional< ::std::unordered_set< ::std::string > >, ::std::unordered_set< ::std::string >, ::std::unordered_set< ::std::string >, int32_t, int32_t>(), py::arg("nullable_list_field"), py::arg("empty_list_field"), py::arg("values_list_field"), py::arg("nullable_map_field"), py::arg("empty_map_field"), py::arg("values_map_field"), py::arg("nullable_set_field"), py::arg("empty_set_field"), py::arg("values_set_field"), py::arg("some_field"), py::arg("another_field"))
         .def(py::init<int32_t, int32_t>(), py::arg("some_field"), py::arg("another_field"))
         ;
 
@@ -121,7 +121,7 @@ auto cls_TypesWithDefaultsImmutableStructWithNullableFieldUsingImmutableStruct =
         .def_readonly("some_field1", &ImmutableStructWithNullableFieldUsingImmutableStruct::some_field1)
         .def_readonly("some_field2", &ImmutableStructWithNullableFieldUsingImmutableStruct::some_field2)
         .def(py::init<>())
-        .def(py::init<std::optional< ::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults >, std::optional< ::smoke::TypesWithDefaults::ImmutableStructWithCollections >>(), py::arg("some_field1"), py::arg("some_field2"))
+        .def(py::init<::gluecodium::optional< ::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults >, ::gluecodium::optional< ::smoke::TypesWithDefaults::ImmutableStructWithCollections >>(), py::arg("some_field1"), py::arg("some_field2"))
         ;
 
 auto cls_TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct = py::class_<ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct>(cls_TypesWithDefaults, "ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct")
@@ -130,7 +130,7 @@ auto cls_TypesWithDefaultsImmutableStructWithFieldConstructorAndNullableFieldUsi
         .def_readonly("some_field", &ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct::some_field)
         .def_readonly("another_field", &ImmutableStructWithFieldConstructorAndNullableFieldUsingImmutableStruct::another_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults >, std::optional< ::smoke::TypesWithDefaults::ImmutableStructWithCollections >, int32_t, int32_t>(), py::arg("some_field1"), py::arg("some_field2"), py::arg("some_field"), py::arg("another_field"))
+        .def(py::init<::gluecodium::optional< ::smoke::TypesWithDefaults::SomeImmutableStructWithDefaults >, ::gluecodium::optional< ::smoke::TypesWithDefaults::ImmutableStructWithCollections >, int32_t, int32_t>(), py::arg("some_field1"), py::arg("some_field2"), py::arg("some_field"), py::arg("another_field"))
         .def(py::init<int32_t, int32_t>(), py::arg("some_field"), py::arg("another_field"))
         ;
 
