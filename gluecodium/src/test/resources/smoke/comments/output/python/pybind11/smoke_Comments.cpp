@@ -12,10 +12,10 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "smoke/Comments.h"
 #include "cstdint"
 #include "functional"
-#include "optional"
 #include "string"
 
 using Comments = ::smoke::Comments;
@@ -51,7 +51,7 @@ auto cls_commentsSomeStruct = py::class_<SomeStruct>(cls_Comments, "SomeStruct")
         .def_readwrite("nullable_field", &SomeStruct::nullable_field)
         .def(py::init<>())
         .def(py::init<bool>(), py::arg("some_field"))
-        .def(py::init<bool, std::optional< ::std::string >>(), py::arg("some_field"), py::arg("nullable_field"))
+        .def(py::init<bool, ::gluecodium::optional< ::std::string >>(), py::arg("some_field"), py::arg("nullable_field"))
         .def("some_struct_method", &SomeStruct::some_struct_method)
         .def_static("some_static_struct_method", &SomeStruct::some_static_struct_method)
         ;

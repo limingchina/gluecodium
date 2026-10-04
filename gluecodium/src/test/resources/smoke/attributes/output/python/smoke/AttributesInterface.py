@@ -13,15 +13,14 @@ class AttributesInterface(generated.smoke_AttributesInterface):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
         # existing native instance (returned by a factory), adopt it via the generated
-        # adoption constructor; otherwise construct a fresh trampoline. `self._native`
-        # aliases the wrapper itself so the rest of the generated code can reach the
-        # native object uniformly (e.g. when passing this interface back into a C++
-        # call site).
+        # adoption constructor and retain the original native object for calls back into
+        # C++; otherwise construct a fresh trampoline.
         if native is not None and isinstance(native, generated.smoke_AttributesInterface):
             super().__init__(native)
+            self._native = native
         else:
             super().__init__()
-        self._native = self
+            self._native = self
 
     def very_fun(self, param: str):
         return _wrap(generated.smoke_AttributesInterface.very_fun(self, _unwrap(param, str)), None)
@@ -34,6 +33,6 @@ class AttributesInterface(generated.smoke_AttributesInterface):
     def prop(self, value: str):
         generated.smoke_AttributesInterface.prop.fset(self, _unwrap(value, str))
 
-    PI = False
 
+    PI = False
 

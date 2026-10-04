@@ -22,6 +22,17 @@ using ClassWithOverloads = ::smoke::ClassWithOverloads;
 
 
 void register_smoke_ClassWithOverloads(py::module_& module) {
+auto cls_ClassWithOverloads = py::class_<ClassWithOverloads, std::shared_ptr<ClassWithOverloads>>(module, "smoke_ClassWithOverloads")
+        .def("__gluecodium_id__", [](const ClassWithOverloads& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def("one_overload_not_exposed", &ClassWithOverloads::oneOverloadNotExposed)
+        .def("all_overloads_exposed", py::overload_cast<const ::std::string&>(&ClassWithOverloads::allOverloadsExposed), py::arg("input"))
+                .def("all_overloads_exposed", [](ClassWithOverloads& self, const ::std::vector< ::std::string >& input_list) {
+                        return self.allOverloadsExposed(input_list);
+                }, py::arg("input_list"))
+        .def("all_overloads_exposed", py::overload_cast<const ::std::string&, const bool>(&ClassWithOverloads::allOverloadsExposed), py::arg("input_string"), py::arg("input_bool"))
+        ;
 
 
 }

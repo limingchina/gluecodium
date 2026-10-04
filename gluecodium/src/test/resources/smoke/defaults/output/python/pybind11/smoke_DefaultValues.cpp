@@ -12,12 +12,12 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/UnorderedSetHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/DefaultValues.h"
 #include "cstdint"
-#include "optional"
 #include "string"
 #include "unordered_map"
 #include "unordered_set"
@@ -58,7 +58,7 @@ auto cls_DefaultValuesNullableStructWithDefaults = py::class_<NullableStructWith
         .def_readwrite("bool_field", &NullableStructWithDefaults::bool_field)
         .def_readwrite("string_field", &NullableStructWithDefaults::string_field)
         .def(py::init<>())
-        .def(py::init<std::optional< int32_t >, std::optional< uint32_t >, std::optional< float >, std::optional< bool >, std::optional< ::std::string >>(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("bool_field"), py::arg("string_field"))
+        .def(py::init<::gluecodium::optional< int32_t >, ::gluecodium::optional< uint32_t >, ::gluecodium::optional< float >, ::gluecodium::optional< bool >, ::gluecodium::optional< ::std::string >>(), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("bool_field"), py::arg("string_field"))
         ;
 
 auto cls_DefaultValuesStructWithSpecialDefaults = py::class_<StructWithSpecialDefaults>(cls_DefaultValues, "StructWithSpecialDefaults")

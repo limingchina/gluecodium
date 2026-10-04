@@ -19,15 +19,14 @@ class ParentInterfaceWithIncludes(generated.smoke_ParentInterfaceWithIncludes):
         # Subclass the native pybind11 type so that a Python override of an interface
         # method is dispatched through the generated trampoline. When `native` is an
         # existing native instance (returned by a factory), adopt it via the generated
-        # adoption constructor; otherwise construct a fresh trampoline. `self._native`
-        # aliases the wrapper itself so the rest of the generated code can reach the
-        # native object uniformly (e.g. when passing this interface back into a C++
-        # call site).
+        # adoption constructor and retain the original native object for calls back into
+        # C++; otherwise construct a fresh trampoline.
         if native is not None and isinstance(native, generated.smoke_ParentInterfaceWithIncludes):
             super().__init__(native)
+            self._native = native
         else:
             super().__init__()
-        self._native = self
+            self._native = self
 
     def root_method(self, input1: IncludableStruct, input2: IncludableEnum) -> IncludableClass:
         return _wrap(generated.smoke_ParentInterfaceWithIncludes.root_method(self, _unwrap(input1, IncludableStruct), _unwrap(input2, IncludableEnum)), IncludableClass)
