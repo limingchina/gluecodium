@@ -9,6 +9,10 @@ import typing
 from typing import Optional
 
 class EnumCollectionDefaultsExternal:
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, list_field: list[ExternalEnum1], set_field: set[ExternalEnum2], map_field: dict[ExternalEnum3, ExternalEnum4]) -> None: ...
 
     list_field: list[ExternalEnum1]
 

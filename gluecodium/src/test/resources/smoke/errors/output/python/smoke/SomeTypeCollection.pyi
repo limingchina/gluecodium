@@ -5,6 +5,7 @@ import typing
 from typing import Optional
 
 class SomeTypeCollection:
+    def __init__(self) -> None: ...
 
     class SomeTypeCollectionError(Enum):
 

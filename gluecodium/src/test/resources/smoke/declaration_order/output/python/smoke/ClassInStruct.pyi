@@ -6,6 +6,7 @@ from typing import Optional
 from typing import Callable
 
 class ClassInStruct:
+    def __init__(self) -> None: ...
 
     class FooChecker:
         ...

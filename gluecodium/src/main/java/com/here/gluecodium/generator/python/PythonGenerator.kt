@@ -383,6 +383,8 @@ internal class PythonGenerator : Generator {
                         (element as? LimeStruct)?.fields.orEmpty().filter {
                             predicates.getValue("isPublic")(it) && containsLambda(it.typeRef)
                         },
+                    "stubConstructors" to
+                        (element as? LimeStruct)?.let { stubConstructorSignatures(it, predicates) }.orEmpty(),
                     "constructorSignatures" to
                         (element as? LimeStruct)?.let { struct ->
                             val signatures = mutableListOf<List<com.here.gluecodium.model.lime.LimeField>>()
@@ -895,6 +897,30 @@ internal class PythonGenerator : Generator {
             is LimeGenericType -> limeType.childTypes.any(::containsLambda)
             else -> limeType.actualType is LimeLambda
         }
+
+    private fun stubConstructorSignatures(
+        struct: LimeStruct,
+        predicates: Map<String, (Any) -> Boolean>,
+    ): List<Map<String, Any>> {
+        // Native constructor decisions use the retained model, including internal/skipped fields.
+        val native = limeReferenceMap[struct.fullName] as? LimeStruct ?: struct
+        val publicNames = struct.fields.filter { predicates.getValue("isPublic")(it) }.map { it.name }.toSet()
+        val signatures = mutableListOf<List<com.here.gluecodium.model.lime.LimeField>>()
+        if (predicates.getValue("hasDefaultConstructor")(native)) signatures.add(emptyList())
+        if (predicates.getValue("hasPartialDefaults")(native)) {
+            signatures.add(native.uninitializedFields.filter { predicates.getValue("isPublic")(it) })
+        }
+        if (predicates.getValue("needsAllFieldsConstructor")(native)) {
+            signatures.add(native.fields.filter { predicates.getValue("isPublic")(it) })
+        }
+        signatures.addAll(native.fieldConstructors.map { it.fields })
+        val publicSignatures =
+            signatures.filter { fields -> fields.all { it.name in publicNames } }
+                .distinctBy { fields -> fields.map { pythonNameResolver.resolveName(it) to pythonNameResolver.resolveName(it.typeRef) } }
+        return publicSignatures.map { fields ->
+            mapOf("fields" to fields, "overloaded" to (publicSignatures.size > 1))
+        }
+    }
 
     private fun structKeyStubName(type: LimeStruct): String =
         "_gluecodium_key_" + type.fullName.toByteArray(Charsets.UTF_8).joinToString("") { "%02x".format(it) }

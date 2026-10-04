@@ -10,6 +10,7 @@ import typing
 from typing import Optional
 
 class KotlinExternalTypesStruct:
+    def __init__(self, currency: Currency, time_zone: TimeZone, month: Month, color: SystemColor, season: Season) -> None: ...
 
     currency: Currency
 

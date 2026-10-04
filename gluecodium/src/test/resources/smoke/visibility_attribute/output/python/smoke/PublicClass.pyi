@@ -18,18 +18,27 @@ class PublicClass:
         ...
 
     class _InternalStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, string_field: str) -> None: ...
 
         string_field: str
 
 
 
     class PublicStruct:
+        def __init__(self) -> None: ...
 
         _internal_field: PublicClass._InternalStruct
 
 
 
     class PublicStructWithInternalDefaults:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, public_field: float) -> None: ...
 
         _internal_field: str
 

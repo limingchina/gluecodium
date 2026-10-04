@@ -6,6 +6,7 @@ import typing
 from typing import Optional
 
 class ExternalDartConstants:
+    def __init__(self) -> None: ...
 
 
     SMALL = Rectangle(0, 0, 1, 1)

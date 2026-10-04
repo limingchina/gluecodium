@@ -12,12 +12,20 @@ from typing import Optional
 class EnumDefaultsExternal:
 
     class SimpleEnum:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, enum_field: ExternalEnum1) -> None: ...
 
         enum_field: ExternalEnum1
 
 
 
     class NullableEnum:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, enum_field1: Optional[ExternalEnum2], enum_field2: Optional[ExternalEnum2]) -> None: ...
 
         enum_field1: Optional[ExternalEnum2]
 
@@ -26,12 +34,20 @@ class EnumDefaultsExternal:
 
 
     class AliasEnum:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, enum_field: ExternalEnum3) -> None: ...
 
         enum_field: ExternalEnum3
 
 
 
     class WrappedEnum:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, struct_field: EnumWrapper) -> None: ...
 
         struct_field: EnumWrapper
 

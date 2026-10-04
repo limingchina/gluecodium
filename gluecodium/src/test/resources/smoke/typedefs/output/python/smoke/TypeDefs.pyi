@@ -40,12 +40,20 @@ class TypeDefs:
         ...
 
     class StructHavingAliasFieldDefinedBelow:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, field: float) -> None: ...
 
         field: float
 
 
 
     class TestStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, something: str) -> None: ...
 
         something: str
 

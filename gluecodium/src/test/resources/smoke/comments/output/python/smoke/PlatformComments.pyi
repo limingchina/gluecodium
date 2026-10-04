@@ -23,6 +23,10 @@ class PlatformComments:
 
     class Something:
         """This is a."""
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, nothing: str) -> None: ...
 
         nothing: str
 

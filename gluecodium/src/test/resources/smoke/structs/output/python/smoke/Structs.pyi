@@ -24,6 +24,10 @@ class Structs:
         ...
 
     class Point:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, x: float, y: float) -> None: ...
 
         x: float
 
@@ -37,6 +41,10 @@ class Structs:
 
 
     class Line:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, a: Structs.Point, b: Structs.Point) -> None: ...
 
         a: Structs.Point
 
@@ -45,6 +53,7 @@ class Structs:
 
 
     class AllTypesStruct:
+        def __init__(self, int8_field: int, uint8_field: int, int16_field: int, uint16_field: int, int32_field: int, uint32_field: int, int64_field: int, uint64_field: int, float_field: float, double_field: float, string_field: str, boolean_field: bool, bytes_field: bytes, point_field: Structs.Point) -> None: ...
 
         int8_field: int
 
@@ -77,24 +86,34 @@ class Structs:
 
 
     class NestingImmutableStruct:
+        def __init__(self, struct_field: Structs.AllTypesStruct) -> None: ...
 
         struct_field: Structs.AllTypesStruct
 
 
 
     class DoubleNestingImmutableStruct:
+        def __init__(self, nesting_struct_field: Structs.NestingImmutableStruct) -> None: ...
 
         nesting_struct_field: Structs.NestingImmutableStruct
 
 
 
     class StructWithArrayOfImmutable:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, array_field: list[Structs.AllTypesStruct]) -> None: ...
 
         array_field: list[Structs.AllTypesStruct]
 
 
 
     class ImmutableStructWithCppAccessors:
+        @typing.overload
+        def __init__(self, trivial_int_field: int, trivial_double_field: float, nontrivial_string_field: str, nontrivial_point_field: Structs.Point) -> None: ...
+        @typing.overload
+        def __init__(self, trivial_int_field: int, trivial_double_field: float, nontrivial_string_field: str, nontrivial_point_field: Structs.Point, nontrivial_optional_point: Optional[Structs.Point]) -> None: ...
 
         trivial_int_field: int
 
@@ -109,6 +128,12 @@ class Structs:
 
 
     class MutableStructWithCppAccessors:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, trivial_int_field: int, trivial_double_field: float, nontrivial_string_field: str, nontrivial_point_field: Structs.Point) -> None: ...
+        @typing.overload
+        def __init__(self, trivial_int_field: int, trivial_double_field: float, nontrivial_string_field: str, nontrivial_point_field: Structs.Point, nontrivial_optional_point: Optional[Structs.Point]) -> None: ...
 
         trivial_int_field: int
 

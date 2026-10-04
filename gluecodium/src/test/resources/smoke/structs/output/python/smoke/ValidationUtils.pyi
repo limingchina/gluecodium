@@ -5,6 +5,7 @@ import typing
 from typing import Optional
 
 class ValidationUtils:
+    def __init__(self) -> None: ...
 
     class ValidationErrorCode(Enum):
 

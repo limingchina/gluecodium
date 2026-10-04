@@ -11,6 +11,10 @@ class DefaultValues:
         ...
 
     class StructWithDefaults:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, int_field: int, uint_field: int, float_field: float, double_field: float, bool_field: bool, string_field: str) -> None: ...
 
         int_field: int
 
@@ -27,6 +31,10 @@ class DefaultValues:
 
 
     class NullableStructWithDefaults:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, int_field: Optional[int], uint_field: Optional[int], float_field: Optional[float], bool_field: Optional[bool], string_field: Optional[str]) -> None: ...
 
         int_field: Optional[int]
 
@@ -41,6 +49,10 @@ class DefaultValues:
 
 
     class StructWithSpecialDefaults:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, float_nan_field: float, float_infinity_field: float, float_negative_infinity_field: float, double_nan_field: float, double_infinity_field: float, double_negative_infinity_field: float) -> None: ...
 
         float_nan_field: float
 
@@ -57,6 +69,10 @@ class DefaultValues:
 
 
     class StructWithEmptyDefaults:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, ints_field: list[int], floats_field: list[float], map_field: dict[int, str], struct_field: DefaultValues.StructWithDefaults, set_type_field: set[str]) -> None: ...
 
         ints_field: list[int]
 
@@ -71,6 +87,10 @@ class DefaultValues:
 
 
     class StructWithTypedefDefaults:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, long_field: int, bool_field: bool, string_field: str) -> None: ...
 
         long_field: int
 

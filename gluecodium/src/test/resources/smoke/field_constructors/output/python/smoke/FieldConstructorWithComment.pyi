@@ -6,6 +6,10 @@ from typing import Optional
 
 class FieldConstructorWithComment:
     """SomeStruct"""
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, string_field: str) -> None: ...
 
     #: Some field
     string_field: str

@@ -5,6 +5,12 @@ import typing
 from typing import Optional
 
 class PublicStructWithNonDefaultInternalField:
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, public_field: bool) -> None: ...
+    @typing.overload
+    def __init__(self, defaulted_field: int, public_field: bool) -> None: ...
 
     defaulted_field: int
 

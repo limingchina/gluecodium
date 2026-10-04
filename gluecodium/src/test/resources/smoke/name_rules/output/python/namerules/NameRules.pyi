@@ -38,6 +38,10 @@ class NameRules:
         ...
 
     class ExampleStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, value: float, int_value: list[int]) -> None: ...
 
         value: float
 

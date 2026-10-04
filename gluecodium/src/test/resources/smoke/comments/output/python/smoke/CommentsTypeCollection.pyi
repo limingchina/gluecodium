@@ -5,8 +5,13 @@ import typing
 from typing import Optional
 
 class CommentsTypeCollection:
+    def __init__(self) -> None: ...
 
     class TypeCollectionStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, field: int) -> None: ...
 
         field: int
 

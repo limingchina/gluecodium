@@ -5,8 +5,13 @@ import typing
 from typing import Optional
 
 class Serialization:
+    def __init__(self) -> None: ...
 
     class SerializableStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, bool_field: bool, byte_field: int, short_field: int, int_field: int, long_field: int, float_field: float, double_field: float, string_field: str, struct_field: Serialization.NestedSerializableStruct, byte_buffer_field: bytes, array_field: list[str], struct_array_field: list[Serialization.NestedSerializableStruct], map_field: dict[int, str], set_field: set[str], enum_set_field: set[Serialization.SomeEnum], enum_field: Serialization.SomeEnum) -> None: ...
 
         bool_field: bool
 
@@ -43,6 +48,10 @@ class Serialization:
 
 
     class NestedSerializableStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, some_field: str) -> None: ...
 
         some_field: str
 

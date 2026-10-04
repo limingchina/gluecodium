@@ -5,8 +5,13 @@ import typing
 from typing import Optional
 
 class TypeCollection:
+    def __init__(self) -> None: ...
 
     class Point:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, x: float, y: float) -> None: ...
 
         x: float
 
@@ -15,6 +20,10 @@ class TypeCollection:
 
 
     class StructHavingAliasFieldDefinedBelow:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, field: int) -> None: ...
 
         field: int
 
