@@ -27,7 +27,7 @@ using SomeEnum = ::smoke::Comments::SomeEnum;
 void register_smoke_Comments(py::module_& module) {
 auto cls_Comments = py::class_<Comments, std::shared_ptr<Comments>>(module, "smoke_Comments")
         .def("__gluecodium_id__", [](const Comments& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("some_method_with_all_comments", &Comments::some_method_with_all_comments, py::arg("input_parameter"))
         .def("some_method_with_input_comments", &Comments::some_method_with_input_comments, py::arg("input"))

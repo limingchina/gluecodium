@@ -23,7 +23,7 @@ using JavaInternalPropertyRev = ::smoke::JavaInternalPropertyRev;
 void register_smoke_JavaInternalPropertyRev(py::module_& module) {
 auto cls_JavaInternalPropertyRev = py::class_<JavaInternalPropertyRev, std::shared_ptr<JavaInternalPropertyRev>>(module, "smoke_JavaInternalPropertyRev")
         .def("__gluecodium_id__", [](const JavaInternalPropertyRev& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_property("app_context", py::overload_cast<>(&JavaInternalPropertyRev::get_app_context, py::const_), py::overload_cast<const ::gluecodium::optional< ::std::string >&>(&JavaInternalPropertyRev::set_app_context))
         ;

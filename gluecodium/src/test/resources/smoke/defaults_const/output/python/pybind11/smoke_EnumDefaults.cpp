@@ -30,7 +30,7 @@ using WrappedEnum = ::smoke::EnumDefaults::WrappedEnum;
 void register_smoke_EnumDefaults(py::module_& module) {
 auto cls_EnumDefaults = py::class_<EnumDefaults, std::shared_ptr<EnumDefaults>>(module, "smoke_EnumDefaults")
         .def("__gluecodium_id__", [](const EnumDefaults& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

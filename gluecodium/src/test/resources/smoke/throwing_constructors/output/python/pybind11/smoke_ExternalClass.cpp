@@ -38,7 +38,7 @@ public:
 void register_smoke_ExternalClass(py::module_& module) {
 auto cls_ExternalClass = py::class_<ExternalClass, std::shared_ptr<ExternalClass>, ExternalClassTrampoline>(module, "smoke_ExternalClass")
         .def("__gluecodium_id__", [](const ExternalClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
@@ -55,7 +55,7 @@ auto cls_ExternalClass = py::class_<ExternalClass, std::shared_ptr<ExternalClass
 
 auto cls_ExternalClassInternalOne = py::class_<InternalOne, std::shared_ptr<InternalOne>>(cls_ExternalClass, "InternalOne")
         .def("__gluecodium_id__", [](const InternalOne& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("create", py::overload_cast<>(InternalOne::create))
         .def_static("create", py::overload_cast<const uint64_t>(InternalOne::create), py::arg("value"))
@@ -63,7 +63,7 @@ auto cls_ExternalClassInternalOne = py::class_<InternalOne, std::shared_ptr<Inte
 
 auto cls_ExternalClassInternalTwo = py::class_<InternalTwo, std::shared_ptr<InternalTwo>>(cls_ExternalClass, "InternalTwo")
         .def("__gluecodium_id__", [](const InternalTwo& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("create", &InternalTwo::create)
         ;

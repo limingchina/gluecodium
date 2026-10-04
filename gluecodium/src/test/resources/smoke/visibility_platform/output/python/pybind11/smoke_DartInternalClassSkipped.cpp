@@ -21,7 +21,7 @@ using DartInternalClassSkipped = ::smoke::DartInternalClassSkipped;
 void register_smoke_DartInternalClassSkipped(py::module_& module) {
 auto cls_DartInternalClassSkipped = py::class_<DartInternalClassSkipped, std::shared_ptr<DartInternalClassSkipped>>(module, "smoke_DartInternalClassSkipped")
         .def("__gluecodium_id__", [](const DartInternalClassSkipped& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

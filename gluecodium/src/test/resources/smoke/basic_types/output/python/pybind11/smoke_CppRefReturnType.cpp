@@ -26,7 +26,7 @@ using InternalError = ::smoke::CppRefReturnType::InternalError;
 void register_smoke_CppRefReturnType(py::module_& module) {
 auto cls_CppRefReturnType = py::class_<CppRefReturnType, std::shared_ptr<CppRefReturnType>>(module, "smoke_CppRefReturnType")
         .def("__gluecodium_id__", [](const CppRefReturnType& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("void_ref", &CppRefReturnType::void_ref)
         .def_static("bool_ref", &CppRefReturnType::bool_ref)

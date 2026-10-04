@@ -69,7 +69,16 @@ public:
 void register_smoke_ForwardDeclarationBug(py::module_& module) {
 auto cls_ForwardDeclarationBug = py::class_<ForwardDeclarationBug, ::smoke::ParentClass, std::shared_ptr<ForwardDeclarationBug>, ForwardDeclarationBugTrampoline>(module, "smoke_ForwardDeclarationBug")
         .def("__gluecodium_id__", [](const ForwardDeclarationBug& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentClass>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<ForwardDeclarationBug>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

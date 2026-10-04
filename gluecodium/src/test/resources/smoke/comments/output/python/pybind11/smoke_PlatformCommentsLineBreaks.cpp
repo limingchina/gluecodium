@@ -21,7 +21,7 @@ using PlatformCommentsLineBreaks = ::smoke::PlatformCommentsLineBreaks;
 void register_smoke_PlatformCommentsLineBreaks(py::module_& module) {
 auto cls_PlatformCommentsLineBreaks = py::class_<PlatformCommentsLineBreaks, std::shared_ptr<PlatformCommentsLineBreaks>>(module, "smoke_PlatformCommentsLineBreaks")
         .def("__gluecodium_id__", [](const PlatformCommentsLineBreaks& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

@@ -28,8 +28,21 @@ auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{py
 {{#generateBinding}}
 auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}, {{#baseClasses}}{{fqn}}, {{/baseClasses}}std::shared_ptr<{{resolveName model "Pybind11"}}>, {{resolveName}}Trampoline>({{scope}}, "{{pybindName}}"{{#ifPredicate model "needsMultipleInheritanceTag"}}, py::multiple_inheritance(){{/ifPredicate}})
         .def("__gluecodium_id__", [](const {{resolveName model "Pybind11"}}& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
+{{#if downcastBases}}
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+{{#downcastBases}}
+            try {
+                auto base = native.cast<std::shared_ptr<{{fqn}}>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<{{resolveName model "Pybind11"}}>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+{{/downcastBases}}
+            return py::none();
+        })
+{{/if}}
 {{#generateBinding}}
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

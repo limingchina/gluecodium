@@ -20,7 +20,6 @@ using SkipSetter = ::smoke::SkipSetter;
 class SkipSetterTrampoline : public SkipSetter {
 public:
     using SkipSetter::SkipSetter;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -50,7 +49,7 @@ public:
 void register_smoke_SkipSetter(py::module_& module) {
 auto cls_SkipSetter = py::class_<SkipSetter, std::shared_ptr<SkipSetter>, SkipSetterTrampoline>(module, "smoke_SkipSetter")
         .def("__gluecodium_id__", [](const SkipSetter& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

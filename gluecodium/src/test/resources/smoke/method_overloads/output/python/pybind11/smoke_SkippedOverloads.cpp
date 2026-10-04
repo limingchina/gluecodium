@@ -23,7 +23,7 @@ using SkippedOverloads = ::smoke::SkippedOverloads;
 void register_smoke_SkippedOverloads(py::module_& module) {
 auto cls_SkippedOverloads = py::class_<SkippedOverloads, std::shared_ptr<SkippedOverloads>>(module, "smoke_SkippedOverloads")
         .def("__gluecodium_id__", [](const SkippedOverloads& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("make", &SkippedOverloads::make)
         .def_static("make_for_dart", &SkippedOverloads::make_for_dart, py::arg("input"))

@@ -23,7 +23,7 @@ using SwiftConstructorOverloads = ::smoke::SwiftConstructorOverloads;
 void register_smoke_SwiftConstructorOverloads(py::module_& module) {
 auto cls_SwiftConstructorOverloads = py::class_<SwiftConstructorOverloads, std::shared_ptr<SwiftConstructorOverloads>>(module, "smoke_SwiftConstructorOverloads")
         .def("__gluecodium_id__", [](const SwiftConstructorOverloads& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("make", &SwiftConstructorOverloads::make, py::arg("input"))
         .def_static("make_do", &SwiftConstructorOverloads::make_do, py::arg("throughput"))

@@ -19,7 +19,6 @@ using PlatformInternalInterface = ::smoke::PlatformInternalInterface;
 class PlatformInternalInterfaceTrampoline : public PlatformInternalInterface {
 public:
     using PlatformInternalInterface::PlatformInternalInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -34,7 +33,7 @@ public:
 void register_smoke_PlatformInternalInterface(py::module_& module) {
 auto cls_PlatformInternalInterface = py::class_<PlatformInternalInterface, std::shared_ptr<PlatformInternalInterface>, PlatformInternalInterfaceTrampoline>(module, "smoke_PlatformInternalInterface")
         .def("__gluecodium_id__", [](const PlatformInternalInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

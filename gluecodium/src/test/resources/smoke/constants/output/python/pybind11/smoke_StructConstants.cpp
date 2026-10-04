@@ -24,7 +24,7 @@ using NestingStruct = ::smoke::StructConstants::NestingStruct;
 void register_smoke_StructConstants(py::module_& module) {
 auto cls_StructConstants = py::class_<StructConstants, std::shared_ptr<StructConstants>>(module, "smoke_StructConstants")
         .def("__gluecodium_id__", [](const StructConstants& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

@@ -25,7 +25,7 @@ using StructWithStaticMethodsOnly = ::smoke::StructsWithMethodsInterface::Struct
 void register_smoke_StructsWithMethodsInterface(py::module_& module) {
 auto cls_StructsWithMethodsInterface = py::class_<StructsWithMethodsInterface, std::shared_ptr<StructsWithMethodsInterface>>(module, "smoke_StructsWithMethodsInterface")
         .def("__gluecodium_id__", [](const StructsWithMethodsInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

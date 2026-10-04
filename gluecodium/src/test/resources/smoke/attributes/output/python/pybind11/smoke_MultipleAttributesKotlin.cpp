@@ -21,7 +21,7 @@ using MultipleAttributesKotlin = ::smoke::MultipleAttributesKotlin;
 void register_smoke_MultipleAttributesKotlin(py::module_& module) {
 auto cls_MultipleAttributesKotlin = py::class_<MultipleAttributesKotlin, std::shared_ptr<MultipleAttributesKotlin>>(module, "smoke_MultipleAttributesKotlin")
         .def("__gluecodium_id__", [](const MultipleAttributesKotlin& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("no_lists2", &MultipleAttributesKotlin::no_lists2)
         .def("no_lists3", &MultipleAttributesKotlin::no_lists3)

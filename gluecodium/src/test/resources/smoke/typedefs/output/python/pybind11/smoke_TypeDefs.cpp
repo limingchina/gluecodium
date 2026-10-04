@@ -27,7 +27,7 @@ using TestStruct = ::smoke::TypeDefs::TestStruct;
 void register_smoke_TypeDefs(py::module_& module) {
 auto cls_TypeDefs = py::class_<TypeDefs, std::shared_ptr<TypeDefs>>(module, "smoke_TypeDefs")
         .def("__gluecodium_id__", [](const TypeDefs& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("method_with_primitive_type_def", &TypeDefs::method_with_primitive_type_def, py::arg("input"))
                 .def_static("method_with_complex_type_def", [](const ::std::vector< ::smoke::TypeDefs::TestStruct >& input) -> py::object {

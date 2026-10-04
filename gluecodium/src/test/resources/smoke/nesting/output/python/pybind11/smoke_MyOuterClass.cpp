@@ -35,13 +35,22 @@ public:
 void register_smoke_MyOuterClass(py::module_& module) {
 auto cls_MyOuterClass = py::class_<MyOuterClass, std::shared_ptr<MyOuterClass>>(module, "smoke_MyOuterClass")
         .def("__gluecodium_id__", [](const MyOuterClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 
 auto cls_MyOuterClassMyNestedImplementation = py::class_<MyNestedImplementation, ::smoke::MyParentInterface, std::shared_ptr<MyNestedImplementation>, MyNestedImplementationTrampoline>(cls_MyOuterClass, "MyNestedImplementation")
         .def("__gluecodium_id__", [](const MyNestedImplementation& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::MyParentInterface>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<MyNestedImplementation>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

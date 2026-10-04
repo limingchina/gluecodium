@@ -22,7 +22,6 @@ using SomeEnum = ::smoke::CommentsInterface::SomeEnum;
 class CommentsInterfaceTrampoline : public CommentsInterface {
 public:
     using CommentsInterface::CommentsInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -136,7 +135,7 @@ public:
 void register_smoke_CommentsInterface(py::module_& module) {
 auto cls_CommentsInterface = py::class_<CommentsInterface, std::shared_ptr<CommentsInterface>, CommentsInterfaceTrampoline>(module, "smoke_CommentsInterface")
         .def("__gluecodium_id__", [](const CommentsInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

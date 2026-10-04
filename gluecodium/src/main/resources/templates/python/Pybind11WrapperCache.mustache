@@ -52,11 +52,32 @@
 #include <pybind11/pybind11.h>
 
 #include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <type_traits>
 #include <functional>
 #include <mutex>
 #include <unordered_map>
 
 namespace gluecodium::python {
+
+template <typename T>
+uintptr_t native_identity(const T& value) {
+    if constexpr (std::is_polymorphic_v<T>) {
+        return reinterpret_cast<uintptr_t>(dynamic_cast<const void*>(std::addressof(value)));
+    } else {
+        return reinterpret_cast<uintptr_t>(std::addressof(value));
+    }
+}
+
+template <typename Derived, typename Base>
+std::shared_ptr<Derived> dynamic_pointer_cast(const std::shared_ptr<Base>& value) {
+    if constexpr (std::is_polymorphic_v<Base>) {
+        return std::dynamic_pointer_cast<Derived>(value);
+    } else {
+        return {};
+    }
+}
 
 class WrapperCache {
 public:

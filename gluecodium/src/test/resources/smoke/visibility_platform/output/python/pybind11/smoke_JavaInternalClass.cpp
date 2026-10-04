@@ -21,7 +21,7 @@ using JavaInternalClass = ::smoke::JavaInternalClass;
 void register_smoke_JavaInternalClass(py::module_& module) {
 auto cls_JavaInternalClass = py::class_<JavaInternalClass, std::shared_ptr<JavaInternalClass>>(module, "smoke_JavaInternalClass")
         .def("__gluecodium_id__", [](const JavaInternalClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

@@ -21,7 +21,7 @@ using CollectionConstants = ::smoke::CollectionConstants;
 void register_smoke_CollectionConstants(py::module_& module) {
 auto cls_CollectionConstants = py::class_<CollectionConstants, std::shared_ptr<CollectionConstants>>(module, "smoke_CollectionConstants")
         .def("__gluecodium_id__", [](const CollectionConstants& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

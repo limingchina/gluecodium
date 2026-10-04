@@ -30,7 +30,7 @@ using SomeEnum = ::smoke::OrderInClass::SomeEnum;
 void register_smoke_OrderInClass(py::module_& module) {
 auto cls_OrderInClass = py::class_<OrderInClass, std::shared_ptr<OrderInClass>>(module, "smoke_OrderInClass")
         .def("__gluecodium_id__", [](const OrderInClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

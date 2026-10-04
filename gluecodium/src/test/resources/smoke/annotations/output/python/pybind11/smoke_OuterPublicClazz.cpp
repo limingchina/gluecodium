@@ -22,13 +22,13 @@ using InnerInternalClazz = ::smoke::OuterPublicClazz::InnerInternalClazz;
 void register_smoke_OuterPublicClazz(py::module_& module) {
 auto cls_OuterPublicClazz = py::class_<OuterPublicClazz, std::shared_ptr<OuterPublicClazz>>(module, "smoke_OuterPublicClazz")
         .def("__gluecodium_id__", [](const OuterPublicClazz& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 
 auto cls__OuterPublicClazzInnerInternalClazz = py::class_<InnerInternalClazz, std::shared_ptr<InnerInternalClazz>>(cls_OuterPublicClazz, "_InnerInternalClazz")
         .def("__gluecodium_id__", [](const InnerInternalClazz& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("some_function", &InnerInternalClazz::some_function)
         ;

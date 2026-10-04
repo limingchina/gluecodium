@@ -27,7 +27,6 @@ using ParentInterfaceWithIncludes = ::smoke::ParentInterfaceWithIncludes;
 class ParentInterfaceWithIncludesTrampoline : public ParentInterfaceWithIncludes {
 public:
     using ParentInterfaceWithIncludes::ParentInterfaceWithIncludes;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -88,7 +87,7 @@ public:
 void register_smoke_ParentInterfaceWithIncludes(py::module_& module) {
 auto cls_ParentInterfaceWithIncludes = py::class_<ParentInterfaceWithIncludes, std::shared_ptr<ParentInterfaceWithIncludes>, ParentInterfaceWithIncludesTrampoline>(module, "smoke_ParentInterfaceWithIncludes")
         .def("__gluecodium_id__", [](const ParentInterfaceWithIncludes& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

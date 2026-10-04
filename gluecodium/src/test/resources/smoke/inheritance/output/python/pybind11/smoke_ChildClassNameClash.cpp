@@ -53,7 +53,16 @@ public:
 void register_smoke_ChildClassNameClash(py::module_& module) {
 auto cls_ChildClassNameClash = py::class_<ChildClassNameClash, ::smoke::InterfaceWithOverloads, std::shared_ptr<ChildClassNameClash>, ChildClassNameClashTrampoline>(module, "smoke_ChildClassNameClash")
         .def("__gluecodium_id__", [](const ChildClassNameClash& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::InterfaceWithOverloads>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<ChildClassNameClash>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

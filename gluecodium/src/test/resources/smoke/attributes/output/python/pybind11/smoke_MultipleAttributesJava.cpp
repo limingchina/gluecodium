@@ -21,7 +21,7 @@ using MultipleAttributesJava = ::smoke::MultipleAttributesJava;
 void register_smoke_MultipleAttributesJava(py::module_& module) {
 auto cls_MultipleAttributesJava = py::class_<MultipleAttributesJava, std::shared_ptr<MultipleAttributesJava>>(module, "smoke_MultipleAttributesJava")
         .def("__gluecodium_id__", [](const MultipleAttributesJava& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("no_lists2", &MultipleAttributesJava::no_lists2)
         .def("no_lists3", &MultipleAttributesJava::no_lists3)

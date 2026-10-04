@@ -22,7 +22,7 @@ using NoCacheClass = ::smoke::NoCacheClass;
 void register_smoke_NoCacheClass(py::module_& module) {
 auto cls_NoCacheClass = py::class_<NoCacheClass, std::shared_ptr<NoCacheClass>>(module, "smoke_NoCacheClass")
         .def("__gluecodium_id__", [](const NoCacheClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("make", &NoCacheClass::make)
         .def("foo", &NoCacheClass::foo)

@@ -22,6 +22,45 @@ from test.DummyFactory import DummyFactory
 from test.DummyClass import DummyClass
 
 import pytest
+import subprocess
+import sys
+
+
+@pytest.mark.parametrize("parent_first", [True, False])
+def test_child_wrapper_identity_across_parent_views(parent_first):
+    # Each process starts with an empty identity cache, making access order observable.
+    script = f"""
+from test.DummyFactory import DummyFactory
+from test.DummyChildClass import DummyChildClass
+if {parent_first!r}:
+    parent = DummyFactory.get_dummy_child_class_singleton_as_parent()
+    child = DummyFactory.get_dummy_child_class_singleton()
+else:
+    child = DummyFactory.get_dummy_child_class_singleton()
+    parent = DummyFactory.get_dummy_child_class_singleton_as_parent()
+assert isinstance(parent, DummyChildClass)
+assert isinstance(child, DummyChildClass)
+assert parent is child
+"""
+    subprocess.run([sys.executable, "-c", script], check=True, timeout=10)
+
+
+@pytest.mark.parametrize("parent_first", [True, False])
+def test_child_interface_identity_across_parent_views(parent_first):
+    script = f"""
+from test.DummyFactory import DummyFactory
+from test.DummyChildInterface import DummyChildInterface
+if {parent_first!r}:
+    parent = DummyFactory.get_dummy_child_interface_singleton_as_parent()
+    child = DummyFactory.get_dummy_child_interface_singleton()
+else:
+    child = DummyFactory.get_dummy_child_interface_singleton()
+    parent = DummyFactory.get_dummy_child_interface_singleton_as_parent()
+assert isinstance(parent, DummyChildInterface)
+assert isinstance(child, DummyChildInterface)
+assert parent is child
+"""
+    subprocess.run([sys.executable, "-c", script], check=True, timeout=10)
 
 
 class TestRefEquality:

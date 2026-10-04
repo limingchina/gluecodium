@@ -20,7 +20,6 @@ using ExampleStruct = ::smoke::PropertiesInterface::ExampleStruct;
 class PropertiesInterfaceTrampoline : public PropertiesInterface {
 public:
     using PropertiesInterface::PropertiesInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -50,7 +49,7 @@ public:
 void register_smoke_PropertiesInterface(py::module_& module) {
 auto cls_PropertiesInterface = py::class_<PropertiesInterface, std::shared_ptr<PropertiesInterface>, PropertiesInterfaceTrampoline>(module, "smoke_PropertiesInterface")
         .def("__gluecodium_id__", [](const PropertiesInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

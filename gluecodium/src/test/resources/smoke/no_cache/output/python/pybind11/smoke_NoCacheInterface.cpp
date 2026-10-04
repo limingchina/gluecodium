@@ -19,7 +19,6 @@ using NoCacheInterface = ::smoke::NoCacheInterface;
 class NoCacheInterfaceTrampoline : public NoCacheInterface {
 public:
     using NoCacheInterface::NoCacheInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -43,7 +42,7 @@ public:
 void register_smoke_NoCacheInterface(py::module_& module) {
 auto cls_NoCacheInterface = py::class_<NoCacheInterface, std::shared_ptr<NoCacheInterface>, NoCacheInterfaceTrampoline>(module, "smoke_NoCacheInterface")
         .def("__gluecodium_id__", [](const NoCacheInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

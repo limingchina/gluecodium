@@ -34,7 +34,7 @@ using SomeEnum = ::smoke::Nullable::SomeEnum;
 void register_smoke_Nullable(py::module_& module) {
 auto cls_Nullable = py::class_<Nullable, std::shared_ptr<Nullable>>(module, "smoke_Nullable")
         .def("__gluecodium_id__", [](const Nullable& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("method_with_string", &Nullable::method_with_string, py::arg("input"))
         .def("method_with_boolean", &Nullable::method_with_boolean, py::arg("input"))

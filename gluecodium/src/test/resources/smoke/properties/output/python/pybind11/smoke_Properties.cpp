@@ -29,7 +29,7 @@ using InternalErrorCode = ::smoke::Properties::InternalErrorCode;
 void register_smoke_Properties(py::module_& module) {
 auto cls_Properties = py::class_<Properties, std::shared_ptr<Properties>>(module, "smoke_Properties")
         .def("__gluecodium_id__", [](const Properties& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_property("built_in_type_property", py::overload_cast<>(&Properties::get_built_in_type_property, py::const_), py::overload_cast<const uint32_t>(&Properties::set_built_in_type_property))
         .def_property_readonly("readonly_property", py::overload_cast<>(&Properties::get_readonly_property, py::const_))

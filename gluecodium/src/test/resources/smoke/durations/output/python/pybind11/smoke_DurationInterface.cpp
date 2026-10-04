@@ -22,7 +22,6 @@ using DurationInterface = ::smoke::DurationInterface;
 class DurationInterfaceTrampoline : public DurationInterface {
 public:
     using DurationInterface::DurationInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -45,7 +44,7 @@ public:
 void register_smoke_DurationInterface(py::module_& module) {
 auto cls_DurationInterface = py::class_<DurationInterface, std::shared_ptr<DurationInterface>, DurationInterfaceTrampoline>(module, "smoke_DurationInterface")
         .def("__gluecodium_id__", [](const DurationInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

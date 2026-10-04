@@ -37,7 +37,6 @@ using InnerEnum = ::smoke::OuterStruct::InnerEnum;
 class InnerInterfaceTrampoline : public InnerInterface {
 public:
     using InnerInterface::InnerInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
@@ -80,7 +79,7 @@ auto cls_OuterStructInnerStruct = py::class_<InnerStruct>(cls_OuterStruct, "Inne
 
 auto cls_OuterStructInnerClass = py::class_<InnerClass, std::shared_ptr<InnerClass>>(cls_OuterStruct, "InnerClass")
         .def("__gluecodium_id__", [](const InnerClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
                 .def("foo_bar", [](InnerClass& self) -> py::object {
                         return gluecodium::python::to_python_regular(self.foo_bar());
@@ -89,7 +88,7 @@ auto cls_OuterStructInnerClass = py::class_<InnerClass, std::shared_ptr<InnerCla
 
 auto cls_OuterStructBuilder = py::class_<Builder, std::shared_ptr<Builder>>(cls_OuterStruct, "Builder")
         .def("__gluecodium_id__", [](const Builder& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("create", &Builder::create)
         .def("field", &Builder::field, py::arg("value"))
@@ -98,7 +97,7 @@ auto cls_OuterStructBuilder = py::class_<Builder, std::shared_ptr<Builder>>(cls_
 
 auto cls_OuterStructInnerInterface = py::class_<InnerInterface, std::shared_ptr<InnerInterface>, InnerInterfaceTrampoline>(cls_OuterStruct, "InnerInterface")
         .def("__gluecodium_id__", [](const InnerInterface& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def(py::init<>())
         // Adoption constructor: when a factory returns an existing native instance (e.g. a

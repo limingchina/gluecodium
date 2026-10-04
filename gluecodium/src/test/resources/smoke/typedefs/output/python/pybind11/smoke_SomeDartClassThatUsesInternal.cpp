@@ -25,7 +25,7 @@ using SomeDartClassThatUsesInternal = ::smoke::SomeDartClassThatUsesInternal;
 void register_smoke_SomeDartClassThatUsesInternal(py::module_& module) {
 auto cls_SomeDartClassThatUsesInternal = py::class_<SomeDartClassThatUsesInternal, std::shared_ptr<SomeDartClassThatUsesInternal>>(module, "smoke_SomeDartClassThatUsesInternal")
         .def("__gluecodium_id__", [](const SomeDartClassThatUsesInternal& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def("_add_entity", &SomeDartClassThatUsesInternal::add_entity, py::arg("entity"))
         ;

@@ -35,7 +35,7 @@ using StructWithTypedefDefaults = ::smoke::DefaultValues::StructWithTypedefDefau
 void register_smoke_DefaultValues(py::module_& module) {
 auto cls_DefaultValues = py::class_<DefaultValues, std::shared_ptr<DefaultValues>>(module, "smoke_DefaultValues")
         .def("__gluecodium_id__", [](const DefaultValues& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         .def_static("process_struct_with_defaults", &DefaultValues::process_struct_with_defaults, py::arg("input"))
         ;

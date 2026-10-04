@@ -22,7 +22,7 @@ using NonEquatableClass = ::smoke::NonEquatableClass;
 void register_smoke_NonEquatableClass(py::module_& module) {
 auto cls_NonEquatableClass = py::class_<NonEquatableClass, std::shared_ptr<NonEquatableClass>>(module, "smoke_NonEquatableClass")
         .def("__gluecodium_id__", [](const NonEquatableClass& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 

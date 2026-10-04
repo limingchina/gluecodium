@@ -39,7 +39,16 @@ public:
 void register_smoke_ChildConstructors(py::module_& module) {
 auto cls_ChildConstructors = py::class_<ChildConstructors, ::smoke::Constructors, std::shared_ptr<ChildConstructors>, ChildConstructorsTrampoline>(module, "smoke_ChildConstructors")
         .def("__gluecodium_id__", [](const ChildConstructors& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::Constructors>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<ChildConstructors>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
         })
         // Adoption constructor: adopt an existing native instance returned by a factory into
         // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the

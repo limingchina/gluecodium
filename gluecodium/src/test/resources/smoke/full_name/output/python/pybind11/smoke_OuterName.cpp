@@ -23,7 +23,7 @@ using InnerName = ::smoke::OuterName::InnerName;
 void register_smoke_OuterName(py::module_& module) {
 auto cls_OuterName = py::class_<OuterName, std::shared_ptr<OuterName>>(module, "smoke_OuterName")
         .def("__gluecodium_id__", [](const OuterName& self) {
-            return reinterpret_cast<uintptr_t>(std::addressof(self));
+            return gluecodium::python::native_identity(self);
         })
         ;
 
