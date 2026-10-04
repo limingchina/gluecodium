@@ -133,6 +133,8 @@ def _canonical_wrapper(native, wrapper_type):
 def _get_or_create_wrapper(native: Any, wrapper_type: Any) -> Any:
     if native is None:
         return None
+    if get_origin(wrapper_type) in (Union, types.UnionType):
+        return _wrap(native, wrapper_type)
     if hasattr(native, "__gluecodium_id__"):
         native, wrapper_type, narrow = _canonical_wrapper(native, wrapper_type)
         if isinstance(native, wrapper_type):
