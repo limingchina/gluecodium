@@ -21,6 +21,10 @@ class AttributesWithDeprecated:
         ...
 
     class SomeStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, field: str) -> None: ...
 
         #:
         field: str

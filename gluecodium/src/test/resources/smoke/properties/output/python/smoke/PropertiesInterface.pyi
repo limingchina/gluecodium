@@ -15,5 +15,9 @@ class PropertiesInterface:
         ...
 
     class ExampleStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, value: float) -> None: ...
 
         value: float

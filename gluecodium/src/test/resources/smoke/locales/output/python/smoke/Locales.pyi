@@ -18,6 +18,10 @@ class Locales:
         ...
 
     class LocaleStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, locale_field: str) -> None: ...
 
         locale_field: str
 

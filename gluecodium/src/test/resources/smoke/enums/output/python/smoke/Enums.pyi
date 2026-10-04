@@ -23,6 +23,10 @@ class Enums:
         ...
 
     class ErrorStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, type: Enums.InternalErrorCode, message: str) -> None: ...
 
         type: Enums.InternalErrorCode
 

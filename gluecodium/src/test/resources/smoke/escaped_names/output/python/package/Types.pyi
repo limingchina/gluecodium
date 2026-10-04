@@ -5,8 +5,13 @@ import typing
 from typing import Optional
 
 class Types:
+    def __init__(self) -> None: ...
 
     class Struct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, null: Types.Enum) -> None: ...
 
         null: Types.Enum
 

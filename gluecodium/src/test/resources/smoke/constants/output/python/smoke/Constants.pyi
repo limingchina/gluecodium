@@ -5,6 +5,7 @@ import typing
 from typing import Optional
 
 class Constants:
+    def __init__(self) -> None: ...
 
     class StateEnum(Enum):
 

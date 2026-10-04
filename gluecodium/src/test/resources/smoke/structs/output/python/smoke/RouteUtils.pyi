@@ -5,6 +5,7 @@ import typing
 from typing import Optional
 
 class RouteUtils:
+    def __init__(self) -> None: ...
 
     class RouteType(Enum):
 

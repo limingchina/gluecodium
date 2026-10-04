@@ -15,6 +15,10 @@ class Structs:
         ...
 
     class ExternalStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, string_field: str, external_string_field: str, external_array_field: list[int], external_struct_field: Structs.AnotherExternalStruct) -> None: ...
 
         string_field: str
 
@@ -27,5 +31,9 @@ class Structs:
 
 
     class AnotherExternalStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, int_field: int) -> None: ...
 
         int_field: int

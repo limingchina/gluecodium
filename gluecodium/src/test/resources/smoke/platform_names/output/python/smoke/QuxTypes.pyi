@@ -5,8 +5,13 @@ import typing
 from typing import Optional
 
 class QuxTypes:
+    def __init__(self) -> None: ...
 
     class QuxStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, qux_field: str) -> None: ...
 
         qux_field: str
 

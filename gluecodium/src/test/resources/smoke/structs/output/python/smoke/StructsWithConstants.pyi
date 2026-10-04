@@ -6,8 +6,13 @@ import typing
 from typing import Optional
 
 class StructsWithConstants:
+    def __init__(self) -> None: ...
 
     class Route:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, description: str, type: RouteUtils.RouteType) -> None: ...
 
         description: str
 

@@ -27,6 +27,10 @@ class ExcludedCommentsOnly:
 
     class SomeStruct:
         """"""
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, some_field: bool) -> None: ...
 
         #:
         some_field: bool

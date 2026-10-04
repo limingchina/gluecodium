@@ -7,6 +7,10 @@ from typing import Optional
 class OrderInClass:
 
     class MainStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, struct_field: OrderInClass.NestedStruct, type_def_field: int, struct_array_field: list[OrderInClass.NestedStruct], map_field: dict[int, list[OrderInClass.NestedStruct]], enum_field: OrderInClass.SomeEnum) -> None: ...
 
         struct_field: OrderInClass.NestedStruct
 
@@ -21,6 +25,10 @@ class OrderInClass:
 
 
     class NestedStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, some_field: str) -> None: ...
 
         some_field: str
 

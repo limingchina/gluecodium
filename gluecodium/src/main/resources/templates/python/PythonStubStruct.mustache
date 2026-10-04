@@ -21,7 +21,13 @@
 {{! Python struct type stub. }}
 {{#model}}class {{resolveName}}:
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
-{{/ifPredicate}}{{#ifPredicate "isEquatable"}}
+{{/ifPredicate}}
+{{#stubConstructors}}
+{{#overloaded}}    @typing.overload
+{{/overloaded}}    def __init__(self{{#fields}}, {{resolveName}}: {{resolveName typeRef}}{{/fields}}) -> None: ...
+{{/stubConstructors}}{{^stubConstructors}}
+    def __init__(self, _no_public_constructor: typing.NoReturn) -> None: ...
+{{/stubConstructors}}{{#ifPredicate "isEquatable"}}
     def __eq__(self, other: object) -> bool: ...
 {{#hasImmutableHashState}}
     def __hash__(self) -> int: ...

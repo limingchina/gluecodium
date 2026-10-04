@@ -64,6 +64,10 @@ class ListenerWithProperties:
         ...
 
     class ResultStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, result: float) -> None: ...
 
         result: float
 

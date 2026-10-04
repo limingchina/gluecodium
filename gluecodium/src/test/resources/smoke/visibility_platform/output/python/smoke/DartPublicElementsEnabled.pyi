@@ -5,6 +5,10 @@ import typing
 from typing import Optional
 
 class DartPublicElementsEnabled:
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, bool_field: bool) -> None: ...
 
     bool_field: bool
 

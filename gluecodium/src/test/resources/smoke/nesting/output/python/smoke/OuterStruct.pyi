@@ -7,6 +7,10 @@ from typing import Optional
 from typing import Callable
 
 class OuterStruct:
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, field: str) -> None: ...
 
     field: str
 
@@ -14,6 +18,10 @@ class OuterStruct:
         ...
 
     class InnerStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, other_field: list[datetime.datetime]) -> None: ...
 
         other_field: list[datetime.datetime]
 

@@ -6,8 +6,13 @@ import typing
 from typing import Optional
 
 class StructsWithMethods:
+    def __init__(self) -> None: ...
 
     class Vector:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, x: float, y: float) -> None: ...
 
         x: float
 

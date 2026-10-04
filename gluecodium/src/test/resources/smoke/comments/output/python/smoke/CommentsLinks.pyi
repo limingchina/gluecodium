@@ -59,6 +59,10 @@ Not working for Swift:
 
     class RandomStruct:
         """Links also work in:"""
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, random_field: Comments.SomeStruct) -> None: ...
 
         #: Some random field `Comments.SomeStruct`
         random_field: Comments.SomeStruct

@@ -28,6 +28,10 @@ class ExcludedComments:
 
     class SomeStruct:
         """This is some very useful struct."""
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, some_field: bool) -> None: ...
 
         #: How useful this struct is
         #: remains to be seen

@@ -5,6 +5,10 @@ import typing
 from typing import Optional
 
 class OrderInStructWithFunctions:
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, some_field: str) -> None: ...
 
     some_field: str
 
@@ -12,6 +16,10 @@ class OrderInStructWithFunctions:
         ...
 
     class NestedStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, some_field: str) -> None: ...
 
         some_field: str
 

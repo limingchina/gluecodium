@@ -22,6 +22,10 @@ class DurationMilliseconds:
         ...
 
     class DurationStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, duration_field: datetime.timedelta) -> None: ...
 
         duration_field: datetime.timedelta
 

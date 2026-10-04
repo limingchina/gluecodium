@@ -118,12 +118,20 @@ class Nullable:
         ...
 
     class SomeStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, string_field: str) -> None: ...
 
         string_field: str
 
 
 
     class NullableStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, string_field: Optional[str], bool_field: Optional[bool], double_field: Optional[float], struct_field: Optional[Nullable.SomeStruct], enum_field: Optional[Nullable.SomeEnum], array_field: Optional[list[str]], inline_array_field: Optional[list[str]], map_field: Optional[dict[int, str]], instance_field: Optional[SomeInterface]) -> None: ...
 
         string_field: Optional[str]
 
@@ -146,6 +154,10 @@ class Nullable:
 
 
     class NullableIntsStruct:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, int8_field: Optional[int], int16_field: Optional[int], int32_field: Optional[int], int64_field: Optional[int], uint8_field: Optional[int], uint16_field: Optional[int], uint32_field: Optional[int], uint64_field: Optional[int]) -> None: ...
 
         int8_field: Optional[int]
 

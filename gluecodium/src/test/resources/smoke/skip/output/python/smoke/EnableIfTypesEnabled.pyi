@@ -5,8 +5,13 @@ import typing
 from typing import Optional
 
 class EnableIfTypesEnabled:
+    def __init__(self) -> None: ...
 
     class EnableMeToo:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, field: EnableIfTypesEnabled.EnableMe) -> None: ...
 
         field: EnableIfTypesEnabled.EnableMe
 

@@ -8,6 +8,10 @@ from typing import Optional
 class StructsWithMethodsInterface:
 
     class Vector3:
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, x: float, y: float, z: float) -> None: ...
 
         x: float
 
@@ -38,6 +42,7 @@ class StructsWithMethodsInterface:
 
 
     class StructWithStaticMethodsOnly:
+        def __init__(self) -> None: ...
 
         @staticmethod
         def do_stuff():
