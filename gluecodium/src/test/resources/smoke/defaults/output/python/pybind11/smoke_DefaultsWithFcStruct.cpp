@@ -21,7 +21,15 @@ using DefaultsWithFcStruct = ::smoke::DefaultsWithFcStruct;
 
 void register_smoke_DefaultsWithFcStruct(py::module_& module) {
 auto cls_DefaultsWithFcStruct = py::class_<DefaultsWithFcStruct>(module, "smoke_DefaultsWithFcStruct")
-        .def_readwrite("struct_field", &DefaultsWithFcStruct::struct_field)
+        .def_property("struct_field", [](const DefaultsWithFcStruct& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](DefaultsWithFcStruct& self, const ::smoke::FcStruct& value) {
+
+                self.struct_field = value;
+
+        })
         .def(py::init<>())
         ;
 

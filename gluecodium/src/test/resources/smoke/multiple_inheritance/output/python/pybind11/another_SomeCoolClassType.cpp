@@ -23,7 +23,7 @@ auto cls_SomeCoolClassType = py::class_<SomeCoolClassType, std::shared_ptr<SomeC
         .def("__gluecodium_id__", [](const SomeCoolClassType& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_important_stuff", &SomeCoolClassType::do_important_stuff)
+        .def("do_important_stuff", &SomeCoolClassType::do_important_stuff, py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -23,7 +23,7 @@ auto cls_AsyncRenamed = py::class_<AsyncRenamed, std::shared_ptr<AsyncRenamed>>(
         .def("__gluecodium_id__", [](const AsyncRenamed& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("dispose", &AsyncRenamed::callDispose)
+        .def("dispose", &AsyncRenamed::callDispose, py::call_guard<py::gil_scoped_release>())
         ;
 
 

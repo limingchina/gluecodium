@@ -26,7 +26,7 @@ auto cls_Enums = py::class_<Enums, std::shared_ptr<Enums>>(module, "smoke_Enums"
         .def("__gluecodium_id__", [](const Enums& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("method_with_external_enum", &Enums::method_with_external_enum, py::arg("input"))
+        .def_static("method_with_external_enum", &Enums::method_with_external_enum, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_EnumsExternal_Enum = py::enum_<External_Enum>(cls_Enums, "ExternalEnum")

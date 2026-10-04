@@ -33,30 +33,30 @@ auto cls_Thermometer = py::class_<Thermometer, std::shared_ptr<Thermometer>>(mod
             return gluecodium::python::native_identity(self);
         })
         .def_static("make_with_duration", [](const ::std::chrono::seconds interval, const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& observers) {
-                return Thermometer::make_with_duration(interval, observers);
+                return gluecodium::python::call_native([&]() -> decltype(auto) { return Thermometer::make_with_duration(interval, observers); });
             }, py::arg("interval"), py::arg("observers"))
         .def_static("make_without_duration", [](const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& observers) {
-                return Thermometer::make_without_duration(observers);
+                return gluecodium::python::call_native([&]() -> decltype(auto) { return Thermometer::make_without_duration(observers); });
             }, py::arg("observers"))
         .def_static("throwing_make", [](const int32_t id, const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& observers) {
-                return Thermometer::throwing_make(id, observers);
+                return gluecodium::python::call_native([&]() -> decltype(auto) { return Thermometer::throwing_make(id, observers); });
             }, py::arg("id"), py::arg("observers"))
         .def_static("nothrow_make", [](const ::std::string& label, const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& nice_observers) {
-                return Thermometer::nothrow_make(label, nice_observers);
+                return gluecodium::python::call_native([&]() -> decltype(auto) { return Thermometer::nothrow_make(label, nice_observers); });
             }, py::arg("label"), py::arg("nice_observers"))
         .def_static("another_throwing_make", [](const bool dummy, const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& observers) {
-                return Thermometer::another_throwing_make(dummy, observers);
+                return gluecodium::python::call_native([&]() -> decltype(auto) { return Thermometer::another_throwing_make(dummy, observers); });
             }, py::arg("dummy"), py::arg("observers"))
                 .def_static("notify_observers", [](const ::std::shared_ptr< ::smoke::Thermometer >& thermometer, const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& some_observers) {
-                        Thermometer::notify_observers(thermometer, some_observers);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return Thermometer::notify_observers(thermometer, some_observers); });
                 }, py::arg("thermometer"), py::arg("some_observers"))
                 .def_static("throwing_notify_observers", [](const ::std::shared_ptr< ::smoke::Thermometer >& thermometer, const ::std::vector< ::std::shared_ptr< ::smoke::TemperatureObserver > >& some_observers) {
-                        return Thermometer::throwing_notify_observers(thermometer, some_observers);
+                        return gluecodium::python::call_native([&]() -> decltype(auto) { return Thermometer::throwing_notify_observers(thermometer, some_observers); });
                 }, py::arg("thermometer"), py::arg("some_observers"))
-        .def("force_update", &Thermometer::force_update)
-        .def("get_celsius", &Thermometer::get_celsius)
-        .def("get_kelvin", &Thermometer::get_kelvin)
-        .def("get_fahrenheit", &Thermometer::get_fahrenheit)
+        .def("force_update", &Thermometer::force_update, py::call_guard<py::gil_scoped_release>())
+        .def("get_celsius", &Thermometer::get_celsius, py::call_guard<py::gil_scoped_release>())
+        .def("get_kelvin", &Thermometer::get_kelvin, py::call_guard<py::gil_scoped_release>())
+        .def("get_fahrenheit", &Thermometer::get_fahrenheit, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_ThermometerSomeThermometerErrorCode = py::enum_<SomeThermometerErrorCode>(cls_Thermometer, "SomeThermometerErrorCode")

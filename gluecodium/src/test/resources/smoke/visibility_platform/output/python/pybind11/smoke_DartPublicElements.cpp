@@ -21,12 +21,20 @@ using DartPublicElements = ::smoke::DartPublicElements;
 
 void register_smoke_DartPublicElements(py::module_& module) {
 auto cls_DartPublicElements = py::class_<DartPublicElements>(module, "smoke_DartPublicElements")
-        .def_readwrite("_string_field", &DartPublicElements::string_field)
+        .def_property("_string_field", [](const DartPublicElements& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](DartPublicElements& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init([]() {
             return DartPublicElements(::std::string{});
         }))
-        .def("_foo", &DartPublicElements::foo)
+        .def("_foo", &DartPublicElements::foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 

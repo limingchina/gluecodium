@@ -28,7 +28,15 @@ auto cls_Types = py::class_<Types>(module, "package_Types")
         ;
 
 auto cls_typesstruct = py::class_<Struct>(cls_Types, "Struct")
-        .def_readwrite("null", &Struct::null)
+        .def_property("null", [](const Struct& self) -> decltype(auto) {
+            return
+                (self.null)
+            ;
+        }, [](Struct& self, const ::package::Types::Enum value) {
+
+                self.null = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::package::Types::Enum>(), py::arg("null"))
         ;

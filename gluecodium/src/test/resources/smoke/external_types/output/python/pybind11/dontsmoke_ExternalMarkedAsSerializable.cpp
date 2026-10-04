@@ -22,7 +22,15 @@ using ExternalMarkedAsSerializable = ::dontsmoke::ExternalMarkedAsSerializable;
 
 void register_dontsmoke_ExternalMarkedAsSerializable(py::module_& module) {
 auto cls_ExternalMarkedAsSerializable = py::class_<ExternalMarkedAsSerializable>(module, "dontsmoke_ExternalMarkedAsSerializable")
-        .def_readwrite("field", &ExternalMarkedAsSerializable::field)
+        .def_property("field", [](const ExternalMarkedAsSerializable& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](ExternalMarkedAsSerializable& self, const int32_t value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("field"))
         ;

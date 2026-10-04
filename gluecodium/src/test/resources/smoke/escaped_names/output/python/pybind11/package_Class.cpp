@@ -34,31 +34,31 @@ public:
     using fun_return_type = ::gluecodium::Return< ::package::Types::Struct, ::std::error_code >;
     ::gluecodium::Return< ::package::Types::Struct, ::std::error_code > fun(
             const ::std::vector< ::package::Types::Struct >& double ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->fun(double);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const Class*>(this), "__gluecodium_callback_7061636b6167652e636c6173732e66756e")) {
-        PYBIND11_OVERRIDE_PURE_NAME(fun_return_type, Class, "__gluecodium_callback_7061636b6167652e636c6173732e66756e", fun, double);
+        PYBIND11_OVERRIDE_PURE_NAME(fun_return_type, Class, "__gluecodium_callback_7061636b6167652e636c6173732e66756e", fun, gluecodium::python::to_python_regular(double));
         }
-        PYBIND11_OVERRIDE_PURE(fun_return_type, Class, fun, double);
+        PYBIND11_OVERRIDE_PURE(fun_return_type, Class, fun, gluecodium::python::to_python_regular(double));
     }
     ::package::Types::Enum get_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const Class*>(this), "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::package::Types::Enum, Class, "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_get", get_property);
         }
         PYBIND11_OVERRIDE_PURE(::package::Types::Enum, Class, get_property);
     }
     void set_property(const ::package::Types::Enum value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const Class*>(this), "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, Class, "__gluecodium_callback_7061636b6167652e636c6173732e70726f7065727479_set", set_property, value);
         }
@@ -92,11 +92,19 @@ auto cls_Class = py::class_<Class, ::package::Interface, std::shared_ptr<Class>,
             self->m_impl = native;
             return self;
         }))
-        .def_static("constructor", &Class::constructor)
+        .def_static("constructor", &Class::constructor, py::call_guard<py::gil_scoped_release>())
                 .def("fun", [](Class& self, const ::std::vector< ::package::Types::Struct >& double) {
-                        return self.fun(double);
+                        return gluecodium::python::call_native([&]() -> decltype(auto) { return self.fun(double); });
                 }, py::arg("double"))
-        .def_property("property", py::overload_cast<>(&Class::get_property, py::const_), py::overload_cast<const ::package::Types::Enum>(&Class::set_property))
+        .def_property("property", [](const Class& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_property();
+            });
+        }, [](Class& self, const ::package::Types::Enum value) {
+            gluecodium::python::call_native([&] {
+                self.set_property(value);
+            });
+        })
         ;
 
 

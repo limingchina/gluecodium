@@ -22,10 +22,18 @@ using DartExternalCtor = ::smoke::DartExternalCtor;
 
 void register_smoke_DartExternalCtor(py::module_& module) {
 auto cls_DartExternalCtor = py::class_<DartExternalCtor>(module, "smoke_DartExternalCtor")
-        .def_readwrite("field", &DartExternalCtor::field)
+        .def_property("field", [](const DartExternalCtor& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](DartExternalCtor& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
-        .def_static("make", &DartExternalCtor::make, py::arg("field"))
+        .def_static("make", &DartExternalCtor::make, py::arg("field"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

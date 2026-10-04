@@ -21,10 +21,18 @@ using PublicStructWithInternalConstructors = ::smoke::PublicStructWithInternalCo
 
 void register_smoke_PublicStructWithInternalConstructors(py::module_& module) {
 auto cls_PublicStructWithInternalConstructors = py::class_<PublicStructWithInternalConstructors>(module, "smoke_PublicStructWithInternalConstructors")
-        .def_readwrite("some_var", &PublicStructWithInternalConstructors::some_var)
+        .def_property("some_var", [](const PublicStructWithInternalConstructors& self) -> decltype(auto) {
+            return
+                (self.some_var)
+            ;
+        }, [](PublicStructWithInternalConstructors& self, const int32_t value) {
+
+                self.some_var = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("some_var"))
-        .def_static("_make", &PublicStructWithInternalConstructors::make)
+        .def_static("_make", &PublicStructWithInternalConstructors::make, py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -24,7 +24,7 @@ auto cls_LongComments = py::class_<LongComments, std::shared_ptr<LongComments>>(
         .def("__gluecodium_id__", [](const LongComments& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("some_method_with_long_comment", &LongComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
+        .def("some_method_with_long_comment", &LongComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

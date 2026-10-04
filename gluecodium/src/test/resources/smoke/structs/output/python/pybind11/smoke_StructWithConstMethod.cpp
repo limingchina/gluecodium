@@ -21,10 +21,18 @@ using StructWithConstMethod = ::smoke::StructWithConstMethod;
 
 void register_smoke_StructWithConstMethod(py::module_& module) {
 auto cls_StructWithConstMethod = py::class_<StructWithConstMethod>(module, "smoke_StructWithConstMethod")
-        .def_readwrite("string_field", &StructWithConstMethod::string_field)
+        .def_property("string_field", [](const StructWithConstMethod& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](StructWithConstMethod& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
-        .def("double_const", &StructWithConstMethod::double_const)
+        .def("double_const", &StructWithConstMethod::double_const, py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -23,7 +23,15 @@ using StructWithSet = ::smoke::StructWithSet;
 
 void register_smoke_StructWithSet(py::module_& module) {
 auto cls_StructWithSet = py::class_<StructWithSet>(module, "smoke_StructWithSet")
-        .def_readwrite("field", &StructWithSet::field)
+        .def_property("field", [](const StructWithSet& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.field)
+            );
+        }, [](StructWithSet& self, const ::std::unordered_set< ::smoke::StructWithSet, ::gluecodium::hash< ::smoke::StructWithSet > >& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::unordered_set< ::smoke::StructWithSet, ::gluecodium::hash< ::smoke::StructWithSet > >>(), py::arg("field"))
         .def("__gluecodium_copy__", [](const StructWithSet& self) { return StructWithSet(self); })

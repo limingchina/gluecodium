@@ -22,7 +22,15 @@ using EquatableStructWithAccessors = ::smoke::EquatableStructWithAccessors;
 
 void register_smoke_EquatableStructWithAccessors(py::module_& module) {
 auto cls_EquatableStructWithAccessors = py::class_<EquatableStructWithAccessors>(module, "smoke_EquatableStructWithAccessors")
-        .def_property("foo_field", static_cast<const ::std::string& (EquatableStructWithAccessors::*)() const &>(&EquatableStructWithAccessors::get_foo_field), py::overload_cast<const ::std::string&>(&EquatableStructWithAccessors::set_foo_field))
+        .def_property("foo_field", [](const EquatableStructWithAccessors& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_foo_field();
+            });
+        }, [](EquatableStructWithAccessors& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_foo_field(value);
+            });
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         .def("__gluecodium_copy__", [](const EquatableStructWithAccessors& self) { return EquatableStructWithAccessors(self); })

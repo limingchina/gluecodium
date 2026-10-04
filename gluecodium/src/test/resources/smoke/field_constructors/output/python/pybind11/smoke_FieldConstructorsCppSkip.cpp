@@ -22,8 +22,24 @@ using FieldConstructorsCppSkip = ::smoke::FieldConstructorsCppSkip;
 
 void register_smoke_FieldConstructorsCppSkip(py::module_& module) {
 auto cls_FieldConstructorsCppSkip = py::class_<FieldConstructorsCppSkip>(module, "smoke_FieldConstructorsCppSkip")
-        .def_readwrite("string_field", &FieldConstructorsCppSkip::string_field)
-        .def_readwrite("int_field", &FieldConstructorsCppSkip::int_field)
+        .def_property("string_field", [](const FieldConstructorsCppSkip& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldConstructorsCppSkip& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("int_field", [](const FieldConstructorsCppSkip& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](FieldConstructorsCppSkip& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
         ;

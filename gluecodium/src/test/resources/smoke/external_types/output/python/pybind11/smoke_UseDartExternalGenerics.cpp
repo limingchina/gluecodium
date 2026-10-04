@@ -34,7 +34,7 @@ auto cls_UseDartExternalGenerics = py::class_<UseDartExternalGenerics, std::shar
             return gluecodium::python::native_identity(self);
         })
                 .def("use_generics", [](UseDartExternalGenerics& self, const ::std::vector< ::smoke::Rectangle >& list, const ::std::unordered_set< ::smoke::CompressionState, ::gluecodium::hash< ::smoke::CompressionState > >& set) -> py::object {
-                        return gluecodium::python::to_python_regular(self.use_generics(list, set));
+                        return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) { return self.use_generics(list, set); }));
                 }, py::arg("list"), py::arg("set"))
         ;
 

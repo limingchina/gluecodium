@@ -21,10 +21,42 @@ using SystemColor = ::kotlin_smoke::SystemColor;
 
 void register_kotlin_smoke_SystemColor(py::module_& module) {
 auto cls_SystemColor = py::class_<SystemColor>(module, "kotlin_smoke_SystemColor")
-        .def_readwrite("red", &SystemColor::red)
-        .def_readwrite("green", &SystemColor::green)
-        .def_readwrite("blue", &SystemColor::blue)
-        .def_readwrite("alpha", &SystemColor::alpha)
+        .def_property("red", [](const SystemColor& self) -> decltype(auto) {
+            return
+                (self.red)
+            ;
+        }, [](SystemColor& self, const float value) {
+
+                self.red = value;
+
+        })
+        .def_property("green", [](const SystemColor& self) -> decltype(auto) {
+            return
+                (self.green)
+            ;
+        }, [](SystemColor& self, const float value) {
+
+                self.green = value;
+
+        })
+        .def_property("blue", [](const SystemColor& self) -> decltype(auto) {
+            return
+                (self.blue)
+            ;
+        }, [](SystemColor& self, const float value) {
+
+                self.blue = value;
+
+        })
+        .def_property("alpha", [](const SystemColor& self) -> decltype(auto) {
+            return
+                (self.alpha)
+            ;
+        }, [](SystemColor& self, const float value) {
+
+                self.alpha = value;
+
+        })
         .def(py::init<>())
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))
         ;

@@ -21,11 +21,27 @@ using DartInternalElementsEnabled = ::smoke::DartInternalElementsEnabled;
 
 void register_smoke_DartInternalElementsEnabled(py::module_& module) {
 auto cls_DartInternalElementsEnabled = py::class_<DartInternalElementsEnabled>(module, "smoke_DartInternalElementsEnabled")
-        .def_readwrite("bool_field", &DartInternalElementsEnabled::bool_field)
-        .def_readwrite("string_field", &DartInternalElementsEnabled::string_field)
+        .def_property("bool_field", [](const DartInternalElementsEnabled& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](DartInternalElementsEnabled& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
+        .def_property("string_field", [](const DartInternalElementsEnabled& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](DartInternalElementsEnabled& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<bool, ::std::string>(), py::arg("bool_field"), py::arg("string_field"))
-        .def("foo", &DartInternalElementsEnabled::foo)
+        .def("foo", &DartInternalElementsEnabled::foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 

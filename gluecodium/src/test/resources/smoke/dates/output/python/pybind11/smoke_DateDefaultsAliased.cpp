@@ -23,10 +23,42 @@ using DateDefaultsAliased = ::smoke::DateDefaultsAliased;
 
 void register_smoke_DateDefaultsAliased(py::module_& module) {
 auto cls_DateDefaultsAliased = py::class_<DateDefaultsAliased>(module, "smoke_DateDefaultsAliased")
-        .def_readwrite("date_time", &DateDefaultsAliased::date_time)
-        .def_readwrite("date_time_utc", &DateDefaultsAliased::date_time_utc)
-        .def_readwrite("before_epoch", &DateDefaultsAliased::before_epoch)
-        .def_readwrite("exactly_epoch", &DateDefaultsAliased::exactly_epoch)
+        .def_property("date_time", [](const DateDefaultsAliased& self) -> decltype(auto) {
+            return
+                (self.date_time)
+            ;
+        }, [](DateDefaultsAliased& self, const ::std::chrono::system_clock::time_point& value) {
+
+                self.date_time = value;
+
+        })
+        .def_property("date_time_utc", [](const DateDefaultsAliased& self) -> decltype(auto) {
+            return
+                (self.date_time_utc)
+            ;
+        }, [](DateDefaultsAliased& self, const ::std::chrono::system_clock::time_point& value) {
+
+                self.date_time_utc = value;
+
+        })
+        .def_property("before_epoch", [](const DateDefaultsAliased& self) -> decltype(auto) {
+            return
+                (self.before_epoch)
+            ;
+        }, [](DateDefaultsAliased& self, const ::std::chrono::system_clock::time_point& value) {
+
+                self.before_epoch = value;
+
+        })
+        .def_property("exactly_epoch", [](const DateDefaultsAliased& self) -> decltype(auto) {
+            return
+                (self.exactly_epoch)
+            ;
+        }, [](DateDefaultsAliased& self, const ::std::chrono::system_clock::time_point& value) {
+
+                self.exactly_epoch = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("date_time"), py::arg("date_time_utc"), py::arg("before_epoch"), py::arg("exactly_epoch"))
         ;

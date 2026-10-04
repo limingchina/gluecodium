@@ -25,7 +25,7 @@ auto cls_UseTcException = py::class_<UseTcException, std::shared_ptr<UseTcExcept
             return gluecodium::python::native_identity(self);
         })
         .def("do_nothing", [](UseTcException& self) {
-                const auto error = self.do_nothing();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return self.do_nothing(); });
                 if (error) {
                     throw error;
                 }

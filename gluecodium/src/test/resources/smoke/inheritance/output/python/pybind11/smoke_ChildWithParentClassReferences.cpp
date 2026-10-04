@@ -32,31 +32,31 @@ public:
 
     ::std::shared_ptr< ::smoke::ChildClassFromClass > class_function(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->class_function();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildWithParentClassReferences*>(this), "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737346756e6374696f6e")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::ChildClassFromClass >, ChildWithParentClassReferences, "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737346756e6374696f6e", class_function);
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ChildClassFromClass >, ChildWithParentClassReferences, class_function);
     }
     ::std::shared_ptr< ::smoke::ParentClass > get_class_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_class_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildWithParentClassReferences*>(this), "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::ParentClass >, ChildWithParentClassReferences, "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_get", get_class_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ParentClass >, ChildWithParentClassReferences, get_class_property);
     }
     void set_class_property(const ::std::shared_ptr< ::smoke::ParentClass >& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_class_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildWithParentClassReferences*>(this), "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, ChildWithParentClassReferences, "__gluecodium_callback_736d6f6b652e506172656e7457697468436c6173735265666572656e6365732e636c61737350726f7065727479_set", set_class_property, value);
         }
@@ -91,12 +91,16 @@ auto cls_ChildWithParentClassReferences = py::class_<ChildWithParentClassReferen
             return self;
         }))
         .def("class_function", [](ChildWithParentClassReferences& self) {
-            return self.class_function();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.class_function(); });
         })
-        .def_property("class_property", [](const ChildWithParentClassReferences& self) {
-            return self.get_class_property();
+        .def_property("class_property", [](const ChildWithParentClassReferences& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_class_property();
+            });
         }, [](ChildWithParentClassReferences& self, const ::std::shared_ptr< ::smoke::ParentClass >& value) {
-            self.set_class_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_class_property(value);
+            });
         })
         ;
 

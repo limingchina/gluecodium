@@ -21,7 +21,15 @@ using FieldConstructorWithBothComments = ::smoke::FieldConstructorWithBothCommen
 
 void register_smoke_FieldConstructorWithBothComments(py::module_& module) {
 auto cls_FieldConstructorWithBothComments = py::class_<FieldConstructorWithBothComments>(module, "smoke_FieldConstructorWithBothComments")
-        .def_readwrite("string_field", &FieldConstructorWithBothComments::string_field)
+        .def_property("string_field", [](const FieldConstructorWithBothComments& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldConstructorWithBothComments& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

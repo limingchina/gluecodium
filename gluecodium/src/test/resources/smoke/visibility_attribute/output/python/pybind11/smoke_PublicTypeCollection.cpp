@@ -26,12 +26,20 @@ auto cls_PublicTypeCollection = py::class_<PublicTypeCollection>(module, "smoke_
         ;
 
 auto cls__PublicTypeCollectionInternalStruct = py::class_<InternalStruct>(cls_PublicTypeCollection, "_InternalStruct")
-        .def_readwrite("_string_field", &InternalStruct::string_field)
+        .def_property("_string_field", [](const InternalStruct& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](InternalStruct& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init([]() {
             return InternalStruct(::std::string{});
         }))
-        .def("foo_bar", &InternalStruct::foo_bar)
+        .def("foo_bar", &InternalStruct::foo_bar, py::call_guard<py::gil_scoped_release>())
         ;
 
 

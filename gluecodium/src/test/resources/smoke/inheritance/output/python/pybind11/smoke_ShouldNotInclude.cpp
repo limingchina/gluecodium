@@ -21,7 +21,15 @@ using ShouldNotInclude = ::smoke::ShouldNotInclude;
 
 void register_smoke_ShouldNotInclude(py::module_& module) {
 auto cls_ShouldNotInclude = py::class_<ShouldNotInclude>(module, "smoke_ShouldNotInclude")
-        .def_readwrite("field", &ShouldNotInclude::field)
+        .def_property("field", [](const ShouldNotInclude& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](ShouldNotInclude& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;

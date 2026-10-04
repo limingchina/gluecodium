@@ -22,8 +22,24 @@ using Payload = ::smoke::Payload;
 
 void register_smoke_Payload(py::module_& module) {
 auto cls_Payload = py::class_<Payload>(module, "smoke_Payload")
-        .def_readwrite("error_code", &Payload::error_code)
-        .def_readwrite("message", &Payload::message)
+        .def_property("error_code", [](const Payload& self) -> decltype(auto) {
+            return
+                (self.error_code)
+            ;
+        }, [](Payload& self, const int32_t value) {
+
+                self.error_code = value;
+
+        })
+        .def_property("message", [](const Payload& self) -> decltype(auto) {
+            return
+                (self.message)
+            ;
+        }, [](Payload& self, const ::std::string& value) {
+
+                self.message = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string>(), py::arg("error_code"), py::arg("message"))
         ;

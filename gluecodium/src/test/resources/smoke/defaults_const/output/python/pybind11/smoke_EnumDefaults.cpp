@@ -35,26 +35,66 @@ auto cls_EnumDefaults = py::class_<EnumDefaults, std::shared_ptr<EnumDefaults>>(
         ;
 
 auto cls_EnumDefaultsSimpleEnum = py::class_<SimpleEnum>(cls_EnumDefaults, "SimpleEnum")
-        .def_readwrite("enum_field", &SimpleEnum::enum_field)
+        .def_property("enum_field", [](const SimpleEnum& self) -> decltype(auto) {
+            return
+                (self.enum_field)
+            ;
+        }, [](SimpleEnum& self, const ::fire::Enum1 value) {
+
+                self.enum_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::fire::Enum1>(), py::arg("enum_field"))
         ;
 
 auto cls_EnumDefaultsNullableEnum = py::class_<NullableEnum>(cls_EnumDefaults, "NullableEnum")
-        .def_readwrite("enum_field1", &NullableEnum::enum_field1)
-        .def_readwrite("enum_field1", &NullableEnum::enum_field1)
+        .def_property("enum_field1", [](const NullableEnum& self) -> decltype(auto) {
+            return
+                (self.enum_field1)
+            ;
+        }, [](NullableEnum& self, const ::gluecodium::optional< ::fire::Enum2 >& value) {
+
+                self.enum_field1 = value;
+
+        })
+        .def_property("enum_field1", [](const NullableEnum& self) -> decltype(auto) {
+            return
+                (self.enum_field1)
+            ;
+        }, [](NullableEnum& self, const ::gluecodium::optional< ::fire::Enum2 >& value) {
+
+                self.enum_field1 = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::gluecodium::optional< ::fire::Enum2 >, ::gluecodium::optional< ::fire::Enum2 >>(), py::arg("enum_field1"), py::arg("enum_field1"))
         ;
 
 auto cls_EnumDefaultsAliasEnum = py::class_<AliasEnum>(cls_EnumDefaults, "AliasEnum")
-        .def_readwrite("enum_field", &AliasEnum::enum_field)
+        .def_property("enum_field", [](const AliasEnum& self) -> decltype(auto) {
+            return
+                (self.enum_field)
+            ;
+        }, [](AliasEnum& self, const ::fire::Enum3 value) {
+
+                self.enum_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::fire::Enum3>(), py::arg("enum_field"))
         ;
 
 auto cls_EnumDefaultsWrappedEnum = py::class_<WrappedEnum>(cls_EnumDefaults, "WrappedEnum")
-        .def_readwrite("struct_field", &WrappedEnum::struct_field)
+        .def_property("struct_field", [](const WrappedEnum& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](WrappedEnum& self, const ::smoke::EnumWrapper& value) {
+
+                self.struct_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::EnumWrapper>(), py::arg("struct_field"))
         ;

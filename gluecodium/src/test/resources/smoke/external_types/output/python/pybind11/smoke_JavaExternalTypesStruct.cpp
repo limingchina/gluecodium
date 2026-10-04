@@ -26,11 +26,47 @@ using JavaExternalTypesStruct = ::smoke::JavaExternalTypesStruct;
 
 void register_smoke_JavaExternalTypesStruct(py::module_& module) {
 auto cls_JavaExternalTypesStruct = py::class_<JavaExternalTypesStruct>(module, "smoke_JavaExternalTypesStruct")
-        .def_readonly("currency", &JavaExternalTypesStruct::currency)
-        .def_readwrite("time_zone", &JavaExternalTypesStruct::time_zone)
-        .def_readwrite("month", &JavaExternalTypesStruct::month)
-        .def_readwrite("color", &JavaExternalTypesStruct::color)
-        .def_readwrite("season", &JavaExternalTypesStruct::season)
+        .def_property_readonly("currency", [](const JavaExternalTypesStruct& self) -> decltype(auto) {
+            return
+                (self.currency)
+            ;
+        })
+        .def_property("time_zone", [](const JavaExternalTypesStruct& self) -> decltype(auto) {
+            return
+                (self.time_zone)
+            ;
+        }, [](JavaExternalTypesStruct& self, const ::smoke::TimeZone& value) {
+
+                self.time_zone = value;
+
+        })
+        .def_property("month", [](const JavaExternalTypesStruct& self) -> decltype(auto) {
+            return
+                (self.month)
+            ;
+        }, [](JavaExternalTypesStruct& self, const ::smoke::Month value) {
+
+                self.month = value;
+
+        })
+        .def_property("color", [](const JavaExternalTypesStruct& self) -> decltype(auto) {
+            return
+                (self.color)
+            ;
+        }, [](JavaExternalTypesStruct& self, const ::smoke::SystemColor& value) {
+
+                self.color = value;
+
+        })
+        .def_property("season", [](const JavaExternalTypesStruct& self) -> decltype(auto) {
+            return
+                (self.season)
+            ;
+        }, [](JavaExternalTypesStruct& self, const ::smoke::Season value) {
+
+                self.season = value;
+
+        })
         .def(py::init<::smoke::Currency, ::smoke::TimeZone, ::smoke::Month, ::smoke::SystemColor, ::smoke::Season>(), py::arg("currency"), py::arg("time_zone"), py::arg("month"), py::arg("color"), py::arg("season"))
         ;
 

@@ -26,7 +26,15 @@ void register_smoke_ExternalClass(py::module_& module) {
 auto cls_ExternalClass = py::class_<::fire::Baz>(module, "smoke_ExternalClass");
 
 auto cls_ExternalClasssome_Struct = py::class_<some_Struct>(cls_ExternalClass, "SomeStruct")
-        .def_readwrite("some_field", &some_Struct::some_Field)
+        .def_property("some_field", [](const some_Struct& self) -> decltype(auto) {
+            return
+                (self.some_Field)
+            ;
+        }, [](some_Struct& self, const ::std::string& value) {
+
+                self.some_Field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;

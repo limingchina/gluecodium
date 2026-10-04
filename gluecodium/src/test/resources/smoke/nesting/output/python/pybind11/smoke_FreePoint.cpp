@@ -20,11 +20,27 @@ using FreePoint = ::smoke::FreePoint;
 
 void register_smoke_FreePoint(py::module_& module) {
 auto cls_FreePoint = py::class_<FreePoint>(module, "smoke_FreePoint")
-        .def_readwrite("x", &FreePoint::x)
-        .def_readwrite("y", &FreePoint::y)
+        .def_property("x", [](const FreePoint& self) -> decltype(auto) {
+            return
+                (self.x)
+            ;
+        }, [](FreePoint& self, const double value) {
+
+                self.x = value;
+
+        })
+        .def_property("y", [](const FreePoint& self) -> decltype(auto) {
+            return
+                (self.y)
+            ;
+        }, [](FreePoint& self, const double value) {
+
+                self.y = value;
+
+        })
         .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
-        .def("flip", &FreePoint::flip)
+        .def("flip", &FreePoint::flip, py::call_guard<py::gil_scoped_release>())
         ;
 
 

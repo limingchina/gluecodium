@@ -21,7 +21,15 @@ using SerializableEquatableStruct = ::smoke::SerializableEquatableStruct;
 
 void register_smoke_SerializableEquatableStruct(py::module_& module) {
 auto cls_SerializableEquatableStruct = py::class_<SerializableEquatableStruct>(module, "smoke_SerializableEquatableStruct")
-        .def_readwrite("foo_field", &SerializableEquatableStruct::foo_field)
+        .def_property("foo_field", [](const SerializableEquatableStruct& self) -> decltype(auto) {
+            return
+                (self.foo_field)
+            ;
+        }, [](SerializableEquatableStruct& self, const ::std::string& value) {
+
+                self.foo_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         .def("__gluecodium_copy__", [](const SerializableEquatableStruct& self) { return SerializableEquatableStruct(self); })

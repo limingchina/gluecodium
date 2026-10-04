@@ -21,7 +21,15 @@ using UnusedTopLevelPoint = ::smoke::UnusedTopLevelPoint;
 
 void register_smoke_UnusedTopLevelPoint(py::module_& module) {
 auto cls_UnusedTopLevelPoint = py::class_<UnusedTopLevelPoint>(module, "smoke_UnusedTopLevelPoint")
-        .def_readwrite("foo", &UnusedTopLevelPoint::foo)
+        .def_property("foo", [](const UnusedTopLevelPoint& self) -> decltype(auto) {
+            return
+                (self.foo)
+            ;
+        }, [](UnusedTopLevelPoint& self, const ::std::string& value) {
+
+                self.foo = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo"))
         ;

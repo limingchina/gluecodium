@@ -25,8 +25,8 @@ auto cls_Calculator = py::class_<Calculator, std::shared_ptr<Calculator>>(module
         .def("__gluecodium_id__", [](const Calculator& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("register_listener", &Calculator::register_listener, py::arg("listener"))
-        .def_static("unregister_listener", &Calculator::unregister_listener, py::arg("listener"))
+        .def_static("register_listener", &Calculator::register_listener, py::arg("listener"), py::call_guard<py::gil_scoped_release>())
+        .def_static("unregister_listener", &Calculator::unregister_listener, py::arg("listener"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -29,7 +29,7 @@
 {{#ifPredicate "isRawErrorCodeReturn"}}
 {{#if isStatic}}
         .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
-                const auto error = {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}); });
                 if (error) {
                     throw error;
                 }
@@ -37,7 +37,7 @@
 {{/if}}
 {{#unless isStatic}}
         .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
-                const auto error = self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}); });
                 if (error) {
                     throw error;
                 }
@@ -48,14 +48,14 @@
 {{#if isConstructor}}
 {{#ifPredicate "needsCollectionLambdaBinding"}}
         .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}) {
-                return {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+                return gluecodium::python::call_native([&]() -> decltype(auto) { return {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}); });
             }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/ifPredicate}}
 {{#unlessPredicate "needsCollectionLambdaBinding"}}
 {{#ifPredicate "isCppOverloaded"}}
-        .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>({{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+        .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>({{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}}, py::call_guard<py::gil_scoped_release>())
 {{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
-        .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+        .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}}, py::call_guard<py::gil_scoped_release>())
 {{/unlessPredicate}}
 {{/unlessPredicate}}
 {{! Non-constructor static methods (including static factory functions and regular static methods). }}
@@ -63,34 +63,34 @@
 {{#ifPredicate "needsCollectionLambdaBinding"}}
 {{#if isStatic}}
                 .def_static("{{resolveName}}", []({{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}} -> py::object{{/ifPredicate}} {
-                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}py::cast({{/ifPredicate}}{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
+                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}gluecodium::python::to_python_regular({{/ifPredicate}}gluecodium::python::call_native([&]() -> decltype(auto) { return {{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}); }){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
                 }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/if}}
 {{#unless isStatic}}
                 .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}} -> py::object{{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}} -> py::object{{/ifPredicate}} {
-                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}py::cast({{/ifPredicate}}self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
+                        {{#unlessPredicate "isCppVoid"}}return {{/unlessPredicate}}{{#ifPredicate returnType.typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}gluecodium::python::to_python_regular({{/ifPredicate}}gluecodium::python::call_native([&]() -> decltype(auto) { return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}); }){{#ifPredicate returnType.typeRef "isCollectionType"}}){{/ifPredicate}}{{#ifPredicate returnType.typeRef "isLambdaType"}}){{/ifPredicate}};
                 }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/unless}}
 {{/ifPredicate}}{{#unlessPredicate "needsCollectionLambdaBinding"}}{{#if isStatic}}{{#ifPredicate "isCppOverloaded"}}
-        .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+        .def_static("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}}, py::call_guard<py::gil_scoped_release>())
 {{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
-        .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+        .def_static("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}}, py::call_guard<py::gil_scoped_release>())
 {{/unlessPredicate}}
 {{/if}}{{#unless isStatic}}{{#ifPredicate "isCppOverloaded"}}
 {{#ifPredicate "needsInterfaceLambdaBinding"}}
         .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
-            return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}); });
         }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
-        .def("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#ifPredicate "isCppConst"}}, py::const_{{/ifPredicate}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+        .def("{{resolveName}}", py::overload_cast<{{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#ifPredicate "isCppConst"}}, py::const_{{/ifPredicate}}){{#parameters}}, py::arg("{{resolveName}}"){{/parameters}}, py::call_guard<py::gil_scoped_release>())
 {{/unlessPredicate}}
 {{/ifPredicate}}{{#unlessPredicate "isCppOverloaded"}}
 {{#ifPredicate "needsInterfaceLambdaBinding"}}
         .def("{{resolveName}}", []({{resolveName model "Pybind11"}}& self{{#parameters}}, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{/parameters}}) {
-            return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}); });
         }{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
 {{/ifPredicate}}{{#unlessPredicate "needsInterfaceLambdaBinding"}}
-        .def("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}})
+        .def("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}}{{#parameters}}, py::arg("{{resolveName}}"){{/parameters}}, py::call_guard<py::gil_scoped_release>())
 {{/unlessPredicate}}
 {{/unlessPredicate}}
 {{/unless}}

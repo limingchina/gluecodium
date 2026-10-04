@@ -21,7 +21,15 @@ using DummyStruct = ::smoke::DummyStruct;
 
 void register_smoke_DummyStruct(py::module_& module) {
 auto cls_DummyStruct = py::class_<DummyStruct>(module, "smoke_DummyStruct")
-        .def_readwrite("string_field", &DummyStruct::string_field)
+        .def_property("string_field", [](const DummyStruct& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](DummyStruct& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

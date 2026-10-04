@@ -24,9 +24,33 @@ using SomeMutableCustomStructWithDefaults = ::smoke::SomeMutableCustomStructWith
 
 void register_smoke_SomeMutableCustomStructWithDefaults(py::module_& module) {
 auto cls_SomeMutableCustomStructWithDefaults = py::class_<SomeMutableCustomStructWithDefaults>(module, "smoke_SomeMutableCustomStructWithDefaults")
-        .def_readwrite("int_field", &SomeMutableCustomStructWithDefaults::int_field)
-        .def_readwrite("string_field", &SomeMutableCustomStructWithDefaults::string_field)
-        .def_readwrite("list_field", &SomeMutableCustomStructWithDefaults::list_field)
+        .def_property("int_field", [](const SomeMutableCustomStructWithDefaults& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](SomeMutableCustomStructWithDefaults& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("string_field", [](const SomeMutableCustomStructWithDefaults& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](SomeMutableCustomStructWithDefaults& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("list_field", [](const SomeMutableCustomStructWithDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.list_field)
+            );
+        }, [](SomeMutableCustomStructWithDefaults& self, const ::std::vector< int32_t >& value) {
+
+                self.list_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string, ::std::vector< int32_t >>(), py::arg("int_field"), py::arg("string_field"), py::arg("list_field"))
         ;

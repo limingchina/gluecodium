@@ -25,7 +25,15 @@ auto cls_JavaInternalPropertyRev = py::class_<JavaInternalPropertyRev, std::shar
         .def("__gluecodium_id__", [](const JavaInternalPropertyRev& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_property("app_context", py::overload_cast<>(&JavaInternalPropertyRev::get_app_context, py::const_), py::overload_cast<const ::gluecodium::optional< ::std::string >&>(&JavaInternalPropertyRev::set_app_context))
+        .def_property("app_context", [](const JavaInternalPropertyRev& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_app_context();
+            });
+        }, [](JavaInternalPropertyRev& self, const ::gluecodium::optional< ::std::string >& value) {
+            gluecodium::python::call_native([&] {
+                self.set_app_context(value);
+            });
+        })
         ;
 
 

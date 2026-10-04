@@ -21,8 +21,24 @@ using ConstantDefaults = ::smoke::ConstantDefaults;
 
 void register_smoke_ConstantDefaults(py::module_& module) {
 auto cls_ConstantDefaults = py::class_<ConstantDefaults>(module, "smoke_ConstantDefaults")
-        .def_readwrite("field1", &ConstantDefaults::field1)
-        .def_readwrite("field2", &ConstantDefaults::field2)
+        .def_property("field1", [](const ConstantDefaults& self) -> decltype(auto) {
+            return
+                (self.field1)
+            ;
+        }, [](ConstantDefaults& self, const ::fire::SomeStruct& value) {
+
+                self.field1 = value;
+
+        })
+        .def_property("field2", [](const ConstantDefaults& self) -> decltype(auto) {
+            return
+                (self.field2)
+            ;
+        }, [](ConstantDefaults& self, const ::fire::SomeStruct& value) {
+
+                self.field2 = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::fire::SomeStruct, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;

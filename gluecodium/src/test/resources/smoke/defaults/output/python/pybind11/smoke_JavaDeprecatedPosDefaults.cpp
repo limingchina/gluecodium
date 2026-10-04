@@ -22,8 +22,24 @@ using JavaDeprecatedPosDefaults = ::smoke::JavaDeprecatedPosDefaults;
 
 void register_smoke_JavaDeprecatedPosDefaults(py::module_& module) {
 auto cls_JavaDeprecatedPosDefaults = py::class_<JavaDeprecatedPosDefaults>(module, "smoke_JavaDeprecatedPosDefaults")
-        .def_readwrite("first_init_field", &JavaDeprecatedPosDefaults::first_init_field)
-        .def_readwrite("first_free_field", &JavaDeprecatedPosDefaults::first_free_field)
+        .def_property("first_init_field", [](const JavaDeprecatedPosDefaults& self) -> decltype(auto) {
+            return
+                (self.first_init_field)
+            ;
+        }, [](JavaDeprecatedPosDefaults& self, const int32_t value) {
+
+                self.first_init_field = value;
+
+        })
+        .def_property("first_free_field", [](const JavaDeprecatedPosDefaults& self) -> decltype(auto) {
+            return
+                (self.first_free_field)
+            ;
+        }, [](JavaDeprecatedPosDefaults& self, const ::std::string& value) {
+
+                self.first_free_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("first_free_field"))
         .def(py::init<int32_t, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"))

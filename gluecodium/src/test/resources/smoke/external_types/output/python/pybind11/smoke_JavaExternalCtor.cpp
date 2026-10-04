@@ -22,10 +22,18 @@ using JavaExternalCtor = ::smoke::JavaExternalCtor;
 
 void register_smoke_JavaExternalCtor(py::module_& module) {
 auto cls_JavaExternalCtor = py::class_<JavaExternalCtor>(module, "smoke_JavaExternalCtor")
-        .def_readwrite("field", &JavaExternalCtor::field)
+        .def_property("field", [](const JavaExternalCtor& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](JavaExternalCtor& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
-        .def_static("make", &JavaExternalCtor::make, py::arg("field"))
+        .def_static("make", &JavaExternalCtor::make, py::arg("field"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -22,12 +22,28 @@ using JavaDeprecatedPosDefaultsCustom = ::smoke::JavaDeprecatedPosDefaultsCustom
 
 void register_smoke_JavaDeprecatedPosDefaultsCustom(py::module_& module) {
 auto cls_JavaDeprecatedPosDefaultsCustom = py::class_<JavaDeprecatedPosDefaultsCustom>(module, "smoke_JavaDeprecatedPosDefaultsCustom")
-        .def_readwrite("first_init_field", &JavaDeprecatedPosDefaultsCustom::first_init_field)
-        .def_readwrite("first_free_field", &JavaDeprecatedPosDefaultsCustom::first_free_field)
+        .def_property("first_init_field", [](const JavaDeprecatedPosDefaultsCustom& self) -> decltype(auto) {
+            return
+                (self.first_init_field)
+            ;
+        }, [](JavaDeprecatedPosDefaultsCustom& self, const int32_t value) {
+
+                self.first_init_field = value;
+
+        })
+        .def_property("first_free_field", [](const JavaDeprecatedPosDefaultsCustom& self) -> decltype(auto) {
+            return
+                (self.first_free_field)
+            ;
+        }, [](JavaDeprecatedPosDefaultsCustom& self, const ::std::string& value) {
+
+                self.first_free_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("first_free_field"))
         .def(py::init<int32_t, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"))
-        .def_static("custom", &JavaDeprecatedPosDefaultsCustom::custom)
+        .def_static("custom", &JavaDeprecatedPosDefaultsCustom::custom, py::call_guard<py::gil_scoped_release>())
         ;
 
 

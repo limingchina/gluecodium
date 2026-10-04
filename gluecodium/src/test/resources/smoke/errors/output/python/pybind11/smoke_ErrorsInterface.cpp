@@ -33,10 +33,10 @@ public:
     using method_with_errors_return_type = ::std::error_code;
     ::std::error_code method_with_errors(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_errors();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273")) {
             auto callback = py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273");
             auto result = callback();
@@ -51,10 +51,10 @@ public:
     using method_with_external_errors_return_type = ::std::error_code;
     ::std::error_code method_with_external_errors(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_external_errors();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f645769746845787465726e616c4572726f7273")) {
             auto callback = py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f645769746845787465726e616c4572726f7273");
             auto result = callback();
@@ -69,10 +69,10 @@ public:
     using method_with_errors_and_return_value_return_type = ::gluecodium::Return< ::std::string, ::std::error_code >;
     ::gluecodium::Return< ::std::string, ::std::error_code > method_with_errors_and_return_value(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_errors_and_return_value();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ErrorsInterface*>(this), "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273416e6452657475726e56616c7565")) {
         PYBIND11_OVERRIDE_PURE_NAME(method_with_errors_and_return_value_return_type, ErrorsInterface, "__gluecodium_callback_736d6f6b652e4572726f7273496e746572666163652e6d6574686f64576974684572726f7273416e6452657475726e56616c7565", method_with_errors_and_return_value);
         }
@@ -100,22 +100,22 @@ auto cls_ErrorsInterface = py::class_<ErrorsInterface, std::shared_ptr<ErrorsInt
             return self;
         }))
         .def("method_with_errors", [](ErrorsInterface& self) {
-                const auto error = self.method_with_errors();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_errors(); });
                 if (error) {
                     throw error;
                 }
         })
         .def("method_with_external_errors", [](ErrorsInterface& self) {
-                const auto error = self.method_with_external_errors();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_external_errors(); });
                 if (error) {
                     throw error;
                 }
         })
         .def("method_with_errors_and_return_value", [](ErrorsInterface& self) {
-            return self.method_with_errors_and_return_value();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_errors_and_return_value(); });
         })
-        .def_static("method_with_payload_error", &ErrorsInterface::method_with_payload_error)
-        .def_static("method_with_payload_error_and_return_value", &ErrorsInterface::method_with_payload_error_and_return_value)
+        .def_static("method_with_payload_error", &ErrorsInterface::method_with_payload_error, py::call_guard<py::gil_scoped_release>())
+        .def_static("method_with_payload_error_and_return_value", &ErrorsInterface::method_with_payload_error_and_return_value, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_ErrorsInterfaceInternalError = py::enum_<InternalError>(cls_ErrorsInterface, "InternalError")

@@ -22,7 +22,15 @@ using SerializableStructWithExternalField = ::dontsmoke::SerializableStructWithE
 
 void register_dontsmoke_SerializableStructWithExternalField(py::module_& module) {
 auto cls_SerializableStructWithExternalField = py::class_<SerializableStructWithExternalField>(module, "dontsmoke_SerializableStructWithExternalField")
-        .def_readwrite("some_struct", &SerializableStructWithExternalField::some_struct)
+        .def_property("some_struct", [](const SerializableStructWithExternalField& self) -> decltype(auto) {
+            return
+                (self.some_struct)
+            ;
+        }, [](SerializableStructWithExternalField& self, const ::dontsmoke::ExternalMarkedAsSerializable& value) {
+
+                self.some_struct = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::dontsmoke::ExternalMarkedAsSerializable>(), py::arg("some_struct"))
         ;

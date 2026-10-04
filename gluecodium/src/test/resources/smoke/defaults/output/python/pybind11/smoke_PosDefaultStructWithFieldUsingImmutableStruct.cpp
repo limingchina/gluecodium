@@ -21,7 +21,11 @@ using PosDefaultStructWithFieldUsingImmutableStruct = ::smoke::PosDefaultStructW
 
 void register_smoke_PosDefaultStructWithFieldUsingImmutableStruct(py::module_& module) {
 auto cls_PosDefaultStructWithFieldUsingImmutableStruct = py::class_<PosDefaultStructWithFieldUsingImmutableStruct>(module, "smoke_PosDefaultStructWithFieldUsingImmutableStruct")
-        .def_readonly("some_field1", &PosDefaultStructWithFieldUsingImmutableStruct::some_field1)
+        .def_property_readonly("some_field1", [](const PosDefaultStructWithFieldUsingImmutableStruct& self) -> decltype(auto) {
+            return
+                (self.some_field1)
+            ;
+        })
         .def(py::init<>())
         .def(py::init<::smoke::ImmutableStructWithDefaults>(), py::arg("some_field1"))
         ;

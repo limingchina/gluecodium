@@ -25,8 +25,24 @@ using MixedCollectionsStruct = ::smoke::MixedCollectionsStruct;
 
 void register_smoke_MixedCollectionsStruct(py::module_& module) {
 auto cls_MixedCollectionsStruct = py::class_<MixedCollectionsStruct>(module, "smoke_MixedCollectionsStruct")
-        .def_readwrite("almost_dates", &MixedCollectionsStruct::almost_dates)
-        .def_readwrite("dates", &MixedCollectionsStruct::dates)
+        .def_property("almost_dates", [](const MixedCollectionsStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.almost_dates)
+            );
+        }, [](MixedCollectionsStruct& self, const ::std::vector< ::gluecodium::optional< ::std::chrono::system_clock::time_point > >& value) {
+
+                self.almost_dates = value;
+
+        })
+        .def_property("dates", [](const MixedCollectionsStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.dates)
+            );
+        }, [](MixedCollectionsStruct& self, const ::std::vector< ::std::chrono::system_clock::time_point >& value) {
+
+                self.dates = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::gluecodium::optional< ::std::chrono::system_clock::time_point > >, ::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("almost_dates"), py::arg("dates"))
         ;

@@ -23,8 +23,24 @@ using DateInterval = ::smoke::DateInterval;
 
 void register_smoke_DateInterval(py::module_& module) {
 auto cls_DateInterval = py::class_<DateInterval>(module, "smoke_DateInterval")
-        .def_readwrite("start", &DateInterval::start)
-        .def_readwrite("end", &DateInterval::end)
+        .def_property("start", [](const DateInterval& self) -> decltype(auto) {
+            return
+                (self.start)
+            ;
+        }, [](DateInterval& self, const ::std::chrono::system_clock::time_point& value) {
+
+                self.start = value;
+
+        })
+        .def_property("end", [](const DateInterval& self) -> decltype(auto) {
+            return
+                (self.end)
+            ;
+        }, [](DateInterval& self, const ::std::chrono::system_clock::time_point& value) {
+
+                self.end = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::chrono::system_clock::time_point, ::std::chrono::system_clock::time_point>(), py::arg("start"), py::arg("end"))
         ;

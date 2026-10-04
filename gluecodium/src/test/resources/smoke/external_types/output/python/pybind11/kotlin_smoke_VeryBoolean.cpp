@@ -21,10 +21,18 @@ using VeryBoolean = ::kotlin_smoke::VeryBoolean;
 
 void register_kotlin_smoke_VeryBoolean(py::module_& module) {
 auto cls_VeryBoolean = py::class_<VeryBoolean>(module, "kotlin_smoke_VeryBoolean")
-        .def_readwrite("value", &VeryBoolean::value)
+        .def_property("value", [](const VeryBoolean& self) -> decltype(auto) {
+            return
+                (self.value)
+            ;
+        }, [](VeryBoolean& self, const bool value) {
+
+                self.value = value;
+
+        })
         .def(py::init<>())
         .def(py::init<bool>(), py::arg("value"))
-        .def_static("make", &VeryBoolean::make, py::arg("value"))
+        .def_static("make", &VeryBoolean::make, py::arg("value"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

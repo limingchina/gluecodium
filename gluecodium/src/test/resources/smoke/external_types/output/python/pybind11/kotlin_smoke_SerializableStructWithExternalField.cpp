@@ -22,7 +22,15 @@ using SerializableStructWithExternalField = ::kotlin_smoke::SerializableStructWi
 
 void register_kotlin_smoke_SerializableStructWithExternalField(py::module_& module) {
 auto cls_SerializableStructWithExternalField = py::class_<SerializableStructWithExternalField>(module, "kotlin_smoke_SerializableStructWithExternalField")
-        .def_readwrite("some_struct", &SerializableStructWithExternalField::some_struct)
+        .def_property("some_struct", [](const SerializableStructWithExternalField& self) -> decltype(auto) {
+            return
+                (self.some_struct)
+            ;
+        }, [](SerializableStructWithExternalField& self, const ::kotlin_smoke::ExternalMarkedAsSerializable& value) {
+
+                self.some_struct = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::kotlin_smoke::ExternalMarkedAsSerializable>(), py::arg("some_struct"))
         ;

@@ -26,7 +26,15 @@ auto cls_BasicTypes = py::class_<BasicTypes>(module, "smoke_BasicTypes")
         ;
 
 auto cls_BasicTypesSomeStruct = py::class_<SomeStruct>(cls_BasicTypes, "SomeStruct")
-        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def_property("some_field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](SomeStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;

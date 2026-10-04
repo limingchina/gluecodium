@@ -26,9 +26,9 @@ auto cls_KotlinMethodOverloads = py::class_<KotlinMethodOverloads, std::shared_p
         .def("__gluecodium_id__", [](const KotlinMethodOverloads& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("one", &KotlinMethodOverloads::one, py::arg("input"))
+        .def("one", &KotlinMethodOverloads::one, py::arg("input"), py::call_guard<py::gil_scoped_release>())
                 .def("two", [](KotlinMethodOverloads& self, const ::std::vector< ::std::string >& input) {
-                        self.two(input);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.two(input); });
                 }, py::arg("input"))
         ;
 

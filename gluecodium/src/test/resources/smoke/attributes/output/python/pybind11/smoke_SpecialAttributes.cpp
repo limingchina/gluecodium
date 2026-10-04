@@ -23,8 +23,8 @@ auto cls_SpecialAttributes = py::class_<SpecialAttributes, std::shared_ptr<Speci
         .def("__gluecodium_id__", [](const SpecialAttributes& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("with_escaping", &SpecialAttributes::with_escaping)
-        .def("with_line_break", &SpecialAttributes::with_line_break)
+        .def("with_escaping", &SpecialAttributes::with_escaping, py::call_guard<py::gil_scoped_release>())
+        .def("with_line_break", &SpecialAttributes::with_line_break, py::call_guard<py::gil_scoped_release>())
         ;
 
 

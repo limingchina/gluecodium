@@ -26,9 +26,9 @@ auto cls_SwiftMethodOverloads = py::class_<SwiftMethodOverloads, std::shared_ptr
         .def("__gluecodium_id__", [](const SwiftMethodOverloads& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("one", &SwiftMethodOverloads::one, py::arg("input"))
+        .def("one", &SwiftMethodOverloads::one, py::arg("input"), py::call_guard<py::gil_scoped_release>())
                 .def("two", [](SwiftMethodOverloads& self, const ::std::vector< ::std::string >& input) {
-                        self.two(input);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.two(input); });
                 }, py::arg("input"))
         ;
 

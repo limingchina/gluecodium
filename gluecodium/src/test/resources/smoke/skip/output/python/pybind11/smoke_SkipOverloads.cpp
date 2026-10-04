@@ -20,10 +20,18 @@ using SkipOverloads = ::smoke::SkipOverloads;
 
 void register_smoke_SkipOverloads(py::module_& module) {
 auto cls_SkipOverloads = py::class_<SkipOverloads>(module, "smoke_SkipOverloads")
-        .def_readwrite("dummy", &SkipOverloads::dummy)
+        .def_property("dummy", [](const SkipOverloads& self) -> decltype(auto) {
+            return
+                (self.dummy)
+            ;
+        }, [](SkipOverloads& self, const double value) {
+
+                self.dummy = value;
+
+        })
         .def(py::init<>())
         .def(py::init<double>(), py::arg("dummy"))
-        .def("do_foo", &SkipOverloads::do_foo, py::arg("input"))
+        .def("do_foo", &SkipOverloads::do_foo, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

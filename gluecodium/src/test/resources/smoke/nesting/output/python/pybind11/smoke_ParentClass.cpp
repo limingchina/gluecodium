@@ -29,32 +29,32 @@ public:
 
     void parent_fun(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_fun();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7446756e")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7446756e", parent_fun);
         }
         PYBIND11_OVERRIDE_PURE(void, ParentClass, parent_fun);
     }
     ::std::string get_parent_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_parent_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, ParentClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_get", get_parent_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ParentClass, get_parent_property);
     }
     void set_parent_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_parent_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, ParentClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_set", set_parent_property, value);
         }
@@ -79,8 +79,16 @@ auto cls_ParentClass = py::class_<ParentClass, std::shared_ptr<ParentClass>, Par
             self->m_impl = native;
             return self;
         }))
-        .def("parent_fun", &ParentClass::parent_fun)
-        .def_property("parent_property", py::overload_cast<>(&ParentClass::get_parent_property, py::const_), py::overload_cast<const ::std::string&>(&ParentClass::set_parent_property))
+        .def("parent_fun", &ParentClass::parent_fun, py::call_guard<py::gil_scoped_release>())
+        .def_property("parent_property", [](const ParentClass& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property();
+            });
+        }, [](ParentClass& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_parent_property(value);
+            });
+        })
         ;
 
 

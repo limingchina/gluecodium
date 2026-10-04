@@ -24,7 +24,7 @@ auto cls_SomeSkippedClass = py::class_<SomeSkippedClass, std::shared_ptr<SomeSki
         .def("__gluecodium_id__", [](const SomeSkippedClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_foo", &SomeSkippedClass::do_foo)
+        .def("do_foo", &SomeSkippedClass::do_foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -2,6 +2,8 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
+#include <functional>
+#include <optional>
 #include <type_traits>
 #include <unordered_map>
 #include <unordered_set>
@@ -35,9 +37,27 @@ struct is_unordered_map<std::unordered_map<Key, Value, Hash, Equal, Allocator>> 
 };
 
 template <typename T>
+struct is_function : std::false_type {};
+template <typename Return, typename... Args>
+struct is_function<std::function<Return(Args...)>> : std::true_type {};
+
+template <typename T>
+struct is_optional : std::false_type {};
+template <typename T>
+struct is_optional<std::optional<T>> : std::true_type {};
+
+template <typename T>
 using remove_cvref_t = std::remove_cv_t<std::remove_reference_t<T>>;
 
 }  // namespace detail
+
+// Arguments are already native values; release only for C++ work and reacquire
+// before pybind11 casts results or any generated Python conversion runs.
+template <typename Callable>
+decltype(auto) call_native(Callable&& function) {
+    py::gil_scoped_release release;
+    return std::forward<Callable>(function)();
+}
 
 template <typename T>
 T from_python_regular(py::handle source);
@@ -50,6 +70,20 @@ py::object to_python_regular(const T& value);
 
 template <typename T>
 py::object to_python_hashable(const T& value);
+
+template <typename Return, typename... Args>
+py::object to_python_callable(const std::function<Return(Args...)>& callback) {
+    if (!callback) return py::none();
+    return py::cpp_function([callback](Args... args) -> py::object {
+        if constexpr (std::is_void_v<Return>) {
+            call_native([&] { callback(args...); });
+            return py::none();
+        } else {
+            return to_python_regular(call_native([&]() -> decltype(auto) { return callback(args...); }));
+        }
+    });
+}
+
 
 template <typename T>
 T from_python_regular(py::handle source) {
@@ -112,7 +146,11 @@ T from_python_hashable(py::handle source) {
 template <typename T>
 py::object to_python_regular(const T& value) {
     using Value = detail::remove_cvref_t<T>;
-    if constexpr (detail::is_vector<Value>::value) {
+    if constexpr (detail::is_function<Value>::value) {
+        return to_python_callable(value);
+    } else if constexpr (detail::is_optional<Value>::value) {
+        return value ? to_python_regular(*value) : py::none();
+    } else if constexpr (detail::is_vector<Value>::value) {
         py::list result;
         for (const auto& item : value) {
             result.append(to_python_regular(item));

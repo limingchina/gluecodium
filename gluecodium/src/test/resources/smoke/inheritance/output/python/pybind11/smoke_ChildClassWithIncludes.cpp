@@ -37,10 +37,10 @@ public:
 
     ::std::shared_ptr< ::smoke::IncludableClass > root_method(
             const ::smoke::IncludableStruct& input1, const ::smoke::IncludableEnum input2 ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->root_method(input1, input2);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f744d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::IncludableClass >, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f744d6574686f64", root_method, input1, input2);
         }
@@ -48,52 +48,52 @@ public:
     }
     ::smoke::ShouldNotInclude not_in_java(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->not_in_java();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a617661")) {
         PYBIND11_OVERRIDE_PURE_NAME(::smoke::ShouldNotInclude, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a617661", not_in_java);
         }
         PYBIND11_OVERRIDE_PURE(::smoke::ShouldNotInclude, ChildClassWithIncludes, not_in_java);
     }
     ::std::function<void(const int64_t)> get_root_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::function<void(const int64_t)>, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_get", get_root_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::function<void(const int64_t)>, ChildClassWithIncludes, get_root_property);
     }
     void set_root_property(const ::std::function<void(const int64_t)>& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_root_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_set")) {
-            PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_set", set_root_property, value);
+            PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e726f6f7450726f7065727479_set", set_root_property, gluecodium::python::to_python_regular(value));
         }
-        PYBIND11_OVERRIDE_PURE(void, ChildClassWithIncludes, set_root_property, value);
+        PYBIND11_OVERRIDE_PURE(void, ChildClassWithIncludes, set_root_property, gluecodium::python::to_python_regular(value));
     }
     ::smoke::ShouldNotInclude get_not_in_java_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_not_in_java_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::smoke::ShouldNotInclude, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_get", get_not_in_java_property);
         }
         PYBIND11_OVERRIDE_PURE(::smoke::ShouldNotInclude, ChildClassWithIncludes, get_not_in_java_property);
     }
     void set_not_in_java_property(const ::smoke::ShouldNotInclude& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_not_in_java_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassWithIncludes*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithIncludes, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468496e636c756465732e6e6f74496e4a61766150726f7065727479_set", set_not_in_java_property, value);
         }
@@ -128,20 +128,28 @@ auto cls_ChildClassWithIncludes = py::class_<ChildClassWithIncludes, ::smoke::Pa
             return self;
         }))
         .def("root_method", [](ChildClassWithIncludes& self, const ::smoke::IncludableStruct& input1, const ::smoke::IncludableEnum input2) {
-            return self.root_method(input1, input2);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.root_method(input1, input2); });
         }, py::arg("input1"), py::arg("input2"))
         .def("not_in_java", [](ChildClassWithIncludes& self) {
-            return self.not_in_java();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.not_in_java(); });
         })
-        .def_property("root_property", [](const ChildClassWithIncludes& self) {
-            return self.get_root_property();
+        .def_property("root_property", [](const ChildClassWithIncludes& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_root_property();
+            }));
         }, [](ChildClassWithIncludes& self, const ::std::function<void(const int64_t)>& value) {
-            self.set_root_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_root_property(value);
+            });
         })
-        .def_property("not_in_java_property", [](const ChildClassWithIncludes& self) {
-            return self.get_not_in_java_property();
+        .def_property("not_in_java_property", [](const ChildClassWithIncludes& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_not_in_java_property();
+            });
         }, [](ChildClassWithIncludes& self, const ::smoke::ShouldNotInclude& value) {
-            self.set_not_in_java_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_not_in_java_property(value);
+            });
         })
         ;
 

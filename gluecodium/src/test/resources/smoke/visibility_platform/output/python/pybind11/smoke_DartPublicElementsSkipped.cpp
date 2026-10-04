@@ -21,13 +21,29 @@ using DartPublicElementsSkipped = ::smoke::DartPublicElementsSkipped;
 
 void register_smoke_DartPublicElementsSkipped(py::module_& module) {
 auto cls_DartPublicElementsSkipped = py::class_<DartPublicElementsSkipped>(module, "smoke_DartPublicElementsSkipped")
-        .def_readwrite("bool_field", &DartPublicElementsSkipped::bool_field)
-        .def_readwrite("_string_field", &DartPublicElementsSkipped::string_field)
+        .def_property("bool_field", [](const DartPublicElementsSkipped& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](DartPublicElementsSkipped& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
+        .def_property("_string_field", [](const DartPublicElementsSkipped& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](DartPublicElementsSkipped& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init([](const bool& bool_field) {
             return DartPublicElementsSkipped(bool_field, ::std::string{});
         }), py::arg("bool_field"))
-        .def("_foo", &DartPublicElementsSkipped::foo)
+        .def("_foo", &DartPublicElementsSkipped::foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 

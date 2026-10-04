@@ -24,10 +24,10 @@ auto cls_SkipFunctions = py::class_<SkipFunctions, std::shared_ptr<SkipFunctions
         .def("__gluecodium_id__", [](const SkipFunctions& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("not_in_java", &SkipFunctions::not_in_java, py::arg("input"))
-        .def_static("not_in_swift", &SkipFunctions::not_in_swift, py::arg("input"))
-        .def_static("not_in_dart", &SkipFunctions::not_in_dart, py::arg("input"))
-        .def_static("not_in_kotlin", &SkipFunctions::not_in_kotlin, py::arg("input"))
+        .def_static("not_in_java", &SkipFunctions::not_in_java, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("not_in_swift", &SkipFunctions::not_in_swift, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("not_in_dart", &SkipFunctions::not_in_dart, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("not_in_kotlin", &SkipFunctions::not_in_kotlin, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

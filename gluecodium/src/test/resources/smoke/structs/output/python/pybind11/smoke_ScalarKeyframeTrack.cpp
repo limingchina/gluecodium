@@ -24,9 +24,29 @@ using ScalarKeyframeTrack = ::smoke::ScalarKeyframeTrack;
 
 void register_smoke_ScalarKeyframeTrack(py::module_& module) {
 auto cls_ScalarKeyframeTrack = py::class_<ScalarKeyframeTrack>(module, "smoke_ScalarKeyframeTrack")
-        .def_readonly("keyframes", &ScalarKeyframeTrack::keyframes)
-        .def_readwrite("easing_function", &ScalarKeyframeTrack::easing_function)
-        .def_readwrite("interpolation_mode", &ScalarKeyframeTrack::interpolation_mode)
+        .def_property_readonly("keyframes", [](const ScalarKeyframeTrack& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.keyframes)
+            );
+        })
+        .def_property("easing_function", [](const ScalarKeyframeTrack& self) -> decltype(auto) {
+            return
+                (self.easing_function)
+            ;
+        }, [](ScalarKeyframeTrack& self, const ::std::string& value) {
+
+                self.easing_function = value;
+
+        })
+        .def_property("interpolation_mode", [](const ScalarKeyframeTrack& self) -> decltype(auto) {
+            return
+                (self.interpolation_mode)
+            ;
+        }, [](ScalarKeyframeTrack& self, const ::std::string& value) {
+
+                self.interpolation_mode = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::ScalarKeyframe >, ::std::string, ::std::string>(), py::arg("keyframes"), py::arg("easing_function"), py::arg("interpolation_mode"))
         ;

@@ -32,16 +32,32 @@ auto cls_DatesSteady = py::class_<DatesSteady, std::shared_ptr<DatesSteady>>(mod
         .def("__gluecodium_id__", [](const DatesSteady& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("date_method", &DatesSteady::date_method, py::arg("input"))
-        .def("nullable_date_method", &DatesSteady::nullable_date_method, py::arg("input"))
+        .def("date_method", &DatesSteady::date_method, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("nullable_date_method", &DatesSteady::nullable_date_method, py::arg("input"), py::call_guard<py::gil_scoped_release>())
                 .def("date_list_method", [](DatesSteady& self, const ::std::vector< std::chrono::steady_clock::time_point >& input) -> py::object {
-                        return gluecodium::python::to_python_regular(self.date_list_method(input));
+                        return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) { return self.date_list_method(input); }));
                 }, py::arg("input"))
         ;
 
 auto cls_DatesSteadyDateStruct = py::class_<DateStruct>(cls_DatesSteady, "DateStruct")
-        .def_readwrite("date_field", &DateStruct::date_field)
-        .def_readwrite("nullable_date_field", &DateStruct::nullable_date_field)
+        .def_property("date_field", [](const DateStruct& self) -> decltype(auto) {
+            return
+                (self.date_field)
+            ;
+        }, [](DateStruct& self, const std::chrono::steady_clock::time_point& value) {
+
+                self.date_field = value;
+
+        })
+        .def_property("nullable_date_field", [](const DateStruct& self) -> decltype(auto) {
+            return
+                (self.nullable_date_field)
+            ;
+        }, [](DateStruct& self, const ::gluecodium::optional< std::chrono::steady_clock::time_point >& value) {
+
+                self.nullable_date_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<std::chrono::steady_clock::time_point>(), py::arg("date_field"))
         .def(py::init<std::chrono::steady_clock::time_point, ::gluecodium::optional< std::chrono::steady_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))

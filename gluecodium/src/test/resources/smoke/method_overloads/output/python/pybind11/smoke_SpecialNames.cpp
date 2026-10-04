@@ -25,11 +25,11 @@ auto cls_SpecialNames = py::class_<SpecialNames, std::shared_ptr<SpecialNames>>(
         .def("__gluecodium_id__", [](const SpecialNames& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("create", &SpecialNames::create)
-        .def("release", &SpecialNames::release)
-        .def("create_proxy", &SpecialNames::create_proxy)
-        .def("_uppercase", &SpecialNames::_uppercase)
-        .def_static("make", &SpecialNames::make, py::arg("result"))
+        .def("create", &SpecialNames::create, py::call_guard<py::gil_scoped_release>())
+        .def("release", &SpecialNames::release, py::call_guard<py::gil_scoped_release>())
+        .def("create_proxy", &SpecialNames::create_proxy, py::call_guard<py::gil_scoped_release>())
+        .def("_uppercase", &SpecialNames::_uppercase, py::call_guard<py::gil_scoped_release>())
+        .def_static("make", &SpecialNames::make, py::arg("result"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

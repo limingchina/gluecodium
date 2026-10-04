@@ -32,10 +32,10 @@ auto cls_Lambdas = py::class_<Lambdas, std::shared_ptr<Lambdas>>(module, "smoke_
             return gluecodium::python::native_identity(self);
         })
                 .def("deconfuse", [](Lambdas& self, const ::std::string& value, const ::std::function<::std::function<::std::string()>(const ::std::string&)>& confuser) -> py::object {
-                        return py::cast(self.deconfuse(value, confuser));
+                        return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) { return self.deconfuse(value, confuser); }));
                 }, py::arg("value"), py::arg("confuser"))
                 .def_static("fuse", [](const ::std::vector< ::std::string >& items, const ::std::function<int32_t(const ::std::string&, const float)>& callback) -> py::object {
-                        return gluecodium::python::to_python_regular(Lambdas::fuse(items, callback));
+                        return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) { return Lambdas::fuse(items, callback); }));
                 }, py::arg("items"), py::arg("callback"))
         ;
 

@@ -33,7 +33,6 @@
 {{/ifPredicate}}
     {{>cpp/CppReturnType}} {{resolveName this "Pybind11"}}(
             {{#parameters}}const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} {{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}{{#unless parameters}}/* no args */{{/unless}} ){{#ifPredicate "isCppConst"}} const{{/ifPredicate}}{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
 {{#ifPredicate this "isCppVoid"}}
             m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
@@ -43,34 +42,35 @@
             return m_impl->{{resolveName this "Pybind11"}}({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
 {{/unlessPredicate}}
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const {{resolveName model "Pybind11"}}*>(this), "{{resolveName this "Callback"}}")) {
 {{#ifPredicate this "isRawErrorCodeReturn"}}
             auto callback = py::get_override(static_cast<const {{resolveName model "Pybind11"}}*>(this), "{{resolveName this "Callback"}}");
-            auto result = callback({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+            auto result = callback({{#parameters}}{{>python/Pybind11CallbackArgument}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
             return result.is_none() ? std::error_code{} : result.cast<std::error_code>();
 {{/ifPredicate}}
 {{#unlessPredicate this "isRawErrorCodeReturn"}}
 {{#ifPredicate this "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE_NAME({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback"}}", {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
+        PYBIND11_OVERRIDE_PURE_NAME({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback"}}", {{resolveName this}}{{#parameters}}, {{>python/Pybind11CallbackArgument}}{{/parameters}});
 {{/ifPredicate}}
 {{#unlessPredicate this "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE_NAME({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback"}}", {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
+        PYBIND11_OVERRIDE_PURE_NAME({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback"}}", {{resolveName this}}{{#parameters}}, {{>python/Pybind11CallbackArgument}}{{/parameters}});
 {{/unlessPredicate}}
 {{/unlessPredicate}}
         }
 {{#ifPredicate this "isRawErrorCodeReturn"}}
         if (auto callback = py::get_override(static_cast<const {{resolveName model "Pybind11"}}*>(this), "{{resolveName this}}")) {
-            auto result = callback({{#parameters}}{{resolveName}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
+            auto result = callback({{#parameters}}{{>python/Pybind11CallbackArgument}}{{#if iter.hasNext}}, {{/if}}{{/parameters}});
             return result.is_none() ? std::error_code{} : result.cast<std::error_code>();
         }
         py::pybind11_fail("Tried to call pure virtual function \"{{resolveName model "Pybind11"}}::{{resolveName this}}\"");
 {{/ifPredicate}}
 {{#unlessPredicate this "isRawErrorCodeReturn"}}
 {{#ifPredicate this "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
+        PYBIND11_OVERRIDE_PURE({{resolveName this "Pybind11"}}_return_type, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{>python/Pybind11CallbackArgument}}{{/parameters}});
 {{/ifPredicate}}
 {{#unlessPredicate this "returnTypeHasComma"}}
-        PYBIND11_OVERRIDE_PURE({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{resolveName}}{{/parameters}});
+        PYBIND11_OVERRIDE_PURE({{>cpp/CppReturnType}}, {{resolveName model "Pybind11"}}, {{resolveName this}}{{#parameters}}, {{>python/Pybind11CallbackArgument}}{{/parameters}});
 {{/unlessPredicate}}
 {{/unlessPredicate}}
     }

@@ -36,16 +36,96 @@ auto cls_Equatable = py::class_<Equatable>(module, "smoke_Equatable")
         ;
 
 auto cls_EquatableEquatableStruct = py::class_<EquatableStruct>(cls_Equatable, "EquatableStruct")
-        .def_readwrite("bool_field", &EquatableStruct::bool_field)
-        .def_readwrite("int_field", &EquatableStruct::int_field)
-        .def_readwrite("long_field", &EquatableStruct::long_field)
-        .def_readwrite("float_field", &EquatableStruct::float_field)
-        .def_readwrite("double_field", &EquatableStruct::double_field)
-        .def_readwrite("string_field", &EquatableStruct::string_field)
-        .def_readwrite("struct_field", &EquatableStruct::struct_field)
-        .def_readwrite("enum_field", &EquatableStruct::enum_field)
-        .def_readwrite("array_field", &EquatableStruct::array_field)
-        .def_readwrite("map_field", &EquatableStruct::map_field)
+        .def_property("bool_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](EquatableStruct& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
+        .def_property("int_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](EquatableStruct& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("long_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.long_field)
+            ;
+        }, [](EquatableStruct& self, const int64_t value) {
+
+                self.long_field = value;
+
+        })
+        .def_property("float_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.float_field)
+            ;
+        }, [](EquatableStruct& self, const float value) {
+
+                self.float_field = value;
+
+        })
+        .def_property("double_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.double_field)
+            ;
+        }, [](EquatableStruct& self, const double value) {
+
+                self.double_field = value;
+
+        })
+        .def_property("string_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](EquatableStruct& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("struct_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](EquatableStruct& self, const ::smoke::Equatable::NestedEquatableStruct& value) {
+
+                self.struct_field = value;
+
+        })
+        .def_property("enum_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.enum_field)
+            ;
+        }, [](EquatableStruct& self, const ::smoke::Equatable::SomeEnum value) {
+
+                self.enum_field = value;
+
+        })
+        .def_property("array_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.array_field)
+            );
+        }, [](EquatableStruct& self, const ::std::vector< ::std::string >& value) {
+
+                self.array_field = value;
+
+        })
+        .def_property("map_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.map_field)
+            );
+        }, [](EquatableStruct& self, const ::std::unordered_map< int32_t, ::std::string >& value) {
+
+                self.map_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<bool, int32_t, int64_t, float, double, ::std::string, ::smoke::Equatable::NestedEquatableStruct, ::smoke::Equatable::SomeEnum, ::std::vector< ::std::string >, ::std::unordered_map< int32_t, ::std::string >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("long_field"), py::arg("float_field"), py::arg("double_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
         .def("__gluecodium_copy__", [](const EquatableStruct& self) { return EquatableStruct(self); })
@@ -54,15 +134,87 @@ auto cls_EquatableEquatableStruct = py::class_<EquatableStruct>(cls_Equatable, "
         ;
 
 auto cls_EquatableEquatableNullableStruct = py::class_<EquatableNullableStruct>(cls_Equatable, "EquatableNullableStruct")
-        .def_readwrite("bool_field", &EquatableNullableStruct::bool_field)
-        .def_readwrite("int_field", &EquatableNullableStruct::int_field)
-        .def_readwrite("uint_field", &EquatableNullableStruct::uint_field)
-        .def_readwrite("float_field", &EquatableNullableStruct::float_field)
-        .def_readwrite("string_field", &EquatableNullableStruct::string_field)
-        .def_readwrite("struct_field", &EquatableNullableStruct::struct_field)
-        .def_readwrite("enum_field", &EquatableNullableStruct::enum_field)
-        .def_readwrite("array_field", &EquatableNullableStruct::array_field)
-        .def_readwrite("map_field", &EquatableNullableStruct::map_field)
+        .def_property("bool_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< bool >& value) {
+
+                self.bool_field = value;
+
+        })
+        .def_property("int_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< int32_t >& value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("uint_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return
+                (self.uint_field)
+            ;
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< uint16_t >& value) {
+
+                self.uint_field = value;
+
+        })
+        .def_property("float_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return
+                (self.float_field)
+            ;
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< float >& value) {
+
+                self.float_field = value;
+
+        })
+        .def_property("string_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< ::std::string >& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("struct_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< ::smoke::Equatable::NestedEquatableStruct >& value) {
+
+                self.struct_field = value;
+
+        })
+        .def_property("enum_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return
+                (self.enum_field)
+            ;
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< ::smoke::Equatable::SomeEnum >& value) {
+
+                self.enum_field = value;
+
+        })
+        .def_property("array_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.array_field)
+            );
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< ::std::vector< ::std::string > >& value) {
+
+                self.array_field = value;
+
+        })
+        .def_property("map_field", [](const EquatableNullableStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.map_field)
+            );
+        }, [](EquatableNullableStruct& self, const ::gluecodium::optional< ::std::unordered_map< int32_t, ::std::string > >& value) {
+
+                self.map_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::gluecodium::optional< bool >, ::gluecodium::optional< int32_t >, ::gluecodium::optional< uint16_t >, ::gluecodium::optional< float >, ::gluecodium::optional< ::std::string >, ::gluecodium::optional< ::smoke::Equatable::NestedEquatableStruct >, ::gluecodium::optional< ::smoke::Equatable::SomeEnum >, ::gluecodium::optional< ::std::vector< ::std::string > >, ::gluecodium::optional< ::std::unordered_map< int32_t, ::std::string > >>(), py::arg("bool_field"), py::arg("int_field"), py::arg("uint_field"), py::arg("float_field"), py::arg("string_field"), py::arg("struct_field"), py::arg("enum_field"), py::arg("array_field"), py::arg("map_field"))
         .def("__gluecodium_copy__", [](const EquatableNullableStruct& self) { return EquatableNullableStruct(self); })
@@ -71,7 +223,15 @@ auto cls_EquatableEquatableNullableStruct = py::class_<EquatableNullableStruct>(
         ;
 
 auto cls_EquatableNestedEquatableStruct = py::class_<NestedEquatableStruct>(cls_Equatable, "NestedEquatableStruct")
-        .def_readwrite("foo_field", &NestedEquatableStruct::foo_field)
+        .def_property("foo_field", [](const NestedEquatableStruct& self) -> decltype(auto) {
+            return
+                (self.foo_field)
+            ;
+        }, [](NestedEquatableStruct& self, const ::std::string& value) {
+
+                self.foo_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         .def("__gluecodium_copy__", [](const NestedEquatableStruct& self) { return NestedEquatableStruct(self); })

@@ -28,21 +28,21 @@ public:
     std::shared_ptr<PropertiesInterface> m_impl;
 
     ::smoke::PropertiesInterface::ExampleStruct get_struct_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_struct_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const PropertiesInterface*>(this), "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::smoke::PropertiesInterface::ExampleStruct, PropertiesInterface, "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_get", get_struct_property);
         }
         PYBIND11_OVERRIDE_PURE(::smoke::PropertiesInterface::ExampleStruct, PropertiesInterface, get_struct_property);
     }
     void set_struct_property(const ::smoke::PropertiesInterface::ExampleStruct& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_struct_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const PropertiesInterface*>(this), "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, PropertiesInterface, "__gluecodium_callback_736d6f6b652e50726f70657274696573496e746572666163652e73747275637450726f7065727479_set", set_struct_property, value);
         }
@@ -69,15 +69,27 @@ auto cls_PropertiesInterface = py::class_<PropertiesInterface, std::shared_ptr<P
             self->m_impl = native;
             return self;
         }))
-        .def_property("struct_property", [](const PropertiesInterface& self) {
-            return self.get_struct_property();
+        .def_property("struct_property", [](const PropertiesInterface& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_struct_property();
+            });
         }, [](PropertiesInterface& self, const ::smoke::PropertiesInterface::ExampleStruct& value) {
-            self.set_struct_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_struct_property(value);
+            });
         })
         ;
 
 auto cls_PropertiesInterfaceExampleStruct = py::class_<ExampleStruct>(cls_PropertiesInterface, "ExampleStruct")
-        .def_readwrite("value", &ExampleStruct::value)
+        .def_property("value", [](const ExampleStruct& self) -> decltype(auto) {
+            return
+                (self.value)
+            ;
+        }, [](ExampleStruct& self, const double value) {
+
+                self.value = value;
+
+        })
         .def(py::init<>())
         .def(py::init<double>(), py::arg("value"))
         ;

@@ -30,10 +30,10 @@ public:
 
     ::gluecodium::optional< int8_t > method_with_byte(
             const ::gluecodium::optional< int8_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_byte(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f645769746842797465")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< int8_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f645769746842797465", method_with_byte, input);
         }
@@ -41,10 +41,10 @@ public:
     }
     ::gluecodium::optional< uint8_t > method_with_u_byte(
             const ::gluecodium::optional< uint8_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_u_byte(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f64576974685542797465")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< uint8_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f64576974685542797465", method_with_u_byte, input);
         }
@@ -52,10 +52,10 @@ public:
     }
     ::gluecodium::optional< int16_t > method_with_short(
             const ::gluecodium::optional< int16_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_short(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f645769746853686f7274")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< int16_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f645769746853686f7274", method_with_short, input);
         }
@@ -63,10 +63,10 @@ public:
     }
     ::gluecodium::optional< uint16_t > method_with_u_short(
             const ::gluecodium::optional< uint16_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_u_short(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f64576974685553686f7274")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< uint16_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f64576974685553686f7274", method_with_u_short, input);
         }
@@ -74,10 +74,10 @@ public:
     }
     ::gluecodium::optional< int32_t > method_with_int(
             const ::gluecodium::optional< int32_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_int(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468496e74")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< int32_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468496e74", method_with_int, input);
         }
@@ -85,10 +85,10 @@ public:
     }
     ::gluecodium::optional< uint32_t > method_with_u_int(
             const ::gluecodium::optional< uint32_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_u_int(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f645769746855496e74")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< uint32_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f645769746855496e74", method_with_u_int, input);
         }
@@ -96,10 +96,10 @@ public:
     }
     ::gluecodium::optional< int64_t > method_with_long(
             const ::gluecodium::optional< int64_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_long(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f64576974684c6f6e67")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< int64_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f64576974684c6f6e67", method_with_long, input);
         }
@@ -107,10 +107,10 @@ public:
     }
     ::gluecodium::optional< uint64_t > method_with_u_long(
             const ::gluecodium::optional< uint64_t >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_u_long(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468554c6f6e67")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< uint64_t >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468554c6f6e67", method_with_u_long, input);
         }
@@ -118,10 +118,10 @@ public:
     }
     ::gluecodium::optional< bool > method_with_double(
             const ::gluecodium::optional< bool >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_double(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468446f75626c65")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< bool >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468446f75626c65", method_with_double, input);
         }
@@ -129,10 +129,10 @@ public:
     }
     ::gluecodium::optional< float > method_with_float(
             const ::gluecodium::optional< float >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_float(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468466c6f6174")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< float >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468466c6f6174", method_with_float, input);
         }
@@ -140,10 +140,10 @@ public:
     }
     ::gluecodium::optional< double > method_with_double(
             const ::gluecodium::optional< double >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->method_with_double(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerWithNullable*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468446f75626c653a31")) {
         PYBIND11_OVERRIDE_PURE_NAME(::gluecodium::optional< double >, ListenerWithNullable, "__gluecodium_callback_736d6f6b652e4c697374656e6572576974684e756c6c61626c652e6d6574686f6457697468446f75626c653a31", method_with_double, input);
         }
@@ -171,37 +171,37 @@ auto cls_ListenerWithNullable = py::class_<ListenerWithNullable, std::shared_ptr
             return self;
         }))
         .def("method_with_byte", [](ListenerWithNullable& self, const ::gluecodium::optional< int8_t >& input) {
-            return self.method_with_byte(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_byte(input); });
         }, py::arg("input"))
         .def("method_with_u_byte", [](ListenerWithNullable& self, const ::gluecodium::optional< uint8_t >& input) {
-            return self.method_with_u_byte(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_u_byte(input); });
         }, py::arg("input"))
         .def("method_with_short", [](ListenerWithNullable& self, const ::gluecodium::optional< int16_t >& input) {
-            return self.method_with_short(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_short(input); });
         }, py::arg("input"))
         .def("method_with_u_short", [](ListenerWithNullable& self, const ::gluecodium::optional< uint16_t >& input) {
-            return self.method_with_u_short(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_u_short(input); });
         }, py::arg("input"))
         .def("method_with_int", [](ListenerWithNullable& self, const ::gluecodium::optional< int32_t >& input) {
-            return self.method_with_int(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_int(input); });
         }, py::arg("input"))
         .def("method_with_u_int", [](ListenerWithNullable& self, const ::gluecodium::optional< uint32_t >& input) {
-            return self.method_with_u_int(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_u_int(input); });
         }, py::arg("input"))
         .def("method_with_long", [](ListenerWithNullable& self, const ::gluecodium::optional< int64_t >& input) {
-            return self.method_with_long(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_long(input); });
         }, py::arg("input"))
         .def("method_with_u_long", [](ListenerWithNullable& self, const ::gluecodium::optional< uint64_t >& input) {
-            return self.method_with_u_long(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_u_long(input); });
         }, py::arg("input"))
         .def("method_with_double", [](ListenerWithNullable& self, const ::gluecodium::optional< bool >& input) {
-            return self.method_with_double(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_double(input); });
         }, py::arg("input"))
         .def("method_with_float", [](ListenerWithNullable& self, const ::gluecodium::optional< float >& input) {
-            return self.method_with_float(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_float(input); });
         }, py::arg("input"))
         .def("method_with_double", [](ListenerWithNullable& self, const ::gluecodium::optional< double >& input) {
-            return self.method_with_double(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.method_with_double(input); });
         }, py::arg("input"))
         ;
 

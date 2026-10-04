@@ -260,8 +260,17 @@ interface methods or Python properties with public types; callable parameters an
 results also convert their arguments and returns when invoked through C++.
 Direct Python calls to your overrides retain ordinary Python behavior.
 
-The generated trampoline dispatches C++ virtual calls to Python and acquires the
-GIL for those calls. Keep the Python callback object alive while C++ may invoke it;
+Generated native methods, factories, property accessors, and returned native
+callables release the GIL while executing C++ work. Python argument and result
+conversions run with the GIL held, and trampolines acquire it before invoking
+Python overrides. Plain generated struct field access remains serialized by the
+GIL. Native implementations must synchronize their own state when calls run
+concurrently.
+
+Join or explicitly drain native workers before releasing callback owners or
+shutting down Python. Native worker code must catch callback exceptions and
+propagate them after joining; exceptions must not escape a `noexcept` callback.
+Keep the Python callback object alive while C++ may invoke it;
 shared ownership of a C++ object alone is not a substitute for managing the Python
 subclass's lifetime.
 

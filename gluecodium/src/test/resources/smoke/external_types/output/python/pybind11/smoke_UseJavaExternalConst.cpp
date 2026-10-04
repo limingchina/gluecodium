@@ -22,7 +22,15 @@ using UseJavaExternalConst = ::smoke::UseJavaExternalConst;
 
 void register_smoke_UseJavaExternalConst(py::module_& module) {
 auto cls_UseJavaExternalConst = py::class_<UseJavaExternalConst>(module, "smoke_UseJavaExternalConst")
-        .def_readwrite("string_field", &UseJavaExternalConst::string_field)
+        .def_property("string_field", [](const UseJavaExternalConst& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](UseJavaExternalConst& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

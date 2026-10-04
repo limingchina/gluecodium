@@ -22,8 +22,24 @@ using LearnToReadAgain = ::smoke::LearnToReadAgain;
 
 void register_smoke_LearnToReadAgain(py::module_& module) {
 auto cls_LearnToReadAgain = py::class_<LearnToReadAgain>(module, "smoke_LearnToReadAgain")
-        .def_readwrite("field_b", &LearnToReadAgain::field_b)
-        .def_readwrite("field_c", &LearnToReadAgain::field_c)
+        .def_property("field_b", [](const LearnToReadAgain& self) -> decltype(auto) {
+            return
+                (self.field_b)
+            ;
+        }, [](LearnToReadAgain& self, const ::smoke::foo::Alphabet value) {
+
+                self.field_b = value;
+
+        })
+        .def_property("field_c", [](const LearnToReadAgain& self) -> decltype(auto) {
+            return
+                (self.field_c)
+            ;
+        }, [](LearnToReadAgain& self, const ::smoke::bar::Alphabet value) {
+
+                self.field_c = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::foo::Alphabet, ::smoke::bar::Alphabet>(), py::arg("field_b"), py::arg("field_c"))
         ;

@@ -29,11 +29,11 @@ public:
 
     void foo(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f", foo);
         }
@@ -41,11 +41,11 @@ public:
     }
     void foo(
             const int32_t input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo(input);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f3a31")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f3a31", foo, input);
         }
@@ -53,11 +53,11 @@ public:
     }
     void bar(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->bar();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e626172")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e626172", bar);
         }
@@ -65,11 +65,11 @@ public:
     }
     void baz(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->baz();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e62617a")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e62617a", baz);
         }
@@ -94,10 +94,10 @@ auto cls_ParentClass = py::class_<ParentClass, std::shared_ptr<ParentClass>, Par
             self->m_impl = native;
             return self;
         }))
-        .def("foo", py::overload_cast<>(&ParentClass::foo))
-        .def("foo", py::overload_cast<const int32_t>(&ParentClass::foo), py::arg("input"))
-        .def("bar", py::overload_cast<>(&ParentClass::bar))
-        .def("baz", &ParentClass::baz)
+        .def("foo", py::overload_cast<>(&ParentClass::foo), py::call_guard<py::gil_scoped_release>())
+        .def("foo", py::overload_cast<const int32_t>(&ParentClass::foo), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("bar", py::overload_cast<>(&ParentClass::bar), py::call_guard<py::gil_scoped_release>())
+        .def("baz", &ParentClass::baz, py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -50,6 +50,7 @@
 
 #pragma once
 
+#include "_generic_caster.h"
 #include <pybind11/pybind11.h>
 #include <cstdint>
 #include <memory>
@@ -185,7 +186,15 @@ struct type_caster<{{returnTypeFullName}}<Value, Error>> {
             if constexpr (std::is_void_v<Value>) {
                 return pybind11::none().release();
             } else {
-                return type_caster<Value>::cast(src.unsafe_value(), policy, parent);
+                if constexpr (gluecodium::python::detail::is_function<Value>::value ||
+                              gluecodium::python::detail::is_optional<Value>::value ||
+                              gluecodium::python::detail::is_vector<Value>::value ||
+                              gluecodium::python::detail::is_unordered_map<Value>::value ||
+                              gluecodium::python::detail::is_unordered_set<Value>::value) {
+                    return gluecodium::python::to_python_regular(src.unsafe_value()).release();
+                } else {
+                    return type_caster<Value>::cast(src.unsafe_value(), policy, parent);
+                }
             }
         }
         // Failure: set a Python exception carrying the error description, then

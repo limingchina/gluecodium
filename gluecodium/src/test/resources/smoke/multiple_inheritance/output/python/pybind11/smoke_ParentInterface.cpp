@@ -31,11 +31,11 @@ public:
 
     void parent_function(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_function();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7446756e6374696f6e")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7446756e6374696f6e", parent_function);
         }
@@ -43,32 +43,32 @@ public:
     }
     void some_function_that_uses_type_from_another_package(
             const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->some_function_that_uses_type_from_another_package(some_param);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e736f6d655f66756e6374696f6e5f746861745f757365735f747970655f66726f6d5f616e6f746865725f7061636b616765")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e736f6d655f66756e6374696f6e5f746861745f757365735f747970655f66726f6d5f616e6f746865725f7061636b616765", some_function_that_uses_type_from_another_package, some_param);
         }
         PYBIND11_OVERRIDE_PURE(void, ParentInterface, some_function_that_uses_type_from_another_package, some_param);
     }
     ::std::string get_parent_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_parent_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_get", get_parent_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ParentInterface, get_parent_property);
     }
     void set_parent_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_parent_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, ParentInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_set", set_parent_property, value);
         }
@@ -96,15 +96,19 @@ auto cls_ParentInterface = py::class_<ParentInterface, std::shared_ptr<ParentInt
             return self;
         }))
         .def("parent_function", [](ParentInterface& self) {
-            return self.parent_function();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_function(); });
         })
         .def("some_function_that_uses_type_from_another_package", [](ParentInterface& self, const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param) {
-            return self.some_function_that_uses_type_from_another_package(some_param);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.some_function_that_uses_type_from_another_package(some_param); });
         }, py::arg("some_param"))
-        .def_property("parent_property", [](const ParentInterface& self) {
-            return self.get_parent_property();
+        .def_property("parent_property", [](const ParentInterface& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property();
+            });
         }, [](ParentInterface& self, const ::std::string& value) {
-            self.set_parent_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_parent_property(value);
+            });
         })
         ;
 

@@ -21,7 +21,15 @@ using DeprecatedWithNoMessage = ::smoke::DeprecatedWithNoMessage;
 
 void register_smoke_DeprecatedWithNoMessage(py::module_& module) {
 auto cls_DeprecatedWithNoMessage = py::class_<DeprecatedWithNoMessage>(module, "smoke_DeprecatedWithNoMessage")
-        .def_readwrite("field", &DeprecatedWithNoMessage::field)
+        .def_property("field", [](const DeprecatedWithNoMessage& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](DeprecatedWithNoMessage& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;

@@ -33,11 +33,11 @@ public:
 
     void use_it(
             const ::std::shared_ptr< ::smoke::forward::Class1 >& param1, const ::std::shared_ptr< ::smoke::forward::Class2 >& param2, const ::std::shared_ptr< ::smoke::SimpleClass >& simple_class, const ::std::shared_ptr< ::smoke::SimpleInterface >& simple_interface ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->use_it(param1, param2, simple_class, simple_interface);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const UseForward*>(this), "__gluecodium_callback_736d6f6b652e666f72776172642e557365466f72776172642e7573655f6974")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, UseForward, "__gluecodium_callback_736d6f6b652e666f72776172642e557365466f72776172642e7573655f6974", use_it, param1, param2, simple_class, simple_interface);
         }
@@ -65,7 +65,7 @@ auto cls_UseForward = py::class_<UseForward, std::shared_ptr<UseForward>, UseFor
             return self;
         }))
         .def("use_it", [](UseForward& self, const ::std::shared_ptr< ::smoke::forward::Class1 >& param1, const ::std::shared_ptr< ::smoke::forward::Class2 >& param2, const ::std::shared_ptr< ::smoke::SimpleClass >& simple_class, const ::std::shared_ptr< ::smoke::SimpleInterface >& simple_interface) {
-            return self.use_it(param1, param2, simple_class, simple_interface);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.use_it(param1, param2, simple_class, simple_interface); });
         }, py::arg("param1"), py::arg("param2"), py::arg("simple_class"), py::arg("simple_interface"))
         ;
 

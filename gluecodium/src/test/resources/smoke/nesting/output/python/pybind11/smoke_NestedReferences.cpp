@@ -26,11 +26,19 @@ auto cls_NestedReferences = py::class_<NestedReferences, std::shared_ptr<NestedR
         .def("__gluecodium_id__", [](const NestedReferences& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("inside_out", &NestedReferences::inside_out, py::arg("struct1"), py::arg("struct2"))
+        .def("inside_out", &NestedReferences::inside_out, py::arg("struct1"), py::arg("struct2"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_NestedReferencesNestedReferences = py::class_<NestedReferences>(cls_NestedReferences, "NestedReferences")
-        .def_readwrite("string_field", &NestedReferences::string_field)
+        .def_property("string_field", [](const NestedReferences& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](NestedReferences& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

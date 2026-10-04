@@ -29,7 +29,15 @@ auto cls_ClassWithStructWithSkipLambdaInPlatform = py::class_<ClassWithStructWit
         ;
 
 auto cls_ClassWithStructWithSkipLambdaInPlatformSkipLambdaInPlatform = py::class_<SkipLambdaInPlatform>(cls_ClassWithStructWithSkipLambdaInPlatform, "SkipLambdaInPlatform")
-        .def_readwrite("int_field", &SkipLambdaInPlatform::int_field)
+        .def_property("int_field", [](const SkipLambdaInPlatform& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](SkipLambdaInPlatform& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, ::std::function<int32_t()>>(), py::arg("int_field"), py::arg("some_lambda"))
         ;

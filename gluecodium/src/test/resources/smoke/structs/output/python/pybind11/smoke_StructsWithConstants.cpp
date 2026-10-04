@@ -27,8 +27,24 @@ auto cls_StructsWithConstants = py::class_<StructsWithConstants>(module, "smoke_
         ;
 
 auto cls_StructsWithConstantsRoute = py::class_<Route>(cls_StructsWithConstants, "Route")
-        .def_readwrite("description", &Route::description)
-        .def_readwrite("type", &Route::type)
+        .def_property("description", [](const Route& self) -> decltype(auto) {
+            return
+                (self.description)
+            ;
+        }, [](Route& self, const ::std::string& value) {
+
+                self.description = value;
+
+        })
+        .def_property("type", [](const Route& self) -> decltype(auto) {
+            return
+                (self.type)
+            ;
+        }, [](Route& self, const ::smoke::RouteUtils::RouteType value) {
+
+                self.type = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string, ::smoke::RouteUtils::RouteType>(), py::arg("description"), py::arg("type"))
         ;

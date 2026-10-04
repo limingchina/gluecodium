@@ -23,8 +23,16 @@ using Currency = ::kotlin_smoke::Currency;
 
 void register_kotlin_smoke_Currency(py::module_& module) {
 auto cls_Currency = py::class_<Currency>(module, "kotlin_smoke_Currency")
-        .def_readonly("currency_code", &Currency::currency_code)
-        .def_readonly("numeric_code", &Currency::numeric_code)
+        .def_property_readonly("currency_code", [](const Currency& self) -> decltype(auto) {
+            return
+                (self.currency_code)
+            ;
+        })
+        .def_property_readonly("numeric_code", [](const Currency& self) -> decltype(auto) {
+            return
+                (self.numeric_code)
+            ;
+        })
         .def(py::init<::std::string, int32_t>(), py::arg("currency_code"), py::arg("numeric_code"))
         ;
 

@@ -22,7 +22,15 @@ using StructWithList = ::smoke::StructWithList;
 
 void register_smoke_StructWithList(py::module_& module) {
 auto cls_StructWithList = py::class_<StructWithList>(module, "smoke_StructWithList")
-        .def_readwrite("field", &StructWithList::field)
+        .def_property("field", [](const StructWithList& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.field)
+            );
+        }, [](StructWithList& self, const ::std::vector< ::smoke::StructWithList >& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::StructWithList >>(), py::arg("field"))
         ;

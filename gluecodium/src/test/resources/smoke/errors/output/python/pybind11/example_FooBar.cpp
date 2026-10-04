@@ -26,13 +26,13 @@ auto cls_FooBar = py::class_<FooBar, std::shared_ptr<FooBar>>(module, "example_F
             return gluecodium::python::native_identity(self);
         })
         .def_static("method_with_internal_error", []() {
-                const auto error = FooBar::method_with_internal_error();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return FooBar::method_with_internal_error(); });
                 if (error) {
                     throw error;
                 }
         })
         .def_static("method_with_type_collection_error", []() {
-                const auto error = FooBar::method_with_type_collection_error();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return FooBar::method_with_type_collection_error(); });
                 if (error) {
                     throw error;
                 }

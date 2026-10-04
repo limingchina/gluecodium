@@ -27,10 +27,18 @@ auto cls_QuxTypes = py::class_<fooTypes>(module, "smoke_QuxTypes")
         ;
 
 auto cls_QuxStruct = py::class_<fooStruct>(cls_QuxTypes, "QuxStruct")
-        .def_readwrite("qux_field", &fooStruct::FOO_FIELD)
+        .def_property("qux_field", [](const fooStruct& self) -> decltype(auto) {
+            return
+                (self.FOO_FIELD)
+            ;
+        }, [](fooStruct& self, const ::std::string& value) {
+
+                self.FOO_FIELD = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("qux_field"))
-        .def_static("qux_make", &fooStruct::FooCreate, py::arg("qux_parameter"))
+        .def_static("qux_make", &fooStruct::FooCreate, py::arg("qux_parameter"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_QuxEnum = py::enum_<fooEnum>(cls_QuxTypes, "QuxEnum")

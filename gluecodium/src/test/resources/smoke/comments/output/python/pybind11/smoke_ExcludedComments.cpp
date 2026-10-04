@@ -28,13 +28,29 @@ auto cls_ExcludedComments = py::class_<ExcludedComments, std::shared_ptr<Exclude
         .def("__gluecodium_id__", [](const ExcludedComments& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("some_method_with_all_comments", &ExcludedComments::some_method_with_all_comments, py::arg("input_parameter"))
-        .def("some_method_without_return_type_or_input_parameters", &ExcludedComments::some_method_without_return_type_or_input_parameters)
-        .def_property("is_some_property", py::overload_cast<>(&ExcludedComments::is_some_property, py::const_), py::overload_cast<const bool>(&ExcludedComments::set_some_property))
+        .def("some_method_with_all_comments", &ExcludedComments::some_method_with_all_comments, py::arg("input_parameter"), py::call_guard<py::gil_scoped_release>())
+        .def("some_method_without_return_type_or_input_parameters", &ExcludedComments::some_method_without_return_type_or_input_parameters, py::call_guard<py::gil_scoped_release>())
+        .def_property("is_some_property", [](const ExcludedComments& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.is_some_property();
+            });
+        }, [](ExcludedComments& self, const bool value) {
+            gluecodium::python::call_native([&] {
+                self.set_some_property(value);
+            });
+        })
         ;
 
 auto cls_ExcludedCommentsSomeStruct = py::class_<SomeStruct>(cls_ExcludedComments, "SomeStruct")
-        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def_property("some_field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](SomeStruct& self, const bool value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<bool>(), py::arg("some_field"))
         ;

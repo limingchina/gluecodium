@@ -33,13 +33,69 @@ auto cls_StructsQualifiedType = py::class_<StructsQualifiedType, std::shared_ptr
         ;
 
 auto cls_StructsQualifiedTypeQualifiedType = py::class_<QualifiedType>(cls_StructsQualifiedType, "QualifiedType")
-        .def_readwrite("type_collection_point", &QualifiedType::type_collection_point)
-        .def_readwrite("interface_point", &QualifiedType::interface_point)
-        .def_readwrite("type_collection_explicit_points", &QualifiedType::type_collection_explicit_points)
-        .def_readwrite("interface_explicit_points", &QualifiedType::interface_explicit_points)
-        .def_readwrite("type_collection_implicit_points", &QualifiedType::type_collection_implicit_points)
-        .def_readwrite("interface_implicit_points", &QualifiedType::interface_implicit_points)
-        .def_readwrite("structs_instance", &QualifiedType::structs_instance)
+        .def_property("type_collection_point", [](const QualifiedType& self) -> decltype(auto) {
+            return
+                (self.type_collection_point)
+            ;
+        }, [](QualifiedType& self, const ::smoke::TypeCollection::Point& value) {
+
+                self.type_collection_point = value;
+
+        })
+        .def_property("interface_point", [](const QualifiedType& self) -> decltype(auto) {
+            return
+                (self.interface_point)
+            ;
+        }, [](QualifiedType& self, const ::smoke::Structs::Point& value) {
+
+                self.interface_point = value;
+
+        })
+        .def_property("type_collection_explicit_points", [](const QualifiedType& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.type_collection_explicit_points)
+            );
+        }, [](QualifiedType& self, const ::std::vector< ::smoke::Structs::Point >& value) {
+
+                self.type_collection_explicit_points = value;
+
+        })
+        .def_property("interface_explicit_points", [](const QualifiedType& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.interface_explicit_points)
+            );
+        }, [](QualifiedType& self, const ::std::vector< ::smoke::Structs::Point >& value) {
+
+                self.interface_explicit_points = value;
+
+        })
+        .def_property("type_collection_implicit_points", [](const QualifiedType& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.type_collection_implicit_points)
+            );
+        }, [](QualifiedType& self, const ::std::vector< ::smoke::TypeCollection::Point >& value) {
+
+                self.type_collection_implicit_points = value;
+
+        })
+        .def_property("interface_implicit_points", [](const QualifiedType& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.interface_implicit_points)
+            );
+        }, [](QualifiedType& self, const ::std::vector< ::smoke::Structs::Point >& value) {
+
+                self.interface_implicit_points = value;
+
+        })
+        .def_property("structs_instance", [](const QualifiedType& self) -> decltype(auto) {
+            return
+                (self.structs_instance)
+            ;
+        }, [](QualifiedType& self, const ::std::shared_ptr< ::smoke::StructsInstance >& value) {
+
+                self.structs_instance = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::TypeCollection::Point, ::smoke::Structs::Point, ::std::vector< ::smoke::Structs::Point >, ::std::vector< ::smoke::Structs::Point >, ::std::vector< ::smoke::TypeCollection::Point >, ::std::vector< ::smoke::Structs::Point >, ::std::shared_ptr< ::smoke::StructsInstance >>(), py::arg("type_collection_point"), py::arg("interface_point"), py::arg("type_collection_explicit_points"), py::arg("interface_explicit_points"), py::arg("type_collection_implicit_points"), py::arg("interface_implicit_points"), py::arg("structs_instance"))
         ;

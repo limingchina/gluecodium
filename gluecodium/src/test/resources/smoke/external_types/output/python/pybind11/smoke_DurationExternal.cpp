@@ -21,8 +21,10 @@ namespace py = pybind11;
 
 void register_smoke_DurationExternal(py::module_& module) {
 auto cls_DurationExternal = py::class_<std::chrono::duration<uint64_t, std::ratio<1,1000>>>(module, "smoke_DurationExternal")
-        .def_property_readonly("value", [](const std::chrono::duration<uint64_t, std::ratio<1,1000>>& self) {
-            return self.count();
+        .def_property_readonly("value", [](const std::chrono::duration<uint64_t, std::ratio<1,1000>>& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.count();
+            });
         })
         .def(py::init<uint64_t>(), py::arg("value"))
         ;

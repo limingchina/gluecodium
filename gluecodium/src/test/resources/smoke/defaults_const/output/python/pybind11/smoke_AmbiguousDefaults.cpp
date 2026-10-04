@@ -22,8 +22,24 @@ using AmbiguousDefaults = ::smoke::AmbiguousDefaults;
 
 void register_smoke_AmbiguousDefaults(py::module_& module) {
 auto cls_AmbiguousDefaults = py::class_<AmbiguousDefaults>(module, "smoke_AmbiguousDefaults")
-        .def_readwrite("field1", &AmbiguousDefaults::field1)
-        .def_readwrite("field2", &AmbiguousDefaults::field2)
+        .def_property("field1", [](const AmbiguousDefaults& self) -> decltype(auto) {
+            return
+                (self.field1)
+            ;
+        }, [](AmbiguousDefaults& self, const ::fire::AmbiguousEnum value) {
+
+                self.field1 = value;
+
+        })
+        .def_property("field2", [](const AmbiguousDefaults& self) -> decltype(auto) {
+            return
+                (self.field2)
+            ;
+        }, [](AmbiguousDefaults& self, const ::fire::SomeStruct& value) {
+
+                self.field2 = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::fire::AmbiguousEnum, ::fire::SomeStruct>(), py::arg("field1"), py::arg("field2"))
         ;

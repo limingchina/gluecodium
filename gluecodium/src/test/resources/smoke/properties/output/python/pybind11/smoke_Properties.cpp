@@ -31,21 +31,101 @@ auto cls_Properties = py::class_<Properties, std::shared_ptr<Properties>>(module
         .def("__gluecodium_id__", [](const Properties& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_property("built_in_type_property", py::overload_cast<>(&Properties::get_built_in_type_property, py::const_), py::overload_cast<const uint32_t>(&Properties::set_built_in_type_property))
-        .def_property_readonly("readonly_property", py::overload_cast<>(&Properties::get_readonly_property, py::const_))
-        .def_property("struct_property", py::overload_cast<>(&Properties::get_struct_property, py::const_), py::overload_cast<const ::smoke::Properties::ExampleStruct&>(&Properties::set_struct_property))
-        .def_property("array_property", py::overload_cast<>(&Properties::get_array_property, py::const_), py::overload_cast<const ::std::vector< ::std::string >&>(&Properties::set_array_property))
-        .def_property("complex_type_property", py::overload_cast<>(&Properties::get_complex_type_property, py::const_), py::overload_cast<const ::smoke::Properties::InternalErrorCode>(&Properties::set_complex_type_property))
-        .def_property("byte_buffer_property", py::overload_cast<>(&Properties::get_byte_buffer_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::std::vector< uint8_t > >&>(&Properties::set_byte_buffer_property))
-        .def_property("instance_property", py::overload_cast<>(&Properties::get_instance_property, py::const_), py::overload_cast<const ::std::shared_ptr< ::smoke::PropertiesInterface >&>(&Properties::set_instance_property))
-        .def_property("is_boolean_property", py::overload_cast<>(&Properties::is_boolean_property, py::const_), py::overload_cast<const bool>(&Properties::set_boolean_property))
-        .def_static("static_property", &Properties::get_static_property)
-        .def_static("static_property_set", &Properties::set_static_property)
-        .def_static("static_readonly_property", &Properties::get_static_readonly_property)
+        .def_property("built_in_type_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_built_in_type_property();
+            });
+        }, [](Properties& self, const uint32_t value) {
+            gluecodium::python::call_native([&] {
+                self.set_built_in_type_property(value);
+            });
+        })
+        .def_property_readonly("readonly_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_readonly_property();
+            });
+        })
+        .def_property("struct_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_struct_property();
+            });
+        }, [](Properties& self, const ::smoke::Properties::ExampleStruct& value) {
+            gluecodium::python::call_native([&] {
+                self.set_struct_property(value);
+            });
+        })
+        .def_property("array_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_array_property();
+            }));
+        }, [](Properties& self, const ::std::vector< ::std::string >& value) {
+            gluecodium::python::call_native([&] {
+                self.set_array_property(value);
+            });
+        })
+        .def_property("complex_type_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_complex_type_property();
+            });
+        }, [](Properties& self, const ::smoke::Properties::InternalErrorCode value) {
+            gluecodium::python::call_native([&] {
+                self.set_complex_type_property(value);
+            });
+        })
+        .def_property("byte_buffer_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_byte_buffer_property();
+            });
+        }, [](Properties& self, const ::std::shared_ptr< ::std::vector< uint8_t > >& value) {
+            gluecodium::python::call_native([&] {
+                self.set_byte_buffer_property(value);
+            });
+        })
+        .def_property("instance_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_instance_property();
+            });
+        }, [](Properties& self, const ::std::shared_ptr< ::smoke::PropertiesInterface >& value) {
+            gluecodium::python::call_native([&] {
+                self.set_instance_property(value);
+            });
+        })
+        .def_property("is_boolean_property", [](const Properties& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.is_boolean_property();
+            });
+        }, [](Properties& self, const bool value) {
+            gluecodium::python::call_native([&] {
+                self.set_boolean_property(value);
+            });
+        })
+        .def_static("static_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return Properties::get_static_property();
+            });
+        })
+        .def_static("static_property_set", [](const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                Properties::set_static_property(value);
+            });
+        })
+        .def_static("static_readonly_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return Properties::get_static_readonly_property();
+            });
+        })
         ;
 
 auto cls_PropertiesExampleStruct = py::class_<ExampleStruct>(cls_Properties, "ExampleStruct")
-        .def_readwrite("value", &ExampleStruct::value)
+        .def_property("value", [](const ExampleStruct& self) -> decltype(auto) {
+            return
+                (self.value)
+            ;
+        }, [](ExampleStruct& self, const double value) {
+
+                self.value = value;
+
+        })
         .def(py::init<>())
         .def(py::init<double>(), py::arg("value"))
         ;

@@ -24,10 +24,42 @@ using SimpleEquatableStruct = ::smoke::SimpleEquatableStruct;
 
 void register_smoke_SimpleEquatableStruct(py::module_& module) {
 auto cls_SimpleEquatableStruct = py::class_<SimpleEquatableStruct>(module, "smoke_SimpleEquatableStruct")
-        .def_readwrite("class_field", &SimpleEquatableStruct::class_field)
-        .def_readwrite("interface_field", &SimpleEquatableStruct::interface_field)
-        .def_readwrite("nullable_class_field", &SimpleEquatableStruct::nullable_class_field)
-        .def_readwrite("nullable_interface_field", &SimpleEquatableStruct::nullable_interface_field)
+        .def_property("class_field", [](const SimpleEquatableStruct& self) -> decltype(auto) {
+            return
+                (self.class_field)
+            ;
+        }, [](SimpleEquatableStruct& self, const ::std::shared_ptr< ::smoke::NonEquatableClass >& value) {
+
+                self.class_field = value;
+
+        })
+        .def_property("interface_field", [](const SimpleEquatableStruct& self) -> decltype(auto) {
+            return
+                (self.interface_field)
+            ;
+        }, [](SimpleEquatableStruct& self, const ::std::shared_ptr< ::smoke::NonEquatableInterface >& value) {
+
+                self.interface_field = value;
+
+        })
+        .def_property("nullable_class_field", [](const SimpleEquatableStruct& self) -> decltype(auto) {
+            return
+                (self.nullable_class_field)
+            ;
+        }, [](SimpleEquatableStruct& self, const ::std::shared_ptr< ::smoke::NonEquatableClass >& value) {
+
+                self.nullable_class_field = value;
+
+        })
+        .def_property("nullable_interface_field", [](const SimpleEquatableStruct& self) -> decltype(auto) {
+            return
+                (self.nullable_interface_field)
+            ;
+        }, [](SimpleEquatableStruct& self, const ::std::shared_ptr< ::smoke::NonEquatableInterface >& value) {
+
+                self.nullable_interface_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >>(), py::arg("class_field"), py::arg("interface_field"))
         .def(py::init<::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >, ::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >>(), py::arg("class_field"), py::arg("interface_field"), py::arg("nullable_class_field"), py::arg("nullable_interface_field"))

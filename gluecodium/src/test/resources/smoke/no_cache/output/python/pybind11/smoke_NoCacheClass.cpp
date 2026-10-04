@@ -24,8 +24,8 @@ auto cls_NoCacheClass = py::class_<NoCacheClass, std::shared_ptr<NoCacheClass>>(
         .def("__gluecodium_id__", [](const NoCacheClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("make", &NoCacheClass::make)
-        .def("foo", &NoCacheClass::foo)
+        .def_static("make", &NoCacheClass::make, py::call_guard<py::gil_scoped_release>())
+        .def("foo", &NoCacheClass::foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -25,12 +25,28 @@ auto cls_AttributesWithComments = py::class_<AttributesWithComments, std::shared
         .def("__gluecodium_id__", [](const AttributesWithComments& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("very_fun", &AttributesWithComments::very_fun)
-        .def_property("prop", py::overload_cast<>(&AttributesWithComments::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithComments::set_prop))
+        .def("very_fun", &AttributesWithComments::very_fun, py::call_guard<py::gil_scoped_release>())
+        .def_property("prop", [](const AttributesWithComments& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_prop();
+            });
+        }, [](AttributesWithComments& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_prop(value);
+            });
+        })
         ;
 
 auto cls_AttributesWithCommentsSomeStruct = py::class_<SomeStruct>(cls_AttributesWithComments, "SomeStruct")
-        .def_readwrite("field", &SomeStruct::field)
+        .def_property("field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](SomeStruct& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;

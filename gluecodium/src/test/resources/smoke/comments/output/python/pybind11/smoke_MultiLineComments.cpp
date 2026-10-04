@@ -24,7 +24,7 @@ auto cls_MultiLineComments = py::class_<MultiLineComments, std::shared_ptr<Multi
         .def("__gluecodium_id__", [](const MultiLineComments& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("some_method_with_long_comment", &MultiLineComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"))
+        .def("some_method_with_long_comment", &MultiLineComments::some_method_with_long_comment, py::arg("input"), py::arg("ratio"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

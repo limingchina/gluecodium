@@ -24,7 +24,7 @@ auto cls_EnumsInTypeCollectionInterface = py::class_<EnumsInTypeCollectionInterf
         .def("__gluecodium_id__", [](const EnumsInTypeCollectionInterface& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("flip_enum_value", &EnumsInTypeCollectionInterface::flip_enum_value, py::arg("input"))
+        .def_static("flip_enum_value", &EnumsInTypeCollectionInterface::flip_enum_value, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

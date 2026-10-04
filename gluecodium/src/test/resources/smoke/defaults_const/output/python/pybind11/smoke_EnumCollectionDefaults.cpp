@@ -31,9 +31,33 @@ using EnumCollectionDefaults = ::smoke::EnumCollectionDefaults;
 
 void register_smoke_EnumCollectionDefaults(py::module_& module) {
 auto cls_EnumCollectionDefaults = py::class_<EnumCollectionDefaults>(module, "smoke_EnumCollectionDefaults")
-        .def_readwrite("list_field", &EnumCollectionDefaults::list_field)
-        .def_readwrite("set_field", &EnumCollectionDefaults::set_field)
-        .def_readwrite("map_field", &EnumCollectionDefaults::map_field)
+        .def_property("list_field", [](const EnumCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.list_field)
+            );
+        }, [](EnumCollectionDefaults& self, const ::std::vector< ::fire::Enum1 >& value) {
+
+                self.list_field = value;
+
+        })
+        .def_property("set_field", [](const EnumCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.set_field)
+            );
+        }, [](EnumCollectionDefaults& self, const ::std::unordered_set< ::fire::Enum2, ::gluecodium::hash< ::fire::Enum2 > >& value) {
+
+                self.set_field = value;
+
+        })
+        .def_property("map_field", [](const EnumCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.map_field)
+            );
+        }, [](EnumCollectionDefaults& self, const ::std::unordered_map< ::fire::Enum3, ::fire::Enum4, ::gluecodium::hash< ::fire::Enum3 > >& value) {
+
+                self.map_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::fire::Enum1 >, ::std::unordered_set< ::fire::Enum2, ::gluecodium::hash< ::fire::Enum2 > >, ::std::unordered_map< ::fire::Enum3, ::fire::Enum4, ::gluecodium::hash< ::fire::Enum3 > >>(), py::arg("list_field"), py::arg("set_field"), py::arg("map_field"))
         ;

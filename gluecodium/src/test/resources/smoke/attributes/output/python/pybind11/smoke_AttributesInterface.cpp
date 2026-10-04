@@ -29,32 +29,32 @@ public:
 
     void very_fun(
             const ::std::string& param ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->very_fun(param);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const AttributesInterface*>(this), "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e7665727946756e")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, AttributesInterface, "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e7665727946756e", very_fun, param);
         }
         PYBIND11_OVERRIDE_PURE(void, AttributesInterface, very_fun, param);
     }
     ::std::string get_prop() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_prop();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const AttributesInterface*>(this), "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, AttributesInterface, "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_get", get_prop);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, AttributesInterface, get_prop);
     }
     void set_prop(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_prop(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const AttributesInterface*>(this), "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, AttributesInterface, "__gluecodium_callback_736d6f6b652e41747472696275746573496e746572666163652e70726f70_set", set_prop, value);
         }
@@ -82,12 +82,16 @@ auto cls_AttributesInterface = py::class_<AttributesInterface, std::shared_ptr<A
             return self;
         }))
         .def("very_fun", [](AttributesInterface& self, const ::std::string& param) {
-            return self.very_fun(param);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.very_fun(param); });
         }, py::arg("param"))
-        .def_property("prop", [](const AttributesInterface& self) {
-            return self.get_prop();
+        .def_property("prop", [](const AttributesInterface& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_prop();
+            });
         }, [](AttributesInterface& self, const ::std::string& value) {
-            self.set_prop(value);
+            gluecodium::python::call_native([&] {
+                self.set_prop(value);
+            });
         })
         ;
 

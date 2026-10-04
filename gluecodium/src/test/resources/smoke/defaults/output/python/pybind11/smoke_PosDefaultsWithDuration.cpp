@@ -22,8 +22,24 @@ using PosDefaultsWithDuration = ::smoke::PosDefaultsWithDuration;
 
 void register_smoke_PosDefaultsWithDuration(py::module_& module) {
 auto cls_PosDefaultsWithDuration = py::class_<PosDefaultsWithDuration>(module, "smoke_PosDefaultsWithDuration")
-        .def_readwrite("duration_field", &PosDefaultsWithDuration::duration_field)
-        .def_readwrite("nanos_field", &PosDefaultsWithDuration::nanos_field)
+        .def_property("duration_field", [](const PosDefaultsWithDuration& self) -> decltype(auto) {
+            return
+                (self.duration_field)
+            ;
+        }, [](PosDefaultsWithDuration& self, const ::std::chrono::seconds value) {
+
+                self.duration_field = value;
+
+        })
+        .def_property("nanos_field", [](const PosDefaultsWithDuration& self) -> decltype(auto) {
+            return
+                (self.nanos_field)
+            ;
+        }, [](PosDefaultsWithDuration& self, const ::std::chrono::seconds value) {
+
+                self.nanos_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("duration_field"), py::arg("nanos_field"))
         ;

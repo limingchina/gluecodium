@@ -21,10 +21,18 @@ using AttributesStruct = ::smoke::AttributesStruct;
 
 void register_smoke_AttributesStruct(py::module_& module) {
 auto cls_AttributesStruct = py::class_<AttributesStruct>(module, "smoke_AttributesStruct")
-        .def_readwrite("field", &AttributesStruct::field)
+        .def_property("field", [](const AttributesStruct& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](AttributesStruct& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
-        .def("very_fun", &AttributesStruct::very_fun, py::arg("param"))
+        .def("very_fun", &AttributesStruct::very_fun, py::arg("param"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

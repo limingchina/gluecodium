@@ -30,11 +30,11 @@ public:
 
     void on_temperature_update(
             const ::std::shared_ptr< ::smoke::Thermometer >& thermometer ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->on_temperature_update(thermometer);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const TemperatureObserver*>(this), "__gluecodium_callback_736d6f6b652e54656d70657261747572654f627365727665722e6f6e54656d7065726174757265557064617465")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, TemperatureObserver, "__gluecodium_callback_736d6f6b652e54656d70657261747572654f627365727665722e6f6e54656d7065726174757265557064617465", on_temperature_update, thermometer);
         }
@@ -62,7 +62,7 @@ auto cls_TemperatureObserver = py::class_<TemperatureObserver, std::shared_ptr<T
             return self;
         }))
         .def("on_temperature_update", [](TemperatureObserver& self, const ::std::shared_ptr< ::smoke::Thermometer >& thermometer) {
-            return self.on_temperature_update(thermometer);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.on_temperature_update(thermometer); });
         }, py::arg("thermometer"))
         ;
 

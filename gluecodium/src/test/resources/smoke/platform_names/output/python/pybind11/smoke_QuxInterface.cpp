@@ -27,9 +27,17 @@ auto cls_QuxInterface = py::class_<fooInterface, std::shared_ptr<fooInterface>>(
         .def("__gluecodium_id__", [](const fooInterface& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("qux_method", &fooInterface::FooMethod, py::arg("qux_parameter"))
-        .def_static("qux_create", &fooInterface::make, py::arg("make_parameter"))
-        .def_property("qux_property", py::overload_cast<>(&fooInterface::GET_FOO_PROPERTY, py::const_), py::overload_cast<const uint32_t>(&fooInterface::SET_FOO_PROPERTY))
+        .def("qux_method", &fooInterface::FooMethod, py::arg("qux_parameter"), py::call_guard<py::gil_scoped_release>())
+        .def_static("qux_create", &fooInterface::make, py::arg("make_parameter"), py::call_guard<py::gil_scoped_release>())
+        .def_property("qux_property", [](const fooInterface& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.GET_FOO_PROPERTY();
+            });
+        }, [](fooInterface& self, const uint32_t value) {
+            gluecodium::python::call_native([&] {
+                self.SET_FOO_PROPERTY(value);
+            });
+        })
         ;
 
 

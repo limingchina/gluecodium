@@ -28,20 +28,20 @@ auto cls_Errors = py::class_<Errors, std::shared_ptr<Errors>>(module, "smoke_Err
             return gluecodium::python::native_identity(self);
         })
         .def_static("method_with_errors", []() {
-                const auto error = Errors::method_with_errors();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return Errors::method_with_errors(); });
                 if (error) {
                     throw error;
                 }
         })
         .def_static("method_with_external_errors", []() {
-                const auto error = Errors::method_with_external_errors();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return Errors::method_with_external_errors(); });
                 if (error) {
                     throw error;
                 }
         })
-        .def_static("method_with_errors_and_return_value", &Errors::method_with_errors_and_return_value)
-        .def_static("method_with_payload_error", &Errors::method_with_payload_error)
-        .def_static("method_with_payload_error_and_return_value", &Errors::method_with_payload_error_and_return_value)
+        .def_static("method_with_errors_and_return_value", &Errors::method_with_errors_and_return_value, py::call_guard<py::gil_scoped_release>())
+        .def_static("method_with_payload_error", &Errors::method_with_payload_error, py::call_guard<py::gil_scoped_release>())
+        .def_static("method_with_payload_error_and_return_value", &Errors::method_with_payload_error_and_return_value, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_ErrorsInternalErrorCode = py::enum_<InternalErrorCode>(cls_Errors, "InternalErrorCode")

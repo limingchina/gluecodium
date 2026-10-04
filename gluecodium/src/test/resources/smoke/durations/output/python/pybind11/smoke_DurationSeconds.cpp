@@ -34,13 +34,29 @@ auto cls_DurationSeconds = py::class_<DurationSeconds, std::shared_ptr<DurationS
         .def("__gluecodium_id__", [](const DurationSeconds& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("duration_function", &DurationSeconds::duration_function, py::arg("input"))
-        .def("nullable_duration_function", &DurationSeconds::nullable_duration_function, py::arg("input"))
-        .def_property("duration_property", py::overload_cast<>(&DurationSeconds::get_duration_property, py::const_), py::overload_cast<const ::std::chrono::seconds>(&DurationSeconds::set_duration_property))
+        .def("duration_function", &DurationSeconds::duration_function, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("nullable_duration_function", &DurationSeconds::nullable_duration_function, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_property("duration_property", [](const DurationSeconds& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_duration_property();
+            });
+        }, [](DurationSeconds& self, const ::std::chrono::seconds value) {
+            gluecodium::python::call_native([&] {
+                self.set_duration_property(value);
+            });
+        })
         ;
 
 auto cls_DurationSecondsDurationStruct = py::class_<DurationStruct>(cls_DurationSeconds, "DurationStruct")
-        .def_readwrite("duration_field", &DurationStruct::duration_field)
+        .def_property("duration_field", [](const DurationStruct& self) -> decltype(auto) {
+            return
+                (self.duration_field)
+            ;
+        }, [](DurationStruct& self, const ::std::chrono::seconds value) {
+
+                self.duration_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::chrono::seconds>(), py::arg("duration_field"))
         ;

@@ -23,13 +23,29 @@ using FoodType = ::smoke::FieldConstructorsNullableTypes::FoodType;
 
 void register_smoke_FieldConstructorsNullableTypes(py::module_& module) {
 auto cls_FieldConstructorsNullableTypes = py::class_<FieldConstructorsNullableTypes>(module, "smoke_FieldConstructorsNullableTypes")
-        .def_readwrite("nullable_field", &FieldConstructorsNullableTypes::nullable_field)
+        .def_property("nullable_field", [](const FieldConstructorsNullableTypes& self) -> decltype(auto) {
+            return
+                (self.nullable_field)
+            ;
+        }, [](FieldConstructorsNullableTypes& self, const ::gluecodium::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >& value) {
+
+                self.nullable_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::gluecodium::optional< ::smoke::FieldConstructorsNullableTypes::StructWithParameters >>(), py::arg("nullable_field"))
         ;
 
 auto cls_FieldConstructorsNullableTypesStructWithParameters = py::class_<StructWithParameters>(cls_FieldConstructorsNullableTypes, "StructWithParameters")
-        .def_readwrite("food_type", &StructWithParameters::food_type)
+        .def_property("food_type", [](const StructWithParameters& self) -> decltype(auto) {
+            return
+                (self.food_type)
+            ;
+        }, [](StructWithParameters& self, const ::smoke::FieldConstructorsNullableTypes::FoodType value) {
+
+                self.food_type = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::FieldConstructorsNullableTypes::FoodType>(), py::arg("food_type"))
         ;

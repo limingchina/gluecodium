@@ -24,7 +24,7 @@ auto cls_UseInnerName = py::class_<UseInnerName, std::shared_ptr<UseInnerName>>(
         .def("__gluecodium_id__", [](const UseInnerName& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_foo", &UseInnerName::do_foo)
+        .def("do_foo", &UseInnerName::do_foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 

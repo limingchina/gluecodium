@@ -23,7 +23,15 @@ using StructB = ::smoke::StructB;
 
 void register_smoke_StructB(py::module_& module) {
 auto cls_StructB = py::class_<StructB>(module, "smoke_StructB")
-        .def_readwrite("field", &StructB::field)
+        .def_property("field", [](const StructB& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.field)
+            );
+        }, [](StructB& self, const ::std::vector< ::smoke::StructA >& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::StructA >>(), py::arg("field"))
         ;

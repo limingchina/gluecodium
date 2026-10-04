@@ -30,34 +30,74 @@ auto cls_DeclarationOrderWithFunctions = py::class_<DeclarationOrderWithFunction
         ;
 
 auto cls_DeclarationOrderWithFunctionsMainStructWithFunctions = py::class_<MainStructWithFunctions>(cls_DeclarationOrderWithFunctions, "MainStructWithFunctions")
-        .def_readwrite("struct_field", &MainStructWithFunctions::struct_field)
+        .def_property("struct_field", [](const MainStructWithFunctions& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](MainStructWithFunctions& self, const ::smoke::DeclarationOrderWithFunctions::FieldStruct& value) {
+
+                self.struct_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::DeclarationOrderWithFunctions::FieldStruct>(), py::arg("struct_field"))
-        .def("with_parameter", &MainStructWithFunctions::with_parameter, py::arg("input"))
-        .def("with_return", &MainStructWithFunctions::with_return)
-        .def("with_thrown", &MainStructWithFunctions::with_thrown)
+        .def("with_parameter", &MainStructWithFunctions::with_parameter, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("with_return", &MainStructWithFunctions::with_return, py::call_guard<py::gil_scoped_release>())
+        .def("with_thrown", &MainStructWithFunctions::with_thrown, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_DeclarationOrderWithFunctionsFieldStruct = py::class_<FieldStruct>(cls_DeclarationOrderWithFunctions, "FieldStruct")
-        .def_readwrite("some_field", &FieldStruct::some_field)
+        .def_property("some_field", [](const FieldStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](FieldStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 
 auto cls_DeclarationOrderWithFunctionsParameterStruct = py::class_<ParameterStruct>(cls_DeclarationOrderWithFunctions, "ParameterStruct")
-        .def_readwrite("some_field", &ParameterStruct::some_field)
+        .def_property("some_field", [](const ParameterStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](ParameterStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 
 auto cls_DeclarationOrderWithFunctionsReturnStruct = py::class_<ReturnStruct>(cls_DeclarationOrderWithFunctions, "ReturnStruct")
-        .def_readwrite("some_field", &ReturnStruct::some_field)
+        .def_property("some_field", [](const ReturnStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](ReturnStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;
 
 auto cls_DeclarationOrderWithFunctionsThrownStruct = py::class_<ThrownStruct>(cls_DeclarationOrderWithFunctions, "ThrownStruct")
-        .def_readwrite("some_field", &ThrownStruct::some_field)
+        .def_property("some_field", [](const ThrownStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](ThrownStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;

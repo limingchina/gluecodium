@@ -21,10 +21,18 @@ using DartInternalElements = ::smoke::DartInternalElements;
 
 void register_smoke_DartInternalElements(py::module_& module) {
 auto cls_DartInternalElements = py::class_<DartInternalElements>(module, "smoke_DartInternalElements")
-        .def_readwrite("string_field", &DartInternalElements::string_field)
+        .def_property("string_field", [](const DartInternalElements& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](DartInternalElements& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
-        .def("foo", &DartInternalElements::foo)
+        .def("foo", &DartInternalElements::foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -23,7 +23,15 @@ using SomeSkippedStruct = ::smoke::SomeSkippedStruct;
 
 void register_smoke_SomeSkippedStruct(py::module_& module) {
 auto cls_SomeSkippedStruct = py::class_<SomeSkippedStruct>(module, "smoke_SomeSkippedStruct")
-        .def_readwrite("field", &SomeSkippedStruct::field)
+        .def_property("field", [](const SomeSkippedStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.field)
+            );
+        }, [](SomeSkippedStruct& self, const ::std::vector< ::smoke::SomeSkippedEnum >& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::SomeSkippedEnum >>(), py::arg("field"))
         .def("__gluecodium_copy__", [](const SomeSkippedStruct& self) { return SomeSkippedStruct(self); })

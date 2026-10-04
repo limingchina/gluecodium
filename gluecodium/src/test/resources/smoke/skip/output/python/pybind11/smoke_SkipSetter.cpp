@@ -28,21 +28,21 @@ public:
     std::shared_ptr<SkipSetter> m_impl;
 
     ::std::string get_foo() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_foo();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const SkipSetter*>(this), "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, SkipSetter, "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_get", get_foo);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, SkipSetter, get_foo);
     }
     void set_foo(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_foo(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const SkipSetter*>(this), "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, SkipSetter, "__gluecodium_callback_736d6f6b652e536b69705365747465722e666f6f_set", set_foo, value);
         }
@@ -69,10 +69,14 @@ auto cls_SkipSetter = py::class_<SkipSetter, std::shared_ptr<SkipSetter>, SkipSe
             self->m_impl = native;
             return self;
         }))
-        .def_property("foo", [](const SkipSetter& self) {
-            return self.get_foo();
+        .def_property("foo", [](const SkipSetter& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_foo();
+            });
         }, [](SkipSetter& self, const ::std::string& value) {
-            self.set_foo(value);
+            gluecodium::python::call_native([&] {
+                self.set_foo(value);
+            });
         })
         ;
 

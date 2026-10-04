@@ -21,9 +21,33 @@ using PublicFieldsMixedInit = ::smoke::PublicFieldsMixedInit;
 
 void register_smoke_PublicFieldsMixedInit(py::module_& module) {
 auto cls_PublicFieldsMixedInit = py::class_<PublicFieldsMixedInit>(module, "smoke_PublicFieldsMixedInit")
-        .def_readwrite("public_field1", &PublicFieldsMixedInit::public_field1)
-        .def_readwrite("public_field2", &PublicFieldsMixedInit::public_field2)
-        .def_readwrite("_internal_field", &PublicFieldsMixedInit::internal_field)
+        .def_property("public_field1", [](const PublicFieldsMixedInit& self) -> decltype(auto) {
+            return
+                (self.public_field1)
+            ;
+        }, [](PublicFieldsMixedInit& self, const ::std::string& value) {
+
+                self.public_field1 = value;
+
+        })
+        .def_property("public_field2", [](const PublicFieldsMixedInit& self) -> decltype(auto) {
+            return
+                (self.public_field2)
+            ;
+        }, [](PublicFieldsMixedInit& self, const ::std::string& value) {
+
+                self.public_field2 = value;
+
+        })
+        .def_property("_internal_field", [](const PublicFieldsMixedInit& self) -> decltype(auto) {
+            return
+                (self.internal_field)
+            ;
+        }, [](PublicFieldsMixedInit& self, const ::std::string& value) {
+
+                self.internal_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("public_field2"))
         .def(py::init([](const ::std::string& public_field1, const ::std::string& public_field2) {

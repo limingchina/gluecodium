@@ -24,7 +24,7 @@ auto cls_Basic = py::class_<Basic, std::shared_ptr<Basic>>(module, "smoke_Basic"
         .def("__gluecodium_id__", [](const Basic& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("basic_method", &Basic::basic_method, py::arg("input_string"))
+        .def_static("basic_method", &Basic::basic_method, py::arg("input_string"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

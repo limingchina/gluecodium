@@ -22,9 +22,33 @@ using FieldConstructorsParameterDefaults = ::smoke::FieldConstructorsParameterDe
 
 void register_smoke_FieldConstructorsParameterDefaults(py::module_& module) {
 auto cls_FieldConstructorsParameterDefaults = py::class_<FieldConstructorsParameterDefaults>(module, "smoke_FieldConstructorsParameterDefaults")
-        .def_readwrite("string_field", &FieldConstructorsParameterDefaults::string_field)
-        .def_readwrite("int_field", &FieldConstructorsParameterDefaults::int_field)
-        .def_readwrite("bool_field", &FieldConstructorsParameterDefaults::bool_field)
+        .def_property("string_field", [](const FieldConstructorsParameterDefaults& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldConstructorsParameterDefaults& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("int_field", [](const FieldConstructorsParameterDefaults& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](FieldConstructorsParameterDefaults& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("bool_field", [](const FieldConstructorsParameterDefaults& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](FieldConstructorsParameterDefaults& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("int_field"))
         .def(py::init<int32_t, bool>(), py::arg("int_field"), py::arg("bool_field"))

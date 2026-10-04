@@ -25,8 +25,8 @@ auto cls_SwiftConstructorOverloads = py::class_<SwiftConstructorOverloads, std::
         .def("__gluecodium_id__", [](const SwiftConstructorOverloads& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("make", &SwiftConstructorOverloads::make, py::arg("input"))
-        .def_static("make_do", &SwiftConstructorOverloads::make_do, py::arg("throughput"))
+        .def_static("make", &SwiftConstructorOverloads::make, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("make_do", &SwiftConstructorOverloads::make_do, py::arg("throughput"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

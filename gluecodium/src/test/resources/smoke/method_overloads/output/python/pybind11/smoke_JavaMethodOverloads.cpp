@@ -26,9 +26,9 @@ auto cls_JavaMethodOverloads = py::class_<JavaMethodOverloads, std::shared_ptr<J
         .def("__gluecodium_id__", [](const JavaMethodOverloads& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("one", &JavaMethodOverloads::one, py::arg("input"))
+        .def("one", &JavaMethodOverloads::one, py::arg("input"), py::call_guard<py::gil_scoped_release>())
                 .def("two", [](JavaMethodOverloads& self, const ::std::vector< ::std::string >& input) {
-                        self.two(input);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.two(input); });
                 }, py::arg("input"))
         ;
 

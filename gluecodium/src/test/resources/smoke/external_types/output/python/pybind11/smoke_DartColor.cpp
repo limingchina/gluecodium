@@ -21,10 +21,42 @@ using DartColor = ::smoke::DartColor;
 
 void register_smoke_DartColor(py::module_& module) {
 auto cls_DartColor = py::class_<DartColor>(module, "smoke_DartColor")
-        .def_readwrite("red", &DartColor::red)
-        .def_readwrite("green", &DartColor::green)
-        .def_readwrite("blue", &DartColor::blue)
-        .def_readwrite("alpha", &DartColor::alpha)
+        .def_property("red", [](const DartColor& self) -> decltype(auto) {
+            return
+                (self.red)
+            ;
+        }, [](DartColor& self, const float value) {
+
+                self.red = value;
+
+        })
+        .def_property("green", [](const DartColor& self) -> decltype(auto) {
+            return
+                (self.green)
+            ;
+        }, [](DartColor& self, const float value) {
+
+                self.green = value;
+
+        })
+        .def_property("blue", [](const DartColor& self) -> decltype(auto) {
+            return
+                (self.blue)
+            ;
+        }, [](DartColor& self, const float value) {
+
+                self.blue = value;
+
+        })
+        .def_property("alpha", [](const DartColor& self) -> decltype(auto) {
+            return
+                (self.alpha)
+            ;
+        }, [](DartColor& self, const float value) {
+
+                self.alpha = value;
+
+        })
         .def(py::init<>())
         .def(py::init<float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"))
         .def(py::init<float, float, float, float>(), py::arg("red"), py::arg("green"), py::arg("blue"), py::arg("alpha"))

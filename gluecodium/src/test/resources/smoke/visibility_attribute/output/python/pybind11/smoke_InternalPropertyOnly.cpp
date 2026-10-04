@@ -24,7 +24,15 @@ auto cls_InternalPropertyOnly = py::class_<InternalPropertyOnly, std::shared_ptr
         .def("__gluecodium_id__", [](const InternalPropertyOnly& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_property("_foo", py::overload_cast<>(&InternalPropertyOnly::get_foo, py::const_), py::overload_cast<const ::std::string&>(&InternalPropertyOnly::set_foo))
+        .def_property("_foo", [](const InternalPropertyOnly& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_foo();
+            });
+        }, [](InternalPropertyOnly& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_foo(value);
+            });
+        })
         ;
 
 

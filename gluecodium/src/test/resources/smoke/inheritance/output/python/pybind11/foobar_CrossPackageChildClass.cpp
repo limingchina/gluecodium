@@ -30,32 +30,32 @@ public:
 
     void root_method(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->root_method();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const CrossPackageChildClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f744d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, CrossPackageChildClass, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f744d6574686f64", root_method);
         }
         PYBIND11_OVERRIDE_PURE(void, CrossPackageChildClass, root_method);
     }
     ::std::string get_root_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const CrossPackageChildClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, CrossPackageChildClass, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_get", get_root_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, CrossPackageChildClass, get_root_property);
     }
     void set_root_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_root_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const CrossPackageChildClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, CrossPackageChildClass, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e726f6f7450726f7065727479_set", set_root_property, value);
         }
@@ -90,12 +90,16 @@ auto cls_CrossPackageChildClass = py::class_<CrossPackageChildClass, ::smoke::Pa
             return self;
         }))
         .def("root_method", [](CrossPackageChildClass& self) {
-            return self.root_method();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.root_method(); });
         })
-        .def_property("root_property", [](const CrossPackageChildClass& self) {
-            return self.get_root_property();
+        .def_property("root_property", [](const CrossPackageChildClass& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_root_property();
+            });
         }, [](CrossPackageChildClass& self, const ::std::string& value) {
-            self.set_root_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_root_property(value);
+            });
         })
         ;
 

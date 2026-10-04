@@ -29,11 +29,11 @@ public:
 
     void root_method(
             const bool input1 ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->root_method(input1);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassWithBool*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468426f6f6c2e726f6f744d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassWithBool, "__gluecodium_callback_736d6f6b652e506172656e74496e7465726661636557697468426f6f6c2e726f6f744d6574686f64", root_method, input1);
         }
@@ -68,7 +68,7 @@ auto cls_ChildClassWithBool = py::class_<ChildClassWithBool, ::smoke::ParentInte
             return self;
         }))
         .def("root_method", [](ChildClassWithBool& self, const bool input1) {
-            return self.root_method(input1);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.root_method(input1); });
         }, py::arg("input1"))
         ;
 

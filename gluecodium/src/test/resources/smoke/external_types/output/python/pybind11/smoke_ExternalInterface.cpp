@@ -32,21 +32,21 @@ public:
 
     void some_Method(
             const int8_t some_parameter ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->some_Method(some_parameter);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ExternalInterface*>(this), "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f4d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ExternalInterface, "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f4d6574686f64", some_method, some_parameter);
         }
         PYBIND11_OVERRIDE_PURE(void, ExternalInterface, some_method, some_parameter);
     }
     ::std::string get_Me() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_Me();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ExternalInterface*>(this), "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f50726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, ExternalInterface, "__gluecodium_callback_736d6f6b652e45787465726e616c496e746572666163652e736f6d655f50726f7065727479_get", get_Me);
         }
@@ -60,7 +60,15 @@ void register_smoke_ExternalInterface(py::module_& module) {
 auto cls_ExternalInterface = py::class_<ExternalInterface>(module, "smoke_ExternalInterface");
 
 auto cls_ExternalInterfacesome_Struct = py::class_<some_Struct>(cls_ExternalInterface, "SomeStruct")
-        .def_readwrite("some_field", &some_Struct::some_Field)
+        .def_property("some_field", [](const some_Struct& self) -> decltype(auto) {
+            return
+                (self.some_Field)
+            ;
+        }, [](some_Struct& self, const ::std::string& value) {
+
+                self.some_Field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;

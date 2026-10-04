@@ -26,8 +26,8 @@ auto cls_DurationOverloads = py::class_<DurationOverloads, std::shared_ptr<Durat
         .def("__gluecodium_id__", [](const DurationOverloads& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("duration_function", py::overload_cast<const ::std::chrono::seconds>(&DurationOverloads::duration_function), py::arg("input"))
-        .def("duration_function", py::overload_cast<const ::std::string&>(&DurationOverloads::duration_function), py::arg("input"))
+        .def("duration_function", py::overload_cast<const ::std::chrono::seconds>(&DurationOverloads::duration_function), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("duration_function", py::overload_cast<const ::std::string&>(&DurationOverloads::duration_function), py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

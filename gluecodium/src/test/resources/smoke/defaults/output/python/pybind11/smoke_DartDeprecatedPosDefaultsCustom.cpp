@@ -22,12 +22,28 @@ using DartDeprecatedPosDefaultsCustom = ::smoke::DartDeprecatedPosDefaultsCustom
 
 void register_smoke_DartDeprecatedPosDefaultsCustom(py::module_& module) {
 auto cls_DartDeprecatedPosDefaultsCustom = py::class_<DartDeprecatedPosDefaultsCustom>(module, "smoke_DartDeprecatedPosDefaultsCustom")
-        .def_readwrite("int_field", &DartDeprecatedPosDefaultsCustom::int_field)
-        .def_readwrite("string_field", &DartDeprecatedPosDefaultsCustom::string_field)
+        .def_property("int_field", [](const DartDeprecatedPosDefaultsCustom& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](DartDeprecatedPosDefaultsCustom& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("string_field", [](const DartDeprecatedPosDefaultsCustom& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](DartDeprecatedPosDefaultsCustom& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
-        .def_static("custom", &DartDeprecatedPosDefaultsCustom::custom)
+        .def_static("custom", &DartDeprecatedPosDefaultsCustom::custom, py::call_guard<py::gil_scoped_release>())
         ;
 
 

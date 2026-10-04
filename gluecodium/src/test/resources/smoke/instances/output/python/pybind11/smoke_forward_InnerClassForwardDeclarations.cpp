@@ -36,10 +36,10 @@ public:
 
     ::std::shared_ptr< ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1 > get_inner_interface(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_inner_interface();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const InnerClass1*>(this), "__gluecodium_callback_736d6f6b652e666f72776172642e496e6e6572436c617373466f72776172644465636c61726174696f6e732e496e6e6572436c617373312e676574496e6e6572496e74657266616365")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::forward::InnerClassForwardDeclarations::InnerInterface1 >, InnerClass1, "__gluecodium_callback_736d6f6b652e666f72776172642e496e6e6572436c617373466f72776172644465636c61726174696f6e732e496e6e6572436c617373312e676574496e6e6572496e74657266616365", _get_inner_interface);
         }
@@ -106,7 +106,7 @@ auto cls_InnerClassForwardDeclarationsInnerClass1 = py::class_<InnerClass1, std:
             self->m_impl = native;
             return self;
         }))
-        .def("_get_inner_interface", &InnerClass1::get_inner_interface)
+        .def("_get_inner_interface", &InnerClass1::get_inner_interface, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_InnerClassForwardDeclarationsInnerClass2 = py::class_<InnerClass2, std::shared_ptr<InnerClass2>>(cls_InnerClassForwardDeclarations, "InnerClass2")
@@ -119,14 +119,14 @@ auto cls_InnerClassForwardDeclarationsInnerClass2InnerInnerClass1 = py::class_<I
         .def("__gluecodium_id__", [](const InnerInnerClass1& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("foo", &InnerInnerClass1::foo)
+        .def("foo", &InnerInnerClass1::foo, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_InnerClassForwardDeclarationsInnerClass2InnerInnerClass2 = py::class_<InnerInnerClass2, std::shared_ptr<InnerInnerClass2>>(cls_InnerClassForwardDeclarationsInnerClass2, "InnerInnerClass2")
         .def("__gluecodium_id__", [](const InnerInnerClass2& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("bar", &InnerInnerClass2::bar, py::arg("arg"))
+        .def("bar", &InnerInnerClass2::bar, py::arg("arg"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls__InnerClassForwardDeclarationsInnerInterface1 = py::class_<InnerInterface1, std::shared_ptr<InnerInterface1>, _InnerInterface1Trampoline>(cls_InnerClassForwardDeclarations, "_InnerInterface1")
