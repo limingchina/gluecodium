@@ -12,11 +12,11 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "smoke/LambdasInterface.h"
 #include "cstdint"
 #include "functional"
 #include "memory"
-#include "optional"
 #include "vector"
 
 using LambdasInterface = ::smoke::LambdasInterface;
@@ -33,7 +33,7 @@ public:
     std::shared_ptr<LambdasInterface> m_impl;
 
     void take_screenshot(
-            const ::std::function<void(const std::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >&)>& callback ) override {
+            const ::std::function<void(const ::gluecodium::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >&)>& callback ) override {
         py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->take_screenshot(callback);
@@ -62,7 +62,7 @@ auto cls_LambdasInterface = py::class_<LambdasInterface, std::shared_ptr<Lambdas
             self->m_impl = native;
             return self;
         }))
-                .def("take_screenshot", [](LambdasInterface& self, const ::std::function<void(const std::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >&)>& callback) {
+                .def("take_screenshot", [](LambdasInterface& self, const ::std::function<void(const ::gluecodium::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >&)>& callback) {
                         self.take_screenshot(callback);
                 }, py::arg("callback"))
         ;

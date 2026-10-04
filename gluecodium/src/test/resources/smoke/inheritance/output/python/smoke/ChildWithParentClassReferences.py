@@ -16,14 +16,14 @@ class ChildWithParentClassReferences(generated.smoke_ChildWithParentClassReferen
         # Subclass the native pybind11 type so a Python override of an inherited virtual
         # method (from a parent interface or open base class) is dispatched through the
         # generated trampoline. When `native` is an existing native instance (returned by
-        # a factory), adopt it via the generated adoption constructor; otherwise construct a
-        # fresh trampoline. `self._native` aliases the wrapper itself so the rest of the
-        # generated code can reach the native object uniformly.
+        # a factory), adopt it via the generated adoption constructor and retain the original
+        # native object for calls back into C++; otherwise construct a fresh trampoline.
         if native is not None and isinstance(native, generated.smoke_ChildWithParentClassReferences):
             super().__init__(native)
+            self._native = native
         else:
             super().__init__()
-        self._native = self
+            self._native = self
 
     def class_function(self) -> ChildClassFromClass:
         return _wrap(generated.smoke_ChildWithParentClassReferences.class_function(self), ChildClassFromClass)

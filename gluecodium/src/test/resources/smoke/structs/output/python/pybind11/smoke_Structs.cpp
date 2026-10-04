@@ -12,12 +12,12 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/Structs.h"
 #include "smoke/TypeCollection.h"
 #include "cstdint"
 #include "memory"
-#include "optional"
 #include "string"
 #include "vector"
 
@@ -99,9 +99,9 @@ auto cls_StructsImmutableStructWithCppAccessors = py::class_<ImmutableStructWith
         .def_property_readonly("trivial_double_field", static_cast<double (ImmutableStructWithCppAccessors::*)() const>(&ImmutableStructWithCppAccessors::get_trivial_double_field))
         .def_property_readonly("nontrivial_string_field", static_cast<const ::std::string& (ImmutableStructWithCppAccessors::*)() const &>(&ImmutableStructWithCppAccessors::get_nontrivial_string_field))
         .def_property_readonly("nontrivial_point_field", static_cast<const ::smoke::Structs::Point& (ImmutableStructWithCppAccessors::*)() const &>(&ImmutableStructWithCppAccessors::get_nontrivial_point_field))
-        .def_property_readonly("nontrivial_optional_point", static_cast<const std::optional< ::smoke::Structs::Point >& (ImmutableStructWithCppAccessors::*)() const &>(&ImmutableStructWithCppAccessors::get_nontrivial_optional_point))
+        .def_property_readonly("nontrivial_optional_point", static_cast<const ::gluecodium::optional< ::smoke::Structs::Point >& (ImmutableStructWithCppAccessors::*)() const &>(&ImmutableStructWithCppAccessors::get_nontrivial_optional_point))
         .def(py::init<int32_t, double, ::std::string, ::smoke::Structs::Point>(), py::arg("trivial_int_field"), py::arg("trivial_double_field"), py::arg("nontrivial_string_field"), py::arg("nontrivial_point_field"))
-        .def(py::init<int32_t, double, ::std::string, ::smoke::Structs::Point, std::optional< ::smoke::Structs::Point >>(), py::arg("trivial_int_field"), py::arg("trivial_double_field"), py::arg("nontrivial_string_field"), py::arg("nontrivial_point_field"), py::arg("nontrivial_optional_point"))
+        .def(py::init<int32_t, double, ::std::string, ::smoke::Structs::Point, ::gluecodium::optional< ::smoke::Structs::Point >>(), py::arg("trivial_int_field"), py::arg("trivial_double_field"), py::arg("nontrivial_string_field"), py::arg("nontrivial_point_field"), py::arg("nontrivial_optional_point"))
         ;
 
 auto cls_StructsMutableStructWithCppAccessors = py::class_<MutableStructWithCppAccessors>(cls_Structs, "MutableStructWithCppAccessors")
@@ -109,10 +109,10 @@ auto cls_StructsMutableStructWithCppAccessors = py::class_<MutableStructWithCppA
         .def_property("trivial_double_field", static_cast<double (MutableStructWithCppAccessors::*)() const>(&MutableStructWithCppAccessors::get_trivial_double_field), py::overload_cast<const double>(&MutableStructWithCppAccessors::set_trivial_double_field))
         .def_property("nontrivial_string_field", static_cast<const ::std::string& (MutableStructWithCppAccessors::*)() const &>(&MutableStructWithCppAccessors::get_nontrivial_string_field), py::overload_cast<const ::std::string&>(&MutableStructWithCppAccessors::set_nontrivial_string_field))
         .def_property("nontrivial_point_field", static_cast<const ::smoke::Structs::Point& (MutableStructWithCppAccessors::*)() const &>(&MutableStructWithCppAccessors::get_nontrivial_point_field), py::overload_cast<const ::smoke::Structs::Point&>(&MutableStructWithCppAccessors::set_nontrivial_point_field))
-        .def_property("nontrivial_optional_point", static_cast<const std::optional< ::smoke::Structs::Point >& (MutableStructWithCppAccessors::*)() const &>(&MutableStructWithCppAccessors::get_nontrivial_optional_point), py::overload_cast<const std::optional< ::smoke::Structs::Point >&>(&MutableStructWithCppAccessors::set_nontrivial_optional_point))
+        .def_property("nontrivial_optional_point", static_cast<const ::gluecodium::optional< ::smoke::Structs::Point >& (MutableStructWithCppAccessors::*)() const &>(&MutableStructWithCppAccessors::get_nontrivial_optional_point), py::overload_cast<const ::gluecodium::optional< ::smoke::Structs::Point >&>(&MutableStructWithCppAccessors::set_nontrivial_optional_point))
         .def(py::init<>())
         .def(py::init<int32_t, double, ::std::string, ::smoke::Structs::Point>(), py::arg("trivial_int_field"), py::arg("trivial_double_field"), py::arg("nontrivial_string_field"), py::arg("nontrivial_point_field"))
-        .def(py::init<int32_t, double, ::std::string, ::smoke::Structs::Point, std::optional< ::smoke::Structs::Point >>(), py::arg("trivial_int_field"), py::arg("trivial_double_field"), py::arg("nontrivial_string_field"), py::arg("nontrivial_point_field"), py::arg("nontrivial_optional_point"))
+        .def(py::init<int32_t, double, ::std::string, ::smoke::Structs::Point, ::gluecodium::optional< ::smoke::Structs::Point >>(), py::arg("trivial_int_field"), py::arg("trivial_double_field"), py::arg("nontrivial_string_field"), py::arg("nontrivial_point_field"), py::arg("nontrivial_optional_point"))
         ;
 
 auto cls_StructsFooBar = py::enum_<FooBar>(cls_Structs, "FooBar")

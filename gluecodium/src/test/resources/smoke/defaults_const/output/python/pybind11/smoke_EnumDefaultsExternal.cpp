@@ -15,9 +15,9 @@ namespace py = pybind11;
 #include "foo/AlienEnum1.h"
 #include "foo/AlienEnum2.h"
 #include "foo/AlienEnum3.h"
+#include "gluecodium/Optional.h"
 #include "smoke/EnumDefaultsExternal.h"
 #include "smoke/EnumWrapper.h"
-#include "optional"
 
 using EnumDefaultsExternal = ::smoke::EnumDefaultsExternal;
 using SimpleEnum = ::smoke::EnumDefaultsExternal::SimpleEnum;
@@ -44,7 +44,7 @@ auto cls_EnumDefaultsExternalNullableEnum = py::class_<NullableEnum>(cls_EnumDef
         .def_readwrite("enum_field1", &NullableEnum::enum_field1)
         .def_readwrite("enum_field2", &NullableEnum::enum_field2)
         .def(py::init<>())
-        .def(py::init<std::optional< foo::AlienEnum2 >, std::optional< foo::AlienEnum2 >>(), py::arg("enum_field1"), py::arg("enum_field2"))
+        .def(py::init<::gluecodium::optional< foo::AlienEnum2 >, ::gluecodium::optional< foo::AlienEnum2 >>(), py::arg("enum_field1"), py::arg("enum_field2"))
         ;
 
 auto cls_EnumDefaultsExternalAliasEnum = py::class_<AliasEnum>(cls_EnumDefaultsExternal, "AliasEnum")

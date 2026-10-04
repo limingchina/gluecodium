@@ -12,8 +12,8 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "smoke/NullableOverloads.h"
-#include "optional"
 #include "string"
 
 using NullableOverloads = ::smoke::NullableOverloads;
@@ -26,7 +26,7 @@ auto cls_NullableOverloads = py::class_<NullableOverloads, std::shared_ptr<Nulla
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
         .def("foo", py::overload_cast<const ::std::string&>(&NullableOverloads::foo), py::arg("input"))
-        .def("foo", py::overload_cast<const std::optional< ::std::string >&>(&NullableOverloads::foo), py::arg("input"))
+        .def("foo", py::overload_cast<const ::gluecodium::optional< ::std::string >&>(&NullableOverloads::foo), py::arg("input"))
         ;
 
 
