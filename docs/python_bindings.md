@@ -14,7 +14,7 @@ Use Python **3.10 or newer** for the generated wrapper layer. The CMake helper
 requires Python 3.10+ to match generated code that uses features such as
 `types.UnionType` and built-in generic annotations.
 You also need Python development headers, a C++17 compiler, CMake 3.19+ for the
-example, and pybind11 2.11+ (the minimum declared by generated `pyproject.toml`).
+example, and pybind11 3.1.0+ (the minimum declared by generated `pyproject.toml`).
 Building Gluecodium from this branch requires a suitable JDK; the example uses
 JDK 17 or newer and the repository's Gradle wrapper.
 
