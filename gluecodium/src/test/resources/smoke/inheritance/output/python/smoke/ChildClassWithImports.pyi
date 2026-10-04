@@ -10,5 +10,6 @@ import typing
 
 class ChildClassWithImports(
     ParentClassWithImports):
+    ...
 
 

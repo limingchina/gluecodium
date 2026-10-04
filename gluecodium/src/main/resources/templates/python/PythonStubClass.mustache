@@ -24,7 +24,8 @@
 {{/if}}{{/parents}}
 ){{/if}}:
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
-{{/ifPredicate}}{{#functions}}
+{{/ifPredicate}}{{^hasStubClassBody}}    ...
+{{/hasStubClassBody}}{{#functions}}
 
 {{>python/PythonStubFunction}}{{/functions}}
 {{#properties}}

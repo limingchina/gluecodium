@@ -349,6 +349,12 @@ internal class PythonGenerator : Generator {
                     "typeName" to pythonNameResolver.resolvePybind11AccessPath(element),
                     "nativeTypeName" to pythonNameResolver.resolvePybind11AccessPath(element),
                     "nestedTypes" to nestedTypesStr,
+                    "hasStubClassBody" to (
+                        predicates.getValue("hasAnyComment")(element) || nestedTypesStr.isNotBlank() ||
+                            (element as? com.here.gluecodium.model.lime.LimeContainer)?.let {
+                                it.functions.isNotEmpty() || it.properties.isNotEmpty() || it.constants.isNotEmpty()
+                            } == true
+                    ),
                     "isStub" to isStub,
                 ) + (
                     if (element is com.here.gluecodium.model.lime.LimeTypeAlias) {
