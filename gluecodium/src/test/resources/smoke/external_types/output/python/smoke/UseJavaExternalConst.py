@@ -28,5 +28,5 @@ class UseJavaExternalConst(_NativeBase):
 
 
 
-    _DEFAULT_TRUTH = {"foo"}
+    _DEFAULT_TRUTH = JavaExternalCtor("foo")
 
