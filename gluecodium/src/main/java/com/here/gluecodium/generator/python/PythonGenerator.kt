@@ -682,6 +682,7 @@ internal class PythonGenerator : Generator {
             pybind11FilteredModel.referenceMap.values.filterIsInstance<LimeStruct>()
                 .filter { it.external?.cpp?.isNotEmpty() == true }
                 .distinctBy { cppNameCache.getFullyQualifiedName(it) }
+                .sortedBy { cppNameCache.getFullyQualifiedName(it) }
         val opaqueFiles =
             if (opaqueTypes.isEmpty()) {
                 emptyList()

@@ -42,6 +42,7 @@ class PlainDataStructuresImmutable {
         booleanField: Boolean
         pointField: Point
         fun contains(point: Point): Boolean
+        @Dart("containsStruct")
         fun contains(other: AllTypesImmutableStruct): Boolean
     }
     struct NestingImmutableStruct {

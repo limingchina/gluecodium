@@ -15,8 +15,8 @@
 
 // These types are registered as classes, rather than converted to STL values.
 // All binding translation units must use the same caster specializations.
-PYBIND11_MAKE_OPAQUE(std::chrono::duration<uint64_t, std::ratio<1,1000>>);
-PYBIND11_MAKE_OPAQUE(::smoke::Structs::ExternalStruct);
-PYBIND11_MAKE_OPAQUE(::fire::SomeVeryExternalStruct);
-PYBIND11_MAKE_OPAQUE(external::ClassWithOverloads::StructWithOverloads);
 PYBIND11_MAKE_OPAQUE(::external::IntStruct);
+PYBIND11_MAKE_OPAQUE(::fire::SomeVeryExternalStruct);
+PYBIND11_MAKE_OPAQUE(::smoke::Structs::ExternalStruct);
+PYBIND11_MAKE_OPAQUE(external::ClassWithOverloads::StructWithOverloads);
+PYBIND11_MAKE_OPAQUE(std::chrono::duration<uint64_t, std::ratio<1,1000>>);
