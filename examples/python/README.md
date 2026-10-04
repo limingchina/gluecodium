@@ -9,7 +9,7 @@ Python through generated pybind11 bindings. See the
 - JDK 17 or newer to build Gluecodium.
 - Python 3.10 or newer with development headers.
 - CMake 3.19 or newer and a C++17 compiler.
-- pybind11 (2.11 or newer).
+- pybind11 (3.1.0 or newer).
 
 ## Build and run
 
@@ -19,7 +19,7 @@ Java is not already available on `PATH`.
 ```bash
 python3 -m venv .venv
 . .venv/bin/activate
-python -m pip install 'pybind11>=2.11'
+python -m pip install 'pybind11>=3.1.0'
 ./gradlew :gluecodium:installDist
 
 cmake -S examples/python -B build/python-example \
