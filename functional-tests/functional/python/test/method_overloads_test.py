@@ -28,6 +28,29 @@ import pytest
 
 
 class TestMethodOverloads:
+    @pytest.mark.parametrize(
+        "value, expected",
+        [(True, True), (5, False), ("text", False), ([1, 2, 3], False), ({"a", "b"}, False)],
+    )
+    def test_is_boolean_keyword(self, value, expected):
+        assert MethodOverloads.is_boolean(input=value) is expected
+
+    def test_is_boolean_wrapper_keyword(self):
+        assert MethodOverloads.is_boolean(input=MethodOverloadsPoint(1.0, 2.0)) is False
+
+    def test_is_boolean_mixed_arguments(self):
+        assert MethodOverloads.is_boolean(
+            True, 5, input3="text", input4=MethodOverloadsPoint(1.0, 2.0)
+        ) is False
+
+    def test_is_boolean_rejects_duplicate_argument(self):
+        with pytest.raises(TypeError):
+            MethodOverloads.is_boolean(True, input=True)
+
+    def test_is_boolean_rejects_unknown_keyword(self):
+        with pytest.raises(TypeError):
+            MethodOverloads.is_boolean(True, unknown=True)
+
     def test_is_boolean_bool(self):
         assert MethodOverloads.is_boolean(True) is True
 
@@ -57,6 +80,19 @@ class TestMethodOverloads:
 
 
 class TestConstructorOverloads:
+    def test_create_mixed_arguments(self):
+        instance = ConstructorOverloads.create("text", boolean_input=True)
+        assert isinstance(instance, ConstructorOverloads)
+
+    def test_create_rejects_invalid_keyword_value(self):
+        # Dropping the keyword would incorrectly select the default constructor.
+        with pytest.raises(TypeError):
+            ConstructorOverloads.create(input=object())
+
+    def test_create_rejects_unknown_keyword(self):
+        with pytest.raises(TypeError):
+            ConstructorOverloads.create(unknown="text")
+
     def test_create_no_args(self):
         instance = ConstructorOverloads.create()
         assert isinstance(instance, ConstructorOverloads)
@@ -83,6 +119,19 @@ class TestConstructorOverloads:
 
 
 class TestStructConstructorOverloads:
+    def test_create_keyword_selects_string_overload(self):
+        instance = StructConstructorOverloads.create(input="text")
+        assert isinstance(instance, StructConstructorOverloads)
+        assert instance.string_field == "text"
+
+    def test_create_keywords_select_two_string_overload(self):
+        instance = StructConstructorOverloads.create(input2="bar", input1="foo")
+        assert instance.string_field == "foobar"
+
+    def test_create_mixed_arguments(self):
+        instance = StructConstructorOverloads.create("foo", input2="bar")
+        assert instance.string_field == "foobar"
+
     def test_create_no_args(self):
         instance = StructConstructorOverloads.create()
         assert isinstance(instance, StructConstructorOverloads)

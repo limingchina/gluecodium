@@ -14,7 +14,7 @@ class SkipOverloadsInDart(_NativeBase):
 
     @staticmethod
     def make(*args, **kwargs) -> SkipOverloadsInDart:
-        native_result = generated.smoke_SkipOverloadsInDart.make(*[_unwrap(a) for a in args])
+        native_result = generated.smoke_SkipOverloadsInDart.make(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
         return _get_or_create_wrapper(native_result, SkipOverloadsInDart)
 
 

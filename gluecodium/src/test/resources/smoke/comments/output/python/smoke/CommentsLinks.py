@@ -52,7 +52,7 @@ Not working for Java:
 
 Not working for Swift:
 * named comment: []`Comments.VERY_USEFUL`"""
-        return _wrap(self._native.random_method(*[_unwrap(a) for a in args]), Comments.SomeEnum)
+        return _wrap(self._native.random_method(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), Comments.SomeEnum)
 
 
     class RandomStruct(_NativeBase):

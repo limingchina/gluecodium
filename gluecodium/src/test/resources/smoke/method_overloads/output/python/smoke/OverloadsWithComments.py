@@ -13,7 +13,7 @@ class OverloadsWithComments(_NativeBase):
         super().__init__(native)
 
     def do_stuff(self, *args, **kwargs):
-        return _wrap(self._native.do_stuff(*[_unwrap(a) for a in args]), None)
+        return _wrap(self._native.do_stuff(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), None)
 
 
 

@@ -25,14 +25,14 @@
 {{/if}}{{#unless isStub}}{{#ifPredicate this "isOverloaded"}}{{#ifPredicate this "isFirstOverload"}}{{#if isStatic}}    @staticmethod
 {{/if}}    def {{resolveName}}({{#unless isStatic}}self, {{/unless}}*args, **kwargs){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
 {{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""
-{{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
-{{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
+{{/if}}{{#if isStatic}}{{#if returnType.isVoid}}        {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
+{{/if}}{{#unless returnType.isVoid}}{{#ifPredicate returnType.typeRef "isWrapperType"}}        native_result = {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
 {{#ifPredicate this "isAncestorReturnType"}}        from {{resolveName returnType.typeRef "" "ref"}} import {{resolveName returnType.typeRef}}
 {{/ifPredicate}}        return _get_or_create_wrapper(native_result, {{resolveName returnType}})
-{{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isWrapperType"}}{{#ifPredicate returnType.typeRef "isCollectionType"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args]), {{resolveName returnType}})
-{{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isCollectionType"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args])
-{{/unlessPredicate}}{{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}{{#ifPredicate model "needsTrampoline"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(self, *[_unwrap(a) for a in args]), {{resolveName returnType}})
-{{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        return _wrap(self._native.{{resolveName}}(*[_unwrap(a) for a in args]), {{resolveName returnType}})
+{{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isWrapperType"}}{{#ifPredicate returnType.typeRef "isCollectionType"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), {{resolveName returnType}})
+{{/ifPredicate}}{{#unlessPredicate returnType.typeRef "isCollectionType"}}        return {{nativeModule}}.{{typeName}}.{{resolveName}}(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
+{{/unlessPredicate}}{{/unlessPredicate}}{{/unless}}{{/if}}{{#unless isStatic}}{{#ifPredicate model "needsTrampoline"}}        return _wrap({{nativeModule}}.{{typeName}}.{{resolveName}}(self, *[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), {{resolveName returnType}})
+{{/ifPredicate}}{{#unlessPredicate model "needsTrampoline"}}        return _wrap(self._native.{{resolveName}}(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), {{resolveName returnType}})
 {{/unlessPredicate}}{{/unless}}{{/ifPredicate}}{{/ifPredicate}}{{#unlessPredicate this "isOverloaded"}}{{#if isStatic}}    @staticmethod
 {{/if}}    def {{resolveName}}({{#unless isStatic}}self{{#if parameters}}, {{/if}}{{/unless}}{{#parameters}}{{resolveName}}: {{resolveName typeRef}}{{#if iter.hasNext}}, {{/if}}{{/parameters}}){{#unless returnType.isVoid}} -> {{resolveName returnType}}{{/unless}}:
 {{#ifPredicate this "hasAnyComment"}}        """{{resolveName comment}}"""

@@ -137,3 +137,5 @@ class TestStructsImmutable:
 
         assert struct.contains(point)
         assert struct.contains(struct)
+        assert struct.contains(point=point)
+        assert struct.contains(other=struct)

@@ -15,7 +15,7 @@ class MapScene(_NativeBase):
         super().__init__(native)
 
     def load_scene(self, *args, **kwargs):
-        return _wrap(self._native.load_scene(*[_unwrap(a) for a in args]), None)
+        return _wrap(self._native.load_scene(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), None)
 
 
     LoadSceneCallback = Callable[[Optional[str]], None]

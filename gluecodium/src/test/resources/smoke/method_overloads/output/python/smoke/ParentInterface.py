@@ -23,7 +23,7 @@ class ParentInterface(generated.smoke_ParentInterface):
             self._native = self
 
     def foo(self, *args, **kwargs):
-        return _wrap(generated.smoke_ParentInterface.foo(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ParentInterface.foo(self, *[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), None)
 
 
     def bar(self):

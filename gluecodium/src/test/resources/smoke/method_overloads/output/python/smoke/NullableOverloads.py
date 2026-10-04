@@ -13,7 +13,7 @@ class NullableOverloads(_NativeBase):
         super().__init__(native)
 
     def foo(self, *args, **kwargs):
-        return _wrap(self._native.foo(*[_unwrap(a) for a in args]), None)
+        return _wrap(self._native.foo(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), None)
 
 
 

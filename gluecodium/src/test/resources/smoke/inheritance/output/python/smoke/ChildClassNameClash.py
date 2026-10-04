@@ -24,7 +24,7 @@ class ChildClassNameClash(generated.smoke_ChildClassNameClash):
             self._native = self
 
     def parent_method(self, *args, **kwargs):
-        return _wrap(generated.smoke_ChildClassNameClash.parent_method(self, *[_unwrap(a) for a in args]), None)
+        return _wrap(generated.smoke_ChildClassNameClash.parent_method(self, *[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), None)
 
 
 

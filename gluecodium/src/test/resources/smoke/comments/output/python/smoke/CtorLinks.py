@@ -54,7 +54,7 @@ class CtorLinks(_NativeBase):
     
         @staticmethod
         def create(*args, **kwargs) -> CtorLinks.OverloadedCtors:
-            native_result = generated.smoke_CtorLinks.OverloadedCtors.create(*[_unwrap(a) for a in args])
+            native_result = generated.smoke_CtorLinks.OverloadedCtors.create(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
             return _get_or_create_wrapper(native_result, CtorLinks.OverloadedCtors)
     
     
