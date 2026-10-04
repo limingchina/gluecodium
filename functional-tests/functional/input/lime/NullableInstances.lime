@@ -21,6 +21,11 @@ class NullableStatic {
     struct NullableStruct {
         nullableField: NullablePayload?
     }
+    enum NullableEnum { FIRST, SECOND }
+    static fun nullableStructRoundTrip(input: NullableStruct?): NullableStruct?
+    static fun nullableEnumRoundTrip(input: NullableEnum?): NullableEnum?
+    static fun nullableInterfaceRoundTrip(input: NullableInstanceListener?): NullableInstanceListener?
+    static fun nullablePayloadListRoundTrip(input: List<NullablePayload?>?): List<NullablePayload?>?
     static fun nullableTopDownRoundTrip(
         input: NullablePayload?
     ): NullablePayload?
