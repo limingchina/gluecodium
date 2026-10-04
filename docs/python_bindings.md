@@ -11,8 +11,8 @@ For LimeIDL syntax, see the [user guide](guide.md) and [language reference](lime
 ## Requirements
 
 Use Python **3.10 or newer** for the generated wrapper layer. The CMake helper
-currently accepts Python 3.8+, but generated code uses features such as
-`types.UnionType` and built-in generic annotations that require a newer runtime.
+requires Python 3.10+ to match generated code that uses features such as
+`types.UnionType` and built-in generic annotations.
 You also need Python development headers, a C++17 compiler, CMake 3.19+ for the
 example, and pybind11 2.11+ (the minimum declared by generated `pyproject.toml`).
 Building Gluecodium from this branch requires a suitable JDK; the example uses
@@ -101,7 +101,7 @@ gluecodium_target_python_sources(my_cpp_api
   OUTPUT python_extension)
 ```
 
-The helper locates Python3 and pybind11, gathers `python/pybind11/*.cpp`, creates
+The helper locates Python 3.10+ and pybind11, gathers `python/pybind11/*.cpp`, creates
 `my_cpp_api_python`, and links `my_cpp_api`. `OUTPUT` receives that target's name;
 `MODULE_NAME` changes the extension filename, so it must agree with
 `-pythonmodule` used during generation.
@@ -268,8 +268,6 @@ original C++ payload.
   explicit callbacks; the Python functional suite does not enable the Async feature.
 - Package override options are parsed but do not change wrapper output paths.
 - Generated setuptools files need application-specific build and packaging setup.
-- The CMake helper's minimum interpreter check is lower than the wrapper runtime
-  requirement; select Python 3.10+ explicitly.
 
 For `ModuleNotFoundError`, check both the native module name and wrapper import
 root. An import error mentioning an undefined C++ symbol usually indicates missing
