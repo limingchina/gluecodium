@@ -19,7 +19,7 @@ class StructConstants:
     
     
 
-    STRUCT_CONSTANT = {"bar Buzz", 1.41}
+    STRUCT_CONSTANT = SomeStruct("bar Buzz", 1.41)
 
-    NESTING_STRUCT_CONSTANT = {{"nonsense", -2.82}}
+    NESTING_STRUCT_CONSTANT = NestingStruct(SomeStruct("nonsense", -2.82))
 

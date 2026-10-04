@@ -19,32 +19,15 @@
   !
   !}}
 {{#if copyrightHeader}}{{prefix copyrightHeader "// "}}{{/if}}
+#pragma once
 
-#include <Python.h>
 #include <pybind11/pybind11.h>
-{{#hasOpaqueTypes}}
-#include "_opaque_types.h"
-{{/hasOpaqueTypes}}
-#include <pybind11/functional.h>
-#include <pybind11/stl.h>
-#include <pybind11/chrono.h>
-#include "_wrapper_cache.h"
-#include "_return_caster.h"
-#include "_generic_caster.h"
-#include "_locale_caster.h"
-
-// pybind11 3.x no longer provides the `py` namespace alias by default.
-namespace py = pybind11;
 {{#includes}}
 #include "{{fileName}}"
 {{/includes}}
 
-{{#aliases}}
-using {{shortName}} = {{fullName}};
-{{/aliases}}
-
-{{{trampolines}}}
-
-void register_{{registerName}}(py::module_& module) {
-{{{bindings}}}
-}
+// These types are registered as classes, rather than converted to STL values.
+// All binding translation units must use the same caster specializations.
+{{#types}}
+PYBIND11_MAKE_OPAQUE({{name}});
+{{/types}}

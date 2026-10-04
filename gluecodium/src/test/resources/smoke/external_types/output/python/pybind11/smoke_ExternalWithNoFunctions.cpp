@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include "_opaque_types.h"
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
@@ -15,10 +16,21 @@ namespace py = pybind11;
 #include "some/path/Bar.h"
 
 
+class ExternalWithNoFunctionsTrampoline : public ::some::path::Bar {
+public:
+    // Holds an adopted native implementation (e.g. a C++ implementation of this interface
+    // returned by a factory). When non-null, the trampoline forwards virtual calls to it
+    // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes
+    // the returned implementation. A Python subclass is instantiated with no impl held, in
+    // which case the overrides fall back to PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<::some::path::Bar> m_impl;
+
+};
+
 
 
 void register_smoke_ExternalWithNoFunctions(py::module_& module) {
-auto cls_ExternalWithNoFunctions = py::class_<::some::path::Bar, std::shared_ptr<::some::path::Bar>>(module, "smoke_ExternalWithNoFunctions")
+auto cls_ExternalWithNoFunctions = py::class_<::some::path::Bar, std::shared_ptr<::some::path::Bar>, ExternalWithNoFunctionsTrampoline>(module, "smoke_ExternalWithNoFunctions")
         .def("__gluecodium_id__", [](const ::some::path::Bar& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })

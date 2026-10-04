@@ -28,5 +28,5 @@ class UseKotlinExternalConst(_NativeBase):
 
 
 
-    _DEFAULT_TRUTH = {true}
+    _DEFAULT_TRUTH = VeryBoolean(True)
 
