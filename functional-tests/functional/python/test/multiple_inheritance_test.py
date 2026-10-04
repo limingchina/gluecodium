@@ -76,8 +76,9 @@ class TestMultipleInheritance:
         instance = MultipleInheritanceFactory.get_multi_interface()
         narrow = MultipleInheritanceFactory.upcast_multi_interface_to_narrow(instance)
         assert not MultipleInheritanceChecker.check_is_multi_interface(narrow)
+        assert narrow.parent_function_light() == "foo interface"
 
-    def test_narrow_round_trip_preserves_identity(self):
+    def test_cpp_narrow_round_trip_breaks_identity(self):
         # A narrow-interface round trip must NOT preserve identity with the C++ singleton:
         # the narrow interface intentionally breaks referential equality on the C++ -> Platform
         # -> C++ round trip (see docs/lime_idl.md). Mirrors Swift's
@@ -85,3 +86,14 @@ class TestMultipleInheritance:
         narrow = MultipleInheritanceFactory.get_multi_class_singleton()
         returned = MultipleInheritanceChecker.narrow_round_trip(narrow)
         assert not MultipleInheritanceChecker.check_singleton_equality(returned)
+
+    def test_narrow_send_twice_preserves_python_identity(self):
+        first = MultipleInheritanceFactory.get_multi_class_singleton()
+        second = MultipleInheritanceFactory.get_multi_class_singleton()
+        assert first is second
+
+    def test_python_narrow_round_trip_preserves_identity(self):
+        narrow = MultipleInheritanceFactory.get_multi_class_singleton()
+        returned = MultipleInheritanceChecker.narrow_round_trip(narrow)
+        assert returned is narrow
+        assert returned.parent_function_light() == "foo class"

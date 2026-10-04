@@ -13,6 +13,6 @@ class AmbiguousConstants(_NativeBase):
     def __init__(self, native):
         super().__init__(native)
 
-    DUMMY = {42}
 
+    DUMMY = SomeStruct(42)
 

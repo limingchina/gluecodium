@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include "_opaque_types.h"
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
@@ -19,7 +20,6 @@ using NonEquatableInterface = ::smoke::NonEquatableInterface;
 class NonEquatableInterfaceTrampoline : public NonEquatableInterface {
 public:
     using NonEquatableInterface::NonEquatableInterface;
-
     // Holds an adopted native implementation (e.g. a C++ implementation of this interface
     // returned by a factory). When non-null, the trampoline forwards virtual calls to it
     // instead of the pure-virtual stub, so `RootInterface(native_result)` actually invokes

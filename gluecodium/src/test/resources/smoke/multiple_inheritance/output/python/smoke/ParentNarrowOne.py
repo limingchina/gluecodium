@@ -17,7 +17,9 @@ class ParentNarrowOne(generated.smoke_ParentNarrowOne):
         # C++; otherwise construct a fresh trampoline.
         if native is not None and isinstance(native, generated.smoke_ParentNarrowOne):
             super().__init__(native)
-            self._native = native
+            # Narrow interfaces cross back into C++ through the forwarding trampoline,
+            # preserving only this interface's type and not the original object's identity.
+            self._native = self
         else:
             super().__init__()
             self._native = self

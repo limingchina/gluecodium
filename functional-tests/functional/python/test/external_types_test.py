@@ -39,3 +39,47 @@ class TestExternalTypes:
         # so it cannot be instantiated directly in Python
         assert StandaloneExternalType is not None
         assert hasattr(StandaloneExternalType, 'foo')
+
+
+class TestExternalBindingRegressions:
+    def test_pair_fields_use_class_binding(self):
+        from external.ExternalStringPair import ExternalStringPair
+
+        pair = ExternalStringPair("first", "second")
+        pair.first = "updated"
+        assert pair.first == "updated"
+        assert pair.second == "second"
+
+    def test_external_getters_preserve_cpp_signatures(self):
+        from external.AnotherExternalStruct import AnotherExternalStruct
+        from external.ExternalStruct import ExternalStruct
+        from test.StructWithOverloads import StructWithOverloads
+
+        value = ExternalStruct()
+        value.external_string_field = "hello"
+        value.external_array_field = [1, 2]
+        value.external_struct_field = AnotherExternalStruct(7)
+        assert value.external_string_field == "hello"
+        assert value.external_array_field == [1, 2]
+        assert value.external_struct_field.int_field == 7
+
+        initialized = ExternalStruct("plain", "accessor", [3, 4], AnotherExternalStruct(8))
+        assert initialized.string_field == "plain"
+        assert initialized.external_string_field == "accessor"
+        assert initialized.external_array_field == [3, 4]
+        assert initialized.external_struct_field.int_field == 8
+
+        overloaded = StructWithOverloads()
+        overloaded.overloaded_accessors = 42
+        assert overloaded.overloaded_accessors == 42
+
+    def test_external_interface_python_override(self):
+        from test.MyClass import MyClass
+        from test.UseMyClass import UseMyClass
+
+        class Implementation(MyClass):
+            def foo(self):
+                return 99
+
+        implementation = Implementation()
+        assert UseMyClass.make().call_bar(implementation) == 99

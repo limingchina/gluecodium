@@ -23,14 +23,14 @@ if(NOT FUNCTIONAL_BUILD_PYTHON_TESTS)
 endif()
 
 # Use the *same* Python interpreter that built the extension module. The extension
-# is compiled against the headers/libraries located by `find_package(Python ...)` in
+# is compiled against the headers/libraries located by `find_package(Python3 ...)` in
 # gluecodium_target_python_sources, which creates the global imported target
-# `Python::Interpreter`. Running the tests under a different interpreter (e.g. a
+# `Python3::Interpreter`. Running the tests under a different interpreter (e.g. a
 # Miniconda python3 on PATH) fails to load the version-specific .so
 # ("symbol not found in flat namespace"). Fall back to a PATH lookup only if the
 # imported target is somehow unavailable.
-if(TARGET Python::Interpreter)
-    set(PYTHON_TEST_INTERP Python::Interpreter)
+if(TARGET Python3::Interpreter)
+    set(PYTHON_TEST_INTERP Python3::Interpreter)
 else()
     find_program(PYTHON_EXE python3)
     if(NOT PYTHON_EXE)

@@ -216,7 +216,7 @@ internal class PythonGenerator : Generator {
         }
 
         return pythonFiles + pybind11Files +
-            generateCommonFiles(pybind11FilteredModel, pythonFilteredModel, nameResolvers, predicates.predicates)
+            generateCommonFiles(pybind11FilteredModel, pythonFilteredModel, nameResolvers, predicates.predicates, pybind11IncludeCollector)
     }
 
     private fun generatePythonFile(
@@ -524,6 +524,10 @@ internal class PythonGenerator : Generator {
                 "trampolines" to trampolines.toString(),
                 "bindings" to bindings.toString(),
                 "registerName" to pythonNameResolver.resolveRegisterName(limeElement),
+                "hasOpaqueTypes" to
+                    pybind11FilteredModel.referenceMap.values.any {
+                        it is LimeStruct && it.external?.cpp?.isNotEmpty() == true
+                    },
             )
         val content = TemplateEngine.render("python/Pybind11File", templateData, nameResolvers, predicates)
         return listOf(GeneratedFile(content, nameRules.getPybind11FileName(limeElement)))
@@ -571,6 +575,7 @@ internal class PythonGenerator : Generator {
         pythonFilteredModel: LimeModel,
         nameResolvers: Map<String, NameResolver>,
         predicates: Map<String, (Any) -> Boolean>,
+        includeCollector: GenericIncludesCollector,
     ): List<GeneratedFile> {
         val initTemplateData = mapOf("moduleName" to pythonModule)
         val initContent = TemplateEngine.render("python/PythonInit", initTemplateData, nameResolvers, predicates)
@@ -671,20 +676,48 @@ internal class PythonGenerator : Generator {
                 .map { GeneratedFile(initContent, it) }
                 .toList()
 
-        return listOf(
-            GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
-            GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
-            GeneratedFile(localeCasterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_locale_caster.h"),
-            GeneratedFile(wrapperCacheContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_wrapper_cache.h"),
-            GeneratedFile(
-                TemplateEngine.render("python/Pybind11GenericCaster", emptyMap<String, Any>(), nameResolvers, predicates),
-                PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_generic_caster.h",
-            ),
-            GeneratedFile(moduleInitContent, PythonNameRules.MODULE_INIT_FILE),
-            GeneratedFile(setupPyContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "setup.py"),
-            GeneratedFile(pyprojectContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "pyproject.toml"),
-            GeneratedFile(nativeBaseContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "_native_base.py"),
-        ) + packageInitFiles
+        // External structs are exposed as Python classes, including STL types such as pair.
+        // Disable automatic STL/chrono conversion consistently in every translation unit.
+        val opaqueTypes =
+            pybind11FilteredModel.referenceMap.values.filterIsInstance<LimeStruct>()
+                .filter { it.external?.cpp?.isNotEmpty() == true }
+                .distinctBy { cppNameCache.getFullyQualifiedName(it) }
+                .sortedBy { cppNameCache.getFullyQualifiedName(it) }
+        val opaqueFiles =
+            if (opaqueTypes.isEmpty()) {
+                emptyList()
+            } else {
+                listOf(
+                    GeneratedFile(
+                        TemplateEngine.render(
+                            "python/Pybind11OpaqueTypes",
+                            mapOf(
+                                "includes" to opaqueTypes.flatMap { includeCollector.collectImports(it) }.distinct().sorted(),
+                                "types" to opaqueTypes.map { mapOf("name" to cppNameCache.getFullyQualifiedName(it)) },
+                            ),
+                            nameResolvers,
+                            predicates,
+                        ),
+                        PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_opaque_types.h",
+                    ),
+                )
+            }
+
+        return opaqueFiles +
+            listOf(
+                GeneratedFile(initContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "__init__.py"),
+                GeneratedFile(casterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_return_caster.h"),
+                GeneratedFile(localeCasterContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_locale_caster.h"),
+                GeneratedFile(wrapperCacheContent, PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_wrapper_cache.h"),
+                GeneratedFile(
+                    TemplateEngine.render("python/Pybind11GenericCaster", emptyMap<String, Any>(), nameResolvers, predicates),
+                    PythonNameRules.PYBIND11_TARGET_DIRECTORY + "_generic_caster.h",
+                ),
+                GeneratedFile(moduleInitContent, PythonNameRules.MODULE_INIT_FILE),
+                GeneratedFile(setupPyContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "setup.py"),
+                GeneratedFile(pyprojectContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "pyproject.toml"),
+                GeneratedFile(nativeBaseContent, PythonNameRules.PYTHON_TARGET_DIRECTORY + "_native_base.py"),
+            ) + packageInitFiles
     }
 
     // Topologically sorts type names so that every base class appears before its derived

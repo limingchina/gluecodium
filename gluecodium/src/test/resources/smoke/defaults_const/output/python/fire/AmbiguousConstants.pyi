@@ -6,6 +6,6 @@ import typing
 
 class AmbiguousConstants:
 
-    DUMMY = {42}
 
+    DUMMY = SomeStruct(42)
 

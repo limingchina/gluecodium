@@ -132,6 +132,8 @@ atexit.register(_wrapper_cache.clear)
 def _get_or_create_wrapper(native: Any, wrapper_type: Any) -> Any:
     if native is None:
         return None
+    if isinstance(native, wrapper_type):
+        return native
     if hasattr(native, "__gluecodium_id__"):
         key = native.__gluecodium_id__()
         cached = _wrapper_cache.get(key)

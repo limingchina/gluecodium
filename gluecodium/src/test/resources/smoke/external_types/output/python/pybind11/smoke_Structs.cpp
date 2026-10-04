@@ -2,6 +2,7 @@
 
 #include <Python.h>
 #include <pybind11/pybind11.h>
+#include "_opaque_types.h"
 #include <pybind11/functional.h>
 #include <pybind11/stl.h>
 #include <pybind11/chrono.h>
@@ -37,11 +38,30 @@ auto cls_Structs = py::class_<Structs, std::shared_ptr<Structs>>(module, "smoke_
 
 auto cls_StructsExternalStruct = py::class_<ExternalStruct>(cls_Structs, "ExternalStruct")
         .def_readwrite("string_field", &ExternalStruct::stringField)
-        .def_property("external_string_field", static_cast<const ::std::string& (ExternalStruct::*)() const &>(&ExternalStruct::get_some_string), py::overload_cast<const ::std::string&>(&ExternalStruct::set_some_string))
-        .def_property("external_array_field", static_cast<const ::std::vector< int8_t >& (ExternalStruct::*)() const &>(&ExternalStruct::get_some_array), py::overload_cast<const ::std::vector< int8_t >&>(&ExternalStruct::set_some_array))
-        .def_property("external_struct_field", static_cast<const ::fire::SomeVeryExternalStruct& (ExternalStruct::*)() const &>(&ExternalStruct::get_some_struct), py::overload_cast<const ::fire::SomeVeryExternalStruct&>(&ExternalStruct::set_some_struct))
+        .def_property("external_string_field", [](const ExternalStruct& self) {
+            return self.get_some_string();
+        }, [](ExternalStruct& self, const ::std::string& value) {
+            self.set_some_string(value);
+        })
+        .def_property("external_array_field", [](const ExternalStruct& self) {
+            return self.get_some_array();
+        }, [](ExternalStruct& self, const ::std::vector< int8_t >& value) {
+            self.set_some_array(value);
+        })
+        .def_property("external_struct_field", [](const ExternalStruct& self) {
+            return self.get_some_struct();
+        }, [](ExternalStruct& self, const ::fire::SomeVeryExternalStruct& value) {
+            self.set_some_struct(value);
+        })
         .def(py::init<>())
-        .def(py::init<::std::string, ::std::string, ::std::vector< int8_t >, ::fire::SomeVeryExternalStruct>(), py::arg("string_field"), py::arg("external_string_field"), py::arg("external_array_field"), py::arg("external_struct_field"))
+        .def(py::init([](const ::std::string& string_field, const ::std::string& external_string_field, const ::std::vector< int8_t >& external_array_field, const ::fire::SomeVeryExternalStruct& external_struct_field) {
+            ExternalStruct result{};
+            result.stringField = string_field;
+            result.set_some_string(external_string_field);
+            result.set_some_array(external_array_field);
+            result.set_some_struct(external_struct_field);
+            return result;
+        }), py::arg("string_field"), py::arg("external_string_field"), py::arg("external_array_field"), py::arg("external_struct_field"))
         ;
 
 auto cls_StructsAnotherExternalStruct = py::class_<::fire::SomeVeryExternalStruct>(cls_Structs, "AnotherExternalStruct")

@@ -9,5 +9,5 @@ class UseJavaExternalConst:
     string_field: str
 
 
-    _DEFAULT_TRUTH = {"foo"}
+    _DEFAULT_TRUTH = JavaExternalCtor("foo")
 
