@@ -28,26 +28,38 @@ auto cls_CppRefReturnType = py::class_<CppRefReturnType, std::shared_ptr<CppRefR
         .def("__gluecodium_id__", [](const CppRefReturnType& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("void_ref", &CppRefReturnType::void_ref)
-        .def_static("bool_ref", &CppRefReturnType::bool_ref)
-        .def_static("string_ref", &CppRefReturnType::string_ref)
-        .def_static("struct_ref", &CppRefReturnType::struct_ref)
-        .def_static("class_ref", &CppRefReturnType::class_ref)
-        .def_static("nullable_ref", &CppRefReturnType::nullable_ref)
+        .def_static("void_ref", &CppRefReturnType::void_ref, py::call_guard<py::gil_scoped_release>())
+        .def_static("bool_ref", &CppRefReturnType::bool_ref, py::call_guard<py::gil_scoped_release>())
+        .def_static("string_ref", &CppRefReturnType::string_ref, py::call_guard<py::gil_scoped_release>())
+        .def_static("struct_ref", &CppRefReturnType::struct_ref, py::call_guard<py::gil_scoped_release>())
+        .def_static("class_ref", &CppRefReturnType::class_ref, py::call_guard<py::gil_scoped_release>())
+        .def_static("nullable_ref", &CppRefReturnType::nullable_ref, py::call_guard<py::gil_scoped_release>())
         .def_static("throwing_enum_with_void", []() {
-                const auto error = CppRefReturnType::throwing_enum_with_void();
+                const auto error = gluecodium::python::call_native([&]() -> decltype(auto) { return CppRefReturnType::throwing_enum_with_void(); });
                 if (error) {
                     throw error;
                 }
         })
-        .def_static("throwing_enum_with_string", &CppRefReturnType::throwing_enum_with_string)
-        .def_static("throwing_struct_with_void", &CppRefReturnType::throwing_struct_with_void)
-        .def_static("throwing_struct_with_string", &CppRefReturnType::throwing_struct_with_string)
-        .def_static("string_property", &CppRefReturnType::get_string_property)
+        .def_static("throwing_enum_with_string", &CppRefReturnType::throwing_enum_with_string, py::call_guard<py::gil_scoped_release>())
+        .def_static("throwing_struct_with_void", &CppRefReturnType::throwing_struct_with_void, py::call_guard<py::gil_scoped_release>())
+        .def_static("throwing_struct_with_string", &CppRefReturnType::throwing_struct_with_string, py::call_guard<py::gil_scoped_release>())
+        .def_static("string_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return CppRefReturnType::get_string_property();
+            });
+        })
         ;
 
 auto cls_CppRefReturnTypeSomeStruct = py::class_<SomeStruct>(cls_CppRefReturnType, "SomeStruct")
-        .def_readwrite("field", &SomeStruct::field)
+        .def_property("field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](SomeStruct& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;

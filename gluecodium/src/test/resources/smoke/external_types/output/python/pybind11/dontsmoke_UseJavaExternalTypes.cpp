@@ -30,12 +30,12 @@ auto cls_UseJavaExternalTypes = py::class_<UseJavaExternalTypes, std::shared_ptr
         .def("__gluecodium_id__", [](const UseJavaExternalTypes& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("currency_round_trip", &UseJavaExternalTypes::currency_round_trip, py::arg("input"))
-        .def_static("time_zone_round_trip", &UseJavaExternalTypes::time_zone_round_trip, py::arg("input"))
-        .def_static("month_round_trip", &UseJavaExternalTypes::month_round_trip, py::arg("input"))
-        .def_static("color_round_trip", &UseJavaExternalTypes::color_round_trip, py::arg("input"))
-        .def_static("season_round_trip", &UseJavaExternalTypes::season_round_trip, py::arg("input"))
-        .def_static("struct_round_trip", &UseJavaExternalTypes::struct_round_trip, py::arg("input"))
+        .def_static("currency_round_trip", &UseJavaExternalTypes::currency_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("time_zone_round_trip", &UseJavaExternalTypes::time_zone_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("month_round_trip", &UseJavaExternalTypes::month_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("color_round_trip", &UseJavaExternalTypes::color_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("season_round_trip", &UseJavaExternalTypes::season_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("struct_round_trip", &UseJavaExternalTypes::struct_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

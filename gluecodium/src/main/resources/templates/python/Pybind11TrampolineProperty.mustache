@@ -27,10 +27,10 @@
     using {{resolveName this "Pybind11" "getter"}}_return_type = {{resolveName typeRef "Pybind11"}};
 {{/ifPredicate}}
     {{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName typeRef "Pybind11"}}{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}} {{resolveName this "Pybind11" "getter"}}() const{{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->{{resolveName this "Pybind11" "getter"}}();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const {{resolveName model "Pybind11"}}*>(this), "{{resolveName this "Callback" "getter"}}")) {
 {{#ifPredicate typeRef "returnTypeHasComma"}}
         PYBIND11_OVERRIDE_PURE_NAME({{#ifPredicate "hasCppRef"}}const {{/ifPredicate}}{{resolveName this "Pybind11" "getter"}}_return_type{{#ifPredicate "hasCppRef"}}&{{/ifPredicate}}, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback" "getter"}}", {{resolveName this "Pybind11" "getter"}});
@@ -48,14 +48,14 @@
     }
 {{#ifPredicate "hasSetter"}}
     void {{resolveName this "Pybind11" "setter"}}(const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value){{#ifPredicate "isCppNoexcept"}} noexcept{{/ifPredicate}} override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->{{resolveName this "Pybind11" "setter"}}(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const {{resolveName model "Pybind11"}}*>(this), "{{resolveName this "Callback" "setter"}}")) {
-            PYBIND11_OVERRIDE_PURE_NAME(void, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback" "setter"}}", {{resolveName this "Pybind11" "setter"}}, value);
+            PYBIND11_OVERRIDE_PURE_NAME(void, {{resolveName model "Pybind11"}}, "{{resolveName this "Callback" "setter"}}", {{resolveName this "Pybind11" "setter"}}, {{#ifPredicate typeRef "isLambdaType"}}gluecodium::python::to_python_regular(value){{/ifPredicate}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::to_python_regular(value){{/ifPredicate}}{{#unlessPredicate typeRef "isLambdaType"}}{{#unlessPredicate typeRef "isCollectionType"}}value{{/unlessPredicate}}{{/unlessPredicate}});
         }
-        PYBIND11_OVERRIDE_PURE(void, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "setter"}}, value);
+        PYBIND11_OVERRIDE_PURE(void, {{resolveName model "Pybind11"}}, {{resolveName this "Pybind11" "setter"}}, {{#ifPredicate typeRef "isLambdaType"}}gluecodium::python::to_python_regular(value){{/ifPredicate}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::to_python_regular(value){{/ifPredicate}}{{#unlessPredicate typeRef "isLambdaType"}}{{#unlessPredicate typeRef "isCollectionType"}}value{{/unlessPredicate}}{{/unlessPredicate}});
     }
 {{/ifPredicate}}

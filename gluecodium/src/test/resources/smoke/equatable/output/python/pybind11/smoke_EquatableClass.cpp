@@ -32,10 +32,42 @@ auto cls_EquatableClass = py::class_<EquatableClass, std::shared_ptr<EquatableCl
         ;
 
 auto cls_EquatableClassEquatableStruct = py::class_<EquatableStruct>(cls_EquatableClass, "EquatableStruct")
-        .def_readwrite("int_field", &EquatableStruct::int_field)
-        .def_readwrite("string_field", &EquatableStruct::string_field)
-        .def_readwrite("nested_equatable_instance", &EquatableStruct::nested_equatable_instance)
-        .def_readwrite("nested_pointer_equatable_instance", &EquatableStruct::nested_pointer_equatable_instance)
+        .def_property("int_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](EquatableStruct& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("string_field", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](EquatableStruct& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("nested_equatable_instance", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.nested_equatable_instance)
+            ;
+        }, [](EquatableStruct& self, const ::std::shared_ptr< ::smoke::EquatableClass >& value) {
+
+                self.nested_equatable_instance = value;
+
+        })
+        .def_property("nested_pointer_equatable_instance", [](const EquatableStruct& self) -> decltype(auto) {
+            return
+                (self.nested_pointer_equatable_instance)
+            ;
+        }, [](EquatableStruct& self, const ::std::shared_ptr< ::smoke::PointerEquatableClass >& value) {
+
+                self.nested_pointer_equatable_instance = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string, ::std::shared_ptr< ::smoke::EquatableClass >, ::std::shared_ptr< ::smoke::PointerEquatableClass >>(), py::arg("int_field"), py::arg("string_field"), py::arg("nested_equatable_instance"), py::arg("nested_pointer_equatable_instance"))
         .def("__gluecodium_copy__", [](const EquatableStruct& self) { return EquatableStruct(self); })

@@ -21,8 +21,24 @@ using PublicFieldsNoInit = ::smoke::PublicFieldsNoInit;
 
 void register_smoke_PublicFieldsNoInit(py::module_& module) {
 auto cls_PublicFieldsNoInit = py::class_<PublicFieldsNoInit>(module, "smoke_PublicFieldsNoInit")
-        .def_readwrite("public_field", &PublicFieldsNoInit::public_field)
-        .def_readwrite("_internal_field", &PublicFieldsNoInit::internal_field)
+        .def_property("public_field", [](const PublicFieldsNoInit& self) -> decltype(auto) {
+            return
+                (self.public_field)
+            ;
+        }, [](PublicFieldsNoInit& self, const ::std::string& value) {
+
+                self.public_field = value;
+
+        })
+        .def_property("_internal_field", [](const PublicFieldsNoInit& self) -> decltype(auto) {
+            return
+                (self.internal_field)
+            ;
+        }, [](PublicFieldsNoInit& self, const ::std::string& value) {
+
+                self.internal_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("public_field"))
         .def(py::init([](const ::std::string& public_field) {

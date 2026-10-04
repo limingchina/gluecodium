@@ -36,29 +36,29 @@ auto cls_CtorLinksSingleCtor = py::class_<SingleCtor, std::shared_ptr<SingleCtor
         .def("__gluecodium_id__", [](const SingleCtor& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("create", &SingleCtor::create)
+        .def_static("create", &SingleCtor::create, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_CtorLinksSingleCtorWithOneArgument = py::class_<SingleCtorWithOneArgument, std::shared_ptr<SingleCtorWithOneArgument>>(cls_CtorLinks, "SingleCtorWithOneArgument")
         .def("__gluecodium_id__", [](const SingleCtorWithOneArgument& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("create", &SingleCtorWithOneArgument::create, py::arg("arg"))
+        .def_static("create", &SingleCtorWithOneArgument::create, py::arg("arg"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_CtorLinksSingleCtorWithTwoArgument = py::class_<SingleCtorWithTwoArgument, std::shared_ptr<SingleCtorWithTwoArgument>>(cls_CtorLinks, "SingleCtorWithTwoArgument")
         .def("__gluecodium_id__", [](const SingleCtorWithTwoArgument& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("create", &SingleCtorWithTwoArgument::create, py::arg("arg"), py::arg("arg2"))
+        .def_static("create", &SingleCtorWithTwoArgument::create, py::arg("arg"), py::arg("arg2"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_CtorLinksOverloadedCtors = py::class_<OverloadedCtors, std::shared_ptr<OverloadedCtors>>(cls_CtorLinks, "OverloadedCtors")
         .def("__gluecodium_id__", [](const OverloadedCtors& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("create", py::overload_cast<const ::std::string&>(OverloadedCtors::create), py::arg("input"))
-        .def_static("create", py::overload_cast<const ::std::string&, const bool>(OverloadedCtors::create), py::arg("input"), py::arg("flag"))
+        .def_static("create", py::overload_cast<const ::std::string&>(OverloadedCtors::create), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const ::std::string&, const bool>(OverloadedCtors::create), py::arg("input"), py::arg("flag"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

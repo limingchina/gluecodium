@@ -29,21 +29,21 @@ public:
     std::shared_ptr<Weakling> m_impl;
 
     ::std::shared_ptr< ::smoke::ListenerInterface > get_listener() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_listener();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const Weakling*>(this), "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::ListenerInterface >, Weakling, "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_get", get_listener);
         }
         PYBIND11_OVERRIDE_PURE(::std::shared_ptr< ::smoke::ListenerInterface >, Weakling, get_listener);
     }
     void set_listener(const ::std::shared_ptr< ::smoke::ListenerInterface >& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_listener(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const Weakling*>(this), "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, Weakling, "__gluecodium_callback_736d6f6b652e5765616b6c696e672e6c697374656e6572_set", set_listener, value);
         }
@@ -70,10 +70,14 @@ auto cls_Weakling = py::class_<Weakling, std::shared_ptr<Weakling>, WeaklingTram
             self->m_impl = native;
             return self;
         }))
-        .def_property("listener", [](const Weakling& self) {
-            return self.get_listener();
+        .def_property("listener", [](const Weakling& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_listener();
+            });
         }, [](Weakling& self, const ::std::shared_ptr< ::smoke::ListenerInterface >& value) {
-            self.set_listener(value);
+            gluecodium::python::call_native([&] {
+                self.set_listener(value);
+            });
         })
         ;
 

@@ -35,17 +35,65 @@ auto cls_OrderInClass = py::class_<OrderInClass, std::shared_ptr<OrderInClass>>(
         ;
 
 auto cls_OrderInClassMainStruct = py::class_<MainStruct>(cls_OrderInClass, "MainStruct")
-        .def_readwrite("struct_field", &MainStruct::struct_field)
-        .def_readwrite("type_def_field", &MainStruct::type_def_field)
-        .def_readwrite("struct_array_field", &MainStruct::struct_array_field)
-        .def_readwrite("map_field", &MainStruct::map_field)
-        .def_readwrite("enum_field", &MainStruct::enum_field)
+        .def_property("struct_field", [](const MainStruct& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](MainStruct& self, const ::smoke::OrderInClass::NestedStruct& value) {
+
+                self.struct_field = value;
+
+        })
+        .def_property("type_def_field", [](const MainStruct& self) -> decltype(auto) {
+            return
+                (self.type_def_field)
+            ;
+        }, [](MainStruct& self, const int32_t value) {
+
+                self.type_def_field = value;
+
+        })
+        .def_property("struct_array_field", [](const MainStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.struct_array_field)
+            );
+        }, [](MainStruct& self, const ::std::vector< ::smoke::OrderInClass::NestedStruct >& value) {
+
+                self.struct_array_field = value;
+
+        })
+        .def_property("map_field", [](const MainStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.map_field)
+            );
+        }, [](MainStruct& self, const ::std::unordered_map< int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct > >& value) {
+
+                self.map_field = value;
+
+        })
+        .def_property("enum_field", [](const MainStruct& self) -> decltype(auto) {
+            return
+                (self.enum_field)
+            ;
+        }, [](MainStruct& self, const ::smoke::OrderInClass::SomeEnum value) {
+
+                self.enum_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::OrderInClass::NestedStruct, int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct >, ::std::unordered_map< int32_t, ::std::vector< ::smoke::OrderInClass::NestedStruct > >, ::smoke::OrderInClass::SomeEnum>(), py::arg("struct_field"), py::arg("type_def_field"), py::arg("struct_array_field"), py::arg("map_field"), py::arg("enum_field"))
         ;
 
 auto cls_OrderInClassNestedStruct = py::class_<NestedStruct>(cls_OrderInClass, "NestedStruct")
-        .def_readwrite("some_field", &NestedStruct::some_field)
+        .def_property("some_field", [](const NestedStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](NestedStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;

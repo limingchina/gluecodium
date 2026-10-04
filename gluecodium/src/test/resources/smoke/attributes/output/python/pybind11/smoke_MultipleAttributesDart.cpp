@@ -23,11 +23,11 @@ auto cls_MultipleAttributesDart = py::class_<MultipleAttributesDart, std::shared
         .def("__gluecodium_id__", [](const MultipleAttributesDart& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("no_lists2", &MultipleAttributesDart::no_lists2)
-        .def("no_lists3", &MultipleAttributesDart::no_lists3)
-        .def("list_first", &MultipleAttributesDart::list_first)
-        .def("list_second", &MultipleAttributesDart::list_second)
-        .def("two_lists", &MultipleAttributesDart::two_lists)
+        .def("no_lists2", &MultipleAttributesDart::no_lists2, py::call_guard<py::gil_scoped_release>())
+        .def("no_lists3", &MultipleAttributesDart::no_lists3, py::call_guard<py::gil_scoped_release>())
+        .def("list_first", &MultipleAttributesDart::list_first, py::call_guard<py::gil_scoped_release>())
+        .def("list_second", &MultipleAttributesDart::list_second, py::call_guard<py::gil_scoped_release>())
+        .def("two_lists", &MultipleAttributesDart::two_lists, py::call_guard<py::gil_scoped_release>())
         ;
 
 

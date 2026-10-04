@@ -21,7 +21,15 @@ using FieldConstructorsSkipTag = ::smoke::FieldConstructorsSkipTag;
 
 void register_smoke_FieldConstructorsSkipTag(py::module_& module) {
 auto cls_FieldConstructorsSkipTag = py::class_<FieldConstructorsSkipTag>(module, "smoke_FieldConstructorsSkipTag")
-        .def_readwrite("field1", &FieldConstructorsSkipTag::field1)
+        .def_property("field1", [](const FieldConstructorsSkipTag& self) -> decltype(auto) {
+            return
+                (self.field1)
+            ;
+        }, [](FieldConstructorsSkipTag& self, const ::std::string& value) {
+
+                self.field1 = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field1"))
         ;

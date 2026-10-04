@@ -23,14 +23,30 @@ using SomeEnum = ::smoke::OrderInStructWithFunctions::SomeEnum;
 
 void register_smoke_OrderInStructWithFunctions(py::module_& module) {
 auto cls_OrderInStructWithFunctions = py::class_<OrderInStructWithFunctions>(module, "smoke_OrderInStructWithFunctions")
-        .def_readwrite("some_field", &OrderInStructWithFunctions::some_field)
+        .def_property("some_field", [](const OrderInStructWithFunctions& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](OrderInStructWithFunctions& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
-        .def("do_stuff", &OrderInStructWithFunctions::do_stuff, py::arg("struct_foo"))
+        .def("do_stuff", &OrderInStructWithFunctions::do_stuff, py::arg("struct_foo"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_OrderInStructWithFunctionsNestedStruct = py::class_<NestedStruct>(cls_OrderInStructWithFunctions, "NestedStruct")
-        .def_readwrite("some_field", &NestedStruct::some_field)
+        .def_property("some_field", [](const NestedStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](NestedStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;

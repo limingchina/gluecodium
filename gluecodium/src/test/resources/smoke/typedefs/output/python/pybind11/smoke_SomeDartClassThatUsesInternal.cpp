@@ -27,7 +27,7 @@ auto cls_SomeDartClassThatUsesInternal = py::class_<SomeDartClassThatUsesInterna
         .def("__gluecodium_id__", [](const SomeDartClassThatUsesInternal& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("_add_entity", &SomeDartClassThatUsesInternal::add_entity, py::arg("entity"))
+        .def("_add_entity", &SomeDartClassThatUsesInternal::add_entity, py::arg("entity"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

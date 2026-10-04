@@ -21,7 +21,15 @@ using SkipFieldConstructorsClash = ::smoke::SkipFieldConstructorsClash;
 
 void register_smoke_SkipFieldConstructorsClash(py::module_& module) {
 auto cls_SkipFieldConstructorsClash = py::class_<SkipFieldConstructorsClash>(module, "smoke_SkipFieldConstructorsClash")
-        .def_readwrite("param", &SkipFieldConstructorsClash::param)
+        .def_property("param", [](const SkipFieldConstructorsClash& self) -> decltype(auto) {
+            return
+                (self.param)
+            ;
+        }, [](SkipFieldConstructorsClash& self, const ::std::string& value) {
+
+                self.param = value;
+
+        })
         .def(py::init<>())
         ;
 

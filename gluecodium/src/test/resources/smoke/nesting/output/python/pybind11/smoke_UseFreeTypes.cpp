@@ -28,7 +28,7 @@ auto cls_UseFreeTypes = py::class_<UseFreeTypes, std::shared_ptr<UseFreeTypes>>(
         .def("__gluecodium_id__", [](const UseFreeTypes& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_stuff", &UseFreeTypes::do_stuff, py::arg("point"), py::arg("mode"))
+        .def("do_stuff", &UseFreeTypes::do_stuff, py::arg("point"), py::arg("mode"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

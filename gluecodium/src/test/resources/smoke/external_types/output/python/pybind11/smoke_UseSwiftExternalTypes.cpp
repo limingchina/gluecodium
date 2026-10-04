@@ -28,10 +28,10 @@ auto cls_UseSwiftExternalTypes = py::class_<UseSwiftExternalTypes, std::shared_p
         .def("__gluecodium_id__", [](const UseSwiftExternalTypes& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"))
-        .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"))
-        .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"))
-        .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"))
+        .def_static("date_interval_round_trip", &UseSwiftExternalTypes::date_interval_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("persistence_round_trip", &UseSwiftExternalTypes::persistence_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("color_round_trip", &UseSwiftExternalTypes::color_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("season_round_trip", &UseSwiftExternalTypes::season_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

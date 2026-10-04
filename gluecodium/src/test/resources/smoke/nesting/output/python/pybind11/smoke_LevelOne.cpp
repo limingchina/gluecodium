@@ -43,14 +43,22 @@ auto cls_LevelOneLevelTwoLevelThree = py::class_<LevelThree, std::shared_ptr<Lev
         .def("__gluecodium_id__", [](const LevelThree& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("foo", &LevelThree::foo, py::arg("input"))
+        .def("foo", &LevelThree::foo, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_LevelOneLevelTwoLevelThreeLevelFour = py::class_<LevelFour>(cls_LevelOneLevelTwoLevelThree, "LevelFour")
-        .def_readwrite("string_field", &LevelFour::string_field)
+        .def_property("string_field", [](const LevelFour& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](LevelFour& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
-        .def_static("foo_factory", &LevelFour::foo_factory)
+        .def_static("foo_factory", &LevelFour::foo_factory, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_LevelOneLevelTwoLevelThreeLevelFourEnum = py::enum_<LevelFourEnum>(cls_LevelOneLevelTwoLevelThree, "LevelFourEnum")

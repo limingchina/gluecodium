@@ -31,11 +31,11 @@ public:
 
     void foo(
             const ::std::string& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo(input);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildInterfaceOverloads*>(this), "__gluecodium_callback_736d6f6b652e4368696c64496e746572666163654f7665726c6f6164732e666f6f")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildInterfaceOverloads, "__gluecodium_callback_736d6f6b652e4368696c64496e746572666163654f7665726c6f6164732e666f6f", foo, input);
         }
@@ -43,11 +43,11 @@ public:
     }
     void bar(
             const ::std::string& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->bar(input);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildInterfaceOverloads*>(this), "__gluecodium_callback_736d6f6b652e4368696c64496e746572666163654f7665726c6f6164732e626172")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildInterfaceOverloads, "__gluecodium_callback_736d6f6b652e4368696c64496e746572666163654f7665726c6f6164732e626172", bar, input);
         }
@@ -55,11 +55,11 @@ public:
     }
     void foo(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildInterfaceOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e666f6f")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildInterfaceOverloads, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e666f6f", foo);
         }
@@ -67,11 +67,11 @@ public:
     }
     void foo(
             const int32_t input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo(input);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildInterfaceOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e666f6f3a31")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildInterfaceOverloads, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e666f6f3a31", foo, input);
         }
@@ -79,11 +79,11 @@ public:
     }
     void bar(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->bar();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildInterfaceOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e626172")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildInterfaceOverloads, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e626172", bar);
         }
@@ -91,11 +91,11 @@ public:
     }
     void baz(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->baz();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildInterfaceOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e62617a")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildInterfaceOverloads, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e62617a", baz);
         }
@@ -132,22 +132,22 @@ auto cls_ChildInterfaceOverloads = py::class_<ChildInterfaceOverloads, ::smoke::
             return self;
         }))
         .def("foo", [](ChildInterfaceOverloads& self, const ::std::string& input) {
-            return self.foo(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.foo(input); });
         }, py::arg("input"))
         .def("bar", [](ChildInterfaceOverloads& self, const ::std::string& input) {
-            return self.bar(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.bar(input); });
         }, py::arg("input"))
         .def("foo", [](ChildInterfaceOverloads& self) {
-            return self.foo();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.foo(); });
         })
         .def("foo", [](ChildInterfaceOverloads& self, const int32_t input) {
-            return self.foo(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.foo(input); });
         }, py::arg("input"))
         .def("bar", [](ChildInterfaceOverloads& self) {
-            return self.bar();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.bar(); });
         })
         .def("baz", [](ChildInterfaceOverloads& self) {
-            return self.baz();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.baz(); });
         })
         ;
 

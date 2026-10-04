@@ -23,10 +23,42 @@ using InternalEnumDefaults = ::smoke::InternalEnumDefaults;
 
 void register_smoke_InternalEnumDefaults(py::module_& module) {
 auto cls_InternalEnumDefaults = py::class_<InternalEnumDefaults>(module, "smoke_InternalEnumDefaults")
-        .def_readwrite("public_field", &InternalEnumDefaults::public_field)
-        .def_readwrite("public_list_field", &InternalEnumDefaults::public_list_field)
-        .def_readwrite("_internal_field", &InternalEnumDefaults::internal_field)
-        .def_readwrite("_internal_list_field", &InternalEnumDefaults::internal_list_field)
+        .def_property("public_field", [](const InternalEnumDefaults& self) -> decltype(auto) {
+            return
+                (self.public_field)
+            ;
+        }, [](InternalEnumDefaults& self, const ::smoke::FooBarEnum value) {
+
+                self.public_field = value;
+
+        })
+        .def_property("public_list_field", [](const InternalEnumDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.public_list_field)
+            );
+        }, [](InternalEnumDefaults& self, const ::std::vector< ::smoke::FooBarEnum >& value) {
+
+                self.public_list_field = value;
+
+        })
+        .def_property("_internal_field", [](const InternalEnumDefaults& self) -> decltype(auto) {
+            return
+                (self.internal_field)
+            ;
+        }, [](InternalEnumDefaults& self, const ::smoke::FooBarEnum value) {
+
+                self.internal_field = value;
+
+        })
+        .def_property("_internal_list_field", [](const InternalEnumDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.internal_list_field)
+            );
+        }, [](InternalEnumDefaults& self, const ::std::vector< ::smoke::FooBarEnum >& value) {
+
+                self.internal_list_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init([](const ::smoke::FooBarEnum& public_field, const ::std::vector< ::smoke::FooBarEnum >& public_list_field) {
             return InternalEnumDefaults(public_field, public_list_field, ::smoke::FooBarEnum{}, ::std::vector< ::smoke::FooBarEnum >{});

@@ -32,8 +32,24 @@ auto cls_StructsWithConstantsInterface = py::class_<StructsWithConstantsInterfac
         ;
 
 auto cls_StructsWithConstantsInterfaceMultiRoute = py::class_<MultiRoute>(cls_StructsWithConstantsInterface, "MultiRoute")
-        .def_readwrite("descriptions", &MultiRoute::descriptions)
-        .def_readwrite("type", &MultiRoute::type)
+        .def_property("descriptions", [](const MultiRoute& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.descriptions)
+            );
+        }, [](MultiRoute& self, const ::std::vector< ::std::string >& value) {
+
+                self.descriptions = value;
+
+        })
+        .def_property("type", [](const MultiRoute& self) -> decltype(auto) {
+            return
+                (self.type)
+            ;
+        }, [](MultiRoute& self, const ::smoke::RouteUtils::RouteType value) {
+
+                self.type = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::std::string >, ::smoke::RouteUtils::RouteType>(), py::arg("descriptions"), py::arg("type"))
         ;

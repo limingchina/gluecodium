@@ -33,32 +33,32 @@ public:
 
     void child_function(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->child_function();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e4669727374506172656e744973496e74657266616365496e746572666163652e6368696c6446756e6374696f6e")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e4669727374506172656e744973496e74657266616365496e746572666163652e6368696c6446756e6374696f6e", child_function);
         }
         PYBIND11_OVERRIDE_PURE(void, FirstParentIsInterfaceInterface, child_function);
     }
     ::std::string get_child_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_child_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e4669727374506172656e744973496e74657266616365496e746572666163652e6368696c6450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e4669727374506172656e744973496e74657266616365496e746572666163652e6368696c6450726f7065727479_get", get_child_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, FirstParentIsInterfaceInterface, get_child_property);
     }
     void set_child_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_child_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e4669727374506172656e744973496e74657266616365496e746572666163652e6368696c6450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e4669727374506172656e744973496e74657266616365496e746572666163652e6368696c6450726f7065727479_set", set_child_property, value);
         }
@@ -66,11 +66,11 @@ public:
     }
     void parent_function(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_function();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7446756e6374696f6e")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7446756e6374696f6e", parent_function);
         }
@@ -78,11 +78,11 @@ public:
     }
     void some_function_that_uses_type_from_another_package(
             const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->some_function_that_uses_type_from_another_package(some_param);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e736f6d655f66756e6374696f6e5f746861745f757365735f747970655f66726f6d5f616e6f746865725f7061636b616765")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e736f6d655f66756e6374696f6e5f746861745f757365735f747970655f66726f6d5f616e6f746865725f7061636b616765", some_function_that_uses_type_from_another_package, some_param);
         }
@@ -90,53 +90,53 @@ public:
     }
     void parent_function_one(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_function_one();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7446756e6374696f6e4f6e65")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7446756e6374696f6e4f6e65", parent_function_one);
         }
         PYBIND11_OVERRIDE_PURE(void, FirstParentIsInterfaceInterface, parent_function_one);
     }
     ::std::string get_parent_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_parent_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_get", get_parent_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, FirstParentIsInterfaceInterface, get_parent_property);
     }
     void set_parent_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_parent_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e506172656e74496e746572666163652e706172656e7450726f7065727479_set", set_parent_property, value);
         }
         PYBIND11_OVERRIDE_PURE(void, FirstParentIsInterfaceInterface, set_parent_property, value);
     }
     ::std::string get_parent_property_one() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_parent_property_one();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_get", get_parent_property_one);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, FirstParentIsInterfaceInterface, get_parent_property_one);
     }
     void set_parent_property_one(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_parent_property_one(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const FirstParentIsInterfaceInterface*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsInterfaceInterface, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_set", set_parent_property_one, value);
         }
@@ -179,31 +179,43 @@ auto cls_FirstParentIsInterfaceInterface = py::class_<FirstParentIsInterfaceInte
             return self;
         }))
         .def("child_function", [](FirstParentIsInterfaceInterface& self) {
-            return self.child_function();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.child_function(); });
         })
-        .def_property("child_property", [](const FirstParentIsInterfaceInterface& self) {
-            return self.get_child_property();
+        .def_property("child_property", [](const FirstParentIsInterfaceInterface& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_child_property();
+            });
         }, [](FirstParentIsInterfaceInterface& self, const ::std::string& value) {
-            self.set_child_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_child_property(value);
+            });
         })
         .def("parent_function", [](FirstParentIsInterfaceInterface& self) {
-            return self.parent_function();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_function(); });
         })
         .def("some_function_that_uses_type_from_another_package", [](FirstParentIsInterfaceInterface& self, const ::std::shared_ptr< ::another::SomeCoolClassType >& some_param) {
-            return self.some_function_that_uses_type_from_another_package(some_param);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.some_function_that_uses_type_from_another_package(some_param); });
         }, py::arg("some_param"))
         .def("parent_function_one", [](FirstParentIsInterfaceInterface& self) {
-            return self.parent_function_one();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_function_one(); });
         })
-        .def_property("parent_property", [](const FirstParentIsInterfaceInterface& self) {
-            return self.get_parent_property();
+        .def_property("parent_property", [](const FirstParentIsInterfaceInterface& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property();
+            });
         }, [](FirstParentIsInterfaceInterface& self, const ::std::string& value) {
-            self.set_parent_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_parent_property(value);
+            });
         })
-        .def_property("parent_property_one", [](const FirstParentIsInterfaceInterface& self) {
-            return self.get_parent_property_one();
+        .def_property("parent_property_one", [](const FirstParentIsInterfaceInterface& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property_one();
+            });
         }, [](FirstParentIsInterfaceInterface& self, const ::std::string& value) {
-            self.set_parent_property_one(value);
+            gluecodium::python::call_native([&] {
+                self.set_parent_property_one(value);
+            });
         })
         ;
 

@@ -22,7 +22,15 @@ using TimeZone = ::kotlin_smoke::TimeZone;
 
 void register_kotlin_smoke_TimeZone(py::module_& module) {
 auto cls_TimeZone = py::class_<TimeZone>(module, "kotlin_smoke_TimeZone")
-        .def_readwrite("raw_offset", &TimeZone::raw_offset)
+        .def_property("raw_offset", [](const TimeZone& self) -> decltype(auto) {
+            return
+                (self.raw_offset)
+            ;
+        }, [](TimeZone& self, const int32_t value) {
+
+                self.raw_offset = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("raw_offset"))
         ;

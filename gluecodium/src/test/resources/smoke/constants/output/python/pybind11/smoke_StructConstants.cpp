@@ -29,14 +29,38 @@ auto cls_StructConstants = py::class_<StructConstants, std::shared_ptr<StructCon
         ;
 
 auto cls_StructConstantsSomeStruct = py::class_<SomeStruct>(cls_StructConstants, "SomeStruct")
-        .def_readwrite("string_field", &SomeStruct::string_field)
-        .def_readwrite("float_field", &SomeStruct::float_field)
+        .def_property("string_field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](SomeStruct& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("float_field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.float_field)
+            ;
+        }, [](SomeStruct& self, const float value) {
+
+                self.float_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string, float>(), py::arg("string_field"), py::arg("float_field"))
         ;
 
 auto cls_StructConstantsNestingStruct = py::class_<NestingStruct>(cls_StructConstants, "NestingStruct")
-        .def_readwrite("struct_field", &NestingStruct::struct_field)
+        .def_property("struct_field", [](const NestingStruct& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](NestingStruct& self, const ::smoke::StructConstants::SomeStruct& value) {
+
+                self.struct_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::StructConstants::SomeStruct>(), py::arg("struct_field"))
         ;

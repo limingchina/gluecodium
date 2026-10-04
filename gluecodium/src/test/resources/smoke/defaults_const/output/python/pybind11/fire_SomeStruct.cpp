@@ -21,7 +21,15 @@ using SomeStruct = ::fire::SomeStruct;
 
 void register_fire_SomeStruct(py::module_& module) {
 auto cls_SomeStruct = py::class_<SomeStruct>(module, "fire_SomeStruct")
-        .def_readwrite("int_field", &SomeStruct::int_field)
+        .def_property("int_field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](SomeStruct& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("int_field"))
         ;

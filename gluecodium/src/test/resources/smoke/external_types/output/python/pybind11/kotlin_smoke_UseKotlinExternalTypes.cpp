@@ -31,13 +31,13 @@ auto cls_UseKotlinExternalTypes = py::class_<UseKotlinExternalTypes, std::shared
         .def("__gluecodium_id__", [](const UseKotlinExternalTypes& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("currency_round_trip", &UseKotlinExternalTypes::currency_round_trip, py::arg("input"))
-        .def_static("time_zone_round_trip", &UseKotlinExternalTypes::time_zone_round_trip, py::arg("input"))
-        .def_static("month_round_trip", &UseKotlinExternalTypes::month_round_trip, py::arg("input"))
-        .def_static("color_round_trip", &UseKotlinExternalTypes::color_round_trip, py::arg("input"))
-        .def_static("season_round_trip", &UseKotlinExternalTypes::season_round_trip, py::arg("input"))
-        .def_static("struct_round_trip", &UseKotlinExternalTypes::struct_round_trip, py::arg("input"))
-        .def_static("very_boolean_unbox", &UseKotlinExternalTypes::very_boolean_unbox, py::arg("input"))
+        .def_static("currency_round_trip", &UseKotlinExternalTypes::currency_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("time_zone_round_trip", &UseKotlinExternalTypes::time_zone_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("month_round_trip", &UseKotlinExternalTypes::month_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("color_round_trip", &UseKotlinExternalTypes::color_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("season_round_trip", &UseKotlinExternalTypes::season_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("struct_round_trip", &UseKotlinExternalTypes::struct_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("very_boolean_unbox", &UseKotlinExternalTypes::very_boolean_unbox, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

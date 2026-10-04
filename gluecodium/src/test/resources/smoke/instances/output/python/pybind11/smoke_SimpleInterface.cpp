@@ -30,10 +30,10 @@ public:
 
     ::std::string get_string_value(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_string_value();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const SimpleInterface*>(this), "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e676574537472696e6756616c7565")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, SimpleInterface, "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e676574537472696e6756616c7565", get_string_value);
         }
@@ -41,10 +41,10 @@ public:
     }
     ::std::shared_ptr< ::smoke::SimpleInterface > use_simple_interface(
             const ::std::shared_ptr< ::smoke::SimpleInterface >& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->use_simple_interface(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const SimpleInterface*>(this), "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e75736553696d706c65496e74657266616365")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::shared_ptr< ::smoke::SimpleInterface >, SimpleInterface, "__gluecodium_callback_736d6f6b652e53696d706c65496e746572666163652e75736553696d706c65496e74657266616365", use_simple_interface, input);
         }
@@ -72,10 +72,10 @@ auto cls_SimpleInterface = py::class_<SimpleInterface, std::shared_ptr<SimpleInt
             return self;
         }))
         .def("get_string_value", [](SimpleInterface& self) {
-            return self.get_string_value();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.get_string_value(); });
         })
         .def("use_simple_interface", [](SimpleInterface& self, const ::std::shared_ptr< ::smoke::SimpleInterface >& input) {
-            return self.use_simple_interface(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.use_simple_interface(input); });
         }, py::arg("input"))
         ;
 

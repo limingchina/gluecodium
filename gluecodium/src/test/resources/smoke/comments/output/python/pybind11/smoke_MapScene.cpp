@@ -28,10 +28,10 @@ auto cls_MapScene = py::class_<MapScene, std::shared_ptr<MapScene>>(module, "smo
             return gluecodium::python::native_identity(self);
         })
                 .def("load_scene", [](MapScene& self, const int32_t map_scheme, const std::optional< ::std::function<void(const ::gluecodium::optional< ::std::string >&)> >& callback) {
-                        self.load_scene(map_scheme, callback);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.load_scene(map_scheme, callback); });
                 }, py::arg("map_scheme"), py::arg("callback"))
                 .def("load_scene", [](MapScene& self, const ::std::string& configuration_file, const std::optional< ::std::function<void(const ::gluecodium::optional< ::std::string >&)> >& callback) {
-                        self.load_scene(configuration_file, callback);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.load_scene(configuration_file, callback); });
                 }, py::arg("configuration_file"), py::arg("callback"))
         ;
 

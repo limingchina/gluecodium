@@ -28,32 +28,24 @@ auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{py
 auto {{varName}} = py::class_<{{resolveName model "Pybind11"}}>({{scope}}, "{{pybindName}}")
 {{#generateBinding}}
 {{#fields}}
-{{! A skipped field may still be present here (retained for Pybind11StructInit's
-    constructor signature, which must match the real C++ struct), but it must not
-    get its own accessor exposed to Python. }}
 {{#unlessPredicate "isSkippedForPython"}}
+        .def_property{{#ifPredicate "isImmutableField"}}_readonly{{/ifPredicate}}("{{resolveName}}", [](const {{resolveName model "Pybind11"}}& self) -> decltype(auto) {
+            return {{#ifPredicate typeRef "isLambdaType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate typeRef "isCollectionType"}}gluecodium::python::to_python_regular({{/ifPredicate}}{{#ifPredicate "hasFieldAccessors"}}gluecodium::python::call_native([&]() -> decltype(auto) { {{/ifPredicate}}
 {{#ifPredicate "hasFieldAccessors"}}
-{{#ifPredicate "hasExternalFieldAccessors"}}
-        .def_property{{#ifPredicate "isImmutableField"}}_readonly{{/ifPredicate}}("{{resolveName}}", [](const {{resolveName model "Pybind11"}}& self) {
-            return self.{{resolveName this "Pybind11" "getter"}}();
-        }{{#unlessPredicate "isImmutableField"}}, []({{resolveName model "Pybind11"}}& self, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value) {
-            self.{{resolveName this "Pybind11" "setter"}}(value);
-        }{{/unlessPredicate}})
-{{/ifPredicate}}
-{{#unlessPredicate "hasExternalFieldAccessors"}}
-{{#ifPredicate "isImmutableField"}}
-        .def_property_readonly("{{resolveName}}", {{#ifPredicate typeRef "needsRefSuffix"}}static_cast<const {{resolveName typeRef "Pybind11"}}& ({{resolveName model "Pybind11"}}::*)() const &>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/ifPredicate}}{{#unlessPredicate typeRef "needsRefSuffix"}}static_cast<{{resolveName typeRef "Pybind11"}} ({{resolveName model "Pybind11"}}::*)() const>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/unlessPredicate}})
-{{/ifPredicate}}{{#unlessPredicate "isImmutableField"}}
-        .def_property("{{resolveName}}", {{#ifPredicate typeRef "needsRefSuffix"}}static_cast<const {{resolveName typeRef "Pybind11"}}& ({{resolveName model "Pybind11"}}::*)() const &>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/ifPredicate}}{{#unlessPredicate typeRef "needsRefSuffix"}}static_cast<{{resolveName typeRef "Pybind11"}} ({{resolveName model "Pybind11"}}::*)() const>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "getter"}}){{/unlessPredicate}}, py::overload_cast<const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}}>(&{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11" "setter"}}))
-{{/unlessPredicate}}
-{{/unlessPredicate}}
+                return self.{{resolveName this "Pybind11" "getter"}}();
 {{/ifPredicate}}{{#unlessPredicate "hasFieldAccessors"}}
-{{#ifPredicate "isImmutableField"}}
-        .def_readonly("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
-{{/ifPredicate}}{{#unlessPredicate "isImmutableField"}}
-        .def_readwrite("{{resolveName}}", &{{resolveName model "Pybind11"}}::{{resolveName this "Pybind11"}})
+                (self.{{resolveName this "Pybind11"}})
 {{/unlessPredicate}}
+            {{#ifPredicate "hasFieldAccessors"}}}){{/ifPredicate}}{{#ifPredicate typeRef "isLambdaType"}}){{/ifPredicate}}{{#ifPredicate typeRef "isCollectionType"}}){{/ifPredicate}};
+        }{{#unlessPredicate "isImmutableField"}}, []({{resolveName model "Pybind11"}}& self, const {{resolveName typeRef "Pybind11"}}{{#ifPredicate typeRef "needsRefSuffix"}}&{{/ifPredicate}} value) {
+{{#ifPredicate "hasFieldAccessors"}}            gluecodium::python::call_native([&] { {{/ifPredicate}}
+{{#ifPredicate "hasFieldAccessors"}}
+                self.{{resolveName this "Pybind11" "setter"}}(value);
+{{/ifPredicate}}{{#unlessPredicate "hasFieldAccessors"}}
+                self.{{resolveName this "Pybind11"}} = value;
 {{/unlessPredicate}}
+{{#ifPredicate "hasFieldAccessors"}}            });{{/ifPredicate}}
+        }{{/unlessPredicate}})
 {{/unlessPredicate}}
 {{/fields}}
 {{>python/Pybind11StructInit}}

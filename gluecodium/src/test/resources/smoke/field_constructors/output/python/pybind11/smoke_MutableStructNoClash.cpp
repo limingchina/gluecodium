@@ -22,9 +22,33 @@ using MutableStructNoClash = ::smoke::MutableStructNoClash;
 
 void register_smoke_MutableStructNoClash(py::module_& module) {
 auto cls_MutableStructNoClash = py::class_<MutableStructNoClash>(module, "smoke_MutableStructNoClash")
-        .def_readwrite("string_field", &MutableStructNoClash::string_field)
-        .def_readwrite("int_field", &MutableStructNoClash::int_field)
-        .def_readwrite("bool_field", &MutableStructNoClash::bool_field)
+        .def_property("string_field", [](const MutableStructNoClash& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](MutableStructNoClash& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("int_field", [](const MutableStructNoClash& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](MutableStructNoClash& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("bool_field", [](const MutableStructNoClash& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](MutableStructNoClash& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
         .def(py::init<>())
         ;
 

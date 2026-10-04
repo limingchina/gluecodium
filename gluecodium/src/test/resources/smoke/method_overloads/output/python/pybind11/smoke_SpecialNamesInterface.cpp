@@ -29,15 +29,15 @@ public:
 
     void dispatch(
             const ::std::function<void()>& callback ) const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->dispatch(callback);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const SpecialNamesInterface*>(this), "__gluecodium_callback_736d6f6b652e5370656369616c4e616d6573496e746572666163652e6469737061746368")) {
-        PYBIND11_OVERRIDE_PURE_NAME(void, SpecialNamesInterface, "__gluecodium_callback_736d6f6b652e5370656369616c4e616d6573496e746572666163652e6469737061746368", dispatch, callback);
+        PYBIND11_OVERRIDE_PURE_NAME(void, SpecialNamesInterface, "__gluecodium_callback_736d6f6b652e5370656369616c4e616d6573496e746572666163652e6469737061746368", dispatch, gluecodium::python::to_python_regular(callback));
         }
-        PYBIND11_OVERRIDE_PURE(void, SpecialNamesInterface, dispatch, callback);
+        PYBIND11_OVERRIDE_PURE(void, SpecialNamesInterface, dispatch, gluecodium::python::to_python_regular(callback));
     }
 };
 
@@ -61,7 +61,7 @@ auto cls_SpecialNamesInterface = py::class_<SpecialNamesInterface, std::shared_p
             return self;
         }))
                 .def("dispatch", [](SpecialNamesInterface& self, const ::std::function<void()>& callback) {
-                        self.dispatch(callback);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.dispatch(callback); });
                 }, py::arg("callback"))
         ;
 

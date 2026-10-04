@@ -24,8 +24,16 @@ auto cls_AttributesClass = py::class_<AttributesClass, std::shared_ptr<Attribute
         .def("__gluecodium_id__", [](const AttributesClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("very_fun", &AttributesClass::very_fun, py::arg("param"))
-        .def_property("prop", py::overload_cast<>(&AttributesClass::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesClass::set_prop))
+        .def("very_fun", &AttributesClass::very_fun, py::arg("param"), py::call_guard<py::gil_scoped_release>())
+        .def_property("prop", [](const AttributesClass& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_prop();
+            });
+        }, [](AttributesClass& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_prop(value);
+            });
+        })
         ;
 
 

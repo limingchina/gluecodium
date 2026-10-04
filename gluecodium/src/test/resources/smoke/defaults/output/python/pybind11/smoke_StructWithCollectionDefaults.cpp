@@ -27,12 +27,60 @@ using StructWithCollectionDefaults = ::smoke::StructWithCollectionDefaults;
 
 void register_smoke_StructWithCollectionDefaults(py::module_& module) {
 auto cls_StructWithCollectionDefaults = py::class_<StructWithCollectionDefaults>(module, "smoke_StructWithCollectionDefaults")
-        .def_readwrite("empty_list_field", &StructWithCollectionDefaults::empty_list_field)
-        .def_readwrite("empty_map_field", &StructWithCollectionDefaults::empty_map_field)
-        .def_readwrite("empty_set_field", &StructWithCollectionDefaults::empty_set_field)
-        .def_readwrite("list_field", &StructWithCollectionDefaults::list_field)
-        .def_readwrite("map_field", &StructWithCollectionDefaults::map_field)
-        .def_readwrite("set_field", &StructWithCollectionDefaults::set_field)
+        .def_property("empty_list_field", [](const StructWithCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.empty_list_field)
+            );
+        }, [](StructWithCollectionDefaults& self, const ::std::vector< ::std::string >& value) {
+
+                self.empty_list_field = value;
+
+        })
+        .def_property("empty_map_field", [](const StructWithCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.empty_map_field)
+            );
+        }, [](StructWithCollectionDefaults& self, const ::std::unordered_map< ::std::string, ::std::string >& value) {
+
+                self.empty_map_field = value;
+
+        })
+        .def_property("empty_set_field", [](const StructWithCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.empty_set_field)
+            );
+        }, [](StructWithCollectionDefaults& self, const ::std::unordered_set< ::std::string >& value) {
+
+                self.empty_set_field = value;
+
+        })
+        .def_property("list_field", [](const StructWithCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.list_field)
+            );
+        }, [](StructWithCollectionDefaults& self, const ::std::vector< ::std::string >& value) {
+
+                self.list_field = value;
+
+        })
+        .def_property("map_field", [](const StructWithCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.map_field)
+            );
+        }, [](StructWithCollectionDefaults& self, const ::std::unordered_map< ::std::string, ::std::string >& value) {
+
+                self.map_field = value;
+
+        })
+        .def_property("set_field", [](const StructWithCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.set_field)
+            );
+        }, [](StructWithCollectionDefaults& self, const ::std::unordered_set< ::std::string >& value) {
+
+                self.set_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >, ::std::vector< ::std::string >, ::std::unordered_map< ::std::string, ::std::string >, ::std::unordered_set< ::std::string >>(), py::arg("empty_list_field"), py::arg("empty_map_field"), py::arg("empty_set_field"), py::arg("list_field"), py::arg("map_field"), py::arg("set_field"))
         ;

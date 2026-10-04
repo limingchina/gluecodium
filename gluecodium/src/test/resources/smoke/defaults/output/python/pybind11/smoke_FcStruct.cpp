@@ -21,7 +21,15 @@ using FcStruct = ::smoke::FcStruct;
 
 void register_smoke_FcStruct(py::module_& module) {
 auto cls_FcStruct = py::class_<FcStruct>(module, "smoke_FcStruct")
-        .def_readwrite("string_field", &FcStruct::string_field)
+        .def_property("string_field", [](const FcStruct& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FcStruct& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

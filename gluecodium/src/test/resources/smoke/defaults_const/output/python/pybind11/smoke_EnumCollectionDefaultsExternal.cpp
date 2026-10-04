@@ -31,9 +31,33 @@ using EnumCollectionDefaultsExternal = ::smoke::EnumCollectionDefaultsExternal;
 
 void register_smoke_EnumCollectionDefaultsExternal(py::module_& module) {
 auto cls_EnumCollectionDefaultsExternal = py::class_<EnumCollectionDefaultsExternal>(module, "smoke_EnumCollectionDefaultsExternal")
-        .def_readwrite("list_field", &EnumCollectionDefaultsExternal::list_field)
-        .def_readwrite("set_field", &EnumCollectionDefaultsExternal::set_field)
-        .def_readwrite("map_field", &EnumCollectionDefaultsExternal::map_field)
+        .def_property("list_field", [](const EnumCollectionDefaultsExternal& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.list_field)
+            );
+        }, [](EnumCollectionDefaultsExternal& self, const ::std::vector< foo::AlienEnum1 >& value) {
+
+                self.list_field = value;
+
+        })
+        .def_property("set_field", [](const EnumCollectionDefaultsExternal& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.set_field)
+            );
+        }, [](EnumCollectionDefaultsExternal& self, const ::std::unordered_set< foo::AlienEnum2, ::gluecodium::hash< foo::AlienEnum2 > >& value) {
+
+                self.set_field = value;
+
+        })
+        .def_property("map_field", [](const EnumCollectionDefaultsExternal& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.map_field)
+            );
+        }, [](EnumCollectionDefaultsExternal& self, const ::std::unordered_map< foo::AlienEnum3, foo::AlienEnum4, ::gluecodium::hash< foo::AlienEnum3 > >& value) {
+
+                self.map_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< foo::AlienEnum1 >, ::std::unordered_set< foo::AlienEnum2, ::gluecodium::hash< foo::AlienEnum2 > >, ::std::unordered_map< foo::AlienEnum3, foo::AlienEnum4, ::gluecodium::hash< foo::AlienEnum3 > >>(), py::arg("list_field"), py::arg("set_field"), py::arg("map_field"))
         ;

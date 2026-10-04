@@ -52,7 +52,15 @@ auto cls_PublicInterface = py::class_<PublicInterface, std::shared_ptr<PublicInt
         ;
 
 auto cls__PublicInterfaceInternalStruct = py::class_<InternalStruct>(cls_PublicInterface, "_InternalStruct")
-        .def_readwrite("field_of_internal_type", &InternalStruct::field_of_internal_type)
+        .def_property("field_of_internal_type", [](const InternalStruct& self) -> decltype(auto) {
+            return
+                (self.field_of_internal_type)
+            ;
+        }, [](InternalStruct& self, const ::smoke::PublicClass::InternalStruct& value) {
+
+                self.field_of_internal_type = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::PublicClass::InternalStruct>(), py::arg("field_of_internal_type"))
         ;

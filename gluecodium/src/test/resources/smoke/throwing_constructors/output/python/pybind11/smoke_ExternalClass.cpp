@@ -50,22 +50,22 @@ auto cls_ExternalClass = py::class_<ExternalClass, std::shared_ptr<ExternalClass
             self->m_impl = native;
             return self;
         }))
-        .def_static("create", &ExternalClass::create)
+        .def_static("create", &ExternalClass::create, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_ExternalClassInternalOne = py::class_<InternalOne, std::shared_ptr<InternalOne>>(cls_ExternalClass, "InternalOne")
         .def("__gluecodium_id__", [](const InternalOne& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("create", py::overload_cast<>(InternalOne::create))
-        .def_static("create", py::overload_cast<const uint64_t>(InternalOne::create), py::arg("value"))
+        .def_static("create", py::overload_cast<>(InternalOne::create), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const uint64_t>(InternalOne::create), py::arg("value"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_ExternalClassInternalTwo = py::class_<InternalTwo, std::shared_ptr<InternalTwo>>(cls_ExternalClass, "InternalTwo")
         .def("__gluecodium_id__", [](const InternalTwo& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("create", &InternalTwo::create)
+        .def_static("create", &InternalTwo::create, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_ExternalClassErrorEnum = py::enum_<ErrorEnum>(cls_ExternalClass, "ErrorEnum")

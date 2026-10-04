@@ -26,14 +26,22 @@ auto cls_PlatformComments = py::class_<PlatformComments, std::shared_ptr<Platfor
         .def("__gluecodium_id__", [](const PlatformComments& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_nothing", &PlatformComments::do_nothing)
-        .def("do_magic", &PlatformComments::do_magic)
-        .def("some_method_with_all_comments", &PlatformComments::some_method_with_all_comments, py::arg("input"))
-        .def("some_deprecated_method", &PlatformComments::some_deprecated_method)
+        .def("do_nothing", &PlatformComments::do_nothing, py::call_guard<py::gil_scoped_release>())
+        .def("do_magic", &PlatformComments::do_magic, py::call_guard<py::gil_scoped_release>())
+        .def("some_method_with_all_comments", &PlatformComments::some_method_with_all_comments, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("some_deprecated_method", &PlatformComments::some_deprecated_method, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_PlatformCommentssomething = py::class_<Something>(cls_PlatformComments, "Something")
-        .def_readwrite("nothing", &Something::nothing)
+        .def_property("nothing", [](const Something& self) -> decltype(auto) {
+            return
+                (self.nothing)
+            ;
+        }, [](Something& self, const ::std::string& value) {
+
+                self.nothing = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("nothing"))
         ;

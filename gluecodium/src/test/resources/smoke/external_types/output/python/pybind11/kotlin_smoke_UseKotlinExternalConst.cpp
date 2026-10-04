@@ -22,7 +22,15 @@ using UseKotlinExternalConst = ::kotlin_smoke::UseKotlinExternalConst;
 
 void register_kotlin_smoke_UseKotlinExternalConst(py::module_& module) {
 auto cls_UseKotlinExternalConst = py::class_<UseKotlinExternalConst>(module, "kotlin_smoke_UseKotlinExternalConst")
-        .def_readwrite("string_field", &UseKotlinExternalConst::string_field)
+        .def_property("string_field", [](const UseKotlinExternalConst& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](UseKotlinExternalConst& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

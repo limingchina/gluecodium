@@ -33,15 +33,15 @@ public:
 
     void take_screenshot(
             const ::std::function<void(const ::gluecodium::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >&)>& callback ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->take_screenshot(callback);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const LambdasInterface*>(this), "__gluecodium_callback_736d6f6b652e4c616d62646173496e746572666163652e74616b655f73637265656e73686f74")) {
-        PYBIND11_OVERRIDE_PURE_NAME(void, LambdasInterface, "__gluecodium_callback_736d6f6b652e4c616d62646173496e746572666163652e74616b655f73637265656e73686f74", take_screenshot, callback);
+        PYBIND11_OVERRIDE_PURE_NAME(void, LambdasInterface, "__gluecodium_callback_736d6f6b652e4c616d62646173496e746572666163652e74616b655f73637265656e73686f74", take_screenshot, gluecodium::python::to_python_regular(callback));
         }
-        PYBIND11_OVERRIDE_PURE(void, LambdasInterface, take_screenshot, callback);
+        PYBIND11_OVERRIDE_PURE(void, LambdasInterface, take_screenshot, gluecodium::python::to_python_regular(callback));
     }
 };
 
@@ -65,7 +65,7 @@ auto cls_LambdasInterface = py::class_<LambdasInterface, std::shared_ptr<Lambdas
             return self;
         }))
                 .def("take_screenshot", [](LambdasInterface& self, const ::std::function<void(const ::gluecodium::optional< ::std::shared_ptr< ::std::vector< uint8_t > > >&)>& callback) {
-                        self.take_screenshot(callback);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.take_screenshot(callback); });
                 }, py::arg("callback"))
         ;
 

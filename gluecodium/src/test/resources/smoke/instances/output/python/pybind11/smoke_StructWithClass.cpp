@@ -22,7 +22,15 @@ using StructWithClass = ::smoke::StructWithClass;
 
 void register_smoke_StructWithClass(py::module_& module) {
 auto cls_StructWithClass = py::class_<StructWithClass>(module, "smoke_StructWithClass")
-        .def_readwrite("class_instance", &StructWithClass::class_instance)
+        .def_property("class_instance", [](const StructWithClass& self) -> decltype(auto) {
+            return
+                (self.class_instance)
+            ;
+        }, [](StructWithClass& self, const ::std::shared_ptr< ::smoke::SimpleClass >& value) {
+
+                self.class_instance = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::SimpleClass >>(), py::arg("class_instance"))
         ;

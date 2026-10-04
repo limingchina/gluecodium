@@ -22,11 +22,51 @@ using StructWithKotlinPositionalDefaults = ::smoke::StructWithKotlinPositionalDe
 
 void register_smoke_StructWithKotlinPositionalDefaults(py::module_& module) {
 auto cls_StructWithKotlinPositionalDefaults = py::class_<StructWithKotlinPositionalDefaults>(module, "smoke_StructWithKotlinPositionalDefaults")
-        .def_readwrite("first_init_field", &StructWithKotlinPositionalDefaults::first_init_field)
-        .def_readwrite("first_free_field", &StructWithKotlinPositionalDefaults::first_free_field)
-        .def_readwrite("second_init_field", &StructWithKotlinPositionalDefaults::second_init_field)
-        .def_readwrite("second_free_field", &StructWithKotlinPositionalDefaults::second_free_field)
-        .def_readwrite("third_init_field", &StructWithKotlinPositionalDefaults::third_init_field)
+        .def_property("first_init_field", [](const StructWithKotlinPositionalDefaults& self) -> decltype(auto) {
+            return
+                (self.first_init_field)
+            ;
+        }, [](StructWithKotlinPositionalDefaults& self, const int32_t value) {
+
+                self.first_init_field = value;
+
+        })
+        .def_property("first_free_field", [](const StructWithKotlinPositionalDefaults& self) -> decltype(auto) {
+            return
+                (self.first_free_field)
+            ;
+        }, [](StructWithKotlinPositionalDefaults& self, const ::std::string& value) {
+
+                self.first_free_field = value;
+
+        })
+        .def_property("second_init_field", [](const StructWithKotlinPositionalDefaults& self) -> decltype(auto) {
+            return
+                (self.second_init_field)
+            ;
+        }, [](StructWithKotlinPositionalDefaults& self, const float value) {
+
+                self.second_init_field = value;
+
+        })
+        .def_property("second_free_field", [](const StructWithKotlinPositionalDefaults& self) -> decltype(auto) {
+            return
+                (self.second_free_field)
+            ;
+        }, [](StructWithKotlinPositionalDefaults& self, const bool value) {
+
+                self.second_free_field = value;
+
+        })
+        .def_property("third_init_field", [](const StructWithKotlinPositionalDefaults& self) -> decltype(auto) {
+            return
+                (self.third_init_field)
+            ;
+        }, [](StructWithKotlinPositionalDefaults& self, const ::std::string& value) {
+
+                self.third_init_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string, bool>(), py::arg("first_free_field"), py::arg("second_free_field"))
         .def(py::init<int32_t, ::std::string, float, bool, ::std::string>(), py::arg("first_init_field"), py::arg("first_free_field"), py::arg("second_init_field"), py::arg("second_free_field"), py::arg("third_init_field"))

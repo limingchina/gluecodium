@@ -28,11 +28,51 @@ using EquatableStructWithInternalFields = ::smoke::EquatableStructWithInternalFi
 
 void register_smoke_EquatableStructWithInternalFields(py::module_& module) {
 auto cls_EquatableStructWithInternalFields = py::class_<EquatableStructWithInternalFields>(module, "smoke_EquatableStructWithInternalFields")
-        .def_readwrite("public_field", &EquatableStructWithInternalFields::public_field)
-        .def_readwrite("_internal_field", &EquatableStructWithInternalFields::internal_field)
-        .def_readwrite("_internal_list_field", &EquatableStructWithInternalFields::internal_list_field)
-        .def_readwrite("_internal_map_field", &EquatableStructWithInternalFields::internal_map_field)
-        .def_readwrite("_internal_set_field", &EquatableStructWithInternalFields::internal_set_field)
+        .def_property("public_field", [](const EquatableStructWithInternalFields& self) -> decltype(auto) {
+            return
+                (self.public_field)
+            ;
+        }, [](EquatableStructWithInternalFields& self, const ::std::string& value) {
+
+                self.public_field = value;
+
+        })
+        .def_property("_internal_field", [](const EquatableStructWithInternalFields& self) -> decltype(auto) {
+            return
+                (self.internal_field)
+            ;
+        }, [](EquatableStructWithInternalFields& self, const ::std::string& value) {
+
+                self.internal_field = value;
+
+        })
+        .def_property("_internal_list_field", [](const EquatableStructWithInternalFields& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.internal_list_field)
+            );
+        }, [](EquatableStructWithInternalFields& self, const ::std::vector< ::std::string >& value) {
+
+                self.internal_list_field = value;
+
+        })
+        .def_property("_internal_map_field", [](const EquatableStructWithInternalFields& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.internal_map_field)
+            );
+        }, [](EquatableStructWithInternalFields& self, const ::std::unordered_map< ::std::string, ::std::string >& value) {
+
+                self.internal_map_field = value;
+
+        })
+        .def_property("_internal_set_field", [](const EquatableStructWithInternalFields& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.internal_set_field)
+            );
+        }, [](EquatableStructWithInternalFields& self, const ::std::unordered_set< ::std::string >& value) {
+
+                self.internal_set_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init([](const ::std::string& public_field) {
             return EquatableStructWithInternalFields(public_field, ::std::string{}, ::std::vector< ::std::string >{}, ::std::unordered_map< ::std::string, ::std::string >{}, ::std::unordered_set< ::std::string >{});

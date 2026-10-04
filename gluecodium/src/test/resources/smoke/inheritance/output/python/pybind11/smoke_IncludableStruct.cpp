@@ -21,7 +21,15 @@ using IncludableStruct = ::smoke::IncludableStruct;
 
 void register_smoke_IncludableStruct(py::module_& module) {
 auto cls_IncludableStruct = py::class_<IncludableStruct>(module, "smoke_IncludableStruct")
-        .def_readwrite("field", &IncludableStruct::field)
+        .def_property("field", [](const IncludableStruct& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](IncludableStruct& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;

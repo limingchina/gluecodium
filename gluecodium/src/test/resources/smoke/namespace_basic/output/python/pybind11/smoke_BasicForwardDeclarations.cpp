@@ -25,7 +25,7 @@ auto cls_BasicForwardDeclarations = py::class_<BasicForwardDeclarations, std::sh
         .def("__gluecodium_id__", [](const BasicForwardDeclarations& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("use_basic", &BasicForwardDeclarations::use_basic)
+        .def("use_basic", &BasicForwardDeclarations::use_basic, py::call_guard<py::gil_scoped_release>())
         ;
 
 

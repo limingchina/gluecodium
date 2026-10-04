@@ -25,8 +25,8 @@ auto cls_RenamedClass = py::class_<MyClass, std::shared_ptr<MyClass>>(module, "c
         .def("__gluecodium_id__", [](const MyClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("_internal_method", &MyClass::internal_method)
-        .def("visible_method", &MyClass::visible_method, py::arg("param"))
+        .def("_internal_method", &MyClass::internal_method, py::call_guard<py::gil_scoped_release>())
+        .def("visible_method", &MyClass::visible_method, py::arg("param"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

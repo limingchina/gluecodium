@@ -24,7 +24,7 @@ auto cls_SkippedFunctionClass = py::class_<SkippedFunctionClass, std::shared_ptr
         .def("__gluecodium_id__", [](const SkippedFunctionClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_foo", &SkippedFunctionClass::do_foo, py::arg("input"))
+        .def("do_foo", &SkippedFunctionClass::do_foo, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

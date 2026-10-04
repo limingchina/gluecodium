@@ -22,7 +22,15 @@ using StructWithInterface = ::smoke::StructWithInterface;
 
 void register_smoke_StructWithInterface(py::module_& module) {
 auto cls_StructWithInterface = py::class_<StructWithInterface>(module, "smoke_StructWithInterface")
-        .def_readwrite("interface_instance", &StructWithInterface::interface_instance)
+        .def_property("interface_instance", [](const StructWithInterface& self) -> decltype(auto) {
+            return
+                (self.interface_instance)
+            ;
+        }, [](StructWithInterface& self, const ::std::shared_ptr< ::smoke::SimpleInterface >& value) {
+
+                self.interface_instance = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::SimpleInterface >>(), py::arg("interface_instance"))
         ;

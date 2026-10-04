@@ -29,8 +29,24 @@ using NullableCollectionsStruct = ::smoke::NullableCollectionsStruct;
 
 void register_smoke_NullableCollectionsStruct(py::module_& module) {
 auto cls_NullableCollectionsStruct = py::class_<NullableCollectionsStruct>(module, "smoke_NullableCollectionsStruct")
-        .def_readwrite("dates", &NullableCollectionsStruct::dates)
-        .def_readwrite("structs", &NullableCollectionsStruct::structs)
+        .def_property("dates", [](const NullableCollectionsStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.dates)
+            );
+        }, [](NullableCollectionsStruct& self, const ::std::vector< ::gluecodium::optional< ::std::chrono::system_clock::time_point > >& value) {
+
+                self.dates = value;
+
+        })
+        .def_property("structs", [](const NullableCollectionsStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.structs)
+            );
+        }, [](NullableCollectionsStruct& self, const ::std::unordered_map< int32_t, ::gluecodium::optional< ::smoke::Nullable::SomeStruct > >& value) {
+
+                self.structs = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::gluecodium::optional< ::std::chrono::system_clock::time_point > >, ::std::unordered_map< int32_t, ::gluecodium::optional< ::smoke::Nullable::SomeStruct > >>(), py::arg("dates"), py::arg("structs"))
         ;

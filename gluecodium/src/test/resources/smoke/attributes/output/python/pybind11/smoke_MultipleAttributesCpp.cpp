@@ -23,11 +23,11 @@ auto cls_MultipleAttributesCpp = py::class_<MultipleAttributesCpp, std::shared_p
         .def("__gluecodium_id__", [](const MultipleAttributesCpp& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("no_lists2", &MultipleAttributesCpp::no_lists2)
-        .def("no_lists3", &MultipleAttributesCpp::no_lists3)
-        .def("list_first", &MultipleAttributesCpp::list_first)
-        .def("list_second", &MultipleAttributesCpp::list_second)
-        .def("two_lists", &MultipleAttributesCpp::two_lists)
+        .def("no_lists2", &MultipleAttributesCpp::no_lists2, py::call_guard<py::gil_scoped_release>())
+        .def("no_lists3", &MultipleAttributesCpp::no_lists3, py::call_guard<py::gil_scoped_release>())
+        .def("list_first", &MultipleAttributesCpp::list_first, py::call_guard<py::gil_scoped_release>())
+        .def("list_second", &MultipleAttributesCpp::list_second, py::call_guard<py::gil_scoped_release>())
+        .def("two_lists", &MultipleAttributesCpp::two_lists, py::call_guard<py::gil_scoped_release>())
         ;
 
 

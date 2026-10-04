@@ -30,11 +30,11 @@ public:
 
     void child_class_method(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->child_class_method();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassFromClass*>(this), "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173732e6368696c64436c6173734d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClass, "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173732e6368696c64436c6173734d6574686f64", child_class_method);
         }
@@ -42,32 +42,32 @@ public:
     }
     void root_method(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->root_method();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassFromClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f744d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f744d6574686f64", root_method);
         }
         PYBIND11_OVERRIDE_PURE(void, ChildClassFromClass, root_method);
     }
     ::std::string get_root_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassFromClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, ChildClassFromClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_get", get_root_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ChildClassFromClass, get_root_property);
     }
     void set_root_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_root_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassFromClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClass, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_set", set_root_property, value);
         }
@@ -101,9 +101,17 @@ auto cls_ChildClassFromClass = py::class_<ChildClassFromClass, ::smoke::ParentCl
             self->m_impl = native;
             return self;
         }))
-        .def("child_class_method", &ChildClassFromClass::child_class_method)
-        .def("root_method", &ChildClassFromClass::root_method)
-        .def_property("root_property", py::overload_cast<>(&ChildClassFromClass::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ChildClassFromClass::set_root_property))
+        .def("child_class_method", &ChildClassFromClass::child_class_method, py::call_guard<py::gil_scoped_release>())
+        .def("root_method", &ChildClassFromClass::root_method, py::call_guard<py::gil_scoped_release>())
+        .def_property("root_property", [](const ChildClassFromClass& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_root_property();
+            });
+        }, [](ChildClassFromClass& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_root_property(value);
+            });
+        })
         ;
 
 

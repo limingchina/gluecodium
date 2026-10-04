@@ -22,12 +22,36 @@ using FieldCustomConstructorsMix = ::smoke::FieldCustomConstructorsMix;
 
 void register_smoke_FieldCustomConstructorsMix(py::module_& module) {
 auto cls_FieldCustomConstructorsMix = py::class_<FieldCustomConstructorsMix>(module, "smoke_FieldCustomConstructorsMix")
-        .def_readwrite("string_field", &FieldCustomConstructorsMix::string_field)
-        .def_readwrite("int_field", &FieldCustomConstructorsMix::int_field)
-        .def_readwrite("bool_field", &FieldCustomConstructorsMix::bool_field)
+        .def_property("string_field", [](const FieldCustomConstructorsMix& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldCustomConstructorsMix& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("int_field", [](const FieldCustomConstructorsMix& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](FieldCustomConstructorsMix& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("bool_field", [](const FieldCustomConstructorsMix& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](FieldCustomConstructorsMix& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("int_field"))
-        .def_static("create_me", &FieldCustomConstructorsMix::create_me, py::arg("int_value"), py::arg("dummy"))
+        .def_static("create_me", &FieldCustomConstructorsMix::create_me, py::arg("int_value"), py::arg("dummy"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

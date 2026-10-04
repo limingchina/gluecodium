@@ -25,11 +25,19 @@ auto cls_NestedPackages = py::class_<NestedPackages, std::shared_ptr<NestedPacka
         .def("__gluecodium_id__", [](const NestedPackages& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("basic_method", &NestedPackages::basic_method, py::arg("input"))
+        .def_static("basic_method", &NestedPackages::basic_method, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_NestedPackagesSomeStruct = py::class_<SomeStruct>(cls_NestedPackages, "SomeStruct")
-        .def_readwrite("some_field", &SomeStruct::some_field)
+        .def_property("some_field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.some_field)
+            ;
+        }, [](SomeStruct& self, const ::std::string& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("some_field"))
         ;

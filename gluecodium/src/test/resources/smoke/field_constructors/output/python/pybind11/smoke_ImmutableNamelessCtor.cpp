@@ -21,7 +21,15 @@ using ImmutableNamelessCtor = ::smoke::ImmutableNamelessCtor;
 
 void register_smoke_ImmutableNamelessCtor(py::module_& module) {
 auto cls_ImmutableNamelessCtor = py::class_<ImmutableNamelessCtor>(module, "smoke_ImmutableNamelessCtor")
-        .def_readwrite("string_field", &ImmutableNamelessCtor::string_field)
+        .def_property("string_field", [](const ImmutableNamelessCtor& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](ImmutableNamelessCtor& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         ;
 

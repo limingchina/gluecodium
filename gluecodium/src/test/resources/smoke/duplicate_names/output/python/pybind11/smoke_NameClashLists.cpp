@@ -24,8 +24,24 @@ using NameClashLists = ::smoke::NameClashLists;
 
 void register_smoke_NameClashLists(py::module_& module) {
 auto cls_NameClashLists = py::class_<NameClashLists>(module, "smoke_NameClashLists")
-        .def_readwrite("field_a", &NameClashLists::field_a)
-        .def_readwrite("field_b", &NameClashLists::field_b)
+        .def_property("field_a", [](const NameClashLists& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.field_a)
+            );
+        }, [](NameClashLists& self, const ::std::vector< ::smoke::Alphabet >& value) {
+
+                self.field_a = value;
+
+        })
+        .def_property("field_b", [](const NameClashLists& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.field_b)
+            );
+        }, [](NameClashLists& self, const ::std::vector< ::smoke::foo::Alphabet >& value) {
+
+                self.field_b = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< ::smoke::Alphabet >, ::std::vector< ::smoke::foo::Alphabet >>(), py::arg("field_a"), py::arg("field_b"))
         ;

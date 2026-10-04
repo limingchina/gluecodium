@@ -32,10 +32,10 @@ public:
 
     ::std::string foo(
             const ::std::string& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->foo(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const OuterClassWithInheritance*>(this), "__gluecodium_callback_736d6f6b652e4f75746572436c61737357697468496e6865726974616e63652e666f6f")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, OuterClassWithInheritance, "__gluecodium_callback_736d6f6b652e4f75746572436c61737357697468496e6865726974616e63652e666f6f", foo, input);
         }
@@ -43,32 +43,32 @@ public:
     }
     void parent_fun(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_fun();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const OuterClassWithInheritance*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7446756e")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, OuterClassWithInheritance, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7446756e", parent_fun);
         }
         PYBIND11_OVERRIDE_PURE(void, OuterClassWithInheritance, parent_fun);
     }
     ::std::string get_parent_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_parent_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const OuterClassWithInheritance*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, OuterClassWithInheritance, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_get", get_parent_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, OuterClassWithInheritance, get_parent_property);
     }
     void set_parent_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_parent_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const OuterClassWithInheritance*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, OuterClassWithInheritance, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e706172656e7450726f7065727479_set", set_parent_property, value);
         }
@@ -88,10 +88,10 @@ public:
 
     ::std::string baz(
             const ::std::string& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->baz(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const InnerInterface*>(this), "__gluecodium_callback_736d6f6b652e4f75746572436c61737357697468496e6865726974616e63652e496e6e6572496e746572666163652e62617a")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, InnerInterface, "__gluecodium_callback_736d6f6b652e4f75746572436c61737357697468496e6865726974616e63652e496e6e6572496e746572666163652e62617a", baz, input);
         }
@@ -125,16 +125,24 @@ auto cls_OuterClassWithInheritance = py::class_<OuterClassWithInheritance, ::smo
             self->m_impl = native;
             return self;
         }))
-        .def("foo", &OuterClassWithInheritance::foo, py::arg("input"))
-        .def("parent_fun", &OuterClassWithInheritance::parent_fun)
-        .def_property("parent_property", py::overload_cast<>(&OuterClassWithInheritance::get_parent_property, py::const_), py::overload_cast<const ::std::string&>(&OuterClassWithInheritance::set_parent_property))
+        .def("foo", &OuterClassWithInheritance::foo, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("parent_fun", &OuterClassWithInheritance::parent_fun, py::call_guard<py::gil_scoped_release>())
+        .def_property("parent_property", [](const OuterClassWithInheritance& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property();
+            });
+        }, [](OuterClassWithInheritance& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_parent_property(value);
+            });
+        })
         ;
 
 auto cls_OuterClassWithInheritanceInnerClass = py::class_<InnerClass, std::shared_ptr<InnerClass>>(cls_OuterClassWithInheritance, "InnerClass")
         .def("__gluecodium_id__", [](const InnerClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("bar", &InnerClass::bar, py::arg("input"))
+        .def("bar", &InnerClass::bar, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_OuterClassWithInheritanceInnerInterface = py::class_<InnerInterface, std::shared_ptr<InnerInterface>, InnerInterfaceTrampoline>(cls_OuterClassWithInheritance, "InnerInterface")
@@ -154,7 +162,7 @@ auto cls_OuterClassWithInheritanceInnerInterface = py::class_<InnerInterface, st
             return self;
         }))
         .def("baz", [](InnerInterface& self, const ::std::string& input) {
-            return self.baz(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.baz(input); });
         }, py::arg("input"))
         ;
 

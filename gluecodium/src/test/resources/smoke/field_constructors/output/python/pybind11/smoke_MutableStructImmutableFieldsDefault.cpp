@@ -22,9 +22,33 @@ using MutableStructImmutableFieldsDefault = ::smoke::MutableStructImmutableField
 
 void register_smoke_MutableStructImmutableFieldsDefault(py::module_& module) {
 auto cls_MutableStructImmutableFieldsDefault = py::class_<MutableStructImmutableFieldsDefault>(module, "smoke_MutableStructImmutableFieldsDefault")
-        .def_readwrite("struct_field", &MutableStructImmutableFieldsDefault::struct_field)
-        .def_readwrite("int_field", &MutableStructImmutableFieldsDefault::int_field)
-        .def_readwrite("bool_field", &MutableStructImmutableFieldsDefault::bool_field)
+        .def_property("struct_field", [](const MutableStructImmutableFieldsDefault& self) -> decltype(auto) {
+            return
+                (self.struct_field)
+            ;
+        }, [](MutableStructImmutableFieldsDefault& self, const ::smoke::ImmutableDefaultCtor& value) {
+
+                self.struct_field = value;
+
+        })
+        .def_property("int_field", [](const MutableStructImmutableFieldsDefault& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](MutableStructImmutableFieldsDefault& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("bool_field", [](const MutableStructImmutableFieldsDefault& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](MutableStructImmutableFieldsDefault& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
         .def(py::init<>())
         ;
 

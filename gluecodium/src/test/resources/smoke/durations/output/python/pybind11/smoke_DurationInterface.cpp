@@ -31,10 +31,10 @@ public:
 
     ::std::string duration_function(
             const ::std::chrono::seconds input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->duration_function(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const DurationInterface*>(this), "__gluecodium_callback_736d6f6b652e4475726174696f6e496e746572666163652e6475726174696f6e46756e6374696f6e")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, DurationInterface, "__gluecodium_callback_736d6f6b652e4475726174696f6e496e746572666163652e6475726174696f6e46756e6374696f6e", duration_function, input);
         }
@@ -62,7 +62,7 @@ auto cls_DurationInterface = py::class_<DurationInterface, std::shared_ptr<Durat
             return self;
         }))
         .def("duration_function", [](DurationInterface& self, const ::std::chrono::seconds input) {
-            return self.duration_function(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.duration_function(input); });
         }, py::arg("input"))
         ;
 

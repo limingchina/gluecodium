@@ -27,16 +27,32 @@ auto cls_StructsWithMethods = py::class_<StructsWithMethods>(module, "smoke_Stru
         ;
 
 auto cls_StructsWithMethodsVector = py::class_<Vector>(cls_StructsWithMethods, "Vector")
-        .def_readwrite("x", &Vector::x)
-        .def_readwrite("y", &Vector::y)
+        .def_property("x", [](const Vector& self) -> decltype(auto) {
+            return
+                (self.x)
+            ;
+        }, [](Vector& self, const double value) {
+
+                self.x = value;
+
+        })
+        .def_property("y", [](const Vector& self) -> decltype(auto) {
+            return
+                (self.y)
+            ;
+        }, [](Vector& self, const double value) {
+
+                self.y = value;
+
+        })
         .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
-        .def("distance_to", &Vector::distance_to, py::arg("other"))
-        .def("add", &Vector::add, py::arg("other"))
-        .def_static("validate", &Vector::validate, py::arg("x"), py::arg("y"))
-        .def_static("create", py::overload_cast<const double, const double>(Vector::create), py::arg("x"), py::arg("y"))
-        .def_static("create", py::overload_cast<const ::smoke::StructsWithMethods::Vector&>(Vector::create), py::arg("other"))
-        .def_static("create", py::overload_cast<const uint64_t>(Vector::create), py::arg("input"))
+        .def("distance_to", &Vector::distance_to, py::arg("other"), py::call_guard<py::gil_scoped_release>())
+        .def("add", &Vector::add, py::arg("other"), py::call_guard<py::gil_scoped_release>())
+        .def_static("validate", &Vector::validate, py::arg("x"), py::arg("y"), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const double, const double>(Vector::create), py::arg("x"), py::arg("y"), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const ::smoke::StructsWithMethods::Vector&>(Vector::create), py::arg("other"), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const uint64_t>(Vector::create), py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

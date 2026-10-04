@@ -23,7 +23,15 @@ using SomeDartStructWithTypedefField = ::smoke::SomeDartStructWithTypedefField;
 
 void register_smoke_SomeDartStructWithTypedefField(py::module_& module) {
 auto cls_SomeDartStructWithTypedefField = py::class_<SomeDartStructWithTypedefField>(module, "smoke_SomeDartStructWithTypedefField")
-        .def_readwrite("some_field", &SomeDartStructWithTypedefField::some_field)
+        .def_property("some_field", [](const SomeDartStructWithTypedefField& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.some_field)
+            );
+        }, [](SomeDartStructWithTypedefField& self, const ::std::vector< float >& value) {
+
+                self.some_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::vector< float >>(), py::arg("some_field"))
         ;

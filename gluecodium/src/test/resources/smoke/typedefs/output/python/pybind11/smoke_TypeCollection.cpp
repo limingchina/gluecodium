@@ -27,14 +27,38 @@ auto cls_TypeCollection = py::class_<TypeCollection>(module, "smoke_TypeCollecti
         ;
 
 auto cls_TypeCollectionPoint = py::class_<Point>(cls_TypeCollection, "Point")
-        .def_readwrite("x", &Point::x)
-        .def_readwrite("y", &Point::y)
+        .def_property("x", [](const Point& self) -> decltype(auto) {
+            return
+                (self.x)
+            ;
+        }, [](Point& self, const double value) {
+
+                self.x = value;
+
+        })
+        .def_property("y", [](const Point& self) -> decltype(auto) {
+            return
+                (self.y)
+            ;
+        }, [](Point& self, const double value) {
+
+                self.y = value;
+
+        })
         .def(py::init<>())
         .def(py::init<double, double>(), py::arg("x"), py::arg("y"))
         ;
 
 auto cls_TypeCollectionStructHavingAliasFieldDefinedBelow = py::class_<StructHavingAliasFieldDefinedBelow>(cls_TypeCollection, "StructHavingAliasFieldDefinedBelow")
-        .def_readwrite("field", &StructHavingAliasFieldDefinedBelow::field)
+        .def_property("field", [](const StructHavingAliasFieldDefinedBelow& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](StructHavingAliasFieldDefinedBelow& self, const uint64_t value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<uint64_t>(), py::arg("field"))
         ;

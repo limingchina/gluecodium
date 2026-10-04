@@ -29,32 +29,32 @@ public:
 
     void parent_function_two(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_function_two();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentNarrowTwo*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7446756e6374696f6e54776f")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ParentNarrowTwo, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7446756e6374696f6e54776f", parent_function_two);
         }
         PYBIND11_OVERRIDE_PURE(void, ParentNarrowTwo, parent_function_two);
     }
     ::std::string get_parent_property_two() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_parent_property_two();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentNarrowTwo*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, ParentNarrowTwo, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_get", get_parent_property_two);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ParentNarrowTwo, get_parent_property_two);
     }
     void set_parent_property_two(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_parent_property_two(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ParentNarrowTwo*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, ParentNarrowTwo, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_set", set_parent_property_two, value);
         }
@@ -82,12 +82,16 @@ auto cls_ParentNarrowTwo = py::class_<ParentNarrowTwo, std::shared_ptr<ParentNar
             return self;
         }))
         .def("parent_function_two", [](ParentNarrowTwo& self) {
-            return self.parent_function_two();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_function_two(); });
         })
-        .def_property("parent_property_two", [](const ParentNarrowTwo& self) {
-            return self.get_parent_property_two();
+        .def_property("parent_property_two", [](const ParentNarrowTwo& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property_two();
+            });
         }, [](ParentNarrowTwo& self, const ::std::string& value) {
-            self.set_parent_property_two(value);
+            gluecodium::python::call_native([&] {
+                self.set_parent_property_two(value);
+            });
         })
         ;
 

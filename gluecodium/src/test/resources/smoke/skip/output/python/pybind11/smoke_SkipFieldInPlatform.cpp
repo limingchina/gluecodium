@@ -22,8 +22,24 @@ using SkipFieldInPlatform = ::smoke::SkipFieldInPlatform;
 
 void register_smoke_SkipFieldInPlatform(py::module_& module) {
 auto cls_SkipFieldInPlatform = py::class_<SkipFieldInPlatform>(module, "smoke_SkipFieldInPlatform")
-        .def_readwrite("int_field", &SkipFieldInPlatform::int_field)
-        .def_readwrite("bool_field", &SkipFieldInPlatform::bool_field)
+        .def_property("int_field", [](const SkipFieldInPlatform& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](SkipFieldInPlatform& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("bool_field", [](const SkipFieldInPlatform& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](SkipFieldInPlatform& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;

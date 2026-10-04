@@ -21,7 +21,15 @@ using ExposeStruct = ::smoke::ExposeStruct;
 
 void register_smoke_ExposeStruct(py::module_& module) {
 auto cls_ExposeStruct = py::class_<ExposeStruct>(module, "smoke_ExposeStruct")
-        .def_readwrite("field", &ExposeStruct::field)
+        .def_property("field", [](const ExposeStruct& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](ExposeStruct& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;

@@ -26,12 +26,20 @@ auto cls_CommentsLinks = py::class_<CommentsLinks, std::shared_ptr<CommentsLinks
         .def("__gluecodium_id__", [](const CommentsLinks& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("random_method", py::overload_cast<const ::smoke::Comments::SomeEnum>(&CommentsLinks::random_method), py::arg("input_parameter"))
-        .def("random_method", py::overload_cast<const ::std::string&, const bool>(&CommentsLinks::random_method), py::arg("text"), py::arg("flag"))
+        .def("random_method", py::overload_cast<const ::smoke::Comments::SomeEnum>(&CommentsLinks::random_method), py::arg("input_parameter"), py::call_guard<py::gil_scoped_release>())
+        .def("random_method", py::overload_cast<const ::std::string&, const bool>(&CommentsLinks::random_method), py::arg("text"), py::arg("flag"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_CommentsLinksRandomStruct = py::class_<RandomStruct>(cls_CommentsLinks, "RandomStruct")
-        .def_readwrite("random_field", &RandomStruct::random_field)
+        .def_property("random_field", [](const RandomStruct& self) -> decltype(auto) {
+            return
+                (self.random_field)
+            ;
+        }, [](RandomStruct& self, const ::smoke::Comments::SomeStruct& value) {
+
+                self.random_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::Comments::SomeStruct>(), py::arg("random_field"))
         ;

@@ -28,11 +28,11 @@ public:
 
     void notify(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->notify();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ListenerInterface*>(this), "__gluecodium_callback_736d6f6b652e4c697374656e6572496e746572666163652e6e6f74696679")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ListenerInterface, "__gluecodium_callback_736d6f6b652e4c697374656e6572496e746572666163652e6e6f74696679", notify);
         }
@@ -60,7 +60,7 @@ auto cls_ListenerInterface = py::class_<ListenerInterface, std::shared_ptr<Liste
             return self;
         }))
         .def("notify", [](ListenerInterface& self) {
-            return self.notify();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.notify(); });
         })
         ;
 

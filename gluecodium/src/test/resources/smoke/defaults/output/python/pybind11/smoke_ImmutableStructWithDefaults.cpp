@@ -21,7 +21,11 @@ using ImmutableStructWithDefaults = ::smoke::ImmutableStructWithDefaults;
 
 void register_smoke_ImmutableStructWithDefaults(py::module_& module) {
 auto cls_ImmutableStructWithDefaults = py::class_<ImmutableStructWithDefaults>(module, "smoke_ImmutableStructWithDefaults")
-        .def_readonly("int_field", &ImmutableStructWithDefaults::int_field)
+        .def_property_readonly("int_field", [](const ImmutableStructWithDefaults& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("int_field"))
         ;

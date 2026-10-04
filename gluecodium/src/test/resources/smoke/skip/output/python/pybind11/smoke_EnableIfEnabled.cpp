@@ -23,13 +23,13 @@ auto cls_EnableIfEnabled = py::class_<EnableIfEnabled, std::shared_ptr<EnableIfE
         .def("__gluecodium_id__", [](const EnableIfEnabled& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("enable_if_unquoted", &EnableIfEnabled::enable_if_unquoted)
-        .def_static("enable_if_unquoted_list", &EnableIfEnabled::enable_if_unquoted_list)
-        .def_static("enable_if_quoted", &EnableIfEnabled::enable_if_quoted)
-        .def_static("enable_if_quoted_list", &EnableIfEnabled::enable_if_quoted_list)
-        .def_static("enable_if_tagged", &EnableIfEnabled::enable_if_tagged)
-        .def_static("enable_if_tagged_list", &EnableIfEnabled::enable_if_tagged_list)
-        .def_static("enable_if_mixed_list", &EnableIfEnabled::enable_if_mixed_list)
+        .def_static("enable_if_unquoted", &EnableIfEnabled::enable_if_unquoted, py::call_guard<py::gil_scoped_release>())
+        .def_static("enable_if_unquoted_list", &EnableIfEnabled::enable_if_unquoted_list, py::call_guard<py::gil_scoped_release>())
+        .def_static("enable_if_quoted", &EnableIfEnabled::enable_if_quoted, py::call_guard<py::gil_scoped_release>())
+        .def_static("enable_if_quoted_list", &EnableIfEnabled::enable_if_quoted_list, py::call_guard<py::gil_scoped_release>())
+        .def_static("enable_if_tagged", &EnableIfEnabled::enable_if_tagged, py::call_guard<py::gil_scoped_release>())
+        .def_static("enable_if_tagged_list", &EnableIfEnabled::enable_if_tagged_list, py::call_guard<py::gil_scoped_release>())
+        .def_static("enable_if_mixed_list", &EnableIfEnabled::enable_if_mixed_list, py::call_guard<py::gil_scoped_release>())
         ;
 
 

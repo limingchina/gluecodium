@@ -29,31 +29,31 @@ public:
 
     ::std::string regular_function(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->regular_function();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const InterfaceWithStatic*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617246756e6374696f6e")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, InterfaceWithStatic, "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617246756e6374696f6e", regular_function);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, InterfaceWithStatic, regular_function);
     }
     ::std::string get_regular_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_regular_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const InterfaceWithStatic*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, InterfaceWithStatic, "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_get", get_regular_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, InterfaceWithStatic, get_regular_property);
     }
     void set_regular_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_regular_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const InterfaceWithStatic*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, InterfaceWithStatic, "__gluecodium_callback_736d6f6b652e496e74657266616365576974685374617469632e726567756c617250726f7065727479_set", set_regular_property, value);
         }
@@ -81,16 +81,28 @@ auto cls_InterfaceWithStatic = py::class_<InterfaceWithStatic, std::shared_ptr<I
             return self;
         }))
         .def("regular_function", [](InterfaceWithStatic& self) {
-            return self.regular_function();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.regular_function(); });
         })
-        .def_static("static_function", &InterfaceWithStatic::static_function)
-        .def_property("regular_property", [](const InterfaceWithStatic& self) {
-            return self.get_regular_property();
+        .def_static("static_function", &InterfaceWithStatic::static_function, py::call_guard<py::gil_scoped_release>())
+        .def_property("regular_property", [](const InterfaceWithStatic& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_regular_property();
+            });
         }, [](InterfaceWithStatic& self, const ::std::string& value) {
-            self.set_regular_property(value);
+            gluecodium::python::call_native([&] {
+                self.set_regular_property(value);
+            });
         })
-        .def_static("static_property", &InterfaceWithStatic::get_static_property)
-        .def_static("static_property_set", &InterfaceWithStatic::set_static_property)
+        .def_static("static_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return InterfaceWithStatic::get_static_property();
+            });
+        })
+        .def_static("static_property_set", [](const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                InterfaceWithStatic::set_static_property(value);
+            });
+        })
         ;
 
 

@@ -24,8 +24,8 @@ auto cls_OverloadsWithComments = py::class_<OverloadsWithComments, std::shared_p
         .def("__gluecodium_id__", [](const OverloadsWithComments& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_stuff", py::overload_cast<>(&OverloadsWithComments::do_stuff))
-        .def("do_stuff", py::overload_cast<const ::std::string&>(&OverloadsWithComments::do_stuff), py::arg("stuff"))
+        .def("do_stuff", py::overload_cast<>(&OverloadsWithComments::do_stuff), py::call_guard<py::gil_scoped_release>())
+        .def("do_stuff", py::overload_cast<const ::std::string&>(&OverloadsWithComments::do_stuff), py::arg("stuff"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

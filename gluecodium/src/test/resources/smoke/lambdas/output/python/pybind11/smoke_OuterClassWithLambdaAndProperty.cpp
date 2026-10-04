@@ -25,9 +25,25 @@ auto cls_OuterClassWithLambdaAndProperty = py::class_<OuterClassWithLambdaAndPro
         .def("__gluecodium_id__", [](const OuterClassWithLambdaAndProperty& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_property("some_integer", py::overload_cast<>(&OuterClassWithLambdaAndProperty::get_some_integer, py::const_), py::overload_cast<const int32_t>(&OuterClassWithLambdaAndProperty::set_some_integer))
-        .def_static("another_integer", &OuterClassWithLambdaAndProperty::get_another_integer)
-        .def_static("another_integer_set", &OuterClassWithLambdaAndProperty::set_another_integer)
+        .def_property("some_integer", [](const OuterClassWithLambdaAndProperty& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_some_integer();
+            });
+        }, [](OuterClassWithLambdaAndProperty& self, const int32_t value) {
+            gluecodium::python::call_native([&] {
+                self.set_some_integer(value);
+            });
+        })
+        .def_static("another_integer", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return OuterClassWithLambdaAndProperty::get_another_integer();
+            });
+        })
+        .def_static("another_integer_set", [](const int32_t value) {
+            gluecodium::python::call_native([&] {
+                OuterClassWithLambdaAndProperty::set_another_integer(value);
+            });
+        })
         ;
 
 

@@ -22,10 +22,42 @@ using Rectangle = ::smoke::Rectangle;
 
 void register_smoke_Rectangle(py::module_& module) {
 auto cls_Rectangle = py::class_<Rectangle>(module, "smoke_Rectangle")
-        .def_readwrite("left", &Rectangle::left)
-        .def_readwrite("top", &Rectangle::top)
-        .def_readwrite("width", &Rectangle::width)
-        .def_readwrite("height", &Rectangle::height)
+        .def_property("left", [](const Rectangle& self) -> decltype(auto) {
+            return
+                (self.left)
+            ;
+        }, [](Rectangle& self, const int32_t value) {
+
+                self.left = value;
+
+        })
+        .def_property("top", [](const Rectangle& self) -> decltype(auto) {
+            return
+                (self.top)
+            ;
+        }, [](Rectangle& self, const int32_t value) {
+
+                self.top = value;
+
+        })
+        .def_property("width", [](const Rectangle& self) -> decltype(auto) {
+            return
+                (self.width)
+            ;
+        }, [](Rectangle& self, const int32_t value) {
+
+                self.width = value;
+
+        })
+        .def_property("height", [](const Rectangle& self) -> decltype(auto) {
+            return
+                (self.height)
+            ;
+        }, [](Rectangle& self, const int32_t value) {
+
+                self.height = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, int32_t, int32_t, int32_t>(), py::arg("left"), py::arg("top"), py::arg("width"), py::arg("height"))
         ;

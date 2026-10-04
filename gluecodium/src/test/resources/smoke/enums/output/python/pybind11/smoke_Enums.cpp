@@ -31,15 +31,31 @@ auto cls_Enums = py::class_<Enums, std::shared_ptr<Enums>>(module, "smoke_Enums"
         .def("__gluecodium_id__", [](const Enums& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("method_with_enumeration", &Enums::method_with_enumeration, py::arg("input"))
-        .def_static("flip_enum_value", &Enums::flip_enum_value, py::arg("input"))
-        .def_static("extract_enum_from_struct", &Enums::extract_enum_from_struct, py::arg("input"))
-        .def_static("create_struct_with_enum_inside", &Enums::create_struct_with_enum_inside, py::arg("type"), py::arg("message"))
+        .def_static("method_with_enumeration", &Enums::method_with_enumeration, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("flip_enum_value", &Enums::flip_enum_value, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("extract_enum_from_struct", &Enums::extract_enum_from_struct, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("create_struct_with_enum_inside", &Enums::create_struct_with_enum_inside, py::arg("type"), py::arg("message"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_EnumsErrorStruct = py::class_<ErrorStruct>(cls_Enums, "ErrorStruct")
-        .def_readwrite("type", &ErrorStruct::type)
-        .def_readwrite("message", &ErrorStruct::message)
+        .def_property("type", [](const ErrorStruct& self) -> decltype(auto) {
+            return
+                (self.type)
+            ;
+        }, [](ErrorStruct& self, const ::smoke::Enums::InternalErrorCode value) {
+
+                self.type = value;
+
+        })
+        .def_property("message", [](const ErrorStruct& self) -> decltype(auto) {
+            return
+                (self.message)
+            ;
+        }, [](ErrorStruct& self, const ::std::string& value) {
+
+                self.message = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::Enums::InternalErrorCode, ::std::string>(), py::arg("type"), py::arg("message"))
         ;

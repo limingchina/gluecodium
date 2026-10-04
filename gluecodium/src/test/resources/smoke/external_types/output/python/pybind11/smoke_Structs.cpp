@@ -32,26 +32,46 @@ auto cls_Structs = py::class_<Structs, std::shared_ptr<Structs>>(module, "smoke_
         .def("__gluecodium_id__", [](const Structs& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("get_external_struct", &Structs::get_external_struct)
-        .def_static("get_another_external_struct", &Structs::get_another_external_struct)
+        .def_static("get_external_struct", &Structs::get_external_struct, py::call_guard<py::gil_scoped_release>())
+        .def_static("get_another_external_struct", &Structs::get_another_external_struct, py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_StructsExternalStruct = py::class_<ExternalStruct>(cls_Structs, "ExternalStruct")
-        .def_readwrite("string_field", &ExternalStruct::stringField)
-        .def_property("external_string_field", [](const ExternalStruct& self) {
-            return self.get_some_string();
+        .def_property("string_field", [](const ExternalStruct& self) -> decltype(auto) {
+            return
+                (self.stringField)
+            ;
         }, [](ExternalStruct& self, const ::std::string& value) {
-            self.set_some_string(value);
+
+                self.stringField = value;
+
         })
-        .def_property("external_array_field", [](const ExternalStruct& self) {
-            return self.get_some_array();
+        .def_property("external_string_field", [](const ExternalStruct& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_some_string();
+            });
+        }, [](ExternalStruct& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_some_string(value);
+            });
+        })
+        .def_property("external_array_field", [](const ExternalStruct& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_some_array();
+            }));
         }, [](ExternalStruct& self, const ::std::vector< int8_t >& value) {
-            self.set_some_array(value);
+            gluecodium::python::call_native([&] {
+                self.set_some_array(value);
+            });
         })
-        .def_property("external_struct_field", [](const ExternalStruct& self) {
-            return self.get_some_struct();
+        .def_property("external_struct_field", [](const ExternalStruct& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_some_struct();
+            });
         }, [](ExternalStruct& self, const ::fire::SomeVeryExternalStruct& value) {
-            self.set_some_struct(value);
+            gluecodium::python::call_native([&] {
+                self.set_some_struct(value);
+            });
         })
         .def(py::init<>())
         .def(py::init([](const ::std::string& string_field, const ::std::string& external_string_field, const ::std::vector< int8_t >& external_array_field, const ::fire::SomeVeryExternalStruct& external_struct_field) {
@@ -65,7 +85,15 @@ auto cls_StructsExternalStruct = py::class_<ExternalStruct>(cls_Structs, "Extern
         ;
 
 auto cls_StructsAnotherExternalStruct = py::class_<::fire::SomeVeryExternalStruct>(cls_Structs, "AnotherExternalStruct")
-        .def_readwrite("int_field", &::fire::SomeVeryExternalStruct::intField)
+        .def_property("int_field", [](const ::fire::SomeVeryExternalStruct& self) -> decltype(auto) {
+            return
+                (self.intField)
+            ;
+        }, [](::fire::SomeVeryExternalStruct& self, const int8_t value) {
+
+                self.intField = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int8_t>(), py::arg("int_field"))
         ;

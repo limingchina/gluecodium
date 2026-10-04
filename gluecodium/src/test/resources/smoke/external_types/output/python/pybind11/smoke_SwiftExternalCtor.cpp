@@ -22,10 +22,18 @@ using SwiftExternalCtor = ::smoke::SwiftExternalCtor;
 
 void register_smoke_SwiftExternalCtor(py::module_& module) {
 auto cls_SwiftExternalCtor = py::class_<SwiftExternalCtor>(module, "smoke_SwiftExternalCtor")
-        .def_readwrite("field", &SwiftExternalCtor::field)
+        .def_property("field", [](const SwiftExternalCtor& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](SwiftExternalCtor& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
-        .def_static("make", &SwiftExternalCtor::make, py::arg("field"))
+        .def_static("make", &SwiftExternalCtor::make, py::arg("field"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

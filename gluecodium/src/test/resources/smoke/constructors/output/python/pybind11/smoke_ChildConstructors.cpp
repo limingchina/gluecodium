@@ -60,8 +60,8 @@ auto cls_ChildConstructors = py::class_<ChildConstructors, ::smoke::Constructors
             self->m_impl = native;
             return self;
         }))
-        .def_static("create", py::overload_cast<>(ChildConstructors::create))
-        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(ChildConstructors::create), py::arg("other"))
+        .def_static("create", py::overload_cast<>(ChildConstructors::create), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(ChildConstructors::create), py::arg("other"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

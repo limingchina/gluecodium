@@ -24,7 +24,7 @@ auto cls_SingleNamedConstructor = py::class_<SingleNamedConstructor, std::shared
         .def("__gluecodium_id__", [](const SingleNamedConstructor& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("create", &SingleNamedConstructor::create)
+        .def_static("create", &SingleNamedConstructor::create, py::call_guard<py::gil_scoped_release>())
         ;
 
 

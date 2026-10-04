@@ -22,7 +22,7 @@ using CppRefReturnTypeStruct = ::smoke::CppRefReturnTypeStruct;
 void register_smoke_CppRefReturnTypeStruct(py::module_& module) {
 auto cls_CppRefReturnTypeStruct = py::class_<CppRefReturnTypeStruct>(module, "smoke_CppRefReturnTypeStruct")
         .def(py::init<>())
-        .def_static("string_ref", &CppRefReturnTypeStruct::string_ref)
+        .def_static("string_ref", &CppRefReturnTypeStruct::string_ref, py::call_guard<py::gil_scoped_release>())
         ;
 
 

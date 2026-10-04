@@ -25,8 +25,8 @@ auto cls_SimpleClass = py::class_<SimpleClass, std::shared_ptr<SimpleClass>>(mod
         .def("__gluecodium_id__", [](const SimpleClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("get_string_value", &SimpleClass::get_string_value)
-        .def("use_simple_class", &SimpleClass::use_simple_class, py::arg("input"))
+        .def("get_string_value", &SimpleClass::get_string_value, py::call_guard<py::gil_scoped_release>())
+        .def("use_simple_class", &SimpleClass::use_simple_class, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

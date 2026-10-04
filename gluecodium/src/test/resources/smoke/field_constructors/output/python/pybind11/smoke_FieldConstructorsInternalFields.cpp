@@ -22,9 +22,33 @@ using FieldConstructorsInternalFields = ::smoke::FieldConstructorsInternalFields
 
 void register_smoke_FieldConstructorsInternalFields(py::module_& module) {
 auto cls_FieldConstructorsInternalFields = py::class_<FieldConstructorsInternalFields>(module, "smoke_FieldConstructorsInternalFields")
-        .def_readwrite("string_field", &FieldConstructorsInternalFields::string_field)
-        .def_readwrite("int_field", &FieldConstructorsInternalFields::int_field)
-        .def_readwrite("_bool_field", &FieldConstructorsInternalFields::bool_field)
+        .def_property("string_field", [](const FieldConstructorsInternalFields& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldConstructorsInternalFields& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("int_field", [](const FieldConstructorsInternalFields& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](FieldConstructorsInternalFields& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("_bool_field", [](const FieldConstructorsInternalFields& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](FieldConstructorsInternalFields& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string>(), py::arg("int_field"), py::arg("string_field"))
         .def(py::init<bool, int32_t, ::std::string>(), py::arg("_bool_field"), py::arg("int_field"), py::arg("string_field"))

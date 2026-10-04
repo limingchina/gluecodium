@@ -27,7 +27,15 @@ auto cls_CommentsTypeCollection = py::class_<CommentsTypeCollection>(module, "sm
         ;
 
 auto cls_CommentsTypeCollectionTypeCollectionStruct = py::class_<TypeCollectionStruct>(cls_CommentsTypeCollection, "TypeCollectionStruct")
-        .def_readwrite("field", &TypeCollectionStruct::field)
+        .def_property("field", [](const TypeCollectionStruct& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](TypeCollectionStruct& self, const int32_t value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("field"))
         ;

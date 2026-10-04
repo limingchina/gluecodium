@@ -28,7 +28,15 @@ auto cls_OuterName = py::class_<OuterName, std::shared_ptr<OuterName>>(module, "
         ;
 
 auto cls_OuterNameInnerName = py::class_<InnerName>(cls_OuterName, "InnerName")
-        .def_readwrite("string_field", &InnerName::string_field)
+        .def_property("string_field", [](const InnerName& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](InnerName& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

@@ -21,7 +21,15 @@ using ImmutableDefaultCtor = ::smoke::ImmutableDefaultCtor;
 
 void register_smoke_ImmutableDefaultCtor(py::module_& module) {
 auto cls_ImmutableDefaultCtor = py::class_<ImmutableDefaultCtor>(module, "smoke_ImmutableDefaultCtor")
-        .def_readwrite("string_field", &ImmutableDefaultCtor::string_field)
+        .def_property("string_field", [](const ImmutableDefaultCtor& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](ImmutableDefaultCtor& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         ;
 

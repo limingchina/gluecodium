@@ -28,10 +28,26 @@ auto cls_CachedProperties = py::class_<CachedProperties, std::shared_ptr<CachedP
         .def("__gluecodium_id__", [](const CachedProperties& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_property_readonly("cached_property", py::overload_cast<>(&CachedProperties::get_cached_property, py::const_))
-        .def_property_readonly("_internal_cached_property", py::overload_cast<>(&CachedProperties::get_internal_cached_property, py::const_))
-        .def_static("static_cached_property", &CachedProperties::get_static_cached_property)
-        .def_static("_internal_static_cached_property", &CachedProperties::get_internal_static_cached_property)
+        .def_property_readonly("cached_property", [](const CachedProperties& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_cached_property();
+            }));
+        })
+        .def_property_readonly("_internal_cached_property", [](const CachedProperties& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_internal_cached_property();
+            }));
+        })
+        .def_static("static_cached_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return CachedProperties::get_static_cached_property();
+            });
+        })
+        .def_static("_internal_static_cached_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return CachedProperties::get_internal_static_cached_property();
+            });
+        })
         ;
 
 

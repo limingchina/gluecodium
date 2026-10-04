@@ -24,7 +24,7 @@ auto cls_UnderscorePackage = py::class_<UnderscorePackage, std::shared_ptr<Under
         .def("__gluecodium_id__", [](const UnderscorePackage& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"))
+        .def_static("basic_method", &UnderscorePackage::basic_method, py::arg("input_string"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

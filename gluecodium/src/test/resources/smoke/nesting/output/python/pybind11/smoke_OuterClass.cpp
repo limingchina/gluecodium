@@ -31,10 +31,10 @@ public:
 
     ::std::string foo(
             const ::std::string& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->foo(input);
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const InnerInterface*>(this), "__gluecodium_callback_736d6f6b652e4f75746572436c6173732e496e6e6572496e746572666163652e666f6f")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, InnerInterface, "__gluecodium_callback_736d6f6b652e4f75746572436c6173732e496e6e6572496e746572666163652e666f6f", foo, input);
         }
@@ -49,14 +49,14 @@ auto cls_OuterClass = py::class_<OuterClass, std::shared_ptr<OuterClass>>(module
         .def("__gluecodium_id__", [](const OuterClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("foo", &OuterClass::foo, py::arg("input"))
+        .def("foo", &OuterClass::foo, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_OuterClassInnerClass = py::class_<InnerClass, std::shared_ptr<InnerClass>>(cls_OuterClass, "InnerClass")
         .def("__gluecodium_id__", [](const InnerClass& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("foo", &InnerClass::foo, py::arg("input"))
+        .def("foo", &InnerClass::foo, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_OuterClassInnerInterface = py::class_<InnerInterface, std::shared_ptr<InnerInterface>, InnerInterfaceTrampoline>(cls_OuterClass, "InnerInterface")
@@ -76,7 +76,7 @@ auto cls_OuterClassInnerInterface = py::class_<InnerInterface, std::shared_ptr<I
             return self;
         }))
         .def("foo", [](InnerInterface& self, const ::std::string& input) {
-            return self.foo(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.foo(input); });
         }, py::arg("input"))
         ;
 

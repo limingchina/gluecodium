@@ -24,7 +24,7 @@ auto cls_SkipEnableParameters = py::class_<SkipEnableParameters, std::shared_ptr
         .def("__gluecodium_id__", [](const SkipEnableParameters& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("do_something", &SkipEnableParameters::do_something, py::arg("input"))
+        .def("do_something", &SkipEnableParameters::do_something, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

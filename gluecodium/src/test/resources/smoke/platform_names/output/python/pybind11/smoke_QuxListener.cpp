@@ -29,11 +29,11 @@ public:
 
     void FooMethod(
             const ::std::string& qux_parameter ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->FooMethod(qux_parameter);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const fooListener*>(this), "__gluecodium_callback_736d6f6b652e506c6174666f726d4e616d65734c697374656e65722e62617369634d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, fooListener, "__gluecodium_callback_736d6f6b652e506c6174666f726d4e616d65734c697374656e65722e62617369634d6574686f64", qux_method, qux_parameter);
         }
@@ -61,7 +61,7 @@ auto cls_QuxListener = py::class_<fooListener, std::shared_ptr<fooListener>, Qux
             return self;
         }))
         .def("qux_method", [](fooListener& self, const ::std::string& qux_parameter) {
-            return self.FooMethod(qux_parameter);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.FooMethod(qux_parameter); });
         }, py::arg("qux_parameter"))
         ;
 

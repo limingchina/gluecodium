@@ -28,10 +28,10 @@ auto cls_UseDartExternalTypes = py::class_<UseDartExternalTypes, std::shared_ptr
         .def("__gluecodium_id__", [](const UseDartExternalTypes& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def_static("rectangle_round_trip", &UseDartExternalTypes::rectangle_round_trip, py::arg("input"))
-        .def_static("compression_state_round_trip", &UseDartExternalTypes::compression_state_round_trip, py::arg("input"))
-        .def_static("color_round_trip", &UseDartExternalTypes::color_round_trip, py::arg("input"))
-        .def_static("season_round_trip", &UseDartExternalTypes::season_round_trip, py::arg("input"))
+        .def_static("rectangle_round_trip", &UseDartExternalTypes::rectangle_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("compression_state_round_trip", &UseDartExternalTypes::compression_state_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("color_round_trip", &UseDartExternalTypes::color_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_static("season_round_trip", &UseDartExternalTypes::season_round_trip, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

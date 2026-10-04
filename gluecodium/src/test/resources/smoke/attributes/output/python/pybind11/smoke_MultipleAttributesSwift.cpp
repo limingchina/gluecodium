@@ -23,11 +23,11 @@ auto cls_MultipleAttributesSwift = py::class_<MultipleAttributesSwift, std::shar
         .def("__gluecodium_id__", [](const MultipleAttributesSwift& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("no_lists2", &MultipleAttributesSwift::no_lists2)
-        .def("no_lists3", &MultipleAttributesSwift::no_lists3)
-        .def("list_first", &MultipleAttributesSwift::list_first)
-        .def("list_second", &MultipleAttributesSwift::list_second)
-        .def("two_lists", &MultipleAttributesSwift::two_lists)
+        .def("no_lists2", &MultipleAttributesSwift::no_lists2, py::call_guard<py::gil_scoped_release>())
+        .def("no_lists3", &MultipleAttributesSwift::no_lists3, py::call_guard<py::gil_scoped_release>())
+        .def("list_first", &MultipleAttributesSwift::list_first, py::call_guard<py::gil_scoped_release>())
+        .def("list_second", &MultipleAttributesSwift::list_second, py::call_guard<py::gil_scoped_release>())
+        .def("two_lists", &MultipleAttributesSwift::two_lists, py::call_guard<py::gil_scoped_release>())
         ;
 
 

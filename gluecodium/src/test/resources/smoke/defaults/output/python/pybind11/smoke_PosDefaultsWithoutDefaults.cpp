@@ -21,7 +21,15 @@ using PosDefaultsWithoutDefaults = ::smoke::PosDefaultsWithoutDefaults;
 
 void register_smoke_PosDefaultsWithoutDefaults(py::module_& module) {
 auto cls_PosDefaultsWithoutDefaults = py::class_<PosDefaultsWithoutDefaults>(module, "smoke_PosDefaultsWithoutDefaults")
-        .def_readwrite("string_field", &PosDefaultsWithoutDefaults::string_field)
+        .def_property("string_field", [](const PosDefaultsWithoutDefaults& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](PosDefaultsWithoutDefaults& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

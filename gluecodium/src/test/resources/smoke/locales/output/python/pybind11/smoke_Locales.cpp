@@ -32,12 +32,28 @@ auto cls_Locales = py::class_<Locales, std::shared_ptr<Locales>>(module, "smoke_
         .def("__gluecodium_id__", [](const Locales& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("locale_method", &Locales::locale_method, py::arg("input"))
-        .def_property("locale_property", py::overload_cast<>(&Locales::get_locale_property, py::const_), py::overload_cast<const ::gluecodium::Locale&>(&Locales::set_locale_property))
+        .def("locale_method", &Locales::locale_method, py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def_property("locale_property", [](const Locales& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_locale_property();
+            });
+        }, [](Locales& self, const ::gluecodium::Locale& value) {
+            gluecodium::python::call_native([&] {
+                self.set_locale_property(value);
+            });
+        })
         ;
 
 auto cls_LocalesLocaleStruct = py::class_<LocaleStruct>(cls_Locales, "LocaleStruct")
-        .def_readwrite("locale_field", &LocaleStruct::locale_field)
+        .def_property("locale_field", [](const LocaleStruct& self) -> decltype(auto) {
+            return
+                (self.locale_field)
+            ;
+        }, [](LocaleStruct& self, const ::gluecodium::Locale& value) {
+
+                self.locale_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::gluecodium::Locale>(), py::arg("locale_field"))
         ;

@@ -26,7 +26,7 @@ auto cls_ClassWithInternalLambda = py::class_<ClassWithInternalLambda, std::shar
             return gluecodium::python::native_identity(self);
         })
                 .def_static("invoke_internal_lambda", [](const ::std::function<bool(const ::std::string&)>& lambda_, const ::std::string& value) {
-                        return ClassWithInternalLambda::invoke_internal_lambda(lambda_, value);
+                        return gluecodium::python::call_native([&]() -> decltype(auto) { return ClassWithInternalLambda::invoke_internal_lambda(lambda_, value); });
                 }, py::arg("lambda_"), py::arg("value"))
         ;
 

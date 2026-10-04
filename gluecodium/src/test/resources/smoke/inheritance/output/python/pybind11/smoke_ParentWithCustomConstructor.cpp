@@ -46,7 +46,7 @@ auto cls_ParentWithCustomConstructor = py::class_<ParentWithCustomConstructor, s
             self->m_impl = native;
             return self;
         }))
-        .def_static("create", &ParentWithCustomConstructor::create)
+        .def_static("create", &ParentWithCustomConstructor::create, py::call_guard<py::gil_scoped_release>())
         ;
 
 

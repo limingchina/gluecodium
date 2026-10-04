@@ -30,7 +30,7 @@ auto cls__OuterPublicClazzInnerInternalClazz = py::class_<InnerInternalClazz, st
         .def("__gluecodium_id__", [](const InnerInternalClazz& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("some_function", &InnerInternalClazz::some_function)
+        .def("some_function", &InnerInternalClazz::some_function, py::call_guard<py::gil_scoped_release>())
         ;
 
 

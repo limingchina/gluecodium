@@ -25,7 +25,7 @@ auto cls_UnicodeComments = py::class_<UnicodeComments, std::shared_ptr<UnicodeCo
         .def("__gluecodium_id__", [](const UnicodeComments& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("some_method_with_all_comments", &UnicodeComments::some_method_with_all_comments, py::arg("input"))
+        .def("some_method_with_all_comments", &UnicodeComments::some_method_with_all_comments, py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 

@@ -22,13 +22,69 @@ using DurationDefaults = ::smoke::DurationDefaults;
 
 void register_smoke_DurationDefaults(py::module_& module) {
 auto cls_DurationDefaults = py::class_<DurationDefaults>(module, "smoke_DurationDefaults")
-        .def_readwrite("dayz", &DurationDefaults::dayz)
-        .def_readwrite("hourz", &DurationDefaults::hourz)
-        .def_readwrite("minutez", &DurationDefaults::minutez)
-        .def_readwrite("secondz", &DurationDefaults::secondz)
-        .def_readwrite("milliz", &DurationDefaults::milliz)
-        .def_readwrite("microz", &DurationDefaults::microz)
-        .def_readwrite("nanoz", &DurationDefaults::nanoz)
+        .def_property("dayz", [](const DurationDefaults& self) -> decltype(auto) {
+            return
+                (self.dayz)
+            ;
+        }, [](DurationDefaults& self, const ::std::chrono::seconds value) {
+
+                self.dayz = value;
+
+        })
+        .def_property("hourz", [](const DurationDefaults& self) -> decltype(auto) {
+            return
+                (self.hourz)
+            ;
+        }, [](DurationDefaults& self, const ::std::chrono::seconds value) {
+
+                self.hourz = value;
+
+        })
+        .def_property("minutez", [](const DurationDefaults& self) -> decltype(auto) {
+            return
+                (self.minutez)
+            ;
+        }, [](DurationDefaults& self, const ::std::chrono::seconds value) {
+
+                self.minutez = value;
+
+        })
+        .def_property("secondz", [](const DurationDefaults& self) -> decltype(auto) {
+            return
+                (self.secondz)
+            ;
+        }, [](DurationDefaults& self, const std::chrono::seconds value) {
+
+                self.secondz = value;
+
+        })
+        .def_property("milliz", [](const DurationDefaults& self) -> decltype(auto) {
+            return
+                (self.milliz)
+            ;
+        }, [](DurationDefaults& self, const ::std::chrono::milliseconds value) {
+
+                self.milliz = value;
+
+        })
+        .def_property("microz", [](const DurationDefaults& self) -> decltype(auto) {
+            return
+                (self.microz)
+            ;
+        }, [](DurationDefaults& self, const ::std::chrono::seconds value) {
+
+                self.microz = value;
+
+        })
+        .def_property("nanoz", [](const DurationDefaults& self) -> decltype(auto) {
+            return
+                (self.nanoz)
+            ;
+        }, [](DurationDefaults& self, const ::std::chrono::seconds value) {
+
+                self.nanoz = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::chrono::seconds, ::std::chrono::seconds, ::std::chrono::seconds, std::chrono::seconds, ::std::chrono::milliseconds, ::std::chrono::seconds, ::std::chrono::seconds>(), py::arg("dayz"), py::arg("hourz"), py::arg("minutez"), py::arg("secondz"), py::arg("milliz"), py::arg("microz"), py::arg("nanoz"))
         ;

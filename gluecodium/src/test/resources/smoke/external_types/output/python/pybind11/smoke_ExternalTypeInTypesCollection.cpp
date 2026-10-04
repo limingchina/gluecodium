@@ -27,7 +27,15 @@ auto cls_ExternalTypeInTypesCollection = py::class_<ExternalTypeInTypesCollectio
         ;
 
 auto cls_ExternalTypeInTypesCollectionIntStruct = py::class_<::external::IntStruct>(cls_ExternalTypeInTypesCollection, "IntStruct")
-        .def_readwrite("int_field", &::external::IntStruct::int_field)
+        .def_property("int_field", [](const ::external::IntStruct& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](::external::IntStruct& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t>(), py::arg("int_field"))
         ;

@@ -21,8 +21,24 @@ using FieldConstructorsInternal = ::smoke::FieldConstructorsInternal;
 
 void register_smoke_FieldConstructorsInternal(py::module_& module) {
 auto cls_FieldConstructorsInternal = py::class_<FieldConstructorsInternal>(module, "smoke_FieldConstructorsInternal")
-        .def_readwrite("public_field", &FieldConstructorsInternal::public_field)
-        .def_readwrite("internal_field", &FieldConstructorsInternal::internal_field)
+        .def_property("public_field", [](const FieldConstructorsInternal& self) -> decltype(auto) {
+            return
+                (self.public_field)
+            ;
+        }, [](FieldConstructorsInternal& self, const ::std::string& value) {
+
+                self.public_field = value;
+
+        })
+        .def_property("internal_field", [](const FieldConstructorsInternal& self) -> decltype(auto) {
+            return
+                (self.internal_field)
+            ;
+        }, [](FieldConstructorsInternal& self, const double value) {
+
+                self.internal_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("public_field"))
         .def(py::init<double>(), py::arg("internal_field"))

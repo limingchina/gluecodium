@@ -26,7 +26,15 @@ auto cls_EnableIfTypesEnabled = py::class_<EnableIfTypesEnabled>(module, "smoke_
         ;
 
 auto cls_EnableIfTypesEnabledEnableMeToo = py::class_<EnableMeToo>(cls_EnableIfTypesEnabled, "EnableMeToo")
-        .def_readwrite("field", &EnableMeToo::field)
+        .def_property("field", [](const EnableMeToo& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](EnableMeToo& self, const ::smoke::EnableIfTypesEnabled::EnableMe value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::EnableIfTypesEnabled::EnableMe>(), py::arg("field"))
         ;

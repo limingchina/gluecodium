@@ -22,8 +22,24 @@ using FieldConstructorsSkipDefault = ::smoke::FieldConstructorsSkipDefault;
 
 void register_smoke_FieldConstructorsSkipDefault(py::module_& module) {
 auto cls_FieldConstructorsSkipDefault = py::class_<FieldConstructorsSkipDefault>(module, "smoke_FieldConstructorsSkipDefault")
-        .def_readwrite("string_field", &FieldConstructorsSkipDefault::string_field)
-        .def_readwrite("int_field", &FieldConstructorsSkipDefault::int_field)
+        .def_property("string_field", [](const FieldConstructorsSkipDefault& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldConstructorsSkipDefault& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def_property("int_field", [](const FieldConstructorsSkipDefault& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](FieldConstructorsSkipDefault& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

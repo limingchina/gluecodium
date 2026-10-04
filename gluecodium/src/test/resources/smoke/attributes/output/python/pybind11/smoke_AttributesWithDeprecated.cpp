@@ -25,12 +25,28 @@ auto cls_AttributesWithDeprecated = py::class_<AttributesWithDeprecated, std::sh
         .def("__gluecodium_id__", [](const AttributesWithDeprecated& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("very_fun", &AttributesWithDeprecated::very_fun)
-        .def_property("prop", py::overload_cast<>(&AttributesWithDeprecated::get_prop, py::const_), py::overload_cast<const ::std::string&>(&AttributesWithDeprecated::set_prop))
+        .def("very_fun", &AttributesWithDeprecated::very_fun, py::call_guard<py::gil_scoped_release>())
+        .def_property("prop", [](const AttributesWithDeprecated& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_prop();
+            });
+        }, [](AttributesWithDeprecated& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_prop(value);
+            });
+        })
         ;
 
 auto cls_AttributesWithDeprecatedSomeStruct = py::class_<SomeStruct>(cls_AttributesWithDeprecated, "SomeStruct")
-        .def_readwrite("field", &SomeStruct::field)
+        .def_property("field", [](const SomeStruct& self) -> decltype(auto) {
+            return
+                (self.field)
+            ;
+        }, [](SomeStruct& self, const ::std::string& value) {
+
+                self.field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("field"))
         ;

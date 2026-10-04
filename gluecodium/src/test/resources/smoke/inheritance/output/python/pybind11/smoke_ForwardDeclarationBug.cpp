@@ -31,11 +31,11 @@ public:
 
     void foo(
             const ::std::shared_ptr< ::smoke::ParentClass >& bar ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo(bar);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ForwardDeclarationBug*>(this), "__gluecodium_callback_736d6f6b652e466f72776172644465636c61726174696f6e4275672e666f6f")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ForwardDeclarationBug, "__gluecodium_callback_736d6f6b652e466f72776172644465636c61726174696f6e4275672e666f6f", foo, bar);
         }
@@ -43,32 +43,32 @@ public:
     }
     void root_method(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->root_method();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ForwardDeclarationBug*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f744d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ForwardDeclarationBug, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f744d6574686f64", root_method);
         }
         PYBIND11_OVERRIDE_PURE(void, ForwardDeclarationBug, root_method);
     }
     ::std::string get_root_property() const override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             return m_impl->get_root_property();
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ForwardDeclarationBug*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_get")) {
         PYBIND11_OVERRIDE_PURE_NAME(::std::string, ForwardDeclarationBug, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_get", get_root_property);
         }
         PYBIND11_OVERRIDE_PURE(::std::string, ForwardDeclarationBug, get_root_property);
     }
     void set_root_property(const ::std::string& value) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->set_root_property(value);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ForwardDeclarationBug*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_set")) {
             PYBIND11_OVERRIDE_PURE_NAME(void, ForwardDeclarationBug, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e726f6f7450726f7065727479_set", set_root_property, value);
         }
@@ -102,9 +102,17 @@ auto cls_ForwardDeclarationBug = py::class_<ForwardDeclarationBug, ::smoke::Pare
             self->m_impl = native;
             return self;
         }))
-        .def("foo", &ForwardDeclarationBug::foo, py::arg("bar"))
-        .def("root_method", &ForwardDeclarationBug::root_method)
-        .def_property("root_property", py::overload_cast<>(&ForwardDeclarationBug::get_root_property, py::const_), py::overload_cast<const ::std::string&>(&ForwardDeclarationBug::set_root_property))
+        .def("foo", &ForwardDeclarationBug::foo, py::arg("bar"), py::call_guard<py::gil_scoped_release>())
+        .def("root_method", &ForwardDeclarationBug::root_method, py::call_guard<py::gil_scoped_release>())
+        .def_property("root_property", [](const ForwardDeclarationBug& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_root_property();
+            });
+        }, [](ForwardDeclarationBug& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_root_property(value);
+            });
+        })
         ;
 
 

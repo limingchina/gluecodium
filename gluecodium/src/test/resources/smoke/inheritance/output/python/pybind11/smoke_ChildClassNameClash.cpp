@@ -30,11 +30,11 @@ public:
 
     void parent_method(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_method();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassNameClash*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f64")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassNameClash, "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f64", parent_method);
         }
@@ -42,11 +42,11 @@ public:
     }
     void parent_method(
             const ::std::string& input ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->parent_method(input);
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const ChildClassNameClash*>(this), "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f643a31")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassNameClash, "__gluecodium_callback_736d6f6b652e496e74657266616365576974684f7665726c6f6164732e706172656e744d6574686f643a31", parent_method, input);
         }
@@ -81,10 +81,10 @@ auto cls_ChildClassNameClash = py::class_<ChildClassNameClash, ::smoke::Interfac
             return self;
         }))
         .def("parent_method", [](ChildClassNameClash& self) {
-            return self.parent_method();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_method(); });
         })
         .def("parent_method", [](ChildClassNameClash& self, const ::std::string& input) {
-            return self.parent_method(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_method(input); });
         }, py::arg("input"))
         ;
 

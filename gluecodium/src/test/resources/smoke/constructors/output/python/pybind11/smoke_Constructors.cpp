@@ -51,14 +51,14 @@ auto cls_Constructors = py::class_<Constructors, std::shared_ptr<Constructors>, 
             self->m_impl = native;
             return self;
         }))
-        .def_static("create", py::overload_cast<>(Constructors::create))
-        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(Constructors::create), py::arg("other"))
-        .def_static("create", py::overload_cast<const ::std::string&, const uint64_t>(Constructors::create), py::arg("foo"), py::arg("bar"))
-        .def_static("create", py::overload_cast<const ::std::string&>(Constructors::create), py::arg("input"))
+        .def_static("create", py::overload_cast<>(Constructors::create), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const ::std::shared_ptr< ::smoke::Constructors >&>(Constructors::create), py::arg("other"), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const ::std::string&, const uint64_t>(Constructors::create), py::arg("foo"), py::arg("bar"), py::call_guard<py::gil_scoped_release>())
+        .def_static("create", py::overload_cast<const ::std::string&>(Constructors::create), py::arg("input"), py::call_guard<py::gil_scoped_release>())
         .def_static("create", [](const ::std::vector< double >& input) {
-                return Constructors::create(input);
+                return gluecodium::python::call_native([&]() -> decltype(auto) { return Constructors::create(input); });
             }, py::arg("input"))
-        .def_static("create", py::overload_cast<const uint64_t>(Constructors::create), py::arg("input"))
+        .def_static("create", py::overload_cast<const uint64_t>(Constructors::create), py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 auto cls_ConstructorsErrorEnum = py::enum_<ErrorEnum>(cls_Constructors, "ErrorEnum")

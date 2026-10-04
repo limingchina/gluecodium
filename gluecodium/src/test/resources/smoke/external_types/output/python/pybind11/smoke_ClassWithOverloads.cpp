@@ -28,16 +28,16 @@ auto cls_ClassWithOverloads = py::class_<ClassWithOverloads, std::shared_ptr<Cla
             return gluecodium::python::native_identity(self);
         })
         .def("one_overload_not_exposed", [](ClassWithOverloads& self) {
-            return self.oneOverloadNotExposed();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.oneOverloadNotExposed(); });
         })
         .def("all_overloads_exposed", [](ClassWithOverloads& self, const ::std::string& input) {
-            return self.allOverloadsExposed(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.allOverloadsExposed(input); });
         }, py::arg("input"))
                 .def("all_overloads_exposed", [](ClassWithOverloads& self, const ::std::vector< ::std::string >& input_list) {
-                        return self.allOverloadsExposed(input_list);
+                        return gluecodium::python::call_native([&]() -> decltype(auto) { return self.allOverloadsExposed(input_list); });
                 }, py::arg("input_list"))
         .def("all_overloads_exposed", [](ClassWithOverloads& self, const ::std::string& input_string, const bool input_bool) {
-            return self.allOverloadsExposed(input_string, input_bool);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.allOverloadsExposed(input_string, input_bool); });
         }, py::arg("input_string"), py::arg("input_bool"))
         ;
 

@@ -28,10 +28,10 @@ auto cls_LambdasWithStructuredTypes = py::class_<LambdasWithStructuredTypes, std
             return gluecodium::python::native_identity(self);
         })
                 .def("do_class_stuff", [](LambdasWithStructuredTypes& self, const ::std::function<void(const ::std::shared_ptr< ::smoke::LambdasInterface >&)>& callback) {
-                        self.do_class_stuff(callback);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.do_class_stuff(callback); });
                 }, py::arg("callback"))
                 .def("do_struct_stuff", [](LambdasWithStructuredTypes& self, const ::std::function<void(const ::smoke::LambdasDeclarationOrder::SomeStruct&)>& callback) {
-                        self.do_struct_stuff(callback);
+                        gluecodium::python::call_native([&]() -> decltype(auto) { return self.do_struct_stuff(callback); });
                 }, py::arg("callback"))
         ;
 

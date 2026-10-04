@@ -21,13 +21,29 @@ using InnerStructWithDefaults = ::smoke::OuterStructWithFieldConstructor::InnerS
 
 void register_smoke_OuterStructWithFieldConstructor(py::module_& module) {
 auto cls_OuterStructWithFieldConstructor = py::class_<OuterStructWithFieldConstructor>(module, "smoke_OuterStructWithFieldConstructor")
-        .def_readwrite("outer_struct_field", &OuterStructWithFieldConstructor::outer_struct_field)
+        .def_property("outer_struct_field", [](const OuterStructWithFieldConstructor& self) -> decltype(auto) {
+            return
+                (self.outer_struct_field)
+            ;
+        }, [](OuterStructWithFieldConstructor& self, const ::smoke::OuterStructWithFieldConstructor::InnerStructWithDefaults& value) {
+
+                self.outer_struct_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::smoke::OuterStructWithFieldConstructor::InnerStructWithDefaults>(), py::arg("outer_struct_field"))
         ;
 
 auto cls_OuterStructWithFieldConstructorInnerStructWithDefaults = py::class_<InnerStructWithDefaults>(cls_OuterStructWithFieldConstructor, "InnerStructWithDefaults")
-        .def_readwrite("inner_struct_field", &InnerStructWithDefaults::inner_struct_field)
+        .def_property("inner_struct_field", [](const InnerStructWithDefaults& self) -> decltype(auto) {
+            return
+                (self.inner_struct_field)
+            ;
+        }, [](InnerStructWithDefaults& self, const double value) {
+
+                self.inner_struct_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<double>(), py::arg("inner_struct_field"))
         ;

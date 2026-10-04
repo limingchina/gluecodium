@@ -28,7 +28,15 @@ auto cls_ExternalEquatable = py::class_<ExternalEquatable>(module, "smoke_Extern
         ;
 
 auto cls_ExternalEquatableExternalEquatableStruct = py::class_<ExternalEquatableStruct>(cls_ExternalEquatable, "ExternalEquatableStruct")
-        .def_readwrite("foo_field", &ExternalEquatableStruct::fooField)
+        .def_property("foo_field", [](const ExternalEquatableStruct& self) -> decltype(auto) {
+            return
+                (self.fooField)
+            ;
+        }, [](ExternalEquatableStruct& self, const ::std::string& value) {
+
+                self.fooField = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         .def("__gluecodium_copy__", [](const ExternalEquatableStruct& self) { return ExternalEquatableStruct(self); })

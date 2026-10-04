@@ -28,11 +28,11 @@ public:
 
     void foo(
             /* no args */ ) override {
-        py::gil_scoped_acquire gil;
         if (m_impl) {
             m_impl->foo();
             return;
         }
+        py::gil_scoped_acquire gil;
         if (py::get_override(static_cast<const NoCacheInterface*>(this), "__gluecodium_callback_736d6f6b652e4e6f4361636865496e746572666163652e666f6f")) {
         PYBIND11_OVERRIDE_PURE_NAME(void, NoCacheInterface, "__gluecodium_callback_736d6f6b652e4e6f4361636865496e746572666163652e666f6f", foo);
         }
@@ -60,7 +60,7 @@ auto cls_NoCacheInterface = py::class_<NoCacheInterface, std::shared_ptr<NoCache
             return self;
         }))
         .def("foo", [](NoCacheInterface& self) {
-            return self.foo();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.foo(); });
         })
         ;
 

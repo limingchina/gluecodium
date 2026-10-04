@@ -21,7 +21,15 @@ using FieldConstructorWithDeprecationOnly = ::smoke::FieldConstructorWithDepreca
 
 void register_smoke_FieldConstructorWithDeprecationOnly(py::module_& module) {
 auto cls_FieldConstructorWithDeprecationOnly = py::class_<FieldConstructorWithDeprecationOnly>(module, "smoke_FieldConstructorWithDeprecationOnly")
-        .def_readwrite("string_field", &FieldConstructorWithDeprecationOnly::string_field)
+        .def_property("string_field", [](const FieldConstructorWithDeprecationOnly& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldConstructorWithDeprecationOnly& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("string_field"))
         ;

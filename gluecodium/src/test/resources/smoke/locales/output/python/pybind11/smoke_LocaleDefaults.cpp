@@ -21,12 +21,60 @@ using LocaleDefaults = ::smoke::LocaleDefaults;
 
 void register_smoke_LocaleDefaults(py::module_& module) {
 auto cls_LocaleDefaults = py::class_<LocaleDefaults>(module, "smoke_LocaleDefaults")
-        .def_readwrite("english", &LocaleDefaults::english)
-        .def_readwrite("lat_am_spanish", &LocaleDefaults::lat_am_spanish)
-        .def_readwrite("romansh_sursilvan", &LocaleDefaults::romansh_sursilvan)
-        .def_readwrite("serbian_cyrillic", &LocaleDefaults::serbian_cyrillic)
-        .def_readwrite("traditional_chinese_taiwan", &LocaleDefaults::traditional_chinese_taiwan)
-        .def_readwrite("zuerich_german", &LocaleDefaults::zuerich_german)
+        .def_property("english", [](const LocaleDefaults& self) -> decltype(auto) {
+            return
+                (self.english)
+            ;
+        }, [](LocaleDefaults& self, const ::gluecodium::Locale& value) {
+
+                self.english = value;
+
+        })
+        .def_property("lat_am_spanish", [](const LocaleDefaults& self) -> decltype(auto) {
+            return
+                (self.lat_am_spanish)
+            ;
+        }, [](LocaleDefaults& self, const ::gluecodium::Locale& value) {
+
+                self.lat_am_spanish = value;
+
+        })
+        .def_property("romansh_sursilvan", [](const LocaleDefaults& self) -> decltype(auto) {
+            return
+                (self.romansh_sursilvan)
+            ;
+        }, [](LocaleDefaults& self, const ::gluecodium::Locale& value) {
+
+                self.romansh_sursilvan = value;
+
+        })
+        .def_property("serbian_cyrillic", [](const LocaleDefaults& self) -> decltype(auto) {
+            return
+                (self.serbian_cyrillic)
+            ;
+        }, [](LocaleDefaults& self, const ::gluecodium::Locale& value) {
+
+                self.serbian_cyrillic = value;
+
+        })
+        .def_property("traditional_chinese_taiwan", [](const LocaleDefaults& self) -> decltype(auto) {
+            return
+                (self.traditional_chinese_taiwan)
+            ;
+        }, [](LocaleDefaults& self, const ::gluecodium::Locale& value) {
+
+                self.traditional_chinese_taiwan = value;
+
+        })
+        .def_property("zuerich_german", [](const LocaleDefaults& self) -> decltype(auto) {
+            return
+                (self.zuerich_german)
+            ;
+        }, [](LocaleDefaults& self, const ::gluecodium::Locale& value) {
+
+                self.zuerich_german = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale, ::gluecodium::Locale>(), py::arg("english"), py::arg("lat_am_spanish"), py::arg("romansh_sursilvan"), py::arg("serbian_cyrillic"), py::arg("traditional_chinese_taiwan"), py::arg("zuerich_german"))
         ;

@@ -24,14 +24,38 @@ using UseEnumOptionSet = ::smoke::UseEnumOptionSet;
 
 void register_smoke_UseEnumOptionSet(py::module_& module) {
 auto cls_UseEnumOptionSet = py::class_<UseEnumOptionSet>(module, "smoke_UseEnumOptionSet")
-        .def_readwrite("set_field", &UseEnumOptionSet::set_field)
-        .def_readwrite("set_field_empty", &UseEnumOptionSet::set_field_empty)
-        .def_readwrite("set_field_value", &UseEnumOptionSet::set_field_value)
+        .def_property("set_field", [](const UseEnumOptionSet& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.set_field)
+            );
+        }, [](UseEnumOptionSet& self, const ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >& value) {
+
+                self.set_field = value;
+
+        })
+        .def_property("set_field_empty", [](const UseEnumOptionSet& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.set_field_empty)
+            );
+        }, [](UseEnumOptionSet& self, const ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >& value) {
+
+                self.set_field_empty = value;
+
+        })
+        .def_property("set_field_value", [](const UseEnumOptionSet& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.set_field_value)
+            );
+        }, [](UseEnumOptionSet& self, const ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >& value) {
+
+                self.set_field_value = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >>(), py::arg("set_field"))
         .def(py::init<::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >, ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >>(), py::arg("set_field"), py::arg("set_field_empty"), py::arg("set_field_value"))
                 .def_static("round_trip", [](const ::std::unordered_set< ::smoke::EnumOptionSet, ::gluecodium::hash< ::smoke::EnumOptionSet > >& input) -> py::object {
-                        return gluecodium::python::to_python_regular(UseEnumOptionSet::round_trip(input));
+                        return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) { return UseEnumOptionSet::round_trip(input); }));
                 }, py::arg("input"))
         ;
 

@@ -21,7 +21,15 @@ using EnumWrapper = ::smoke::EnumWrapper;
 
 void register_smoke_EnumWrapper(py::module_& module) {
 auto cls_EnumWrapper = py::class_<EnumWrapper>(module, "smoke_EnumWrapper")
-        .def_readwrite("enum_field", &EnumWrapper::enum_field)
+        .def_property("enum_field", [](const EnumWrapper& self) -> decltype(auto) {
+            return
+                (self.enum_field)
+            ;
+        }, [](EnumWrapper& self, const ::fire::Enum4 value) {
+
+                self.enum_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::fire::Enum4>(), py::arg("enum_field"))
         ;

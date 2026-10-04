@@ -22,10 +22,14 @@ namespace py = pybind11;
 
 void register_smoke_StructWithOverloads(py::module_& module) {
 auto cls_StructWithOverloads = py::class_<external::ClassWithOverloads::StructWithOverloads>(module, "smoke_StructWithOverloads")
-        .def_property("overloaded_accessors", [](const external::ClassWithOverloads::StructWithOverloads& self) {
-            return self.overloadedAccessors();
+        .def_property("overloaded_accessors", [](const external::ClassWithOverloads::StructWithOverloads& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.overloadedAccessors();
+            });
         }, [](external::ClassWithOverloads::StructWithOverloads& self, const int32_t value) {
-            self.overloadedAccessors(value);
+            gluecodium::python::call_native([&] {
+                self.overloadedAccessors(value);
+            });
         })
         .def(py::init<>())
         .def(py::init([](const int32_t& overloaded_accessors) {
@@ -34,13 +38,13 @@ auto cls_StructWithOverloads = py::class_<external::ClassWithOverloads::StructWi
             return result;
         }), py::arg("overloaded_accessors"))
         .def("overloaded_method", [](external::ClassWithOverloads::StructWithOverloads& self) {
-            return self.overloadedMethod();
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.overloadedMethod(); });
         })
         .def("overloaded_method", [](external::ClassWithOverloads::StructWithOverloads& self, const ::std::string& input) {
-            return self.overloadedMethod(input);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.overloadedMethod(input); });
         }, py::arg("input"))
         .def("overloaded_method", [](external::ClassWithOverloads::StructWithOverloads& self, const ::std::string& input_string, const bool input_bool) {
-            return self.overloadedMethod(input_string, input_bool);
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.overloadedMethod(input_string, input_bool); });
         }, py::arg("input_string"), py::arg("input_bool"))
         ;
 

@@ -22,8 +22,24 @@ using EnableIfField = ::smoke::EnableIfField;
 
 void register_smoke_EnableIfField(py::module_& module) {
 auto cls_EnableIfField = py::class_<EnableIfField>(module, "smoke_EnableIfField")
-        .def_readwrite("int_field", &EnableIfField::int_field)
-        .def_readwrite("bool_field", &EnableIfField::bool_field)
+        .def_property("int_field", [](const EnableIfField& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        }, [](EnableIfField& self, const int32_t value) {
+
+                self.int_field = value;
+
+        })
+        .def_property("bool_field", [](const EnableIfField& self) -> decltype(auto) {
+            return
+                (self.bool_field)
+            ;
+        }, [](EnableIfField& self, const bool value) {
+
+                self.bool_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string, bool>(), py::arg("int_field"), py::arg("string_field"), py::arg("bool_field"))
         ;

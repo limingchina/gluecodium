@@ -33,25 +33,57 @@ auto cls_SkipTypes = py::class_<SkipTypes, std::shared_ptr<SkipTypes>>(module, "
         ;
 
 auto cls_SkipTypesNotInJava = py::class_<NotInJava>(cls_SkipTypes, "NotInJava")
-        .def_readwrite("foo_field", &NotInJava::foo_field)
+        .def_property("foo_field", [](const NotInJava& self) -> decltype(auto) {
+            return
+                (self.foo_field)
+            ;
+        }, [](NotInJava& self, const ::std::string& value) {
+
+                self.foo_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 
 auto cls_SkipTypesNotInSwift = py::class_<NotInSwift>(cls_SkipTypes, "NotInSwift")
-        .def_readwrite("foo_field", &NotInSwift::foo_field)
+        .def_property("foo_field", [](const NotInSwift& self) -> decltype(auto) {
+            return
+                (self.foo_field)
+            ;
+        }, [](NotInSwift& self, const ::std::string& value) {
+
+                self.foo_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 
 auto cls_SkipTypesNotInDart = py::class_<NotInDart>(cls_SkipTypes, "NotInDart")
-        .def_readwrite("foo_field", &NotInDart::foo_field)
+        .def_property("foo_field", [](const NotInDart& self) -> decltype(auto) {
+            return
+                (self.foo_field)
+            ;
+        }, [](NotInDart& self, const ::std::string& value) {
+
+                self.foo_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         ;
 
 auto cls_SkipTypesNotInKotlin = py::class_<NotInKotlin>(cls_SkipTypes, "NotInKotlin")
-        .def_readwrite("foo_field", &NotInKotlin::foo_field)
+        .def_property("foo_field", [](const NotInKotlin& self) -> decltype(auto) {
+            return
+                (self.foo_field)
+            ;
+        }, [](NotInKotlin& self, const ::std::string& value) {
+
+                self.foo_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
         ;

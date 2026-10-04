@@ -28,9 +28,33 @@ using StructWithNullableCollectionDefaults = ::smoke::StructWithNullableCollecti
 
 void register_smoke_StructWithNullableCollectionDefaults(py::module_& module) {
 auto cls_StructWithNullableCollectionDefaults = py::class_<StructWithNullableCollectionDefaults>(module, "smoke_StructWithNullableCollectionDefaults")
-        .def_readwrite("nullable_list_field", &StructWithNullableCollectionDefaults::nullable_list_field)
-        .def_readwrite("nullable_map_field", &StructWithNullableCollectionDefaults::nullable_map_field)
-        .def_readwrite("nullable_set_field", &StructWithNullableCollectionDefaults::nullable_set_field)
+        .def_property("nullable_list_field", [](const StructWithNullableCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.nullable_list_field)
+            );
+        }, [](StructWithNullableCollectionDefaults& self, const ::gluecodium::optional< ::std::vector< ::std::string > >& value) {
+
+                self.nullable_list_field = value;
+
+        })
+        .def_property("nullable_map_field", [](const StructWithNullableCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.nullable_map_field)
+            );
+        }, [](StructWithNullableCollectionDefaults& self, const ::gluecodium::optional< ::std::unordered_map< ::std::string, ::std::string > >& value) {
+
+                self.nullable_map_field = value;
+
+        })
+        .def_property("nullable_set_field", [](const StructWithNullableCollectionDefaults& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(
+                (self.nullable_set_field)
+            );
+        }, [](StructWithNullableCollectionDefaults& self, const ::gluecodium::optional< ::std::unordered_set< ::std::string > >& value) {
+
+                self.nullable_set_field = value;
+
+        })
         .def(py::init<>())
         .def(py::init<::gluecodium::optional< ::std::vector< ::std::string > >, ::gluecodium::optional< ::std::unordered_map< ::std::string, ::std::string > >, ::gluecodium::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
         ;

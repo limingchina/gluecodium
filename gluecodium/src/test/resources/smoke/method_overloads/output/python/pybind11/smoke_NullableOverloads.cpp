@@ -25,8 +25,8 @@ auto cls_NullableOverloads = py::class_<NullableOverloads, std::shared_ptr<Nulla
         .def("__gluecodium_id__", [](const NullableOverloads& self) {
             return gluecodium::python::native_identity(self);
         })
-        .def("foo", py::overload_cast<const ::std::string&>(&NullableOverloads::foo), py::arg("input"))
-        .def("foo", py::overload_cast<const ::gluecodium::optional< ::std::string >&>(&NullableOverloads::foo), py::arg("input"))
+        .def("foo", py::overload_cast<const ::std::string&>(&NullableOverloads::foo), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("foo", py::overload_cast<const ::gluecodium::optional< ::std::string >&>(&NullableOverloads::foo), py::arg("input"), py::call_guard<py::gil_scoped_release>())
         ;
 
 
