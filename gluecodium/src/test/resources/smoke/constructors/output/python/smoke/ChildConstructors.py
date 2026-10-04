@@ -25,7 +25,7 @@ class ChildConstructors(generated.smoke_ChildConstructors):
 
     @staticmethod
     def create(*args, **kwargs) -> ChildConstructors:
-        native_result = generated.smoke_ChildConstructors.create(*[_unwrap(a) for a in args])
+        native_result = generated.smoke_ChildConstructors.create(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
         return _get_or_create_wrapper(native_result, ChildConstructors)
 
 

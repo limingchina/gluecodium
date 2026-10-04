@@ -27,7 +27,7 @@ class StructWithOverloads(_NativeBase):
 
 
     def overloaded_method(self, *args, **kwargs) -> str:
-        return _wrap(self._native.overloaded_method(*[_unwrap(a) for a in args]), str)
+        return _wrap(self._native.overloaded_method(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), str)
 
 
 

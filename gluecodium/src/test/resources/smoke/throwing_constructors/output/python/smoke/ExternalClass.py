@@ -33,7 +33,7 @@ class ExternalClass(generated.smoke_ExternalClass):
     
         @staticmethod
         def create(*args, **kwargs) -> ExternalClass.InternalOne:
-            native_result = generated.smoke_ExternalClass.InternalOne.create(*[_unwrap(a) for a in args])
+            native_result = generated.smoke_ExternalClass.InternalOne.create(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
             return _get_or_create_wrapper(native_result, ExternalClass.InternalOne)
     
     

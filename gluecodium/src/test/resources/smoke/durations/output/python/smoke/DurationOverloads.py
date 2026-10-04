@@ -14,7 +14,7 @@ class DurationOverloads(_NativeBase):
         super().__init__(native)
 
     def duration_function(self, *args, **kwargs) -> str:
-        return _wrap(self._native.duration_function(*[_unwrap(a) for a in args]), str)
+        return _wrap(self._native.duration_function(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), str)
 
 
 

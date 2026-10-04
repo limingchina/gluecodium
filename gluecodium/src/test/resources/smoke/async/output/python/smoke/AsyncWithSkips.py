@@ -14,7 +14,7 @@ class AsyncWithSkips(_NativeBase):
 
     @staticmethod
     def make_shared_instance(*args, **kwargs):
-        generated.smoke_AsyncWithSkips.make_shared_instance(*[_unwrap(a) for a in args])
+        generated.smoke_AsyncWithSkips.make_shared_instance(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
 
 
 

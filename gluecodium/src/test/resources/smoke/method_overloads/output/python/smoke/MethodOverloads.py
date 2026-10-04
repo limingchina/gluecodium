@@ -13,7 +13,7 @@ class MethodOverloads(_NativeBase):
         super().__init__(native)
 
     def is_boolean(self, *args, **kwargs) -> bool:
-        return _wrap(self._native.is_boolean(*[_unwrap(a) for a in args]), bool)
+        return _wrap(self._native.is_boolean(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), bool)
 
 
 
@@ -23,7 +23,7 @@ class MethodOverloads(_NativeBase):
 
 
     def is_float(self, *args, **kwargs) -> bool:
-        return _wrap(self._native.is_float(*[_unwrap(a) for a in args]), bool)
+        return _wrap(self._native.is_float(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()}), bool)
 
 
     class Point(_NativeBase):

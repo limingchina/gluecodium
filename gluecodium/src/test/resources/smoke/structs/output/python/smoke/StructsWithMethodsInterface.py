@@ -59,7 +59,7 @@ class StructsWithMethodsInterface(_NativeBase):
     
         @staticmethod
         def create(*args, **kwargs) -> StructsWithMethodsInterface.Vector3:
-            native_result = generated.smoke_StructsWithMethodsInterface.Vector3.create(*[_unwrap(a) for a in args])
+            native_result = generated.smoke_StructsWithMethodsInterface.Vector3.create(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
             return _get_or_create_wrapper(native_result, StructsWithMethodsInterface.Vector3)
     
     
