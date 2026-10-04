@@ -6,5 +6,6 @@ import typing
 
 class CrossPackageChildClass(
     ParentInterface):
+    ...
 
 

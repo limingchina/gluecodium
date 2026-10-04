@@ -11,5 +11,6 @@ import typing
 
 class ChildClassWithIncludes(
     ParentInterfaceWithIncludes):
+    ...
 
 

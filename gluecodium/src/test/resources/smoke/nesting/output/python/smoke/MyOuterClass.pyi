@@ -8,6 +8,7 @@ class MyOuterClass:
 
     class MyNestedImplementation(
         MyParentInterface):
+        ...
     
     
 

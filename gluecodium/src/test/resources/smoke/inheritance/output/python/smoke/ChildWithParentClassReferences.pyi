@@ -8,5 +8,6 @@ import typing
 
 class ChildWithParentClassReferences(
     ParentWithClassReferences):
+    ...
 
 

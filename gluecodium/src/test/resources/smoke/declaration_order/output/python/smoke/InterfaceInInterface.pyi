@@ -7,6 +7,7 @@ from typing import Callable
 class InterfaceInInterface:
 
     class FooChecker:
+        ...
     
     
     

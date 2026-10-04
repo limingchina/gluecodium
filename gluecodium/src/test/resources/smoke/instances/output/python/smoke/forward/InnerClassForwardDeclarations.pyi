@@ -30,14 +30,17 @@ class InnerClassForwardDeclarations:
     
     
     class _InnerInterface1:
+        ...
     
     
     
     class InnerInterface2:
+        ...
     
     
     
     class InnerInterface3:
+        ...
     
     
 
