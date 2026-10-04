@@ -95,7 +95,7 @@ function(gluecodium_target_python_sources _target)
   cmake_parse_arguments(_args "${_options}" "${_single_args}" "${_multi_args}" ${ARGN})
   gluecodium_check_no_unparsed_arguments(_args gluecodium_target_python_sources)
 
-  find_package(Python3 3.8 COMPONENTS Interpreter Development.Module REQUIRED)
+  find_package(Python3 3.10 COMPONENTS Interpreter Development.Module REQUIRED)
   find_package(pybind11 CONFIG REQUIRED)
 
   # Resolve the Python output directory. Prefer an explicit OUTPUT_DIR; otherwise read the
