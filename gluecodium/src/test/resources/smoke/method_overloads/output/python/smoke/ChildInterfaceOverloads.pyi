@@ -5,7 +5,8 @@ from enum import Enum
 import typing
 from typing import Optional
 
-class ChildInterfaceOverloads:
+class ChildInterfaceOverloads(
+    ParentInterface):
 
     def foo(self, input: str):
         ...
