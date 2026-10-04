@@ -12,12 +12,12 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "gluecodium/TimePointHash.h"
 #include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/DatesSteady.h"
 #include "chrono"
-#include "optional"
 #include "string"
 #include "unordered_map"
 #include "vector"
@@ -44,7 +44,7 @@ auto cls_DatesSteadyDateStruct = py::class_<DateStruct>(cls_DatesSteady, "DateSt
         .def_readwrite("nullable_date_field", &DateStruct::nullable_date_field)
         .def(py::init<>())
         .def(py::init<std::chrono::steady_clock::time_point>(), py::arg("date_field"))
-        .def(py::init<std::chrono::steady_clock::time_point, std::optional< std::chrono::steady_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))
+        .def(py::init<std::chrono::steady_clock::time_point, ::gluecodium::optional< std::chrono::steady_clock::time_point >>(), py::arg("date_field"), py::arg("nullable_date_field"))
         ;
 
 

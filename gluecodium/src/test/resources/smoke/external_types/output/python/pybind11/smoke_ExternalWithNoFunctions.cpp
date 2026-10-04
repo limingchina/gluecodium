@@ -18,6 +18,23 @@ namespace py = pybind11;
 
 
 void register_smoke_ExternalWithNoFunctions(py::module_& module) {
+auto cls_ExternalWithNoFunctions = py::class_<::some::path::Bar, std::shared_ptr<::some::path::Bar>>(module, "smoke_ExternalWithNoFunctions")
+        .def("__gluecodium_id__", [](const ::some::path::Bar& self) {
+            return reinterpret_cast<uintptr_t>(std::addressof(self));
+        })
+        .def(py::init<>())
+        // Adoption constructor: when a factory returns an existing native instance (e.g. a
+        // C++ implementation of this interface), adopt it into the trampoline subclass and
+        // stash it in `m_impl` so virtual calls forward to the real implementation instead
+        // of the pure-virtual stub. `init_alias` cannot be used here because the returned
+        // instance is a foreign (non-trampoline) implementation; instead we build a fresh
+        // trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<::some::path::Bar> native) {
+            auto self = std::make_shared<ExternalWithNoFunctionsTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
+        ;
 
 
 }

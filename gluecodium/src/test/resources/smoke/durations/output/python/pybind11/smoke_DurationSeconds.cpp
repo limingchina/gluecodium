@@ -13,12 +13,12 @@
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
 #include "gluecodium/DurationHash.h"
+#include "gluecodium/Optional.h"
 #include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/UnorderedSetHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/DurationSeconds.h"
 #include "chrono"
-#include "optional"
 #include "string"
 #include "unordered_map"
 #include "unordered_set"

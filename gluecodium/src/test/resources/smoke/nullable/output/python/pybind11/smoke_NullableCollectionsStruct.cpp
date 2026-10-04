@@ -12,6 +12,7 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "gluecodium/TimePointHash.h"
 #include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/VectorHash.h"
@@ -19,7 +20,6 @@ namespace py = pybind11;
 #include "smoke/NullableCollectionsStruct.h"
 #include "chrono"
 #include "cstdint"
-#include "optional"
 #include "unordered_map"
 #include "vector"
 
@@ -32,7 +32,7 @@ auto cls_NullableCollectionsStruct = py::class_<NullableCollectionsStruct>(modul
         .def_readwrite("dates", &NullableCollectionsStruct::dates)
         .def_readwrite("structs", &NullableCollectionsStruct::structs)
         .def(py::init<>())
-        .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::unordered_map< int32_t, std::optional< ::smoke::Nullable::SomeStruct > >>(), py::arg("dates"), py::arg("structs"))
+        .def(py::init<::std::vector< ::gluecodium::optional< ::std::chrono::system_clock::time_point > >, ::std::unordered_map< int32_t, ::gluecodium::optional< ::smoke::Nullable::SomeStruct > >>(), py::arg("dates"), py::arg("structs"))
         ;
 
 

@@ -12,11 +12,11 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "gluecodium/TimePointHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/MixedCollectionsStruct.h"
 #include "chrono"
-#include "optional"
 #include "vector"
 
 using MixedCollectionsStruct = ::smoke::MixedCollectionsStruct;
@@ -28,7 +28,7 @@ auto cls_MixedCollectionsStruct = py::class_<MixedCollectionsStruct>(module, "sm
         .def_readwrite("almost_dates", &MixedCollectionsStruct::almost_dates)
         .def_readwrite("dates", &MixedCollectionsStruct::dates)
         .def(py::init<>())
-        .def(py::init<::std::vector< std::optional< ::std::chrono::system_clock::time_point > >, ::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("almost_dates"), py::arg("dates"))
+        .def(py::init<::std::vector< ::gluecodium::optional< ::std::chrono::system_clock::time_point > >, ::std::vector< ::std::chrono::system_clock::time_point >>(), py::arg("almost_dates"), py::arg("dates"))
         ;
 
 

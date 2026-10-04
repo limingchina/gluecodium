@@ -12,11 +12,11 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "gluecodium/UnorderedMapHash.h"
 #include "gluecodium/UnorderedSetHash.h"
 #include "gluecodium/VectorHash.h"
 #include "smoke/StructWithNullableCollectionDefaults.h"
-#include "optional"
 #include "string"
 #include "unordered_map"
 #include "unordered_set"
@@ -32,7 +32,7 @@ auto cls_StructWithNullableCollectionDefaults = py::class_<StructWithNullableCol
         .def_readwrite("nullable_map_field", &StructWithNullableCollectionDefaults::nullable_map_field)
         .def_readwrite("nullable_set_field", &StructWithNullableCollectionDefaults::nullable_set_field)
         .def(py::init<>())
-        .def(py::init<std::optional< ::std::vector< ::std::string > >, std::optional< ::std::unordered_map< ::std::string, ::std::string > >, std::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
+        .def(py::init<::gluecodium::optional< ::std::vector< ::std::string > >, ::gluecodium::optional< ::std::unordered_map< ::std::string, ::std::string > >, ::gluecodium::optional< ::std::unordered_set< ::std::string > >>(), py::arg("nullable_list_field"), py::arg("nullable_map_field"), py::arg("nullable_set_field"))
         ;
 
 

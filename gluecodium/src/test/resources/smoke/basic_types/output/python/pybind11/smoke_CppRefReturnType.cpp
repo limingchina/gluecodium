@@ -12,9 +12,9 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "smoke/CppRefReturnType.h"
 #include "memory"
-#include "optional"
 #include "string"
 
 using CppRefReturnType = ::smoke::CppRefReturnType;

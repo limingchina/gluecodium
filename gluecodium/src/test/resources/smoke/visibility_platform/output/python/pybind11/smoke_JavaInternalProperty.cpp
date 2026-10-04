@@ -12,8 +12,8 @@
 
 // pybind11 3.x no longer provides the `py` namespace alias by default.
 namespace py = pybind11;
+#include "gluecodium/Optional.h"
 #include "smoke/JavaInternalProperty.h"
-#include "optional"
 #include "string"
 
 using JavaInternalProperty = ::smoke::JavaInternalProperty;
@@ -25,7 +25,7 @@ auto cls_JavaInternalProperty = py::class_<JavaInternalProperty, std::shared_ptr
         .def("__gluecodium_id__", [](const JavaInternalProperty& self) {
             return reinterpret_cast<uintptr_t>(std::addressof(self));
         })
-        .def_property("app_context", py::overload_cast<>(&JavaInternalProperty::get_app_context, py::const_), py::overload_cast<const std::optional< ::std::string >&>(&JavaInternalProperty::set_app_context))
+        .def_property("app_context", py::overload_cast<>(&JavaInternalProperty::get_app_context, py::const_), py::overload_cast<const ::gluecodium::optional< ::std::string >&>(&JavaInternalProperty::set_app_context))
         ;
 
 

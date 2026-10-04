@@ -12,12 +12,16 @@
 // entry point aggregates them into a single CPython extension module. The `pybind11::` prefix
 // is used here because the `py` namespace alias is introduced further below (after these
 // declarations).
+void register_smoke_InitializedPublicFieldsViaOverloadedFieldCtors(pybind11::module_& module);
 void register_smoke_InternalPropertyOnly(pybind11::module_& module);
+void register_smoke_NoCtorsInitializedPublicFieldOneInternalField(pybind11::module_& module);
+void register_smoke_NoCtorsUninitializedFieldsOneInternalField(pybind11::module_& module);
 void register_smoke_PublicClass(pybind11::module_& module);
 void register_smoke_PublicInterface(pybind11::module_& module);
 void register_smoke_PublicStructWithInternalConstructors(pybind11::module_& module);
 void register_smoke_PublicStructWithNonDefaultInternalField(pybind11::module_& module);
 void register_smoke_PublicTypeCollection(pybind11::module_& module);
+void register_smoke_StructWithNamedFieldConstructors(pybind11::module_& module);
 void register_smoke__InternalClass(pybind11::module_& module);
 void register_smoke__InternalInterfaceParent(pybind11::module_& module);
 void register_smoke__InternalClassInherits(pybind11::module_& module);
@@ -33,12 +37,16 @@ namespace py = pybind11;
 PYBIND11_MODULE(generated, m) {
     m.doc() = "Generated Python bindings for the 'generated' extension module.";
 
+    register_smoke_InitializedPublicFieldsViaOverloadedFieldCtors(m);
     register_smoke_InternalPropertyOnly(m);
+    register_smoke_NoCtorsInitializedPublicFieldOneInternalField(m);
+    register_smoke_NoCtorsUninitializedFieldsOneInternalField(m);
     register_smoke_PublicClass(m);
     register_smoke_PublicInterface(m);
     register_smoke_PublicStructWithInternalConstructors(m);
     register_smoke_PublicStructWithNonDefaultInternalField(m);
     register_smoke_PublicTypeCollection(m);
+    register_smoke_StructWithNamedFieldConstructors(m);
     register_smoke__InternalClass(m);
     register_smoke__InternalInterfaceParent(m);
     register_smoke__InternalClassInherits(m);
