@@ -33,3 +33,49 @@ def test_generated_stubs_have_valid_syntax():
     assert stub_files, "Generated type stubs must be present beside the extension"
     for stub in stub_files:
         ast.parse(stub.read_text(encoding="utf-8"), filename=str(stub))
+
+
+def test_interface_stub_inheritance_preserves_bases_and_members(tmp_path):
+    import os
+    import subprocess
+    import sys
+
+    env = dict(os.environ, MYPYPATH=str(Path(functional.__file__).parent))
+    command = [sys.executable, '-m', 'mypy', '--follow-imports=silent', '--show-error-codes',
+               '--cache-dir', str(tmp_path / 'mypy-cache')]
+    positive = tmp_path / 'inherited_interface_consumer.py'
+    positive.write_text('''
+from test.MultiInterface import MultiInterface
+from test.RegularInterface import RegularInterface
+from test.NarrowInterface import NarrowInterface
+
+def consume(value: MultiInterface) -> None:
+    regular: RegularInterface = value
+    narrow: NarrowInterface = value
+    value.parent_function()
+    value.parent_property = "text"
+    regular_text: str = value.parent_property
+    narrow_text: str = value.parent_function_light()
+    property_text: str = value.parent_property_light
+    value.child_function()
+    value.child_property = "child"
+    child_text: str = value.child_property
+''')
+    result = subprocess.run(command + [str(positive)], env=env, capture_output=True, text=True, timeout=30)
+    assert result.returncode == 0, result.stdout + result.stderr
+    negative = tmp_path / 'invalid_interface_consumer.py'
+    negative.write_text('''
+from test.MultiInterface import MultiInterface
+from test.RegularInterface import RegularInterface
+from test.MessageBox import MessageBox
+
+def invalid(value: MultiInterface, unrelated: MessageBox) -> None:
+    value.parent_property = 123
+    regular: RegularInterface = unrelated
+    value.missing_member()
+''')
+    result = subprocess.run(command + [str(negative)], env=env, capture_output=True, text=True, timeout=30)
+    assert result.returncode != 0
+    assert result.stdout.count('[assignment]') == 2, result.stdout + result.stderr
+    assert result.stdout.count('[attr-defined]') == 1, result.stdout + result.stderr
+    assert 'Found 3 errors' in result.stdout, result.stdout + result.stderr

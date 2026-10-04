@@ -7,7 +7,9 @@ from enum import Enum
 import typing
 from typing import Optional
 
-class FirstParentIsInterfaceInterface:
+class FirstParentIsInterfaceInterface(
+    ParentInterface,
+    ParentNarrowOne):
 
     def child_function(self):
         ...

@@ -19,7 +19,10 @@
   !
   !}}
 {{! Python interface type stub. }}
-{{#model}}class {{resolveName}}:
+{{#model}}class {{resolveName}}{{#if parents}}(
+{{#parents}}    {{resolveName}}{{#if iter.hasNext}},
+{{/if}}{{/parents}}
+){{/if}}:
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}{{^hasStubClassBody}}    ...
 {{/hasStubClassBody}}{{#functions}}

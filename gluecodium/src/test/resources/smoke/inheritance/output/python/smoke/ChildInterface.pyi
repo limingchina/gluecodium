@@ -5,7 +5,8 @@ from enum import Enum
 import typing
 from typing import Optional
 
-class ChildInterface:
+class ChildInterface(
+    ParentInterface):
 
     def child_method(self):
         ...
