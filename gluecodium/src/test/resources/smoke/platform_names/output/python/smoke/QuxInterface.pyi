@@ -3,6 +3,7 @@
 from smoke.QuxTypes import QuxTypes
 from enum import Enum
 import typing
+from typing import Optional
 
 class QuxInterface:
 
@@ -20,5 +21,3 @@ class QuxInterface:
     @qux_property.setter
     def qux_property(self, value: int) -> None:
         ...
-
-

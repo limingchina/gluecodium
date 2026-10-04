@@ -26,8 +26,9 @@ auto cls_StructWithSet = py::class_<StructWithSet>(module, "smoke_StructWithSet"
         .def_readwrite("field", &StructWithSet::field)
         .def(py::init<>())
         .def(py::init<::std::unordered_set< ::smoke::StructWithSet, ::gluecodium::hash< ::smoke::StructWithSet > >>(), py::arg("field"))
-        .def("__eq__", [](const StructWithSet& lhs, const StructWithSet& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const StructWithSet& self) { return gluecodium::hash<StructWithSet>{}(self); })
+        .def("__gluecodium_copy__", [](const StructWithSet& self) { return StructWithSet(self); })
+        .def("__gluecodium_equals__", [](const StructWithSet& lhs, const StructWithSet& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const StructWithSet& self) { return gluecodium::hash<StructWithSet>{}(self); })
         ;
 
 

@@ -4,6 +4,7 @@ from package.Interface import Interface
 from package.Types import Types
 from enum import Enum
 import typing
+from typing import Optional
 
 class Class(
     Interface):
@@ -22,5 +23,3 @@ class Class(
     @property.setter
     def property(self, value: Types.Enum) -> None:
         ...
-
-

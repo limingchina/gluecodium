@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class DartInternalElements:
 
@@ -9,5 +10,3 @@ class DartInternalElements:
 
     def foo(self):
         ...
-
-

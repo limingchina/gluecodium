@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class MultipleAttributesCpp:
 
@@ -19,5 +20,3 @@ class MultipleAttributesCpp:
 
     def two_lists(self):
         ...
-
-

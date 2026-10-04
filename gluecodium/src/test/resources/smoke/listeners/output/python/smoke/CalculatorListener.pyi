@@ -3,6 +3,7 @@
 from smoke.CalculationResult import CalculationResult
 from enum import Enum
 import typing
+from typing import Optional
 
 class CalculatorListener:
 
@@ -25,12 +26,9 @@ class CalculatorListener:
         ...
 
     class ResultStruct:
-    
-        result: float
-    
-    
-    
-    NamedCalculationResults = dict[str, float]
-    
-    
 
+        result: float
+
+
+
+    NamedCalculationResults = dict[str, float]

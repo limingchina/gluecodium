@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class NestedReferences:
 
@@ -9,8 +10,5 @@ class NestedReferences:
         ...
 
     class NestedReferences:
-    
-        string_field: str
-    
-    
 
+        string_field: str

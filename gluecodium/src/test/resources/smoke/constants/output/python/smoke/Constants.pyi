@@ -2,15 +2,16 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class Constants:
 
     class StateEnum(Enum):
-    
+
         OFF = 0
         ON = 1
-    
-    
+
+
 
     BOOL_CONSTANT = True
 
@@ -25,4 +26,3 @@ class Constants:
     STRING_CONSTANT = "Foo bar"
 
     ENUM_CONSTANT = StateEnum.ON
-

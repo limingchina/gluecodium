@@ -25,8 +25,9 @@ auto cls_EquatableStructWithAccessors = py::class_<EquatableStructWithAccessors>
         .def_property("foo_field", static_cast<const ::std::string& (EquatableStructWithAccessors::*)() const &>(&EquatableStructWithAccessors::get_foo_field), py::overload_cast<const ::std::string&>(&EquatableStructWithAccessors::set_foo_field))
         .def(py::init<>())
         .def(py::init<::std::string>(), py::arg("foo_field"))
-        .def("__eq__", [](const EquatableStructWithAccessors& lhs, const EquatableStructWithAccessors& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const EquatableStructWithAccessors& self) { return gluecodium::hash<EquatableStructWithAccessors>{}(self); })
+        .def("__gluecodium_copy__", [](const EquatableStructWithAccessors& self) { return EquatableStructWithAccessors(self); })
+        .def("__gluecodium_equals__", [](const EquatableStructWithAccessors& lhs, const EquatableStructWithAccessors& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const EquatableStructWithAccessors& self) { return gluecodium::hash<EquatableStructWithAccessors>{}(self); })
         ;
 
 

@@ -4,6 +4,7 @@ from smoke.AsyncError import AsyncError
 from smoke.AsyncErrorCode import AsyncErrorCode
 from enum import Enum
 import typing
+from typing import Optional
 
 class AsyncClass:
 
@@ -22,5 +23,3 @@ class AsyncClass:
     @staticmethod
     def async_static(input: bool):
         ...
-
-

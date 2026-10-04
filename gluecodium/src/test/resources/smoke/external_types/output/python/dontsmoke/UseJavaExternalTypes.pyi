@@ -8,6 +8,7 @@ from smoke.SystemColor import SystemColor
 from smoke.TimeZone import TimeZone
 from enum import Enum
 import typing
+from typing import Optional
 
 class UseJavaExternalTypes:
 
@@ -34,5 +35,3 @@ class UseJavaExternalTypes:
     @staticmethod
     def struct_round_trip(input: JavaExternalTypesStruct) -> JavaExternalTypesStruct:
         ...
-
-

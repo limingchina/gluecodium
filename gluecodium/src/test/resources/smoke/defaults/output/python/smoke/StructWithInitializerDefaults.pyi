@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class StructWithInitializerDefaults:
 
@@ -12,5 +13,3 @@ class StructWithInitializerDefaults:
     set_type_field: set[str]
 
     map_field: dict[int, str]
-
-

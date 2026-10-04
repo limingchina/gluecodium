@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -35,25 +35,22 @@ class FieldConstructorsNullableTypes(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def food_type(self) -> FieldConstructorsNullableTypes.FoodType:
             return _wrap(self._native.food_type, FieldConstructorsNullableTypes.FoodType)
         @food_type.setter
         def food_type(self, value: FieldConstructorsNullableTypes.FoodType):
           self._native.food_type = _unwrap(value, FieldConstructorsNullableTypes.FoodType)
-    
-    
-    
-    
+
+
+
+
     class FoodType(Enum):
-    
+
         VEGETABLES = generated.smoke_FieldConstructorsNullableTypes.FoodType.VEGETABLES
         FRUITS = generated.smoke_FieldConstructorsNullableTypes.FoodType.FRUITS
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-

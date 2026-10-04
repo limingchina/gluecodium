@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class SkipOverloadsInDart:
 
@@ -14,5 +15,3 @@ class SkipOverloadsInDart:
     @staticmethod
     def make(input: str) -> SkipOverloadsInDart:
         ...
-
-

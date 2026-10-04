@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -68,33 +68,33 @@ class Thermometer(_NativeBase):
 
     class SomeThermometerErrorCode(Enum):
         """Some error code for thermometer."""
-    
+
         ERROR_NONE = generated.smoke_Thermometer.SomeThermometerErrorCode.ERROR_NONE
         ERROR_FATAL = generated.smoke_Thermometer.SomeThermometerErrorCode.ERROR_FATAL
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class NotificationError(Exception):
         """This error indicates problems with notification of observers.
     May be thrown if observers cannot be notified."""
-    
+
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
-    
-    
-    
+
+
+
     class AnotherNotificationError(Exception):
         """This error indicates other problems with notification of observers."""
-    
+
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
-    
-    
+
+
 
 from smoke.TemperatureObserver import TemperatureObserver

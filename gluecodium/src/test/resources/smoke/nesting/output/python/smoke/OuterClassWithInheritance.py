@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -43,12 +43,12 @@ class OuterClassWithInheritance(generated.smoke_OuterClassWithInheritance):
     class InnerClass(_NativeBase):
         def __init__(self, native):
             super().__init__(native)
-    
+
         def bar(self, input: str) -> str:
             return _wrap(self._native.bar(_unwrap(input, str)), str)
-    
-    
-    
+
+
+
     @_mark_callback_base
     class InnerInterface(generated.smoke_OuterClassWithInheritance.InnerInterface):
         @classmethod
@@ -70,9 +70,6 @@ class OuterClassWithInheritance(generated.smoke_OuterClassWithInheritance):
             else:
                 super().__init__()
                 self._native = self
-    
+
         def baz(self, input: str) -> str:
             return _wrap(generated.smoke_OuterClassWithInheritance.InnerInterface.baz(self, _unwrap(input, str)), str)
-    
-    
-

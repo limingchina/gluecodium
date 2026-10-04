@@ -5,4 +5,4 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "functional-python-tests"
 version = "0.0.1"
-dependencies = ["pytest"]
+dependencies = ["pytest", "mypy>=1.19"]

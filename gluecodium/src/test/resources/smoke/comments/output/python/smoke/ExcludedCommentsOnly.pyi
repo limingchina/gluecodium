@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class ExcludedCommentsOnly:
@@ -26,37 +27,36 @@ class ExcludedCommentsOnly:
 
     class SomeStruct:
         """"""
-    
-        #: 
+
+        #:
         some_field: bool
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
         """"""
-    
+
         USELESS = 0
-    
-    
-    
+
+
+
     class SomethingWrongError(Exception):
         """"""
         message: str
-    
+
         def __init__(self, message: str) -> None: ...
-    
-    
-    
-    #: 
+
+
+
+    #:
     Usefulness = bool
-    
-    
-    
-    #: 
+
+
+
+    #:
     SomeLambda = Callable[[str, int], float]
-    
-    
 
-    #: 
+
+
+    #:
     VERY_USEFUL = True
-

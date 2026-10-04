@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -27,33 +27,30 @@ class QuxTypes(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def qux_field(self) -> str:
             return _wrap(self._native.qux_field, str)
         @qux_field.setter
         def qux_field(self, value: str):
           self._native.qux_field = _unwrap(value, str)
-    
-    
+
+
         @staticmethod
         def qux_make(qux_parameter: str) -> QuxTypes.QuxStruct:
             native_result = generated.smoke_QuxTypes.QuxStruct.qux_make(_unwrap(qux_parameter, str))
             return _get_or_create_wrapper(native_result, QuxTypes.QuxStruct)
-    
-    
-    
+
+
+
     class QuxEnum(Enum):
-    
+
         QUX_ITEM = generated.smoke_QuxTypes.QuxEnum.QUX_ITEM
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
-    QuxTypedef = float
-    
-    
 
+
+
+    QuxTypedef = float

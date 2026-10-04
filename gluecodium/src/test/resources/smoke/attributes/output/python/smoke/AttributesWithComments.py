@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -36,7 +36,7 @@ class AttributesWithComments(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def field(self) -> str:
             """Field comment"""
@@ -44,10 +44,9 @@ class AttributesWithComments(_NativeBase):
         @field.setter
         def field(self, value: str):
           self._native.field = _unwrap(value, str)
-    
-    
-    
+
+
+
 
     #: Const comment
     PI = False
-

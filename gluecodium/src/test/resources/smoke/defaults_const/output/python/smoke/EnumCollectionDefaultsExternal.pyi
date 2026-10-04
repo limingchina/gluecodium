@@ -6,6 +6,7 @@ from fire.ExternalEnum3 import ExternalEnum3
 from fire.ExternalEnum4 import ExternalEnum4
 from enum import Enum
 import typing
+from typing import Optional
 
 class EnumCollectionDefaultsExternal:
 
@@ -14,5 +15,3 @@ class EnumCollectionDefaultsExternal:
     set_field: set[ExternalEnum2]
 
     map_field: dict[ExternalEnum3, ExternalEnum4]
-
-

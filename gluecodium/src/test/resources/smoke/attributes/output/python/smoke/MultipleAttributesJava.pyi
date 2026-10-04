@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class MultipleAttributesJava:
 
@@ -19,5 +20,3 @@ class MultipleAttributesJava:
 
     def two_lists(self):
         ...
-
-

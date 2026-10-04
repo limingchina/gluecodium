@@ -4,10 +4,12 @@ from smoke.NonEquatableClass import NonEquatableClass
 from smoke.NonEquatableInterface import NonEquatableInterface
 from enum import Enum
 import typing
+from typing import Optional
 
 class SimpleEquatableStruct:
     def __eq__(self, other: object) -> bool: ...
-    def __hash__(self) -> int: ...
+    __hash__ = None  # type: ignore[assignment]
+    def as_key(self) -> _gluecodium_key_736d6f6b652e53696d706c65457175617461626c65537472756374: ...
 
     class_field: NonEquatableClass
 
@@ -18,3 +20,6 @@ class SimpleEquatableStruct:
     nullable_interface_field: Optional[NonEquatableInterface]
 
 
+
+class _gluecodium_key_736d6f6b652e53696d706c65457175617461626c65537472756374(SimpleEquatableStruct):
+    def __hash__(self) -> int: ...  # type: ignore[override]

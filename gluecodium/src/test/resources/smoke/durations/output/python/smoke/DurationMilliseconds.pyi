@@ -3,6 +3,7 @@
 import datetime
 from enum import Enum
 import typing
+from typing import Optional
 
 class DurationMilliseconds:
 
@@ -21,28 +22,25 @@ class DurationMilliseconds:
         ...
 
     class DurationStruct:
-    
-        duration_field: datetime.timedelta
-    
-    
-    
-    DurationTypeAlias = datetime.timedelta
-    
-    
-    
-    DurationList = list[datetime.timedelta]
-    
-    
-    
-    DurationSet = set[datetime.timedelta]
-    
-    
-    
-    DurationMap = dict[str, datetime.timedelta]
-    
-    
-    
-    DurationKeyMap = dict[datetime.timedelta, str]
-    
-    
 
+        duration_field: datetime.timedelta
+
+
+
+    DurationTypeAlias = datetime.timedelta
+
+
+
+    DurationList = list[datetime.timedelta]
+
+
+
+    DurationSet = set[datetime.timedelta]
+
+
+
+    DurationMap = dict[str, datetime.timedelta]
+
+
+
+    DurationKeyMap = dict[datetime.timedelta, str]

@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class Locales:
 
@@ -17,28 +18,25 @@ class Locales:
         ...
 
     class LocaleStruct:
-    
-        locale_field: str
-    
-    
-    
-    LocaleTypeDef = str
-    
-    
-    
-    LocaleArray = list[str]
-    
-    
-    
-    LocaleMap = dict[str, str]
-    
-    
-    
-    LocaleSet = set[str]
-    
-    
-    
-    LocaleKeyMap = dict[str, str]
-    
-    
 
+        locale_field: str
+
+
+
+    LocaleTypeDef = str
+
+
+
+    LocaleArray = list[str]
+
+
+
+    LocaleMap = dict[str, str]
+
+
+
+    LocaleSet = set[str]
+
+
+
+    LocaleKeyMap = dict[str, str]

@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class EnumWithAccessibleValues(Enum):
 
@@ -9,5 +10,3 @@ class EnumWithAccessibleValues(Enum):
     BAR = 1
     BAZ = 2
     FOO_ALIAS = 3
-
-

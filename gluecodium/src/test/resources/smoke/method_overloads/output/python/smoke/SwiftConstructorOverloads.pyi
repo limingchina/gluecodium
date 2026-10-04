@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class SwiftConstructorOverloads:
 
@@ -12,5 +13,3 @@ class SwiftConstructorOverloads:
     @staticmethod
     def make_do(throughput: str) -> SwiftConstructorOverloads:
         ...
-
-

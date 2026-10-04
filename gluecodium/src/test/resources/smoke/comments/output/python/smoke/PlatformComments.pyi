@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class PlatformComments:
 
@@ -22,23 +23,20 @@ class PlatformComments:
 
     class Something:
         """This is a."""
-    
+
         nothing: str
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
-    
+
         USELESS = 0
         USEFUL = 1
-    
-    
-    
+
+
+
     class SomethingWrongError(Exception):
         """An  when something goes wrong."""
         message: str
-    
-        def __init__(self, message: str) -> None: ...
-    
-    
 
+        def __init__(self, message: str) -> None: ...

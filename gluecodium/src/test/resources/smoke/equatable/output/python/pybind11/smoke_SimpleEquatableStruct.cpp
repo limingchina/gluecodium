@@ -31,8 +31,9 @@ auto cls_SimpleEquatableStruct = py::class_<SimpleEquatableStruct>(module, "smok
         .def(py::init<>())
         .def(py::init<::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >>(), py::arg("class_field"), py::arg("interface_field"))
         .def(py::init<::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >, ::std::shared_ptr< ::smoke::NonEquatableClass >, ::std::shared_ptr< ::smoke::NonEquatableInterface >>(), py::arg("class_field"), py::arg("interface_field"), py::arg("nullable_class_field"), py::arg("nullable_interface_field"))
-        .def("__eq__", [](const SimpleEquatableStruct& lhs, const SimpleEquatableStruct& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const SimpleEquatableStruct& self) { return gluecodium::hash<SimpleEquatableStruct>{}(self); })
+        .def("__gluecodium_copy__", [](const SimpleEquatableStruct& self) { return SimpleEquatableStruct(self); })
+        .def("__gluecodium_equals__", [](const SimpleEquatableStruct& lhs, const SimpleEquatableStruct& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const SimpleEquatableStruct& self) { return gluecodium::hash<SimpleEquatableStruct>{}(self); })
         ;
 
 

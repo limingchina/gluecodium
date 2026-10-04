@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -38,14 +38,10 @@ class PublicInterface(generated.smoke_PublicInterface):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def field_of_internal_type(self) -> PublicClass._InternalStruct:
             return _wrap(self._native.field_of_internal_type, PublicClass._InternalStruct)
         @field_of_internal_type.setter
         def field_of_internal_type(self, value: PublicClass._InternalStruct):
           self._native.field_of_internal_type = _unwrap(value, PublicClass._InternalStruct)
-    
-    
-    
-

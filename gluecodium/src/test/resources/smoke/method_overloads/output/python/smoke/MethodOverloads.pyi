@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class MethodOverloads:
 
@@ -46,18 +47,15 @@ class MethodOverloads:
         ...
 
     class Point:
-    
-        x: float
-    
-        y: float
-    
-    
-    
-    StringArray = list[str]
-    
-    
-    
-    IntArray = list[int]
-    
-    
 
+        x: float
+
+        y: float
+
+
+
+    StringArray = list[str]
+
+
+
+    IntArray = list[int]

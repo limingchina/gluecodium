@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -54,43 +54,42 @@ class ErrorsInterface(generated.smoke_ErrorsInterface):
         return _wrap(generated.smoke_ErrorsInterface.method_with_payload_error_and_return_value(), str)
 
     class InternalError(Enum):
-    
+
         ERROR_NONE = generated.smoke_ErrorsInterface.InternalError.ERROR_NONE
         ERROR_FATAL = generated.smoke_ErrorsInterface.InternalError.ERROR_FATAL
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class ExternalErrors(Enum):
-    
+
         NONE = generated.smoke_ErrorsInterface.ExternalErrors.NONE
         BOOM = generated.smoke_ErrorsInterface.ExternalErrors.BOOM
         BUST = generated.smoke_ErrorsInterface.ExternalErrors.BUST
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class InternalError(Exception):
-    
+
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
-    
-    
-    
+
+
+
     class ExternalError(Exception):
-    
+
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
-    
-    
+
+
 
     ERROR_MESSAGE = "Some error message constant"
-

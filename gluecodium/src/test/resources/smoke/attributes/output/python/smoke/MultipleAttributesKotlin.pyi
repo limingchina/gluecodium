@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class MultipleAttributesKotlin:
 
@@ -19,5 +20,3 @@ class MultipleAttributesKotlin:
 
     def two_lists(self):
         ...
-
-

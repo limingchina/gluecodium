@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class VeryBoolean:
 
@@ -10,5 +11,3 @@ class VeryBoolean:
     @staticmethod
     def make(value: bool) -> VeryBoolean:
         ...
-
-

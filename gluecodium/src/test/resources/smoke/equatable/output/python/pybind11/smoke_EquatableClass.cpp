@@ -38,8 +38,9 @@ auto cls_EquatableClassEquatableStruct = py::class_<EquatableStruct>(cls_Equatab
         .def_readwrite("nested_pointer_equatable_instance", &EquatableStruct::nested_pointer_equatable_instance)
         .def(py::init<>())
         .def(py::init<int32_t, ::std::string, ::std::shared_ptr< ::smoke::EquatableClass >, ::std::shared_ptr< ::smoke::PointerEquatableClass >>(), py::arg("int_field"), py::arg("string_field"), py::arg("nested_equatable_instance"), py::arg("nested_pointer_equatable_instance"))
-        .def("__eq__", [](const EquatableStruct& lhs, const EquatableStruct& rhs) { return lhs == rhs; })
-        .def("__hash__", [](const EquatableStruct& self) { return gluecodium::hash<EquatableStruct>{}(self); })
+        .def("__gluecodium_copy__", [](const EquatableStruct& self) { return EquatableStruct(self); })
+        .def("__gluecodium_equals__", [](const EquatableStruct& lhs, const EquatableStruct& rhs) { return lhs == rhs; })
+        .def("__gluecodium_hash__", [](const EquatableStruct& self) { return gluecodium::hash<EquatableStruct>{}(self); })
         ;
 
 

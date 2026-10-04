@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -65,7 +65,7 @@ Not working for Swift:
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def random_field(self) -> Comments.SomeStruct:
             """Some random field `Comments.SomeStruct`"""
@@ -73,7 +73,3 @@ Not working for Swift:
         @random_field.setter
         def random_field(self, value: Comments.SomeStruct):
           self._native.random_field = _unwrap(value, Comments.SomeStruct)
-    
-    
-    
-

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -28,39 +28,34 @@ class StructsWithMethods(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def x(self) -> float:
             return _wrap(self._native.x, float)
         @x.setter
         def x(self, value: float):
           self._native.x = _unwrap(value, float)
-    
-    
+
+
         @property
         def y(self) -> float:
             return _wrap(self._native.y, float)
         @y.setter
         def y(self, value: float):
           self._native.y = _unwrap(value, float)
-    
-    
+
+
         def distance_to(self, other: StructsWithMethods.Vector) -> float:
             return _wrap(self._native.distance_to(_unwrap(other, StructsWithMethods.Vector)), float)
-    
+
         def add(self, other: StructsWithMethods.Vector) -> StructsWithMethods.Vector:
             return _wrap(self._native.add(_unwrap(other, StructsWithMethods.Vector)), StructsWithMethods.Vector)
-    
+
         @staticmethod
         def validate(x: float, y: float) -> bool:
             return _wrap(generated.smoke_StructsWithMethods.Vector.validate(_unwrap(x, float), _unwrap(y, float)), bool)
-    
+
         @staticmethod
         def create(*args, **kwargs) -> StructsWithMethods.Vector:
             native_result = generated.smoke_StructsWithMethods.Vector.create(*[_unwrap(a) for a in args], **{k: _unwrap(v) for k, v in kwargs.items()})
             return _get_or_create_wrapper(native_result, StructsWithMethods.Vector)
-    
-    
-    
-    
-

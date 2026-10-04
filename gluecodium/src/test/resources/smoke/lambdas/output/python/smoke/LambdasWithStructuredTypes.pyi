@@ -4,6 +4,7 @@ from smoke.LambdasDeclarationOrder import LambdasDeclarationOrder
 from smoke.LambdasInterface import LambdasInterface
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class LambdasWithStructuredTypes:
@@ -15,10 +16,7 @@ class LambdasWithStructuredTypes:
         ...
 
     ClassCallback = Callable[[LambdasInterface], None]
-    
-    
-    
-    StructCallback = Callable[[LambdasDeclarationOrder.SomeStruct], None]
-    
-    
 
+
+
+    StructCallback = Callable[[LambdasDeclarationOrder.SomeStruct], None]

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -33,35 +33,35 @@ class InnerClassForwardDeclarations(_NativeBase):
             else:
                 super().__init__()
                 self._native = self
-    
+
         def _get_inner_interface(self) -> InnerClassForwardDeclarations._InnerInterface1:
             return _wrap(generated.smoke_forward_InnerClassForwardDeclarations.InnerClass1._get_inner_interface(self), InnerClassForwardDeclarations._InnerInterface1)
-    
-    
-    
+
+
+
     class InnerClass2(_NativeBase):
         def __init__(self, native):
             super().__init__(native)
-    
+
         class InnerInnerClass1(_NativeBase):
             def __init__(self, native):
                 super().__init__(native)
-    
+
             def foo(self) -> InnerClassForwardDeclarations.InnerClass2.InnerInnerClass2:
                 return _wrap(self._native.foo(), InnerClassForwardDeclarations.InnerClass2.InnerInnerClass2)
-    
-    
-    
+
+
+
         class InnerInnerClass2(_NativeBase):
             def __init__(self, native):
                 super().__init__(native)
-    
+
             def bar(self, arg: InnerClassForwardDeclarations.InnerInterface2):
                 return _wrap(self._native.bar(_unwrap(arg, InnerClassForwardDeclarations.InnerInterface2)), None)
-    
-    
-    
-    
+
+
+
+
     @_mark_callback_base
     class _InnerInterface1(generated.smoke_forward_InnerClassForwardDeclarations._InnerInterface1):
         @classmethod
@@ -81,9 +81,9 @@ class InnerClassForwardDeclarations(_NativeBase):
             else:
                 super().__init__()
                 self._native = self
-    
-    
-    
+
+
+
     @_mark_callback_base
     class InnerInterface2(generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface2):
         @classmethod
@@ -103,9 +103,9 @@ class InnerClassForwardDeclarations(_NativeBase):
             else:
                 super().__init__()
                 self._native = self
-    
-    
-    
+
+
+
     @_mark_callback_base
     class InnerInterface3(generated.smoke_forward_InnerClassForwardDeclarations.InnerInterface3):
         @classmethod
@@ -125,6 +125,3 @@ class InnerClassForwardDeclarations(_NativeBase):
             else:
                 super().__init__()
                 self._native = self
-    
-    
-

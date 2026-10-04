@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class DartPublicElementsEnabled:
 
@@ -11,5 +12,3 @@ class DartPublicElementsEnabled:
 
     def _foo(self):
         ...
-
-

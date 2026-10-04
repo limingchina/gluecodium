@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -19,12 +19,15 @@ class PseudoColor(_NativeBase):
             ))
 
     def __eq__(self, other: object) -> bool:
-        if not isinstance(other, type(self)):
+        if not isinstance(other, __class__):
             return False
-        return self._native == other._native
+        return self._native.__gluecodium_equals__(other._native)
 
-    def __hash__(self) -> int:
-        return hash(self._native)
+    __hash__ = None
+
+    def as_key(self):
+        """Return an isolated immutable value snapshot for dictionaries and sets."""
+        return _struct_key(self, __class__)
 
     @property
     def red(self) -> float:
@@ -56,6 +59,3 @@ class PseudoColor(_NativeBase):
     @alpha.setter
     def alpha(self, value: float):
       self._native.alpha = _unwrap(value, float)
-
-
-

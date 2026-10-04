@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class SomeMutableCustomStructWithDefaults:
 
@@ -10,5 +11,3 @@ class SomeMutableCustomStructWithDefaults:
     string_field: str
 
     list_field: list[int]
-
-

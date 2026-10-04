@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -27,38 +27,37 @@ class Types(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def null(self) -> Types.Enum:
             return _wrap(self._native.null, Types.Enum)
         @null.setter
         def null(self, value: Types.Enum):
           self._native.null = _unwrap(value, Types.Enum)
-    
-    
-    
-    
+
+
+
+
     class Enum(Enum):
-    
+
         NA_N = generated.package_Types.Enum.NA_N
-    
+
         @property
         def _native(self):
             return self.value
-    
-    
-    
+
+
+
     class ExceptionError(Exception):
-    
+
         def __init__(self, message: str):
             super().__init__(message)
             self.message = message
-    
-    
-    
+
+
+
     ULong = list[Struct]
-    
-    
+
+
 
     CONST = Enum.NA_N
-

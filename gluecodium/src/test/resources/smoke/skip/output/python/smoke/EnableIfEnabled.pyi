@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class EnableIfEnabled:
 
@@ -32,5 +33,3 @@ class EnableIfEnabled:
     @staticmethod
     def enable_if_mixed_list():
         ...
-
-

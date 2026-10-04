@@ -3,6 +3,7 @@
 from smoke.ParentWithCustomConstructor import ParentWithCustomConstructor
 from enum import Enum
 import typing
+from typing import Optional
 
 class ChildWithCustomConstructor(
     ParentWithCustomConstructor):
@@ -10,5 +11,3 @@ class ChildWithCustomConstructor(
     @staticmethod
     def make() -> ChildWithCustomConstructor:
         ...
-
-

@@ -6,6 +6,7 @@ from smoke.DartSeason import DartSeason
 from smoke.Rectangle import Rectangle
 from enum import Enum
 import typing
+from typing import Optional
 
 class UseDartExternalTypes:
 
@@ -24,5 +25,3 @@ class UseDartExternalTypes:
     @staticmethod
     def season_round_trip(input: DartSeason) -> DartSeason:
         ...
-
-

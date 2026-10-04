@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class StructWithKotlinPositionalDefaults:
     """This is an important struct that uses positional default annotation."""
@@ -15,5 +16,3 @@ class StructWithKotlinPositionalDefaults:
     second_free_field: bool
 
     third_init_field: str
-
-

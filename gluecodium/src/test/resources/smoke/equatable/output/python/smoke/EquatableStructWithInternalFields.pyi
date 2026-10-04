@@ -2,10 +2,12 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class EquatableStructWithInternalFields:
     def __eq__(self, other: object) -> bool: ...
-    def __hash__(self) -> int: ...
+    __hash__ = None  # type: ignore[assignment]
+    def as_key(self) -> _gluecodium_key_736d6f6b652e457175617461626c6553747275637457697468496e7465726e616c4669656c6473: ...
 
     public_field: str
 
@@ -18,3 +20,6 @@ class EquatableStructWithInternalFields:
     _internal_set_field: set[str]
 
 
+
+class _gluecodium_key_736d6f6b652e457175617461626c6553747275637457697468496e7465726e616c4669656c6473(EquatableStructWithInternalFields):
+    def __hash__(self) -> int: ...  # type: ignore[override]

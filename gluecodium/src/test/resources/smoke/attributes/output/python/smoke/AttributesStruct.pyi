@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class AttributesStruct:
 
@@ -10,6 +11,5 @@ class AttributesStruct:
     def very_fun(self, param: str):
         ...
 
+
     PI = False
-
-

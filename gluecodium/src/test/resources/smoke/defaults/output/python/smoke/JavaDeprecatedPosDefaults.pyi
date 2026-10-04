@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class JavaDeprecatedPosDefaults:
     """Foo Bar this is a comment"""
@@ -11,5 +12,3 @@ class JavaDeprecatedPosDefaults:
 
     #: first free!
     first_free_field: str
-
-

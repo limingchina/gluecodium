@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class Season(Enum):
 
@@ -9,5 +10,3 @@ class Season(Enum):
     SPRING = 1
     SUMMER = 2
     AUTUMN = 3
-
-

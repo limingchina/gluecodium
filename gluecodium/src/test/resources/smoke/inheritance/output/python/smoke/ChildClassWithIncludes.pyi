@@ -8,10 +8,9 @@ from smoke.ParentInterfaceWithIncludes import ParentInterfaceWithIncludes
 from smoke.ShouldNotInclude import ShouldNotInclude
 from enum import Enum
 import typing
+from typing import Optional
 from typing import Callable
 
 class ChildClassWithIncludes(
     ParentInterfaceWithIncludes):
     ...
-
-

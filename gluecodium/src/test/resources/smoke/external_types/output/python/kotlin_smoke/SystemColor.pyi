@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class SystemColor:
 
@@ -12,5 +13,3 @@ class SystemColor:
     blue: float
 
     alpha: float
-
-

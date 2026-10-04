@@ -4,6 +4,7 @@ from smoke.ParentClass import ParentClass
 from smoke.ParentNarrowOne import ParentNarrowOne
 from enum import Enum
 import typing
+from typing import Optional
 
 class FirstParentIsClassClass(
     ParentClass,
@@ -19,5 +20,3 @@ class FirstParentIsClassClass(
     @child_property.setter
     def child_property(self, value: str) -> None:
         ...
-
-

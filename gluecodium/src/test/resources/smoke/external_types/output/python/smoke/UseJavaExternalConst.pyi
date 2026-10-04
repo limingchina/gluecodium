@@ -3,6 +3,7 @@
 from smoke.JavaExternalCtor import JavaExternalCtor
 from enum import Enum
 import typing
+from typing import Optional
 
 class UseJavaExternalConst:
 
@@ -10,4 +11,3 @@ class UseJavaExternalConst:
 
 
     _DEFAULT_TRUTH = JavaExternalCtor("foo")
-

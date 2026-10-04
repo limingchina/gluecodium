@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class OrderInStructWithFunctions:
 
@@ -11,15 +12,12 @@ class OrderInStructWithFunctions:
         ...
 
     class NestedStruct:
-    
+
         some_field: str
-    
-    
-    
+
+
+
     class SomeEnum(Enum):
-    
+
         FOO = 0
         BAR = 1
-    
-    
-

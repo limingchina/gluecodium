@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class RenamedClass:
 
@@ -10,5 +11,3 @@ class RenamedClass:
 
     def visible_method(self, param: int) -> str:
         ...
-
-

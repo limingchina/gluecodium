@@ -23,7 +23,13 @@
 {{#ifPredicate this "hasAnyComment"}}    """{{resolveName comment}}"""
 {{/ifPredicate}}{{#ifPredicate "isEquatable"}}
     def __eq__(self, other: object) -> bool: ...
+{{#hasImmutableHashState}}
     def __hash__(self) -> int: ...
+{{/hasImmutableHashState}}
+{{^hasImmutableHashState}}
+    __hash__ = None  # type: ignore[assignment]
+{{/hasImmutableHashState}}
+    def as_key(self) -> {{structKeyStubName}}: ...
 {{/ifPredicate}}
 {{#fields}}
 

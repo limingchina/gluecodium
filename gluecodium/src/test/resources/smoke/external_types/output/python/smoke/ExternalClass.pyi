@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class ExternalClass:
 
@@ -14,14 +15,11 @@ class ExternalClass:
 
 
     class SomeStruct:
-    
-        some_field: str
-    
-    
-    
-    class SomeEnum(Enum):
-    
-        SOME_VALUE = 0
-    
-    
 
+        some_field: str
+
+
+
+    class SomeEnum(Enum):
+
+        SOME_VALUE = 0

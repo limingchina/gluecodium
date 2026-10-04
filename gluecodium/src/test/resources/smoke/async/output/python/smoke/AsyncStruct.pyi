@@ -3,6 +3,7 @@
 from smoke.ThrowMeError import ThrowMeError
 from enum import Enum
 import typing
+from typing import Optional
 
 class AsyncStruct:
 
@@ -23,5 +24,3 @@ class AsyncStruct:
     @staticmethod
     def async_static(input: bool):
         ...
-
-

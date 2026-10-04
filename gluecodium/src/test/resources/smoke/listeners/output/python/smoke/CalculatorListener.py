@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -68,18 +68,15 @@ class CalculatorListener(generated.smoke_CalculatorListener):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def result(self) -> float:
             return _wrap(self._native.result, float)
         @result.setter
         def result(self, value: float):
           self._native.result = _unwrap(value, float)
-    
-    
-    
-    
-    NamedCalculationResults = dict[str, float]
-    
-    
 
+
+
+
+    NamedCalculationResults = dict[str, float]

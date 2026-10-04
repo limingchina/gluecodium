@@ -7,6 +7,7 @@ from kotlin_smoke.SystemColor import SystemColor
 from kotlin_smoke.TimeZone import TimeZone
 from enum import Enum
 import typing
+from typing import Optional
 
 class KotlinExternalTypesStruct:
 
@@ -19,5 +20,3 @@ class KotlinExternalTypesStruct:
     color: SystemColor
 
     season: Season
-
-

@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class CommentsMarkdown:
     """First line.
@@ -28,5 +29,3 @@ Ordered list:
 ---
 
 [title](https://www.markdownguide.org/cheat-sheet/)"""
-
-

@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class CppRefReturnType:
 
@@ -51,29 +52,26 @@ class CppRefReturnType:
 
 
     class SomeStruct:
-    
+
         field: str
-    
-    
-    
+
+
+
     class InternalError(Enum):
-    
+
         FOO = 0
         BAR = 1
-    
-    
-    
+
+
+
     class EnumBasedError(Exception):
         message: str
-    
+
         def __init__(self, message: str) -> None: ...
-    
-    
-    
+
+
+
     class StructBasedError(Exception):
         message: str
-    
-        def __init__(self, message: str) -> None: ...
-    
-    
 
+        def __init__(self, message: str) -> None: ...

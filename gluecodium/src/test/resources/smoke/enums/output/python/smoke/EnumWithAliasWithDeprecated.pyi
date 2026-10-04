@@ -2,6 +2,7 @@
 
 from enum import Enum
 import typing
+from typing import Optional
 
 class EnumWithAliasWithDeprecated(Enum):
 
@@ -9,5 +10,3 @@ class EnumWithAliasWithDeprecated(Enum):
     TWO = 1
     THREE = 2
     FIRST = 3
-
-

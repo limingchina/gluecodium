@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
 from enum import Enum
 from typing import Optional
 import generated
@@ -44,34 +44,31 @@ class Dates(_NativeBase):
                     *[_unwrap(arg) for arg in args],
                     **{k: _unwrap(v) for k, v in kwargs.items()}
                 ))
-    
+
         @property
         def date_field(self) -> datetime.datetime:
             return _wrap(self._native.date_field, datetime.datetime)
         @date_field.setter
         def date_field(self, value: datetime.datetime):
           self._native.date_field = _unwrap(value, datetime.datetime)
-    
-    
+
+
         @property
         def nullable_date_field(self):
             return _wrap(self._native.nullable_date_field, Optional[datetime.datetime])
         @nullable_date_field.setter
         def nullable_date_field(self, value):
           self._native.nullable_date_field = _unwrap(value, Optional[datetime.datetime])
-    
-    
-    
-    
-    DateTypeDef = datetime.datetime
-    
-    
-    
-    DateArray = list[datetime.datetime]
-    
-    
-    
-    DateMap = dict[str, datetime.datetime]
-    
-    
 
+
+
+
+    DateTypeDef = datetime.datetime
+
+
+
+    DateArray = list[datetime.datetime]
+
+
+
+    DateMap = dict[str, datetime.datetime]
