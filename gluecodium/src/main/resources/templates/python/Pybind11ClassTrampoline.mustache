@@ -1,0 +1,62 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{! pybind11 class trampoline — extracted from Pybind11Class for Option B (one file per top element). }}
+{{#model}}
+{{#ifPredicate model "needsTrampoline"}}
+{{#unless external.cpp}}
+class {{resolveName}}Trampoline : public {{resolveName model "Pybind11"}} {
+public:
+    using {{resolveName model "Pybind11"}}::{{resolveName model "Pybind11"}};
+
+    // Holds an adopted native implementation returned by a factory. When non-null, the
+    // trampoline forwards virtual calls to it instead of the pure-virtual stub. A Python
+    // subclass is instantiated with no impl held, in which case the overrides fall back to
+    // PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<{{resolveName model "Pybind11"}}> m_impl;
+
+{{#functions}}
+{{#unless isStatic}}
+{{#unless isConstructor}}
+{{>python/Pybind11TrampolineFunction}}
+{{/unless}}
+{{/unless}}
+{{/functions}}
+{{#properties}}
+{{#unless isStatic}}
+{{>python/Pybind11TrampolineProperty}}
+{{/unless}}
+{{/properties}}
+{{#inheritedFunctions}}
+{{#unless isStatic}}
+{{#unless isConstructor}}
+{{>python/Pybind11TrampolineFunction}}
+{{/unless}}
+{{/unless}}
+{{/inheritedFunctions}}
+{{#inheritedProperties}}
+{{#unless isStatic}}
+{{>python/Pybind11TrampolineProperty}}
+{{/unless}}
+{{/inheritedProperties}}
+};
+{{/unless}}
+{{/ifPredicate}}
+{{/model}}

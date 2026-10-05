@@ -1,0 +1,20 @@
+
+
+from __future__ import annotations
+
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
+from enum import Enum
+from typing import Optional
+import generated
+
+
+class Season(Enum):
+
+    WINTER = generated.smoke_Season.WINTER
+    SPRING = generated.smoke_Season.SPRING
+    SUMMER = generated.smoke_Season.SUMMER
+    AUTUMN = generated.smoke_Season.AUTUMN
+
+    @property
+    def _native(self):
+        return self.value

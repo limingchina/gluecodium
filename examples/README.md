@@ -38,3 +38,10 @@ What this example DOESN'T demonstrate:
 - How to use advanced Gluecodium features such as tags, advanced manipulations with comments or properties.
 
 For a detailed description check [calculator/README.md](calculator/README.md)
+
+## Python example
+
+The [Calculator example](python/README.md) generates C++ and Python bindings, builds a
+CPython extension with pybind11, and runs a Python client. It covers factories,
+structs, properties, callbacks implemented in Python, and throwing methods.
+It uses a local Gluecodium distribution; Maven publication is not required.

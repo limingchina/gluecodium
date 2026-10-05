@@ -25,6 +25,18 @@ import "../test_suite.dart";
 final _testSuite = TestSuite("PlainDataStructuresImmutable");
 
 void main() {
+  _testSuite.test("Immutable struct overloads have distinct Dart names", () {
+    final point = PlainDataStructuresImmutablePoint(-11, 12);
+    final input = PlainDataStructuresImmutableAllTypesImmutableStruct(
+        -1, 2, -3, 4, -5, 6, -7, 8, -9, 10, "foo", true, point);
+    final other = PlainDataStructuresImmutableAllTypesImmutableStruct(
+        -1, 2, -3, 4, -5, 6, -7, 8, -9, 10, "bar", true, point);
+
+    expect(input.contains(point), isTrue);
+    expect(input.contains(PlainDataStructuresImmutablePoint(0, 0)), isFalse);
+    expect(input.containsStruct(input), isTrue);
+    expect(input.containsStruct(other), isFalse);
+  });
   _testSuite.test("All types immutable struct round trip", () {
     final input = PlainDataStructuresImmutableAllTypesImmutableStruct(-1, 2, -3, 4, -5,
         6, -7, 8, -9, 10, "foo", true, PlainDataStructuresImmutablePoint(-11, 12));
