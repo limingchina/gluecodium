@@ -25,28 +25,46 @@
 #include "test/DummyInterface.h"
 #include "test/DummyChildInterface.h"
 
+#include <atomic>
+#include <new>
+#include <stdexcept>
+
 namespace test
 {
 namespace {
-class DummyClassImpl : public DummyClass {
+std::atomic<int64_t> s_live_count{0};
+std::atomic<int64_t> s_destroyed_count{0};
+std::atomic<int64_t> s_generation{0};
+
+class TrackedLifetime {
+public:
+    TrackedLifetime() : generation(++s_generation) { ++s_live_count; }
+    ~TrackedLifetime() { --s_live_count; ++s_destroyed_count; }
+    const int64_t generation;
+};
+
+class DummyClassImpl : public DummyClass, public TrackedLifetime {
 public:
     ~DummyClassImpl() = default;
 };
 
-class DummyInterfaceImpl : public DummyInterface {
+class DummyInterfaceImpl : public DummyInterface, public TrackedLifetime {
 public:
     ~DummyInterfaceImpl() = default;
 };
 
-class DummyChildInterfaceImpl : public DummyChildInterface {
+class DummyChildInterfaceImpl : public DummyChildInterface, public TrackedLifetime {
 public:
     ~DummyChildInterfaceImpl() = default;
 };
 
-class DummyChildClassImpl : public DummyChildClass {
+class DummyChildClassImpl : public DummyChildClass, public TrackedLifetime {
 public:
     ~DummyChildClassImpl() = default;
 };
+
+alignas(DummyClassImpl) unsigned char s_reused_storage[sizeof(DummyClassImpl)];
+std::atomic<bool> s_reused_occupied{false};
 
 std::shared_ptr<DummyClass> s_dummy_class = std::make_shared<DummyClassImpl>();
 std::shared_ptr<DummyInterface> s_dummy_interface = std::make_shared<DummyInterfaceImpl>();
@@ -67,6 +85,24 @@ DummyClass::dummy_class_round_trip(const std::shared_ptr<DummyClass>& input) {
 std::vector<std::shared_ptr<DummyClass>>
 DummyClass::dummy_class_list_round_trip(const std::vector<std::shared_ptr<DummyClass>>& input) {
     return input;
+}
+
+int64_t DummyFactory::get_native_live_count() { return s_live_count.load(); }
+int64_t DummyFactory::get_native_destroyed_count() { return s_destroyed_count.load(); }
+int64_t DummyFactory::get_native_generation(const std::shared_ptr<DummyClass>& instance) {
+    return dynamic_cast<const DummyClassImpl&>(*instance).generation;
+}
+
+std::shared_ptr<DummyClass>
+DummyFactory::create_reused_dummy_class() {
+    if (s_reused_occupied.exchange(true)) {
+        throw std::runtime_error("Previous reused object is still alive");
+    }
+    auto* instance = new (s_reused_storage) DummyClassImpl();
+    return std::shared_ptr<DummyClass>(instance, [](DummyClass* value) {
+        static_cast<DummyClassImpl*>(value)->~DummyClassImpl();
+        s_reused_occupied = false;
+    });
 }
 
 std::shared_ptr<DummyClass>

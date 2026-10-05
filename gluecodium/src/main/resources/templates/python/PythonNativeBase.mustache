@@ -294,12 +294,12 @@ def _install_callback_adapters(cls, owner, specifications):
 # The cache is keyed on the C++ instance pointer (exposed via the ``__gluecodium_id__`` method
 # registered on every pybind11 class/interface binding). Only class/interface types have this
 # method; structs and enums are value types and are never cached.
-_wrapper_cache = {}
+_wrapper_cache = weakref.WeakValueDictionary()
 
-# Clear the wrapper cache at interpreter exit to avoid segfaults during pybind11
-# module unloading. The cache holds strong references to Python wrappers, which hold
-# strong references to C++ shared_ptrs. Clearing the cache early ensures all C++ objects
-# are released while the module is still fully functional.
+# Identity is preserved while the public wrapper is alive. Weak entries disappear
+# when application references disappear, so the cache never owns native resources.
+# Clear remaining weak entries before module unloading; native callback ownership
+# and worker shutdown remain separate responsibilities.
 atexit.register(_wrapper_cache.clear)
 
 

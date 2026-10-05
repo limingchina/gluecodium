@@ -233,8 +233,16 @@ a previously passed C++ value. Classes and interfaces use shared ownership.
 The wrapper cache reuses class/interface wrappers by native identity and selects
 the most specific bound wrapper for regular inherited views. Polymorphic base
 subobjects share the same identity. Narrow-interface requests keep their declared
-view and a separate cache entry. The cache's current strong references can keep
-objects alive until interpreter shutdown.
+view and a separate cache entry. Cache entries are weak: identity is preserved
+while a public wrapper is alive, and dropping its last application reference
+allows its native shared ownership to be released. If C++ still owns the native
+object, a later return creates a new public wrapper. Native address reuse cannot
+recover an expired wrapper.
+
+The cache does not own callback objects. Keep Python interface owners alive until
+native callbacks finish. A native `std::function` retains its Python callable until
+native code releases the function; join or drain workers before interpreter
+shutdown.
 
 ### Callbacks
 

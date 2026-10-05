@@ -33,6 +33,11 @@ open class DummyParentClass {}
 class DummyChildClass: DummyParentClass {}
 
 class DummyFactory {
+    static fun getNativeLiveCount(): Long
+    static fun getNativeDestroyedCount(): Long
+    static fun getNativeGeneration(instance: DummyClass): Long
+    static fun createReusedDummyClass(): DummyClass
+
     static fun getDummyClassSingleton(): DummyClass
     static fun createDummyClass(): DummyClass
     static fun getDummyInterfaceSingleton(): DummyInterface
