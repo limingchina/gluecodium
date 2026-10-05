@@ -3,8 +3,8 @@
 These records describe accepted choices reflected in the current implementation.
 They consolidate rationale from retired development plans and subsequent review
 fixes; they do not assign retrospective approval dates. For usage and requirements,
-see [Python bindings](python_bindings.md); for implementation and verification,
-see the [development overview](internal/python_binding/python_binding_dev/README.md).
+see [Python bindings](../../python_bindings.md); for implementation and verification,
+see the [development overview](README.md).
 
 ## ADR 1: Compile generated pybind11 bindings alongside the C++ API
 
@@ -25,8 +25,8 @@ requires Python 3.10+. Extensions are tied to their Python ABI/platform. Linux C
 currently checks Python 3.14 with pybind11 exactly 3.1.0; this is not a declaration
 of free-threaded, subinterpreter or cross-platform validation.
 
-**Implementation:** [PythonGenerator](../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt),
-[pybind11 templates](../gluecodium/src/main/resources/templates/python/).
+**Implementation:** [PythonGenerator](../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt),
+[pybind11 templates](../../../gluecodium/src/main/resources/templates/python/).
 
 ## ADR 2: Use one public module per top-level element and physical nested types
 
@@ -48,9 +48,9 @@ than access enforcement. Parsed package override options currently do not reloca
 wrapper output. Lazy imports/hint resolution reduce import cycles; arbitrary import
 graphs and multiple independently generated runtimes still need dedicated coverage.
 
-**Implementation:** [PythonGenerator](../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt),
-[PythonFile](../gluecodium/src/main/resources/templates/python/PythonFile.mustache),
-[Pybind11File](../gluecodium/src/main/resources/templates/python/Pybind11File.mustache).
+**Implementation:** [PythonGenerator](../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt),
+[PythonFile](../../../gluecodium/src/main/resources/templates/python/PythonFile.mustache),
+[Pybind11File](../../../gluecodium/src/main/resources/templates/python/Pybind11File.mustache).
 
 ## ADR 3: Present one public conversion contract in both call directions
 
@@ -70,9 +70,9 @@ must cover inherited and nested signatures. Overload resolution still belongs to
 pybind11, so mixed argument forms and heterogeneous result shapes require explicit
 tests. `None` must be handled before constructing an optional wrapper.
 
-**Implementation:** [PythonNativeBase](../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache),
-[PythonFunction](../gluecodium/src/main/resources/templates/python/PythonFunction.mustache),
-[trampoline functions](../gluecodium/src/main/resources/templates/python/Pybind11TrampolineFunction.mustache).
+**Implementation:** [PythonNativeBase](../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache),
+[PythonFunction](../../../gluecodium/src/main/resources/templates/python/PythonFunction.mustache),
+[trampoline functions](../../../gluecodium/src/main/resources/templates/python/Pybind11TrampolineFunction.mustache).
 
 ## ADR 4: Canonical dynamic identity with a weak public wrapper cache
 
@@ -94,8 +94,8 @@ not promised across that lifetime gap. Expired entries cannot return wrappers fo
 reused addresses. Narrow views intentionally differ. A per-type key alone was
 insufficient because it would sacrifice regular cross-view identity.
 
-**Implementation:** [PythonNativeBase](../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache),
-[native class identity/downcasts](../gluecodium/src/main/resources/templates/python/Pybind11Class.mustache).
+**Implementation:** [PythonNativeBase](../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache),
+[native class identity/downcasts](../../../gluecodium/src/main/resources/templates/python/Pybind11Class.mustache).
 
 ## ADR 5: Keep callback ownership separate from wrapper caching
 
@@ -114,8 +114,8 @@ No smart-holder migration is claimed. Callback exception capture, worker cleanup
 and shutdown order remain native application responsibilities. Generated GIL scopes
 cannot repair native lock cycles or unsafe interpreter-finalization behavior.
 
-**Evidence:** [lifetime tests](../functional-tests/functional/python/test/cache_lifetime_test.py),
-[historical resolution record](internal/python_binding/python_binding_dev/review_resolutions.md).
+**Evidence:** [lifetime tests](../../../functional-tests/functional/python/test/cache_lifetime_test.py),
+[historical resolution record](review_resolutions.md).
 
 ## ADR 6: Release the GIL around native work, preserve it around Python work
 
@@ -137,9 +137,9 @@ workers join, not escape `noexcept` callbacks. Bounded subprocess tests are need
 to catch deadlocks and shutdown failures. Ordinary GIL-enabled CPython coverage does
 not establish support for free-threaded builds.
 
-**Implementation:** [Pybind11Function](../gluecodium/src/main/resources/templates/python/Pybind11Function.mustache),
-[generic conversion helper](../gluecodium/src/main/resources/templates/python/Pybind11GenericCaster.mustache),
-[trampoline properties](../gluecodium/src/main/resources/templates/python/Pybind11TrampolineProperty.mustache).
+**Implementation:** [Pybind11Function](../../../gluecodium/src/main/resources/templates/python/Pybind11Function.mustache),
+[generic conversion helper](../../../gluecodium/src/main/resources/templates/python/Pybind11GenericCaster.mustache),
+[trampoline properties](../../../gluecodium/src/main/resources/templates/python/Pybind11TrampolineProperty.mustache).
 
 ## ADR 7: Mutable value structs are unhashable; keys are immutable snapshots
 
@@ -163,9 +163,9 @@ a struct copy and are rejected for snapshots. Public clients should use `as_key(
 when supplying mutable structs as keys; private native identity semantics are not
 public value semantics.
 
-**Implementation:** [PythonStruct](../gluecodium/src/main/resources/templates/python/PythonStruct.mustache),
-[Pybind11Struct](../gluecodium/src/main/resources/templates/python/Pybind11Struct.mustache),
-[PythonNativeBase](../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache).
+**Implementation:** [PythonStruct](../../../gluecodium/src/main/resources/templates/python/PythonStruct.mustache),
+[Pybind11Struct](../../../gluecodium/src/main/resources/templates/python/Pybind11Struct.mustache),
+[PythonNativeBase](../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache).
 
 ## ADR 8: Model stubs after accessible runtime APIs and test consumers
 
@@ -185,8 +185,8 @@ Python classes would require a separate pybind11 MRO/metaclass design. Keep nati
 constructor changes, visibility, defaults and stubs coordinated. Packaging typing
 markers and clean wheel installation remain separate distribution work.
 
-**Evidence:** [stub consumer tests](../functional-tests/functional/python/test/stubs_test.py),
-[stub templates](../gluecodium/src/main/resources/templates/python/).
+**Evidence:** [stub consumer tests](../../../functional-tests/functional/python/test/stubs_test.py),
+[stub templates](../../../gluecodium/src/main/resources/templates/python/).
 
 ## ADR 9: Reuse chrono casters and adapt Gluecodium Return errors
 
@@ -211,8 +211,8 @@ share a C++ `std::error_code` registry entry, limiting distinction among multipl
 enum error definitions. Payload exceptions carry messages rather than all original
 fields. Do not infer a reverse Python-exception-to-Return contract without tests.
 
-**Implementation:** [Pybind11File](../gluecodium/src/main/resources/templates/python/Pybind11File.mustache),
-[Return caster](../gluecodium/src/main/resources/templates/python/Pybind11ReturnCaster.mustache).
+**Implementation:** [Pybind11File](../../../gluecodium/src/main/resources/templates/python/Pybind11File.mustache),
+[Return caster](../../../gluecodium/src/main/resources/templates/python/Pybind11ReturnCaster.mustache).
 
 ## ADR 10: Separate generation/build integration from application packaging
 
@@ -234,5 +234,5 @@ PEP 561 metadata and broader platform/minimum-version coverage remain work to
 validate. Async/asyncio support and effective package override options are not
 established by synchronous functional tests.
 
-**Evidence:** [Calculator example](../examples/python/README.md),
-[CI guide](internal/python_ci.md), [CMake helper](../cmake/modules/gluecodium/Python.cmake).
+**Evidence:** [Calculator example](../../../examples/python/README.md),
+[CI guide](python_ci.md), [CMake helper](../../../cmake/modules/gluecodium/Python.cmake).

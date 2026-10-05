@@ -1,9 +1,9 @@
 # Python bindings CI
 
-The [Python bindings workflow](../../.github/workflows/python-bindings.yml) runs
+The [Python bindings workflow](../../../.github/workflows/python-bindings.yml) runs
 on pushes, pull requests, and manual dispatch. It uses Ubuntu 24.04, Python 3.14,
 pybind11 **3.1.0**, Java 17, GCC, CMake, and Ninja. The pybind11 version is pinned
-in [.github/requirements-python-ci.txt](../../.github/requirements-python-ci.txt).
+in [.github/requirements-python-ci.txt](../../../.github/requirements-python-ci.txt).
 
 The workflow runs the parameterized generator `SmokeTest` class, including its
 Python cases, to compare generated files with checked-in references. This class

@@ -204,7 +204,7 @@ functional-tests/scripts/build-python-functional --publish
 The Python functional tests have additional requirements (a Python 3.10+
 interpreter with pybind11 3.1.0+). The build script auto-detects a suitable
 interpreter, but there are version-matching and override caveats — see
-[docs/internal/python_functional_tests.md](docs/internal/python_functional_tests.md) for details.
+[docs/internal/python_binding/python_functional_tests.md](docs/internal/python_binding/python_functional_tests.md) for details.
 
 ### Using CMake Toolchain
 

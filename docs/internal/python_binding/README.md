@@ -1,10 +1,10 @@
 # Developing Python bindings
 
-The maintained entry points are the [user guide](../../../python_bindings.md),
-[architecture decisions](../../../python_bindings_architecture_decisions.md),
-[functional-test guide](../../python_functional_tests.md), and
-[CI guide](../../python_ci.md). The runnable
-[Calculator example](../../../../examples/python/README.md) covers generation, native
+The maintained entry points are the [user guide](../../python_bindings.md),
+[architecture decisions](python_bindings_architecture_decisions.md),
+[functional-test guide](python_functional_tests.md), and
+[CI guide](python_ci.md). The runnable
+[Calculator example](../../../examples/python/README.md) covers generation, native
 implementation, configuration and public Python usage.
 
 The wrapper language minimum is Python 3.10; the declared pybind11 minimum is
@@ -29,14 +29,14 @@ flowchart LR
 
 | Responsibility | Maintained source |
 | --- | --- |
-| Filtered models, import/constructor/hash metadata and output planning | [PythonGenerator.kt](../../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt) |
-| Python and native names/types | [Python generator package](../../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/) |
-| Wrapper conversion, callback bridges, snapshots and weak identity cache | [PythonNativeBase.mustache](../../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache) |
-| Native function/callable conversions and GIL scopes | [Python templates](../../../../gluecodium/src/main/resources/templates/python/) (`Pybind11Function`, `Pybind11GenericCaster`, trampoline and property templates) |
-| CMake extension target and Python discovery | [Python.cmake](../../../../cmake/modules/gluecodium/Python.cmake) |
-| Enabled functional features and native sources | [functional CMake configuration](../../../../functional-tests/functional/CMakeLists.txt) |
-| Public API, typing, worker and lifetime regressions | [Python functional tests](../../../../functional-tests/functional/python/test/) |
-| Generator output comparisons | [smoke fixtures and references](../../../../gluecodium/src/test/resources/smoke/) |
+| Filtered models, import/constructor/hash metadata and output planning | [PythonGenerator.kt](../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt) |
+| Python and native names/types | [Python generator package](../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/) |
+| Wrapper conversion, callback bridges, snapshots and weak identity cache | [PythonNativeBase.mustache](../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache) |
+| Native function/callable conversions and GIL scopes | [Python templates](../../../gluecodium/src/main/resources/templates/python/) (`Pybind11Function`, `Pybind11GenericCaster`, trampoline and property templates) |
+| CMake extension target and Python discovery | [Python.cmake](../../../cmake/modules/gluecodium/Python.cmake) |
+| Enabled functional features and native sources | [functional CMake configuration](../../../functional-tests/functional/CMakeLists.txt) |
+| Public API, typing, worker and lifetime regressions | [Python functional tests](../../../functional-tests/functional/python/test/) |
+| Generator output comparisons | [smoke fixtures and references](../../../gluecodium/src/test/resources/smoke/) |
 
 Change metadata in the generator and structure in the templates. Inspect both
 runtime and stub output: a syntactically valid stub can still misdescribe public
@@ -55,7 +55,7 @@ Python API, especially for equatable structs and callback values.
 4. Run CTest/pytest and focused positive/negative mypy consumers for stub changes.
    Use bounded subprocess cases for deadlocks, worker shutdown and ownership.
 
-Follow the commands in the [CI guide](../../python_ci.md); use a fresh native
+Follow the commands in the [CI guide](python_ci.md); use a fresh native
 build directory when the interpreter/ABI changes. The shell interpreter probe
 currently accepts versions older than the wrapper minimum and checks pybind11
 presence rather than its minimum version. Select a suitable interpreter explicitly

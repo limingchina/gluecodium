@@ -3,7 +3,7 @@
 This record preserves regression evidence from the [original review](review_history.md).
 The counts below describe validation at each fix, rather than a permanent suite size
 or a current CI result. Current gates are defined by the checked-in tests and
-[CI workflow](../../../../.github/workflows/python-bindings.yml). The fixes were developed
+[CI workflow](../../../.github/workflows/python-bindings.yml). The fixes were developed
 as separate changes; branch names and commit IDs from the old progress diary were
 retired when the contribution history was rewritten for matching DCO signoffs.
 
@@ -28,4 +28,4 @@ that tested source tree and do not replace checks on subsequent changes.
 The lifetime fix does not introduce `py::smart_holder` ownership for Python
 interface subclasses. Keep their owners alive until native callbacks finish;
 retained `std::function` callables have a separate ownership contract. See the
-[architecture decisions](../../../python_bindings_architecture_decisions.md).
+[architecture decisions](python_bindings_architecture_decisions.md).

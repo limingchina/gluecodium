@@ -3,7 +3,7 @@ Python functional tests
 
 This document covers running the Python (pybind11) functional tests for Gluecodium.
 For the general functional-test workflow, see
-[Testing](../../AGENTS.md#testing) and [testing.md](testing.md).
+[Testing](../../../AGENTS.md#testing) and [testing.md](../testing.md).
 
 Basic command
 -------------
@@ -60,7 +60,7 @@ Requirements for any interpreter (auto-detected or overridden):
 - Python 3.10 or newer
 - pybind11 3.1.0 or newer (`python -m pip install "pybind11>=3.1.0"`)
 - pytest and mypy for functional and stub-consumer tests; see the
-  [CI requirements](../../.github/requirements-python-ci.txt) for the pinned
+  [CI requirements](../../../.github/requirements-python-ci.txt) for the pinned
   Python 3.14 validation environment.
 
 If you change the used python version, do a clean rebuild:
