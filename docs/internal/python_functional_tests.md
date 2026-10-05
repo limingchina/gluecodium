@@ -27,7 +27,7 @@ imported by the *same* Python version that built it — a 3.9 interpreter cannot
 `cpython-314` module, and vice versa.
 
 To keep the build and test interpreter in sync, `build-python-functional`
-auto-detects a Python 3.8+ interpreter with pybind11 installed (see
+auto-detects an interpreter with pybind11 installed (see
 `functional-tests/scripts/python-env.sh`). It probes the following locations in
 order: `python3` on `PATH`, common conda/miniconda/anaconda paths, Homebrew
 Python, and system Python. The detected interpreter's bin directory is prepended
@@ -49,14 +49,19 @@ functional-tests/scripts/build-python-functional --publish --python /path/to/pyt
 GLUECODIUM_PYTHON=/path/to/python3 functional-tests/scripts/build-python-functional --publish
 ```
 
-When an explicit interpreter is given, the script validates that it is Python 3.8+
-with pybind11 installed and does **not** fall back to auto-detection — so an invalid
-override fails loudly instead of silently picking another interpreter.
+When an explicit interpreter is given, the script checks it and does **not**
+fall back to auto-detection. Its preflight still accepts Python 3.8+ and checks
+pybind11 presence rather than its minimum version. Those checks are weaker than
+the supported requirements below: CMake requires Python 3.10+, and the generated
+wrapper layer also requires 3.10+. Select a suitable interpreter explicitly.
 
 Requirements for any interpreter (auto-detected or overridden):
 
-- Python 3.8 or newer
-- `pybind11` installed (`pip install pybind11`)
+- Python 3.10 or newer
+- pybind11 3.1.0 or newer (`python -m pip install "pybind11>=3.1.0"`)
+- pytest and mypy for functional and stub-consumer tests; see the
+  [CI requirements](../../.github/requirements-python-ci.txt) for the pinned
+  Python 3.14 validation environment.
 
 If you change the used python version, do a clean rebuild:
 

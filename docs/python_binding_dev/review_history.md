@@ -1,10 +1,21 @@
-# Python binding implementation: review and improvement plan
+# Historical Python binding review
 
-> Resolution update (2026-10-05): all nine findings below have been fixed in separate signed-off commits on `python_bind`, published to PR #2. The final local Python 3.14 / pybind11 3.1.0 suite passed 446 tests; full Gradle had zero failures and 63 skips. The findings describe the original reviewed revision. See [fixes and validation](python-binding-fixes-progress.md) for commit IDs and before/fixed evidence.
+This is the original review of revision `99abd74cf3e8275cdbf3603a86d84d0f926925c2`.
+Its numbered findings describe the implementation **before** the subsequent fixes.
+They are retained as reproduction evidence, not as current behavior or an active
+implementation plan. Original line numbers and baseline test counts refer to that
+reviewed revision. Historical commit IDs identify pre-DCO-rewrite revisions and
+must not be used as the current branch tip.
+
+All nine numbered findings were subsequently addressed. See the
+[resolution record](review_resolutions.md), [current architecture decisions](../python_bindings_architecture_decisions.md),
+and [development overview](README.md). Remaining observations are coverage gaps
+or documented limitations; resolution of the numbered findings does not establish
+support for every scenario discussed here.
 
 ## Executive assessment
 
-Reviewed `python_bind` at `99abd74cf3e8275cdbf3603a86d84d0f926925c2` in `/workspace/gluecodium`, read-only. The implementation has substantial functional breadth and a working Python 3.10 native build. The separation between Kotlin model processing, generated wrapper modules, and pybind11 registrations is useful. The recent empty-stub fix is sound and the syntax regression test is valuable.
+Reviewed `python_bind` at `99abd74cf3e8275cdbf3603a86d84d0f926925c2`, read-only. The implementation has substantial functional breadth and a working Python 3.10 native build. The separation between Kotlin model processing, generated wrapper modules, and pybind11 registrations is useful. The recent empty-stub fix is sound and the syntax regression test is valuable.
 
 The passing suites establish substantial baseline behavior, but do not yet establish a consistent public Python type contract. Seven confirmed semantic/type-contract defects are listed below, alongside one high-priority threading risk and one documented lifecycle limitation. The most consequential themes are conversion consistency in both directions, identity independent of first access type, and stub fidelity. These are stronger priorities than adding more language features.
 
@@ -223,7 +234,7 @@ The current guide accurately describes several incomplete areas; they should be 
 - Enum-backed exception registry entries share `std::error_code`; last-registration/type/category ambiguity is explicitly documented (`docs/python_bindings.md:259`–261). Preserve the originating error category or generate per-call/per-exception translators before promising reliable exception selection for several enums.
 - Payload exceptions currently expose messages rather than complete payload fields. Python exceptions raised inside throwing callbacks are not demonstrated to become native failed `Return` values; the caster's comments should not be taken as proof of that reverse error contract.
 - Async/asyncio integration and package overrides are documented unsupported/inert. Narrow interfaces intentionally preserve only their declared view. Callback Python-object lifetime is explicitly assigned to the client. These are limits to retain in a support matrix, not errors invented by this review.
-- Minimum declared pybind11 is 2.11, but this execution used 3.1.0. Compatibility with the minimum needs a separate matrix job. Python 3.13/3.14, free-threaded builds, Windows/macOS, multiple independent generated modules in one process, reload and subinterpreters were not validated.
+- The earlier development plan described pybind11 2.11, while the reviewed build used 3.1.0. Compatibility with the minimum needs a separate matrix job. Python 3.13/3.14, free-threaded builds, Windows/macOS, multiple independent generated modules in one process, reload and subinterpreters were not validated.
 
 ## Coverage gaps and confidence
 
@@ -233,60 +244,3 @@ Add consumer contract tests for positional versus keyword behavior, return-shape
 
 Confirmed probe results are high confidence for the exact fixtures. The thread, longer import-cycle, overload return-shape, and broader platform/interpreter observations are risks or missing verification, not falsely claimed reproduced bugs. I did not run sanitizers, rebuild the full native suite, produce/install a wheel, or install additional runtimes. No repository source changes, commits, publication, or network calls were performed by this reviewer.
 
-## Prioritized improvement plan
-
-### Near term: repair the public contract
-
-1. **Add focused failing regressions first** for findings 1–7, using public wrappers. Split keyword forwarding, optional-return conversion, cache type selection, callback conversion, and hash behavior into reviewable changes. Each should prove the previously failing case and retain the 345 functional baseline.
-2. **Fix keyword forwarding and optional hint normalization**; these are localized and can precede the ownership redesign. Add mixed kwargs/wrapper conversion checks and nullable uncached-return checks.
-3. **Specify identity and lifecycle together**, then fix cached wrapper type selection. Choose dynamic wrapper selection and weak-cache semantics deliberately; add parent/child, multiple-inheritance, retention, and shutdown tests before replacing the cache. Callback conversion depends on this identity policy.
-4. **Repair callback conversions** once the identity policy is stable. Cover structs/enums/classes and nested optionals/collections, then lambdas and callback properties. Replace test-only native-object workarounds with public API assertions.
-5. **Make mutable equatable structs unhashable or define immutable key adapters**. Treat any affected struct-key API as a compatibility decision; verify immutable nesting before retaining value hashing.
-6. **Emit constructor/inheritance-complete stubs** and establish a small mypy/pyright consumer gate. Update the 3.10 interpreter validator and docs together. Re-run generator/smoke tests, syntax validation, and native functional tests after each logical change.
-
-**Scope/confidence:** Mostly localized runtime/template fixes plus explicit identity policy; high confidence in necessity and reproduction. Cache/callback changes require careful design and may expose additional lifecycle assumptions.
-
-### Midterm: harden concurrency, packaging, and generator structure
-
-1. **Define and test the GIL/error/ownership policy** with bounded worker-and-join and detached-callback subprocess tests before enabling Python `CallbacksWithThreads`. This depends on callback conversion and lifetime tests above.
-2. **Test overload conversion and import graphs** with generated heterogeneous-return and three-module-cycle fixtures; move to overload-group rendering and SCC-based import planning only if the fixtures justify it.
-3. **Provide one supported distribution workflow** (CMake install or wheel build) including generated runtime/implementation linking, Python ABI metadata, wrappers/stubs/typing markers, fresh generation and clean configuration. Test installing the artifact into an empty venv outside the build tree.
-4. **Refactor conversion/template data into explicit typed plans** after regression coverage stabilizes; remove the unused C++ cache helper and consolidate repeated Kotlin type branching. Keep a small end-to-end sample for each boundary category.
-5. **Expand the CI matrix** to declared minimum pybind11 and Python versions plus at least one second platform. Document tested versions separately from theoretical support.
-
-**Scope/confidence:** Moderate-to-large changes; sequence tests and ownership policy before refactors. Packaging/concurrency improvements need focused prototypes, not only template snapshots.
-
-### Long term: deliberate feature expansion
-
-1. Extend error identity and payload preservation across multiple enum categories and callbacks; specify reverse error mapping before implementation.
-2. Add async integration/package override behavior only after the public conversion contract is consistent, with explicit compatibility and naming rules.
-3. Assess multi-module coexistence, subinterpreters/free-threaded Python, lifecycle at interpreter finalization, and performance of large recursive collections. State support explicitly; avoid claiming it from ordinary CPython tests.
-4. Publish a maintained support matrix generated or checked against enabled functional features; retire historical development plans as the authoritative source of support claims.
-
-**Scope/confidence:** Roadmap, not an approved implementation request. Dependencies are a stable runtime contract, real distribution tests, and bounded concurrency tests.
-
-## Delivery gates
-
-Near-term completion requires all seven confirmed defect regressions to pass, the existing native functional suite to remain green, fresh smoke outputs to match, all runtime/stub artifacts to parse, and the focused consumer type-check suite to pass. Cache/lifecycle work additionally requires weak-reference/destructor and process-shutdown checks; concurrency work requires a bounded threaded callback test and an explicit supported-feature declaration. Distribution work is complete only when a clean venv can import and exercise an installed artifact without build-tree PYTHONPATH. No feature should be marked complete solely from a template snapshot or alias-presence test.
-
-## Reproduction setup
-
-Runtime probes used:
-
-```sh
-PYTHONDONTWRITEBYTECODE=1 \
-PYTHONPATH=/workspace/python310-functional-build/functional:/workspace/python310-functional-build/functional/python \
-/workspace/python310-venv/bin/python
-```
-
-Typing consumer fixture: `/workspace/python-review-typecheck.py`.
-
-```sh
-PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/workspace/python-review-tools \
-MYPYPATH=/workspace/python310-functional-build/functional \
-/workspace/python310-venv/bin/python -m mypy \
-  --cache-dir /workspace/python-review-mypy-cache --follow-imports=silent \
-  /workspace/python-review-typecheck.py
-```
-
-Observed: exactly the three consumer errors described in findings 6–7. The generated package roots were selected explicitly so this check did not depend on packaging/PEP 561 discovery.

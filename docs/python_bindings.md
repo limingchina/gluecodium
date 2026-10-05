@@ -326,7 +326,9 @@ If a callback reports a pure virtual call, check the subclass's base initializer
 override names, and lifetime. If generated code appears stale, re-run generation
 and CMake configuration before rebuilding.
 
-For contributor verification, use the [Python functional-test guide](internal/python_functional_tests.md).
+For contributor guidance, see the [development overview](python_binding_dev/README.md)
+and [architecture decisions](python_bindings_architecture_decisions.md).
+For verification, use the [Python functional-test guide](internal/python_functional_tests.md).
 Feature coverage is defined in `functional-tests/functional/CMakeLists.txt` and
 `functional-tests/functional/python/test/`; historical development plans are not
 an up-to-date support matrix.
