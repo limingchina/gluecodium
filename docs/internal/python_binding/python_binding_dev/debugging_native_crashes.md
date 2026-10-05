@@ -2,7 +2,7 @@
 
 Use the interpreter that configured and built the extension. Python headers,
 pybind11 discovery, test execution and the extension's SOABI must agree. Start
-with the [functional-test guide](../internal/python_functional_tests.md) and use
+with the [functional-test guide](../../python_functional_tests.md) and use
 `--debug` for debug symbols. Regenerate after template changes before trusting a
 rebuild; a timestamp-only CMake rule can otherwise leave stale bindings in place.
 
@@ -41,5 +41,5 @@ platform's pybind11/CMake module configuration.
 
 Preserve the generated source, interpreter/pybind11 versions, CMake cache, complete
 thread stacks and smallest failing public call with a bug report. CI uploads
-[diagnostics](../internal/python_ci.md) on failure. Do not assume a particular
+[diagnostics](../../python_ci.md) on failure. Do not assume a particular
 signal implies one cause without examining those stacks.

@@ -8,7 +8,7 @@ reviewed revision. Historical commit IDs identify pre-DCO-rewrite revisions and
 must not be used as the current branch tip.
 
 All nine numbered findings were subsequently addressed. See the
-[resolution record](review_resolutions.md), [current architecture decisions](../python_bindings_architecture_decisions.md),
+[resolution record](review_resolutions.md), [current architecture decisions](../../../python_bindings_architecture_decisions.md),
 and [development overview](README.md). Remaining observations are coverage gaps
 or documented limitations; resolution of the numbered findings does not establish
 support for every scenario discussed here.

@@ -4,7 +4,7 @@ These records describe accepted choices reflected in the current implementation.
 They consolidate rationale from retired development plans and subsequent review
 fixes; they do not assign retrospective approval dates. For usage and requirements,
 see [Python bindings](python_bindings.md); for implementation and verification,
-see the [development overview](python_binding_dev/README.md).
+see the [development overview](internal/python_binding/python_binding_dev/README.md).
 
 ## ADR 1: Compile generated pybind11 bindings alongside the C++ API
 
@@ -115,7 +115,7 @@ and shutdown order remain native application responsibilities. Generated GIL sco
 cannot repair native lock cycles or unsafe interpreter-finalization behavior.
 
 **Evidence:** [lifetime tests](../functional-tests/functional/python/test/cache_lifetime_test.py),
-[historical resolution record](python_binding_dev/review_resolutions.md).
+[historical resolution record](internal/python_binding/python_binding_dev/review_resolutions.md).
 
 ## ADR 6: Release the GIL around native work, preserve it around Python work
 
