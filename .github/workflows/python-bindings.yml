@@ -17,6 +17,9 @@ jobs:
     name: Python 3.14 / pybind11 3.1.0
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
     env:
       CC: gcc
       CXX: g++
@@ -25,6 +28,7 @@ jobs:
       CCACHE_COMPILERCHECK: content
       CCACHE_MAXSIZE: 2G
       PYTHONDONTWRITEBYTECODE: '1'
+      ORG_GRADLE_PROJECT_kotlinWarningsAsErrors: 'true'
     steps:
       - uses: actions/checkout@v4
       - name: Set up Java 17

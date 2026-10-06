@@ -5,6 +5,13 @@ on pushes, pull requests, and manual dispatch. It uses Ubuntu 24.04, Python 3.14
 pybind11 **3.1.0**, Java 17, GCC, CMake, and Ninja. The pybind11 version is pinned
 in [.github/requirements-python-ci.txt](../../../.github/requirements-python-ci.txt).
 
+The job sets `ORG_GRADLE_PROJECT_kotlinWarningsAsErrors=true`, enabling Kotlin's
+warnings-as-errors option for production and test compilation in the `gluecodium`
+generator module (including its validators).
+Unused parameters, unnecessary casts, and other Kotlin compiler warnings fail the
+build. To enable the same check locally, pass `-PkotlinWarningsAsErrors=true` to
+Gradle; ordinary local builds keep the default warning behavior.
+
 The workflow runs the parameterized generator `SmokeTest` class, including its
 Python cases, to compare generated files with checked-in references. This class
 also exercises the other generators; it does not build their platform SDKs.

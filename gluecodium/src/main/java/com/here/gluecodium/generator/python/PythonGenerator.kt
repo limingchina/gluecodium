@@ -149,7 +149,6 @@ internal class PythonGenerator : Generator {
                 pybind11FilteredModel.referenceMap,
                 internalNamespace,
                 cppNameCache,
-                cppNameRules,
             )
         val signatureResolver = LimeSignatureResolver(pybind11FilteredModel.referenceMap)
 
@@ -571,7 +570,7 @@ internal class PythonGenerator : Generator {
                     "baseClasses" to
                         (type as? LimeContainerWithInheritance)
                             ?.parents
-                            ?.mapNotNull { it.type.actualType as? LimeNamedElement }
+                            ?.map { it.type.actualType }
                             ?.filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
                             ?.map { mapOf("fqn" to cppNameCache.getFullyQualifiedName(it)) }
                             .orEmpty(),
@@ -707,7 +706,7 @@ internal class PythonGenerator : Generator {
                         .mapNotNull { it as? LimeContainerWithInheritance }
                         .flatMap { container ->
                             container.parents
-                                .mapNotNull { it.type.actualType as? LimeNamedElement }
+                                .map { it.type.actualType }
                                 .filter { pybind11FilteredModel.referenceMap.containsKey(it.fullName) }
                                 .map { pythonNameResolver.resolveTopLevelRegisterName(it) }
                         }

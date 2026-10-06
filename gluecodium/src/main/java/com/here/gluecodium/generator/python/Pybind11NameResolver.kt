@@ -22,7 +22,6 @@ package com.here.gluecodium.generator.python
 import com.here.gluecodium.generator.common.NameResolver
 import com.here.gluecodium.generator.cpp.CppNameCache
 import com.here.gluecodium.generator.cpp.CppNameResolver
-import com.here.gluecodium.generator.cpp.CppNameRules
 import com.here.gluecodium.model.lime.LimeElement
 import com.here.gluecodium.model.lime.LimeLambda
 import com.here.gluecodium.model.lime.LimeNamedElement
@@ -41,7 +40,6 @@ internal class Pybind11NameResolver(
     limeReferenceMap: Map<String, LimeElement>,
     internalNamespace: List<String>,
     nameCache: CppNameCache,
-    cppNameRules: CppNameRules,
 ) : NameResolver {
     private val internalNs: List<String> = internalNamespace
     private val cppNameResolver =

@@ -86,7 +86,7 @@ internal class LimeAsyncDecoratorValidator(private val logger: LimeLogger) {
         var isValid = validateUnsupportedTarget(container)
 
         container.functions.forEach {
-            isValid = validateFunction(it, container) && isValid
+            isValid = validateFunction(it) && isValid
         }
         isValid = validateExceptionNames(container) && isValid
         isValid = validateWrapperSignatures(container) && isValid
@@ -176,10 +176,7 @@ internal class LimeAsyncDecoratorValidator(private val logger: LimeLogger) {
 
     private fun decoratedName(function: LimeFunction) = function.attributes.get(ASYNC_DECORATOR, NAME) ?: function.name
 
-    private fun validateFunction(
-        function: LimeFunction,
-        container: LimeContainer,
-    ): Boolean {
+    private fun validateFunction(function: LimeFunction): Boolean {
         var isValid = true
         if (!function.attributes.have(ASYNC_DECORATOR)) {
             if (function.attributes.have(ASYNC_TASK_HANDLE)) {
