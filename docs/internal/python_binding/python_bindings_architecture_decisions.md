@@ -114,8 +114,7 @@ No smart-holder migration is claimed. Callback exception capture, worker cleanup
 and shutdown order remain native application responsibilities. Generated GIL scopes
 cannot repair native lock cycles or unsafe interpreter-finalization behavior.
 
-**Evidence:** [lifetime tests](../../../functional-tests/functional/python/test/cache_lifetime_test.py),
-[historical resolution record](review_resolutions.md).
+**Evidence:** [lifetime tests](../../../functional-tests/functional/python/test/cache_lifetime_test.py).
 
 ## ADR 6: Release the GIL around native work, preserve it around Python work
 

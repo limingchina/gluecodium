@@ -64,9 +64,8 @@ and install the CI requirements; CMake's stricter Python check remains authorita
 ## Troubleshooting and history
 
 See [native debugging](debugging_native_crashes.md) for debugger setup and boundary
-checks. The [historical review](review_history.md) and
-[resolution record](review_resolutions.md) preserve the before/fixed evidence.
-Retired phase plans, ad hoc fixtures, macOS-only spikes and the older Greeter sample
+checks. Historical reviews, fix reports, phase plans, ad hoc fixtures, macOS-only
+spikes and the older Greeter sample
 are available in Git history. Their useful rationale is captured in the architecture
 records; the maintained Calculator example and real functional suite replace those
 prototypes as executable verification.
