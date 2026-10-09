@@ -1,0 +1,39 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/FieldConstructorsSkipAllFields.h"
+#include "cstdint"
+#include "string"
+
+using FieldConstructorsSkipAllFields = ::smoke::FieldConstructorsSkipAllFields;
+
+
+
+void register_smoke_FieldConstructorsSkipAllFields(py::module_& module) {
+auto cls_FieldConstructorsSkipAllFields = py::class_<FieldConstructorsSkipAllFields>(module, "smoke_FieldConstructorsSkipAllFields")
+        .def_property_readonly("string_field", [](const FieldConstructorsSkipAllFields& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        })
+        .def_property_readonly("int_field", [](const FieldConstructorsSkipAllFields& self) -> decltype(auto) {
+            return
+                (self.int_field)
+            ;
+        })
+        .def(py::init<::std::string, int32_t>(), py::arg("string_field"), py::arg("int_field"))
+        ;
+
+
+}

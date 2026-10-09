@@ -21,6 +21,7 @@
 #include "test/CppConstClass.h"
 #include "test/CppConstInterface.h"
 #include "test/CppConstInterfaceFactory.h"
+#include "test/ImmutableClassWithMutator.h"
 
 namespace test
 {
@@ -29,6 +30,12 @@ namespace
 class CppConstClassImpl : public CppConstClass {
 public:
     std::string get_foo() const { return "foo"; }
+};
+
+class ImmutableClassWithMutatorImpl : public ImmutableClassWithMutator {
+public:
+    std::string get_foo() const override { return "foo"; }
+    void set_foo(const std::string&) override {}
 };
 
 class CppConstInterfaceImpl : public CppConstInterface {
@@ -40,6 +47,11 @@ public:
 std::shared_ptr<CppConstClass>
 CppConstClass::create() {
     return std::make_shared<CppConstClassImpl>();
+}
+
+std::shared_ptr<ImmutableClassWithMutator>
+ImmutableClassWithMutator::create() {
+    return std::make_shared<ImmutableClassWithMutatorImpl>();
 }
 
 std::shared_ptr<CppConstInterface>

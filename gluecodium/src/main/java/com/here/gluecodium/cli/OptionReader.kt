@@ -146,6 +146,15 @@ object OptionReader {
                     " below 3.6.0. may experience internal compiler error when compiling the generated code, which utilizes " +
                     "'Finalizable' marker)",
             )
+            addOption("pythonpackage", true, "Python package name for generated sources")
+            addOption(
+                "pythonintpackage",
+                "python-internal-package",
+                true,
+                "Python sub-package to append to 'pythonpackage' for internal types.",
+            )
+            addOption("pythonmodule", true, "Name of the generated Python extension module")
+            addOption("pythonnamerules", true, "Python name rules property file.")
             addOption(
                 "enableandroidattributesmismatchwarning",
                 false,
@@ -281,6 +290,12 @@ object OptionReader {
             readConfigFile(getStringValue("dartnamerules"), generatorOptions.dartNameRules)
         generatorOptions.kotlinNameRules =
             readConfigFile(getStringValue("kotlinnamerules"), generatorOptions.kotlinNameRules)
+
+        generatorOptions.pythonPackages = getStringValue("pythonpackage")?.split(".") ?: emptyList()
+        generatorOptions.pythonInternalPackages = getStringValue("pythonintpackage")?.split(".") ?: emptyList()
+        getStringValue("pythonmodule")?.let { generatorOptions.pythonModule = it }
+        generatorOptions.pythonNameRules =
+            readConfigFile(getStringValue("pythonnamerules"), generatorOptions.pythonNameRules)
 
         generatorOptions.copyrightHeaderContents = getStringValue("copyright")?.let { File(it).readText() }
         getStringListValue("tag")?.let { generatorOptions.tags = CaseInsensitiveSet(it) }
