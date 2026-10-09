@@ -42,10 +42,11 @@ set(PY_MODULE "calculator")
 # the extension target. Reconfigure after editing LimeIDL or the generator.
 execute_process(
   COMMAND "${GLUECODIUM_BIN}"
-          -input "${CMAKE_CURRENT_SOURCE_DIR}/lime/Calculator.lime"
+          -input "${CMAKE_CURRENT_SOURCE_DIR}/../lime/Calculator.lime"
           -output "${GEN_OUTPUT}"
           -generators cpp,python
           -pythonmodule "${PY_MODULE}"
+          -intnamespace gluecodium
   RESULT_VARIABLE generation_result
   OUTPUT_VARIABLE generation_stdout
   ERROR_VARIABLE generation_stderr)
@@ -53,16 +54,14 @@ if(NOT generation_result EQUAL 0)
   message(FATAL_ERROR "Gluecodium generation failed:\n${generation_stdout}\n${generation_stderr}")
 endif()
 
-include("${CMAKE_CURRENT_SOURCE_DIR}/../../cmake/modules/gluecodium/Gluecodium.cmake")
+include("${CMAKE_CURRENT_SOURCE_DIR}/../../../cmake/modules/gluecodium/Gluecodium.cmake")
 
 add_library(calculator_cpp STATIC
-  "${CPP_OUTPUT}/src/LocaleImpl.cpp"
-  "${CPP_OUTPUT}/src/TypeRepositoryImpl.cpp"
-  "${CPP_OUTPUT}/src/com/example/calculator/Calculation.cpp"
-  "${CPP_OUTPUT}/src/com/example/calculator/CalculationListener.cpp"
-  "${CPP_OUTPUT}/src/com/example/calculator/Calculator.cpp"
-  "${CPP_OUTPUT}/src/com/example/calculator/CalculatorErrorCode.cpp"
-  "${CMAKE_CURRENT_SOURCE_DIR}/cpp/CalculatorImpl.cpp")
+  "${CPP_OUTPUT}/src/gluecodium/LocaleImpl.cpp"
+  "${CPP_OUTPUT}/src/gluecodium/TypeRepositoryImpl.cpp"
+  "${CPP_OUTPUT}/src/gluecodium/StringViewImplDefs.cpp"
+  "${CPP_OUTPUT}/src/gluecodium/calculator/Calculator.cpp"
+  "${CMAKE_CURRENT_SOURCE_DIR}/../cpp/CalculatorImpl.cpp")
 target_include_directories(calculator_cpp PUBLIC "${CPP_OUTPUT}/include")
 # This example links the API statically; it does not export a separate library.
 target_compile_definitions(calculator_cpp PUBLIC
@@ -75,17 +74,18 @@ gluecodium_target_python_sources(calculator_cpp
   OUTPUT calculator_extension)
 
 # Keep the native extension, wrapper import root, and client together.
-add_custom_command(TARGET ${calculator_extension} POST_BUILD
+add_custom_target(calculator_python_files ALL
   COMMAND "${CMAKE_COMMAND}" -E copy
-          "${CMAKE_CURRENT_SOURCE_DIR}/python/client.py"
+          "${CMAKE_CURRENT_SOURCE_DIR}/client.py"
           "$<TARGET_FILE_DIR:${calculator_extension}>/client.py"
   COMMAND "${CMAKE_COMMAND}" -E copy_directory
-          "${PY_OUTPUT}/com"
-          "$<TARGET_FILE_DIR:${calculator_extension}>/com"
+          "${PY_OUTPUT}/gluecodium"
+          "$<TARGET_FILE_DIR:${calculator_extension}>/gluecodium"
   COMMAND "${CMAKE_COMMAND}" -E copy
           "${PY_OUTPUT}/__init__.py"
           "${PY_OUTPUT}/_native_base.py"
           "$<TARGET_FILE_DIR:${calculator_extension}>/"
+  DEPENDS ${calculator_extension}
   COMMENT "Copying the generated Python wrappers and calculator client")
 
 # Run with the exact interpreter selected for the extension build.

@@ -4,7 +4,7 @@ The maintained entry points are the [user guide](../../python_bindings.md),
 [architecture decisions](python_bindings_architecture_decisions.md),
 [functional-test guide](python_functional_tests.md), and
 [CI guide](python_ci.md). The runnable
-[Calculator example](../../../examples/python/README.md) covers generation, native
+[Calculator example](../../../examples/calculator/python/README.md) covers generation, native
 implementation, configuration and public Python usage.
 
 The wrapper language minimum is Python 3.10; the declared pybind11 minimum is

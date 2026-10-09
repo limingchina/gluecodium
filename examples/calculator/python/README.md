@@ -1,15 +1,16 @@
 # Python Calculator example
 
-This example defines an API in LimeIDL, implements it in C++, and calls it from
-Python through generated pybind11 bindings. See the
-[Python binding guide](../../docs/python_bindings.md) for the API and build reference.
+This project exposes the shared [Calculator LimeIDL API](../lime/Calculator.lime)
+and [C++ implementation](../cpp/CalculatorImpl.cpp) through Python bindings.
+The same sources are used by the Android and Apple Calculator examples. See the
+[Python binding guide](../../../docs/python_bindings.md) for the API and build reference.
 
 ## Requirements
 
 - JDK 17 or newer to build Gluecodium.
 - Python 3.10 or newer with development headers.
 - CMake 3.19 or newer and a C++17 compiler.
-- pybind11 (3.1.0 or newer).
+- pybind11 3.1.0 or newer.
 
 ## Build and run
 
@@ -22,7 +23,7 @@ python3 -m venv .venv
 python -m pip install 'pybind11>=3.1.0'
 ./gradlew :gluecodium:installDist
 
-cmake -S examples/python -B build/python-example \
+cmake -S examples/calculator/python -B build/python-example \
   -DGLUECODIUM_BIN="$PWD/gluecodium/build/install/gluecodium/bin/gluecodium" \
   -DPython3_EXECUTABLE="$(python -c 'import sys; print(sys.executable)')" \
   -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"
@@ -40,26 +41,26 @@ For a multi-configuration generator, run from the directory containing the built
 extension and copied client, for example `build/python-example/Release`.
 Use the same Python interpreter for configuration and execution.
 
-The client prints results for addition (`5.0`), subtraction (`5.0`), multiplication
-(`42.0`), and division (`4.0`). The listener receives each successful result.
-It then reads a calculation count of `4`, resets it to `0`, reports the
-`com_example_calculator_CalculatorErrorError` exception for division by zero, and constructs a result
-struct in Python. The native exception name includes its LimeIDL package; the
-extra `Error` suffix follows the generator's default exception naming rule.
+The client checks addition (`5`), lambda-based subtraction (`5`), interface-based
+multiplication (`42`) and its overflow callback, division via nested structs (`4.0`)
+and division-by-zero errors, a returned native interface (`min`), nullable values
+(`max`), and an exception raised on sum overflow. Assertions make CTest fail if
+these boundary contracts are broken.
 
 ## Files and workflow
 
 | File | Purpose |
 | --- | --- |
-| [lime/Calculator.lime](lime/Calculator.lime) | Struct, interface, enum, exception, and class definitions. |
-| [cpp/CalculatorImpl.cpp](cpp/CalculatorImpl.cpp) | Implements the C++ service and factory. |
+| [../lime/Calculator.lime](../lime/Calculator.lime) | Shared API, nested types, callbacks, and errors. |
+| [../cpp/CalculatorImpl.cpp](../cpp/CalculatorImpl.cpp) | Shared C++ implementation and factory. |
 | [CMakeLists.txt](CMakeLists.txt) | Generates bindings, builds the extension, and copies Python files. |
-| [python/client.py](python/client.py) | Imports generated wrappers and exercises the API. |
+| [client.py](client.py) | Imports generated wrappers and exercises the shared API. |
 
-CMake invokes Gluecodium at **configure time**, then compiles the generated C++
-runtime, the service implementation, and the generated binding sources. The
-extension is named `calculator`; wrappers live under `com.example.calculator`.
-The generated code is kept under the build directory.
+CMake invokes Gluecodium at **configure time**, then compiles the shared C++
+implementation, generated runtime and binding sources. `-intnamespace gluecodium`
+matches the runtime namespace used by the shared implementation. The native
+extension is named `calculator`; public wrappers live under `gluecodium.calculator`.
+Generated code is kept under the build directory.
 
 Re-run the CMake configure command after changing LimeIDL or rebuilding Gluecodium.
 Use a new build directory when changing Python versions. The wrapper package,

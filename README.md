@@ -18,7 +18,7 @@ bindings for modern languages like Swift or Dart.
 The easiest way to run Gluecodium is by using the [Launcher tool](tools/README.md).
 For a list of features and how to get started writing IDL, see [User guide](./docs/guide.md).
 For Python bindings using pybind11, see the [Python binding guide](docs/python_bindings.md)
-and the runnable [Calculator example](examples/python/README.md).
+and the runnable [Calculator example](examples/calculator/python/README.md).
 
 ## Building and testing
 Outside of IntelliJ you can invoke the following Gradle tasks to build

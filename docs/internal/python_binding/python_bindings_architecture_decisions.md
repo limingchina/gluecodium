@@ -233,5 +233,5 @@ PEP 561 metadata and broader platform/minimum-version coverage remain work to
 validate. Async/asyncio support and effective package override options are not
 established by synchronous functional tests.
 
-**Evidence:** [Calculator example](../../../examples/python/README.md),
+**Evidence:** [Calculator example](../../../examples/calculator/python/README.md),
 [CI guide](python_ci.md), [CMake helper](../../../cmake/modules/gluecodium/Python.cmake).

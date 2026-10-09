@@ -5,7 +5,7 @@ sources for a LimeIDL API. Run it together with `cpp`, implement the generated C
 API, and compile the binding sources into a CPython extension. Python code can
 then call C++ and implement interfaces that C++ calls back into.
 
-Start with the runnable [Calculator example](../examples/python/README.md).
+Start with the runnable [Calculator example](../examples/calculator/python/README.md).
 For LimeIDL syntax, see the [user guide](guide.md) and [language reference](lime_idl.md).
 
 ## Requirements
@@ -34,15 +34,18 @@ Then generate both layers, for example using the Calculator definition:
 
 ```bash
 gluecodium/build/install/gluecodium/bin/gluecodium \
-  -input examples/python/lime/Calculator.lime \
+  -input examples/calculator/lime/Calculator.lime \
   -output build/calculator-generated \
   -generators cpp,python \
-  -pythonmodule calculator
+  -pythonmodule calculator \
+  -intnamespace gluecodium
 ```
 
 `calculator` is the **native extension module name**. It must match both the compiled
 extension filename and its generated `PYBIND11_MODULE` entry point. The LimeIDL
-`package com.example.calculator` determines the wrapper package independently.
+`package gluecodium.calculator` determines the wrapper package independently.
+The `-intnamespace gluecodium` option matches the runtime namespace used by the
+shared Calculator C++ implementation.
 Choose a simple Python identifier for the native module name and avoid naming it
 like a top-level wrapper package, which would cause an import conflict.
 
@@ -53,8 +56,8 @@ For the command above, `build/calculator-generated` contains:
 | Path | Purpose |
 | --- | --- |
 | `cpp/include/`, `cpp/src/` | C++ API declarations, generated implementations, and runtime. |
-| `python/com/example/calculator/*.py` | Python wrapper modules, one per top-level element. |
-| `python/com/example/calculator/*.pyi` | Matching type stubs. |
+| `python/gluecodium/calculator/*.py` | Python wrapper modules, one per top-level element. |
+| `python/gluecodium/calculator/*.pyi` | Matching type stubs. |
 | `python/**/__init__.py` | Package initialization files. |
 | `python/_native_base.py` | Wrapping, unwrapping, and object identity helpers. |
 | `python/pybind11/*.cpp` | Type registrations and `_module_init.cpp` entry point. |
@@ -86,7 +89,7 @@ options to relocate generated modules. General options such as `-cache`,
 
 ### CMake
 
-The [example CMake project](../examples/python/CMakeLists.txt) is a complete
+The [example CMake project](../examples/calculator/python/CMakeLists.txt) is a complete
 configuration that runs generation before defining the extension target.
 The repository's `cmake/modules/gluecodium/Gluecodium.cmake` includes the Python
 helper:
@@ -139,27 +142,25 @@ files alone do not package a complete application API.
 Import wrapper types from their individual modules:
 
 ```python
-from com.example.calculator.Calculator import Calculator
-from com.example.calculator.Calculation import Calculation
-from com.example.calculator.CalculationListener import CalculationListener
+from gluecodium.calculator.Calculator import Calculator
 
-calculator = Calculator.create()
-print(calculator.add(2.0, 3.0).value)
-calculator.calculation_count = 10
-result = Calculation("2 + 3", 5.0)
+calculator = Calculator.make()
+print(calculator.summarize(2, 3))  # 5
+result = calculator.divide(Calculator.DivideArguments(12, 3))
+print(result.result)  # 4.0
 ```
 
-Both the wrapper root (the directory containing `com/` and `_native_base.py`)
+Both the wrapper root (the directory containing `gluecodium/` and `_native_base.py`)
 and the extension's directory must be on `sys.path`, for example by installing
-them together or setting `PYTHONPATH`. Adding only the generated `com/` directory
+them together or setting `PYTHONPATH`. Adding only the generated `gluecodium/` directory
 is insufficient. Importing the wrappers loads the native extension automatically.
 
 ### Names and attributes
 
 Types use `UpperCamelCase`; methods, parameters, fields, and properties use
 `lower_snake_case`; enum members and constants use `UPPER_SNAKE_CASE`.
-Thus `setListener` becomes `set_listener` and `calculationCount` becomes
-`calculation_count`. Hard Python keywords gain a trailing underscore.
+Thus `multiplyCallback` becomes `multiply_callback` and `onResult` becomes
+`on_result`. Hard Python keywords gain a trailing underscore.
 Nested types remain nested under their containing wrapper type, for example
 `Outer.Inner`; their native registration identifiers are an implementation detail.
 
@@ -250,16 +251,21 @@ Subclass the generated interface, initialize its base, and override its Python
 method names:
 
 ```python
-class PrintingListener(CalculationListener):
+class PrintingCallback(Calculator.MultiplyCallback):
     def __init__(self):
         super().__init__()
 
-    def on_calculated(self, result: Calculation) -> None:
-        print(result.expression, result.value)
+    def on_result(self, result: int) -> None:
+        print(result)
 
-listener = PrintingListener()
-calculator.set_listener(listener)
-calculator.multiply(6.0, 7.0)
+    def on_error(self, error: Calculator.CalculatorError) -> None:
+        print(error.name)
+
+callback = PrintingCallback()
+calculator.multiply(6, 7, callback)
+
+# Lambda callbacks are ordinary Python callables.
+calculator.subtract(9, 4, lambda error, result: print(error, result))
 ```
 
 Callback arguments and return values use the same public wrapper types as ordinary
@@ -287,23 +293,25 @@ subclass's lifetime.
 A successful C++ `Return<T, Error>` becomes a Python value (`None` for `Void`).
 A failure raises a registered Python exception, falling back to `RuntimeError`
 when no mapping exists. For enum-backed errors, the native extension exposes the
-exception type with a package-qualified registration name (as in the example
-below); for struct-backed errors, the translator resolves the generated
-Python exception class. Error messages come from the C++ error description.
+exception under its containing native type, or with a package-qualified name for
+a top-level exception (as in the nested example below). For struct-backed errors,
+the translator resolves the generated Python exception class. Error messages come
+from the C++ error description.
 
 ```python
 import calculator as native
 
 try:
-    calculator.divide(1.0, 0.0)
-except native.com_example_calculator_CalculatorErrorError as error:
+    calculator.summarize(2_000_000_000, 2_000_000_000)
+except native.gluecodium_calculator_Calculator.CalculatorExceptionError as error:
     print(error)
 ```
 
 The default exception naming rule adds an `Error` suffix, so the LimeIDL name
-`CalculatorError` becomes `CalculatorErrorError`; the native registration also
-includes the package prefix. Do not assume every generated wrapper exception class
-is the same exception type raised by the native layer. Enum-backed errors share a `std::error_code` registry
+`CalculatorException` becomes `CalculatorExceptionError`; the native registration
+qualifies its containing type with the package name. Do not assume every generated
+wrapper exception class is the same exception type raised by the native layer.
+Enum-backed errors share a `std::error_code` registry
 entry, so APIs with multiple enum-backed exception definitions need particular
 care: the current registry maps by C++ error type, not individual enum type.
 Payload exceptions currently carry a message, rather than all fields of the
