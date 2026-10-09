@@ -38,6 +38,7 @@ object LimeModelSkipPredicates {
         retainFunctionsAndFields: Boolean = false,
     ) = when {
         isSkippedByTags(limeElement, activeTags) -> false
+        isSkippedByOnly(limeElement, platformAttribute) -> false
         retainFunctionsAndFields &&
             (limeElement is LimeFunction || limeElement is LimeProperty || limeElement is LimeField) -> true
         platformAttribute == null -> true
@@ -68,6 +69,23 @@ object LimeModelSkipPredicates {
 
         val isSkipped = hasTagsMatch(limeElement, LimeAttributeType.SKIP, TAG, activeTags)
         return isSkipped ?: false
+    }
+
+    private fun isSkippedByOnly(
+        limeElement: LimeNamedElement,
+        platformAttribute: LimeAttributeType?,
+    ): Boolean {
+        if (platformAttribute == null) return false
+
+        val onlyTags =
+            limeElement.attributes.get(LimeAttributeType.ONLY, TAG, Any::class.java) ?: return false
+        val tagList =
+            when (onlyTags) {
+                is String -> listOf(onlyTags)
+                is List<*> -> onlyTags.filterIsInstance<String>()
+                else -> return false
+            }
+        return !tagList.any { it.equals(platformAttribute.toString(), ignoreCase = true) }
     }
 
     private fun isSkippedByTagsOnPlatform(

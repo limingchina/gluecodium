@@ -64,6 +64,7 @@ import "test/Properties_test.dart" as PropertiesTests;
 import "test/RefEquality_test.dart" as RefEqualityTests;
 import "test/Sets_test.dart" as SetsTests;
 import "test/SimpleEquality_test.dart" as SimpleEqualityTests;
+import "test/OnlyElement_test.dart" as OnlyElementTests;
 import "test/SkipElement_test.dart" as SkipElementTests;
 import "test/StaticBooleanMethods_test.dart" as StaticBooleanMethodsTests;
 import "test/StaticFloatDoubleMethods_test.dart" as StaticFloatDoubleMethodsTests;
@@ -116,6 +117,7 @@ final _allTests = [
   RefEqualityTests.main,
   SetsTests.main,
   SimpleEqualityTests.main,
+  OnlyElementTests.main,
   SkipElementTests.main,
   StaticBooleanMethodsTests.main,
   StaticFloatDoubleMethodsTests.main,

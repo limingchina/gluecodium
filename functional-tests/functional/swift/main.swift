@@ -76,6 +76,7 @@ func getAllTests() -> [XCTestCaseEntry] {
         testCase(SerializationTests.allTests),
         testCase(SetTypeTests.allTests),
         testCase(SimpleEqualityTests.allTests),
+        testCase(OnlyElementTests.allTests),
         testCase(SkipElementTests.allTests),
         testCase(StaticBooleanMethodsTests.allTests),
         testCase(StaticByteArrayMethodsTests.allTests),
