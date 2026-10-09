@@ -35,9 +35,35 @@ interface ThreadedListener {
 
 lambda ThreadedLambda = (String) -> Void
 
+interface ThreadedDispatcher {
+    fun notify(listener: ThreadedListener, message: String): Long
+}
+
+interface ThreadedCallableListener {
+    fun accept(callback: ThreadedNotifier.WorkerCallback): Long
+    property callback: ThreadedNotifier.WorkerCallback?
+}
+
 class ThreadedNotifier {
+    lambda WorkerCallback = (ThreadedListener, String) -> Long
+    struct CallbackHolder {
+        callback: WorkerCallback?
+        callbacks: List<WorkerCallback?>
+    }
+    static fun getWorkerCallback(): WorkerCallback
+    static fun getNullableWorkerCallback(present: Boolean): WorkerCallback?
+    static fun getWorkerCallbacks(): List<WorkerCallback?>
+    static fun getCallbackHolder(): CallbackHolder
+    static property workerOperation: WorkerCallback { get }
+    static fun sendCallback(listener: ThreadedCallableListener): Long
+    static fun setCallback(listener: ThreadedCallableListener)
+    static fun getThrowingCallback(): WorkerCallback throws Errors.Internal
+
     constructor createOnNewThread()
+    static fun createDispatcher(): ThreadedDispatcher
     fun notify(listener: ThreadedListener, message: String): Long
     fun notifyOnDetached(listener: ThreadedListener, message: String)
     fun notifyLambdaOnDetached(`lambda`: ThreadedLambda, message: String)
+    // Waits until detached callbacks and their captured values have completed cleanup.
+    fun waitForCallbacks()
 }

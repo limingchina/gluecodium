@@ -195,6 +195,8 @@ class CommentsLinks {
     // Not working:
     // * input parameter: [inputParameter]
     // * output parameter: [outputParameter]
+    //
+    // Escaped brackets should appear as literal text: \[0, 23\].
     fun random_method(
         inputParameter: comments.SomeCommentedEnum
     ): comments.SomeCommentedEnum throws TooUseful

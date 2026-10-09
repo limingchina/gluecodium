@@ -29,6 +29,20 @@ PlainDataStructuresImmutable::immutable_struct_round_trip(
     return input;
 }
 
+bool
+PlainDataStructuresImmutable::AllTypesImmutableStruct::contains(
+    const PlainDataStructuresImmutable::Point& point ) const
+{
+    return point_field.x == point.x && point_field.y == point.y;
+}
+
+bool
+PlainDataStructuresImmutable::AllTypesImmutableStruct::contains(
+    const PlainDataStructuresImmutable::AllTypesImmutableStruct& other ) const
+{
+    return string_field == other.string_field;
+}
+
 PlainDataStructuresImmutable::NestingImmutableStruct
 PlainDataStructuresImmutable::nesting_immutable_struct_round_trip(
     const PlainDataStructuresImmutable::NestingImmutableStruct& input )
