@@ -34,6 +34,8 @@ class LimeExternalDescriptor private constructor(
         get() = descriptors[DART_TAG]
     val kotlin
         get() = descriptors[KOTLIN_TAG]
+    val python
+        get() = descriptors[PYTHON_TAG]
 
     fun getFor(target: LimeAttributeType) =
         when (target) {
@@ -42,6 +44,7 @@ class LimeExternalDescriptor private constructor(
             LimeAttributeType.KOTLIN -> kotlin
             LimeAttributeType.SWIFT -> swift
             LimeAttributeType.DART -> dart
+            LimeAttributeType.PYTHON -> python
             else -> throw IllegalArgumentException("LimeExternalDescriptor.getFor(): Unknown target language: $target")
         }
 
@@ -73,6 +76,7 @@ class LimeExternalDescriptor private constructor(
         const val KOTLIN_TAG = "kotlin"
         const val SWIFT_TAG = "swift"
         const val DART_TAG = "dart"
+        const val PYTHON_TAG = "python"
 
         const val CONVERTER_NAME = "converter"
         const val INCLUDE_NAME = "include"
