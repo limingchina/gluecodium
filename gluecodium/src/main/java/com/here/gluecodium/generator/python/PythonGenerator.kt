@@ -991,9 +991,7 @@ internal class PythonGenerator : Generator {
 
     private fun selectPybind11Template(limeElement: LimeNamedElement) =
         when (limeElement) {
-            is com.here.gluecodium.model.lime.LimeTypeAlias -> "python/Pybind11TypeAlias"
             is com.here.gluecodium.model.lime.LimeException -> "python/Pybind11Exception"
-            is com.here.gluecodium.model.lime.LimeLambda -> "python/Pybind11Lambda"
             is com.here.gluecodium.model.lime.LimeEnumeration -> "python/Pybind11Enum"
             is com.here.gluecodium.model.lime.LimeStruct -> "python/Pybind11Struct"
             is com.here.gluecodium.model.lime.LimeClass -> "python/Pybind11Class"
