@@ -1,0 +1,14 @@
+
+
+from smoke.SimpleClass import SimpleClass
+from enum import Enum
+import typing
+from typing import Optional
+
+class StructWithClass:
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, class_instance: SimpleClass) -> None: ...
+
+    class_instance: SimpleClass

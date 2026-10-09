@@ -1,0 +1,38 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/FieldConstructorWithComment.h"
+#include "string"
+
+using FieldConstructorWithComment = ::smoke::FieldConstructorWithComment;
+
+
+
+void register_smoke_FieldConstructorWithComment(py::module_& module) {
+auto cls_FieldConstructorWithComment = py::class_<FieldConstructorWithComment>(module, "smoke_FieldConstructorWithComment")
+        .def_property("string_field", [](const FieldConstructorWithComment& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](FieldConstructorWithComment& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("string_field"))
+        ;
+
+
+}

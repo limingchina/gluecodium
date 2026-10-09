@@ -1,0 +1,31 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/EnumWithAccessibleValues.h"
+#include "array"
+
+using EnumWithAccessibleValues = ::smoke::EnumWithAccessibleValues;
+
+
+
+void register_smoke_EnumWithAccessibleValues(py::module_& module) {
+auto cls_EnumWithAccessibleValues = py::enum_<EnumWithAccessibleValues>(module, "smoke_EnumWithAccessibleValues")
+        .value("FOO", EnumWithAccessibleValues::FOO)
+        .value("BAR", EnumWithAccessibleValues::BAR)
+        .value("BAZ", EnumWithAccessibleValues::BAZ)
+        .value("FOO_ALIAS", EnumWithAccessibleValues::FOO_ALIAS)
+        ;
+
+
+}

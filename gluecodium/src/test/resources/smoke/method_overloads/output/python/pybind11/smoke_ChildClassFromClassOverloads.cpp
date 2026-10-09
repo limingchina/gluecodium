@@ -1,0 +1,167 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/ChildClassFromClassOverloads.h"
+#include "smoke/ParentClass.h"
+#include "cstdint"
+#include "string"
+
+using ChildClassFromClassOverloads = ::smoke::ChildClassFromClassOverloads;
+
+class ChildClassFromClassOverloadsTrampoline : public ChildClassFromClassOverloads {
+public:
+    using ChildClassFromClassOverloads::ChildClassFromClassOverloads;
+
+    // Holds an adopted native implementation returned by a factory. When non-null, the
+    // trampoline forwards virtual calls to it instead of the pure-virtual stub. A Python
+    // subclass is instantiated with no impl held, in which case the overrides fall back to
+    // PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<ChildClassFromClassOverloads> m_impl;
+
+    void foo(
+            const ::std::string& input ) override {
+        if (m_impl) {
+            m_impl->foo(input);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e666f6f")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e666f6f", foo, input);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, foo, input);
+    }
+    void foo(
+            const double input ) override {
+        if (m_impl) {
+            m_impl->foo(input);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e666f6f3a31")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e666f6f3a31", foo, input);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, foo, input);
+    }
+    void bar(
+            const ::std::string& input ) override {
+        if (m_impl) {
+            m_impl->bar(input);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e626172")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e626172", bar, input);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, bar, input);
+    }
+    void bar(
+            const double input ) override {
+        if (m_impl) {
+            m_impl->bar(input);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e6261723a31")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e4368696c64436c61737346726f6d436c6173734f7665726c6f6164732e6261723a31", bar, input);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, bar, input);
+    }
+    void foo(
+            /* no args */ ) override {
+        if (m_impl) {
+            m_impl->foo();
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f", foo);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, foo);
+    }
+    void foo(
+            const int32_t input ) override {
+        if (m_impl) {
+            m_impl->foo(input);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f3a31")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e666f6f3a31", foo, input);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, foo, input);
+    }
+    void bar(
+            /* no args */ ) override {
+        if (m_impl) {
+            m_impl->bar();
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e626172")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e626172", bar);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, bar);
+    }
+    void baz(
+            /* no args */ ) override {
+        if (m_impl) {
+            m_impl->baz();
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const ChildClassFromClassOverloads*>(this), "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e62617a")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, ChildClassFromClassOverloads, "__gluecodium_callback_736d6f6b652e506172656e74436c6173732e62617a", baz);
+        }
+        PYBIND11_OVERRIDE_PURE(void, ChildClassFromClassOverloads, baz);
+    }
+};
+
+
+
+void register_smoke_ChildClassFromClassOverloads(py::module_& module) {
+auto cls_ChildClassFromClassOverloads = py::class_<ChildClassFromClassOverloads, ::smoke::ParentClass, std::shared_ptr<ChildClassFromClassOverloads>, ChildClassFromClassOverloadsTrampoline>(module, "smoke_ChildClassFromClassOverloads")
+        .def("__gluecodium_id__", [](const ChildClassFromClassOverloads& self) {
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentClass>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<ChildClassFromClassOverloads>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
+        })
+        // Adoption constructor: adopt an existing native instance returned by a factory into
+        // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
+        // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
+        // here because the returned instance is a foreign (non-trampoline) implementation;
+        // instead we build a fresh trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<ChildClassFromClassOverloads> native) {
+            auto self = std::make_shared<ChildClassFromClassOverloadsTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
+        .def("foo", py::overload_cast<const ::std::string&>(&ChildClassFromClassOverloads::foo), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("foo", py::overload_cast<const double>(&ChildClassFromClassOverloads::foo), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("bar", py::overload_cast<const ::std::string&>(&ChildClassFromClassOverloads::bar), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("bar", py::overload_cast<const double>(&ChildClassFromClassOverloads::bar), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("foo", py::overload_cast<>(&ChildClassFromClassOverloads::foo), py::call_guard<py::gil_scoped_release>())
+        .def("foo", py::overload_cast<const int32_t>(&ChildClassFromClassOverloads::foo), py::arg("input"), py::call_guard<py::gil_scoped_release>())
+        .def("bar", py::overload_cast<>(&ChildClassFromClassOverloads::bar), py::call_guard<py::gil_scoped_release>())
+        .def("baz", &ChildClassFromClassOverloads::baz, py::call_guard<py::gil_scoped_release>())
+        ;
+
+
+}

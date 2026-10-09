@@ -20,8 +20,10 @@ package test
 // Simple inheritance chain with interface as base
 interface ParentInterface {
     // Example method that returns a name. Should be overridden in child implementations.
+    // @return the name string value.
     fun getName(): String
     // Returns the current instance that is cast to ParentInterface type.
+    // @return the current instance as ParentInterface type.
     fun castToParent(): ParentInterface
     // @value Example attribute that represents a number.
     property luckyNumber: Int {
@@ -34,8 +36,10 @@ interface ParentInterface {
 
 open class ChildClass : ParentInterface {
     // Creates an instance of ChildClass.
+    // @return a new instance of ChildClass.
     static fun createChildClass(): ChildClass
     // Does nothing, just checks that it compiles.
+    // @param[input] the ChildClass instance to operate on.
     fun doSomethingToChildClass(
         input: ChildClass
     )
@@ -44,24 +48,31 @@ open class ChildClass : ParentInterface {
 
 class GrandchildClass : ChildClass {
     // Creates an instance of GrandchildClass.
+    // @return a new instance of GrandchildClass.
     static fun createGrandchildClass(): GrandchildClass
     fun doSomething(
+        // @param[value] the string value to process.
         value: String
     )
 }
 
 // Inheritance tree with multiple children
 interface RootInterface {
+    // @param[data] the string data to process.
     fun rootMethod(
         data: String
     )
 }
 
 interface ChildInterface : RootInterface {
+    // Gets data from the interface.
+    // @return the string data.
     fun getData(): String
 }
 
 interface AnotherChildInterface : RootInterface {
+    // Gets data from the interface.
+    // @return the string data.
     fun getData(): String
 }
 
@@ -81,31 +92,48 @@ class InternalChild : InternalParent {}
 
 class InheritanceTestHelper {
     static fun callRootMethod(
+        // @param[interfaceObject] the RootInterface instance to call the method on.
         interfaceObject: RootInterface,
+        // @param[data] the string data to pass to the method.
         data: String
     )
+    // @return a RootInterface instance
     static fun createRoot(): RootInterface
+    // @return a ChildInterface instance
     static fun createChild(): ChildInterface
+    // @return an AnotherChildInterface instance
     static fun createAnotherChild(): AnotherChildInterface
+    // @return a ConcreteChild instance
     static fun createConcreteChild(): ConcreteChild
+    // @return an AnotherConcreteChild instance
     static fun createAnotherConcreteChild(): AnotherConcreteChild
+    // @return a ConcreteGrandChild instance
     static fun createConcreteGrandChild(): ConcreteGrandChild
+    // @return an AnotherConcreteGrandChild instance
     static fun createAnotherConcreteGrandChild(): AnotherConcreteGrandChild
 
+    // @return a ChildInterface instance as RootInterface
     static fun createChildAsRootInterface(): RootInterface
+    // @return a ConcreteChild instance as ChildInterface
     static fun createConcreteChildAsChildInterface(): ChildInterface
+    // @return a GrandchildClass instance as ConcreteChild
     static fun createGrandchildClassAsChildClass(): ConcreteChild
 
     // When multiple inheritance is used in C++ it could mess up the type information
     // Return a class that inherits from ChildInterface and AnotherChildInterface. It can only be
     // returned as one of the branches, not RootInterface, because Gluecodium does not generate virtual inheritance.
+    // @return a ChildInterface instance
     static fun createConjoinedChildrenAsChildInterface(): ChildInterface
+    // @return an AnotherChildInterface instance
     static fun createConjoinedChildrenAsAnotherChildInterface(): AnotherChildInterface
 
     // Using multiple inheritance in C++ with disjoined inheritance chains works
+    // @return a RootInterface instance
     static fun createDisjoinedChildrenAsRootInterface(): RootInterface
+    // @return a ParentInterface instance
     static fun createDisjoinedChildrenAsParentInterface(): ParentInterface
 
+    // @return a list of RootInterface instances
     static fun createFamilyList(): List<RootInterface>
 }
 
@@ -114,6 +142,7 @@ class ChildConstructorOverloads : ConstructorOverloads {
     @Java("createNoParametersChild")
     @Kotlin("createNoParametersChild")
     constructor create()
+    // @param[input] the double input value
     @Dart("createWithErrorChild")
     @Java("createWithErrorChild")
     @Kotlin("createWithErrorChild")
@@ -123,6 +152,7 @@ class ChildConstructorOverloads : ConstructorOverloads {
 }
 
 interface ParentWithClassReferences {
+    // @return a ChildClass instance
     fun classFunction(): ChildClass
     property classProperty: GrandchildClass
 }

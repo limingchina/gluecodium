@@ -1,0 +1,39 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/DartInternalElements.h"
+#include "string"
+
+using DartInternalElements = ::smoke::DartInternalElements;
+
+
+
+void register_smoke_DartInternalElements(py::module_& module) {
+auto cls_DartInternalElements = py::class_<DartInternalElements>(module, "smoke_DartInternalElements")
+        .def_property("string_field", [](const DartInternalElements& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](DartInternalElements& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("string_field"))
+        .def("foo", &DartInternalElements::foo, py::call_guard<py::gil_scoped_release>())
+        ;
+
+
+}
