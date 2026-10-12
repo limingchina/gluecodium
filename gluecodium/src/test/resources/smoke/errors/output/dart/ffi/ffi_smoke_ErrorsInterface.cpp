@@ -37,11 +37,7 @@ public:
             (*reinterpret_cast<void (*)()>(f_close_callbacks_local))();
         };
 
-        if (gluecodium::ffi::IsolateContext::is_current(isolate_id)) {
-            deleter();
-        } else {
-            gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
-        }
+        gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
     }
 
     smoke_ErrorsInterface_Proxy(const smoke_ErrorsInterface_Proxy&) = delete;
@@ -377,7 +373,7 @@ FfiOpaqueHandle
 library_smoke_ErrorsInterface_InternalError_create_handle_nullable(uint32_t value)
 {
     return reinterpret_cast<FfiOpaqueHandle>(
-        new (std::nothrow) std::optional<smoke::ErrorsInterface::InternalError>(
+        new (std::nothrow) ::gluecodium::optional<smoke::ErrorsInterface::InternalError>(
             gluecodium::ffi::Conversion<smoke::ErrorsInterface::InternalError>::toCpp(value)
         )
     );
@@ -386,21 +382,21 @@ library_smoke_ErrorsInterface_InternalError_create_handle_nullable(uint32_t valu
 void
 library_smoke_ErrorsInterface_InternalError_release_handle_nullable(FfiOpaqueHandle handle)
 {
-    delete reinterpret_cast<std::optional<smoke::ErrorsInterface::InternalError>*>(handle);
+    delete reinterpret_cast<::gluecodium::optional<smoke::ErrorsInterface::InternalError>*>(handle);
 }
 
 uint32_t
 library_smoke_ErrorsInterface_InternalError_get_value_nullable(FfiOpaqueHandle handle)
 {
     return gluecodium::ffi::Conversion<smoke::ErrorsInterface::InternalError>::toFfi(
-        **reinterpret_cast<std::optional<smoke::ErrorsInterface::InternalError>*>(handle)
+        **reinterpret_cast<::gluecodium::optional<smoke::ErrorsInterface::InternalError>*>(handle)
     );
 }
 FfiOpaqueHandle
 library_smoke_ErrorsInterface_ExternalErrors_create_handle_nullable(uint32_t value)
 {
     return reinterpret_cast<FfiOpaqueHandle>(
-        new (std::nothrow) std::optional<smoke::ErrorsInterface::ExternalErrors>(
+        new (std::nothrow) ::gluecodium::optional<smoke::ErrorsInterface::ExternalErrors>(
             gluecodium::ffi::Conversion<smoke::ErrorsInterface::ExternalErrors>::toCpp(value)
         )
     );
@@ -409,14 +405,14 @@ library_smoke_ErrorsInterface_ExternalErrors_create_handle_nullable(uint32_t val
 void
 library_smoke_ErrorsInterface_ExternalErrors_release_handle_nullable(FfiOpaqueHandle handle)
 {
-    delete reinterpret_cast<std::optional<smoke::ErrorsInterface::ExternalErrors>*>(handle);
+    delete reinterpret_cast<::gluecodium::optional<smoke::ErrorsInterface::ExternalErrors>*>(handle);
 }
 
 uint32_t
 library_smoke_ErrorsInterface_ExternalErrors_get_value_nullable(FfiOpaqueHandle handle)
 {
     return gluecodium::ffi::Conversion<smoke::ErrorsInterface::ExternalErrors>::toFfi(
-        **reinterpret_cast<std::optional<smoke::ErrorsInterface::ExternalErrors>*>(handle)
+        **reinterpret_cast<::gluecodium::optional<smoke::ErrorsInterface::ExternalErrors>*>(handle)
     );
 }
 

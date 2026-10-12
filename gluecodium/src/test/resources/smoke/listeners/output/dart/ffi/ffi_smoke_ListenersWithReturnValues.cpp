@@ -40,11 +40,7 @@ public:
             (*reinterpret_cast<void (*)()>(f_close_callbacks_local))();
         };
 
-        if (gluecodium::ffi::IsolateContext::is_current(isolate_id)) {
-            deleter();
-        } else {
-            gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
-        }
+        gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
     }
 
     smoke_ListenersWithReturnValues_Proxy(const smoke_ListenersWithReturnValues_Proxy&) = delete;
@@ -333,7 +329,7 @@ FfiOpaqueHandle
 library_smoke_ListenersWithReturnValues_ResultStruct_create_handle_nullable(FfiOpaqueHandle value)
 {
     return reinterpret_cast<FfiOpaqueHandle>(
-        new (std::nothrow) std::optional<smoke::ListenersWithReturnValues::ResultStruct>(
+        new (std::nothrow) ::gluecodium::optional<smoke::ListenersWithReturnValues::ResultStruct>(
             gluecodium::ffi::Conversion<smoke::ListenersWithReturnValues::ResultStruct>::toCpp(value)
         )
     );
@@ -342,14 +338,14 @@ library_smoke_ListenersWithReturnValues_ResultStruct_create_handle_nullable(FfiO
 void
 library_smoke_ListenersWithReturnValues_ResultStruct_release_handle_nullable(FfiOpaqueHandle handle)
 {
-    delete reinterpret_cast<std::optional<smoke::ListenersWithReturnValues::ResultStruct>*>(handle);
+    delete reinterpret_cast<::gluecodium::optional<smoke::ListenersWithReturnValues::ResultStruct>*>(handle);
 }
 
 FfiOpaqueHandle
 library_smoke_ListenersWithReturnValues_ResultStruct_get_value_nullable(FfiOpaqueHandle handle)
 {
     return gluecodium::ffi::Conversion<smoke::ListenersWithReturnValues::ResultStruct>::toFfi(
-        **reinterpret_cast<std::optional<smoke::ListenersWithReturnValues::ResultStruct>*>(handle)
+        **reinterpret_cast<::gluecodium::optional<smoke::ListenersWithReturnValues::ResultStruct>*>(handle)
     );
 }
 
@@ -359,7 +355,7 @@ FfiOpaqueHandle
 library_smoke_ListenersWithReturnValues_ResultEnum_create_handle_nullable(uint32_t value)
 {
     return reinterpret_cast<FfiOpaqueHandle>(
-        new (std::nothrow) std::optional<smoke::ListenersWithReturnValues::ResultEnum>(
+        new (std::nothrow) ::gluecodium::optional<smoke::ListenersWithReturnValues::ResultEnum>(
             gluecodium::ffi::Conversion<smoke::ListenersWithReturnValues::ResultEnum>::toCpp(value)
         )
     );
@@ -368,14 +364,14 @@ library_smoke_ListenersWithReturnValues_ResultEnum_create_handle_nullable(uint32
 void
 library_smoke_ListenersWithReturnValues_ResultEnum_release_handle_nullable(FfiOpaqueHandle handle)
 {
-    delete reinterpret_cast<std::optional<smoke::ListenersWithReturnValues::ResultEnum>*>(handle);
+    delete reinterpret_cast<::gluecodium::optional<smoke::ListenersWithReturnValues::ResultEnum>*>(handle);
 }
 
 uint32_t
 library_smoke_ListenersWithReturnValues_ResultEnum_get_value_nullable(FfiOpaqueHandle handle)
 {
     return gluecodium::ffi::Conversion<smoke::ListenersWithReturnValues::ResultEnum>::toFfi(
-        **reinterpret_cast<std::optional<smoke::ListenersWithReturnValues::ResultEnum>*>(handle)
+        **reinterpret_cast<::gluecodium::optional<smoke::ListenersWithReturnValues::ResultEnum>*>(handle)
     );
 }
 

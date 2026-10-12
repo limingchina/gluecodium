@@ -35,11 +35,7 @@ public:
             (*reinterpret_cast<void (*)()>(f_close_callbacks_local))();
         };
 
-        if (gluecodium::ffi::IsolateContext::is_current(isolate_id)) {
-            deleter();
-        } else {
-            gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
-        }
+        gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
     }
 
     smoke_SpecialNamesInterface_Proxy(const smoke_SpecialNamesInterface_Proxy&) = delete;
@@ -93,11 +89,7 @@ public:
             (*reinterpret_cast<void (*)()>(f_close_callbacks_local))();
         };
 
-        if (gluecodium::ffi::IsolateContext::is_current(isolate_id)) {
-            deleter();
-        } else {
-            gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
-        }
+        gluecodium::ffi::cbqm.enqueueCallback(isolate_id, deleter);
     }
 
     smoke_SpecialNamesInterface_Callback_Proxy(const smoke_SpecialNamesInterface_Callback_Proxy&) = delete;
@@ -230,7 +222,7 @@ FfiOpaqueHandle
 library_smoke_SpecialNamesInterface_Callback_create_handle_nullable(FfiOpaqueHandle value)
 {
     return reinterpret_cast<FfiOpaqueHandle>(
-        new (std::nothrow) std::optional<smoke::SpecialNamesInterface::Callback>(
+        new (std::nothrow) ::gluecodium::optional<smoke::SpecialNamesInterface::Callback>(
             gluecodium::ffi::Conversion<smoke::SpecialNamesInterface::Callback>::toCpp(value)
         )
     );
@@ -239,14 +231,14 @@ library_smoke_SpecialNamesInterface_Callback_create_handle_nullable(FfiOpaqueHan
 void
 library_smoke_SpecialNamesInterface_Callback_release_handle_nullable(FfiOpaqueHandle handle)
 {
-    delete reinterpret_cast<std::optional<smoke::SpecialNamesInterface::Callback>*>(handle);
+    delete reinterpret_cast<::gluecodium::optional<smoke::SpecialNamesInterface::Callback>*>(handle);
 }
 
 FfiOpaqueHandle
 library_smoke_SpecialNamesInterface_Callback_get_value_nullable(FfiOpaqueHandle handle)
 {
     return gluecodium::ffi::Conversion<smoke::SpecialNamesInterface::Callback>::toFfi(
-        **reinterpret_cast<std::optional<smoke::SpecialNamesInterface::Callback>*>(handle)
+        **reinterpret_cast<::gluecodium::optional<smoke::SpecialNamesInterface::Callback>*>(handle)
     );
 }
 

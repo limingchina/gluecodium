@@ -1,0 +1,91 @@
+# Copyright (C) 2016-2026 HERE Europe B.V.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# License-Filename: LICENSE
+
+package test
+
+class ConstructorVisibility {
+    // Struct without explicit constructors, with an internal and a public
+    // field, none of which has a default value. The generated all-args
+    // constructor must not be public, because it would expose the internal
+    // field.
+    struct NoCtorsUninitializedFieldsOneInternalField {
+        @Internal
+        internalField: String
+        publicField: Boolean
+    }
+
+    // Struct without explicit constructors, with an internal field and one
+    // public field with a default value. The generated initialized-fields
+    // constructor must not be public, because it would expose the internal
+    // field.
+    struct NoCtorsInitializedPublicFieldOneInternalField {
+        @Internal
+        internalField: String
+        publicField: Boolean
+        initializedField: Int = 77
+    }
+
+    // Helper struct with a few named, overloaded field constructors. Used
+    // below to verify that default values relying on such constructors
+    // resolve to the correct overload.
+    struct StructWithNamedFieldConstructors {
+        field1: String
+        field2: String
+        initializedField1: Int = 77
+        initializedField2: Int = 101
+
+        @Dart("explicitAllArgsCtor")
+        field constructor(field1, field2, initializedField1, initializedField2)
+
+        @Dart("withoutTwoInitializedFields")
+        field constructor(field1, field2)
+
+        @Dart("withoutOneInitializedField")
+        field constructor(field1, field2, initializedField1)
+    }
+
+    // Struct without explicit constructors, whose default field values use
+    // struct initializer expressions with differing argument counts. The
+    // generated constructor must resolve each initializer to the field
+    // constructor overload matching its argument count.
+    struct InitializedPublicFieldsViaOverloadedFieldCtors {
+        initializedField1: StructWithNamedFieldConstructors = {"abc", "def", 9, 11}
+        initializedField2: StructWithNamedFieldConstructors = {"abc", "def", 123}
+        initializedField3: StructWithNamedFieldConstructors = {"abc", "def"}
+    }
+
+    static fun makeUninitializedFields(
+        internalField: String,
+        publicField: Boolean
+    ): NoCtorsUninitializedFieldsOneInternalField
+    static fun uninitializedFieldsRoundTrip(
+        input: NoCtorsUninitializedFieldsOneInternalField
+    ): NoCtorsUninitializedFieldsOneInternalField
+
+    static fun makeInitializedField(
+        internalField: String,
+        publicField: Boolean,
+        initializedField: Int
+    ): NoCtorsInitializedPublicFieldOneInternalField
+    static fun initializedFieldRoundTrip(
+        input: NoCtorsInitializedPublicFieldOneInternalField
+    ): NoCtorsInitializedPublicFieldOneInternalField
+
+    static fun overloadedFieldCtorsRoundTrip(
+        input: InitializedPublicFieldsViaOverloadedFieldCtors
+    ): InitializedPublicFieldsViaOverloadedFieldCtors
+}
