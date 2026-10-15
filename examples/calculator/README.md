@@ -1,6 +1,6 @@
 # Calculator
 
-This simple application demonstrates how to use basic entities like `struct`, `class`, `interface`, `exception`, `lambda`, `optional values`, `documentation`, `platform-only documentation` and interact between Java, Swift and C++. Flutter is out of this example.
+This simple application demonstrates how to use basic entities like `struct`, `class`, `interface`, `exception`, `lambda`, `optional values`, `documentation`, `platform-only documentation` and interact between Java, Swift, Python and C++. Flutter is out of this example.
 
 # Requirements
 
@@ -9,6 +9,11 @@ This simple application demonstrates how to use basic entities like `struct`, `c
 * [Gluecodium must be built and published to the local maven repository](../README.md#build-and-publish-gluecodium).
 
 # How to build
+
+## Python
+
+See the [Python Calculator example](python/README.md) for build and run commands.
+It uses the same LimeIDL API and C++ implementation as the mobile examples.
 
 ## Android
 

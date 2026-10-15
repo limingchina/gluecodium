@@ -1,0 +1,53 @@
+{{!!
+  !
+  ! Copyright (C) 2016-2026 HERE Europe B.V.
+  !
+  ! Licensed under the Apache License, Version 2.0 (the "License");
+  ! you may not use this file except in compliance with the License.
+  ! You may obtain a copy of the License at
+  !
+  !     http://www.apache.org/licenses/LICENSE-2.0
+  !
+  ! Unless required by applicable law or agreed to in writing, software
+  ! distributed under the License is distributed on an "AS IS" BASIS,
+  ! WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ! See the License for the specific language governing permissions and
+  ! limitations under the License.
+  !
+  ! SPDX-License-Identifier: Apache-2.0
+  ! License-Filename: LICENSE
+  !
+  !}}
+{{! pybind11 exception binding body — exception translator registration. }}
+{{! Uses scope and pybindName instead of module/registerName for nested-scope support. }}
+{{#model}}
+{{#instanceOf model.errorType.type.actualType "LimeEnumeration"}}
+    static py::exception<::std::error_code> exc_{{pybindName}}({{scope}}, "{{pybindName}}");
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::std::error_code& e) {
+            PyErr_SetString(exc_{{pybindName}}.ptr(), e.message().c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::std::error_code>(exc_{{pybindName}}.ptr());
+{{/instanceOf}}
+{{#notInstanceOf model.errorType.type.actualType "LimeEnumeration"}}
+    static auto get_py_exc_{{pybindName}} = []() -> PyObject* {
+        static py::object exception;
+        if (!exception) {
+            exception = py::module_::import("{{resolveName model "" "ref"}}"){{pybind11AttrChain}};
+        }
+        return exception.ptr();
+    };
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const {{resolveName model.errorType "Pybind11"}}& e) {
+            const auto message = pybind11::detail::ReturnErrorToString<{{resolveName model.errorType "Pybind11"}}>::convert(e);
+            PyErr_SetString(get_py_exc_{{pybindName}}(), message.c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<{{resolveName model.errorType "Pybind11"}}>(get_py_exc_{{pybindName}});
+{{/notInstanceOf}}
+{{/model}}
