@@ -23,6 +23,14 @@ class CppConstClass {
     fun getFoo(): String
 }
 
+@Immutable
+open class ImmutableClassWithMutator {
+    constructor create()
+    @Cpp(Const)
+    fun getFoo(): String
+    fun setFoo(value: String)
+}
+
 interface CppConstInterface {
     @Cpp(Const)
     fun getFoo(): String

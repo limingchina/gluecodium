@@ -20,6 +20,12 @@
 plugins {
     alias libs.plugins.lazan.dependency.export
 }
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    kotlinOptions.allWarningsAsErrors = providers.gradleProperty('kotlinWarningsAsErrors')
+            .map { it.toBoolean() }.getOrElse(false)
+}
+
 dependencies {
     api project(":lime-runtime")
     implementation project(":lime-loader")

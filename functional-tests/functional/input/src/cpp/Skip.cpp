@@ -41,4 +41,9 @@ float
 SkipFunctions::not_in_kotlin(const float input) {
     return input;
 }
+
+float
+SkipFunctions::not_in_python(const float input) {
+    return input;
+}
 }

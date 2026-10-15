@@ -1,0 +1,37 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/ImmutableNamelessCtor.h"
+#include "string"
+
+using ImmutableNamelessCtor = ::smoke::ImmutableNamelessCtor;
+
+
+
+void register_smoke_ImmutableNamelessCtor(py::module_& module) {
+auto cls_ImmutableNamelessCtor = py::class_<ImmutableNamelessCtor>(module, "smoke_ImmutableNamelessCtor")
+        .def_property("string_field", [](const ImmutableNamelessCtor& self) -> decltype(auto) {
+            return
+                (self.string_field)
+            ;
+        }, [](ImmutableNamelessCtor& self, const ::std::string& value) {
+
+                self.string_field = value;
+
+        })
+        .def(py::init<>())
+        ;
+
+
+}

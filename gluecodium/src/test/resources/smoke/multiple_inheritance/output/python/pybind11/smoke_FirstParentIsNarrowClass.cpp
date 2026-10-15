@@ -1,0 +1,202 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/FirstParentIsNarrowClass.h"
+#include "smoke/ParentNarrowOne.h"
+#include "smoke/ParentNarrowTwo.h"
+#include "string"
+
+using FirstParentIsNarrowClass = ::smoke::FirstParentIsNarrowClass;
+
+class FirstParentIsNarrowClassTrampoline : public FirstParentIsNarrowClass {
+public:
+    using FirstParentIsNarrowClass::FirstParentIsNarrowClass;
+
+    // Holds an adopted native implementation returned by a factory. When non-null, the
+    // trampoline forwards virtual calls to it instead of the pure-virtual stub. A Python
+    // subclass is instantiated with no impl held, in which case the overrides fall back to
+    // PYBIND11_OVERRIDE_PURE for Python dispatch.
+    std::shared_ptr<FirstParentIsNarrowClass> m_impl;
+
+    void child_function(
+            /* no args */ ) override {
+        if (m_impl) {
+            m_impl->child_function();
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e4669727374506172656e7449734e6172726f77436c6173732e6368696c6446756e6374696f6e")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e4669727374506172656e7449734e6172726f77436c6173732e6368696c6446756e6374696f6e", child_function);
+        }
+        PYBIND11_OVERRIDE_PURE(void, FirstParentIsNarrowClass, child_function);
+    }
+    ::std::string get_child_property() const override {
+        if (m_impl) {
+            return m_impl->get_child_property();
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e4669727374506172656e7449734e6172726f77436c6173732e6368696c6450726f7065727479_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e4669727374506172656e7449734e6172726f77436c6173732e6368696c6450726f7065727479_get", get_child_property);
+        }
+        PYBIND11_OVERRIDE_PURE(::std::string, FirstParentIsNarrowClass, get_child_property);
+    }
+    void set_child_property(const ::std::string& value) override {
+        if (m_impl) {
+            m_impl->set_child_property(value);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e4669727374506172656e7449734e6172726f77436c6173732e6368696c6450726f7065727479_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e4669727374506172656e7449734e6172726f77436c6173732e6368696c6450726f7065727479_set", set_child_property, value);
+        }
+        PYBIND11_OVERRIDE_PURE(void, FirstParentIsNarrowClass, set_child_property, value);
+    }
+    void parent_function_one(
+            /* no args */ ) override {
+        if (m_impl) {
+            m_impl->parent_function_one();
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7446756e6374696f6e4f6e65")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7446756e6374696f6e4f6e65", parent_function_one);
+        }
+        PYBIND11_OVERRIDE_PURE(void, FirstParentIsNarrowClass, parent_function_one);
+    }
+    void parent_function_two(
+            /* no args */ ) override {
+        if (m_impl) {
+            m_impl->parent_function_two();
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7446756e6374696f6e54776f")) {
+        PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7446756e6374696f6e54776f", parent_function_two);
+        }
+        PYBIND11_OVERRIDE_PURE(void, FirstParentIsNarrowClass, parent_function_two);
+    }
+    ::std::string get_parent_property_one() const override {
+        if (m_impl) {
+            return m_impl->get_parent_property_one();
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_get", get_parent_property_one);
+        }
+        PYBIND11_OVERRIDE_PURE(::std::string, FirstParentIsNarrowClass, get_parent_property_one);
+    }
+    void set_parent_property_one(const ::std::string& value) override {
+        if (m_impl) {
+            m_impl->set_parent_property_one(value);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f774f6e652e706172656e7450726f70657274794f6e65_set", set_parent_property_one, value);
+        }
+        PYBIND11_OVERRIDE_PURE(void, FirstParentIsNarrowClass, set_parent_property_one, value);
+    }
+    ::std::string get_parent_property_two() const override {
+        if (m_impl) {
+            return m_impl->get_parent_property_two();
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_get")) {
+        PYBIND11_OVERRIDE_PURE_NAME(::std::string, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_get", get_parent_property_two);
+        }
+        PYBIND11_OVERRIDE_PURE(::std::string, FirstParentIsNarrowClass, get_parent_property_two);
+    }
+    void set_parent_property_two(const ::std::string& value) override {
+        if (m_impl) {
+            m_impl->set_parent_property_two(value);
+            return;
+        }
+        py::gil_scoped_acquire gil;
+        if (py::get_override(static_cast<const FirstParentIsNarrowClass*>(this), "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_set")) {
+            PYBIND11_OVERRIDE_PURE_NAME(void, FirstParentIsNarrowClass, "__gluecodium_callback_736d6f6b652e506172656e744e6172726f7754776f2e706172656e7450726f706572747954776f_set", set_parent_property_two, value);
+        }
+        PYBIND11_OVERRIDE_PURE(void, FirstParentIsNarrowClass, set_parent_property_two, value);
+    }
+};
+
+
+
+void register_smoke_FirstParentIsNarrowClass(py::module_& module) {
+auto cls_FirstParentIsNarrowClass = py::class_<FirstParentIsNarrowClass, ::smoke::ParentNarrowOne, ::smoke::ParentNarrowTwo, std::shared_ptr<FirstParentIsNarrowClass>, FirstParentIsNarrowClassTrampoline>(module, "smoke_FirstParentIsNarrowClass", py::multiple_inheritance())
+        .def("__gluecodium_id__", [](const FirstParentIsNarrowClass& self) {
+            return gluecodium::python::native_identity(self);
+        })
+        .def_static("__gluecodium_downcast__", [](const py::object& native) -> py::object {
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentNarrowOne>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<FirstParentIsNarrowClass>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            try {
+                auto base = native.cast<std::shared_ptr<::smoke::ParentNarrowTwo>>();
+                auto derived = gluecodium::python::dynamic_pointer_cast<FirstParentIsNarrowClass>(base);
+                if (derived) return py::cast(derived);
+            } catch (const py::cast_error&) {
+            }
+            return py::none();
+        })
+        // Adoption constructor: adopt an existing native instance returned by a factory into
+        // the trampoline subclass and stash it in `m_impl` so virtual calls forward to the
+        // real implementation instead of the pure-virtual stub. `init_alias` cannot be used
+        // here because the returned instance is a foreign (non-trampoline) implementation;
+        // instead we build a fresh trampoline and store the impl directly.
+        .def(py::init([](std::shared_ptr<FirstParentIsNarrowClass> native) {
+            auto self = std::make_shared<FirstParentIsNarrowClassTrampoline>();
+            self->m_impl = native;
+            return self;
+        }))
+        .def("child_function", &FirstParentIsNarrowClass::child_function, py::call_guard<py::gil_scoped_release>())
+        .def_property("child_property", [](const FirstParentIsNarrowClass& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_child_property();
+            });
+        }, [](FirstParentIsNarrowClass& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_child_property(value);
+            });
+        })
+        .def("parent_function_one", [](FirstParentIsNarrowClass& self) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_function_one(); });
+        })
+        .def("parent_function_two", [](FirstParentIsNarrowClass& self) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) { return self.parent_function_two(); });
+        })
+        .def_property("parent_property_one", [](const FirstParentIsNarrowClass& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property_one();
+            });
+        }, [](FirstParentIsNarrowClass& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_parent_property_one(value);
+            });
+        })
+        .def_property("parent_property_two", [](const FirstParentIsNarrowClass& self) -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_parent_property_two();
+            });
+        }, [](FirstParentIsNarrowClass& self, const ::std::string& value) {
+            gluecodium::python::call_native([&] {
+                self.set_parent_property_two(value);
+            });
+        })
+        ;
+
+
+}

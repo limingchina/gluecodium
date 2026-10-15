@@ -1,0 +1,49 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/FieldConstructorsInternal.h"
+#include "string"
+
+using FieldConstructorsInternal = ::smoke::FieldConstructorsInternal;
+
+
+
+void register_smoke_FieldConstructorsInternal(py::module_& module) {
+auto cls_FieldConstructorsInternal = py::class_<FieldConstructorsInternal>(module, "smoke_FieldConstructorsInternal")
+        .def_property("public_field", [](const FieldConstructorsInternal& self) -> decltype(auto) {
+            return
+                (self.public_field)
+            ;
+        }, [](FieldConstructorsInternal& self, const ::std::string& value) {
+
+                self.public_field = value;
+
+        })
+        .def_property("internal_field", [](const FieldConstructorsInternal& self) -> decltype(auto) {
+            return
+                (self.internal_field)
+            ;
+        }, [](FieldConstructorsInternal& self, const double value) {
+
+                self.internal_field = value;
+
+        })
+        .def(py::init<>())
+        .def(py::init<::std::string>(), py::arg("public_field"))
+        .def(py::init<double>(), py::arg("internal_field"))
+        .def(py::init<double, ::std::string>(), py::arg("internal_field"), py::arg("public_field"))
+        ;
+
+
+}

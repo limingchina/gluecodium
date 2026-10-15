@@ -17,7 +17,7 @@
 
 package smoke
 
-@Skip(Swift, Dart, Kotlin)
+@Skip(Swift, Dart, Kotlin, Python)
 interface EnableTagsInJava {
     @Java(EnableIf = "Lite")
     fun enableTagged()
@@ -27,7 +27,7 @@ interface EnableTagsInJava {
     fun enableTaggedList()
 }
 
-@Skip(Java, Dart, Kotlin)
+@Skip(Java, Dart, Kotlin, Python)
 interface EnableTagsInSwift {
     @Swift(EnableIf = "Lite")
     fun enableTagged()
@@ -37,7 +37,7 @@ interface EnableTagsInSwift {
     fun enableTaggedList()
 }
 
-@Skip(Java, Swift, Kotlin)
+@Skip(Java, Swift, Kotlin, Python)
 interface EnableTagsInDart {
     @Dart(EnableIf = "Lite")
     fun enableTagged()
@@ -47,7 +47,7 @@ interface EnableTagsInDart {
     fun enableTaggedList()
 }
 
-@Skip(Swift, Dart, Java)
+@Skip(Swift, Dart, Java, Python)
 interface EnableTagsInKotlin {
     @Kotlin(EnableIf = "Lite")
     fun enableTagged()
@@ -62,6 +62,7 @@ struct EnableIfField {
     @Java(EnableIf = "Pro")
     @Swift(EnableIf = "Pro")
     @Dart(EnableIf = "Pro")
+    @Python(EnableIf = "Pro")
     stringField: String
     boolField: Boolean
 }

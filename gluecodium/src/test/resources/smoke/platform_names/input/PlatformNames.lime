@@ -22,6 +22,7 @@ package smoke
 @Swift("bazTypes")
 @Dart("weeTypes")
 @Kotlin("dodoTypes")
+@Python(Name = "QuxTypes")
 struct PlatformNames {
 
     @Cpp("fooStruct")
@@ -29,6 +30,7 @@ struct PlatformNames {
     @Swift("bazStruct")
     @Dart("weeStruct")
     @Kotlin("dodoStruct")
+    @Python(Name = "QuxStruct")
     struct BasicStruct {
 
         @Cpp("FOO_FIELD")
@@ -36,6 +38,7 @@ struct PlatformNames {
         @Swift("BAZ_FIELD")
         @Dart("WEE_FIELD")
         @Kotlin("DODO_FIELD")
+        @Python(Name = "qux_field")
         stringField: String
 
         @Cpp("FooCreate")
@@ -43,6 +46,7 @@ struct PlatformNames {
         @Swift("BazCreate")
         @Dart("WeeCreate")
         @Kotlin("DodoCreate")
+        @Python(Name = "qux_make")
         constructor make(
 
             @Cpp("FooParameter")
@@ -50,6 +54,7 @@ struct PlatformNames {
             @Swift(Name = "BazParameter", Label = "_")
             @Dart("WeeParameter")
             @Kotlin("DodoParameter")
+            @Python(Name = "qux_parameter")
             basicParameter: String
         )
     }
@@ -59,6 +64,7 @@ struct PlatformNames {
     @Swift("bazEnum")
     @Dart("werrEnum")
     @Kotlin("dodoEnum")
+    @Python(Name = "QuxEnum")
     enum BasicEnum {
 
         @Cpp("foo_item")
@@ -66,12 +72,14 @@ struct PlatformNames {
         @Swift("BAZ_ITEM")
         @Dart("WEE_ITEM")
         @Kotlin("DODO_ITEM")
+        @Python(Name = "QUX_ITEM")
         BASIC_ITEM
     }
 
     @Cpp("fooTypedef")
     @Swift("bazTypedef")
     @Kotlin("dodoTypedef")
+    @Python(Name = "QuxTypedef")
     typealias BasicTypedef = Double
 }
 
@@ -80,6 +88,7 @@ struct PlatformNames {
 @Swift("bazInterface")
 @Dart("weeInterface")
 @Kotlin("dodoInterface")
+@Python(Name = "QuxInterface")
 class PlatformNamesInterface {
 
     @Cpp("FooMethod")
@@ -87,6 +96,7 @@ class PlatformNamesInterface {
     @Swift("BazMethod")
     @Dart("WeeMethod")
     @Kotlin("DodoMethod")
+    @Python(Name = "qux_method")
     fun basicMethod(
 
         @Cpp("FooParameter")
@@ -94,6 +104,7 @@ class PlatformNamesInterface {
         @Swift(Name = "BazParameter", Label = "_")
         @Dart("WeeParameter")
         @Kotlin("DodoParameter")
+        @Python(Name = "qux_parameter")
         basicParameter: String
     ): PlatformNames.BasicStruct
 
@@ -102,6 +113,7 @@ class PlatformNamesInterface {
     @Swift("make")
     @Dart("make")
     @Kotlin("make")
+    @Python(Name = "qux_create")
     constructor create(
 
         @Cpp("makeParameter")
@@ -109,12 +121,14 @@ class PlatformNamesInterface {
         @Swift(Name = "makeParameter", Label = "_")
         @Dart("makeParameter")
         @Kotlin("makeParameter")
+        @Python(Name = "make_parameter")
         basicParameter: String
     )
 
     @Swift("BAZ_PROPERTY")
     @Dart("WEE_PROPERTY")
     @Kotlin("DODO_PROPERTY")
+    @Python(Name = "qux_property")
     property basicProperty: UInt {
         @Cpp("GET_FOO_PROPERTY")
         @Java("GET_BAR_PROPERTY")
@@ -132,6 +146,7 @@ class PlatformNamesInterface {
 @Swift("bazListener")
 @Dart("weeListener")
 @Kotlin("dodoListener")
+@Python(Name = "QuxListener")
 interface PlatformNamesListener {
 
     @Cpp("FooMethod")
@@ -139,6 +154,7 @@ interface PlatformNamesListener {
     @Swift("BazMethod")
     @Dart("WeeMethod")
     @Kotlin("DodoMethod")
+    @Python(Name = "qux_method")
     fun basicMethod(
 
         @Cpp("FooParameter")
@@ -146,6 +162,7 @@ interface PlatformNamesListener {
         @Swift(Name = "BazParameter", Label = "_")
         @Dart("WeeParameter")
         @Kotlin("DodoParameter")
+        @Python(Name = "qux_parameter")
         basicParameter: String
     )
 }

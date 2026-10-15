@@ -21,8 +21,12 @@ class NullableInterface {
     @Equatable
     struct SomeStruct {
         stringField: String = ""
+        // Default constructor
+        // @param[stringField] the string field (defaults to empty string)
         @Dart(Skip)
         field constructor()
+        // Constructor with string field
+        // @param[stringField] the string field value
         field constructor(stringField)
     }
     struct NullableStruct {
@@ -35,8 +39,19 @@ class NullableInterface {
         inlineArrayField: List<String>? = null
         mapField: SomeMap? = null
         blobField: Blob? = null
+        // Default constructor with all null values
         @Dart("withDefaults")
         field constructor()
+        // Constructor with all nullable fields
+        // @param[stringField] nullable string field
+        // @param[boolField] nullable boolean field
+        // @param[doubleField] nullable double field
+        // @param[structField] nullable struct field
+        // @param[enumField] nullable enum field
+        // @param[arrayField] nullable array field
+        // @param[inlineArrayField] nullable inline array field
+        // @param[mapField] nullable map field
+        // @param[blobField] nullable blob field
         @Dart(Default)
         field constructor(stringField, boolField, doubleField, structField, enumField, arrayField, inlineArrayField, mapField, blobField)
     }
@@ -49,8 +64,18 @@ class NullableInterface {
         uint16Field: UShort? = null
         uint32Field: UInt? = null
         uint64Field: ULong? = null
+        // Default constructor with all null values
         @Dart("withDefaults")
         field constructor()
+        // Constructor with all nullable integer fields
+        // @param[int8Field] nullable byte field
+        // @param[int16Field] nullable short field
+        // @param[int32Field] nullable int field
+        // @param[int64Field] nullable long field
+        // @param[uint8Field] nullable unsigned byte field
+        // @param[uint16Field] nullable unsigned short field
+        // @param[uint32Field] nullable unsigned int field
+        // @param[uint64Field] nullable unsigned long field
         @Dart(Default)
         field constructor(int8Field, int16Field, int32Field, int64Field, uint8Field, uint16Field, uint32Field, uint64Field)
     }
@@ -66,48 +91,93 @@ class NullableInterface {
     }
     typealias SomeArray = List<String>
     typealias SomeMap = Map<Long, String>
+    // Default constructor
     constructor create()
+    // Process nullable struct
+    // @param[input] the nullable struct to process
+    // @return the processed nullable struct
     fun methodWithNullableStruct(
         input: NullableStruct
     ): NullableStruct
+    // Process nullable integers struct
+    // @param[input] the nullable integers struct to process
+    // @return the processed nullable integers struct
     fun methodWithNullableIntsStruct(
         input: NullableIntsStruct
     ): NullableIntsStruct
 
+    // Process nullable string
+    // @param[input] the nullable string to process
+    // @return the processed nullable string
     fun methodWithString(
         input: String?
     ): String?
+    // Process nullable boolean
+    // @param[input] the nullable boolean to process
+    // @return the processed nullable boolean
     fun methodWithBoolean(
         input: Boolean?
     ): Boolean?
+    // Process nullable double
+    // @param[input] the nullable double to process
+    // @return the processed nullable double
     fun methodWithDouble(
         input: Double?
     ): Double?
+    // Process nullable long integer
+    // @param[input] the nullable long to process
+    // @return the processed nullable long
     fun methodWithInt(
         input: Long?
     ): Long?
+    // Process nullable unsigned integer
+    // @param[input] the nullable unsigned int to process
+    // @return the processed nullable unsigned int
     fun methodWithUint(input: UInt?): UInt?
 
+    // Process nullable struct
+    // @param[input] the nullable struct to process
+    // @return the processed nullable struct
     fun methodWithSomeStruct(
         input: SomeStruct?
     ): SomeStruct?
+    // Process nullable enum
+    // @param[input] the nullable enum to process
+    // @return the processed nullable enum
     fun methodWithSomeEnum(
         input: SomeEnum?
     ): SomeEnum?
+    // Process nullable array
+    // @param[input] the nullable array to process
+    // @return the processed nullable array
     fun methodWithSomeArray(
         input: SomeArray?
     ): SomeArray?
+    // Process nullable inline array
+    // @param[input] the nullable list of strings to process
+    // @return the processed nullable list of strings
     fun methodWithInlineArray(
         input: List<String>?
     ): List<String>?
+    // Process nullable map
+    // @param[input] the nullable map to process
+    // @return the processed nullable map
     fun methodWithSomeMap(
         input: SomeMap?
     ): SomeMap?
+    // Round trip nullable listener method
+    // @param[listener] the nullable listener
+    // @param[input] the nullable double input
+    // @return the processed nullable double
     static fun nullableListenerMethodRoundTrip(
         listener: NullableListener,
     
         input: Double?
     ): Double?
+    // Round trip nullable listener attribute
+    // @param[listener] the nullable listener
+    // @param[input] the nullable list of strings input
+    // @return the processed nullable list of strings
     static fun nullableListenerAttributeRoundTrip(
         listener: NullableListener,
     
@@ -125,6 +195,9 @@ class NullableInterface {
 }
 
 interface NullableListener {
+    // Process nullable double in listener
+    // @param[input] the nullable double to process
+    // @return the processed nullable double
     fun methodWithDouble(
         input: Double?
     ): Double?
@@ -137,5 +210,8 @@ struct NullableCollectionsStruct {
 }
 
 interface InternalInterfaceWithNullable {
+    // Dummy function with string parameter and nullable return
+    // @param[dummyVar] the input string parameter
+    // @return a nullable string result
     fun dummy_function(dummyVar: String): String?
 }

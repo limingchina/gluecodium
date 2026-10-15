@@ -320,7 +320,7 @@ original C++ payload.
 ## Current limits and troubleshooting
 
 - Python `@Async`/`asyncio` integration is not provided. Use synchronous APIs or
-  explicit callbacks.
+  explicit callbacks; the Python functional suite does not enable the Async feature.
 - Package override options are parsed but do not change wrapper output paths.
 - Generated setuptools files need application-specific build and packaging setup.
 
@@ -336,6 +336,7 @@ and CMake configuration before rebuilding.
 
 For contributor guidance, see the [development overview](internal/python_binding/README.md)
 and [architecture decisions](internal/python_binding/python_bindings_architecture_decisions.md).
-For verification, build and run the [Calculator example](../examples/calculator/python/README.md).
-Automated Python smoke tests, functional tests and CI are supplied by the stacked
-verification change.
+For verification, use the [Python functional-test guide](internal/python_binding/python_functional_tests.md).
+Feature coverage is defined in `functional-tests/functional/CMakeLists.txt` and
+`functional-tests/functional/python/test/`; historical development plans are not
+an up-to-date support matrix.

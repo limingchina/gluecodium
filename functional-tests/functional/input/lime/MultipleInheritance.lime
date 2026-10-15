@@ -44,6 +44,8 @@ interface MultiInterface: RegularInterface, NarrowInterface {
 }
 
 class MultipleInheritanceFactory {
+    static fun getNativeLiveCount(): Long
+    static fun getNativeDestroyedCount(): Long
     static fun getMultiClass(): MultiClass
     static fun getMultiInterface(): MultiInterface
     static fun getMultiClassAsNarrow(): NarrowInterface

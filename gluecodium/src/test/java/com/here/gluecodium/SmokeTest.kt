@@ -64,11 +64,22 @@ class SmokeTest(
         val commandLineOptions = File(inputDirectory, "commandlineoptions.txt")
         if (commandLineOptions.exists()) {
             // read command line options and replace INPUT_FOLDER with absolute input path from test
+            // Split by newlines first, then split each line into at most 2 parts (flag + value)
+            // to preserve spaces in file paths (e.g. "/Volumes/Macintosh HD/...")
             val commands =
                 commandLineOptions.readText()
                     .replace("\$INPUT_FOLDER", inputDirectory.toString())
                     .replace("\$AUX_FOLDER", auxDirectory.toString())
-                    .split("\\s".toRegex())
+                    .lines()
+                    .filter { it.isNotBlank() }
+                    .flatMap { line ->
+                        val trimmed = line.trim()
+                        if (trimmed.startsWith("-")) {
+                            trimmed.split("\\s+".toRegex(), 2)
+                        } else {
+                            listOf(trimmed)
+                        }
+                    }
             val options = OptionReader.read(commands.toTypedArray())
             TestCase.assertNotNull("Failed to read commandlineoptions.txt", options)
             return options!!

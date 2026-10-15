@@ -21,9 +21,9 @@ application implements the C++ API and links it into a CPython extension.
 **Consequences:** pybind11 supplies native type registration and base conversion;
 Gluecodium supplies the public conversion, identity and GIL policies. The build
 requires C++17, Python development headers and pybind11 3.1.0+. The wrapper layer
-requires Python 3.10+. Extensions are tied to their Python ABI/platform. The native Calculator
-example has been validated with Python 3.14 and pybind11 3.1.0 on Linux; this does
-not establish free-threaded, subinterpreter or cross-platform validation.
+requires Python 3.10+. Extensions are tied to their Python ABI/platform. Linux CI
+currently checks Python 3.14 with pybind11 exactly 3.1.0; this is not a declaration
+of free-threaded, subinterpreter or cross-platform validation.
 
 **Implementation:** [PythonGenerator](../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt),
 [pybind11 templates](../../../gluecodium/src/main/resources/templates/python/).
@@ -114,6 +114,8 @@ No smart-holder migration is claimed. Callback exception capture, worker cleanup
 and shutdown order remain native application responsibilities. Generated GIL scopes
 cannot repair native lock cycles or unsafe interpreter-finalization behavior.
 
+**Evidence:** [lifetime tests](../../../functional-tests/functional/python/test/cache_lifetime_test.py).
+
 ## ADR 6: Release the GIL around native work, preserve it around Python work
 
 **Status:** Accepted.
@@ -182,7 +184,8 @@ Python classes would require a separate pybind11 MRO/metaclass design. Keep nati
 constructor changes, visibility, defaults and stubs coordinated. Packaging typing
 markers and clean wheel installation remain separate distribution work.
 
-**Implementation:** [stub templates](../../../gluecodium/src/main/resources/templates/python/).
+**Evidence:** [stub consumer tests](../../../functional-tests/functional/python/test/stubs_test.py),
+[stub templates](../../../gluecodium/src/main/resources/templates/python/).
 
 ## ADR 9: Reuse chrono casters and adapt Gluecodium Return errors
 
@@ -190,7 +193,7 @@ markers and clean wheel installation remain separate distribution work.
 
 **Context:** Gluecodium `Return<Value, Error>` needs custom error conversion;
 standard chrono types already have pybind11 casters. Early standalone spikes
-established feasibility; the accepted implementation uses reusable generated casters.
+established feasibility but are superseded by generated functional tests.
 
 **Choice:** Include `pybind11/chrono.h`. `Date` maps from
 `std::chrono::system_clock::time_point` to pybind11's naive **local-time** datetime,
@@ -231,4 +234,4 @@ validate. Async/asyncio support and effective package override options are not
 established by synchronous functional tests.
 
 **Evidence:** [Calculator example](../../../examples/calculator/python/README.md),
-[CMake helper](../../../cmake/modules/gluecodium/Python.cmake).
+[CI guide](python_ci.md), [CMake helper](../../../cmake/modules/gluecodium/Python.cmake).

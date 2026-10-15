@@ -40,6 +40,19 @@ class Maps {
     struct EquatableStruct {
         id: String
     }
+    @Skip(Java, Kotlin, Swift, Dart)
+    @Equatable
+    struct MutableHashState {
+        id: String
+        nested: EquatableStruct
+        fun mutate(value: String)
+    }
+    @Skip(Java, Kotlin, Swift, Dart)
+    lambda MapCallback = (StructToString) -> StructToString
+    @Skip(Java, Kotlin, Swift, Dart)
+    static fun invokeHashCallback(callback: HashMapCallback, values: StructToString): StructToString
+    @Skip(Java, Kotlin, Swift, Dart)
+    static fun invokeHashLambda(callback: MapCallback, values: StructToString): StructToString
     typealias ErrorCodeToMessageMap = Map<Int, String>
     typealias NumberTypedef = UByte
     typealias SomeStructTypedef = SomeStruct
@@ -103,4 +116,17 @@ class Maps {
     static fun somePointerEquatableClassToStringRoundTrip(
         input: SomePointerEquatableClassToString
     ): SomePointerEquatableClassToString
+}
+
+
+@Skip(Java, Kotlin, Swift, Dart)
+interface HashMapCallback {
+    fun roundTrip(values: Maps.StructToString): Maps.StructToString
+}
+
+
+@Skip(Java, Kotlin, Swift, Dart)
+struct SnapshotContainers {
+    keyed: Maps.StructToString
+    grouped: List<Set<Maps.EquatableStruct>>
 }
