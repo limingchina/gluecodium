@@ -6,6 +6,11 @@ fixes; they do not assign retrospective approval dates. For usage and requiremen
 see [Python bindings](../../python_bindings.md); for implementation and verification,
 see the [development overview](README.md).
 
+Examples using Calculator refer to the maintained sample. Other API names, such
+as `Item`, `Shape` and `Point`, illustrate the decision rather than describe
+additional built-in APIs. Snippets assume their generated types and application
+objects are available.
+
 ## ADR 1: Compile generated pybind11 bindings alongside the C++ API
 
 **Status:** Accepted.
@@ -24,6 +29,21 @@ requires C++17, Python development headers and pybind11 3.1.0+. The wrapper laye
 requires Python 3.10+. Extensions are tied to their Python ABI/platform. The native Calculator
 example has been validated with Python 3.14 and pybind11 3.1.0 on Linux; this does
 not establish free-threaded, subinterpreter or cross-platform validation.
+
+**Example:** Generate the Calculator API with
+`-generators cpp,python -pythonmodule calculator`, then compile the generated
+pybind11 sources together with the C++ implementation into the `calculator`
+extension. The public wrapper can then call that implementation:
+
+```python
+from gluecodium.calculator.Calculator import Calculator
+
+calc = Calculator.make()
+assert calc.summarize(2, 3) == 5
+```
+
+The extension supplies the native implementation; the generated Python package
+supplies the public `Calculator` type used by the application.
 
 **Implementation:** [PythonGenerator](../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt),
 [pybind11 templates](../../../gluecodium/src/main/resources/templates/python/).
@@ -48,6 +68,21 @@ than access enforcement. Parsed package override options currently do not reloca
 wrapper output. Lazy imports/hint resolution reduce import cycles; arbitrary import
 graphs and multiple independently generated runtimes still need dedicated coverage.
 
+**Example:** The Calculator's LIME package `gluecodium.calculator` produces
+`gluecodium/calculator/Calculator.py` and a matching `Calculator.pyi`.
+Its nested `DivideArguments` struct is defined inside the public `Calculator`
+class, so application code uses:
+
+```python
+from gluecodium.calculator.Calculator import Calculator
+
+args = Calculator.DivideArguments(12, 3)
+assert Calculator.DivideArguments.__qualname__ == "Calculator.DivideArguments"
+```
+
+The extension's package-qualified registration name,
+`calculator.gluecodium_calculator_Calculator`, stays behind the public wrapper.
+
 **Implementation:** [PythonGenerator](../../../gluecodium/src/main/java/com/here/gluecodium/generator/python/PythonGenerator.kt),
 [PythonFile](../../../gluecodium/src/main/resources/templates/python/PythonFile.mustache),
 [Pybind11File](../../../gluecodium/src/main/resources/templates/python/Pybind11File.mustache).
@@ -56,8 +91,9 @@ graphs and multiple independently generated runtimes still need dedicated covera
 
 **Status:** Accepted.
 
-**Context:** Native pybind11 values differ from public wrappers. Requiring native
-objects in callbacks contradicts annotations and normal method results.
+**Context:** Native pybind11 objects and public wrappers are different Python
+types. Callbacks should receive the same public Python types that the type hints
+describe and regular methods return.
 
 **Choice:** Recursively wrap/unwrap values for methods, properties, collections,
 nullable values and callables. Install hidden, lazily resolved callback bridges
@@ -69,6 +105,30 @@ forwarding rather than duplicating pybind11 dispatch in Python.
 must cover inherited and nested signatures. Overload resolution still belongs to
 pybind11, so mixed argument forms and heterogeneous result shapes require explicit
 tests. `None` must be handled before constructing an optional wrapper.
+
+**Example:** Suppose an API exposes `Service.get_item() -> Item` and
+`Observer.on_item(item: Item) -> None`, where `Item` is the generated public
+wrapper. These are Python type hints: `-> Item` describes the method's result,
+and `item: Item` describes the callback's argument. Both promise the same public
+type:
+
+```python
+item = service.get_item()
+assert isinstance(item, Item)
+
+class MyObserver(Observer):
+    def on_item(self, item: Item) -> None:
+        assert isinstance(item, Item)
+```
+
+An ordinary method result is wrapped before it reaches the caller. A C++ callback
+initially supplies a native pybind11 object, whose Python class differs from
+`Item`. Passing it straight to the user override would make the second assertion
+fail. The hidden callback bridge applies `_wrap(native_item, Item)` first, so both
+assertions pass. Type hints alone do not perform this conversion. If a callback
+returns an `Item`, the bridge applies `_unwrap()` before handing it back to
+pybind11. The same conversion applies to items inside collections and optional
+values.
 
 **Implementation:** [PythonNativeBase](../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache),
 [PythonFunction](../../../gluecodium/src/main/resources/templates/python/PythonFunction.mustache),
@@ -94,6 +154,22 @@ not promised across that lifetime gap. Expired entries cannot return wrappers fo
 reused addresses. Narrow views intentionally differ. A per-type key alone was
 insufficient because it would sacrifice regular cross-view identity.
 
+**Example:** Suppose `get_shape()` is declared to return `Shape` and
+`get_circle()` is declared to return its bound subclass `Circle`. Both native
+methods return the same C++ object:
+
+```python
+shape = service.get_shape()
+circle = service.get_circle()
+assert isinstance(shape, Circle)
+assert shape is circle
+```
+
+Selecting the most-specific wrapper before caching makes this work even when the
+base-typed method is called first. Once both public references are dropped, the
+weak cache can discard the wrapper. If C++ still owns the object, a later call
+creates a new wrapper. A deliberately narrow interface view has its own entry.
+
 **Implementation:** [PythonNativeBase](../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache),
 [native class identity/downcasts](../../../gluecodium/src/main/resources/templates/python/Pybind11Class.mustache).
 
@@ -114,6 +190,24 @@ No smart-holder migration is claimed. Callback exception capture, worker cleanup
 and shutdown order remain native application responsibilities. Generated GIL scopes
 cannot repair native lock cycles or unsafe interpreter-finalization behavior.
 
+**Example:** For an illustrative asynchronous service with `start(observer)`
+and `join()`, retain the Python observer until `join()` has waited for every
+callback-producing worker to finish:
+
+```python
+observer = MyObserver()
+service.start(observer)
+try:
+    do_other_work()
+finally:
+    service.join()
+del observer
+```
+
+The local `observer` reference keeps the Python subclass alive during callbacks.
+The wrapper cache's weak reference cannot do that, and retaining only the native
+C++ interface pointer does not establish the Python subclass's lifetime.
+
 ## ADR 6: Release the GIL around native work, preserve it around Python work
 
 **Status:** Accepted.
@@ -133,6 +227,20 @@ synchronize their state. Callback exceptions must be captured and propagated aft
 workers join, not escape `noexcept` callbacks. Bounded subprocess tests are needed
 to catch deadlocks and shutdown failures. Ordinary GIL-enabled CPython coverage does
 not establish support for free-threaded builds.
+
+**Example:** Suppose a native `run_and_join(callback)` method starts a worker
+that calls Python, then waits for that worker. The generated boundary permits this
+sequence:
+
+```text
+Caller: release the GIL, enter run_and_join(), wait for the worker.
+Worker: acquire the GIL, invoke the Python callback, release the GIL, finish.
+Caller: finish the native call, reacquire the GIL, convert the result.
+```
+
+If the caller kept the GIL while waiting, the worker could not acquire it to run
+the callback, so neither thread could finish. Argument and result conversion
+still run with the GIL held because they access Python objects.
 
 **Implementation:** [Pybind11Function](../../../gluecodium/src/main/resources/templates/python/Pybind11Function.mustache),
 [generic conversion helper](../../../gluecodium/src/main/resources/templates/python/Pybind11GenericCaster.mustache),
@@ -160,6 +268,23 @@ a struct copy and are rejected for snapshots. Public clients should use `as_key(
 when supplying mutable structs as keys; private native identity semantics are not
 public value semantics.
 
+**Example:** For a mutable equatable `Point` struct with scalar `x` and `y`
+fields, create a snapshot before using its value as a dictionary key:
+
+```python
+point = Point(1, 2)
+key = point.as_key()
+values = {key: "saved"}
+
+point.x = 9
+assert values[Point(1, 2).as_key()] == "saved"
+```
+
+The stored key still represents `(1, 2)`; changing the original point cannot
+change its hash. Using `point` itself as a key raises `TypeError`, and assigning
+to `key.x` raises `AttributeError`. Private native struct objects remain usable
+as transport keys before the public snapshot conversion.
+
 **Implementation:** [PythonStruct](../../../gluecodium/src/main/resources/templates/python/PythonStruct.mustache),
 [Pybind11Struct](../../../gluecodium/src/main/resources/templates/python/Pybind11Struct.mustache),
 [PythonNativeBase](../../../gluecodium/src/main/resources/templates/python/PythonNativeBase.mustache).
@@ -178,9 +303,27 @@ construction is not falsely accepted. Give frozen key snapshots a typed subtype.
 Test positive and negative consumer programs with mypy in addition to syntax checks.
 
 **Consequences:** Stub inheritance is a static contract; adding bases to runtime
-Python classes would require a separate pybind11 MRO/metaclass design. Keep native
-constructor changes, visibility, defaults and stubs coordinated. Packaging typing
-markers and clean wheel installation remain separate distribution work.
+Python classes would require a separate design for pybind11 metaclasses and
+Python's method resolution order. Keep native constructor changes, visibility,
+defaults and stubs coordinated. Packaging typing markers and clean wheel
+installation remain separate distribution work.
+
+**Example:** A simplified stub for the Calculator's nested argument struct
+declares its usable constructor:
+
+```python
+class Calculator:
+    class DivideArguments:
+        def __init__(self, dividend: int, divider: int) -> None: ...
+```
+
+A consumer check should accept `Calculator.DivideArguments(12, 3)` and reject
+`Calculator.DivideArguments("twelve", 3)`. Parsing the stub alone cannot detect
+an invalid constructor call in a consumer. Similarly, declaring
+`Child(Parent)` in a stub lets a type checker find inherited members; it does not
+change the runtime class's bases. Python's method resolution order is the order
+in which a class and its bases are searched for attributes, so changing runtime
+bases requires separate validation.
 
 **Implementation:** [stub templates](../../../gluecodium/src/main/resources/templates/python/).
 
@@ -207,6 +350,27 @@ share a C++ `std::error_code` registry entry, limiting distinction among multipl
 enum error definitions. Payload exceptions carry messages rather than all original
 fields. Do not infer a reverse Python-exception-to-Return contract without tests.
 
+**Example:** The Calculator's C++ `summarize` method returns a Gluecodium
+`Return`: success becomes an ordinary Python integer, while overflow raises
+the registered native exception:
+
+```python
+import calculator as native
+from gluecodium.calculator.Calculator import Calculator
+
+calc = Calculator.make()
+assert calc.summarize(2, 3) == 5
+try:
+    calc.summarize(2_000_000_000, 2_000_000_000)
+except native.gluecodium_calculator_Calculator.CalculatorExceptionError as error:
+    print(str(error))
+```
+
+For chrono values, `std::chrono::seconds{90}` becomes
+`datetime.timedelta(seconds=90)`. A returned system-clock time point becomes a
+naive local-time `datetime`, so callers must not interpret it as an explicitly
+UTC-tagged value.
+
 **Implementation:** [Pybind11File](../../../gluecodium/src/main/resources/templates/python/Pybind11File.mustache),
 [Return caster](../../../gluecodium/src/main/resources/templates/python/Pybind11ReturnCaster.mustache).
 
@@ -229,6 +393,27 @@ builds an extension rather than a complete installed package. Fresh wheel instal
 PEP 561 metadata and broader platform/minimum-version coverage remain work to
 validate. Async/asyncio support and effective package override options are not
 established by synchronous functional tests.
+
+**Example:** A Calculator installation for Linux and CPython 3.14 could contain
+the following files; the extension suffix varies by interpreter and platform:
+
+```text
+site-packages/
+  calculator.cpython-314-x86_64-linux-gnu.so
+  _native_base.py
+  gluecodium/
+    __init__.py
+    calculator/
+      __init__.py
+      Calculator.py
+      Calculator.pyi
+```
+
+Building or copying only the extension does not supply the public
+`from gluecodium.calculator.Calculator import Calculator` import. A complete
+distribution must include the wrapper packages and stubs as well. The generated
+`setup.py` must also be configured to compile or link the application's C++
+implementation and generated runtime sources.
 
 **Evidence:** [Calculator example](../../../examples/calculator/python/README.md),
 [CMake helper](../../../cmake/modules/gluecodium/Python.cmake).
