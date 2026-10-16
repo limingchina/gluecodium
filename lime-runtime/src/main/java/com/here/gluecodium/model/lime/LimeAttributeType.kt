@@ -31,6 +31,7 @@ enum class LimeAttributeType(
     KOTLIN("Kotlin", LimeAttributeValueType.NAME),
     SWIFT("Swift", LimeAttributeValueType.NAME),
     DART("Dart", LimeAttributeValueType.NAME),
+    PYTHON("Python", LimeAttributeValueType.NAME),
     ASYNC("Async"),
     ASYNC_DECORATOR("AsyncDecorator"),
     ASYNC_TASK_HANDLE("AsyncTaskHandle", LimeAttributeValueType.NAME),
