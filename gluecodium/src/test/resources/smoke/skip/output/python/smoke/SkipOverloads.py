@@ -1,0 +1,31 @@
+
+
+from __future__ import annotations
+
+from _native_base import _unwrap, _wrap, _get_or_create_wrapper, _NativeBase, _install_callback_adapters, _unwrap_struct_args, _mark_callback_base, _struct_key
+from enum import Enum
+from typing import Optional
+import generated
+
+
+class SkipOverloads(_NativeBase):
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1 and not kwargs and isinstance(args[0], generated.smoke_SkipOverloads):
+            super().__init__(args[0])
+        else:
+            super().__init__(generated.smoke_SkipOverloads(
+                *[_unwrap(arg) for arg in args],
+                **{k: _unwrap(v) for k, v in kwargs.items()}
+            ))
+
+    @property
+    def dummy(self) -> float:
+        return _wrap(self._native.dummy, float)
+    @dummy.setter
+    def dummy(self, value: float):
+      self._native.dummy = _unwrap(value, float)
+
+
+    def do_foo(self, input: float):
+        """"""
+        return _wrap(self._native.do_foo(_unwrap(input, float)), None)

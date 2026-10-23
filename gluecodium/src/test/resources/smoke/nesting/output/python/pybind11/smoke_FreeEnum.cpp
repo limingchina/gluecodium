@@ -1,0 +1,28 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/FreeEnum.h"
+
+using FreeEnum = ::smoke::FreeEnum;
+
+
+
+void register_smoke_FreeEnum(py::module_& module) {
+auto cls_FreeEnum = py::enum_<FreeEnum>(module, "smoke_FreeEnum")
+        .value("FOO", FreeEnum::FOO)
+        .value("BAR", FreeEnum::BAR)
+        ;
+
+
+}

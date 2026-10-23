@@ -1,0 +1,39 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include "_opaque_types.h"
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/TimeZone.h"
+#include "cstdint"
+
+using TimeZone = ::smoke::TimeZone;
+
+
+
+void register_smoke_TimeZone(py::module_& module) {
+auto cls_TimeZone = py::class_<TimeZone>(module, "smoke_TimeZone")
+        .def_property("raw_offset", [](const TimeZone& self) -> decltype(auto) {
+            return
+                (self.raw_offset)
+            ;
+        }, [](TimeZone& self, const int32_t value) {
+
+                self.raw_offset = value;
+
+        })
+        .def(py::init<>())
+        .def(py::init<int32_t>(), py::arg("raw_offset"))
+        ;
+
+
+}

@@ -1,0 +1,54 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "gluecodium/VectorHash.h"
+#include "smoke/CachedProperties.h"
+#include "cstdint"
+#include "memory"
+#include "string"
+#include "vector"
+
+using CachedProperties = ::smoke::CachedProperties;
+
+
+
+void register_smoke_CachedProperties(py::module_& module) {
+auto cls_CachedProperties = py::class_<CachedProperties, std::shared_ptr<CachedProperties>>(module, "smoke_CachedProperties")
+        .def("__gluecodium_id__", [](const CachedProperties& self) {
+            return gluecodium::python::native_identity(self);
+        })
+        .def_property_readonly("cached_property", [](const CachedProperties& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_cached_property();
+            }));
+        })
+        .def_property_readonly("_internal_cached_property", [](const CachedProperties& self) -> decltype(auto) {
+            return gluecodium::python::to_python_regular(gluecodium::python::call_native([&]() -> decltype(auto) {
+                return self.get_internal_cached_property();
+            }));
+        })
+        .def_static("static_cached_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return CachedProperties::get_static_cached_property();
+            });
+        })
+        .def_static("_internal_static_cached_property", []() -> decltype(auto) {
+            return gluecodium::python::call_native([&]() -> decltype(auto) {
+                return CachedProperties::get_internal_static_cached_property();
+            });
+        })
+        ;
+
+
+}

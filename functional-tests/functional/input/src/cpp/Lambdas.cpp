@@ -22,6 +22,9 @@
 #include "test/ClassWithInternalLambda.h"
 #include "test/StructWithLambda.h"
 #include "test/Lambdas.h"
+#include "test/PublicCallbackContract.h"
+#include "test/DerivedPublicStructuredCallback.h"
+#include "test/PublicStructuredCallback.h"
 
 #include <functional>
 
@@ -162,6 +165,45 @@ StructWithLambda::invoke_callback(const lorem_ipsum::test::optional<LambdaCallba
     }
 
     return {};
+}
+
+}
+
+namespace test {
+std::unordered_map<std::string, std::vector<std::shared_ptr<NullablePayload>>>
+PublicCallbackContract::invoke(const std::shared_ptr<DerivedPublicStructuredCallback>& callback,
+                              const std::shared_ptr<NullablePayload>& value) {
+    return callback->round_trip({{"values", {value, nullptr}}});
+}
+
+std::shared_ptr<NullablePayload>
+PublicCallbackContract::property_round_trip(const std::shared_ptr<PublicStructuredCallback>& callback,
+                                            const std::shared_ptr<NullablePayload>& value) {
+    callback->set_payload(value);
+    return callback->get_payload();
+}
+
+std::shared_ptr<NullablePayload>
+PublicCallbackContract::invoke_lambda(const PublicCallbackContract::PayloadCallback& callback,
+                                      const std::shared_ptr<NullablePayload>& value) {
+    return callback(value);
+}
+
+PublicCallbackContract::PayloadCallback PublicCallbackContract::get_lambda() {
+    return [](const std::shared_ptr<NullablePayload>& value) { return value; };
+}
+
+std::shared_ptr<NullablePayload>
+PublicCallbackContract::invoke_holder(const PublicCallbackContract::CallbackHolder& holder,
+                                      const std::shared_ptr<NullablePayload>& value) {
+    return holder.callback(value);
+}
+std::shared_ptr<NullablePayload>
+PublicCallbackContract::invoke_inherited_lambda(
+    const std::shared_ptr<DerivedPublicStructuredCallback>& callback,
+    const std::shared_ptr<NullablePayload>& value) {
+    return callback->on_lambda(
+        [](const std::shared_ptr<NullablePayload>& argument) { return argument; }, value);
 }
 
 }

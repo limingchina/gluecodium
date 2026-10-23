@@ -8,9 +8,11 @@ description of LimeIDL please refer to the [LimeIDL description](lime_idl.md).
 Overview
 --------
 
-Gluecodium generates a C++ API with language bindings for Java, Kotlin, Swift, or Dart. For C++ it will
+Gluecodium generates a C++ API with language bindings for Java, Kotlin, Swift, Dart, or Python. For C++ it will
 generate declarations only. These need to be implemented manually to provide application logic.
-Java, Kotlin, Swift, and Dart bindings are completely generated and forward all calls to C++.
+Java, Kotlin, Swift, Dart, and Python bindings are generated and forward calls to C++.
+For Python build instructions, type mappings, and current limitations, see the
+[Python binding guide](python_bindings.md).
 
 Crossing the language boundary
 ------------------------------

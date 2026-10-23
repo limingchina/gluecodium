@@ -1,0 +1,6 @@
+# Exercise the supported pybind11 minimum with the CI Python interpreter.
+pybind11==3.1.0
+pytest>=8
+mypy>=1.19
+setuptools>=61.0
+wheel

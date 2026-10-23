@@ -47,6 +47,16 @@ struct Equatable {
 
         @Dart("withDefaults")
         field constructor()
+        // Constructor with all fields
+        // @param[boolField] nullable boolean field
+        // @param[intField] nullable int field
+        // @param[uintField] nullable unsigned short field
+        // @param[floatField] nullable float field
+        // @param[stringField] nullable string field
+        // @param[structField] nullable nested struct field
+        // @param[enumField] nullable enum field
+        // @param[mapField] nullable map field
+        // @param[arrayField] nullable array field
         @Dart(Default)
         field constructor(boolField, intField, uintField, floatField, stringField, structField, enumField, mapField, arrayField)
     }
@@ -91,35 +101,61 @@ class EquatableClass {
         intField: Int
         stringField: String
     }
+    // Constructor with name
+    // @param[name] the name for this equatable class
     constructor create(
         name: String
     )
+    // Check if two AnotherEquatableStruct objects are equal
+    // @param[lhs] left-hand side struct to compare
+    // @param[rhs] right-hand side struct to compare
+    // @return true if structs are equal, false otherwise
     @Dart("areEqualAnother")
     static fun areEqual(
         lhs: AnotherEquatableStruct,
 
         rhs: AnotherEquatableStruct
     ): Boolean
+    // Check if two EquatableStruct objects are equal
+    // @param[lhs] left-hand side struct to compare
+    // @param[rhs] right-hand side struct to compare
+    // @return true if structs are equal, false otherwise
     static fun areEqual(
         lhs: Equatable.EquatableStruct,
 
         rhs: Equatable.EquatableStruct
     ): Boolean
+    // Check if two EquatableNullableStruct objects are equal
+    // @param[lhs] left-hand side nullable struct to compare
+    // @param[rhs] right-hand side nullable struct to compare
+    // @return true if structs are equal, false otherwise
     @Dart("areEqualNullable")
     static fun areEqual(
         lhs: Equatable.EquatableNullableStruct,
 
         rhs: Equatable.EquatableNullableStruct
     ): Boolean
+    // Check if two AnotherEquatableStruct objects have the same hash
+    // @param[lhs] left-hand side struct to compare
+    // @param[rhs] right-hand side struct to compare
+    // @return true if structs have the same hash, false otherwise
     @Dart("haveSameHashAnother")
     static fun haveSameHash(
         lhs: AnotherEquatableStruct,
         rhs: AnotherEquatableStruct
     ): Boolean
+    // Check if two EquatableStruct objects have the same hash
+    // @param[lhs] left-hand side struct to compare
+    // @param[rhs] right-hand side struct to compare
+    // @return true if structs have the same hash, false otherwise
     static fun haveSameHash(
         lhs: Equatable.EquatableStruct,
         rhs: Equatable.EquatableStruct
     ): Boolean
+    // Check if two EquatableNullableStruct objects have the same hash
+    // @param[lhs] left-hand side nullable struct to compare
+    // @param[rhs] right-hand side nullable struct to compare
+    // @return true if structs have the same hash, false otherwise
     @Dart("haveSameHashNullable")
     static fun haveSameHash(
         lhs: Equatable.EquatableNullableStruct,
@@ -139,24 +175,46 @@ class PointerEquatableClass {
         equatable: EquatableClass?
         pointerEquatable: PointerEquatableClass?
 
-        field constructor(equatable, pointerEquatable)
+        // Constructor with equatable objects
+    // @param[equatable] the equatable class instance
+    // @param[pointerEquatable] the pointer equatable class instance
+    field constructor(equatable, pointerEquatable)
     }
+    // Create a new PointerEquatableClass instance
+    // @return a new PointerEquatableClass instance
     static fun createNew(): PointerEquatableClass
     // Returns the last created instance again
+    // @return the last created PointerEquatableClass instance
     static fun returnLast(): PointerEquatableClass
+    // Check if two EquatableStruct objects are equal
+    // @param[one] first struct to compare
+    // @param[other] second struct to compare
+    // @return true if structs are equal, false otherwise
     static fun areEqual(
         one: EquatableStruct,
         other: EquatableStruct
     ): Boolean
+    // Check if two OptionalEquatableStruct objects are equal
+    // @param[one] first optional struct to compare
+    // @param[other] second optional struct to compare
+    // @return true if structs are equal, false otherwise
     @Dart("areEqualOptional")
     static fun areEqual(
         one: OptionalEquatableStruct,
         other: OptionalEquatableStruct
     ): Boolean
+    // Check if two EquatableStruct objects have the same hash
+    // @param[one] first struct to compare
+    // @param[other] second struct to compare
+    // @return true if structs have the same hash, false otherwise
     static fun haveSameHash(
         one: EquatableStruct,
         other: EquatableStruct
     ): Boolean
+    // Check if two OptionalEquatableStruct objects have the same hash
+    // @param[one] first optional struct to compare
+    // @param[other] second optional struct to compare
+    // @return true if structs have the same hash, false otherwise
     @Dart("haveSameOptional")
     static fun haveSameHash(
         one: OptionalEquatableStruct,
@@ -189,6 +247,9 @@ interface EquatableInterface {
 }
 
 class EquatableInterfaceFactory {
+    // Create an equatable interface instance
+    // @param[name] the name for the interface
+    // @return a new EquatableInterface instance
     static fun createEquatableInterface(name: String): EquatableInterface
 }
 

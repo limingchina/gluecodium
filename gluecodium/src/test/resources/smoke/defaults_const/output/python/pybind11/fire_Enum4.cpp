@@ -1,0 +1,28 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "fire/Enum4.h"
+
+using Enum4 = ::fire::Enum4;
+
+
+
+void register_fire_Enum4(py::module_& module) {
+auto cls_Enum4 = py::enum_<Enum4>(module, "fire_Enum4")
+        .value("ENABLED", Enum4::ENABLED)
+        .value("DISABLED", Enum4::DISABLED)
+        ;
+
+
+}

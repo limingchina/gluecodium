@@ -1,11 +1,12 @@
 # Gluecodium [![Unit tests](https://github.com/heremaps/gluecodium/actions/workflows/unit-tests.yml/badge.svg)](https://github.com/heremaps/gluecodium/actions/workflows/unit-tests.yml)[![Functional tests](https://github.com/heremaps/gluecodium/actions/workflows/functional-tests.yml/badge.svg)](https://github.com/heremaps/gluecodium/actions/workflows/functional-tests.yml) [![Release](https://jitpack.io/v/heremaps/gluecodium.svg)](https://jitpack.io/#heremaps/gluecodium)
 
-Gluecodium generates **C++**, **Java**, **Kotlin**, **Swift**, and **Dart** code. The main purpose is generating C++ interfaces and
+Gluecodium generates **C++**, **Java**, **Kotlin**, **Swift**, **Dart**, and **Python** code. The main purpose is generating C++ interfaces and
 corresponding Java/Kotlin/Swift/Dart bindings for **Android**/**iOS**/**Flutter** respectively, but other platforms like **macOS**
-and **Linux** work as well. Once implemented in C++ the code can be used directly from Java/Kotlin/Swift/Dart,
+and **Linux** work as well. Python bindings use pybind11 to build a CPython extension.
+Once implemented in C++ the code can be used directly from Java/Kotlin/Swift/Dart/Python,
 eliminating the need for writing conversions and bindings manually.
 To simplify use of platform specific functions, Gluecodium is also able to generate interfaces/protocols
-allowing use of Java/Kotlin/Swift/Dart implementations from C++.
+allowing use of Java/Kotlin/Swift/Dart/Python implementations from C++.
 
 ![Gluecodium logo](docs/logo.svg)
 
@@ -16,6 +17,8 @@ bindings for modern languages like Swift or Dart.
 
 The easiest way to run Gluecodium is by using the [Launcher tool](tools/README.md).
 For a list of features and how to get started writing IDL, see [User guide](./docs/guide.md).
+For Python bindings using pybind11, see the [Python binding guide](docs/python_bindings.md)
+and the runnable [Calculator example](examples/calculator/python/README.md).
 
 ## Building and testing
 Outside of IntelliJ you can invoke the following Gradle tasks to build
