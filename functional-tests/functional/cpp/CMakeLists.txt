@@ -56,6 +56,7 @@ set(SOURCES
   tests/EquatableTest.cpp
   tests/FieldConstructorsTest.cpp
   tests/ImmutableStructsTest.cpp
+  tests/OnlyElementTest.cpp
   tests/OptionalTest.cpp
   tests/ReturnTest.cpp
   tests/StringViewTest.cpp
