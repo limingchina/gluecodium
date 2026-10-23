@@ -139,3 +139,11 @@ struct FieldConstructorsParameterDefaults {
     @Swift(ParameterDefaults)
     field constructor(stringField, intField, boolField)
 }
+
+// No public constructor survives: the only native argument is deliberately hidden.
+@Skip(Java, Kotlin, Swift, Dart)
+@Immutable
+struct HiddenConstructorParameter {
+    @Python(Skip)
+    hidden: Int
+}

@@ -20,6 +20,7 @@
 
 #include "test/SomeEquatableClass.h"
 #include "test/Maps.h"
+#include "test/HashMapCallback.h"
 #include "test/SomePointerEquatableClass.h"
 #include "test/SimpleInterfaceOne.h"
 
@@ -145,4 +146,21 @@ Maps::some_pointer_equatable_class_to_string_round_trip(const Maps::SomePointerE
 {
     return input;
 }
+void Maps::MutableHashState::mutate(const std::string& value) const {
+    // Struct methods have const C++ signatures, but callers own mutable native values.
+    // Exercise a native method that changes that value to verify snapshot isolation.
+    auto& mutable_self = const_cast<MutableHashState&>(*this);
+    mutable_self.id = value;
+    mutable_self.nested.id = value;
+}
+
+Maps::StructToString Maps::invoke_hash_callback(
+    const std::shared_ptr<HashMapCallback>& callback, const StructToString& values) {
+    return callback->round_trip(values);
+}
+
+Maps::StructToString Maps::invoke_hash_lambda(const MapCallback& callback, const StructToString& values) {
+    return callback(values);
+}
+
 }  // namespace test

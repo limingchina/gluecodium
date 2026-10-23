@@ -19,6 +19,7 @@
 // -------------------------------------------------------------------------------------------------
 
 #include "Interfaces.h"
+#include "test/InterfaceWithProperty.h"
 #include <memory>
 
 namespace test
@@ -107,6 +108,49 @@ std::shared_ptr< NestedInterfaceOne >
 NestedInterfaceTwoImpl::get_nested_interface( )
 {
     return m_nested_interface;
+}
+
+}  // namespace test
+
+namespace
+{
+// Concrete implementation of the `InterfaceWithProperty` interface. The
+// generated pybind11 bindings take the address of the pure-virtual
+// `InterfaceWithProperty::get_string_property` / `set_string_property`
+// (via `py::overload_cast`), which forces the linker to require out-of-line
+// definitions of those members. This impl class (and the explicit
+// instantiations below) guarantees those symbols are emitted even though the
+// interface is never constructed by any factory in the functional tests.
+class InterfaceWithPropertyImpl final : public test::InterfaceWithProperty {
+public:
+    ::std::string get_string_property( ) const override {
+        return m_string_property;
+    }
+
+    void set_string_property( const ::std::string& value ) override {
+        m_string_property = value;
+    }
+
+private:
+    ::std::string m_string_property;
+};
+
+// Force emission of the base-class virtual member symbols that pybind11
+// references by address. The lambda stores the address of a factory that
+// constructs the impl, which pulls in the impl's vtable (and thus the
+// base-class virtual member definitions) even though it is never invoked.
+static test::InterfaceWithProperty* ( *const kForceInterfaceWithPropertyCtor )( ) =
+    []( ) -> test::InterfaceWithProperty* { return new InterfaceWithPropertyImpl( ); };
+
+}  // namespace
+
+namespace test
+{
+::std::string InterfaceWithProperty::get_string_property( ) const {
+    return "";
+}
+
+void InterfaceWithProperty::set_string_property( const ::std::string& ) {
 }
 
 }  // namespace test

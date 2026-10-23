@@ -25,6 +25,31 @@
 
 namespace test
 {
+::lorem_ipsum::test::optional<NullableStatic::NullableStruct>
+NullableStatic::nullable_struct_round_trip(const ::lorem_ipsum::test::optional<NullableStruct>& input)
+{
+    return input;
+}
+
+::lorem_ipsum::test::optional<NullableStatic::NullableEnum>
+NullableStatic::nullable_enum_round_trip(const ::lorem_ipsum::test::optional<NullableEnum>& input)
+{
+    return input;
+}
+
+std::shared_ptr<NullableInstanceListener>
+NullableStatic::nullable_interface_round_trip(const std::shared_ptr<NullableInstanceListener>& input)
+{
+    return input;
+}
+
+::lorem_ipsum::test::optional<std::vector<std::shared_ptr<NullablePayload>>>
+NullableStatic::nullable_payload_list_round_trip(
+    const ::lorem_ipsum::test::optional<std::vector<std::shared_ptr<NullablePayload>>>& input)
+{
+    return input;
+}
+
 std::shared_ptr< NullablePayload >
 NullableStatic::nullable_top_down_round_trip( const std::shared_ptr< NullablePayload >& input )
 {

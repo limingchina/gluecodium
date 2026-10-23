@@ -71,12 +71,21 @@ data class GeneratorOptions(
             Gluecodium::class.java,
             "/namerules/dart.properties",
         ),
+    var pythonPackages: List<String> = listOf(),
+    var pythonInternalPackages: List<String> = listOf(),
+    var pythonNameRules: Configuration =
+        ConfigurationProperties.fromResource(
+            Gluecodium::class.java,
+            "/namerules/python.properties",
+        ),
+    var pythonModule: String = "generated",
     var tags: Set<String> = emptySet(),
 ) {
     companion object {
         const val WARNING_DOC_LINKS = "DocLinks"
         const val WARNING_DEPRECATED_ATTRIBUTES = "DeprecatedAttributes"
         const val WARNING_DART_OVERLOADS = "DartOverloads"
+        const val WARNING_PYTHON_OVERLOADS = "PythonOverloads"
         const val WARNING_LIME_FUNCTION_DOCS = "LimeFunctionDocs"
         const val WARNING_LIME_LAMBDA_DOCS = "LimeLambdaDocs"
         const val WARNING_LIME_PROPERTIES_DOCS = "LimePropertiesDocs"

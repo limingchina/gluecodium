@@ -1,0 +1,154 @@
+#!/bin/bash -e
+#
+# Copyright (C) 2016-2025 HERE Europe B.V.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# License-Filename: LICENSE
+
+# Run Python functional tests with the correct interpreter.
+#
+# This script uses the same Python detection logic as build-python-functional
+# (via python-env.sh) to ensure the pytest runner matches the interpreter that
+# built the pybind11 extension module. This avoids SOABI mismatch errors.
+#
+# Usage:
+#   ./scripts/run-python-tests                              # run all tests
+#   ./scripts/run-python-tests tests/equatable_test.py      # run specific file(s)
+#   ./scripts/run-python-tests -k equatable                 # pass -k to pytest
+#   ./scripts/run-python-tests --python /path/to/python3    # override interpreter
+#   ./scripts/run-python-tests --help                       # show this message
+
+SCRIPT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+. "${SCRIPT_DIR}/inc.functions"
+. "${SCRIPT_DIR}/python-env.sh"
+
+USAGE=$(cat <<EOF
+$0 [options] [test-targets...]
+
+Run Python functional tests with the correct interpreter.
+
+Options:
+    --python [PATH]       Path to Python interpreter with pybind11 installed (default: auto-detect)
+    -v, --verbose          Verbose pytest output (same as pytest -v)
+    --help                 Print this message
+
+Environment variables:
+    GLUECODIUM_PYTHON     Same as --python; takes precedence over auto-detection
+
+Test targets:
+    Zero or more paths/patterns relative to the test directory.
+    If omitted, all tests are run.
+    Examples:
+      tests/equatable_test.py
+      tests/structs_immutable_test.py
+      tests/equatable_test.py::test_struct_equality
+
+Any additional arguments (e.g. -k, -x, --tb=short) are forwarded to pytest.
+EOF
+)
+
+# --- Argument parsing -------------------------------------------------------
+
+PYTHON_BIN_OVERRIDE=""
+PYTEST_EXTRA_ARGS=()
+PYTEST_TARGETS=()
+VERBOSE_FLAG=""
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --python)
+            PYTHON_BIN_OVERRIDE="$2"
+            shift 2
+            ;;
+        -v|--verbose)
+            VERBOSE_FLAG="-v"
+            shift
+            ;;
+        --help)
+            echo "$USAGE"
+            exit 0
+            ;;
+        *)
+            # Everything else is forwarded to pytest (targets or flags)
+            PYTEST_TARGETS+=("$1")
+            shift
+            ;;
+    esac
+done
+
+# --- Detect Python interpreter ----------------------------------------------
+
+step() {
+    echo ""
+    echo "==================================================================="
+    echo ">>> $1"
+    echo "==================================================================="
+}
+
+step "Detecting Python interpreter (with pybind11)"
+resolve_python
+
+# --- Locate the build output ------------------------------------------------
+
+PROJECT_ROOT="${SCRIPT_DIR}/.."
+BUILD_DIR="${PROJECT_ROOT}/build-python"
+TEST_DIR="${BUILD_DIR}/functional/python"
+
+# The extension module (.so) and the generated `test` wrapper package are in
+# build-python/functional/.  The test files are copied to
+# build-python/functional/python/tests/ by CMake.  PYTHONPATH must include
+# build-python/functional/ so that `import test` resolves to the wrapper
+# package and `import functional` loads the .so.
+FUNCTIONAL_DIR="${BUILD_DIR}/functional"
+
+if [[ ! -d "${TEST_DIR}" ]]; then
+    die "Test directory not found: ${TEST_DIR}
+
+Have you built the project yet?  Run:
+  ./scripts/build-python-functional --publish
+first."
+fi
+
+# Verify the extension module exists
+SO_COUNT=$(find "${FUNCTIONAL_DIR}" -maxdepth 1 -name 'functional.cpython-*.so' 2>/dev/null | wc -l | tr -d ' ')
+if [[ "$SO_COUNT" -eq 0 ]]; then
+    die "Extension module (functional.cpython-*.so) not found in ${FUNCTIONAL_DIR}
+
+Have you built the project yet?  Run:
+  ./scripts/build-python-functional --publish
+first."
+fi
+
+# Verify pytest is available in the detected interpreter
+if ! "$PYTHON_BIN" -c 'import pytest' 2>/dev/null; then
+    die "pytest is not installed for ${PYTHON_BIN}.
+
+Install it with:
+  ${PYTHON_BIN} -m pip install pytest
+"
+fi
+
+# --- Run pytest -------------------------------------------------------------
+
+step "Running pytest with ${PYTHON_BIN} (${PYTHON_VERSION})"
+
+# If no targets were specified, default to all tests
+if [[ ${#PYTEST_TARGETS[@]} -eq 0 ]]; then
+    PYTEST_TARGETS=("tests/")
+fi
+
+cd "${TEST_DIR}"
+exec env PYTHONPATH="${FUNCTIONAL_DIR}" \
+    "$PYTHON_BIN" -m pytest ${VERBOSE_FLAG} "${PYTEST_TARGETS[@]}"

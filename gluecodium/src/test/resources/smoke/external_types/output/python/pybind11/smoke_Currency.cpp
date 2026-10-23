@@ -1,0 +1,40 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include "_opaque_types.h"
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/Currency.h"
+#include "cstdint"
+#include "string"
+
+using Currency = ::smoke::Currency;
+
+
+
+void register_smoke_Currency(py::module_& module) {
+auto cls_Currency = py::class_<Currency>(module, "smoke_Currency")
+        .def_property_readonly("currency_code", [](const Currency& self) -> decltype(auto) {
+            return
+                (self.currency_code)
+            ;
+        })
+        .def_property_readonly("numeric_code", [](const Currency& self) -> decltype(auto) {
+            return
+                (self.numeric_code)
+            ;
+        })
+        .def(py::init<::std::string, int32_t>(), py::arg("currency_code"), py::arg("numeric_code"))
+        ;
+
+
+}

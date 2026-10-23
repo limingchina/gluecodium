@@ -34,5 +34,8 @@ include(${CMAKE_CURRENT_LIST_DIR}/Gluecodium.cmake)
 # iOS modules
 include(${CMAKE_CURRENT_LIST_DIR}/Swift.cmake)
 
+# Python (pybind11) module
+include(${CMAKE_CURRENT_LIST_DIR}/Python.cmake)
+
 # Packaging functions
 include(${CMAKE_CURRENT_LIST_DIR}/Packaging.cmake)

@@ -20,108 +20,156 @@ package test
 class StaticIntMethods {
     // Method that takes a int8 as input and returns next integer to input as output where input
     // must be less than 127
+    // @param[inputNumber] the input byte number (must be less than 127)
+    // @return the next byte number after inputNumber
     static fun returnNextNumberInt8(
         inputNumber: Byte
     ): Byte
     // Method that takes 2 Int8 as input and returns their sum as output.
+    // @param[inputNumber1] the first byte number to add
+    // @param[inputNumber2] the second byte number to add
+    // @return the sum of the two byte numbers
     static fun sumTwoNumbersInt8(
         inputNumber1: Byte,
     
         inputNumber2: Byte
     ): Byte
     // Method that always returns 2
+    // @return the prime number 2 as a byte
     static fun returnPrimeInt8(): Byte
     // Method that takes a UInt8 as input and returns next integer to input as output where input
     // must be less than 255
+    // @param[inputNumber] the input unsigned byte number (must be less than 255)
+    // @return the next unsigned byte number after inputNumber
     static fun returnNextNumberUint8(
         inputNumber: UByte
     ): UByte
     // Method that takes 2 UInt8 as input and returns their sum as output.
+    // @param[inputNumber1] the first unsigned byte number to add
+    // @param[inputNumber2] the second unsigned byte number to add
+    // @return the sum of the two unsigned byte numbers
     static fun sumTwoNumbersUint8(
         inputNumber1: UByte,
     
         inputNumber2: UByte
     ): UByte
     // Method that always returns 131
+    // @return the prime number 131 as an unsigned byte
     static fun returnPrimeUint8(): UByte
     // Method that takes a UInt16 as input and returns next integer to input as output where input
     // must be less than 32767
+    // @param[inputNumber] the input short number (must be less than 32767)
+    // @return the next short number after inputNumber
     static fun returnNextNumberInt16(
         inputNumber: Short
     ): Short
     // Method that takes 2 Int16 as input and returns their sum as output.
+    // @param[inputNumber1] the first short number to add
+    // @param[inputNumber2] the second short number to add
+    // @return the sum of the two short numbers
     static fun sumTwoNumbersInt16(
         inputNumber1: Short,
     
         inputNumber2: Short
     ): Short
     // Method that always returns 257
+    // @return the prime number 257 as a short
     static fun returnPrimeInt16(): Short
     // Method that takes a UInt16 as input and returns next integer to input as output where input
     // must be less than 65535
+    // @param[inputNumber] the input unsigned short number (must be less than 65535)
+    // @return the next unsigned short number after inputNumber
     static fun returnNextNumberUint16(
         inputNumber: UShort
     ): UShort
     // Method that takes 2 UInt16 as input and returns their sum as output.
+    // @param[inputNumber1] the first unsigned short number to add
+    // @param[inputNumber2] the second unsigned short number to add
+    // @return the sum of the two unsigned short numbers
     static fun sumTwoNumbersUint16(
         inputNumber1: UShort,
     
         inputNumber2: UShort
     ): UShort
     // Method that always returns 32771
+    // @return the prime number 32771 as an unsigned short
     static fun returnPrimeUint16(): UShort
     // Method that takes a Int32 as input and returns next integer to input as output where input
     // must be less than 2147483647
+    // @param[inputNumber] the input int number (must be less than 2147483647)
+    // @return the next int number after inputNumber
     static fun returnNextNumberInt32(
         inputNumber: Int
     ): Int
     // Method that takes 2 Int32 as input and returns their sum as output.
+    // @param[inputNumber1] the first int number to add
+    // @param[inputNumber2] the second int number to add
+    // @return the sum of the two int numbers
     static fun sumTwoNumbersInt32(
         inputNumber1: Int,
     
         inputNumber2: Int
     ): Int
     // Method that always returns 65537
+    // @return the prime number 65537 as an int
     static fun returnPrimeInt32(): Int
     // Method that takes a Uint32 as input and returns next integer to input as output where input
     // must be less than 4294967295
+    // @param[inputNumber] the input unsigned int number (must be less than 4294967295)
+    // @return the next unsigned int number after inputNumber
     static fun returnNextNumberUint32(
         inputNumber: UInt
     ): UInt
     // Method that takes 2 Uint32 as input and returns their sum
     // as output.
+    // @param[inputNumber1] the first unsigned int number to add
+    // @param[inputNumber2] the second unsigned int number to add
+    // @return the sum of the two unsigned int numbers
     static fun sumTwoNumbersUint32(
         inputNumber1: UInt,
     
         inputNumber2: UInt
     ): UInt
     // Method that always returns 2147483659
+    // @return the prime number 2147483659 as an unsigned int
     static fun returnPrimeUint32(): UInt
     // Method that takes a Int64 as input and returns next integer to input as output where input
     // must be less than 2^63-1
+    // @param[inputNumber] the input long number (must be less than 2^63-1)
+    // @return the next long number after inputNumber
     static fun returnNextNumberInt64(
         inputNumber: Long
     ): Long
     // Method that takes 2 Int64 as input and returns their sum
     // as output.
+    // @param[inputNumber1] the first long number to add
+    // @param[inputNumber2] the second long number to add
+    // @return the sum of the two long numbers
     static fun sumTwoNumbersInt64(
         inputNumber1: Long,
     
         inputNumber2: Long
     ): Long
     // Method that always returns 4294967311
+    // @return the prime number 4294967311 as a long
     static fun returnPrimeInt64(): Long
     // Method that takes a Uint64 as input and returns next integer to input as output where input
     // must be less than 2^64-1
+    // @param[inputNumber] the input unsigned long number (must be less than 2^64-1)
+    // @return the next unsigned long number after inputNumber
     static fun returnNextNumberUint64(
         inputNumber: ULong
     ): ULong
     // Method that takes 2 Uint64 as input and returns their sum as output.
+    // @param[inputNumber1] the first unsigned long number to add
+    // @param[inputNumber2] the second unsigned long number to add
+    // @return the sum of the two unsigned long numbers
     static fun sumTwoNumbersUint64(
         inputNumber1: ULong,
     
         inputNumber2: ULong
     ): ULong
     // Method that always returns 4294967311
+    // @return the prime number 4294967311 as an unsigned long
     static fun returnPrimeUint64(): ULong
 }

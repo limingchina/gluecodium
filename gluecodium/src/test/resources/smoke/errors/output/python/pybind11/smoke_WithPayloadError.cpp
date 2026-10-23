@@ -1,0 +1,39 @@
+
+
+#include <Python.h>
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+#include <pybind11/stl.h>
+#include <pybind11/chrono.h>
+#include "_wrapper_cache.h"
+#include "_return_caster.h"
+#include "_generic_caster.h"
+#include "_locale_caster.h"
+
+// pybind11 3.x no longer provides the `py` namespace alias by default.
+namespace py = pybind11;
+#include "smoke/Payload.h"
+
+
+
+
+void register_smoke_WithPayloadError(py::module_& module) {
+    static auto get_py_exc_smoke_WithPayloadError = []() -> PyObject* {
+        static py::object exception;
+        if (!exception) {
+            exception = py::module_::import("smoke.WithPayloadError").attr("WithPayloadError");
+        }
+        return exception.ptr();
+    };
+    py::register_exception_translator([](std::exception_ptr p) {
+        try {
+            if (p) std::rethrow_exception(p);
+        } catch (const ::smoke::Payload& e) {
+            const auto message = pybind11::detail::ReturnErrorToString<::smoke::Payload>::convert(e);
+            PyErr_SetString(get_py_exc_smoke_WithPayloadError(), message.c_str());
+        }
+    });
+    pybind11::detail::registerReturnError<::smoke::Payload>(get_py_exc_smoke_WithPayloadError);
+
+
+}

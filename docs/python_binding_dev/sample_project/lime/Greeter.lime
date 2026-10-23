@@ -1,0 +1,62 @@
+# Copyright (C) 2026 HERE Europe B.V.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+# SPDX-License-Identifier: Apache-2.0
+# License-Filename: LICENSE
+
+package com.example.greeter
+
+# A simple value type passed by copy across the language boundary.
+struct Greeting {
+    # The person being greeted.
+    name: String
+    # How many times the greeting has been repeated.
+    count: Int = 1
+}
+
+# Callback interface implemented on the Python side and invoked from C++.
+interface GreetingListener {
+    # Called whenever a greeting is produced.
+    fun onGreeting(value: String)
+}
+
+# Error codes for [Greeter.greet].
+enum GreeterErrorCode {
+    # The supplied name was empty.
+    EMPTY_NAME
+}
+
+# Thrown by Greeter.greet when the name is empty.
+exception GreeterError(GreeterErrorCode)
+
+# The main API surface exposed to Python.
+class Greeter {
+    # Create a new greeter instance.
+    constructor create()
+
+    # Produce a greeting for the given name.
+    #
+    # @param[in] name The name to greet.
+    # @return The formatted greeting.
+    # @retval GreeterError when name is empty.
+    fun greet(name: String): String throws GreeterError
+
+    # Register a listener that is notified on every greeting.
+    #
+    # @param[in] listener The listener to register.
+    fun addListener(listener: GreetingListener)
+
+    # Number of greetings produced so far.
+    property greetingCount: Int
+}

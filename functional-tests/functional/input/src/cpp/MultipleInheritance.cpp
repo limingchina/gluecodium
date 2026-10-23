@@ -27,14 +27,17 @@
 #include "test/RegularInterface.h"
 
 #include <memory>
+#include <atomic>
 
 namespace
 {
+std::atomic<int64_t> s_live_count{0};
+std::atomic<int64_t> s_destroyed_count{0};
 class MultiClassImpl: public test::MultiClass
 {
 public:
-    MultiClassImpl( ) = default;
-    ~MultiClassImpl( ) = default;
+    MultiClassImpl( ) { ++s_live_count; }
+    ~MultiClassImpl( ) { --s_live_count; ++s_destroyed_count; }
 
     void child_function() override {}
     std::string get_child_property() const override { return {}; }
@@ -50,8 +53,8 @@ public:
 class MultiInterfaceImpl: public test::MultiInterface
 {
 public:
-    MultiInterfaceImpl( ) = default;
-    ~MultiInterfaceImpl( ) = default;
+    MultiInterfaceImpl( ) { ++s_live_count; }
+    ~MultiInterfaceImpl( ) { --s_live_count; ++s_destroyed_count; }
 
     void child_function() override {}
     std::string get_child_property() const override { return {}; }
@@ -70,6 +73,8 @@ std::shared_ptr<MultiClassImpl> s_multi_class = std::make_shared<MultiClassImpl>
 
 namespace test
 {
+int64_t MultipleInheritanceFactory::get_native_live_count() { return s_live_count.load(); }
+int64_t MultipleInheritanceFactory::get_native_destroyed_count() { return s_destroyed_count.load(); }
 std::shared_ptr<MultiClass>
 MultipleInheritanceFactory::get_multi_class() {
     return std::make_shared<MultiClassImpl>();
