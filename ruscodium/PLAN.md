@@ -43,6 +43,8 @@ The first executable deliverable is a useful native compiler preview:
    installed JVM implementation where available.
 6. A reproducible static inventory of template property paths, helpers, and
    partial dependencies to make the subsequent compatibility work concrete.
+7. An experimental JVM reference-model graph exporter to start the canonical
+   model investigation without changing the existing Kotlin loader.
 
 This first release does **not** claim drop-in Gluecodium compatibility. In
 particular, generating a standalone C++ interface does not imply compatibility
@@ -171,9 +173,10 @@ declarations, type/literal structure, annotation/documentation metadata, source
 positions, auxiliary status, and resolved symbol identities. Use the same
 library pipeline from the CLI, tests, and generators.
 
-This is the preview's inspectable model format. A canonical Kotlin-export format,
-an adapter to it, and JSON-consuming compatibility generators are separate
-planned work; emitting native JSON alone does not deliver those capabilities.
+This is the preview's inspectable model format. The experimental JVM snapshot
+described in P0 is a separate representation. A template-complete canonical
+schema, an adapter, a Rust importer and JSON-consuming compatibility generators
+remain planned work; neither existing emitter delivers that boundary by itself.
 
 ### M4: useful, honest C++17 generation
 
@@ -223,15 +226,24 @@ fall within this backend's contract.
 - Run the requested independent review, fix material findings, update tasks and
   compatibility documentation, and commit the tested result.
 
+The delivered [`tools/compare_validation.py`](tools/compare_validation.py) makes
+the acceptance comparison reproducible: 58 cases comprising nine core cases
+and 49 smoke groups, with four known directional differences recorded rather
+than hidden. It also records JVM stack-overflow failures on cycle cases. This
+checks acceptance outcomes; it does not establish diagnostic, crash-behavior,
+model, or generated-output parity. Keep its results current as review fixes
+change either implementation's outcomes.
+
 ### M6: map the template compatibility surface
 
-Add `tools/template_surface.py`, tests for its scanner, and a generated
-`TEMPLATE_SURFACE.md` under `ruscodium/`. Scan the checkout's templates rather
-than hardcoding the supplied analysis's counts. Report template-access property
-paths, helper invocations and arguments where statically visible, partials and
-their dependencies, and dynamic constructs that cannot be fully resolved by
-static inspection. Cover the distinctive helpers, including `resolveName`,
-`prefixPartial`, `ifPredicate`, `instanceOf`, `sort`, `filter`, and `set`.
+Delivered [`tools/template_surface.py`](tools/template_surface.py), scanner
+tests, and [`TEMPLATE_SURFACE.md`](TEMPLATE_SURFACE.md). The inventory scans the
+checkout's 315 templates rather than hardcoding the supplied analysis's counts.
+It reports candidate property paths, helper invocations and selector arguments,
+partial/include references and inline definitions, and dynamic constructs that
+cannot be resolved statically. It covers `resolveName`, `prefixPartial`,
+`ifPredicate`, `instanceOf`, `sort`, `filter`, and `set`; the report records
+current counts and the corpus hash for reproduction.
 
 The report is an implementation inventory, not a working template engine or
 proof that every Kotlin reflective access has been reproduced. Keep extraction
@@ -241,24 +253,36 @@ syntax so the report can guide later typed Rust template views.
 ## Exact-parity migration after the native preview
 
 The following phases adopt the supplied analysis's backend-first approach.
-They remain planned until their own acceptance evidence exists.
+P0 has delivered bounded investigation tooling; its canonical boundary and the
+later phases remain incomplete until their own acceptance evidence exists.
 
-### P0: canonical model export and goldens — deferred
+### P0: experimental snapshot delivered; canonical boundary incomplete
 
-Build a JVM/Kotlin `LimeModel` JSON exporter as migration tooling under
-`ruscodium/`; it may depend on the existing Kotlin implementation. Define and
-version the canonical schema before using it as a compiler boundary. Include
-stable symbol identities, resolved types and references, overloads, attributes,
-documents, auxiliary inputs, and data needed by generator views. Record the
-upstream commit, generator configuration and fixture grouping with each golden.
-Avoid traversing lazy object cycles as arbitrary reflective object graphs.
+Delivered [`tools/reference-model/`](tools/reference-model/README.md): a Java 17
+tool that calls the unchanged installed Kotlin loader and serializes a versioned
+JSON graph. Instance IDs preserve sharing and cycles; properties and map keys
+are sorted, lists retain loader order, and repository source paths are normalized.
+The bounded property selection reads public getters backed by model fields,
+plus explicitly allowed `LimeTypeRef.type` and `LimeElementRef.element` semantic
+edges; attributes use their typed public API. It excludes private implementation
+fields and most computed getters, so computed documentation and external
+descriptor data needed by templates can be absent.
 
-Capture canonical snapshots for coherent existing smoke fixtures and implement
-an explicit adapter between the preview model and that schema. The exporter's
-availability, the adapter's fidelity, and a Rust JSON importer each require
-tests; none is implied by the existing native JSON emitter. The exporter may
-use the JVM, while the eventual Rust generators must consume snapshots without
-requiring a JVM during normal compilation.
+Verification covers byte-identical calculator snapshots from separate JVM
+processes with the same distribution/inputs, main and auxiliary sources,
+resolved reference targets, and syntax/unresolved-reference failures before an
+output file is opened or truncated. This is an experimental reference snapshot,
+not a complete template model or a compatibility guarantee. Its README defines
+the exact property policy, schema and reproducibility limits.
+
+Remaining work: define and test a template-complete canonical schema, account
+for omitted computed data, and capture canonical goldens for coherent smoke
+fixtures. Record upstream commit, generator configuration and fixture grouping
+with each golden. Implement and test an explicit adapter from the preview model
+and a Rust JSON importer; neither exists yet. The snapshot's traversal IDs are
+not a promise of stable semantic identities across model revisions. The export
+tool may use the JVM, while the eventual Rust generators must consume snapshots
+without a JVM during normal compilation.
 
 ### P1: JSON-consuming C++ compatibility backend — deferred
 
@@ -309,7 +333,7 @@ drop-in replacement claim.
 
 | Stage | Work remaining after the preview | Required evidence |
 | --- | --- | --- |
-| Canonical boundary | Kotlin `LimeModel` exporter, versioned canonical schema, native adapter, Rust JSON importer | Golden snapshots for coherent fixtures and schema/adapter tests |
+| Canonical boundary | Extend the experimental JVM snapshot to a template-complete canonical schema; native adapter and Rust JSON importer | Golden snapshots for coherent fixtures and completeness/schema/adapter tests |
 | Template compatibility | Choose Mustache/Trimou compatibility or explicit conversion; property views and every helper | Template inventory plus byte-exact helper/whitespace and smoke comparisons |
 | C++ parity | Name-rule files, every C++ attribute, constructors/accessors/equality, constants, external types, `Return`, error categories, runtime helpers, API/internal outputs | Existing C++ golden outputs and functional C++ tests |
 | Runtime and binding core | Common conversion/runtime model, name resolvers, ownership, cache and lifetime contracts | Native conversion and lifetime regression tests |
