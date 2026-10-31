@@ -26,7 +26,7 @@ of marking the entire port complete after the preview.
   constants, aliases, exceptions and lambdas, including nested declarations.
 - [ ] Parser: generic/nullable/annotated types and every initializer/reference
   form in the checked-in grammar.
-- [ ] Malformed-input regression cases with precise source diagnostics.
+- [x] Malformed-input regression cases with precise source diagnostics.
 - [x] Parse every baseline repository `.lime` file with measured coverage and
   no silent skips; record and explain any deliberate syntax differences.
 
@@ -37,9 +37,9 @@ of marking the entire port complete after the preview.
 - [x] Global symbols, nested qualified names and forward references.
 - [x] Import validation and Kotlin-equivalent ambiguity across imports and all
   enclosing scopes; include a no-nearest-scope-shadowing regression case.
-- [ ] Duplicate declarations and signatures, while retaining legal overloads.
-- [ ] Type references/target kinds and alias-cycle validation.
-- [ ] Inheritance kinds/cycles and applicable open/narrow constraints.
+- [x] Duplicate declarations and signatures, while retaining legal overloads.
+- [x] Type references/target kinds and alias-cycle validation.
+- [x] Inheritance kinds/cycles and applicable open/narrow constraints.
 - [ ] Parameter/field/enumerator duplicates, `Void` restrictions, throws
   targets, field-constructor references and obvious invalid defaults.
 - [x] Document the exact validator set and remaining Kotlin validation gaps.
@@ -48,44 +48,51 @@ of marking the entire port complete after the preview.
 
 ## M3: CLI and JSON
 
-- [ ] Help/version, input/auxinput/output, validation and syntax/model
+- [x] Help/version, input/auxinput/output, validation and syntax/model
   inspection, explicit generator selection and documented legacy flag aliases.
 - [x] Correct nonzero failures for bad inputs/options/unsupported generators;
   no output writes during validation.
-- [ ] Versioned, deterministic JSON containing parsed metadata and resolved
+- [x] Versioned, deterministic JSON containing parsed metadata and resolved
   references, usable for the calculator and broad LIME feature inspection.
 - [ ] CLI integration checks, including paths with spaces and multi-file input.
 
 ## M4: C++17 backend
 
 - [x] Define and document supported C++ API/naming/type mappings and limitations.
-- [ ] Classes/interfaces, virtual methods/factories, properties, structs,
+- [x] Classes/interfaces, virtual methods/factories, properties, structs,
   enums, aliases and lambdas within that contract.
 - [ ] Primitive/string/blob/container/optional/reference mappings and supported
   constants/defaults.
 - [ ] Nested and cross-file dependencies, forwards/definition order and cycle
   diagnostics.
 - [ ] Auxiliary declarations are resolved but not emitted.
-- [ ] Explicit diagnostics for unsupported code-affecting attributes,
+- [x] Explicit diagnostics for unsupported code-affecting attributes,
   descriptors, throwing behavior, runtime types or initializers.
 - [ ] Render all selected outputs before writing; detect path/name collisions
   and verify generation failures do not leave partial generated artifacts.
-- [ ] Compile generated declarations and run a C++17 consumer across multiple
+- [x] Compile generated declarations and run a C++17 consumer across multiple
   inputs; include supported existing repository input in acceptance evidence.
 
 ## M5: verification and handoff
 
 - [x] `cargo fmt --check`.
 - [x] `cargo clippy --all-targets -- -D warnings`.
-- [ ] `cargo test`, including lexer/parser, semantic, corpus, CLI and C++ cases.
-- [ ] Targeted JVM differential validation checks, including success, missing
+- [x] `cargo test`, including lexer/parser, semantic, corpus, CLI and C++ cases.
+- [x] Targeted JVM differential validation checks, including success, missing
   references, ambiguous scope/import lookup, and cycles where applicable.
-- [ ] Determinism and failure-output behavior checked.
+- [x] Determinism and failure-output behavior checked.
 - [x] Write `README.md` with build/run examples, architecture, measured
   coverage, compatibility table, supported semantics and exact limitations.
 - [ ] Independent Sol 6.1 xhigh review; fix and recheck material findings.
 - [ ] Update this checklist with evidence and deferred items; create logical
   local commits, leaving the repository clean.
+
+## M6: template and reference-model migration evidence
+
+- [x] Inventory template helpers and model access sites with a reproducible static tool; see [TEMPLATE_SURFACE.md](TEMPLATE_SURFACE.md).
+- [x] Implement a bounded experimental JVM reference-model snapshot tool with documented schema and tests; see [reference-model](tools/reference-model/README.md).
+- [x] Add a reproducible JVM/Rust validation comparison runner covering core cases and coherent smoke groups.
+- [ ] Build the canonical Kotlin model adapter, Rust JSON importer, template runtime and golden-output parity. The reference snapshot and Rust preview JSON are distinct schemas.
 
 ## Deferred full-parity work
 
@@ -109,7 +116,10 @@ of marking the entire port complete after the preview.
 - The existing installed JVM distribution can serve as a differential oracle;
   the Rust compiler must function independently of it.
 
-- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Twenty integration tests cover 345/345 individually tracked inputs, calculator, four coherent smoke groups and two compiled C++ fixture groups.
-- Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (20 integration tests). Template inventory tests: `python3 -m unittest discover -s tools/tests` (2 tests).
+- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Twenty-one integration tests cover 345/345 individually tracked inputs, calculator, four coherent smoke groups and two compiled C++ fixture groups.
+- Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (21 integration tests). Template inventory tests: `python3 -m unittest discover -s tools/tests` (2 tests).
 - Independent JVM smoke comparison: Rust validates 46 of 49 groups; three need platform filtering (`defaults_const`, `name_clash_overloads`, `skip`). `comments` requires JVM documentation configuration. The JVM accepts some invalid Void positions and duplicate parameters that this preview rejects.
-- Preview remains incomplete: full grammar rejection, complete semantic checks, C++ nested/auxiliary references, feature guards and output parity remain open above. Independent review has not yet occurred.
+- Preview remains incomplete: full grammar rejection, complete semantic checks, C++ nested/auxiliary references, feature guards and output parity remain open above. Independent Sol 6.1 xhigh review is in progress; its material findings have been fixed with regression coverage and the final recheck is pending.
+
+- The latest validation comparison has 58 cases and no unexpected acceptance differences; four smoke differences are explicitly recorded, and the JVM crashes with stack overflow on two cycle cases. This is acceptance evidence only.
+- Remaining preview gaps include structured diagnostic objects, complete syntax rejection and dotted quoted identifiers, full metadata fidelity, runtime-dependent C++ behavior, nested and auxiliary C++ type references, constants/defaults, platform filtering, and full upstream validator parity. C++ guards reject these unsupported cases where implemented.

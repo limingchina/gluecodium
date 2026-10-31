@@ -357,3 +357,33 @@ fn namespace_collision_and_syntax_guards() {
         assert!(parse("x", t, false).is_err(), "{t}");
     }
 }
+#[test]
+fn json_generation_is_deterministic() {
+    let dir = std::env::temp_dir().join(format!("ruscodium-json-{}", std::process::id()));
+    fs::create_dir_all(&dir).unwrap();
+    let src = dir.join("source with spaces.lime");
+    fs::write(&src, "package x\nstruct A { v: Int }\n").unwrap();
+    let out = dir.join("out");
+    for _ in 0..2 {
+        assert!(Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+            .args([
+                "-input",
+                src.to_str().unwrap(),
+                "-generators",
+                "json",
+                "-output",
+                out.to_str().unwrap()
+            ])
+            .status()
+            .unwrap()
+            .success());
+        let json = fs::read(out.join("model.json")).unwrap();
+        let prior = dir.join("prior.json");
+        if prior.exists() {
+            assert_eq!(fs::read(&prior).unwrap(), json)
+        } else {
+            fs::write(prior, json).unwrap()
+        }
+    }
+    fs::remove_dir_all(dir).unwrap();
+}
