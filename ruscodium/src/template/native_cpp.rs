@@ -516,6 +516,8 @@ impl<'a> Resolver<'a> {
             "LimeValue$Literal" => {
                 let tr = self.get(v, "typeRef")?;
                 let actual = self.actual(self.get(tr, "type")?, &mut BTreeSet::new())?;
+                self.checked(&actual)?;
+                self.get(&actual, "external")?;
                 let value = self
                     .get(v, "value")?
                     .as_str()
@@ -562,10 +564,12 @@ impl<'a> Resolver<'a> {
     }
     fn accessor(&self, v: &Value, mode: &str) -> Result<Option<String>, String> {
         self.checked(v)?;
+        self.get(v, "external")?;
         let class = self.class(v)?.rsplit('.').next().unwrap_or("");
         if class == "LimeField" {
             let parent = self.parent(v)?.ok_or("native C++ field missing parent")?;
             self.checked(&parent)?;
+            self.get(&parent, "external")?;
             if self.attr(&parent, "CPP", "ACCESSORS")?.is_none() {
                 return Ok(None);
             }
@@ -575,6 +579,7 @@ impl<'a> Resolver<'a> {
             let accessor = self.get(v, mode)?;
             if !accessor.is_null() {
                 self.checked(accessor)?;
+                self.get(accessor, "external")?;
                 if let Some(name) = self.attr(accessor, "CPP", "NAME")? {
                     return name
                         .as_str()

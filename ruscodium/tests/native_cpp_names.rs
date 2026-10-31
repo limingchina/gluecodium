@@ -258,3 +258,46 @@ fn native_failures_do_not_write_partial_output() {
     }
     fs::remove_dir_all(dir).unwrap();
 }
+
+#[test]
+fn unsupported_or_missing_naming_facts_do_not_succeed() {
+    let original = request("native-enumeration");
+    let receiver = original["data"].clone();
+    let id = receiver["$ref"].as_str().unwrap();
+    for case in [
+        "missing-external",
+        "external",
+        "attribute",
+        "unsupported-class",
+    ] {
+        let mut req = original.clone();
+        let nodes = req["snapshot"]["nodes"].as_array_mut().unwrap();
+        let i = nodes.iter().position(|n| n["id"] == id).unwrap();
+        match case {
+            "missing-external" => {
+                nodes[i]["properties"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove("external");
+            }
+            "external" => nodes[i]["properties"]["external"] = json!({}),
+            "attribute" => {
+                let attr_id = nodes[i]["properties"]["attributes"]["$ref"]
+                    .as_str()
+                    .unwrap()
+                    .to_owned();
+                let attr = nodes.iter_mut().find(|n| n["id"] == attr_id).unwrap();
+                attr["properties"]["attributes"]["CPP"] = json!({"UNKNOWN":true});
+            }
+            "unsupported-class" => {
+                nodes[i]["class"] = json!("com.here.gluecodium.model.lime.LimeLambdaParameter")
+            }
+            _ => unreachable!(),
+        }
+        let graph = graph(&req);
+        assert!(
+            resolve(&graph, &config("native-enumeration"), "", "name", &receiver).is_err(),
+            "case {case}"
+        );
+    }
+}
