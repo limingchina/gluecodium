@@ -58,3 +58,55 @@ there is no canonical adapter or Rust snapshot importer. The template inventory
 is lexical evidence only. The chosen migration path preserves the existing
 Mustache templates and implements their Trimou behavior; that runtime and
 byte-for-byte generator compatibility remain deferred.
+
+## Native Mustache continuation review
+
+Reviewer: Sol 6.1, xhigh effort, as requested. Date: 2026-10-31.
+Final reviewed runtime: `c8b8d8d7e`, including JVM oracle fixtures through
+`185053859`. This section records the subsequent template milestone; the preview
+review above remains a historical record of its earlier implementation.
+
+The continuation review covered the native parser, renderer, identity-graph
+importer, render CLI, JVM oracle, bounded public snapshot API additions and scope
+documentation. Independent probes used the installed, unchanged Trimou engine
+and actual helper registrations. The review evaluated the documented P1a slice:
+stored and measured model views plus explicit name, predicate and sorter replay.
+It did not reopen the standalone C++ preview or require a native C++ resolver.
+
+### Findings and disposition
+
+| Reproduced problem | Final behavior and regression evidence |
+| --- | --- |
+| Unknown model properties could fall through to an outer context and hide an unavailable getter. | Unknown model views fail immediately. Only explicit, measured `absent_properties` permit outer-context lookup; conflicting absences and overlays are rejected. |
+| Helper argument parsing confused quoted equals signs and literal backslashes; null equality, iteration position, repeated defaults and Unicode capitalization diverged from Trimou. | JVM fixtures preserve the measured behavior. Position is zero-based while index is one-based; only the first default executes. Capitalization supports ASCII and the measured `ß` mapping, with other Unicode initials explicitly rejected. |
+| Invalid helper counts and tag forms could succeed, including inside inactive branches; missing `setJoin` arguments or delimiter produced invented output. | Parsing validates registered helper forms and required arguments throughout the AST, along with quoted syntax and inline-partial uniqueness. JVM negative checks assert the compile phase and actual Trimou error code. |
+| Ordinary tag names such as `true` and `1` were interpreted as literals instead of context keys. String length counted Unicode scalars and an unsupported string `size` property was synthesized. | Ordinary interpolation and sections use property lookup; helper arguments retain literal evaluation. String `length` counts UTF-16 code units and `size` remains absent, matching measured outputs. |
+| An empty filter could succeed with an unregistered predicate because no per-element replay lookup occurred. | Filtering requires registry evidence, supplied by measured predicate calls or `hooks.registered_predicates`. The JVM fixture records actual registered names for a legitimate empty filter without fabricating receiver results. |
+| Attribute value maps lost case-insensitive lookup, and sorting injected iteration metadata that the JVM helper never supplies. | A reserved internal attribute view preserves case-insensitive access without changing ordinary maps; external input cannot forge that view. Sorting pushes each result without creating iteration metadata. Actual attribute and sorter JVM fixtures cover both cases. |
+| Secondary helper arguments converted maps and lists to JSON text, and several null arguments succeeded despite JVM failures. | Unsupported object string conversion and the measured invalid null operations return errors. Dynamic `eval` resolves supplied key segments directly, including keys containing brackets. |
+| Helper output could accumulate beyond the output limit before the outer renderer checked it. | Join, joinPartial, prefix, escape and indentation append through size checks; iteration and sorting also check aggregate output. Moderate oversize regressions verify a diagnostic and preserved CLI output. No OOM stress or general security-boundary claim was used. |
+
+### Final independent verification
+
+- All 19 template integration tests passed, including the unchanged 315-template
+  parse inventory, graph and hook validation, strict missing-view behavior,
+  traversal and symlink rejection, recursion limits, output limits and CLI
+  sentinel preservation.
+- The JVM oracle independently verified all 315 installed templates against
+  source and regenerated 29 byte-identical render requests and outputs, with
+  additional negative compile/render checks.
+- Forty-two retained independent CLI probes passed with exact measured output
+  or an explicit rejection for unsupported/invalid operations. These include
+  eager validation, ordinary literal-looking keys, UTF-16 length, attribute
+  casing, sort context, empty-filter registration and object conversion guards.
+- `cargo fmt --check` and offline all-target Clippy with `-D warnings` passed.
+  The final source recheck also confirmed section-form prefix options and
+  incremental helper output guards.
+
+No reported material finding remains unresolved within this bounded continuation
+recheck. The runtime executes selected fragments and helper behavior with an
+imported identity graph. Name resolution, predicates and sorting remain explicit
+offline replay; computed getters and verified absent properties remain supplied
+observations. Additional Trimou features, complete template views, a canonical
+preview-model adapter, whole-file generation and byte-for-byte compiler parity
+remain later milestones, as documented in `PLAN.md` and `TEMPLATES.md`.
