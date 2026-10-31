@@ -1,5 +1,8 @@
 use std::{env, fs, path::PathBuf, process};
 fn run() -> Result<(), String> {
+    if env::args().nth(1).as_deref() == Some("render") {
+        return render_cli();
+    }
     let mut inputs = Vec::new();
     let mut aux = Vec::new();
     let mut output = None;
@@ -86,4 +89,39 @@ fn main() {
         eprintln!("{e}");
         process::exit(1)
     }
+}
+
+fn render_cli() -> Result<(), String> {
+    let mut templates = None;
+    let mut request = None;
+    let mut output = None;
+    let mut args = env::args().skip(2);
+    while let Some(arg) = args.next() {
+        let value = args
+            .next()
+            .ok_or_else(|| format!("missing argument for {arg}"))?;
+        match arg.as_str() {
+            "--templates" => templates = Some(PathBuf::from(value)),
+            "--request" => request = Some(PathBuf::from(value)),
+            "--output" => output = Some(PathBuf::from(value)),
+            _ => return Err(format!("unknown render option: {arg}")),
+        }
+    }
+    let templates = templates.ok_or("render requires --templates")?;
+    let request = request.ok_or("render requires --request")?;
+    let bytes = fs::read(&request).map_err(|e| format!("request: {e}"))?;
+    if bytes.len() > 64 * 1024 * 1024 {
+        return Err("request exceeds size limit".into());
+    }
+    let value = serde_json::from_slice(&bytes).map_err(|e| format!("request JSON: {e}"))?;
+    let rendered = ruscodium::template::render(templates, &value)?;
+    if let Some(path) = output {
+        fs::write(path, rendered).map_err(|e| format!("output: {e}"))?;
+    } else {
+        use std::io::Write;
+        std::io::stdout()
+            .write_all(rendered.as_bytes())
+            .map_err(|e| e.to_string())?;
+    }
+    Ok(())
 }
