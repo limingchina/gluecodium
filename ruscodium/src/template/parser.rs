@@ -1,4 +1,4 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug)]
 pub enum Node {
@@ -135,6 +135,7 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
             tag.end = line_end;
         }
     }
+    #[allow(clippy::too_many_arguments)]
     fn block(
         name: &str,
         source: &str,
@@ -143,6 +144,7 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
         cursor: &mut usize,
         close: Option<&str>,
         depth: usize,
+        definitions: &mut BTreeSet<String>,
     ) -> Result<Vec<Node>, String> {
         if depth > 128 {
             return Err(format!("{name}: nesting limit exceeded"));
@@ -177,7 +179,35 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
                         .next()
                         .ok_or_else(|| format!("{name}: empty section"))?
                         .to_string();
-                    let body = block(name, source, tags, index, cursor, Some(&key), depth + 1)?;
+                    if c.starts_with('+') {
+                        if expr != key {
+                            return Err(format!("{name}: invalid inline partial name {expr}"));
+                        }
+                        if !definitions.insert(key.clone()) {
+                            return Err(format!("{name}: duplicate inline partial {key}"));
+                        }
+                    } else {
+                        let parsed = expression(&expr)?;
+                        if c.starts_with('#')
+                            && matches!(parsed.name.as_str(), "if" | "unless")
+                            && parsed.args.is_empty()
+                        {
+                            return Err(format!("{name}: {} requires an argument", parsed.name));
+                        }
+                        if c.starts_with('#') && parsed.name == "set" && parsed.named.is_empty() {
+                            return Err(format!("{name}: set requires a named argument"));
+                        }
+                    }
+                    let body = block(
+                        name,
+                        source,
+                        tags,
+                        index,
+                        cursor,
+                        Some(&key),
+                        depth + 1,
+                        definitions,
+                    )?;
                     if c.starts_with('+') {
                         nodes.push(Node::Definition(key, body));
                         let closing = &tags[*index - 1];
@@ -195,8 +225,15 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
                     }
                 }
                 '>' => nodes.push(Node::Partial(c[1..].trim().to_string(), tag.indent.clone())),
-                '&' => nodes.push(Node::Value(c[1..].trim().to_string())),
-                _ => nodes.push(Node::Value(c.to_string())),
+                '&' => {
+                    let value = c[1..].trim();
+                    expression(value)?;
+                    nodes.push(Node::Value(value.to_string()));
+                }
+                _ => {
+                    expression(c)?;
+                    nodes.push(Node::Value(c.to_string()));
+                }
             }
         }
         if let Some(c) = close {
@@ -208,7 +245,16 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
         }
         Ok(nodes)
     }
-    block(name, source, &tags, &mut 0, &mut 0, None, 0)
+    block(
+        name,
+        source,
+        &tags,
+        &mut 0,
+        &mut 0,
+        None,
+        0,
+        &mut BTreeSet::new(),
+    )
 }
 
 #[derive(Debug)]
@@ -221,18 +267,7 @@ pub fn expression(input: &str) -> Result<Expression, String> {
     let mut words = Vec::new();
     let mut word = String::new();
     let mut quote = None;
-    let mut escape = false;
     for c in input.chars() {
-        if escape {
-            word.push(c);
-            escape = false;
-            continue;
-        }
-        if c == '\\' && quote.is_some() {
-            word.push(c);
-            escape = true;
-            continue;
-        }
         if let Some(q) = quote {
             word.push(c);
             if c == q {
@@ -263,7 +298,7 @@ pub fn expression(input: &str) -> Result<Expression, String> {
     let mut named = BTreeMap::new();
     for word in it {
         if let Some((k, v)) = word.split_once('=') {
-            if !k.is_empty() {
+            if !k.is_empty() && !k.contains(['"', '\'']) {
                 named.insert(k.to_string(), v.to_string());
                 continue;
             }

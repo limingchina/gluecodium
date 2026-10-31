@@ -212,7 +212,10 @@ impl Engine {
     }
     fn eval(&self, s: &str) -> Result<Value, String> {
         if s.starts_with('"') {
-            return serde_json::from_str(s).map_err(|e| format!("invalid literal {s}: {e}"));
+            if !s.ends_with('"') || s.len() < 2 {
+                return Err(format!("invalid literal {s}"));
+            }
+            return Ok(Value::String(s[1..s.len() - 1].to_string()));
         }
         if s.starts_with('\'') && s.ends_with('\'') && s.len() >= 2 {
             return Ok(Value::String(s[1..s.len() - 1].to_string()));
@@ -291,7 +294,7 @@ impl Engine {
     fn hash(&self, e: &Expression, key: &str, default: &str) -> Result<String, String> {
         e.named
             .get(key)
-            .map(|v| self.eval(v).map(|v| display(&v)))
+            .map(|v| self.eval(v).and_then(|v| self.string_value(&v)))
             .unwrap_or_else(|| Ok(default.to_string()))
     }
     fn hook(
@@ -365,13 +368,26 @@ impl Engine {
         if args.is_empty() || args.iter().any(Value::is_null) {
             return Ok(Value::Null);
         }
-        let mut path = display(&args[0]);
+        let mut path = self.string_value(&args[0])?;
         for arg in &args[1..] {
             path.push('[');
-            path.push_str(&display(arg));
+            path.push_str(&self.string_value(arg)?);
             path.push(']');
         }
         self.lookup(&path)
+    }
+    fn string_value(&self, value: &Value) -> Result<String, String> {
+        match value {
+            Value::Object(m) if m.contains_key("enum") => self
+                .graph
+                .property(value, "toString")?
+                .and_then(|v| v.as_str().map(str::to_owned))
+                .ok_or_else(|| "unsupported enum string conversion".into()),
+            Value::Object(_) | Value::Array(_) => {
+                Err("unsupported object string conversion".into())
+            }
+            _ => Ok(display(value)),
+        }
     }
     fn value(&mut self, input: &str) -> Result<String, String> {
         let e = expression(input)?;
@@ -384,7 +400,7 @@ impl Engine {
         check_hash(&e, allowed)?;
         match e.name.as_str() {
             "resolveName" => Ok(display(&self.resolved_name(&args)?)),
-            "eval" => Ok(display(&self.eval_path(&args)?)),
+            "eval" => self.string_value(&self.eval_path(&args)?),
             "prefix" | "prefixPartial" => {
                 if args.is_empty() {
                     return Ok(String::new());
@@ -392,7 +408,7 @@ impl Engine {
                 let value = if e.name == "prefixPartial" {
                     self.partial(&display(&args[0]))?
                 } else {
-                    display(&args[0])
+                    self.string_value(&args[0])?
                 };
                 let prefix = args.get(1).map(display).unwrap_or_default();
                 let skip = self.hash(&e, "skipFirstLine", "false")? == "true";
@@ -433,16 +449,20 @@ impl Engine {
                     return Err("unsupported join lambda".into());
                 }
                 let delimiter = self.hash(&e, "delimiter", "")?;
-                let values = args
-                    .iter()
-                    .map(|v| match v {
-                        Value::Array(a) => {
-                            a.iter().map(display).collect::<Vec<_>>().join(&delimiter)
-                        }
-                        Value::Null => String::new(),
-                        _ => display(v),
-                    })
-                    .collect::<Vec<_>>();
+                let mut values = Vec::new();
+                for value in &args {
+                    if let Value::Array(items) = value {
+                        values.push(
+                            items
+                                .iter()
+                                .map(|item| self.string_value(item))
+                                .collect::<Result<Vec<_>, _>>()?
+                                .join(&delimiter),
+                        );
+                    } else {
+                        values.push(self.string_value(value)?);
+                    }
+                }
                 Ok(values.join(&delimiter))
             }
             "include" => {
@@ -450,22 +470,38 @@ impl Engine {
                 self.partial(&display(name))
             }
             "capitalize" => {
-                let s = args.first().map(display).unwrap_or_default();
+                let s = args
+                    .first()
+                    .map(|v| self.string_value(v))
+                    .transpose()?
+                    .unwrap_or_default();
                 let mut chars = s.chars();
-                Ok(chars
-                    .next()
-                    .map(|c| c.to_uppercase().collect::<String>() + chars.as_str())
-                    .unwrap_or_default())
+                match chars.next() {
+                    None => Ok(String::new()),
+                    Some(c) if c.is_ascii() => {
+                        Ok(format!("{}{}", c.to_ascii_uppercase(), chars.as_str()))
+                    }
+                    Some('ß') => Ok(format!("Ss{}", chars.as_str())),
+                    Some(c) => Err(format!(
+                        "unsupported Unicode titlecase for U+{:04X}",
+                        c as u32
+                    )),
+                }
             }
             "escape" => {
-                let s = args.first().map(display).unwrap_or_default();
+                let s = args
+                    .first()
+                    .map(|v| self.string_value(v))
+                    .transpose()?
+                    .unwrap_or_default();
                 Ok(s.replace('\\', "\\\\")
                     .replace('"', "\\\"")
                     .replace('\n', "\\n")
                     .replace('\r', "\\r")
-                    .replace('\t', "\\t"))
+                    .replace('\t', "\\t")
+                    .replace('\u{8}', "\\b"))
             }
-            _ if e.args.is_empty() && e.named.is_empty() => Ok(display(&self.eval(&e.name)?)),
+            _ if e.args.is_empty() && e.named.is_empty() => self.string_value(&self.eval(&e.name)?),
             _ => Err(format!("unsupported helper {}", e.name)),
         }
     }
@@ -521,8 +557,8 @@ impl Engine {
                     .iter()
                     .skip(1)
                     .filter(|v| !v.is_null())
-                    .map(display)
-                    .collect::<Vec<_>>()
+                    .map(|v| self.string_value(v))
+                    .collect::<Result<Vec<_>, _>>()?
                     .join(&delimiter);
                 let mut locals = Map::new();
                 locals.insert(display(key), Value::String(value));
@@ -569,6 +605,9 @@ impl Engine {
                 if args.len() < 2 {
                     return Err(format!("{} requires two arguments", e.name));
                 }
+                if args[0].is_null() || args[1].is_null() {
+                    return Ok(String::new());
+                }
                 if (args[0] == args[1]) == (e.name == "isEq") {
                     self.nodes(body)
                 } else {
@@ -576,6 +615,9 @@ impl Engine {
                 }
             }
             "each" => {
+                if args.iter().any(|v| !v.is_array()) {
+                    return Err("each requires iterable arguments".into());
+                }
                 let values: Vec<_> = args
                     .iter()
                     .filter_map(Value::as_array)
@@ -661,7 +703,11 @@ impl Engine {
             "default" => {
                 let (_, terminated, _) = self.switches.last().ok_or("default outside switch")?;
                 if !terminated {
-                    self.nodes(body)
+                    let result = self.nodes(body)?;
+                    if let Some(state) = self.switches.last_mut() {
+                        state.1 = true;
+                    }
+                    Ok(result)
                 } else {
                     Ok(String::new())
                 }
@@ -684,7 +730,7 @@ impl Engine {
         let mut out = String::new();
         for (i, v) in values.iter().enumerate() {
             let mut locals = Map::new();
-            locals.insert("iter".into(), json!({"index": i+1, "position": i+1, "hasNext": i+1 < values.len(), "hasPrevious": i > 0, "first": i == 0, "last": i+1 == values.len(), "isFirst": i == 0, "isLast": i+1 == values.len()}));
+            locals.insert("iter".into(), json!({"index": i+1, "position": i, "hasNext": i+1 < values.len(), "hasPrevious": i > 0, "first": i == 0, "last": i+1 == values.len(), "isFirst": i == 0, "isLast": i+1 == values.len()}));
             let item = self.push(v.clone(), locals, body)?;
             if out.len().saturating_add(item.len()) > MAX_OUTPUT {
                 return Err("render output exceeds size limit".into());

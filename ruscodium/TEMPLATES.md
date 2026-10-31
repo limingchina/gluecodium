@@ -57,7 +57,10 @@ indentation, and forward inline partial definitions. It implements scoped
 `ifPredicate`/`unlessPredicate`, `sort`, `filter`, `instanceOf`/`notInstanceOf`,
 `isEq`/`isNotEq`, `capitalize`, `escape`, and the common `switch`/`case`/`default`
 flow. The `if` and `unless` default logics differ, as in Trimou. List iteration
-supplies one-based `iter.index`/`iter.position` and the boolean iteration flags.
+supplies one-based `iter.index`, zero-based `iter.position`, and boolean iteration
+flags. `capitalize` supports an ASCII initial character and the measured `ß`
+mapping; other non-ASCII initial characters are rejected pending Unicode
+titlecase compatibility.
 Unsupported helpers, hash options (including conditional `else` and join
 lambdas), unregistered selectors, and unknown model properties fail rather than
 silently emit incomplete output. Some optional features such as `numExpr` remain

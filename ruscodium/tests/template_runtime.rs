@@ -10,7 +10,7 @@ struct Dir(PathBuf);
 impl Dir {
     fn new() -> Self {
         let p = std::env::temp_dir().join(format!(
-            "ruscodium-template-{}-{}",
+            "ruscodium template-{}-{}",
             std::process::id(),
             COUNTER.fetch_add(1, Ordering::Relaxed)
         ));
@@ -74,7 +74,7 @@ fn sections_scope_partials_and_iterate() {
             )
         )
         .unwrap(),
-        "T:A:1,T:B:2\n  one\n  two\nlate\n"
+        "T:A:0,T:B:1\n  one\n  two\nlate\n"
     );
 }
 #[test]
@@ -192,4 +192,112 @@ fn reject_nested_tag_delimiters() {
     assert!(parse("bad", "a{{!! before {{value}} after !}}b")
         .unwrap_err()
         .contains("nested tag delimiter"));
+}
+
+#[test]
+fn measured_trimou_literal_iteration_and_flow() {
+    assert_eq!(render_str(r#"{{prefix "a=b" "> "}}|{{prefix "a\nb" "> "}}|{{#isEq nil nil}}bad{{/isEq}}|{{#items}}{{iter.index}}:{{iter.position}};{{/items}}|{{#switch n}}{{#default}}D1{{/default}}{{#default}}D2{{/default}}{{/switch}}|{{capitalize "ßabc"}}"#, json!({"nil":null,"items":["a","b"],"n":1})).unwrap(), r#"> a=b|> a\nb||1:0;2:1;|D1|Ssabc"#);
+}
+
+#[test]
+fn reject_measured_invalid_constructs() {
+    for source in [
+        "{{#if}}x{{/if}}",
+        "{{#unless}}x{{/unless}}",
+        "{{#set name}}x{{/set}}",
+        "{{+p}}a{{/p}}{{+p}}b{{/p}}",
+        "{{+p param}}x{{/p}}",
+        "{{#no}}{{#if}}x{{/if}}{{/no}}",
+        "{{#no}}{{prefix \"unterminated}}{{/no}}",
+    ] {
+        assert!(parse("bad", source).is_err(), "accepted {source}");
+    }
+    assert!(
+        render_str("{{#each name}}x{{/each}}", json!({"name":"text"}))
+            .unwrap_err()
+            .contains("iterable")
+    );
+    assert!(render_str("{{capitalize name}}", json!({"name":"ǳabc"}))
+        .unwrap_err()
+        .contains("Unicode titlecase"));
+    assert!(render_str("{{this}}", json!({"x":1}))
+        .unwrap_err()
+        .contains("object string conversion"));
+}
+
+#[test]
+fn reject_conflicting_hooks_before_output() {
+    let d = Dir::new();
+    d.write("test", "untouched");
+    let mut r = req("test", json!({}));
+    r["hooks"] = json!({"predicates":[{"receiver":{},"name":"p","result":true},{"receiver":{},"name":"p","result":false}]});
+    assert!(render(&d.0, &r).unwrap_err().contains("conflicting hooks"));
+    r["hooks"] = json!({"names":[{"receiver":{},"resolver":"r","mode":"wrong","result":"x"}]});
+    assert!(render(&d.0, &r).unwrap_err().contains("invalid hooks"));
+    r["hooks"] = json!({"sorters":[{"name":"s","input":[],"result":[{"$ref":"missing"}]}]});
+    assert!(render(&d.0, &r).unwrap_err().contains("dangling"));
+}
+
+#[test]
+fn cli_matches_all_jvm_goldens() {
+    fn copy_tree(source: &Path, dest: &Path) {
+        fs::create_dir_all(dest).unwrap();
+        for entry in fs::read_dir(source).unwrap() {
+            let entry = entry.unwrap();
+            let target = dest.join(entry.file_name());
+            if entry.path().is_dir() {
+                copy_tree(&entry.path(), &target);
+            } else {
+                fs::copy(entry.path(), target).unwrap();
+            }
+        }
+    }
+    let d = Dir::new();
+    copy_tree(
+        Path::new("../gluecodium/src/main/resources/templates"),
+        &d.0,
+    );
+    copy_tree(Path::new("tools/template-oracle/templates"), &d.0);
+    let mut count = 0;
+    for entry in fs::read_dir("tests/template-goldens").unwrap() {
+        let path = entry.unwrap().path();
+        let Some(name) = path.file_name().and_then(|s| s.to_str()) else {
+            continue;
+        };
+        let Some(stem) = name.strip_suffix(".request.json") else {
+            continue;
+        };
+        let actual = std::process::Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+            .arg("render")
+            .arg("--templates")
+            .arg(&d.0)
+            .arg("--request")
+            .arg(&path)
+            .output()
+            .unwrap();
+        assert!(
+            actual.status.success(),
+            "{stem}: {}",
+            String::from_utf8_lossy(&actual.stderr)
+        );
+        assert_eq!(
+            actual.stdout,
+            fs::read(path.with_file_name(format!("{stem}.expected"))).unwrap(),
+            "{stem}"
+        );
+        count += 1;
+    }
+    assert!(count >= 24, "missing oracle fixtures: {count}");
+}
+
+#[test]
+fn render_help_is_discoverable() {
+    for args in [&["--help"][..], &["render", "--help"][..]] {
+        let output = std::process::Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+            .args(args)
+            .output()
+            .unwrap();
+        assert!(output.status.success());
+        assert!(String::from_utf8(output.stdout).unwrap().contains("render"));
+    }
 }

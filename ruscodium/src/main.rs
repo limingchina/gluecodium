@@ -14,7 +14,7 @@ fn run() -> Result<(), String> {
         let a = &args[i];
         match a.as_str() {
             "-h" | "-help" | "--help" => {
-                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators");
+                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\n       ruscodium render --templates DIR --request FILE [--output FILE]\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators\nRun 'ruscodium render --help' for the experimental template renderer.");
                 return Ok(());
             }
             "--version" | "-version" => {
@@ -97,6 +97,13 @@ fn render_cli() -> Result<(), String> {
     let mut output = None;
     let mut args = env::args().skip(2);
     while let Some(arg) = args.next() {
+        if arg == "--help" || arg == "-h" {
+            println!("Usage: ruscodium render --templates DIR --request FILE [--output FILE]\nRender a version 1 template request. Without --output, write the result to stdout.");
+            return Ok(());
+        }
+        if !matches!(arg.as_str(), "--templates" | "--request" | "--output") {
+            return Err(format!("unknown render option: {arg}"));
+        }
         let value = args
             .next()
             .ok_or_else(|| format!("missing argument for {arg}"))?;
