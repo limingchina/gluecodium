@@ -83,6 +83,10 @@ computed documentation, external-platform descriptors and arbitrary Java object
 `toString` are not available. A null/missing map value and an unavailable model
 getter are deliberately different outcomes.
 
+The internal `$ruscodium.attribute-view` key is reserved and rejected in
+request and snapshot values. It represents case-insensitive attribute-value
+maps during rendering; ordinary JSON maps retain case-sensitive keys.
+
 Partial names must be relative paths below the canonical template root, without
 `.` or `..` components; canonicalized symlinks may not escape that root. The
 runtime limits template and request sizes, nesting, partial recursion, and output

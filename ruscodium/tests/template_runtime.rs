@@ -300,6 +300,46 @@ fn sort_does_not_create_iteration_metadata_and_secondary_objects_fail() {
 }
 
 #[test]
+fn helper_expansion_stops_at_output_limit() {
+    let data = json!({"items": vec!["x".repeat(256 * 1024); 65]});
+    assert!(render_str("{{join items}}", data)
+        .unwrap_err()
+        .contains("output exceeds size limit"));
+    let d = Dir::new();
+    d.write("test", "{{joinPartial items \"part\"}}");
+    d.write("part", &"x".repeat(256 * 1024));
+    let request = d.0.join("request.json");
+    let output = d.0.join("out.txt");
+    fs::write(
+        &request,
+        serde_json::to_vec(&req("test", json!({"items":vec![0;65]}))).unwrap(),
+    )
+    .unwrap();
+    fs::write(&output, "preserve").unwrap();
+    let result = std::process::Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+        .arg("render")
+        .arg("--templates")
+        .arg(&d.0)
+        .arg("--request")
+        .arg(&request)
+        .arg("--output")
+        .arg(&output)
+        .output()
+        .unwrap();
+    assert!(!result.status.success());
+    assert!(String::from_utf8_lossy(&result.stderr).contains("output exceeds size limit"));
+    assert_eq!(fs::read_to_string(output).unwrap(), "preserve");
+    assert_eq!(
+        render_str(
+            "{{#prefix text \"> \" skipFirstLine=true}}ignored{{/prefix}}",
+            json!({"text":"a\nb"})
+        )
+        .unwrap(),
+        "a\n> b"
+    );
+}
+
+#[test]
 fn cli_matches_all_jvm_goldens() {
     fn copy_tree(source: &Path, dest: &Path) {
         fs::create_dir_all(dest).unwrap();
@@ -348,7 +388,7 @@ fn cli_matches_all_jvm_goldens() {
         );
         count += 1;
     }
-    assert!(count >= 27, "missing oracle fixtures: {count}");
+    assert!(count >= 29, "missing oracle fixtures: {count}");
 }
 
 #[test]

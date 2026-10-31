@@ -209,7 +209,7 @@ impl Engine {
                     if indent.is_empty() {
                         value
                     } else {
-                        indent_lines(&value, indent)
+                        indent_lines(&value, indent)?
                     }
                 }
                 Node::Value(expr) => self.value(expr)?,
@@ -476,16 +476,21 @@ impl Engine {
                     .hash(&e, "skipFirstLine", "false")?
                     .eq_ignore_ascii_case("true");
                 let value = value.replace("\r\n", "\n").replace('\r', "\n");
-                Ok(value
-                    .split('\n')
-                    .enumerate()
-                    .map(|(i, l)| {
-                        format!("{}{}", if i == 0 && skip { "" } else { &prefix }, l)
-                            .trim_end()
-                            .to_string()
-                    })
-                    .collect::<Vec<_>>()
-                    .join("\n"))
+                let mut out = String::new();
+                for (i, line) in value.split('\n').enumerate() {
+                    if i > 0 {
+                        append_checked(&mut out, "\n")?;
+                    }
+                    let p = if i == 0 && skip { "" } else { &prefix };
+                    let trimmed = line.trim_end();
+                    if trimmed.is_empty() {
+                        append_checked(&mut out, p.trim_end())?;
+                    } else {
+                        append_checked(&mut out, p)?;
+                        append_checked(&mut out, trimmed)?;
+                    }
+                }
+                Ok(out)
             }
             "joinPartial" => {
                 if args.len() < 2 {
@@ -498,44 +503,49 @@ impl Engine {
                     .as_array()
                     .cloned()
                     .unwrap_or_else(|| vec![args[0].clone()]);
-                let mut out = Vec::new();
-                for v in values {
+                let delimiter = args
+                    .get(2)
+                    .map(|v| self.string_value(v))
+                    .transpose()?
+                    .unwrap_or_default();
+                let mut out = String::new();
+                for (i, v) in values.into_iter().enumerate() {
                     self.frames.push(Frame {
                         value: v,
                         locals: Map::new(),
                     });
                     let item = self.partial(&self.string_value(&args[1])?);
                     self.frames.pop();
-                    out.push(item?);
+                    let item = item?;
+                    if i > 0 {
+                        append_checked(&mut out, &delimiter)?;
+                    }
+                    append_checked(&mut out, &item)?;
                 }
-                Ok(out.join(
-                    &args
-                        .get(2)
-                        .map(|v| self.string_value(v))
-                        .transpose()?
-                        .unwrap_or_default(),
-                ))
+                Ok(out)
             }
             "join" => {
                 if e.named.contains_key("lambda") {
                     return Err("unsupported join lambda".into());
                 }
                 let delimiter = self.hash(&e, "delimiter", "")?;
-                let mut values = Vec::new();
-                for value in &args {
+                let mut out = String::new();
+                for (i, value) in args.iter().enumerate() {
+                    if i > 0 {
+                        append_checked(&mut out, &delimiter)?;
+                    }
                     if let Value::Array(items) = value {
-                        values.push(
-                            items
-                                .iter()
-                                .map(|item| self.string_value(item))
-                                .collect::<Result<Vec<_>, _>>()?
-                                .join(&delimiter),
-                        );
+                        for (j, item) in items.iter().enumerate() {
+                            if j > 0 {
+                                append_checked(&mut out, &delimiter)?;
+                            }
+                            append_checked(&mut out, &self.string_value(item)?)?;
+                        }
                     } else {
-                        values.push(self.string_value(value)?);
+                        append_checked(&mut out, &self.string_value(value)?)?;
                     }
                 }
-                Ok(values.join(&delimiter))
+                Ok(out)
             }
             "include" => {
                 let name = args.first().ok_or("include expects partial name")?;
@@ -572,12 +582,19 @@ impl Engine {
                     .map(|v| self.string_value(v))
                     .transpose()?
                     .unwrap_or_default();
-                Ok(s.replace('\\', "\\\\")
-                    .replace('"', "\\\"")
-                    .replace('\n', "\\n")
-                    .replace('\r', "\\r")
-                    .replace('\t', "\\t")
-                    .replace('\u{8}', "\\b"))
+                let mut out = String::new();
+                for c in s.chars() {
+                    match c {
+                        '\\' => append_checked(&mut out, "\\\\")?,
+                        '"' => append_checked(&mut out, "\\\"")?,
+                        '\n' => append_checked(&mut out, "\\n")?,
+                        '\r' => append_checked(&mut out, "\\r")?,
+                        '\t' => append_checked(&mut out, "\\t")?,
+                        '\u{8}' => append_checked(&mut out, "\\b")?,
+                        _ => append_checked(&mut out, c.encode_utf8(&mut [0; 4]))?,
+                    }
+                }
+                Ok(out)
             }
             _ if e.args.is_empty() && e.named.is_empty() => {
                 self.string_value(&self.lookup(&e.name)?)
@@ -590,6 +607,7 @@ impl Engine {
         let args = self.args(&e)?;
         let allowed: &[&str] = match e.name.as_str() {
             "if" | "unless" => &["logic"],
+            "prefix" | "prefixPartial" => &["skipFirstLine"],
             "set" => &[],
             "setJoin" => &["delimiter"],
             "sort" => &["sorter"],
@@ -636,13 +654,13 @@ impl Engine {
             "setJoin" => {
                 let key = args.first().ok_or("setJoin requires a key")?;
                 let delimiter = self.hash(&e, "delimiter", "")?;
-                let value = args
-                    .iter()
-                    .skip(1)
-                    .filter(|v| !v.is_null())
-                    .map(|v| self.string_value(v))
-                    .collect::<Result<Vec<_>, _>>()?
-                    .join(&delimiter);
+                let mut value = String::new();
+                for (i, item) in args.iter().skip(1).filter(|v| !v.is_null()).enumerate() {
+                    if i > 0 {
+                        append_checked(&mut value, &delimiter)?;
+                    }
+                    append_checked(&mut value, &self.string_value(item)?)?;
+                }
                 let mut locals = Map::new();
                 locals.insert(self.string_value(key)?, Value::String(value));
                 self.push(Value::Object(locals), Map::new(), body)
@@ -912,9 +930,18 @@ fn display(v: &Value) -> String {
         _ => v.to_string(),
     }
 }
-fn indent_lines(value: &str, indent: &str) -> String {
-    value
-        .split_inclusive('\n')
-        .map(|s| format!("{indent}{s}"))
-        .collect()
+fn append_checked(output: &mut String, value: &str) -> Result<(), String> {
+    if output.len().saturating_add(value.len()) > MAX_OUTPUT {
+        return Err("render output exceeds size limit".into());
+    }
+    output.push_str(value);
+    Ok(())
+}
+fn indent_lines(value: &str, indent: &str) -> Result<String, String> {
+    let mut out = String::new();
+    for line in value.split_inclusive('\n') {
+        append_checked(&mut out, indent)?;
+        append_checked(&mut out, line)?;
+    }
+    Ok(out)
 }
