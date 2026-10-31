@@ -183,7 +183,7 @@ at their measured replay boundary.
   preview corpus/C++ consumer coverage.
 - [x] Obtain independent Sol 6.1 xhigh review, fix material findings, and record
   the review and scope evidence.
-- [ ] Push the authorized branch after final verification.
+- [x] Push the authorized branch after final verification.
 
 The differential inventory currently accounts for 223 recorded calls: 203 exact
 matches and 20 explicit rejections (14 missing parent contexts, four unavailable
@@ -193,7 +193,8 @@ matches JVM bytes for four unchanged, comment-free C++ partials without name
 hooks. At implementation commit `12aac6c45`, formatting, offline Clippy,
 49 Rust tests, four Python tests, the reference-model export checks, all 34 JVM
 oracle cases and release build passed. These measurements do not establish
-complete naming or backend parity.
+complete naming or backend parity. Published this verified increment through
+`121ef5981` to `origin/ruscodium/rust-port`.
 
 ## Deferred full-parity work
 
