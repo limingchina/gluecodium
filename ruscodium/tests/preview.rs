@@ -139,6 +139,24 @@ fn unsupported_backend_does_not_write_output() {
         .unwrap();
     assert!(!status.success());
     assert!(!out.exists());
+    fs::create_dir_all(&out).unwrap();
+    fs::write(out.join("api.hpp"), "existing sentinel").unwrap();
+    let status = Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+        .args([
+            "-input",
+            input.to_str().unwrap(),
+            "-generators",
+            "cpp",
+            "-output",
+            out.to_str().unwrap(),
+        ])
+        .status()
+        .unwrap();
+    assert!(!status.success());
+    assert_eq!(
+        fs::read_to_string(out.join("api.hpp")).unwrap(),
+        "existing sentinel"
+    );
     fs::remove_dir_all(dir).unwrap();
 }
 

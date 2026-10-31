@@ -10,7 +10,7 @@ fn run() -> Result<(), String> {
     while i < args.len() {
         let a = &args[i];
         match a.as_str() {
-            "-h" | "--help" => {
+            "-h" | "-help" | "--help" => {
                 println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators");
                 return Ok(());
             }
