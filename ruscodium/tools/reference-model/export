@@ -2,11 +2,20 @@
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "$here/../../.." && pwd)
-java_home=${JAVA_HOME:-/workspace/.gluecodium-env/jdk-17.0.16+8}
+if [[ -n ${JAVA_HOME:-} ]]; then
+  javac="$JAVA_HOME/bin/javac"
+  java="$JAVA_HOME/bin/java"
+else
+  javac=javac
+  java=java
+fi
+command -v "$javac" >/dev/null 2>&1 && command -v "$java" >/dev/null 2>&1 || {
+  echo "Java 17 JDK required: set JAVA_HOME or put java and javac on PATH" >&2; exit 1;
+}
 lib="$repo/gluecodium/build/install/gluecodium/lib"
 [[ -d "$lib" ]] || { echo "Missing installed JVM libraries: $lib" >&2; exit 1; }
 classes=$(mktemp -d)
 trap 'rm -rf "$classes"' EXIT
-"$java_home/bin/javac" -cp "$lib/*" -d "$classes" "$here/ReferenceModel.java"
+"$javac" -cp "$lib/*" -d "$classes" "$here/ReferenceModel.java"
 cd "$repo"
-"$java_home/bin/java" -cp "$classes:$lib/*" ReferenceModel "$@"
+"$java" -cp "$classes:$lib/*" ReferenceModel "$@"

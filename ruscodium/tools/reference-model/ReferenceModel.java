@@ -19,11 +19,7 @@ public final class ReferenceModel {
             throw new IllegalArgumentException(path + ": non-finite number");
         if (x == null || x instanceof Boolean || x instanceof Number) return x;
         if (x instanceof Character) return x.toString();
-        if (x instanceof String) {
-            String s = (String)x;
-            if (s.startsWith(repository.toString() + "/")) return repository.relativize(Path.of(s).normalize()).toString().replace('\\', '/');
-            return s;
-        }
+        if (x instanceof String) return x;
         if (x instanceof Enum<?>) { Map<String,Object> e = new LinkedHashMap<>(); e.put("enum", x.getClass().getName()); e.put("name", ((Enum<?>)x).name()); return e; }
         if (x instanceof List<?> && !x.getClass().getName().startsWith(PREFIX)) {
             List<Object> out = new ArrayList<>(); int i = 0;
@@ -74,7 +70,18 @@ public final class ReferenceModel {
         }
         for (var e : properties.entrySet()) {
             String path = id + "." + e.getKey();
-            try { props.put(e.getKey(), value(e.getValue().invoke(x), path)); }
+            try {
+                Object v = e.getValue().invoke(x);
+                if (x instanceof com.here.gluecodium.model.lime.LimeModel && e.getKey().equals("fileNameMap")) {
+                    Map<String,String> normalized = new TreeMap<>();
+                    for (var entry : ((com.here.gluecodium.model.lime.LimeModel)x).getFileNameMap().entrySet()) {
+                        Path file = Path.of(entry.getValue()).toAbsolutePath().normalize();
+                        normalized.put(entry.getKey(), file.startsWith(repository) ? repository.relativize(file).toString().replace('\\', '/') : entry.getValue());
+                    }
+                    v = normalized;
+                }
+                props.put(e.getKey(), value(v, path));
+            }
             catch (InvocationTargetException ex) { throw new IllegalArgumentException(path + ": getter failed", ex.getCause()); }
         }
         Map<String,Object> result = new LinkedHashMap<>();
@@ -101,6 +108,19 @@ public final class ReferenceModel {
         else if (x instanceof Map<?,?>) { b.append('{'); boolean first = true; for (var e : ((Map<?,?>)x).entrySet()) { if (!first) b.append(','); first = false; json(b,e.getKey()); b.append(':'); json(b,e.getValue()); } b.append('}'); }
         else throw new IllegalArgumentException("Unsupported JSON value");
     }
+    private static List<String> discover(List<String> sources) throws Exception {
+        SortedSet<String> files = new TreeSet<>();
+        for (String source : sources) {
+            Path path = Path.of(source.startsWith("~/") ? System.getProperty("user.home") + source.substring(1) : source).toAbsolutePath().normalize();
+            if (Files.isDirectory(path)) {
+                try (var paths = Files.walk(path)) {
+                    paths.filter(p -> !Files.isDirectory(p) && p.getFileName().toString().endsWith(".lime"))
+                         .map(p -> p.toAbsolutePath().normalize().toString()).forEach(files::add);
+                }
+            } else if (path.getFileName().toString().endsWith(".lime")) files.add(path.toString());
+        }
+        return new ArrayList<>(files);
+    }
     public static void main(String[] args) throws Exception {
         List<String> main = new ArrayList<>(), aux = new ArrayList<>(); Path output = null;
         for (int i=0; i<args.length; i++) {
@@ -108,7 +128,7 @@ public final class ReferenceModel {
             switch(args[i]) { case "--main": main.add(args[++i]); break; case "--aux": aux.add(args[++i]); break; case "--output": output = Path.of(args[++i]); break; default: throw new IllegalArgumentException("Unknown option " + args[i]); }
         }
         if (main.isEmpty() && aux.isEmpty()) throw new IllegalArgumentException("Supply --main or --aux");
-        Collections.sort(main); Collections.sort(aux);
+        main = discover(main); aux = discover(aux);
         String document = new ReferenceModel().snapshot(new LimeBasedLimeModelLoader().loadModel(main, aux, Collections.emptyMap()));
         if (output == null) System.out.print(document); else Files.writeString(output, document, StandardCharsets.UTF_8);
     }

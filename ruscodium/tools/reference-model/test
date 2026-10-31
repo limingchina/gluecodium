@@ -18,6 +18,24 @@ assert 'example.main.Main' in root['referenceMap']
 assert 'example.aux.Auxiliary' in root['referenceMap']
 assert root['fileNameMap']['example.main.Main'].endswith('tests/main.lime')
 PY
+mkdir "$tmp/sources"
+cp "$here/tests/main.lime" "$tmp/sources/z.lime"
+cp "$here/tests/aux.lime" "$tmp/sources/a.lime"
+cat > "$tmp/sources/literal.lime" <<LIME
+package example.literal
+struct Text { text: String = "$here/preserved" }
+LIME
+"$here/export" --main "$tmp/sources" --aux "$tmp/sources/a.lime" --output "$tmp/directory.json"
+"$here/export" --main "$tmp/sources/z.lime" --main "$tmp/sources/literal.lime" --main "$tmp/sources/a.lime" --aux "$tmp/sources/a.lime" --output "$tmp/files.json"
+cmp "$tmp/directory.json" "$tmp/files.json"
+python3 - "$tmp/directory.json" "$here/preserved" <<'PYTEST'
+import json, sys
+s = json.load(open(sys.argv[1]))
+nodes = {n['id']: n for n in s['nodes']}
+root = nodes[s['root']['$ref']]['properties']
+assert len(root['topElements']) == 3 and not root['auxiliaryElements']
+assert sys.argv[2] in json.dumps(s)
+PYTEST
 printf 'sentinel\n' > "$tmp/failed.json"
 if "$here/export" --main ruscodium/tools/reference-model/tests/invalid.lime --output "$tmp/failed.json" > "$tmp/stdout" 2> "$tmp/stderr"; then
   echo 'invalid input unexpectedly succeeded' >&2; exit 1
