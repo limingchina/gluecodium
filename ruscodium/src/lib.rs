@@ -1481,6 +1481,45 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
     for f in &model.files {
         inheritance(&f.declarations, &containers, &aliases, &f.path)?
     }
+    let mut hierarchy = BTreeMap::new();
+    fn hierarchy_index(
+        ds: &[Decl],
+        scope: &str,
+        aliases: &BTreeMap<String, TypeRef>,
+        out: &mut BTreeMap<String, Vec<String>>,
+    ) {
+        for d in ds {
+            let full = format!("{scope}.{}", d.name);
+            if matches!(d.kind.as_str(), "class" | "interface") {
+                out.insert(
+                    full.clone(),
+                    d.parents.iter().map(|p| canonical(p, aliases)).collect(),
+                );
+            }
+            hierarchy_index(&d.children, &full, aliases, out)
+        }
+    }
+    for f in &model.files {
+        hierarchy_index(&f.declarations, &f.package, &aliases, &mut hierarchy)
+    }
+    fn ancestors(
+        name: &str,
+        graph: &BTreeMap<String, Vec<String>>,
+        seen: &mut BTreeSet<String>,
+    ) -> Result<(), String> {
+        if let Some(parents) = graph.get(name) {
+            for p in parents {
+                if !seen.insert(p.clone()) {
+                    return Err(format!("diamond inheritance involving {p}"));
+                }
+                ancestors(p, graph, seen)?
+            }
+        }
+        Ok(())
+    }
+    for name in hierarchy.keys() {
+        ancestors(name, &hierarchy, &mut BTreeSet::new())?
+    }
     fn signatures(
         ds: &[Decl],
         aliases: &BTreeMap<String, TypeRef>,

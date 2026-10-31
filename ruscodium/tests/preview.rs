@@ -275,3 +275,8 @@ fn oracle_syntax_rejections() {
         assert!(parse("x", text, false).is_err(), "{text}");
     }
 }
+#[test]
+fn diamond_inheritance_rejected() {
+    let mut m=model("package x\nnarrow interface Root {}\nnarrow interface Left : Root {}\nnarrow interface Right : Root {}\ninterface Child : Left, Right {}\n");
+    assert!(resolve(&mut m).unwrap_err().contains("diamond"));
+}
