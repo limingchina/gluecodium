@@ -262,9 +262,10 @@ syntax so the report can guide later typed Rust template views.
 ## Exact-parity migration after the native preview
 
 The following phases adopt the supplied analysis's backend-first approach.
-P0 has delivered bounded investigation tooling and P1a has delivered a bounded
-native template/runtime slice. The complete canonical boundary and subsequent
-backend phases remain incomplete until their own acceptance evidence exists.
+P0 has delivered bounded investigation tooling, P1a a native template/runtime
+slice, and M8 a bounded native C++ name resolver. The complete canonical boundary
+and subsequent backend phases remain incomplete until their own acceptance
+evidence exists.
 
 ### P0: experimental snapshot delivered; canonical boundary incomplete
 
@@ -332,9 +333,10 @@ The delivered slice comprises:
    partials, `prefix`/`prefixPartial`, `join`/`joinPartial`, class-name tests and
    additional measured helpers documented in `TEMPLATES.md`. Selected scope,
    standalone tags, indentation, prefix trimming and final newlines have exact
-   JVM fixtures. `resolveName`, predicates and sorters replay measured results;
-   their C++ implementations have not been ported. Unknown selectors and
-   unsupported executed helpers, options and views fail explicitly.
+   JVM fixtures. Legacy requests replay `resolveName` results; M8 adds explicit
+   native C++ naming as described below. Predicates and sorters still replay
+   measured results. Unknown selectors and unsupported executed helpers,
+   options and views fail explicitly.
 5. Public library `parse`, `Graph` and `render` entry points and the native
    `render` CLI below. Requests are validated and rendered in memory before
    output is opened, preserving an existing output file on import/render
@@ -357,7 +359,8 @@ ruscodium render --templates DIR --request FILE [--output FILE]
 The request has `schema: "gluecodium.template.render-request"`, `version: 1`,
 `template` (extensionless template-relative name), `data` (root render value),
 an optional `snapshot` containing the existing version-1 reference document,
-optional `property_overlays`, optional `absent_properties`, and optional `hooks`.
+optional `property_overlays`, optional `absent_properties`, optional `hooks`,
+and the M8 `native_cpp` opt-in described below and in [TEMPLATES.md](TEMPLATES.md).
 Plain JSON helper cases can omit the snapshot. Values use the snapshot's existing
 reference, enum, scalar, list and map shapes. A reference in `data` or an overlay
 resolves against the embedded snapshot and retains its instance identity.
@@ -378,7 +381,8 @@ properties and overlays on every node of that class.
 The oracle must propagate throwing getters instead of treating them as absent.
 An unmeasured missing model property remains a strict unsupported-view error.
 
-`hooks.names` is a list of `{resolver, mode, receiver, result}` records, with
+For legacy replay requests, `hooks.names` is a list of
+`{resolver, mode, receiver, result}` records, with
 mode `name`, `getter`, `setter` or `ref` and a string-or-null result.
 `hooks.predicates` is a list of `{name, receiver, result}` records with boolean
 results. `hooks.sorters` is a list of `{name, input, result}`
@@ -386,8 +390,10 @@ records containing ordered input/result value lists. Receivers and list entries
 are graph values; equality preserves referenced instance IDs. Identical replay
 entries are permitted, while contradictory duplicates and malformed values
 fail. Unknown selector names and missing requested results fail explicitly.
-A null receiver to `resolveName` needs evidence of the requested resolver/mode
-in `hooks.names`, without an invented receiver-specific null result.
+A null receiver to `resolveName` in replay mode needs evidence of the requested
+resolver/mode in `hooks.names`, without an invented receiver-specific null result.
+Native requests register their supported selectors directly and reject nonempty
+`hooks.names`; they do not use a captured name result or fall back to replay.
 
 Optional `hooks.registered_predicates` contains distinct, nonempty names from
 the actual Kotlin predicate catalog. A measured receiver-specific predicate
@@ -397,9 +403,9 @@ be replaced by fabricated per-receiver results. With neither catalog evidence
 nor an observed result for a name, even an empty filter fails. Every evaluated
 receiver still needs its measured boolean result. This strict rejection of
 unknown predicates is intentional even where JVM filtering would skip them.
-The serialized hooks remain an explicit offline replay boundary. Native C++
-name resolution, predicates, sorters and future helper-provider interfaces
-remain implementation work.
+The serialized hooks remain an explicit offline replay boundary. M8 ports the
+bounded native naming surface below; broader naming, native predicates/sorters
+and future helper-provider interfaces remain implementation work.
 
 The real-template matrix covers `cpp/CppEnumeration`, `cpp/CppTypeAlias`,
 `cpp/CppFunctionSignature` and `cpp/CppReturnType` with unchanged transitive
@@ -416,132 +422,132 @@ bytes and pre-write failure checks. Corpus hashes and oracle distribution
 provenance are recorded in the linked inventory and oracle documentation;
 verification and independent review evidence is maintained in
 [TASKS.md](TASKS.md) and [REVIEW.md](REVIEW.md). These results establish the
-selected engine/view contract. They do not establish native naming, canonical
-model completeness, complete C++ file sets, or runtime/ABI parity.
+selected engine/view contract. P1a's replay evidence does not establish native
+naming; M8 supplies separate native naming comparisons below. Neither milestone
+establishes canonical model completeness, complete C++ file sets or runtime/ABI
+parity.
 
 Full Trimou syntax validation and consistent source-position diagnostics, the
 standalone CLI graph inspector, and unimplemented helper/view contracts remain
 open within this experimental runtime. The native frontend-to-canonical
-adapter, native C++ helper implementations and whole-file compatibility backend
-remain pending in the following phases.
+adapter, remaining native C++ helper implementations and whole-file compatibility
+backend remain pending in the following phases.
 
-### M8 / P1a.1: strict native C++ naming — next bounded increment
+### M8 / P1a.1: strict native C++ naming — bounded implementation delivered
 
-Replace the name-hook replay boundary for a measured subset of C++ naming with
-Rust calculations from the imported identity graph. Keep all 315 production
-Mustache templates unchanged. This is a continuation of P1a, not completion of
-P1b, a canonical frontend adapter, or whole-C++ output/runtime parity.
+Delivered a separate Rust name resolver over the imported identity graph in
+[`src/template/native_cpp.rs`](src/template/native_cpp.rs), with JVM-generated
+fixtures in commit `931251088` and native implementation in `5d9828539`.
+It computes a measured subset of C++ names without recorded name results and
+keeps all 315 production Mustache templates unchanged. This continues P1a; P1b,
+the canonical frontend adapter and whole-C++ output/runtime parity remain open.
 
-Sol 6.1 max owns this initial plan and its documentation commit; Terra 6.1 xhigh
-owns implementation, oracle extensions and evidence; Sol 6.1 xhigh independently
-reviews the resulting behavior. Commit this plan/checklist before implementation.
-Implementation stays under `ruscodium/`, including any JVM test-oracle changes.
+Sol 6.1 max committed the initial plan/checklist in `1b456d4a2` before code;
+Terra 6.1 xhigh owns implementation and evidence, and Sol 6.1 xhigh independently
+reviews the resulting behavior. The independent review disposition and final
+verification evidence are tracked in [REVIEW.md](REVIEW.md) and
+[TASKS.md](TASKS.md). All changes remain under `ruscodium/`.
 
 #### Request and resolver contract
 
-Add an optional `native_cpp` object to the existing version-1 render request.
+The optional `native_cpp` object extends the existing version-1 render request.
 Its presence selects native names; omission retains the existing replay contract.
-The initial options are `root_namespace` and `internal_namespace`, each an array
+The options are `root_namespace` and `internal_namespace`, each an array
 of namespace components, defaulting to empty arrays as in `GeneratorOptions`.
 For the existing oracle configuration use
 `native_cpp: {"root_namespace": [], "internal_namespace": ["internal"]}`.
-Validate types, namespace components and unknown option keys before rendering.
+Types, ASCII namespace components and unknown option keys are validated before
+rendering.
 An empty object is an explicit opt-in, not a request to replay captured names.
 
-In native mode reject nonempty `hooks.names`; do not consult name recordings on
-any native success or unsupported-receiver path. Keep recorded name cells solely
-as expected values in differential tests, outside the request being rendered.
+Native mode rejects nonempty `hooks.names` and never consults name recordings on
+a success or unsupported-receiver path. Differential tests use recorded name
+cells solely as expected values, outside the request being rendered.
 Existing predicates, sorters, registration catalogs, property overlays and known
 absences remain explicit replay/measured boundaries. They do not become native
 because names are native. Native registration supplies selectors `""`, `"C++"`
-and `"FQN"` without fabricated hook entries. Preserve measured helper argument,
-mode normalization and null-receiver behavior; unsupported selectors/modes fail.
+and `"FQN"` without fabricated hook entries. Measured helper argument, mode
+normalization and null-receiver behavior are preserved; unsupported selectors
+and modes fail.
 The upstream `ref` mode is not implemented by these C++ resolvers and remains an
 explicit error. FQN uses `CppFullNameResolver` semantics, not a qualified version
 of the C++ type-expression resolver.
 
-Build a separate typed native naming module over `Graph`; keep helper dispatch
-and name-rule/type calculations distinct. A resolver may cache results it has
-computed from model facts, but must not load a precomputed name-result table.
-Use actual node classes, `LimePath` head/tail/disambiguator, reference edges and
-attributes. Preserve declaration identity, shared references and overload paths.
-Index available named model nodes and require all traversable parents needed by
-`CppNameCache`. A selected-object snapshot can omit its owning container: missing
-parents are unsupported context, never evidence of an unannotated/default-named
-parent. Extend native JVM fixtures to snapshot the real full model, or export
-the actual required parent nodes, retaining the selected render root in `data`.
-Do not synthesize parent nodes or infer their attributes from path strings.
+Helper dispatch and native name-rule/type calculations are separate. The resolver
+uses actual node classes, `LimePath` head/tail/disambiguator, reference edges and
+attributes, with an index of available parent nodes. It requires all traversable
+parents needed by `CppNameCache`. A selected-object snapshot can omit its owning
+container: missing parents are unsupported context, never evidence of default
+parent names or attributes. The new native JVM fixtures snapshot the real full
+model and retain the selected render root in `data`; no parent nodes or resolved
+name strings are synthesized. [TEMPLATES.md](TEMPLATES.md) documents the public
+single-receiver API as well as render-request configuration.
 
 #### Bounded naming surface
 
-Port the checked-in `namerules/cpp.properties` and Kotlin `NameHelper` behavior
-for supported ASCII names, including underscore, mixed-case/acronym and getter
-prefix cases. Reject unmeasured Unicode casing rather than approximate JVM
-locale/Guava behavior. No configurable naming files are supported in this slice.
+The native module implements the checked-in `namerules/cpp.properties` and
+measured Kotlin `NameHelper` behavior for ASCII names, including underscores,
+mixed case/acronyms and getter prefixes. Unmeasured Unicode casing and
+configurable naming files are explicitly unsupported.
 
-The required matrix covers ordinary named declarations, parameters, fields,
+The measured matrix covers ordinary named declarations, parameters, fields,
 constants/enumerators, root/package/nested qualification, enum/type-alias names,
-`LimeBasicType.TypeId`, type references and return types. Port exact C++ primitive,
-string/blob/date/duration/locale type spellings, list/map/set spacing and hash
-selection, nullable wrappers, class/interface shared pointers, exception type
-mapping, alias identity and alias-aware actual-type decisions. Aliases must not
-be flattened when the Kotlin resolver retains their names. Resolve cycles and
-missing required facts with bounded diagnostics.
+`LimeBasicType.TypeId`, type references and return types. It checks exact C++
+primitive/string/blob/date/duration/locale type spellings, list/map/set spacing
+and hash selection, nullable wrappers, class/interface shared pointers, exception type
+mapping, alias identity and alias-aware actual-type decisions. Aliases retain
+their names where the Kotlin resolver does. Cycles and missing required facts
+produce bounded diagnostics.
 
-Also cover supported ordinary literals and constant references, property
+The slice also covers measured ordinary literals and constant references, property
 getters/setters and field accessors where real parent context establishes
-`@Cpp(Accessors)`. Test boolean getter prefixes through aliases. Honor only
-explicitly ported naming/type attributes, initially `@Cpp(Name)`, accessor
-`@Cpp(Name)`, `@Cpp(Type)` and `@Optimized` where the source resolver uses them;
-measure each supported interaction against the JVM. Preserve upstream errors
-for element/rule combinations unsupported by the default rule set.
+`@Cpp(Accessors)`, including boolean getter prefixes through aliases. Supported
+attribute interactions include `@Cpp(Name)`, accessor `@Cpp(Name)`, `@Cpp(Type)`
+and `@Optimized` where the source resolver uses them. The tests retain upstream
+errors for element/rule combinations unsupported by the default rule set.
 
 Nonempty comment processing, external descriptors, custom naming files and
-complex defaults remain deferred unless deliberately added with independent
-JVM evidence. A measured empty comment may resolve to the empty string from its
-actual `isEmpty` fact. Do not fabricate raw comment sections or store a resolved
-C++ comment string as a native projection. Date/locale/duration/special or
-aggregate literal handling beyond the supported literal matrix must diagnose
-the exact unsupported case. Unsupported attributes or unavailable required
-model facts fail before any output write; replay is never the fallback.
+complex defaults remain deferred. A measured empty comment resolves to the empty
+string from its actual `isEmpty` fact; a missing comment fact is unsupported.
+Resolved C++ comment strings are not native projections. Date/locale/duration,
+special and aggregate literal forms beyond the supported literal matrix produce
+an explicit unsupported diagnostic. Unsupported attributes or unavailable
+required model facts fail before any output write; replay is never the fallback.
 
-#### Acceptance and review
+#### Evidence and remaining acceptance
 
-1. Inventory every existing recorded name cell by selector, mode, receiver class
-   and support status. Evaluate every supported cell through native resolution
-   with `hooks.names` removed and compare its exact string/null result. Retain
-   explicit unsupported assertions for the remainder; report counts and reasons
-   instead of silently excluding cells. Where an old selected-root snapshot
-   lacks parent context, prove its rejection and add a JVM-derived complete
-   context case with the same measured receiver/result.
-2. Reproduce byte-exact output from unchanged `cpp/CppEnumeration`,
-   `cpp/CppTypeAlias`, `cpp/CppFunctionSignature` and `cpp/CppReturnType`, including
-   their executed partials and function attributes, with native names and no
-   name hooks. Add genuine JVM-loaded comment-free cases where existing
-   documentation would execute the deferred comment processor; preserve the
-   existing replay fixtures. Add explicit root/internal namespace cases and
-   new JVM cells for supported naming/type/accessor combinations absent from
-   the old recordings. Record configuration and distribution/input provenance.
-3. Reject invalid config, unknown selectors, mixed native/name-hook requests,
-   missing parent context, unsupported comments/attributes/externals/defaults
-   and cyclic/malformed native model dependencies. Verify existing output bytes
-   survive each representative failure and stdout receives no partial render.
-   Changing/removing recorded name results must never affect a native render.
-4. Run formatting, offline Clippy with warnings denied, Cargo tests, existing
-   Python/reference-model checks and JVM oracle reproduction/template equality.
-   Retain all preview/corpus/C++ consumer checks and the 315-template corpus
-   hash. Update `TEMPLATES.md`, README, oracle docs, TASKS and review evidence to
-   distinguish native names from replayed predicates/sorters and deferred full
-   backend parity. Obtain the independent review, fix material findings, commit
-   tested increments and push the already authorized branch.
+[`tests/native_cpp_names.rs`](tests/native_cpp_names.rs) compares every recorded
+name cell with the native resolver, asserting exact string/null results for the
+supported set and explicit rejection reasons for the remainder. Those reasons
+include missing owners in older selected-object snapshots, nonempty comments
+and unsupported `@Cpp(Attribute)` handling. The full-model JVM matrix separately
+proves actual enclosing names/attributes, nonempty root/internal namespaces,
+types, aliases, literals and accessors. Current counts and reproduction settings
+belong to the [oracle documentation](tools/template-oracle/README.md) and tests.
+
+Four genuine JVM-loaded comment-free cases render unchanged
+`cpp/CppEnumeration`, `cpp/CppTypeAlias`, `cpp/CppFunctionSignature` and
+`cpp/CppReturnType`, including executed partials and supported function
+attributes. Their native tests remove all name hooks and compare exact output
+bytes with the JVM. Existing comment-bearing replay fixtures remain available.
+These comparisons prove a native naming slice, not full-file C++ parity.
+
+Keep invalid configuration/selectors, mixed native/name-hook requests, missing
+parent or external facts, unsupported comments/attributes/defaults and cyclic
+dependencies covered by strict errors and output-preservation regressions.
+Retain formatting, offline Clippy, Cargo, Python/reference-model, JVM fixture
+reproduction and 315-template equality checks, together with the preview corpus
+and C++ consumers. The independent review must resolve material findings and
+record its final verification before final review approval is claimed.
 
 ### P1b: JSON-consuming C++ compatibility backend — deferred
 
 Implement C++ generation from the canonical snapshots before tying it to Rust
 frontend fidelity. Use the template-surface report to implement typed property
 views and helper contracts rather than assuming `serde_json` lookup reproduces
-Kotlin reflection. Port the name resolvers and configurable name rules together
-with the helper layer.
+Kotlin reflection. Extend M8's native resolver through the remaining name,
+comment, external-descriptor and configurable-name-rule contracts together with
+native predicate/sorter implementations.
 
 Build on P1a's measured custom runtime and extend the explicit property/helper
 contracts through the C++ backend. Template conversion is outside the chosen
@@ -549,8 +555,9 @@ approach. Preserve standalone tags, missing/null values, section context, helper
 scope, indentation from `prefixPartial`, and final newlines as coverage grows.
 The acceptance criterion is byte-for-byte compatibility on existing smoke
 outputs, including whitespace; normalizing generated source or merely compiling
-it is insufficient. Selected-template equality from P1a does not satisfy this
-whole-backend criterion.
+it is insufficient. Selected-template equality from P1a and native naming from
+M8 do not satisfy this whole-backend criterion. A complete canonical adapter,
+full C++ file generation and native comments/predicates/sorters remain pending.
 
 Run both generators on the same canonical inputs and options, compare output
 file sets and exact bytes, and expand coverage through all C++ smoke fixtures.
