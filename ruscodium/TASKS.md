@@ -83,8 +83,8 @@ of marking the entire port complete after the preview.
 - [x] Determinism and failure-output behavior checked.
 - [x] Write `README.md` with build/run examples, architecture, measured
   coverage, compatibility table, supported semantics and exact limitations.
-- [ ] Independent Sol 6.1 xhigh review; fix and recheck material findings.
-- [ ] Update this checklist with evidence and deferred items; create logical
+- [x] Independent Sol 6.1 xhigh review; fix and recheck material findings.
+- [x] Update this checklist with evidence and deferred items; create logical
   local commits, leaving the repository clean.
 
 ## M6: template and reference-model migration evidence
@@ -93,6 +93,7 @@ of marking the entire port complete after the preview.
 - [x] Implement a bounded experimental JVM reference-model snapshot tool with documented schema and tests; see [reference-model](tools/reference-model/README.md).
 - [x] Add a reproducible JVM/Rust validation comparison runner covering core cases and coherent smoke groups.
 - [ ] Build the canonical Kotlin model adapter, Rust JSON importer, template runtime and golden-output parity. The reference snapshot and Rust preview JSON are distinct schemas.
+- [ ] Keep the existing Mustache templates unchanged and run a Rust engine compatibility spike against Trimou helper, reflection, lookup, partial, and whitespace fixtures, followed by byte-exact output comparisons. The Rust engine implementation remains to be selected.
 
 ## Deferred full-parity work
 
@@ -116,10 +117,10 @@ of marking the entire port complete after the preview.
 - The existing installed JVM distribution can serve as a differential oracle;
   the Rust compiler must function independently of it.
 
-- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Twenty-one integration tests cover 345/345 individually tracked inputs, calculator, four coherent smoke groups and two compiled C++ fixture groups.
-- Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (21 integration tests). Template inventory tests: `python3 -m unittest discover -s tools/tests` (2 tests).
+- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Twenty-two integration tests cover 345/345 individually tracked upstream baseline inputs (excluding the port’s own negative `.lime` fixtures; 348 LIME files are now tracked in the full repository), calculator, four coherent smoke groups and two compiled C++ fixture groups.
+- Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (22 integration tests). Python tool tests: `python3 -m unittest discover -s tools/tests` (4 tests). An optimized `cargo build --release` also passed; the release CLI exported calculator JSON and generated C++ from the multi-input repository fixture.
 - Independent JVM smoke comparison: Rust validates 46 of 49 groups; three need platform filtering (`defaults_const`, `name_clash_overloads`, `skip`). `comments` requires JVM documentation configuration. The JVM accepts some invalid Void positions and duplicate parameters that this preview rejects.
-- Preview remains incomplete: full grammar rejection, complete semantic checks, C++ nested/auxiliary references, feature guards and output parity remain open above. Independent Sol 6.1 xhigh review is in progress; its material findings have been fixed with regression coverage and the final recheck is pending.
+- Preview remains incomplete: full grammar rejection, complete semantic checks, C++ nested/auxiliary references, feature guards and output parity remain open above. Independent Sol 6.1 xhigh review and recheck are recorded in [REVIEW.md](REVIEW.md); material findings were fixed with regression coverage. The final bounded review covered 47 focused cases, compiled all 10 generated-success headers with strict C++17 flags, and ran ordered-container consumers.
 
-- The latest validation comparison has 58 cases and no unexpected acceptance differences; four smoke differences are explicitly recorded, and the JVM crashes with stack overflow on two cycle cases. This is acceptance evidence only.
+- The optimized release validation comparison has 58 cases and no unexpected acceptance differences; four smoke differences are explicitly recorded, and the JVM crashes with stack overflow on two cycle cases. This is acceptance evidence only.
 - Remaining preview gaps include structured diagnostic objects, complete syntax rejection and dotted quoted identifiers, full metadata fidelity, runtime-dependent C++ behavior, nested and auxiliary C++ type references, constants/defaults, platform filtering, and full upstream validator parity. C++ guards reject these unsupported cases where implemented.
