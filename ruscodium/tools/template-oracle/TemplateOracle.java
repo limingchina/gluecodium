@@ -9,6 +9,8 @@ import kotlin.jvm.functions.Function1;
 import java.util.logging.Logger;
 import java.nio.file.*;
 import java.util.*;
+import org.trimou.engine.MustacheEngine;
+import org.trimou.exception.MustacheException;
 
 public final class TemplateOracle {
     private static final Map<Path, byte[]> pending = new LinkedHashMap<>();
@@ -17,6 +19,35 @@ public final class TemplateOracle {
         Map<String,Object> out = new LinkedHashMap<>();
         for (int i = 0; i < pairs.length; i += 2) out.put((String)pairs[i], pairs[i+1]);
         return out;
+    }
+    // Use the same engine instance as TemplateEngine.render, and check the phase
+    // and Trimou error code rather than accepting an arbitrary failure.
+    private static void negativeCases() throws Exception {
+        var field = TemplateEngine.class.getDeclaredField("engine");
+        field.setAccessible(true);
+        MustacheEngine engine = (MustacheEngine) field.get(null);
+        compileError(engine, "if-no-args", "{{#if}}YES{{/if}}", "COMPILE_HELPER_VALIDATION_FAILURE");
+        compileError(engine, "unless-no-args", "{{#unless}}YES{{/unless}}", "COMPILE_HELPER_VALIDATION_FAILURE");
+        compileError(engine, "set-positional", "{{#set name}}{{name}}{{/set}}", "COMPILE_HELPER_VALIDATION_FAILURE");
+        compileError(engine, "inline-redefinition", "{{+p}}A{{/p}}{{>p}}{{+p}}B{{/p}}{{>p}}", "COMPILE_NESTED_TEMPLATE_ERROR");
+        var scalarEach = engine.compileMustache("negative-each-scalar", "{{#each name}}{{this}}{{/each}}");
+        try {
+            scalarEach.render(map("name", "outer"));
+            throw new IllegalStateException("each on a scalar unexpectedly rendered");
+        } catch (MustacheException error) {
+            checkError(error, "RENDER_HELPER_INVALID_OPTIONS");
+        }
+    }
+    private static void compileError(MustacheEngine engine, String name, String template, String code) {
+        try {
+            engine.compileMustache("negative-" + name, template);
+            throw new IllegalStateException(name + " unexpectedly compiled");
+        } catch (MustacheException error) {
+            checkError(error, code);
+        }
+    }
+    private static void checkError(MustacheException error, String code) {
+        if (error.getClass() != MustacheException.class || !error.getMessage().startsWith(code + ":")) throw error;
     }
     private static void fixture(Path dir, String name, String template, Object data) throws Exception {
         var hooks = map("names", List.of(), "predicates", List.of(), "sorters", List.of());
@@ -108,6 +139,7 @@ public final class TemplateOracle {
     }
     public static void main(String[] args) throws Exception {
         Path out = Path.of(args[0]); Files.createDirectories(out);
+        negativeCases();
         LimeModel model = new LimeBasedLimeModelLoader().loadModel(
             List.of(Path.of("ruscodium/tools/template-oracle/fixture.lime").toAbsolutePath().toString()), List.of(), Map.of());
         modelFixture(out, model, model.getReferenceMap().get("oracle.Color"), "cpp-enumeration", "cpp/CppEnumeration");
@@ -137,6 +169,9 @@ public final class TemplateOracle {
         fixture(out, "truth", "oracle/truth", map("zero", 0, "one", 1, "no", false,
             "emptyString", "", "emptyMap", map(), "nil", null));
         fixture(out, "scope", "oracle/scope", map("name", "outer", "items", new ArrayList<>(List.of("a", "b"))));
+        fixture(out, "review-helpers", "oracle/review-helpers", map("nil", null, "one", 1,
+            "special", "x\rY\bZ\f"));
+        fixture(out, "review-scope", "oracle/review-scope", map("items", new ArrayList<>(List.of("a", "b"))));
         fixture(out, "helpers", "oracle/helpers", map("yes", true, "no", false,
             "items", List.of("one", "two", "three"), "multiline", "alpha  \n beta\t\n",
             "special", "<a & \"b\">\n", "empty", List.of(), "nil", null));

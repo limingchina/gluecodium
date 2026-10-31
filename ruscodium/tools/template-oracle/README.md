@@ -12,9 +12,10 @@ ruscodium/tools/template-oracle/check
 ruscodium/tools/template-oracle/run
 ```
 
-`check` first compares every one of the 315 templates inside the installed
-Gluecodium jar to the corresponding source file, then renders into a temporary
-directory and compares every request and output byte. `run` renders every
+`check` first compares the complete set of 315 templates inside the installed
+Gluecodium jar to the corresponding source files, then runs negative checks,
+renders 24 cases into a temporary directory and compares every request and
+output byte. `run` renders every
 case and constructs every request in memory before writing any fixture. A
 render or graph-export failure therefore does not replace a subset of the
 fixtures. Each request has an adjacent `.expected` file, including empty
@@ -22,7 +23,7 @@ output and outputs without a trailing newline. `oracle/*` templates are
 focused test inputs under this tool; `cpp/*` paths refer to unchanged
 production templates.
 
-The checked-in fixtures were captured from checkout
+The original fixtures were captured from checkout
 `572f7108be2379c0810ff8130617776874a92cfb` (upstream source baseline
 `2044ae5c73e8b9521fac6dec6cd6133086dd4136`) using Temurin OpenJDK
 17.0.16+8 and `gluecodium-14.2.2.jar` SHA-256
@@ -30,6 +31,8 @@ The checked-in fixtures were captured from checkout
 The runtime check compares template contents directly, so it also catches a
 stale installed distribution. Exact production-template corpus provenance is
 tracked in [TEMPLATE_SURFACE.md](../../TEMPLATE_SURFACE.md).
+The two `review-*` fixtures were captured from checkout
+`7a4ede941bd4dd6737dcc618f6212b5b21a0ffba` using the same JDK and jar.
 
 The model cases load [fixture.lime](fixture.lime) with the unchanged JVM
 loader. `cpp-enumeration` renders three enumerators, a literal value, normal
@@ -48,7 +51,14 @@ context/set, iteration, inline and named partials, indentation, prefixes,
 join, joinPartial, dynamic eval, CR/CRLF prefixes, escaping, missing values and
 adjacent standalone tags. `model-helpers` records predicate, sort and class-name
 checks against real enumeration nodes. `nested-comment` is a negative compile
-check: Trimou rejects a start delimiter nested inside a comment.
+check: Trimou rejects a start delimiter nested inside a comment. `review-helpers`
+records quoted equals signs and literal backslashes, null equality, repeated
+switch defaults, Unicode capitalization, and escaping control characters;
+`review-scope` records the iteration index and position. The oracle also
+compiles invalid `if`, `unless`, `set`, and duplicate inline-partial definitions
+and renders an `each` over a scalar. It requires the actual Trimou exception
+class and error code at the expected phase for each, so an unrelated failure
+cannot satisfy a negative check.
 
 Each model request embeds the existing version-1 reference snapshot. Node IDs
 are assigned by identity before capturing calls. The oracle wraps the actual

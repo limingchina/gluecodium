@@ -1,0 +1,6 @@
+equals=> a=b
+backslash=> a\nb
+null=unequal
+default=first
+capitalize=Ssabc
+escape=x\rY\bZ

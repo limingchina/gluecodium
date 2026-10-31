@@ -1,0 +1,6 @@
+equals={{prefix "a=b" "> "}}
+backslash={{prefix "a\nb" "> "}}
+null={{#isEq nil nil}}equal{{/isEq}}{{^isEq nil nil}}unequal{{/isEq}}
+default={{#switch one}}{{#default}}first{{/default}}{{#default}}second{{/default}}{{/switch}}
+capitalize={{capitalize "ßabc"}}
+escape={{{escape special}}}

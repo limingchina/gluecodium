@@ -1,0 +1,1 @@
+{"schema":"gluecodium.template.render-request","version":1,"template":"oracle/review-scope","data":{"items":["a","b"]},"property_overlays":{},"hooks":{"names":[],"predicates":[],"sorters":[]}}

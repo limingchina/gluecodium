@@ -1,0 +1,1 @@
+{"schema":"gluecodium.template.render-request","version":1,"template":"oracle/review-helpers","data":{"nil":null,"one":1,"special":"x\rY\u0008Z\u000c"},"property_overlays":{},"hooks":{"names":[],"predicates":[],"sorters":[]}}

@@ -13,6 +13,12 @@ files = sorted(root.rglob('*.mustache'))
 if len(files) != 315:
     sys.exit(f'Expected 315 production templates; found {len(files)}')
 with zipfile.ZipFile(jars[0]) as jar:
+    source_names = {'templates/' + path.relative_to(root).as_posix() for path in files}
+    jar_names = {name for name in jar.namelist()
+                 if name.startswith('templates/') and name.endswith('.mustache')}
+    if jar_names != source_names:
+        sys.exit(f'Installed template set differs: missing {sorted(source_names - jar_names)}, '
+                 f'extra {sorted(jar_names - source_names)}')
     for path in files:
         name = 'templates/' + path.relative_to(root).as_posix()
         try:
