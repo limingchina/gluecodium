@@ -72,6 +72,27 @@ nonempty or unavailable comment content, external descriptors, unsupported
 C++ attributes, complex values and custom rules report errors. This is not a
 complete C++ backend or a replacement for the canonical frontend model.
 
+For example, turn the recorded full-model enumeration fixture into a native
+request, retaining its measured predicate and sorter entries:
+
+```sh
+python3 - <<'PY'
+import json
+from pathlib import Path
+
+request = json.loads(Path('tests/template-goldens/native-enumeration.request.json').read_text())
+request['native_cpp'] = {'root_namespace': [], 'internal_namespace': []}
+request['hooks'].pop('names', None)
+Path('/tmp/native-enumeration.request.json').write_text(json.dumps(request))
+PY
+cargo run -- render --templates ../gluecodium/src/main/resources/templates \
+  --request /tmp/native-enumeration.request.json --output /tmp/native-enumeration.txt
+```
+
+The CLI is the same `render` command: the JSON request selects native naming.
+This template runtime is separate from the preview `-generators cpp` path,
+which emits its own experimental `api.hpp`.
+
 The runtime parses comments (including Trimou multiline comments), escaped and
 unescaped interpolation (both unescaped as configured upstream), nested and
 inverted sections, quoted and named arguments, standalone tags, partial

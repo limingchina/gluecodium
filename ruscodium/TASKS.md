@@ -141,8 +141,8 @@ The complete canonical adapter and C++ backend remain open.
 
 ## M8 / P1a.1: strict native C++ naming
 
-This is the next bounded increment in
-[PLAN.md](PLAN.md#m8--p1a1-strict-native-c-naming--next-bounded-increment).
+This bounded increment follows
+[PLAN.md](PLAN.md#m8--p1a1-strict-native-c-naming--bounded-implementation-delivered).
 It keeps all 315 production templates unchanged and leaves predicates/sorters
 at their measured replay boundary.
 
@@ -152,37 +152,48 @@ at their measured replay boundary.
 - [x] Define explicit `native_cpp` opt-in, namespace options, supported native
   scope, strict rejection/failure behavior, ownership and acceptance evidence.
 - [x] Commit this plan/checklist before implementation changes.
-- [ ] Add validated native config and separate resolver dispatch; retain legacy
+- [x] Add validated native config and separate resolver dispatch; retain legacy
   replay when omitted, reject nonempty `hooks.names` when enabled, and never
   fall back to captured name results.
-- [ ] Index real model declarations/parents and port default ASCII name rules,
+- [x] Index real model declarations/parents and port default ASCII name rules,
   declaration names and FQN semantics, including namespace configuration.
   Reject incomplete traversable parent context instead of guessing.
-- [ ] Port required built-in, enum/alias, return/type-reference, nullable,
+- [x] Port required built-in, enum/alias, return/type-reference, nullable,
   class/interface, list/map/set and hash spellings; test alias-aware actual-type
   behavior and bounded cycle/missing-fact errors.
-- [ ] Port the measured ordinary literal/constant-reference matrix and
+- [x] Port the measured ordinary literal/constant-reference matrix and
   property/field getter/setter rules, including boolean aliases and proven
   `@Cpp(Accessors)` parent context.
-- [ ] Honor and JVM-test supported `@Cpp(Name)`, accessor names, `@Cpp(Type)`
+- [x] Honor and JVM-test supported `@Cpp(Name)`, accessor names, `@Cpp(Type)`
   and `@Optimized` behavior; reject unsupported naming attributes, externals,
   nonempty comments, complex defaults and custom naming files before writes.
-- [ ] Inventory all existing recorded name cells; compare every supported cell
+- [x] Inventory all existing recorded name cells; compare every supported cell
   natively with recordings used only as expectations, and assert/report exact
   unsupported cases. Extend JVM-derived parent context where old snapshots
   cannot prove a supported result.
-- [ ] Add reproducible comment-free JVM cases rendering the four unchanged
+- [x] Add reproducible comment-free JVM cases rendering the four unchanged
   real C++ templates and partials with no name hooks, including function
   attributes; compare exact bytes and preserve the original replay fixtures.
-- [ ] Expand independent JVM name cells for namespace/type/container/alias/
+- [x] Expand independent JVM name cells for namespace/type/container/alias/
   accessor/attribute cases beyond the existing recordings; retain provenance.
-- [ ] Verify mixed-mode/config/selector/missing-context/unsupported/cycle
+- [x] Verify mixed-mode/config/selector/missing-context/unsupported/cycle
   failures preserve existing outputs and emit no partial stdout.
-- [ ] Pass formatting, offline Clippy, Cargo and existing Python/reference-model
+- [x] Pass formatting, offline Clippy, Cargo and existing Python/reference-model
   checks, JVM oracle reproduction, unchanged-template checks and retained
   preview corpus/C++ consumer coverage.
-- [ ] Obtain independent Sol 6.1 xhigh review, fix material findings, update
-  scope/evidence/docs, commit logical increments and push the authorized branch.
+- [x] Obtain independent Sol 6.1 xhigh review, fix material findings, and record
+  the review and scope evidence.
+- [ ] Push the authorized branch after final verification.
+
+The differential inventory currently accounts for 223 recorded calls: 203 exact
+matches and 20 explicit rejections (14 missing parent contexts, four unavailable
+or nonempty comments, and two unsupported `@Cpp(Attribute)` cases). The
+full-model matrix contributes 162 exact matches. The native renderer also
+matches JVM bytes for four unchanged, comment-free C++ partials without name
+hooks. At implementation commit `12aac6c45`, formatting, offline Clippy,
+49 Rust tests, four Python tests, the reference-model export checks, all 34 JVM
+oracle cases and release build passed. These measurements do not establish
+complete naming or backend parity.
 
 ## Deferred full-parity work
 
