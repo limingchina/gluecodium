@@ -136,7 +136,7 @@ The complete canonical adapter and C++ backend remain open.
   checks; retain the preview corpus and C++ consumer coverage.
 - [x] Obtain independent Sol 6.1 xhigh review; fix material findings and record
   exact evidence and remaining helper/view/naming/canonical-boundary gaps.
-- [ ] Update README/review/evidence/checklist to the delivered scope, commit
+- [x] Update README/review/evidence/checklist to the delivered scope, commit
   logical increments and push the authorized branch after verification.
 
 ## Deferred full-parity work
@@ -189,3 +189,6 @@ The complete canonical adapter and C++ backend remain open.
 - Continuation roles retain Sol 6.1 max planning and Sol 6.1 xhigh review;
   the user's subsequent instruction selects Terra 6.1 xhigh for the next
   implementation work.
+- Published the verified continuation through `4f5dd0f8e` to
+  `origin/ruscodium/rust-port`; the remaining unchecked items describe later
+  compatibility work.
