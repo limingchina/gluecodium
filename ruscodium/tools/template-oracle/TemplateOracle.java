@@ -46,6 +46,13 @@ public final class TemplateOracle {
                 if (error.getClass() != NullPointerException.class) throw error;
             }
         }
+        var nullPartial = engine.compileMustache("negative-null-join-partial", "{{+p}}X{{/p}}{{joinPartial nil \"p\" \",\"}}");
+        try {
+            nullPartial.render(map("nil", null));
+            throw new IllegalStateException("joinPartial with null unexpectedly rendered");
+        } catch (NullPointerException error) {
+            if (error.getClass() != NullPointerException.class) throw error;
+        }
         var scalarEach = engine.compileMustache("negative-each-scalar", "{{#each name}}{{this}}{{/each}}");
         try {
             scalarEach.render(map("name", "outer"));
@@ -163,7 +170,9 @@ public final class TemplateOracle {
             Object obj = graph.discoveredObjects().get(i);
             if (!(obj instanceof LimeElement)) continue;
             List<String> missing = new ArrayList<>();
-            for (String property : List.of("propertyElement", "isVirtual", "isConst", "isAsyncHelper", "internalNamespace")) {
+            var candidates = new ArrayList<>(List.of("propertyElement", "isVirtual", "isConst", "isAsyncHelper", "internalNamespace"));
+            if (caseName.equals("review-sort")) candidates.add("iter");
+            for (String property : candidates) {
                 String suffix = Character.toUpperCase(property.charAt(0)) + property.substring(1);
                 boolean present = Arrays.stream(obj.getClass().getMethods()).anyMatch(method ->
                     method.getParameterCount() == 0 && (method.getName().equals("get" + suffix) ||
@@ -195,6 +204,12 @@ public final class TemplateOracle {
         modelFixture(out, model, model.getReferenceMap().get("oracle.Service.register"), "cpp-function-static", "cpp/CppFunctionSignature");
         modelFixture(out, model, model.getReferenceMap().get("oracle.Info.status"), "name-arguments", "oracle/name-arguments");
         modelFixture(out, model, model.getReferenceMap().get("oracle.Color"), "model-helpers", "oracle/model-helpers");
+        modelFixture(out, model, model.getReferenceMap().get("oracle.Color"), "review-sort", "oracle/review-sort");
+        var attributes = new LimeAttributes.Builder()
+            .addAttribute(LimeAttributeType.CPP, LimeAttributeValueType.FULL_NAME, "Foo")
+            .addAttribute(LimeAttributeType.SWIFT, LimeAttributeValueType.OPTION_SET, true)
+            .build();
+        modelFixture(out, model, map("attrs", attributes), "review-attributes", "oracle/review-attributes");
         try {
             TemplateEngine.INSTANCE.render("oracle/nested-comment", map("value", "ignored"), Map.of(), Map.of(), Map.of());
             throw new IllegalStateException("Nested comment unexpectedly compiled");

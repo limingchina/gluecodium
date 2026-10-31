@@ -14,7 +14,7 @@ ruscodium/tools/template-oracle/run
 
 `check` first compares the complete set of 315 templates inside the installed
 Gluecodium jar to the corresponding source files, then runs negative checks,
-renders 27 cases into a temporary directory and compares every request and
+renders 29 cases into a temporary directory and compares every request and
 output byte. `run` renders every
 case and constructs every request in memory before writing any fixture. A
 render or graph-export failure therefore does not replace a subset of the
@@ -35,6 +35,8 @@ The `review-helpers` and `review-scope` fixtures were captured from checkout
 `7a4ede941bd4dd6737dcc618f6212b5b21a0ffba` using the same JDK and jar.
 The `empty-filter`, `review-selectors`, and `review-values` fixtures were
 captured from checkout `949eef269` using the same JDK and jar.
+The `review-sort` and `review-attributes` fixtures were captured from checkout
+`53f639c37` using the same JDK and jar.
 
 The model cases load [fixture.lime](fixture.lime) with the unchanged JVM
 loader. `cpp-enumeration` renders three enumerators, a literal value, normal
@@ -63,7 +65,7 @@ class and error code at the expected phase for each, so an unrelated failure
 cannot satisfy a negative check. Additional negative checks verify helper
 arity, `setJoin`'s required delimiter, and the section-only `if` form even in
 inactive branches. The null `capitalize` and `escape` checks verify the JVM's
-render-time `NullPointerException`.
+render-time `NullPointerException`, as does `joinPartial` with a null list.
 
 `review-selectors` records ordinary tag lookups whose names resemble literals
 and an `eval` key containing a closing bracket. `review-values` records Java
@@ -74,6 +76,10 @@ asserts that no predicate was called for the empty input. Its optional
 empty `hooks.predicates` array records that no receiver-specific result was
 observed. An unknown predicate is deliberately rejected at the native replay
 boundary even though the JVM filter silently skips it.
+`review-sort` measures absent iteration metadata while traversing the actual
+C++ topological sort result. `review-attributes` exports a JVM-built
+`LimeAttributes` instance through the reference snapshot and measures case
+and camel-case lookups of its C++ and Swift attribute values.
 
 Each model request embeds the existing version-1 reference snapshot. Node IDs
 are assigned by identity before capturing calls. The oracle wraps the actual
