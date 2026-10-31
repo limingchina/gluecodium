@@ -30,6 +30,22 @@ public final class TemplateOracle {
         compileError(engine, "unless-no-args", "{{#unless}}YES{{/unless}}", "COMPILE_HELPER_VALIDATION_FAILURE");
         compileError(engine, "set-positional", "{{#set name}}{{name}}{{/set}}", "COMPILE_HELPER_VALIDATION_FAILURE");
         compileError(engine, "inline-redefinition", "{{+p}}A{{/p}}{{>p}}{{+p}}B{{/p}}{{>p}}", "COMPILE_NESTED_TEMPLATE_ERROR");
+        compileError(engine, "inactive-prefix", "{{#no}}{{prefix}}{{/no}}", "COMPILE_HELPER_VALIDATION_FAILURE", "Insufficient number of parameters - expected: 1");
+        compileError(engine, "capitalize-arity", "{{capitalize}}", "COMPILE_HELPER_VALIDATION_FAILURE", "Insufficient number of parameters - expected: 1");
+        compileError(engine, "join-arity", "{{join delimiter=\",\"}}", "COMPILE_HELPER_VALIDATION_FAILURE", "Insufficient number of parameters - expected: 1");
+        compileError(engine, "join-partial-arity", "{{joinPartial}}", "COMPILE_HELPER_VALIDATION_FAILURE", "Insufficient number of parameters - expected: 1");
+        compileError(engine, "set-join-arity", "{{#setJoin \"x\" \"a\" delimiter=\",\"}}{{x}}{{/setJoin}}", "COMPILE_HELPER_VALIDATION_FAILURE", "Insufficient number of parameters - expected: 3");
+        compileError(engine, "set-join-delimiter", "{{#setJoin \"x\" \"a\" \"b\" other=\",\"}}{{x}}{{/setJoin}}", "COMPILE_HELPER_VALIDATION_FAILURE", "Required hash key delimiter not found");
+        compileError(engine, "inactive-if-value", "{{#no}}{{if one}}{{/no}}", "COMPILE_HELPER_VALIDATION_FAILURE", "Unsupported tag type");
+        for (String helper : List.of("capitalize", "escape")) {
+            var nullArgument = engine.compileMustache("negative-null-" + helper, "{{" + helper + " nil}}");
+            try {
+                nullArgument.render(map("nil", null));
+                throw new IllegalStateException(helper + " with null unexpectedly rendered");
+            } catch (NullPointerException error) {
+                if (error.getClass() != NullPointerException.class) throw error;
+            }
+        }
         var scalarEach = engine.compileMustache("negative-each-scalar", "{{#each name}}{{this}}{{/each}}");
         try {
             scalarEach.render(map("name", "outer"));
@@ -39,11 +55,15 @@ public final class TemplateOracle {
         }
     }
     private static void compileError(MustacheEngine engine, String name, String template, String code) {
+        compileError(engine, name, template, code, "");
+    }
+    private static void compileError(MustacheEngine engine, String name, String template, String code, String detail) {
         try {
             engine.compileMustache("negative-" + name, template);
             throw new IllegalStateException(name + " unexpectedly compiled");
         } catch (MustacheException error) {
             checkError(error, code);
+            if (!error.getMessage().contains(detail)) throw error;
         }
     }
     private static void checkError(MustacheException error, String code) {
@@ -56,6 +76,27 @@ public final class TemplateOracle {
         String output = TemplateEngine.INSTANCE.render(template, data, Map.of(), Map.of(), Map.of());
         save(dir.resolve(name + ".request.json"), ReferenceModel.jsonString(request));
         save(dir.resolve(name + ".expected"), output);
+    }
+    private static void emptyFilterFixture(Path dir, LimeModel model) throws Exception {
+        var registered = new CppGeneratorPredicates(model.getReferenceMap()).getPredicates();
+        var calls = new ArrayList<Object>();
+        Map<String,Function1<Object,Boolean>> checks = new LinkedHashMap<>();
+        for (var entry : registered.entrySet()) {
+            String name = entry.getKey(); Function1<Object,Boolean> delegate = entry.getValue();
+            checks.put(name, receiver -> { calls.add(receiver); return delegate.invoke(receiver); });
+        }
+        var data = map("items", List.of());
+        String template = "oracle/empty-filter";
+        String output = TemplateEngine.INSTANCE.render(template, data, Map.of(), checks, Map.of());
+        if (!calls.isEmpty()) throw new IllegalStateException("Empty filter unexpectedly evaluated a predicate");
+        var registry = new ArrayList<>(registered.keySet());
+        Collections.sort(registry);
+        var hooks = map("names", List.of(), "predicates", List.of(), "sorters", List.of(),
+            "registered_predicates", registry);
+        var request = map("schema", "gluecodium.template.render-request", "version", 1,
+            "template", template, "data", data, "property_overlays", map(), "hooks", hooks);
+        save(dir.resolve("empty-filter.request.json"), ReferenceModel.jsonString(request));
+        save(dir.resolve("empty-filter.expected"), output);
     }
     private static void modelFixture(Path dir, LimeModel model, Object element, String caseName, String template) throws Exception {
         ReferenceModel graph = new ReferenceModel();
@@ -142,6 +183,7 @@ public final class TemplateOracle {
         negativeCases();
         LimeModel model = new LimeBasedLimeModelLoader().loadModel(
             List.of(Path.of("ruscodium/tools/template-oracle/fixture.lime").toAbsolutePath().toString()), List.of(), Map.of());
+        emptyFilterFixture(out, model);
         modelFixture(out, model, model.getReferenceMap().get("oracle.Color"), "cpp-enumeration", "cpp/CppEnumeration");
         modelFixture(out, model, model.getReferenceMap().get("oracle.Labels"), "cpp-alias", "cpp/CppTypeAlias");
         modelFixture(out, model, model.getReferenceMap().get("oracle.Service.convert"), "cpp-function", "cpp/CppFunctionSignature");
@@ -172,6 +214,8 @@ public final class TemplateOracle {
         fixture(out, "review-helpers", "oracle/review-helpers", map("nil", null, "one", 1,
             "special", "x\rY\bZ\f"));
         fixture(out, "review-scope", "oracle/review-scope", map("items", new ArrayList<>(List.of("a", "b"))));
+        fixture(out, "review-selectors", "oracle/review-selectors", map("values", map("a]b", "bracket")));
+        fixture(out, "review-values", "oracle/review-values", map("items", List.of("a", "b"), "nil", null));
         fixture(out, "helpers", "oracle/helpers", map("yes", true, "no", false,
             "items", List.of("one", "two", "three"), "multiline", "alpha  \n beta\t\n",
             "special", "<a & \"b\">\n", "empty", List.of(), "nil", null));
