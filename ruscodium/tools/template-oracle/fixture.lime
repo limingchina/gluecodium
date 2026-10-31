@@ -13,10 +13,22 @@ typealias Labels = List<String>
 
 exception Problem(Color)
 
+@Cpp(Accessors)
+struct Info {
+    status: String
+}
+
+lambda Callback = (String?) -> Void
+
 class Service {
+
     // Converts a value.
     @Cpp(Const)
     fun convert(first: String, count: Int): String
 
     fun risky(labels: Labels?, other: Color): String throws Problem
+
+    @Cpp(Attribute = ["nodiscard", "maybe_unused"])
+    @Cpp(Noexcept)
+    static fun register(callback: Callback): Boolean
 }

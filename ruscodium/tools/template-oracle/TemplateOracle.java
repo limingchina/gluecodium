@@ -80,7 +80,7 @@ public final class TemplateOracle {
             Object obj = graph.discoveredObjects().get(i);
             if (!(obj instanceof LimeElement)) continue;
             List<String> missing = new ArrayList<>();
-            for (String property : List.of("propertyElement", "isVirtual", "isConst", "isAsyncHelper")) {
+            for (String property : List.of("propertyElement", "isVirtual", "isConst", "isAsyncHelper", "internalNamespace")) {
                 String suffix = Character.toUpperCase(property.charAt(0)) + property.substring(1);
                 boolean present = Arrays.stream(obj.getClass().getMethods()).anyMatch(method ->
                     method.getParameterCount() == 0 && (method.getName().equals("get" + suffix) ||
@@ -107,6 +107,8 @@ public final class TemplateOracle {
         modelFixture(out, model, model.getReferenceMap().get("oracle.Service.risky"), "cpp-return-throws", "cpp/CppReturnType");
         fixture(out, "inline-eof", "oracle/inline-eof", map("value", "VALUE"));
         fixture(out, "inline-middle", "oracle/inline-middle", map("value", "VALUE"));
+        modelFixture(out, model, model.getReferenceMap().get("oracle.Service.register"), "cpp-function-static", "cpp/CppFunctionSignature");
+        modelFixture(out, model, model.getReferenceMap().get("oracle.Info.status"), "name-arguments", "oracle/name-arguments");
         fixture(out, "adjacent-comment", "oracle/adjacent-comment", map("x", false, "y", false));
         fixture(out, "adjacent-sections", "oracle/adjacent-sections", map("x", false, "y", false));
         fixture(out, "truth", "oracle/truth", map("zero", 0, "one", 1, "no", false,

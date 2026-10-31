@@ -1,0 +1,2 @@
+[[nodiscard, maybe_unused]]
+static bool register( const ::oracle::Callback& callback ) noexcept

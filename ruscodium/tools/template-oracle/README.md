@@ -36,7 +36,10 @@ loader. `cpp-enumeration` renders three enumerators, a literal value, normal
 comments and deprecation; `cpp-alias` uses a list alias; `cpp-function` covers
 multiple primitive/string parameters and a const attribute; and the two
 `*-throws` cases use nullable alias and enum parameters with an enum-backed
-exception. `cpp-return` exercises the ordinary return path. The template is
+exception. `cpp-function-static` covers a callback parameter, static and
+noexcept flags, and multiple C++ attributes. `cpp-return` exercises the ordinary
+return path. `name-arguments` exercises zero through three resolver arguments,
+including getter and setter modes, against a real model field. The template is
 rendered directly with the selected model object as its root; no generator
 outer context is supplied, so the throwing return example intentionally has
 an empty `internalNamespace` and emits `::Return`. `export-default` and
@@ -63,6 +66,5 @@ never treated as absent. Empty sorters indicate none were used in these cases.
 The recorded hooks are an explicit offline record/replay boundary. Passing
 these fixtures demonstrates a bounded renderer/view contract, not an
 implementation of C++ name resolution, complete model projections, generated
-file parity, or ABI parity. Cases with static functions, callback parameters,
-C++ `Attribute`, full generator ambient context and additional selectors
-remain future coverage.
+file parity, or ABI parity. Full generator ambient context, additional selector modes and broader model
+shapes remain future coverage.
