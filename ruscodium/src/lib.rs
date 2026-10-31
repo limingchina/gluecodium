@@ -683,14 +683,14 @@ impl<'a> Parser<'a> {
                     }
                 }
                 self.expect(")")?;
-                if self.eat(":") {
+                if kind == "fun" && self.eat(":") {
                     let (docs, attrs) = self.meta()?;
                     d.return_docs = docs;
                     let mut ty = self.typ()?;
                     ty.annotations.splice(0..0, attrs);
                     d.ty = Some(ty)
                 }
-                if self.eat("throws") {
+                if kind != "field_constructor" && self.eat("throws") {
                     let (docs, attrs) = self.meta()?;
                     d.throws_docs = docs;
                     let mut ty = self.typ()?;
@@ -701,12 +701,17 @@ impl<'a> Parser<'a> {
             "property" | "field" | "const" => {
                 self.expect(":")?;
                 d.ty = Some(self.typ()?);
-                if self.eat("=") {
+                if kind == "const" {
+                    self.expect("=")?;
+                    let literal = self.literal()?;
+                    d.value = Some(literal.raw.clone());
+                    d.literal = Some(literal);
+                } else if kind == "field" && self.eat("=") {
                     let literal = self.literal()?;
                     d.value = Some(literal.raw.clone());
                     d.literal = Some(literal)
                 }
-                if self.peek() == "external" {
+                if kind == "field" && self.peek() == "external" {
                     d.descriptor = Some(self.descriptor()?)
                 }
                 if kind == "property" && self.eat("{") {
@@ -714,7 +719,10 @@ impl<'a> Parser<'a> {
                         let (docs, annotations) = self.meta()?;
                         let span = self.span();
                         let name = self.next();
-                        if name != "get" && name != "set" {
+                        if (d.children.is_empty() && name != "get")
+                            || (d.children.len() == 1 && name != "set")
+                            || d.children.len() > 1
+                        {
                             return Err(error(self.path, &span, "expected get or set"));
                         }
                         let descriptor = if self.peek() == "external" {
@@ -740,6 +748,9 @@ impl<'a> Parser<'a> {
                             return_docs: Vec::new(),
                             throws_docs: Vec::new(),
                         })
+                    }
+                    if d.children.is_empty() {
+                        return Err(error(self.path, &self.span(), "expected getter"));
                     }
                     self.expect("}")?;
                 }
@@ -910,12 +921,20 @@ impl<'a> Parser<'a> {
             if signed && token.kind != "number" && token.text != "Infinity" {
                 return Err(error(self.path, &self.span(), "expected numeric literal"));
             }
-            self.next();
+            if token.kind == "id"
+                && !["true", "false", "null", "NaN", "Infinity"].contains(&token.text.as_str())
+            {
+                self.id()?;
+            } else {
+                self.next();
+            }
             while self.eat(".") {
                 self.id()?;
             }
             let positional = if self.eat("(") {
-                if self.t[self.i].kind != "number" {
+                if self.t[self.i].kind != "number"
+                    || !self.peek().chars().all(|c| c.is_ascii_digit() || c == '_')
+                {
                     return Err(error(self.path, &self.span(), "expected integer"));
                 }
                 self.next();

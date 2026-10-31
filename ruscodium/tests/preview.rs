@@ -67,7 +67,10 @@ fn tracked_corpus_parses() {
         .unwrap();
     assert!(out.status.success());
     let listing = String::from_utf8(out.stdout).unwrap();
-    let files: Vec<_> = listing.lines().collect();
+    let files: Vec<_> = listing
+        .lines()
+        .filter(|p| !p.starts_with("ruscodium/"))
+        .collect();
     assert_eq!(files.len(), 345);
     for path in files {
         let text = fs::read_to_string(root.join(path)).unwrap();
@@ -258,4 +261,17 @@ fn syntax_only_cannot_generate() {
         .unwrap();
     assert!(!result.status.success());
     assert!(!dir.exists());
+}
+#[test]
+fn oracle_syntax_rejections() {
+    for text in [
+        "package x\nclass A { constructor make(): Int }\n",
+        "package x\nclass A { property v: Int = 1\n}\n",
+        "package x\nclass A { const X: Int\n}\n",
+        "package x\nclass A { property v: Int { set }\n}\n",
+        "package x\nstruct S { v: Int = class }\n",
+        "package x\nstruct S { v: Int = Foo(1.5) }\n",
+    ] {
+        assert!(parse("x", text, false).is_err(), "{text}");
+    }
 }
