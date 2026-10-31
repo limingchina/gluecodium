@@ -331,3 +331,29 @@ fn cpp_function_overloads() {
     let h = ruscodium::cpp::generate(&m).unwrap();
     assert_eq!(h.matches(" f(").count(), 2);
 }
+#[test]
+fn namespace_collision_and_syntax_guards() {
+    let mut m = Model {
+        schema_version: 1,
+        files: vec![
+            parse("a", "package x\nclass A {}\n", false).unwrap(),
+            parse("b", "package x.A\nstruct B { value: Int }\n", false).unwrap(),
+        ],
+    };
+    resolve(&mut m).unwrap();
+    assert!(ruscodium::cpp::generate(&m)
+        .unwrap_err()
+        .contains("namespace"));
+    for t in [
+        "package x\n@A(\"\"\"value\"\"\")\nclass A {}\n",
+        "package x\nexception E(Int?)\n",
+        "package x\nstruct A { v: Int = \"s\".foo }\n",
+        "package x\nstruct A { v: Int = 4(0) }\n",
+        "package x\nstruct A { v: Int = true(0) }\n",
+        "package x\nstruct A { v: Int<Int> }\n",
+        "package x\nstruct A { v: Map<Int> }\n",
+        "package x\nclass A {}\nclass B : A? {}\n",
+    ] {
+        assert!(parse("x", t, false).is_err(), "{t}");
+    }
+}

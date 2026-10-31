@@ -118,6 +118,16 @@ fn typecheck(
     ctx: &Context,
     dependencies: &mut BTreeSet<String>,
 ) -> Result<(), String> {
+    if t.builtin {
+        let expected = match t.name.as_str() {
+            "List" | "Set" => 1,
+            "Map" => 2,
+            _ => 0,
+        };
+        if t.args.len() != expected {
+            return Err(format!("{}: invalid C++ type arity", t.name));
+        }
+    }
     if !t.annotations.is_empty() {
         return Err(format!("{}: C++ type annotations are unsupported", t.name));
     }
@@ -430,6 +440,20 @@ pub fn generate(model: &Model) -> Result<String, String> {
                 let name = format!("{}.{}", f.package, d.name);
                 ctx.emitted.insert(name.clone());
                 all.insert(name, (f.package.as_str(), d));
+            }
+        }
+    }
+    for f in &model.files {
+        if !f.auxiliary {
+            let mut prefix = String::new();
+            for part in f.package.split('.') {
+                if !prefix.is_empty() {
+                    prefix.push('.')
+                }
+                prefix.push_str(part);
+                if ctx.emitted.contains(&prefix) {
+                    return Err(format!("{prefix}: C++ namespace conflicts with a type"));
+                }
             }
         }
     }

@@ -454,7 +454,8 @@ impl<'a> Parser<'a> {
                             values: Vec::new(),
                         };
                         if self.t[self.i].kind == "string" {
-                            value.values.push(self.next())
+                            self.string()?;
+                            value.values.push(self.t[self.i - 1].text.clone())
                         } else {
                             value.name = Some(self.id()?);
                             if self.eat("=") {
@@ -532,6 +533,26 @@ impl<'a> Parser<'a> {
                 }
             }
             self.expect(">")?;
+        }
+        if builtin {
+            let expected = match name.as_str() {
+                "List" | "Set" => 1,
+                "Map" => 2,
+                _ => 0,
+            };
+            if args.len() != expected {
+                return Err(error(
+                    self.path,
+                    &span,
+                    &format!("{name} expects {expected} type arguments"),
+                ));
+            }
+        } else if !args.is_empty() {
+            return Err(error(
+                self.path,
+                &span,
+                "user-defined types do not accept type arguments",
+            ));
         }
         let nullable = self.eat("?");
         Ok(TypeRef {
@@ -642,7 +663,17 @@ impl<'a> Parser<'a> {
                         ));
                     }
                     loop {
-                        d.parents.push(self.typ()?);
+                        let span = self.span();
+                        let name = self.qualified()?;
+                        d.parents.push(TypeRef {
+                            name,
+                            builtin: false,
+                            args: vec![],
+                            nullable: false,
+                            annotations: vec![],
+                            span,
+                            resolved: None,
+                        });
                         if !self.eat(",") {
                             break;
                         }
@@ -786,7 +817,15 @@ impl<'a> Parser<'a> {
             }
             "exception" => {
                 self.expect("(")?;
-                d.ty = Some(self.typ()?);
+                let ty = self.typ()?;
+                if ty.nullable {
+                    return Err(error(
+                        self.path,
+                        &ty.span,
+                        "exception type cannot be nullable",
+                    ));
+                }
+                d.ty = Some(ty);
                 self.expect(")")?
             }
             "lambda" => {
@@ -946,10 +985,14 @@ impl<'a> Parser<'a> {
             } else {
                 self.next();
             }
-            while self.eat(".") {
-                self.id()?;
+            let reference = token.kind == "id"
+                && !["true", "false", "null", "NaN", "Infinity"].contains(&token.text.as_str());
+            if reference {
+                while self.eat(".") {
+                    self.id()?;
+                }
             }
-            let positional = if self.eat("(") {
+            let positional = if reference && self.eat("(") {
                 if self.t[self.i].kind != "number"
                     || !self.peek().chars().all(|c| c.is_ascii_digit() || c == '_')
                 {
