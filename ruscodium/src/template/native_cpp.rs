@@ -570,7 +570,10 @@ impl<'a> Resolver<'a> {
             let parent = self.parent(v)?.ok_or("native C++ field missing parent")?;
             self.checked(&parent)?;
             self.get(&parent, "external")?;
-            if self.attr(&parent, "CPP", "ACCESSORS")?.is_none() {
+            if matches!(
+                self.attr(&parent, "CPP", "ACCESSORS")?,
+                None | Some(Value::Null | Value::Bool(false))
+            ) {
                 return Ok(None);
             }
         } else if class == "LimeProperty" {

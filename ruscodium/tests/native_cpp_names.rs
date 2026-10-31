@@ -301,3 +301,32 @@ fn unsupported_or_missing_naming_facts_do_not_succeed() {
         );
     }
 }
+
+#[test]
+fn false_or_null_accessors_attribute_does_not_enable_field_accessors() {
+    let original = request("native-matrix");
+    let receiver = original["hooks"]["names"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["mode"] == "getter" && c["result"] == "get_h_t_t_p_server")
+        .unwrap()["receiver"]
+        .clone();
+    for value in [json!(false), Value::Null] {
+        let mut req = original.clone();
+        let attrs = req["snapshot"]["nodes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|n| n["properties"]["attributes"]["CPP"]["ACCESSORS"] == true)
+            .unwrap();
+        attrs["properties"]["attributes"]["CPP"]["ACCESSORS"] = value;
+        let graph = graph(&req);
+        for mode in ["getter", "setter"] {
+            assert_eq!(
+                resolve(&graph, &config("native-matrix"), "C++", mode, &receiver).unwrap(),
+                None
+            );
+        }
+    }
+}
