@@ -330,3 +330,60 @@ fn false_or_null_accessors_attribute_does_not_enable_field_accessors() {
         }
     }
 }
+
+#[test]
+fn rejects_forged_type_reference_class_and_literal_type_id() {
+    let original = request("native-matrix");
+    let nodes = original["snapshot"]["nodes"].as_array().unwrap();
+    let type_ref = nodes
+        .iter()
+        .find(|n| {
+            n["class"]
+                .as_str()
+                .unwrap()
+                .ends_with("LimeAmbiguousTypeRef")
+        })
+        .unwrap()["id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let mut forged = original.clone();
+    let nodes = forged["snapshot"]["nodes"].as_array_mut().unwrap();
+    nodes.iter_mut().find(|n| n["id"] == type_ref).unwrap()["class"] =
+        json!("review.CustomTypeRef");
+    let forged_graph = graph(&forged);
+    assert!(resolve(
+        &forged_graph,
+        &config("native-matrix"),
+        "FQN",
+        "name",
+        &json!({"$ref":type_ref})
+    )
+    .is_err());
+    let mut forged = original.clone();
+    let nodes = forged["snapshot"]["nodes"].as_array_mut().unwrap();
+    let literal = nodes
+        .iter()
+        .find(|n| n["class"].as_str().unwrap().ends_with("LimeValue$Literal"))
+        .unwrap();
+    let literal_id = literal["id"].as_str().unwrap().to_owned();
+    let type_ref = literal["properties"]["typeRef"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let type_id = nodes.iter().find(|n| n["id"] == type_ref).unwrap()["properties"]["type"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    nodes.iter_mut().find(|n| n["id"] == type_id).unwrap()["properties"]["typeId"]["name"] =
+        json!("UNSUPPORTED");
+    let graph = graph(&forged);
+    assert!(resolve(
+        &graph,
+        &config("native-matrix"),
+        "",
+        "name",
+        &json!({"$ref":literal_id})
+    )
+    .is_err());
+}

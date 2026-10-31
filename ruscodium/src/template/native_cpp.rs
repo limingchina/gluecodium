@@ -123,10 +123,15 @@ impl NativeCppResolver {
                 return Err(format!("FQN {mode} mode is unsupported"));
             }
             let mut v = receiver.clone();
-            if ctx.class(&v)?.ends_with("LimeReturnType") {
+            if ctx.class(&v)? == "com.here.gluecodium.model.lime.LimeReturnType" {
                 v = ctx.get(&v, "typeRef")?.clone();
             }
-            if ctx.class(&v)?.ends_with("TypeRef") {
+            if matches!(
+                ctx.class(&v)?,
+                "com.here.gluecodium.model.lime.LimeBasicTypeRef"
+                    | "com.here.gluecodium.model.lime.LimeDirectTypeRef"
+                    | "com.here.gluecodium.model.lime.LimeAmbiguousTypeRef"
+            ) {
                 v = ctx.get(&v, "type")?.clone();
             }
             return ctx.full_name(&v, &mut BTreeSet::new()).map(Some);
@@ -151,9 +156,17 @@ impl<'a> Resolver<'a> {
             .ok_or_else(|| format!("native C++ missing node {id}"))
     }
     fn class<'b>(&'b self, v: &'b Value) -> Result<&'b str, String> {
-        self.graph
+        let class = self
+            .graph
             .class(v)
-            .ok_or_else(|| "native C++ expected model class".into())
+            .ok_or_else(|| "native C++ expected model class".to_string())?;
+        let simple = class
+            .strip_prefix("com.here.gluecodium.model.lime.")
+            .ok_or_else(|| format!("unsupported native C++ model class {class}"))?;
+        if simple.contains('.') {
+            return Err(format!("unsupported native C++ model class {class}"));
+        }
+        Ok(class)
     }
     fn get(&self, v: &Value, key: &str) -> Result<&'a Value, String> {
         self.node(v)?.properties.get(key).ok_or_else(|| {
@@ -313,7 +326,7 @@ impl<'a> Resolver<'a> {
     }
     fn actual(&self, value: &Value, active: &mut BTreeSet<String>) -> Result<Value, String> {
         let mut current = value.clone();
-        while self.class(&current)?.ends_with("LimeTypeAlias") {
+        while self.class(&current)? == "com.here.gluecodium.model.lime.LimeTypeAlias" {
             let id = reference(&current).ok_or("invalid alias")?.to_owned();
             if !active.insert(id) {
                 return Err("native C++ cyclic alias dependency".into());
@@ -470,7 +483,7 @@ impl<'a> Resolver<'a> {
             return Ok(format!("::std::vector< {first} >"));
         }
         let actual = self.actual(self.get(element, "type")?, &mut BTreeSet::new())?;
-        let std_hash = if self.class(&actual)?.ends_with("LimeBasicType") {
+        let std_hash = if self.class(&actual)? == "com.here.gluecodium.model.lime.LimeBasicType" {
             self.get(&actual, "typeId")?
                 .get("name")
                 .and_then(Value::as_str)
@@ -522,9 +535,10 @@ impl<'a> Resolver<'a> {
                     .get(v, "value")?
                     .as_str()
                     .ok_or("invalid literal value")?;
-                if !self.class(&actual)?.ends_with("LimeBasicType") {
+                if self.class(&actual)? != "com.here.gluecodium.model.lime.LimeBasicType" {
                     return Err("unsupported native C++ nonbasic literal".into());
                 }
+                self.basic(self.get(&actual, "typeId")?, None)?;
                 let id = self
                     .get(&actual, "typeId")?
                     .get("name")
@@ -602,7 +616,10 @@ impl<'a> Resolver<'a> {
                 self.get(self.get(v, "typeRef")?, "type")?,
                 &mut BTreeSet::new(),
             )?;
-            if self.class(&actual)?.ends_with("LimeBasicType")
+            if self.class(&actual)? == "com.here.gluecodium.model.lime.LimeBasicType" {
+                self.basic(self.get(&actual, "typeId")?, None)?;
+            }
+            if self.class(&actual)? == "com.here.gluecodium.model.lime.LimeBasicType"
                 && self
                     .get(&actual, "typeId")?
                     .get("name")
