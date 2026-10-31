@@ -11,7 +11,7 @@ fn run() -> Result<(), String> {
         let a = &args[i];
         match a.as_str() {
             "-h" | "--help" => {
-                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json -output DIR]\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators");
+                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators");
                 return Ok(());
             }
             "--version" | "-version" => {
@@ -42,6 +42,9 @@ fn run() -> Result<(), String> {
             _ => return Err(format!("unknown option: {a}")),
         }
         i += 1
+    }
+    if syntax && (mode == "cpp" || mode == "json") {
+        return Err("--syntax-only cannot be combined with a generator".into());
     }
     if inputs.is_empty() {
         return Err("at least one -input is required".into());

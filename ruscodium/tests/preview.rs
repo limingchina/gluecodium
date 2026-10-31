@@ -240,3 +240,22 @@ fn review_regressions() {
     let mut m = model("package x\ntypealias N = Int?\nclass A { fun f(v: N) fun f(v: N?) }\n");
     assert!(resolve(&mut m).unwrap_err().contains("duplicate signature"));
 }
+#[test]
+fn syntax_only_cannot_generate() {
+    let input = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../examples/calculator/lime");
+    let dir = std::env::temp_dir().join(format!("ruscodium-syntax-only-{}", std::process::id()));
+    let result = Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+        .args([
+            "-input",
+            input.to_str().unwrap(),
+            "--syntax-only",
+            "-generators",
+            "cpp",
+            "-output",
+            dir.to_str().unwrap(),
+        ])
+        .output()
+        .unwrap();
+    assert!(!result.status.success());
+    assert!(!dir.exists());
+}
