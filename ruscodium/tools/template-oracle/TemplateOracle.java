@@ -59,7 +59,18 @@ public final class TemplateOracle {
                 predicates.add(map("name", key, "receiver", graph.value(x, "predicate.receiver"), "result", result));
             } catch (Exception e) { throw new RuntimeException(e); } return result; });
         }
-        String output = TemplateEngine.INSTANCE.render(template, element, resolvers, checks, Map.of());
+        List<Object> sortRecords = new ArrayList<>();
+        Map<String, Function1<List<? extends Object>, List<? extends Object>>> sorters = new LinkedHashMap<>();
+        sorters.put("", input -> {
+            List<LimeNamedElement> selected = new ArrayList<>();
+            for (Object value : input) if (value instanceof LimeNamedElement) selected.add((LimeNamedElement)value);
+            List<LimeNamedElement> result = new TopologicalSort(selected).sort();
+            try { sortRecords.add(map("name", "", "input", graph.value(input, "sort.input"),
+                "result", graph.value(result, "sort.result"))); }
+            catch (Exception e) { throw new RuntimeException(e); }
+            return result;
+        });
+        String output = TemplateEngine.INSTANCE.render(template, element, resolvers, checks, sorters);
         Map<String,Object> snapshot = graph.snapshotDocument(element);
         Map<String,Object> overlays = new LinkedHashMap<>();
         for (int i = 0; i < graph.discoveredObjects().size(); i++) {
@@ -91,7 +102,7 @@ public final class TemplateOracle {
         }
         var request = map("schema", "gluecodium.template.render-request", "version", 1,
             "template", template, "data", data, "snapshot", snapshot, "property_overlays", overlays, "absent_properties", absent,
-            "hooks", map("names", names, "predicates", predicates, "sorters", List.of()));
+            "hooks", map("names", names, "predicates", predicates, "sorters", sortRecords));
         save(dir.resolve(caseName + ".request.json"), ReferenceModel.jsonString(request));
         save(dir.resolve(caseName + ".expected"), output);
     }
@@ -109,6 +120,14 @@ public final class TemplateOracle {
         fixture(out, "inline-middle", "oracle/inline-middle", map("value", "VALUE"));
         modelFixture(out, model, model.getReferenceMap().get("oracle.Service.register"), "cpp-function-static", "cpp/CppFunctionSignature");
         modelFixture(out, model, model.getReferenceMap().get("oracle.Info.status"), "name-arguments", "oracle/name-arguments");
+        modelFixture(out, model, model.getReferenceMap().get("oracle.Color"), "model-helpers", "oracle/model-helpers");
+        try {
+            TemplateEngine.INSTANCE.render("oracle/nested-comment", map("value", "ignored"), Map.of(), Map.of(), Map.of());
+            throw new IllegalStateException("Nested comment unexpectedly compiled");
+        } catch (org.trimou.exception.MustacheException expected) {
+            if (!expected.getMessage().contains("COMPILE_INVALID_TAG")) throw expected;
+        }
+        fixture(out, "prefix-cr", "oracle/prefix-cr", map("value", "one  \r\ntwo\rthree  \n"));
         fixture(out, "adjacent-comment", "oracle/adjacent-comment", map("x", false, "y", false));
         fixture(out, "adjacent-sections", "oracle/adjacent-sections", map("x", false, "y", false));
         fixture(out, "join-partial", "oracle/join-partial", map("outer", "O",

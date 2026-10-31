@@ -45,8 +45,10 @@ outer context is supplied, so the throwing return example intentionally has
 an empty `internalNamespace` and emits `::Return`. `export-default` and
 `export-empty` provide plain map contexts. The helper cases measure truth,
 context/set, iteration, inline and named partials, indentation, prefixes,
-join, joinPartial, dynamic eval, escaping, missing values and adjacent standalone
-tags.
+join, joinPartial, dynamic eval, CR/CRLF prefixes, escaping, missing values and
+adjacent standalone tags. `model-helpers` records predicate, sort and class-name
+checks against real enumeration nodes. `nested-comment` is a negative compile
+check: Trimou rejects a start delimiter nested inside a comment.
 
 Each model request embeds the existing version-1 reference snapshot. Node IDs
 are assigned by identity before capturing calls. The oracle wraps the actual
@@ -62,7 +64,8 @@ small allowlist of context keys is recorded only after checking that no public
 zero-argument Java bean accessor exists on that model object. This establishes
 known absent lookups separately from getter values and allows outer-context
 lookup while preserving errors for unknown model views. A failing getter is
-never treated as absent. Empty sorters indicate none were used in these cases.
+never treated as absent. The `model-helpers` case records the actual C++ topological sorter input and
+result; empty sorter arrays indicate that no sort was used in that case.
 
 The recorded hooks are an explicit offline record/replay boundary. Passing
 these fixtures demonstrates a bounded renderer/view contract, not an

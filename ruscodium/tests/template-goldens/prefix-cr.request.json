@@ -1,0 +1,1 @@
+{"schema":"gluecodium.template.render-request","version":1,"template":"oracle/prefix-cr","data":{"value":"one  \r\ntwo\rthree  \n"},"property_overlays":{},"hooks":{"names":[],"predicates":[],"sorters":[]}}

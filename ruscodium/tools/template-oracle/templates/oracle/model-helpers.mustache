@@ -1,0 +1,3 @@
+{{#instanceOf this "LimeEnumeration"}}enum{{/instanceOf}}/{{#notInstanceOf this "LimeStruct"}}not-struct{{/notInstanceOf}}
+{{#filter enumerators predicate="hasAnyComment"}}{{#this}}{{resolveName}};{{/this}}{{/filter}}
+{{#sort enumerators}}{{resolveName}};{{/sort}}
