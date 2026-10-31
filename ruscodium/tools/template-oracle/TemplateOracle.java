@@ -106,6 +106,9 @@ public final class TemplateOracle {
         save(dir.resolve("empty-filter.expected"), output);
     }
     private static void modelFixture(Path dir, LimeModel model, Object element, String caseName, String template) throws Exception {
+        modelFixture(dir, model, element, element, caseName, template);
+    }
+    private static void modelFixture(Path dir, LimeModel model, Object element, Object snapshotRoot, String caseName, String template) throws Exception {
         ReferenceModel graph = new ReferenceModel();
         Object data = graph.value(element, "data");
         var opts = new GeneratorOptions();
@@ -150,7 +153,7 @@ public final class TemplateOracle {
             return result;
         });
         String output = TemplateEngine.INSTANCE.render(template, element, resolvers, checks, sorters);
-        Map<String,Object> snapshot = graph.snapshotDocument(element);
+        Map<String,Object> snapshot = graph.snapshotDocument(snapshotRoot);
         Map<String,Object> overlays = new LinkedHashMap<>();
         for (int i = 0; i < graph.discoveredObjects().size(); i++) {
             Object obj = graph.discoveredObjects().get(i); Map<String,Object> props = new LinkedHashMap<>();
@@ -162,7 +165,7 @@ public final class TemplateOracle {
             if (!props.isEmpty()) overlays.put("n" + (i + 1), props);
         }
         // Overlay getter results can discover additional model nodes; complete the graph after observations.
-        snapshot = graph.snapshotDocument(element);
+        snapshot = graph.snapshotDocument(snapshotRoot);
         // Record only named properties whose Java bean accessors are actually absent.
         // These are known context lookups used by the selected production partials.
         Map<String,Object> absent = new LinkedHashMap<>();
@@ -209,7 +212,7 @@ public final class TemplateOracle {
             .addAttribute(LimeAttributeType.CPP, LimeAttributeValueType.FULL_NAME, "Foo")
             .addAttribute(LimeAttributeType.SWIFT, LimeAttributeValueType.OPTION_SET, true)
             .build();
-        modelFixture(out, model, map("attrs", attributes), "review-attributes", "oracle/review-attributes");
+        modelFixture(out, model, map("attrs", attributes), attributes, "review-attributes", "oracle/review-attributes");
         try {
             TemplateEngine.INSTANCE.render("oracle/nested-comment", map("value", "ignored"), Map.of(), Map.of(), Map.of());
             throw new IllegalStateException("Nested comment unexpectedly compiled");
