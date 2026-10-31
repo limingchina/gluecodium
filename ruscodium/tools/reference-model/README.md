@@ -12,7 +12,7 @@ ruscodium/tools/reference-model/export --main path/to/main.lime --aux path/to/au
 ruscodium/tools/reference-model/test
 ```
 
-Repeat `--main` and `--aux` for more sources. Without `--output`, the completed document goes to stdout; diagnostics go to stderr. Load, getter, unsupported value, or serialization errors fail before the output file is opened. The loader performs its usual validation. The tool passes no documentation placeholders.
+Repeat `--main` and `--aux` for more sources. Without `--output`, the completed document goes to stdout; diagnostics go to stderr. Load, getter, unsupported value, or serialization errors fail before the output file is opened. Missing paths, non-LIME files, and inputs containing no `.lime` files fail before output. The loader performs its usual validation. The tool passes no documentation placeholders.
 
 ## Schema version 1
 

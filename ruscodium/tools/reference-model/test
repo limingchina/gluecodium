@@ -57,10 +57,18 @@ fi
 [[ $(cat "$tmp/failed.json") == sentinel ]]
 cat > "$tmp/missing.lime" <<'LIME'
 package example.missing
-struct Broken { field: MissingType }
+struct Broken { value: MissingType }
 LIME
 if "$here/export" --main "$tmp/missing.lime" --output "$tmp/failed.json" > "$tmp/stdout" 2> "$tmp/stderr"; then
   echo 'unresolved reference unexpectedly succeeded' >&2; exit 1
 fi
 [[ $(cat "$tmp/failed.json") == sentinel ]]
+rg -q 'MissingType|getter failed' "$tmp/stderr"
+mkdir "$tmp/empty"
+for source in "$tmp/not-found" "$tmp/not-found.lime" "$tmp/empty"; do
+  if "$here/export" --main "$source" --output "$tmp/failed.json" > "$tmp/stdout" 2> "$tmp/stderr"; then
+    echo "invalid source unexpectedly succeeded: $source" >&2; exit 1
+  fi
+  [[ $(cat "$tmp/failed.json") == sentinel ]]
+done
 echo 'reference snapshot tests passed'

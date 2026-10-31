@@ -116,12 +116,14 @@ public final class ReferenceModel {
         SortedSet<String> files = new TreeSet<>();
         for (String source : sources) {
             Path path = Path.of(source.startsWith("~/") ? System.getProperty("user.home") + source.substring(1) : source).toAbsolutePath().normalize();
+            if (!Files.exists(path)) throw new IllegalArgumentException("Source does not exist: " + source);
             if (Files.isDirectory(path)) {
                 try (var paths = Files.walk(path)) {
                     paths.filter(p -> !Files.isDirectory(p) && p.getFileName().toString().endsWith(".lime"))
                          .map(p -> p.toAbsolutePath().normalize().toString()).forEach(files::add);
                 }
-            } else if (path.getFileName().toString().endsWith(".lime")) files.add(path.toString());
+            } else if (Files.isRegularFile(path) && path.getFileName().toString().endsWith(".lime")) files.add(path.toString());
+            else throw new IllegalArgumentException("Source must be a directory or .lime file: " + source);
         }
         return new ArrayList<>(files);
     }
@@ -133,6 +135,7 @@ public final class ReferenceModel {
         }
         if (main.isEmpty() && aux.isEmpty()) throw new IllegalArgumentException("Supply --main or --aux");
         main = discover(main); aux = discover(aux);
+        if (main.isEmpty() && aux.isEmpty()) throw new IllegalArgumentException("No .lime source files found");
         String document = new ReferenceModel().snapshot(new LimeBasedLimeModelLoader().loadModel(main, aux, Collections.emptyMap()));
         if (output == null) System.out.print(document); else Files.writeString(output, document, StandardCharsets.UTF_8);
     }
