@@ -8,6 +8,8 @@ cargo run -- -input ../examples/calculator/lime -validate
 cargo run -- -input ../examples/calculator/lime --model > calculator.json
 cargo run -- -input path/to/lime -generators json -output out
 cargo run -- -input path/to/lime -generators cpp -output out
+cargo run -- render --templates ../gluecodium/src/main/resources/templates \
+  --request tests/template-goldens/cpp-enumeration.request.json --output enumeration.txt
 cargo test
 ```
 
@@ -27,8 +29,8 @@ The C++ generator rejects annotations, external descriptors, throws, inheritance
 
 The corpus test checks the 345 upstream baseline inputs separately because smoke scenarios reuse names. Additional tests validate the calculator and selected coherent smoke groups, and compile and execute a C++17 consumer as well as two checked-in C++ export fixtures. An independent comparison of 49 smoke scenarios with the JVM found Rust success on 46; three (`defaults_const`, `name_clash_overloads`, and `skip`) encounter duplicate names that require Gluecodium's platform filtering. The JVM `comments` scenario also requires extra documentation configuration. The preview is deliberately stricter than JVM validation in some cases: for example, it rejects duplicate parameters and invalid direct `Void` positions that the JVM validation command can accept. The preview also treats alias nullability as inherited for defaults and overload identity; the JVM currently behaves differently in those cases. Neither corpus acceptance nor these comparisons establish complete frontend or output parity.
 
-`cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`, and `python3 -m unittest discover -s tools/tests` are the local checks. The corpus count excludes this port’s own negative `.lime` fixtures; the repository now tracks 348 LIME files in total. The Rust tests compiling C++ require an available `c++` compiler; the corpus inventory test uses `git ls-files`.
+`cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`, `cargo test`, and `python3 -m unittest discover -s tools/tests` are the local checks. The 345-file baseline corpus count excludes this port’s own `.lime` fixtures. The Rust tests compiling C++ require an available `c++` compiler; the corpus inventory test uses `git ls-files`.
 
-The experimental [JVM reference snapshot tool](tools/reference-model/README.md) records a bounded view of the existing model for migration research. It is separate from the Rust runtime and is not yet a canonical adapter or Rust model importer.
+The experimental [JVM reference snapshot tool](tools/reference-model/README.md) records a bounded view of the existing model for migration research. The native template runtime imports its version-1 identity graph and supports measured property overlays and explicitly absent properties. The library exposes `Graph`, `parse`, and `render`; the CLI renders a request against a template root. The snapshot and preview model JSON are distinct formats, and a complete canonical adapter remains future work.
 
-The migration will keep the existing Mustache templates unchanged. A future Rust engine must reproduce Trimou helper, reflection, lookup, partial, and whitespace behavior; its implementation is not yet selected. The next phase will compare unchanged representative templates and byte-exact output against the JVM.
+The [native Mustache runtime](TEMPLATES.md) reads the 315 existing templates unchanged. It implements a bounded set of Trimou helpers, lookup and whitespace behavior and rejects unsupported operations. Its C++ name resolver, predicates and sorters currently replay externally measured results supplied in requests; they are not native ports. The [JVM oracle](tools/template-oracle/README.md) captures reproducible byte-exact fixtures for selected helpers and unchanged C++ fragments. Whole-file C++ generation and complete model, helper and naming parity remain future work.

@@ -92,48 +92,49 @@ of marking the entire port complete after the preview.
 - [x] Inventory template helpers and model access sites with a reproducible static tool; see [TEMPLATE_SURFACE.md](TEMPLATE_SURFACE.md).
 - [x] Implement a bounded experimental JVM reference-model snapshot tool with documented schema and tests; see [reference-model](tools/reference-model/README.md).
 - [x] Add a reproducible JVM/Rust validation comparison runner covering core cases and coherent smoke groups.
-- [ ] Build the canonical Kotlin model adapter, Rust JSON importer, template runtime and golden-output parity. The reference snapshot and Rust preview JSON are distinct schemas.
-- [ ] Keep the existing Mustache templates unchanged and execute the custom Rust compatibility runtime stage below against Trimou helper, reflection, lookup, partial, and whitespace fixtures, followed by byte-exact output comparisons.
+- [ ] Build the complete canonical Kotlin model adapter and establish full template and generated-output parity. The experimental reference snapshot and Rust preview JSON are distinct schemas.
+- [x] Keep the existing Mustache templates unchanged and execute the bounded Rust compatibility runtime against selected Trimou helper, model-view, lookup, partial and whitespace fixtures with byte-exact comparisons.
 
 ## M7 / P1a: executable template and graph-import slice
 
-These are implementation tasks for the continuation, not evidence of delivered
-behavior. The complete canonical adapter and C++ backend remain open.
+This bounded slice is implemented as described in [TEMPLATES.md](TEMPLATES.md).
+The complete canonical adapter and C++ backend remain open.
 
 - [x] Inspect actual Trimou configuration, custom helper semantics, candidate
   C++ templates and existing snapshot schema; choose the bounded custom-runtime
-  stage in [PLAN.md](PLAN.md#p1a-executable-mustache-and-snapshot-compatibility-slice--next-increment).
+  stage in [PLAN.md](PLAN.md#p1a-executable-mustache-and-snapshot-compatibility-slice--bounded-milestone-delivered).
 - [x] Commit this continuation plan/checklist before runtime/oracle changes.
-- [ ] Implement a source-aware parser for the existing Trimou dialect; parse
-  all 315 unchanged production templates, preserving inline partials, comments,
-  arguments and section structure. Verify the production corpus hash is unchanged.
-- [ ] Import version-1 reference snapshots with validated IDs, references,
-  sharing/cycles, enum and value shapes; reject malformed/unsupported documents.
-- [ ] Define and document explicit property views, scoped render context,
+- [x] Parse all 315 unchanged production templates, preserving inline partials,
+  comments, arguments and section structure. Verify the production corpus hash.
+- [ ] Complete source-position diagnostics and full Trimou syntax validation.
+- [x] Import version-1 reference snapshots with validated IDs and references,
+  preserving sharing and cycles and rejecting malformed graph references.
+- [x] Define and document explicit property views, scoped render context,
   helper registrations and captured oracle name/predicate tables where used.
-- [ ] Implement the shared `gluecodium.template.render-request` version-1
+- [x] Implement the shared `gluecodium.template.render-request` version-1
   protocol (`template`, `data`, optional `snapshot`, `property_overlays`,
-  `hooks`) and `render --templates DIR --request FILE [--output FILE]` CLI;
+  `absent_properties`, `hooks`) and `render --templates DIR --request FILE [--output FILE]` CLI;
   distinguish replayed C++ hook results from native resolver implementation.
-- [ ] Execute context lookup, sections and iteration metadata; `if`/`unless`,
+- [x] Execute context lookup, sections and iteration metadata; `if`/`unless`,
   scoped `set`, partials/inline partials, `prefix`/`prefixPartial`,
   `join`/`joinPartial`, instance tests, and the selected `resolveName`/predicate
   contracts. Reject unimplemented executed helpers/selectors explicitly.
-- [ ] Add native library/CLI graph inspection and named-template rendering;
-  render before writing and preserve existing outputs on failures.
-- [ ] Add an actual-JVM-Trimou oracle and reproducible fixtures/configuration,
+- [x] Expose native library graph inspection and named-template rendering via
+  library and CLI; render before writing and preserve outputs on failures.
+- [ ] Add a standalone CLI graph inspector.
+- [x] Add an actual-JVM-Trimou oracle and reproducible fixtures/configuration,
   including exact UTF-8 expected bytes and distribution/template provenance.
-- [ ] Compare helper scope, missing/null values, section context, `iter`,
+- [x] Compare helper scope, missing/null values, section context, `iter`,
   standalone whitespace, partial indentation, multiline prefix trimming and
   final newlines directly against the configured JVM engine.
-- [ ] Compare unchanged `cpp/CppEnumeration`, `cpp/CppTypeAlias`,
+- [x] Compare unchanged `cpp/CppEnumeration`, `cpp/CppTypeAlias`,
   `cpp/CppFunctionSignature`, `cpp/CppReturnType` and transitive partials on a
   documented nontrivial model/configuration matrix; include configured
   `cpp/common/Export`. Record case-level limitations without a whole-C++ claim.
-- [ ] Run `cargo fmt --check`, offline Clippy with warnings denied, Cargo tests,
+- [x] Run `cargo fmt --check`, offline Clippy with warnings denied, Cargo tests,
   existing Python tooling checks and the new oracle reproducibility/differential
   checks; retain the preview corpus and C++ consumer coverage.
-- [ ] Obtain independent Sol 6.1 xhigh review; fix material findings and record
+- [x] Obtain independent Sol 6.1 xhigh review; fix material findings and record
   exact evidence and remaining helper/view/naming/canonical-boundary gaps.
 - [ ] Update README/review/evidence/checklist to the delivered scope, commit
   logical increments and push the authorized branch after verification.
@@ -143,6 +144,8 @@ behavior. The complete canonical adapter and C++ backend remain open.
 - [ ] Complete every upstream semantic validator, filters/tags, documentation
   parser and warning/strict modes.
 - [ ] Exact C++ output/runtime/name rules and existing C++ functional parity.
+- [ ] Port the C++ name resolver, predicates and sorters natively; current
+  template requests replay externally captured results.
 - [ ] Java/Kotlin plus JNI and Android runtime parity.
 - [ ] Swift plus CBridge and Apple runtime parity.
 - [ ] Dart plus FFI and Dart runtime parity.
@@ -160,18 +163,29 @@ behavior. The complete canonical adapter and C++ backend remain open.
 - The existing installed JVM distribution can serve as a differential oracle;
   the Rust compiler must function independently of it.
 
-- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Twenty-two integration tests cover 345/345 individually tracked upstream baseline inputs (excluding the port’s own negative `.lime` fixtures; 348 LIME files are now tracked in the full repository), calculator, four coherent smoke groups and two compiled C++ fixture groups.
+- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Twenty-two integration tests cover 345/345 individually tracked upstream baseline inputs (excluding the port’s own `.lime` fixtures), calculator, four coherent smoke groups and two compiled C++ fixture groups.
 - Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (22 integration tests). Python tool tests: `python3 -m unittest discover -s tools/tests` (4 tests). An optimized `cargo build --release` also passed; the release CLI exported calculator JSON and generated C++ from the multi-input repository fixture.
 - Independent JVM smoke comparison: Rust validates 46 of 49 groups; three need platform filtering (`defaults_const`, `name_clash_overloads`, `skip`). `comments` requires JVM documentation configuration. The JVM accepts some invalid Void positions and duplicate parameters that this preview rejects.
 - Preview remains incomplete: full grammar rejection, complete semantic checks, C++ nested/auxiliary references, feature guards and output parity remain open above. Independent Sol 6.1 xhigh review and recheck are recorded in [REVIEW.md](REVIEW.md); material findings were fixed with regression coverage. The final bounded review covered 47 focused cases, compiled all 10 generated-success headers with strict C++17 flags, and ran ordered-container consumers.
 
 - The optimized release validation comparison has 58 cases and no unexpected acceptance differences; four smoke differences are explicitly recorded, and the JVM crashes with stack overflow on two cycle cases. This is acceptance evidence only.
 - Remaining preview gaps include structured diagnostic objects, complete syntax rejection and dotted quoted identifiers, full metadata fidelity, runtime-dependent C++ behavior, nested and auxiliary C++ type references, constants/defaults, platform filtering, and full upstream validator parity. C++ guards reject these unsupported cases where implemented.
-- Continuation baseline: `6bb3214a2`. The next stage selects a custom Rust
-  Trimou-compatible parser/runtime, a validated version-1 reference-graph
-  importer, explicit bounded property/helper views and an actual JVM byte
-  oracle. It preserves all 315 production Mustache templates and keeps
-  whole-C++, complete canonical-model and native naming parity unclaimed.
+- Continuation baseline: `6bb3214a2`. The delivered bounded custom Rust
+  Mustache runtime imports version-1 reference graphs and uses explicit property
+  views and replayed helper results. The 315 production templates are unchanged;
+  whole-C++, complete canonical-model and native naming parity remain open.
+- The runtime's 19 integration tests include CLI byte comparisons against all
+  29 JVM fixtures, graph and replay validation, path and recursion guards,
+  failure-output preservation and parsing all 315 templates. The JVM oracle
+  includes 15 review regressions for rejected inputs, plus its nested-comment
+  negative check. The existing 22 preview tests retain their
+  345-input corpus and compiled C++ consumer coverage.
+- Final checks passed: formatting, offline Clippy with warnings denied, all 41
+  Rust tests, four Python tooling tests, the reference-model tests, the JVM
+  oracle with 29 byte fixtures and 315 template comparisons, and a release
+  build. Independent Sol 6.1 xhigh review and 42 retained CLI probes are
+  recorded in [REVIEW.md](REVIEW.md); no material findings remain within this
+  bounded stage.
 - Continuation roles retain Sol 6.1 max planning and Sol 6.1 xhigh review;
   the user's subsequent instruction selects Terra 6.1 xhigh for the next
   implementation work.

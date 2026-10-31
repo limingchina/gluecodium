@@ -1,6 +1,6 @@
 # Experimental JVM reference snapshot
 
-This tool loads LIME with the existing JVM loader and captures a versioned JSON graph for investigation and future golden fixtures. It is a reference-model snapshot, not the Rust AST JSON format; there is no importer or compatibility guarantee. It does not add a JVM dependency to the Rust backend.
+This tool loads LIME with the existing JVM loader and captures a versioned JSON graph for investigation and golden fixtures. The [native template runtime](../../TEMPLATES.md) imports this bounded version-1 snapshot as an identity graph. The snapshot is distinct from Rust preview-model JSON; neither a complete canonical adapter nor an adapter from the native preview model is provided. This is not a compatibility guarantee, and the exporter does not add a JVM dependency to the Rust runtime.
 
 Build the JVM distribution first (the expected libraries are `gluecodium/build/install/gluecodium/lib/*.jar` relative to the repository root). Java 17 is required. Set `JAVA_HOME` to a JDK 17 installation, or put `java` and `javac` on `PATH`. The script compiles into a temporary directory and removes it afterward.
 
