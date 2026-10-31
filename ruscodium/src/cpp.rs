@@ -10,6 +10,28 @@ struct Context {
 fn identifier(s: &str) -> Result<&str, String> {
     const KEYWORDS: &[&str] = &[
         "alignas",
+        "char16_t",
+        "char32_t",
+        "wchar_t",
+        "decltype",
+        "noexcept",
+        "static_assert",
+        "thread_local",
+        "const_cast",
+        "dynamic_cast",
+        "reinterpret_cast",
+        "static_cast",
+        "mutable",
+        "using",
+        "compl",
+        "bitand",
+        "bitor",
+        "and_eq",
+        "or_eq",
+        "xor_eq",
+        "not_eq",
+        "typeid",
+        "char8_t",
         "alignof",
         "and",
         "asm",
@@ -214,6 +236,9 @@ fn emit(
     owner: Option<&str>,
 ) -> Result<(), String> {
     let n = identifier(&d.name)?;
+    if owner == Some(n) {
+        return Err(format!("{n}: member name conflicts with its C++ class"));
+    }
     let ty = || d.ty.as_ref().map(|t| ctype(t, ctx)).transpose();
     match d.kind.as_str() {
         "struct" | "class" | "interface" => {
@@ -296,7 +321,7 @@ fn emit(
                 return Err("static properties are unsupported".into());
             }
             out.push_str(&format!("{indent}virtual {t} get_{n}() const = 0;\n"));
-            if d.children.iter().any(|c| c.name == "set") {
+            if d.children.is_empty() || d.children.iter().any(|c| c.name == "set") {
                 out.push_str(&format!("{indent}virtual void set_{n}({t} value) = 0;\n"));
             }
         }

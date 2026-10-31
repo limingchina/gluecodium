@@ -219,3 +219,24 @@ fn inheritance_constraints() {
     let mut m = model("package x\ninterface A {}\ninterface B {}\ninterface C : A, B {}\n");
     assert!(resolve(&mut m).unwrap_err().contains("narrow"));
 }
+
+#[test]
+fn review_regressions() {
+    let mut m = model("package x\ninterface A { property p: Int\n}\n");
+    resolve(&mut m).unwrap();
+    assert!(ruscodium::cpp::generate(&m).unwrap().contains("set_p"));
+    for text in [
+        "package x\nstruct char16_t { v: Int }\n",
+        "package x\nclass A { fun A() }\n",
+    ] {
+        let mut m = model(text);
+        resolve(&mut m).unwrap();
+        assert!(ruscodium::cpp::generate(&m).is_err());
+    }
+    let mut m = model("package x\nstruct A { v: List<Void> }\n");
+    assert!(resolve(&mut m).is_err());
+    let mut m = model("package x\ntypealias N = Int?\nstruct A { v: N = null }\n");
+    assert!(resolve(&mut m).is_ok());
+    let mut m = model("package x\ntypealias N = Int?\nclass A { fun f(v: N) fun f(v: N?) }\n");
+    assert!(resolve(&mut m).unwrap_err().contains("duplicate signature"));
+}

@@ -1195,10 +1195,6 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
                 {
                     return Err(error(path, &t.span, "Void is not valid here"));
                 }
-                if t.nullable && d.value.as_deref() == Some("null") {
-                } else if !t.nullable && d.value.as_deref() == Some("null") {
-                    return Err(error(path, &t.span, "null requires a nullable type"));
-                }
             }
             for t in &mut d.parents {
                 ty(t, scope, imports, symbols, path)?;
@@ -1360,10 +1356,57 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
             );
             name.push('>');
         }
-        if t.nullable {
+        if t.nullable && !name.ends_with('?') {
             name.push('?');
         }
         name
+    }
+    fn validate_types(
+        ds: &[Decl],
+        aliases: &BTreeMap<String, TypeRef>,
+        path: &str,
+    ) -> Result<(), String> {
+        fn nested_void(
+            t: &TypeRef,
+            aliases: &BTreeMap<String, TypeRef>,
+            allow_void: bool,
+            path: &str,
+        ) -> Result<(), String> {
+            let name = canonical(t, aliases);
+            if (name == "Void" && !allow_void) || name == "Void?" {
+                return Err(error(path, &t.span, "Void is not valid here"));
+            }
+            for a in &t.args {
+                nested_void(a, aliases, false, path)?
+            }
+            if let Some(alias) = t.resolved.as_ref().and_then(|n| aliases.get(n)) {
+                for a in &alias.args {
+                    nested_void(a, aliases, false, path)?
+                }
+            }
+            Ok(())
+        }
+        for d in ds {
+            if let Some(t) = &d.ty {
+                nested_void(
+                    t,
+                    aliases,
+                    matches!(d.kind.as_str(), "fun" | "lambda" | "typealias"),
+                    path,
+                )?;
+                if d.value.as_deref() == Some("null") && !canonical(t, aliases).ends_with('?') {
+                    return Err(error(path, &t.span, "null requires a nullable type"));
+                }
+            }
+            for p in &d.params {
+                validate_types(std::slice::from_ref(p), aliases, path)?
+            }
+            validate_types(&d.children, aliases, path)?
+        }
+        Ok(())
+    }
+    for f in &model.files {
+        validate_types(&f.declarations, &aliases, &f.path)?
     }
     let mut containers = BTreeMap::new();
     fn container_index(
