@@ -131,6 +131,7 @@ pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
     let mut i = 0;
     let mut line = 1;
     let mut col = 1;
+    let mut previous_cr = false;
     while i < src.len() {
         let start = i;
         let sl = line;
@@ -140,9 +141,9 @@ pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
         let (n, kind) = if c.is_whitespace() {
             (c.len_utf8(), "space")
         } else if c == '#' {
-            (tail.find('\n').unwrap_or(tail.len()), "space")
+            (tail.find(['\n', '\r']).unwrap_or(tail.len()), "space")
         } else if tail.starts_with("//") {
-            (tail.find('\n').unwrap_or(tail.len()), "doc")
+            (tail.find(['\n', '\r']).unwrap_or(tail.len()), "doc")
         } else if tail.starts_with("/*") {
             match tail.find("*/") {
                 Some(n) => (n + 2, "doc"),
@@ -286,12 +287,18 @@ pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
         };
         let text = &src[i..i + n];
         for ch in text.chars() {
-            if ch == '\n' {
+            if ch == '\r' {
                 line += 1;
-                col = 1
+                col = 1;
+            } else if ch == '\n' {
+                if !previous_cr {
+                    line += 1;
+                }
+                col = 1;
             } else {
-                col += 1
+                col += 1;
             }
+            previous_cr = ch == '\r';
         }
         i += n;
         if kind != "space" {
@@ -409,7 +416,15 @@ impl<'a> Parser<'a> {
             "Infinity",
         ];
         if self.t[self.i].kind == "id" && !RESERVED.contains(&self.peek()) {
-            Ok(self.next().trim_matches('`').to_string())
+            let text = self.next();
+            if text.starts_with('`') && text.contains('.') {
+                return Err(error(
+                    self.path,
+                    &self.t[self.i - 1].span,
+                    "quoted identifiers containing dots are not yet supported",
+                ));
+            }
+            Ok(text.trim_matches('`').to_string())
         } else {
             Err(error(self.path, &self.span(), "expected identifier"))
         }

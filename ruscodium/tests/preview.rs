@@ -300,3 +300,27 @@ fn quoted_builtins_and_cpp_guards() {
     resolve(&mut m).unwrap();
     assert!(ruscodium::cpp::generate(&m).is_ok());
 }
+#[test]
+fn numeric_and_cr_newline_edges() {
+    for value in [".5", ".5e+2", "-.5"] {
+        assert!(parse(
+            "x",
+            &format!("package x\nstruct S {{ v: Double = {value} }}\n"),
+            false
+        )
+        .is_ok());
+    }
+    for value in ["1e", "1abc", "1__"] {
+        assert!(parse(
+            "x",
+            &format!("package x\nstruct S {{ v: Double = {value} }}\n"),
+            false
+        )
+        .is_err());
+    }
+    let e = parse("x", "package x\r# comment\rstruct S { v: }\r", false).unwrap_err();
+    assert!(e.contains("x:3:"), "{e}");
+    assert!(parse("x", "package x\nstruct `a.b` { v: Int }\n", false)
+        .unwrap_err()
+        .contains("containing dots"));
+}
