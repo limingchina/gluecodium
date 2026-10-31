@@ -250,12 +250,27 @@ fn inspect(d: &Decl, ctx: &Context, deps: &mut BTreeSet<String>) -> Result<(), S
     }
     if matches!(d.kind.as_str(), "class" | "interface" | "struct") {
         let mut names = BTreeSet::new();
+        let mut functions: BTreeMap<String, BTreeSet<Vec<String>>> = BTreeMap::new();
         for c in &d.children {
             if d.kind == "struct" && c.kind == "fun" && !c.modifiers.iter().any(|m| m == "static") {
                 return Err(format!(
                     "{}: struct instance methods are unsupported",
                     c.name
                 ));
+            }
+            if matches!(c.kind.as_str(), "fun" | "constructor") {
+                if names.contains(&c.name) {
+                    return Err(format!("{}: generated C++ member name collision", c.name));
+                }
+                let args = c
+                    .params
+                    .iter()
+                    .map(|p| ctype(p.ty.as_ref().ok_or("parameter missing type")?, ctx))
+                    .collect::<Result<Vec<_>, String>>()?;
+                if !functions.entry(c.name.clone()).or_default().insert(args) {
+                    return Err(format!("{}: generated C++ signature collision", c.name));
+                }
+                continue;
             }
             let generated: Vec<String> = if c.kind == "property" {
                 let mut v = vec![format!("get_{}", c.name)];
@@ -267,7 +282,7 @@ fn inspect(d: &Decl, ctx: &Context, deps: &mut BTreeSet<String>) -> Result<(), S
                 vec![c.name.clone()]
             };
             for name in generated {
-                if !names.insert(name.clone()) {
+                if functions.contains_key(&name) || !names.insert(name.clone()) {
                     return Err(format!("{name}: generated C++ member name collision"));
                 }
             }

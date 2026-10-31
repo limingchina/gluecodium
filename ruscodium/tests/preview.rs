@@ -324,3 +324,10 @@ fn numeric_and_cr_newline_edges() {
         .unwrap_err()
         .contains("containing dots"));
 }
+#[test]
+fn cpp_function_overloads() {
+    let mut m = model("package x\nclass A { fun f(v: Int) fun f(v: String) }\n");
+    resolve(&mut m).unwrap();
+    let h = ruscodium::cpp::generate(&m).unwrap();
+    assert_eq!(h.matches(" f(").count(), 2);
+}
