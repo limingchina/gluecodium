@@ -50,10 +50,27 @@ its name is registered. This separate list permits an empty filter without
 inventing a predicate result. Every evaluated receiver still needs a matching
 result entry. A null receiver for `resolveName` requires a recorded name entry
 for its resolver and mode, but does not require a fabricated null result.
-Missing entries are errors. These hooks replay externally measured results: the
-runtime does not claim to port `CppNameResolver`, predicates, or sorters. Every
+Missing entries are errors. These hooks replay externally measured results. Every
 computed getter, absent property, hook, and ambient context value must come from
 the caller or a documented native projection, not a fabricated default.
+
+An optional `native_cpp` object selects the bounded native C++ name resolver.
+Its `root_namespace` and `internal_namespace` fields are arrays of ASCII C++
+identifier components, both defaulting to `[]`; unknown options are errors.
+For the older oracle configuration use `{"root_namespace":[],
+"internal_namespace":["internal"]}`. Native requests must omit or empty
+`hooks.names`. Selectors `""`, `"C++"` and `"FQN"` are registered directly;
+the `ref` mode is unsupported. Predicates, sorters and property overlays still
+use the measured replay contract. The public library entry point
+`template::native_cpp::resolve` also resolves one receiver against a `Graph`.
+
+The native slice includes default ASCII C++ naming, qualified declarations,
+primitive and generic types, nullability, aliases, basic literals and accessor
+names, subject to the model facts present in the snapshot. A nested declaration
+requires its actual parent nodes, including their attributes. Missing parents,
+nonempty or unavailable comment content, external descriptors, unsupported
+C++ attributes, complex values and custom rules report errors. This is not a
+complete C++ backend or a replacement for the canonical frontend model.
 
 The runtime parses comments (including Trimou multiline comments), escaped and
 unescaped interpolation (both unescaped as configured upstream), nested and

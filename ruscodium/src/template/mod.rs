@@ -1,5 +1,6 @@
 //! A bounded Trimou-compatible renderer for explicit reference snapshots.
 mod graph;
+pub mod native_cpp;
 mod parser;
 pub use graph::Graph;
 use parser::{expression, Expression};
@@ -33,6 +34,21 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
     graph.validate(&data)?;
     let hooks = request.get("hooks").cloned().unwrap_or_else(|| json!({}));
     validate_hooks(&graph, &hooks)?;
+    let native_cpp = request
+        .get("native_cpp")
+        .map(native_cpp::NativeCppConfig::parse)
+        .transpose()?;
+    if native_cpp.is_some()
+        && hooks
+            .get("names")
+            .and_then(Value::as_array)
+            .is_some_and(|v| !v.is_empty())
+    {
+        return Err("native_cpp cannot be combined with name hooks".into());
+    }
+    let native_cpp = native_cpp
+        .map(|config| native_cpp::NativeCppResolver::new(&graph, config))
+        .transpose()?;
     let root = fs::canonicalize(root.as_ref()).map_err(|e| format!("template root: {e}"))?;
     if !root.is_dir() {
         return Err("template root is not a directory".into());
@@ -45,6 +61,7 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
         root,
         graph,
         hooks,
+        native_cpp,
         definitions: BTreeMap::new(),
         frames: vec![Frame {
             value: data,
@@ -146,6 +163,7 @@ struct Engine {
     root: PathBuf,
     graph: Graph,
     hooks: Value,
+    native_cpp: Option<native_cpp::NativeCppResolver>,
     definitions: BTreeMap<String, Vec<Node>>,
     frames: Vec<Frame>,
     depth: usize,
@@ -356,6 +374,11 @@ impl Engine {
         } else {
             "name".into()
         };
+        if let Some(native) = &self.native_cpp {
+            return native
+                .resolve(&self.graph, &resolver, &mode, &receiver)
+                .map(|result| result.map(Value::String).unwrap_or(Value::Null));
+        }
         if receiver.is_null() {
             let registered = self
                 .hooks
