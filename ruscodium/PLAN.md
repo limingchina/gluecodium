@@ -108,6 +108,11 @@ implementation detail provided the checked-in grammar remains authoritative.
 Treat name rules, options/configuration, output caching, and `Skip`/`EnableIf`
 filtering as explicit compatibility modules, not template-engine side effects.
 
+The user has chosen to keep Mustache. Preserve the original production
+templates unchanged and implement their existing Trimou-compatible syntax,
+helpers, partials and whitespace behavior in Rust. The choice of Rust engine or
+custom compatibility layer remains open; the template format is decided.
+
 ## First implementation milestones
 
 ### M0: establish the migration record
@@ -292,13 +297,15 @@ views and helper contracts rather than assuming `serde_json` lookup reproduces
 Kotlin reflection. Port the name resolvers and configurable name rules together
 with the helper layer.
 
-Keep the template-engine choice open until a small representative spike proves
-it: either retain Mustache with Trimou-compatible helpers and partial behavior,
-or convert to Jinja-style templates with equivalent explicit data views. Test
+Run a small compatibility spike to choose a Rust implementation that renders
+the unchanged Mustache templates with Trimou-compatible helper and partial
+behavior. Evaluate existing Rust engines or a custom compatibility layer within
+that constraint; template conversion is outside the chosen approach. Test
 standalone tags, missing/null values, section context, helper scope, indentation
-from `prefixPartial`, and final newlines. The deciding criterion is maintainable
+from `prefixPartial`, and final newlines. The acceptance criterion is
 byte-for-byte compatibility on existing smoke outputs, including whitespace;
-normalizing generated source or merely compiling it is insufficient.
+normalizing generated source or merely compiling it is insufficient. This
+runtime and compatibility spike remain future work.
 
 Run both generators on the same canonical inputs and options, compare output
 file sets and exact bytes, and expand coverage through all C++ smoke fixtures.
@@ -334,7 +341,7 @@ drop-in replacement claim.
 | Stage | Work remaining after the preview | Required evidence |
 | --- | --- | --- |
 | Canonical boundary | Extend the experimental JVM snapshot to a template-complete canonical schema; native adapter and Rust JSON importer | Golden snapshots for coherent fixtures and completeness/schema/adapter tests |
-| Template compatibility | Choose Mustache/Trimou compatibility or explicit conversion; property views and every helper | Template inventory plus byte-exact helper/whitespace and smoke comparisons |
+| Template compatibility | Preserve original Mustache templates; choose a compatible Rust engine/layer and implement property views and every Trimou helper | Template inventory plus byte-exact helper/whitespace and smoke comparisons |
 | C++ parity | Name-rule files, every C++ attribute, constructors/accessors/equality, constants, external types, `Return`, error categories, runtime helpers, API/internal outputs | Existing C++ golden outputs and functional C++ tests |
 | Runtime and binding core | Common conversion/runtime model, name resolvers, ownership, cache and lifetime contracts | Native conversion and lifetime regression tests |
 | Dart | FFI then Dart source, finalizers, async and ownership semantics | Existing Dart smoke outputs and functional tests |
