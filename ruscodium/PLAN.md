@@ -9,10 +9,10 @@ work for the port under the repository-root `ruscodium/` directory and leave the
 existing implementation usable as a reference.
 
 Planning baseline: commit `2044ae5c73e8b9521fac6dec6cd6133086dd4136`.
-The supplied Claude conversation could not be retrieved in this environment;
-no requirements have been inferred from its unseen contents. Repository code,
-grammar, examples, and tests are the available specification. Incorporate any
-additional requirements from that conversation when they become available.
+The linked Claude page could not be retrieved in this environment. The user
+subsequently supplied its answer as text; that supplied analysis now informs the
+parity strategy below. This does not imply the linked page was inspected.
+Repository code, grammar, examples, and tests remain the compatibility oracle.
 
 ## Findings and scope
 
@@ -22,6 +22,13 @@ There are 345 checked-in `.lime` files (18,471 lines) across smoke tests,
 functional tests, CMake tests, and examples. Gluecodium generates C++ API code,
 Java/Kotlin plus JNI, Swift plus CBridge, and Dart plus FFI. Replacing all of those
 with verified compatibility is a migration, not a single small translation.
+
+The supplied analysis estimates 35–45 thousand lines of Rust and describes
+about 318 templates and 2,500 `resolveName` uses at an older revision. Those are
+planning estimates, not this checkout's inventory or a promised implementation
+size. Its central finding applies here: the difficult part is preserving the
+Trimou/Mustache object-property and helper behavior, name resolution, and exact
+generated whitespace, rather than merely translating Kotlin data classes.
 
 The first executable deliverable is a useful native compiler preview:
 
@@ -34,6 +41,8 @@ The first executable deliverable is a useful native compiler preview:
    types, exercised by compiling and using generated declarations.
 5. Tests against the existing LIME corpus and targeted comparisons against the
    installed JVM implementation where available.
+6. A reproducible static inventory of template property paths, helpers, and
+   partial dependencies to make the subsequent compatibility work concrete.
 
 This first release does **not** claim drop-in Gluecodium compatibility. In
 particular, generating a standalone C++ interface does not imply compatibility
@@ -41,6 +50,12 @@ with Gluecodium's JNI, CBridge, Dart FFI, or runtime ABI. Unsupported backend
 features must produce a diagnostic before any outputs are written, rather than
 silently dropping declarations or changing their meaning. The broader roadmap
 below remains tracked after this deliverable works.
+
+The native preview was already underway when the user supplied the analysis.
+Complete this independently useful milestone, then use the model-export and
+backend-first sequence below for exact parity. The preview's frontend, JSON
+output, and standalone declarations do not substitute for a Kotlin model
+exporter, a canonical schema adapter, or byte-for-byte backend comparisons.
 
 ## Reference sources
 
@@ -83,6 +98,13 @@ Represent declarations and references without reference-counting cycles: use
 stable indices or full symbol paths for resolved targets. Preserve original
 spelling and spans alongside resolved identities. Separate parsing from name
 resolution so files may refer forward or across input boundaries.
+
+Use a static registry of generator traits instead of Java `ServiceLoader`.
+Handwritten recursive descent, optionally with a lexer such as `logos`, avoids
+depending on an immature Rust ANTLR target; lexical-library choice is an
+implementation detail provided the checked-in grammar remains authoritative.
+Treat name rules, options/configuration, output caching, and `Skip`/`EnableIf`
+filtering as explicit compatibility modules, not template-engine side effects.
 
 ## First implementation milestones
 
@@ -149,6 +171,10 @@ declarations, type/literal structure, annotation/documentation metadata, source
 positions, auxiliary status, and resolved symbol identities. Use the same
 library pipeline from the CLI, tests, and generators.
 
+This is the preview's inspectable model format. A canonical Kotlin-export format,
+an adapter to it, and JSON-consuming compatibility generators are separate
+planned work; emitting native JSON alone does not deliver those capabilities.
+
 ### M4: useful, honest C++17 generation
 
 Generate standalone declarations for ordinary classes/interfaces (virtual
@@ -197,16 +223,100 @@ fall within this backend's contract.
 - Run the requested independent review, fix material findings, update tasks and
   compatibility documentation, and commit the tested result.
 
+### M6: map the template compatibility surface
+
+Add `tools/template_surface.py`, tests for its scanner, and a generated
+`TEMPLATE_SURFACE.md` under `ruscodium/`. Scan the checkout's templates rather
+than hardcoding the supplied analysis's counts. Report template-access property
+paths, helper invocations and arguments where statically visible, partials and
+their dependencies, and dynamic constructs that cannot be fully resolved by
+static inspection. Cover the distinctive helpers, including `resolveName`,
+`prefixPartial`, `ifPredicate`, `instanceOf`, `sort`, `filter`, and `set`.
+
+The report is an implementation inventory, not a working template engine or
+proof that every Kotlin reflective access has been reproduced. Keep extraction
+deterministic and test nested sections, quoted arguments, comments and partial
+syntax so the report can guide later typed Rust template views.
+
+## Exact-parity migration after the native preview
+
+The following phases adopt the supplied analysis's backend-first approach.
+They remain planned until their own acceptance evidence exists.
+
+### P0: canonical model export and goldens — deferred
+
+Build a JVM/Kotlin `LimeModel` JSON exporter as migration tooling under
+`ruscodium/`; it may depend on the existing Kotlin implementation. Define and
+version the canonical schema before using it as a compiler boundary. Include
+stable symbol identities, resolved types and references, overloads, attributes,
+documents, auxiliary inputs, and data needed by generator views. Record the
+upstream commit, generator configuration and fixture grouping with each golden.
+Avoid traversing lazy object cycles as arbitrary reflective object graphs.
+
+Capture canonical snapshots for coherent existing smoke fixtures and implement
+an explicit adapter between the preview model and that schema. The exporter's
+availability, the adapter's fidelity, and a Rust JSON importer each require
+tests; none is implied by the existing native JSON emitter. The exporter may
+use the JVM, while the eventual Rust generators must consume snapshots without
+requiring a JVM during normal compilation.
+
+### P1: JSON-consuming C++ compatibility backend — deferred
+
+Implement C++ generation from the canonical snapshots before tying it to Rust
+frontend fidelity. Use the template-surface report to implement typed property
+views and helper contracts rather than assuming `serde_json` lookup reproduces
+Kotlin reflection. Port the name resolvers and configurable name rules together
+with the helper layer.
+
+Keep the template-engine choice open until a small representative spike proves
+it: either retain Mustache with Trimou-compatible helpers and partial behavior,
+or convert to Jinja-style templates with equivalent explicit data views. Test
+standalone tags, missing/null values, section context, helper scope, indentation
+from `prefixPartial`, and final newlines. The deciding criterion is maintainable
+byte-for-byte compatibility on existing smoke outputs, including whitespace;
+normalizing generated source or merely compiling it is insufficient.
+
+Run both generators on the same canonical inputs and options, compare output
+file sets and exact bytes, and expand coverage through all C++ smoke fixtures.
+Keep this compatibility backend visibly distinct from the preview's standalone
+C++17 declaration contract until the C++ runtime and output goldens agree.
+
+### P2: bindings and platform backends — deferred
+
+Port shared conversion, ownership and runtime helpers, then follow dependency
+order: FFI before Dart, CBridge before Swift, and JNI before Java/Kotlin. For
+each pair, first generate from canonical JSON and compare all file bytes against
+the corresponding smoke goldens; then run existing platform functional tests.
+Include configurable naming, filtering/tags, shared/internal source sets and
+runtime lifetime behavior. Source-file similarity alone does not establish
+bridge ABI or ownership compatibility.
+
+### P3: frontend convergence and tooling — deferred
+
+After backend comparisons isolate generation behavior, compare the native
+frontend's adapted canonical models against the Kotlin-export goldens. Complete
+all remaining model semantics, validators, Limedoc behavior and attribute rules.
+The frontend built for the preview supplies a starting point without being
+declared equivalent in advance. Compare negative diagnostics as well as valid
+models, then join the proven frontend and backends into one native pipeline.
+
+Complete options files/configuration, every supported CLI flag, static generator
+selection, `Skip`/`EnableIf`, output caching and stale-file removal, split outputs,
+and build-system integration. Only the resulting full matrix supports a
+drop-in replacement claim.
+
 ## Roadmap to full Gluecodium compatibility
 
 | Stage | Work remaining after the preview | Required evidence |
 | --- | --- | --- |
-| Frontend fidelity | Complete all Kotlin validators, filtering/tags, full attribute semantics, Limedoc references/placeholders, warnings/strict mode | Differential model and diagnostic cases from existing unit tests |
+| Canonical boundary | Kotlin `LimeModel` exporter, versioned canonical schema, native adapter, Rust JSON importer | Golden snapshots for coherent fixtures and schema/adapter tests |
+| Template compatibility | Choose Mustache/Trimou compatibility or explicit conversion; property views and every helper | Template inventory plus byte-exact helper/whitespace and smoke comparisons |
 | C++ parity | Name-rule files, every C++ attribute, constructors/accessors/equality, constants, external types, `Return`, error categories, runtime helpers, API/internal outputs | Existing C++ golden outputs and functional C++ tests |
 | Runtime and binding core | Common conversion/runtime model, name resolvers, ownership, cache and lifetime contracts | Native conversion and lifetime regression tests |
-| Android | Java/Kotlin source and JNI, platform annotations, async decorators, parcelable behavior | Existing Android smoke outputs and functional tests |
-| Apple | Swift source and CBridge, nullable/external/generic/ownership behavior | Existing Swift smoke outputs and platform functional tests |
-| Dart | Dart source, FFI runtime, finalizers, async and ownership semantics | Existing Dart smoke outputs and functional tests |
+| Dart | FFI then Dart source, finalizers, async and ownership semantics | Existing Dart smoke outputs and functional tests |
+| Apple | CBridge then Swift source, nullable/external/generic/ownership behavior | Existing Swift smoke outputs and platform functional tests |
+| Android | JNI then Java/Kotlin source, platform annotations, async decorators, parcelable behavior | Existing Android smoke outputs and functional tests |
+| Frontend fidelity | Complete all Kotlin validators, filtering/tags, full attribute semantics, Limedoc references/placeholders, warnings/strict mode | Canonical-model comparisons and differential diagnostic cases from existing unit tests |
 | Tooling compatibility | Options files, all CLI options, caching/stale-file handling, split outputs, CMake/Gradle integration and distribution | Existing launcher/build integration tests and packaging checks |
 | Cutover | Define compatibility guarantees, publish migration guide, performance measurement and release policy | Full supported-platform parity matrix before replacing the JVM tool |
 
