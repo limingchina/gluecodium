@@ -1,0 +1,109 @@
+native.matrix.Shade|Shade|::outer::api::native::matrix::Shade
+native.matrix.Shade.RED|RED|::outer::api::native::matrix::Shade::RED
+native.matrix.Shade.BLUE|BLUE|::outer::api::native::matrix::Shade::BLUE
+native.matrix.Labels|Labels|::outer::api::native::matrix::Labels
+native.matrix.Flag|Flag|::outer::api::native::matrix::Flag
+native.matrix.ServiceAlias|ServiceAlias|::outer::api::native::matrix::ServiceAlias
+native.matrix.InterfaceAlias|InterfaceAlias|::outer::api::native::matrix::InterfaceAlias
+native.matrix.Service|RenamedService|::outer::api::native::matrix::RenamedService
+native.matrix.Service.NestedThing|RenamedNested|::outer::api::native::matrix::RenamedService::RenamedNested
+native.matrix.Service.NestedThing.someURLValue|EXPLICIT_FIELD|::outer::api::native::matrix::RenamedService::RenamedNested::EXPLICIT_FIELD
+native.matrix.Service.fetchURL|fetch_u_r_l|::outer::api::native::matrix::RenamedService::fetch_u_r_l
+native.matrix.Service.SOME_COUNT|SOME_COUNT|::outer::api::native::matrix::RenamedService::SOME_COUNT
+native.matrix.Data|Data|::outer::api::native::matrix::Data
+native.matrix.Data.HTTPServer|h_t_t_p_server|::outer::api::native::matrix::Data::h_t_t_p_server
+native.matrix.Data.httpURL2|http_u_r_l2|::outer::api::native::matrix::Data::http_u_r_l2
+native.matrix.Data.leading__underscores|leading__underscores|::outer::api::native::matrix::Data::leading__underscores
+native.matrix.Worker|Worker|::outer::api::native::matrix::Worker
+native.matrix.Data.HTTPServer|int32_t
+native.matrix.Data.URL_value|::std::string
+native.matrix.Data.blobValue|::std::shared_ptr< ::std::vector< uint8_t > >
+native.matrix.Data.byteValue|int8_t
+native.matrix.Data.classAlias|::std::shared_ptr< ::outer::api::native::matrix::ServiceAlias >
+native.matrix.Data.classValue|::std::shared_ptr< ::outer::api::native::matrix::RenamedService >
+native.matrix.Data.customDate|custom::Date
+native.matrix.Data.customString|const char*
+native.matrix.Data.dateValue|::std::chrono::system_clock::time_point
+native.matrix.Data.doubleValue|double
+native.matrix.Data.durationValue|::std::chrono::seconds
+native.matrix.Data.enumMap|::std::unordered_map< ::outer::api::native::matrix::Shade, ::std::string, ::detail::impl::hash< ::outer::api::native::matrix::Shade > >
+native.matrix.Data.floatValue|float
+native.matrix.Data.httpURL2|int32_t
+native.matrix.Data.intValue|int32_t
+native.matrix.Data.interfaceAlias|::std::shared_ptr< ::outer::api::native::matrix::InterfaceAlias >
+native.matrix.Data.isActive|bool
+native.matrix.Data.isReady|::outer::api::native::matrix::Flag
+native.matrix.Data.leading__underscores|int32_t
+native.matrix.Data.listValue|::std::vector< ::std::string >
+native.matrix.Data.localeValue|::detail::impl::Locale
+native.matrix.Data.longValue|int64_t
+native.matrix.Data.mapValue|::std::unordered_map< ::std::string, int32_t >
+native.matrix.Data.optAlias|::detail::impl::optional< ::outer::api::native::matrix::Labels >
+native.matrix.Data.optClass|::std::shared_ptr< ::outer::api::native::matrix::RenamedService >
+native.matrix.Data.optValue|::detail::impl::optional< int32_t >
+native.matrix.Data.optimized|::std::vector< ::std::shared_ptr< ::std::string > >
+native.matrix.Data.setValue|::std::unordered_set< ::outer::api::native::matrix::Shade, ::detail::impl::hash< ::outer::api::native::matrix::Shade > >
+native.matrix.Data.shortValue|int16_t
+native.matrix.Data.ubyteValue|uint8_t
+native.matrix.Data.uintValue|uint32_t
+native.matrix.Data.ulongValue|uint64_t
+native.matrix.Data.ushortValue|uint16_t
+constant-value-SOME_COUNT|42
+constant-value-FRACTION|2.5f
+constant-value-TEXT|"hello"
+constant-value-ENABLED|true
+constant-value-FAVORITE|::outer::api::native::matrix::Shade::BLUE
+basic-type-id-VOID|void
+basic-type-id-INT8|int8_t
+basic-type-id-UINT8|uint8_t
+basic-type-id-INT16|int16_t
+basic-type-id-UINT16|uint16_t
+basic-type-id-INT32|int32_t
+basic-type-id-UINT32|uint32_t
+basic-type-id-INT64|int64_t
+basic-type-id-UINT64|uint64_t
+basic-type-id-FLOAT|float
+basic-type-id-DOUBLE|double
+basic-type-id-BOOLEAN|bool
+basic-type-id-STRING|::std::string
+basic-type-id-BLOB|::std::shared_ptr< ::std::vector< uint8_t > >
+basic-type-id-DATE|::std::chrono::system_clock::time_point
+basic-type-id-DURATION|::std::chrono::seconds
+basic-type-id-LOCALE|::detail::impl::Locale
+void-return|void
+native.matrix.Data.HTTPServer|get_h_t_t_p_server|set_h_t_t_p_server
+native.matrix.Data.URL_value|get_url_value|set_url_value
+native.matrix.Data.blobValue|get_blob_value|set_blob_value
+native.matrix.Data.byteValue|get_byte_value|set_byte_value
+native.matrix.Data.classAlias|get_class_alias|set_class_alias
+native.matrix.Data.classValue|get_class_value|set_class_value
+native.matrix.Data.customDate|get_custom_date|set_custom_date
+native.matrix.Data.customString|get_custom_string|set_custom_string
+native.matrix.Data.dateValue|get_date_value|set_date_value
+native.matrix.Data.doubleValue|get_double_value|set_double_value
+native.matrix.Data.durationValue|get_duration_value|set_duration_value
+native.matrix.Data.enumMap|get_enum_map|set_enum_map
+native.matrix.Data.floatValue|get_float_value|set_float_value
+native.matrix.Data.httpURL2|get_http_u_r_l2|set_http_u_r_l2
+native.matrix.Data.intValue|get_int_value|set_int_value
+native.matrix.Data.interfaceAlias|get_interface_alias|set_interface_alias
+native.matrix.Data.isActive|is_is_active|set_is_active
+native.matrix.Data.isReady|is_is_ready|set_is_ready
+native.matrix.Data.leading__underscores|get_leading__underscores|set_leading__underscores
+native.matrix.Data.listValue|get_list_value|set_list_value
+native.matrix.Data.localeValue|get_locale_value|set_locale_value
+native.matrix.Data.longValue|get_long_value|set_long_value
+native.matrix.Data.mapValue|get_map_value|set_map_value
+native.matrix.Data.optAlias|get_opt_alias|set_opt_alias
+native.matrix.Data.optClass|get_opt_class|set_opt_class
+native.matrix.Data.optValue|get_opt_value|set_opt_value
+native.matrix.Data.optimized|get_optimized|set_optimized
+native.matrix.Data.setValue|get_set_value|set_set_value
+native.matrix.Data.shortValue|get_short_value|set_short_value
+native.matrix.Data.ubyteValue|get_ubyte_value|set_ubyte_value
+native.matrix.Data.uintValue|get_uint_value|set_uint_value
+native.matrix.Data.ulongValue|get_ulong_value|set_ulong_value
+native.matrix.Data.ushortValue|get_ushort_value|set_ushort_value
+native.matrix.Service.isReady|is_is_ready|set_is_ready
+native.matrix.Service.customValue|read_it|write_it
+native.matrix.Plain.flag||

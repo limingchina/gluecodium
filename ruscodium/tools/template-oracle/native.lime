@@ -1,0 +1,79 @@
+package native.matrix
+
+enum Shade {
+    RED,
+    BLUE = 7
+}
+
+typealias Labels = List<String>
+typealias Flag = Boolean
+typealias ServiceAlias = Service
+typealias InterfaceAlias = Worker
+
+interface Worker {
+    fun run(): Void
+}
+
+@Cpp("RenamedService")
+class Service {
+    @Cpp("RenamedNested")
+    struct NestedThing {
+        @Cpp("EXPLICIT_FIELD")
+        someURLValue: Int
+    }
+    const SOME_COUNT: Int = 42
+    const FRACTION: Float = 2.5
+    const TEXT: String = "hello"
+    const ENABLED: Boolean = true
+    const FAVORITE: Shade = Shade.BLUE
+    @Cpp(Const)
+    fun fetchURL(first_value: String, count: Int): Labels
+    property isReady: Flag { get set }
+    property customValue: Int {
+        @Cpp("read_it")
+        get
+        @Cpp("write_it")
+        set
+    }
+}
+
+@Cpp(Accessors)
+struct Data {
+    isActive: Boolean
+    isReady: Flag
+    URL_value: String
+    HTTPServer: Int
+    httpURL2: Int
+    leading__underscores: Int
+    byteValue: Byte
+    ubyteValue: UByte
+    shortValue: Short
+    ushortValue: UShort
+    intValue: Int
+    uintValue: UInt
+    longValue: Long
+    ulongValue: ULong
+    floatValue: Float
+    doubleValue: Double
+    blobValue: Blob
+    dateValue: Date
+    durationValue: Duration
+    localeValue: Locale
+    listValue: List<String>
+    mapValue: Map<String, Int>
+    enumMap: Map<Shade, String>
+    setValue: Set<Shade>
+    optValue: Int?
+    optAlias: Labels?
+    classValue: Service
+    optClass: Service?
+    classAlias: ServiceAlias?
+    interfaceAlias: InterfaceAlias?
+    customString: @Cpp(Type = "const char*") String
+    customDate: @Cpp(Type = "custom::Date") Date
+    optimized: @Optimized List<String>
+}
+
+struct Plain {
+    flag: Boolean
+}

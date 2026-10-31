@@ -1,0 +1,6 @@
+enum class Shade {
+    RED,
+    BLUE = 7
+};
+
+

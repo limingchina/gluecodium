@@ -1,0 +1,4 @@
+{{#each named}}{{label}}|{{resolveName value}}|{{resolveName value "FQN"}}
+{{/each}}{{#each types}}{{label}}|{{resolveName value}}
+{{/each}}{{#each accessors}}{{label}}|{{resolveName value "C++" "getter"}}|{{resolveName value "C++" "setter"}}
+{{/each}}

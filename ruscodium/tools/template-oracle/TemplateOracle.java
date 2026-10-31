@@ -109,12 +109,15 @@ public final class TemplateOracle {
         modelFixture(dir, model, element, element, caseName, template);
     }
     private static void modelFixture(Path dir, LimeModel model, Object element, Object snapshotRoot, String caseName, String template) throws Exception {
+        modelFixture(dir, model, element, snapshotRoot, caseName, template, List.of(), List.of("internal"));
+    }
+    private static void modelFixture(Path dir, LimeModel model, Object element, Object snapshotRoot, String caseName, String template, List<String> rootNamespace, List<String> internalNamespace) throws Exception {
         ReferenceModel graph = new ReferenceModel();
         Object data = graph.value(element, "data");
         var opts = new GeneratorOptions();
-        var rules = new CppNameRules(List.of(), NameRuleSetLoaderKt.nameRuleSetFromConfig(opts.getCppNameRules()));
-        var cache = new CppNameCache(List.of(), model.getReferenceMap(), rules);
-        var original = new CppNameResolver(model.getReferenceMap(), List.of("internal"), cache,
+        var rules = new CppNameRules(rootNamespace, NameRuleSetLoaderKt.nameRuleSetFromConfig(opts.getCppNameRules()));
+        var cache = new CppNameCache(rootNamespace, model.getReferenceMap(), rules);
+        var original = new CppNameResolver(model.getReferenceMap(), internalNamespace, cache,
             new LimeLogger(Logger.getLogger("template-oracle"), model.getFileNameMap()), new DoxygenCommentsProcessor(false), false, false);
         var full = new CppFullNameResolver(cache);
         var names = new ArrayList<Object>();
@@ -195,6 +198,44 @@ public final class TemplateOracle {
         negativeCases();
         LimeModel model = new LimeBasedLimeModelLoader().loadModel(
             List.of(Path.of("ruscodium/tools/template-oracle/fixture.lime").toAbsolutePath().toString()), List.of(), Map.of());
+        LimeModel nativeModel = new LimeBasedLimeModelLoader().loadModel(
+            List.of(Path.of("ruscodium/tools/template-oracle/native.lime").toAbsolutePath().toString()), List.of(), Map.of());
+        var refs = nativeModel.getReferenceMap();
+        for (var entry : Map.of("native-enumeration", "native.matrix.Shade", "native-alias", "native.matrix.Labels",
+                "native-function", "native.matrix.Service.fetchURL", "native-return", "native.matrix.Service.fetchURL").entrySet()) {
+            String template = entry.getKey().equals("native-enumeration") ? "cpp/CppEnumeration" :
+                entry.getKey().equals("native-alias") ? "cpp/CppTypeAlias" :
+                entry.getKey().equals("native-function") ? "cpp/CppFunctionSignature" : "cpp/CppReturnType";
+            Object root = Objects.requireNonNull(refs.get(entry.getValue()), entry.getValue());
+            modelFixture(out, nativeModel, root, nativeModel, entry.getKey(), template, List.of(), List.of());
+        }
+        List<Object> named = new ArrayList<>(), types = new ArrayList<>(), accessors = new ArrayList<>();
+        for (String key : List.of("native.matrix.Shade", "native.matrix.Shade.RED", "native.matrix.Shade.BLUE",
+                "native.matrix.Labels", "native.matrix.Flag", "native.matrix.ServiceAlias", "native.matrix.InterfaceAlias",
+                "native.matrix.Service", "native.matrix.Service.NestedThing", "native.matrix.Service.NestedThing.someURLValue",
+                "native.matrix.Service.fetchURL", "native.matrix.Service.SOME_COUNT", "native.matrix.Data", "native.matrix.Data.HTTPServer", "native.matrix.Data.httpURL2", "native.matrix.Data.leading__underscores", "native.matrix.Worker")) {
+            named.add(map("label", key, "value", Objects.requireNonNull(refs.get(key), key)));
+        }
+        for (var entry : new TreeMap<>(refs).entrySet()) {
+            if (entry.getKey().startsWith("native.matrix.Data.") && entry.getValue() instanceof LimeField) {
+                LimeField field = (LimeField)entry.getValue();
+                types.add(map("label", entry.getKey(), "value", field.getTypeRef()));
+                accessors.add(map("label", entry.getKey(), "value", field));
+            }
+        }
+        for (String key : List.of("native.matrix.Service.isReady", "native.matrix.Service.customValue"))
+            accessors.add(map("label", key, "value", Objects.requireNonNull(refs.get(key), key)));
+        accessors.add(map("label", "native.matrix.Plain.flag", "value", refs.get("native.matrix.Plain.flag")));
+        for (String key : List.of("SOME_COUNT", "FRACTION", "TEXT", "ENABLED", "FAVORITE")) {
+            LimeConstant constant = (LimeConstant)Objects.requireNonNull(refs.get("native.matrix.Service." + key));
+            types.add(map("label", "constant-value-" + key, "value", constant.getValue()));
+        }
+        for (LimeBasicType.TypeId typeId : LimeBasicType.TypeId.values())
+            types.add(map("label", "basic-type-id-" + typeId.name(), "value", typeId));
+        LimeFunction run = (LimeFunction)Objects.requireNonNull(refs.get("native.matrix.Worker.run"));
+        types.add(map("label", "void-return", "value", run.getReturnType()));
+        modelFixture(out, nativeModel, map("named", named, "types", types, "accessors", accessors), nativeModel,
+            "native-matrix", "oracle/native-names", List.of("outer", "api"), List.of("detail", "impl"));
         emptyFilterFixture(out, model);
         modelFixture(out, model, model.getReferenceMap().get("oracle.Color"), "cpp-enumeration", "cpp/CppEnumeration");
         modelFixture(out, model, model.getReferenceMap().get("oracle.Labels"), "cpp-alias", "cpp/CppTypeAlias");

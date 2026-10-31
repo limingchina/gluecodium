@@ -14,7 +14,7 @@ ruscodium/tools/template-oracle/run
 
 `check` first compares the complete set of 315 templates inside the installed
 Gluecodium jar to the corresponding source files, then runs negative checks,
-renders 29 cases into a temporary directory and compares every request and
+renders 34 cases into a temporary directory and compares every request and
 output byte. `run` renders every
 case and constructs every request in memory before writing any fixture. A
 render or graph-export failure therefore does not replace a subset of the
@@ -103,3 +103,34 @@ these fixtures demonstrates a bounded renderer/view contract, not an
 implementation of C++ name resolution, complete model projections, generated
 file parity, or ABI parity. Full generator ambient context, additional selector modes and broader model
 shapes remain future coverage.
+
+
+## Native C++ name profile
+
+The five `native-*` fixture pairs were captured from the real JVM loader and
+resolver using [native.lime](native.lime), the same installed jar and JDK as
+the original fixtures, on the M8 implementation checkout based on commit
+`1b456d4a2`. Their snapshot roots are the whole actual `LimeModel`; `data`
+retains the selected object or matrix for rendering. They retain the JVM's
+recorded name calls in `hooks.names` for comparison. A native render test
+must remove those calls and add `native_cpp` with the corresponding settings:
+
+| Fixtures | `root_namespace` | `internal_namespace` |
+| --- | --- | --- |
+| `native-enumeration`, `native-alias`, `native-function`, `native-return` | `[]` | `[]` |
+| `native-matrix` | `["outer", "api"]` | `["detail", "impl"]` |
+
+The first four use the unchanged production templates. The input deliberately
+has no comments, but every `isEmpty` overlay is obtained from a real JVM model
+getter. The matrix uses the tool-owned `oracle/native-names` template to record
+individual resolver calls for declarations, qualification, type references,
+primitive type IDs, literals, constant references, field/property accessors,
+null accessor results, aliases, nullable types, generic types and attributes.
+Its renamed enclosing class and nested struct ensure fully qualified names use
+actual parent attributes. It also captures mixed acronym and underscore cases.
+The recorded matrix has 162 calls and the four production fixtures have 13;
+predicates and sorters, where called, remain explicitly recorded JVM hooks.
+The matrix config deliberately exercises nonempty root and internal namespaces;
+the production fixtures use the actual `GeneratorOptions` empty defaults.
+These records establish a bounded differential surface, not whole-generator
+parity or support for nonempty comment processing.
