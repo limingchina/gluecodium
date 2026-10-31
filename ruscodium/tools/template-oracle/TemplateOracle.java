@@ -111,6 +111,10 @@ public final class TemplateOracle {
         modelFixture(out, model, model.getReferenceMap().get("oracle.Info.status"), "name-arguments", "oracle/name-arguments");
         fixture(out, "adjacent-comment", "oracle/adjacent-comment", map("x", false, "y", false));
         fixture(out, "adjacent-sections", "oracle/adjacent-sections", map("x", false, "y", false));
+        fixture(out, "join-partial", "oracle/join-partial", map("outer", "O",
+            "entries", List.of(map("name", "A"), map("name", "B")), "single", map("name", "C")));
+        fixture(out, "eval", "oracle/eval", map("key", "chosen", "absent", "missing",
+            "lookup", map("chosen", map("name", "selected"))));
         fixture(out, "truth", "oracle/truth", map("zero", 0, "one", 1, "no", false,
             "emptyString", "", "emptyMap", map(), "nil", null));
         fixture(out, "scope", "oracle/scope", map("name", "outer", "items", new ArrayList<>(List.of("a", "b"))));

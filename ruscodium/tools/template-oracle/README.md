@@ -45,7 +45,8 @@ outer context is supplied, so the throwing return example intentionally has
 an empty `internalNamespace` and emits `::Return`. `export-default` and
 `export-empty` provide plain map contexts. The helper cases measure truth,
 context/set, iteration, inline and named partials, indentation, prefixes,
-join, escaping, missing values and adjacent standalone tags.
+join, joinPartial, dynamic eval, escaping, missing values and adjacent standalone
+tags.
 
 Each model request embeds the existing version-1 reference snapshot. Node IDs
 are assigned by identity before capturing calls. The oracle wraps the actual

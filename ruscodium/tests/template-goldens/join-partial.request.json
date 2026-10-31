@@ -1,0 +1,1 @@
+{"schema":"gluecodium.template.render-request","version":1,"template":"oracle/join-partial","data":{"outer":"O","entries":[{"name":"A"},{"name":"B"}],"single":{"name":"C"}},"property_overlays":{},"hooks":{"names":[],"predicates":[],"sorters":[]}}
