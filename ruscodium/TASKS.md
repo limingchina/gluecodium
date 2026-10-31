@@ -139,13 +139,58 @@ The complete canonical adapter and C++ backend remain open.
 - [x] Update README/review/evidence/checklist to the delivered scope, commit
   logical increments and push the authorized branch after verification.
 
+## M8 / P1a.1: strict native C++ naming
+
+This is the next bounded increment in
+[PLAN.md](PLAN.md#m8--p1a1-strict-native-c-naming--next-bounded-increment).
+It keeps all 315 production templates unchanged and leaves predicates/sorters
+at their measured replay boundary.
+
+- [x] Inspect current renderer/graph/oracle contracts and Kotlin
+  `CppNameResolver`, `CppFullNameResolver`, `CppNameCache`, `NameRules`,
+  `NameHelper` and default C++ naming configuration.
+- [x] Define explicit `native_cpp` opt-in, namespace options, supported native
+  scope, strict rejection/failure behavior, ownership and acceptance evidence.
+- [x] Commit this plan/checklist before implementation changes.
+- [ ] Add validated native config and separate resolver dispatch; retain legacy
+  replay when omitted, reject nonempty `hooks.names` when enabled, and never
+  fall back to captured name results.
+- [ ] Index real model declarations/parents and port default ASCII name rules,
+  declaration names and FQN semantics, including namespace configuration.
+  Reject incomplete traversable parent context instead of guessing.
+- [ ] Port required built-in, enum/alias, return/type-reference, nullable,
+  class/interface, list/map/set and hash spellings; test alias-aware actual-type
+  behavior and bounded cycle/missing-fact errors.
+- [ ] Port the measured ordinary literal/constant-reference matrix and
+  property/field getter/setter rules, including boolean aliases and proven
+  `@Cpp(Accessors)` parent context.
+- [ ] Honor and JVM-test supported `@Cpp(Name)`, accessor names, `@Cpp(Type)`
+  and `@Optimized` behavior; reject unsupported naming attributes, externals,
+  nonempty comments, complex defaults and custom naming files before writes.
+- [ ] Inventory all existing recorded name cells; compare every supported cell
+  natively with recordings used only as expectations, and assert/report exact
+  unsupported cases. Extend JVM-derived parent context where old snapshots
+  cannot prove a supported result.
+- [ ] Add reproducible comment-free JVM cases rendering the four unchanged
+  real C++ templates and partials with no name hooks, including function
+  attributes; compare exact bytes and preserve the original replay fixtures.
+- [ ] Expand independent JVM name cells for namespace/type/container/alias/
+  accessor/attribute cases beyond the existing recordings; retain provenance.
+- [ ] Verify mixed-mode/config/selector/missing-context/unsupported/cycle
+  failures preserve existing outputs and emit no partial stdout.
+- [ ] Pass formatting, offline Clippy, Cargo and existing Python/reference-model
+  checks, JVM oracle reproduction, unchanged-template checks and retained
+  preview corpus/C++ consumer coverage.
+- [ ] Obtain independent Sol 6.1 xhigh review, fix material findings, update
+  scope/evidence/docs, commit logical increments and push the authorized branch.
+
 ## Deferred full-parity work
 
 - [ ] Complete every upstream semantic validator, filters/tags, documentation
   parser and warning/strict modes.
 - [ ] Exact C++ output/runtime/name rules and existing C++ functional parity.
-- [ ] Port the C++ name resolver, predicates and sorters natively; current
-  template requests replay externally captured results.
+- [ ] Complete native C++ resolver/name-rule coverage beyond M8 and port
+  predicates/sorters; legacy template requests still replay captured results.
 - [ ] Java/Kotlin plus JNI and Android runtime parity.
 - [ ] Swift plus CBridge and Apple runtime parity.
 - [ ] Dart plus FFI and Dart runtime parity.
