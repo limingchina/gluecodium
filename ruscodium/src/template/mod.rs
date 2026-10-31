@@ -58,8 +58,24 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
 fn validate_hooks(graph: &Graph, hooks: &Value) -> Result<(), String> {
     let object = hooks.as_object().ok_or("hooks must be an object")?;
     for category in object.keys() {
-        if !["names", "predicates", "sorters"].contains(&category.as_str()) {
+        if !["names", "predicates", "sorters", "registered_predicates"].contains(&category.as_str())
+        {
             return Err(format!("unsupported hook category {category}"));
+        }
+    }
+    if let Some(names) = object.get("registered_predicates") {
+        let mut seen = std::collections::BTreeSet::new();
+        for name in names
+            .as_array()
+            .ok_or("hooks.registered_predicates must be an array")?
+        {
+            let name = name
+                .as_str()
+                .filter(|s| !s.is_empty())
+                .ok_or("invalid registered predicate name")?;
+            if !seen.insert(name) {
+                return Err(format!("duplicate registered predicate {name}"));
+            }
         }
     }
     for category in ["names", "predicates", "sorters"] {
@@ -327,21 +343,37 @@ impl Engine {
             [v] => (v.clone(), String::new(), String::from("name")),
             [v, key, rest @ ..] => (
                 v.clone(),
-                key.as_str().unwrap_or("").to_string(),
+                self.string_value(key)?,
                 rest.first()
-                    .and_then(Value::as_str)
-                    .unwrap_or("name")
+                    .map(|v| self.string_value(v))
+                    .transpose()?
+                    .unwrap_or_else(|| "name".to_string())
                     .to_lowercase(),
             ),
         };
-        if receiver.is_null() {
-            return Ok(Value::Null);
-        }
         let mode = if ["getter", "setter", "ref"].contains(&mode.as_str()) {
             mode
         } else {
             "name".into()
         };
+        if receiver.is_null() {
+            let registered = self
+                .hooks
+                .get("names")
+                .and_then(Value::as_array)
+                .is_some_and(|entries| {
+                    entries.iter().any(|entry| {
+                        entry.get("resolver").and_then(Value::as_str) == Some(&resolver)
+                            && entry.get("mode").and_then(Value::as_str) == Some(&mode)
+                    })
+                });
+            if !registered {
+                return Err(format!(
+                    "missing replay name resolver registration {resolver}/{mode}"
+                ));
+            }
+            return Ok(Value::Null);
+        }
         self.hook(
             "names",
             |v| {
@@ -364,17 +396,42 @@ impl Engine {
         .as_bool()
         .ok_or_else(|| format!("predicate {name} result must be boolean"))
     }
+    fn require_predicate(&self, name: &str) -> Result<(), String> {
+        let registered = self
+            .hooks
+            .get("registered_predicates")
+            .and_then(Value::as_array)
+            .is_some_and(|values| values.iter().any(|v| v.as_str() == Some(name)))
+            || self
+                .hooks
+                .get("predicates")
+                .and_then(Value::as_array)
+                .is_some_and(|values| {
+                    values
+                        .iter()
+                        .any(|v| v.get("name").and_then(Value::as_str) == Some(name))
+                });
+        if !registered {
+            return Err(format!("missing replay predicate registration {name}"));
+        }
+        Ok(())
+    }
     fn eval_path(&self, args: &[Value]) -> Result<Value, String> {
         if args.is_empty() || args.iter().any(Value::is_null) {
             return Ok(Value::Null);
         }
-        let mut path = self.string_value(&args[0])?;
+        let path = self.string_value(&args[0])?;
+        let mut value = self.lookup(&path)?;
         for arg in &args[1..] {
-            path.push('[');
-            path.push_str(&self.string_value(arg)?);
-            path.push(']');
+            if value.is_null() {
+                return Ok(Value::Null);
+            }
+            value = self
+                .graph
+                .property(&value, &self.string_value(arg)?)?
+                .unwrap_or(Value::Null);
         }
-        self.lookup(&path)
+        Ok(value)
     }
     fn string_value(&self, value: &Value) -> Result<String, String> {
         match value {
@@ -406,12 +463,18 @@ impl Engine {
                     return Ok(String::new());
                 }
                 let value = if e.name == "prefixPartial" {
-                    self.partial(&display(&args[0]))?
+                    self.partial(&self.string_value(&args[0])?)?
                 } else {
                     self.string_value(&args[0])?
                 };
-                let prefix = args.get(1).map(display).unwrap_or_default();
-                let skip = self.hash(&e, "skipFirstLine", "false")? == "true";
+                let prefix = args
+                    .get(1)
+                    .map(|v| self.string_value(v))
+                    .transpose()?
+                    .unwrap_or_default();
+                let skip = self
+                    .hash(&e, "skipFirstLine", "false")?
+                    .eq_ignore_ascii_case("true");
                 let value = value.replace("\r\n", "\n").replace('\r', "\n");
                 Ok(value
                     .split('\n')
@@ -428,6 +491,9 @@ impl Engine {
                 if args.len() < 2 {
                     return Ok(String::new());
                 }
+                if args[0].is_null() || args[1].is_null() {
+                    return Err("joinPartial requires non-null collection and partial name".into());
+                }
                 let values = args[0]
                     .as_array()
                     .cloned()
@@ -438,11 +504,17 @@ impl Engine {
                         value: v,
                         locals: Map::new(),
                     });
-                    let item = self.partial(&display(&args[1]));
+                    let item = self.partial(&self.string_value(&args[1])?);
                     self.frames.pop();
                     out.push(item?);
                 }
-                Ok(out.join(&args.get(2).map(display).unwrap_or_default()))
+                Ok(out.join(
+                    &args
+                        .get(2)
+                        .map(|v| self.string_value(v))
+                        .transpose()?
+                        .unwrap_or_default(),
+                ))
             }
             "join" => {
                 if e.named.contains_key("lambda") {
@@ -467,9 +539,12 @@ impl Engine {
             }
             "include" => {
                 let name = args.first().ok_or("include expects partial name")?;
-                self.partial(&display(name))
+                self.partial(&self.string_value(name)?)
             }
             "capitalize" => {
+                if args.first().is_some_and(Value::is_null) {
+                    return Err("capitalize requires a non-null value".into());
+                }
                 let s = args
                     .first()
                     .map(|v| self.string_value(v))
@@ -489,6 +564,9 @@ impl Engine {
                 }
             }
             "escape" => {
+                if args.first().is_some_and(Value::is_null) {
+                    return Err("escape requires a non-null value".into());
+                }
                 let s = args
                     .first()
                     .map(|v| self.string_value(v))
@@ -501,7 +579,9 @@ impl Engine {
                     .replace('\t', "\\t")
                     .replace('\u{8}', "\\b"))
             }
-            _ if e.args.is_empty() && e.named.is_empty() => self.string_value(&self.eval(&e.name)?),
+            _ if e.args.is_empty() && e.named.is_empty() => {
+                self.string_value(&self.lookup(&e.name)?)
+            }
             _ => Err(format!("unsupported helper {}", e.name)),
         }
     }
@@ -521,7 +601,7 @@ impl Engine {
             check_hash(&e, allowed)?;
         }
         if inverted {
-            let value = self.eval(&e.name)?;
+            let value = self.lookup(&e.name)?;
             return if !truth(&value) {
                 self.nodes(body)
             } else {
@@ -529,6 +609,9 @@ impl Engine {
             };
         }
         match e.name.as_str() {
+            "prefix" | "prefixPartial" | "joinPartial" | "capitalize" | "escape" => {
+                self.value(input)
+            }
             "if" | "unless" => {
                 let logic = self.hash(&e, "logic", if e.name == "if" { "and" } else { "or" })?;
                 let matching = |v: &Value| helper_truth(v) == (e.name == "if");
@@ -561,7 +644,7 @@ impl Engine {
                     .collect::<Result<Vec<_>, _>>()?
                     .join(&delimiter);
                 let mut locals = Map::new();
-                locals.insert(display(key), Value::String(value));
+                locals.insert(self.string_value(key)?, Value::String(value));
                 self.push(Value::Object(locals), Map::new(), body)
             }
             "resolveName" => {
@@ -575,9 +658,10 @@ impl Engine {
             "ifPredicate" | "unlessPredicate" => {
                 let (receiver, name) = match args.as_slice() {
                     [Value::String(name), ..] => (self.current().clone(), name.clone()),
-                    [v, name, ..] => (v.clone(), display(name)),
+                    [v, name, ..] => (v.clone(), self.string_value(name)?),
                     _ => return Err(format!("{} requires a predicate name", e.name)),
                 };
+                self.require_predicate(&name)?;
                 if receiver.is_null() {
                     return Ok(String::new());
                 }
@@ -595,7 +679,7 @@ impl Engine {
                     .graph
                     .class(&args[0])
                     .ok_or("instanceOf requires a model or enum value")?;
-                if class.ends_with(&display(&args[1])) == (e.name == "instanceOf") {
+                if class.ends_with(&self.string_value(&args[1])?) == (e.name == "instanceOf") {
                     self.nodes(body)
                 } else {
                     Ok(String::new())
@@ -615,7 +699,12 @@ impl Engine {
                 }
             }
             "each" => {
-                if args.iter().any(|v| !v.is_array()) {
+                let args = if args.is_empty() {
+                    vec![self.current().clone()]
+                } else {
+                    args
+                };
+                if args.iter().any(|v| !v.is_array() && !v.is_null()) {
                     return Err("each requires iterable arguments".into());
                 }
                 let values: Vec<_> = args
@@ -644,13 +733,22 @@ impl Engine {
                     &format!("sorter {sorter}"),
                 )?;
                 let sorted = sorted.as_array().ok_or("sorter result must be a list")?;
-                self.iterate(sorted, body)
+                let mut output = String::new();
+                for value in sorted {
+                    let item = self.push(value.clone(), Map::new(), body)?;
+                    if output.len().saturating_add(item.len()) > MAX_OUTPUT {
+                        return Err("render output exceeds size limit".into());
+                    }
+                    output.push_str(&item);
+                }
+                Ok(output)
             }
             "filter" => {
                 let predicate = self.hash(&e, "predicate", "")?;
                 if predicate.is_empty() {
                     return Err("filter requires predicate".into());
                 }
+                self.require_predicate(&predicate)?;
                 let mut values = Vec::new();
                 for v in args
                     .iter()
@@ -717,7 +815,7 @@ impl Engine {
                 Err(format!("unsupported helper {}", e.name))
             }
             _ => {
-                let value = self.eval(&e.name)?;
+                let value = self.lookup(&e.name)?;
                 match &value {
                     Value::Array(a) => self.iterate(a, body),
                     _ if truth(&value) => self.push(value, Map::new(), body),

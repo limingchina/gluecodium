@@ -188,14 +188,8 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
                         }
                     } else {
                         let parsed = expression(&expr)?;
-                        if c.starts_with('#')
-                            && matches!(parsed.name.as_str(), "if" | "unless")
-                            && parsed.args.is_empty()
-                        {
-                            return Err(format!("{name}: {} requires an argument", parsed.name));
-                        }
-                        if c.starts_with('#') && parsed.name == "set" && parsed.named.is_empty() {
-                            return Err(format!("{name}: set requires a named argument"));
+                        if c.starts_with('#') {
+                            validate_helper(&parsed, true).map_err(|e| format!("{name}: {e}"))?;
                         }
                     }
                     let body = block(
@@ -227,11 +221,12 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
                 '>' => nodes.push(Node::Partial(c[1..].trim().to_string(), tag.indent.clone())),
                 '&' => {
                     let value = c[1..].trim();
-                    expression(value)?;
+                    validate_helper(&expression(value)?, false)
+                        .map_err(|e| format!("{name}: {e}"))?;
                     nodes.push(Node::Value(value.to_string()));
                 }
                 _ => {
-                    expression(c)?;
+                    validate_helper(&expression(c)?, false).map_err(|e| format!("{name}: {e}"))?;
                     nodes.push(Node::Value(c.to_string()));
                 }
             }
@@ -262,6 +257,35 @@ pub struct Expression {
     pub name: String,
     pub args: Vec<String>,
     pub named: BTreeMap<String, String>,
+}
+
+// The registration metadata comes from the configured JVM helpers. Inverted
+// sections are ordinary lookups in Trimou and do not invoke helpers.
+fn validate_helper(e: &Expression, section: bool) -> Result<(), String> {
+    let (min, form) = match e.name.as_str() {
+        "prefix" | "prefixPartial" | "joinPartial" | "capitalize" | "eval" | "numExpr" => (1, 2),
+        "escape" | "resolveName" => (0, 2),
+        "join" | "include" => (1, 0),
+        "is" => (2, 0),
+        "if" | "unless" | "ifPredicate" | "unlessPredicate" | "instanceOf" | "notInstanceOf"
+        | "isEq" | "isNotEq" | "case" | "sort" | "filter" | "with" => (1, 1),
+        "setJoin" => (3, 1),
+        "set" | "each" | "switch" | "default" => (0, 1),
+        _ => return Ok(()),
+    };
+    if (section && form == 0) || (!section && form == 1) {
+        return Err(format!("{} does not support this tag form", e.name));
+    }
+    if e.args.len() < min {
+        return Err(format!("{} requires at least {min} argument(s)", e.name));
+    }
+    if e.name == "set" && e.named.is_empty() {
+        return Err("set requires a named argument".into());
+    }
+    if e.name == "setJoin" && !e.named.contains_key("delimiter") {
+        return Err("setJoin requires a delimiter option".into());
+    }
+    Ok(())
 }
 pub fn expression(input: &str) -> Result<Expression, String> {
     let mut words = Vec::new();
@@ -299,6 +323,9 @@ pub fn expression(input: &str) -> Result<Expression, String> {
     for word in it {
         if let Some((k, v)) = word.split_once('=') {
             if !k.is_empty() && !k.contains(['"', '\'']) {
+                if v.is_empty() {
+                    return Err(format!("missing value for option {k}"));
+                }
                 named.insert(k.to_string(), v.to_string());
                 continue;
             }

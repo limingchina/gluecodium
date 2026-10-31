@@ -37,12 +37,19 @@ rejects unknown IDs, duplicates, and any absence contradicted by a stored or
 overlaid property on a node of that class. An unmeasured missing model property
 remains an error. Missing plain-map keys behave as null.
 
-Optional `hooks` has `names`, `predicates`, and `sorters` arrays. Each name entry
+Optional `hooks` has `names`, `predicates`, `sorters`, and
+`registered_predicates` arrays. Each name entry
 has `receiver`, `resolver`, `mode` (`name`, `getter`, `setter`, or `ref`) and a
 string or null `result`. Predicate entries have `receiver`, `name` and a boolean
 `result`; sorter entries have `name`, list `input`, and list `result`. Receiver
 identity is represented by the original graph value, including `$ref` IDs.
 Identical repeated entries are permitted; contradictory duplicates are errors.
+`registered_predicates` contains distinct, nonempty names from the caller's
+actual predicate registry; a recorded predicate result also establishes that
+its name is registered. This separate list permits an empty filter without
+inventing a predicate result. Every evaluated receiver still needs a matching
+result entry. A null receiver for `resolveName` requires a recorded name entry
+for its resolver and mode, but does not require a fabricated null result.
 Missing entries are errors. These hooks replay externally measured results: the
 runtime does not claim to port `CppNameResolver`, predicates, or sorters. Every
 computed getter, absent property, hook, and ambient context value must come from
@@ -67,7 +74,7 @@ silently emit incomplete output. Some optional features such as `numExpr` remain
 unimplemented.
 
 Native views are intentionally small: ordinary JSON maps, scalar strings and
-lists; list indexing, `size` and `isEmpty`; string `size`, `length` and
+lists; list indexing, `size` and `isEmpty`; string `length` (UTF-16 code units) and
 `isEmpty`; enum class identity; and the `LimeBasicType.TypeId` `toString` tags.
 `LimeAttributes` uses its documented case-insensitive Map interface, with
 snapshot enum keys converted to their attribute tags. Model properties otherwise

@@ -1,6 +1,8 @@
 use serde_json::{Map, Value};
 use std::collections::{BTreeMap, BTreeSet};
 
+const ATTRIBUTE_VIEW: &str = "$ruscodium.attribute-view";
+
 #[derive(Clone, Debug)]
 pub struct ModelNode {
     pub class: String,
@@ -153,14 +155,18 @@ impl Graph {
                 }
                 return Ok(attributes
                     .iter()
-                    .find(|(k, _)| attribute_key(k) == attribute_key(key))
+                    .find(|(k, _)| attribute_key(k) == key.to_lowercase())
                     .map(|(_, v)| match v {
-                        Value::Object(fields) => Value::Object(
-                            fields
+                        Value::Object(fields) => {
+                            let folded: Map<String, Value> = fields
                                 .iter()
                                 .map(|(k, v)| (attribute_key(k), v.clone()))
-                                .collect(),
-                        ),
+                                .collect();
+                            Value::Object(Map::from_iter([(
+                                ATTRIBUTE_VIEW.to_string(),
+                                Value::Object(folded),
+                            )]))
+                        }
                         _ => v.clone(),
                     }));
             }
@@ -175,6 +181,19 @@ impl Graph {
                 .ok_or_else(|| format!("unsupported property {key} on {} ({id})", node.class));
         }
         match value {
+            Value::Object(m) if m.len() == 1 && m.contains_key(ATTRIBUTE_VIEW) => {
+                let fields = m[ATTRIBUTE_VIEW]
+                    .as_object()
+                    .ok_or("invalid attribute view")?;
+                let key = key.to_lowercase();
+                if let Some(value) = fields.get(&key) {
+                    return Ok(Some(value.clone()));
+                }
+                if key == "isempty" {
+                    return Ok(Some(Value::Bool(fields.is_empty())));
+                }
+                Ok(None)
+            }
             Value::Object(m) if m.contains_key("enum") && key == "toString" => {
                 let class = m
                     .get("enum")
@@ -216,9 +235,7 @@ impl Graph {
             }
             Value::Array(a) if key == "size" => Ok(Some(Value::from(a.len()))),
             Value::Array(a) if key == "isEmpty" => Ok(Some(Value::Bool(a.is_empty()))),
-            Value::String(s) if key == "size" || key == "length" => {
-                Ok(Some(Value::from(s.chars().count())))
-            }
+            Value::String(s) if key == "length" => Ok(Some(Value::from(s.encode_utf16().count()))),
             Value::String(s) if key == "isEmpty" => Ok(Some(Value::Bool(s.is_empty()))),
             _ => Ok(None),
         }
@@ -248,6 +265,9 @@ fn validate_value(v: &Value, ids: &BTreeSet<String>, depth: usize) -> Result<(),
     }
     match v {
         Value::Object(m) => {
+            if m.contains_key(ATTRIBUTE_VIEW) {
+                return Err("reserved attribute view key in input".into());
+            }
             if m.contains_key("$ref") {
                 let id = reference(v).ok_or("invalid reference object")?;
                 if !ids.contains(id) {

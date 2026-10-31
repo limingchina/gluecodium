@@ -209,6 +209,14 @@ fn reject_measured_invalid_constructs() {
         "{{+p param}}x{{/p}}",
         "{{#no}}{{#if}}x{{/if}}{{/no}}",
         "{{#no}}{{prefix \"unterminated}}{{/no}}",
+        "{{#no}}{{prefix}}{{/no}}",
+        "{{#no}}{{capitalize}}{{/no}}",
+        "{{#no}}{{join}}{{/no}}",
+        "{{#no}}{{joinPartial}}{{/no}}",
+        "{{#no}}{{if yes}}{{/no}}",
+        "{{#no}}{{#setJoin \"x\" \"a\" delimiter=\",\"}}x{{/setJoin}}{{/no}}",
+        "{{#setJoin \"x\" \"a\" \"b\"}}x{{/setJoin}}",
+        "{{#set x=}}x{{/set}}",
     ] {
         assert!(parse("bad", source).is_err(), "accepted {source}");
     }
@@ -236,6 +244,59 @@ fn reject_conflicting_hooks_before_output() {
     assert!(render(&d.0, &r).unwrap_err().contains("invalid hooks"));
     r["hooks"] = json!({"sorters":[{"name":"s","input":[],"result":[{"$ref":"missing"}]}]});
     assert!(render(&d.0, &r).unwrap_err().contains("dangling"));
+}
+
+#[test]
+fn empty_filter_requires_evidence_of_a_registered_predicate() {
+    let d = Dir::new();
+    d.write("test", "{{#filter items predicate=\"p\"}}yes{{/filter}}");
+    let mut r = req("test", json!({"items":[]}));
+    assert!(render(&d.0, &r).unwrap_err().contains("registration"));
+    r["hooks"] = json!({"registered_predicates":["p"]});
+    assert_eq!(render(&d.0, &r).unwrap(), "yes");
+    r["hooks"] = json!({"registered_predicates":["p", "p"]});
+    assert!(render(&d.0, &r).unwrap_err().contains("duplicate"));
+    r["hooks"] = json!({"registered_predicates":["p"],"predicates":[]});
+    r["data"]["items"] = json!([1]);
+    assert!(render(&d.0, &r)
+        .unwrap_err()
+        .contains("missing replay predicate p for 1"));
+}
+
+#[test]
+fn attribute_views_keep_case_insensitivity_without_changing_maps() {
+    let d = Dir::new();
+    d.write("test", "{{attrs.cpp.fullname}}/{{attrs.CPP.FullName}}/{{attrs.cpp.fullName}}/{{attrs.CPP.FULL_NAME}}/{{attrs.swift.optionSet}}/{{attrs.cpp.isEmpty}}/{{plain.Foo}}/{{plain.foo}}");
+    let mut r = req("test", json!({"attrs":{"$ref":"a"},"plain":{"Foo":"yes"}}));
+    r["snapshot"] = json!({"schema":"gluecodium.reference-model.snapshot","version":1,"root":{"$ref":"a"},"nodes":[{"id":"a","class":"com.here.gluecodium.model.lime.LimeAttributes","properties":{"attributes":{"CPP":{"FULL_NAME":"Foo"},"SWIFT":{"OPTION_SET":true}}}}]});
+    assert_eq!(render(&d.0, &r).unwrap(), "Foo/Foo/Foo//true/false/yes/");
+}
+
+#[test]
+fn sort_does_not_create_iteration_metadata_and_secondary_objects_fail() {
+    let d = Dir::new();
+    d.write(
+        "test",
+        "{{#sort items sorter=\"s\"}}{{this}}:{{iter.index}}/{{iter.position}};{{/sort}}",
+    );
+    let mut r = req("test", json!({"items":["a","b"]}));
+    r["hooks"] = json!({"sorters":[{"name":"s","input":["a","b"],"result":["a","b"]}]});
+    assert_eq!(render(&d.0, &r).unwrap(), "a:/;b:/;");
+    for source in [
+        "{{prefix \"a\" values}}",
+        "{{+p}}X{{/p}}{{joinPartial items \"p\" values}}",
+        "{{#setJoin values \"a\" \"b\" delimiter=\",\"}}{{this}}{{/setJoin}}",
+    ] {
+        assert!(
+            render_str(source, json!({"values":{"x":1},"items":[1]}))
+                .unwrap_err()
+                .contains("object string conversion"),
+            "{source}"
+        );
+    }
+    assert!(render_str("{{joinPartial nil \"p\"}}", json!({"nil":null}))
+        .unwrap_err()
+        .contains("non-null"));
 }
 
 #[test]
@@ -287,7 +348,7 @@ fn cli_matches_all_jvm_goldens() {
         );
         count += 1;
     }
-    assert!(count >= 24, "missing oracle fixtures: {count}");
+    assert!(count >= 27, "missing oracle fixtures: {count}");
 }
 
 #[test]
