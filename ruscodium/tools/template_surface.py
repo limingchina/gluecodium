@@ -8,7 +8,7 @@ import re
 from pathlib import Path
 
 REGISTERED = set('prefix prefixPartial joinPartial instanceOf notInstanceOf capitalize escape switch case default setJoin resolveName ifPredicate unlessPredicate sort filter'.split())
-BUILTINS = set('eval isEqual isNotEqual include join numExpr set if unless each with'.split())
+BUILTINS = set('eval isEq isNotEq include join numExpr set if unless each with'.split())
 HELPERS = REGISTERED | BUILTINS
 TAG = re.compile(r'{{!!.*?!}}|{{!!.*?}}|{{{.*?}}}|{{.*?}}', re.S)
 TOKEN = re.compile(r'''(?:[^\s="']+=)?(?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^\s]+)''')
@@ -47,14 +47,17 @@ def scan(root):
             body = tag[3:-3].strip() if tag.startswith('{{{') else tag[2:-2].strip()
             if not body or body[0] in '/!=':
                 continue
-            sigil = body[0] if body[0] in '#^>&' else ''
+            sigil = body[0] if body[0] in '#^>&+' else ''
             if sigil:
                 body = body[1:].strip()
             parts = TOKEN.findall(body)
             if not parts:
                 continue
             head, args = parts[0], parts[1:]
-            if sigil == '>':
+            if sigil == '+':
+                partials.append({**location, 'kind': 'inline_definition', 'selector': head, 'dynamic': False})
+                args_to_scan = args
+            elif sigil == '>':
                 partials.append({**location, 'kind': 'partial', 'selector': head, 'dynamic': not is_literal(head) and head.startswith('(')})
                 args_to_scan = args
             elif head in HELPERS:
@@ -74,7 +77,7 @@ def scan(root):
                 if '=' in token:
                     assignment, token = token.split('=', 1)
                 if not is_literal(token):
-                    classification = ('context' if token == 'this' or token.startswith(('@', '../', './')) else 'possible_local' if token.split('.')[0] in bindings else 'candidate_property')
+                    classification = ('context' if token == 'this' or token.startswith(('this.', '@', '../', './')) else 'possible_local' if token.split('.')[0] in bindings else 'candidate_property')
                     paths.append({**location, 'path': token, 'classification': classification, 'role': 'assignment_value' if assignment else ('section_or_value' if token == head and head not in HELPERS else 'argument'), **({'assignment': assignment} if assignment else {})})
     digest = hashlib.sha256(''.join(f"{x['file']}\0{x['sha256']}\n" for x in file_hashes).encode()).hexdigest()
     return {'schema': 1, 'template_count': len(files), 'targets': dict(sorted(counts.items())), 'corpus_sha256': digest, 'files': file_hashes, 'property_candidates': paths, 'helpers': helpers, 'partials': partials, 'selectors': selectors}
