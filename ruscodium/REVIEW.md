@@ -110,3 +110,55 @@ offline replay; computed getters and verified absent properties remain supplied
 observations. Additional Trimou features, complete template views, a canonical
 preview-model adapter, whole-file generation and byte-for-byte compiler parity
 remain later milestones, as documented in `PLAN.md` and `TEMPLATES.md`.
+
+## Native C++ naming continuation review
+
+Reviewer: Sol 6.1, xhigh effort, as requested. Date: 2026-10-31.
+Final reviewed implementation: `12aac6c45`, including JVM differential fixtures
+from `931251088`. This section records the bounded M8 increment and preserves
+the preceding reviews as historical records.
+
+The review covered native resolver dispatch, namespace configuration, default
+ASCII name rules, actual parent context, type and alias traversal, containers
+and hash spellings, literals, accessors, supported attributes, replay isolation
+and failure output. Kotlin `CppNameResolver`, `CppFullNameResolver`,
+`CppNameCache`, `NameRules`, `NameHelper` and `CppLibraryIncludes` remained the
+normative implementation. Two focused JVM probes also constructed actual model
+objects to check lambda-parameter rejection and false accessor attributes.
+
+### Findings and disposition
+
+| Reproduced problem | Final behavior and regression evidence |
+| --- | --- |
+| A `LimeLambdaParameter` received ordinary parameter naming even though the JVM default name rules throw; an unavailable `external` fact could be treated as null. | Unsupported named classes fail before applying name overrides, and the required external facts must be present. `unsupported_or_missing_naming_facts_do_not_succeed` covers these guards. |
+| A stored `CPP.ACCESSORS` value of false or null enabled field accessor names, contrary to `LimeAttributes.have`. | False and null leave field accessors absent. A real JVM-built false attribute returned null for both modes; the Rust regression checks both false and null. |
+| FQN dispatch unwrapped an unknown class solely because its name ended in `TypeRef`, allowing a forged receiver to succeed. | Dispatch accepts the supported concrete model reference classes and rejects foreign model class identities. The regression and independent CLI probes cover both a custom suffix and a foreign class with a familiar short name. |
+| Literal naming accepted an unknown basic type ID or foreign enum identity and returned the raw value. | Literal and boolean-accessor type decisions validate the actual basic type enum and supported IDs. `rejects_forged_type_reference_class_and_literal_type_id` covers the literal failures. |
+
+### Final independent verification
+
+- All eight native naming integration tests passed. They inventory all 223
+  recorded name calls: 203 native results match the JVM, while 20 fail for the
+  explicitly recorded boundaries of missing owner context (14), comment text
+  (four) and unsupported C++ attributes (two).
+- All 162 calls in the broader native matrix match. The four unchanged
+  production C++ partial fixtures render byte-for-byte with name hooks removed;
+  an independent complete matrix render also matches with name hooks removed
+  and its nonempty root and internal namespace configuration.
+- Thirty-six independent CLI probes passed. Twenty-nine rejection cases checked
+  both empty stdout and preservation of an existing output sentinel. The probes
+  cover malformed configuration/hooks, mixed replay/native mode, selectors,
+  missing facts and owners, duplicate owners, alias cycles, unsupported
+  attributes/classes, malformed literal IDs, ASCII acronym/digit spellings,
+  parent name overrides and accessor activation.
+- Three additional acyclic generic chains of 256, 1,024 and 4,096 levels each
+  produced a depth-limit diagnostic with empty stdout. They did not crash or
+  emit a partial rendering.
+
+No reported material finding remains unresolved within this bounded review.
+This increment supplies native C++ names for the documented graph facts and
+keeps legacy name replay available when native mode is omitted. Predicates and
+sorters still require measured replay; computed views still require supplied
+observations. Nonempty comments, external descriptors, custom name rules,
+complex values, a complete canonical model adapter, whole-file generation and
+full compiler/output parity remain later work.
