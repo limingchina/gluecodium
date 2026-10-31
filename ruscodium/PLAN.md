@@ -358,13 +358,25 @@ ruscodium render --templates DIR --request FILE [--output FILE]
 The request has `schema: "gluecodium.template.render-request"`, `version: 1`,
 `template` (extensionless template-relative name), `data` (root render value),
 an optional `snapshot` containing the existing version-1 reference document,
-optional `property_overlays`, and optional `hooks`. Plain JSON helper cases can
-omit the snapshot. Values use the snapshot's existing reference, enum, scalar,
-list and map shapes. A reference in `data` or an overlay resolves against the
-embedded snapshot and retains its instance identity. `property_overlays` maps
-snapshot node IDs to property maps; the oracle may add measured public computed
-getter results without changing snapshot version 1 or pretending those getters
-were present in the original bounded exporter.
+optional `property_overlays`, optional `absent_properties`, and optional `hooks`.
+Plain JSON helper cases can omit the snapshot. Values use the snapshot's existing
+reference, enum, scalar, list and map shapes. A reference in `data` or an overlay
+resolves against the embedded snapshot and retains its instance identity.
+`property_overlays` maps snapshot node IDs to property maps; the oracle may add
+measured public computed getter results without changing snapshot version 1 or
+pretending those getters were present in the original bounded exporter.
+
+`absent_properties` maps snapshot node IDs to lists of property names, for
+example `{"n4": ["propertyElement"]}`. This additive optional field records
+only model properties whose public JVM getter is actually absent. It permits
+the runtime to return Missing for that measured absence, so unqualified lookup
+can continue through enclosing contexts while explicit `this.propertyElement`
+remains missing/null. An omitted computed getter that actually exists must have
+its measured result exported as an overlay; recording absence or inventing a
+null value would hide an unsupported view. Validate that every declared node ID
+exists and each absent property is disjoint from stored properties and overlays.
+The oracle must propagate throwing getters instead of treating them as absent.
+An unmeasured missing model property remains a strict unsupported-view error.
 
 `hooks.names` is a list of `{resolver, mode, receiver, result}` records, with
 mode `name`, `getter`, `setter` or `ref` and a string-or-null result.
