@@ -119,9 +119,12 @@ custom compatibility layer remains open; the template format is decided.
 
 Create this plan and `TASKS.md` before implementation, commit them, then execute
 the task list. Record evidence and scope changes as work proceeds. Use the
-user-requested roles: Sol 6.1 at max effort for planning, Terra 6.1 for
-implementation, and Sol 6.1 at xhigh effort for review. Commit finished logical
-increments locally; no push or pull request is requested.
+user-requested roles: Sol 6.1 at max effort for planning, Terra 6.1 at xhigh
+effort for the continuation implementation, and Sol 6.1 at xhigh effort for
+review. Commit finished logical
+increments. The user has subsequently authorized pushing the incremental work
+to `ruscodium/rust-port`; this does not authorize replacing the JVM compiler or
+claiming parity before the corresponding evidence exists.
 
 ### M1: complete syntax frontend and source-aware model
 
@@ -289,7 +292,118 @@ not a promise of stable semantic identities across model revisions. The export
 tool may use the JVM, while the eventual Rust generators must consume snapshots
 without a JVM during normal compilation.
 
-### P1: JSON-consuming C++ compatibility backend — deferred
+### P1a: executable Mustache and snapshot compatibility slice — next increment
+
+Continue implementation with a custom Rust compatibility runtime for the
+existing Trimou dialect. Keep all 315 production `.mustache` files unchanged;
+read them directly from an explicit template root during this experimental
+stage. The lexical inventory alone cannot select an off-the-shelf engine or
+establish parsing/rendering compatibility. The native runtime must not start a
+JVM; the installed JVM engine is an independent fixture-generation oracle.
+
+Deliver this bounded stage before expanding to whole-file C++ generation:
+
+1. Parse the entire production template corpus into an explicit syntax tree.
+   Cover quoted/literal/positional/named arguments, dotted and bracketed keys,
+   escaped and unescaped interpolations (escaping is disabled upstream),
+   comments including `{{!! ... }}`, ordinary and inverted sections, partials,
+   and forward-referenced `{{+name}}` inline partial definitions. Validate
+   balanced syntax with template names and source positions. Parsing a helper
+   invocation does not imply that its behavior has been implemented.
+2. Import `gluecodium.reference-model.snapshot` version 1 as an identity graph.
+   Validate document version, IDs, references and graph structure before any
+   output; retain sharing, cycles, null/scalars/lists/maps and enum values.
+   Resolve property paths by graph edges instead of recursively copying or
+   flattening the graph. Keep this importer distinct from preview-model JSON.
+3. Define an explicit property-view boundary. Support the stored snapshot
+   properties and the bounded collection, attribute, path and model projections
+   required by the selected templates. Document every synthesized projection
+   and supplied render-context value. Do not imply that all Kotlin computed
+   getters, documentation or platform descriptors are available. Missing plain
+   map keys follow the measured Trimou missing-value behavior. Missing model
+   properties are strict unsupported-view errors because this bounded export
+   can omit real Kotlin getters. Unsupported helper names, registered selector
+   names and view operations must produce useful errors, rather than silently
+   removing generated code.
+4. Implement context lookup, section iteration and `iter` metadata, scoped
+   `set`, `if`/`unless` including their multiple-argument logic, named and
+   inline partials, `prefix`/`prefixPartial`, `join`/`joinPartial`, and class-name
+   tests. Establish an explicit registration interface for `resolveName` and
+   named predicates; support the selected name/predicate contracts with
+   documented identity and selector behavior. Other registered Trimou helpers
+   may remain parseable but fail explicitly when executed. Preserve section
+   context, local scope, standalone-tag handling, whitespace, partial
+   indentation, trailing-space trimming and final newlines as observed from
+   the configured JVM engine.
+5. Expose native CLI/library entry points to inspect/import a reference graph
+   and render a named template from an imported graph plus an explicit render
+   context/configuration. Validate requested configuration, render completely
+   in memory and only then write the output. A failed import or render must
+   preserve an existing output file. Document CLI modes as experimental
+   tooling, separate from the standalone `cpp` preview generator.
+6. Add a JVM oracle under `tools/template-oracle/` that runs the actual installed
+   Trimou engine with Gluecodium's existing helper registration and unchanged
+   production templates. It must emit reproducible input/configuration and
+   expected UTF-8 output fixtures. Capture model snapshots and selected actual
+   resolver/predicate results where full native implementations remain outside
+   this increment; label such captured lookup tables explicitly as oracle
+   data, not a native C++ resolver. Avoid duplicating production templates.
+
+Use one shared request protocol for the Rust CLI and the JVM oracle:
+
+```text
+ruscodium render --templates DIR --request FILE [--output FILE]
+```
+
+The request has `schema: "gluecodium.template.render-request"`, `version: 1`,
+`template` (extensionless template-relative name), `data` (root render value),
+an optional `snapshot` containing the existing version-1 reference document,
+optional `property_overlays`, and optional `hooks`. Plain JSON helper cases can
+omit the snapshot. Values use the snapshot's existing reference, enum, scalar,
+list and map shapes. A reference in `data` or an overlay resolves against the
+embedded snapshot and retains its instance identity. `property_overlays` maps
+snapshot node IDs to property maps; the oracle may add measured public computed
+getter results without changing snapshot version 1 or pretending those getters
+were present in the original bounded exporter.
+
+`hooks.names` is a list of `{resolver, mode, receiver, result}` records, with
+mode `name`, `getter`, `setter` or `ref` and a string-or-null result.
+`hooks.predicates` is a list of `{name, receiver, result}` records with boolean
+results. `hooks.sorters`, if supported, is a list of `{name, input, result}`
+records containing ordered input/result value lists. Receivers and list entries
+are graph values; equality preserves referenced instance IDs. Missing requested
+records, invalid selectors, duplicate conflicting records and malformed values
+must fail. Native library interfaces should permit real helper providers later;
+the serialized records are an explicit offline replay boundary. A tool that
+only replays names does not implement C++ naming rules. Both implementations
+must agree on this protocol before independently implementing it.
+
+The initial real-template matrix should include `cpp/CppEnumeration`,
+`cpp/CppTypeAlias`, `cpp/CppFunctionSignature` and `cpp/CppReturnType`, with their
+unchanged documentation, attribute, export and common partials. Exercise
+ordinary and explicit-valued enumerators, multiple function parameters,
+nullable/container/user type references, static/const/noexcept flags, C++
+attributes and comment suppression/rendering where supported. Include a
+nontrivial runtime-header template such as `cpp/common/Export` with different
+configuration values. If measured JVM/model contracts require narrowing a
+case, record the exact supported matrix and leave the remaining case unchecked;
+do not replace the milestone with a static-template-only demonstration.
+
+Acceptance requires all 315 original templates to parse, identity/cycle and
+invalid-input importer checks, focused JVM/Rust comparisons of helper and
+whitespace behavior, and byte-identical output on the selected real-template
+matrix. Record original corpus hashes and oracle distribution/configuration
+provenance. A parser accepting the corpus is syntax coverage only. Rendering
+selected templates using recorded name results proves that bounded engine/view
+contract; it does not prove a native naming implementation, canonical model
+completeness, complete C++ file sets, or any runtime/ABI parity. Keep the native
+frontend-to-canonical adapter and the unimplemented helper/view contracts open.
+
+Commit this continuation plan/checklist before implementation. Implement in
+logical increments, run Cargo and oracle checks, then obtain the requested
+independent review and fix material findings before recording delivered scope.
+
+### P1b: JSON-consuming C++ compatibility backend — deferred
 
 Implement C++ generation from the canonical snapshots before tying it to Rust
 frontend fidelity. Use the template-surface report to implement typed property
@@ -297,15 +411,14 @@ views and helper contracts rather than assuming `serde_json` lookup reproduces
 Kotlin reflection. Port the name resolvers and configurable name rules together
 with the helper layer.
 
-Run a small compatibility spike to choose a Rust implementation that renders
-the unchanged Mustache templates with Trimou-compatible helper and partial
-behavior. Evaluate existing Rust engines or a custom compatibility layer within
-that constraint; template conversion is outside the chosen approach. Test
-standalone tags, missing/null values, section context, helper scope, indentation
-from `prefixPartial`, and final newlines. The acceptance criterion is
-byte-for-byte compatibility on existing smoke outputs, including whitespace;
-normalizing generated source or merely compiling it is insufficient. This
-runtime and compatibility spike remain future work.
+Build on P1a's measured custom runtime and extend the explicit property/helper
+contracts through the C++ backend. Template conversion is outside the chosen
+approach. Preserve standalone tags, missing/null values, section context, helper
+scope, indentation from `prefixPartial`, and final newlines as coverage grows.
+The acceptance criterion is byte-for-byte compatibility on existing smoke
+outputs, including whitespace; normalizing generated source or merely compiling
+it is insufficient. Selected-template equality from P1a does not satisfy this
+whole-backend criterion.
 
 Run both generators on the same canonical inputs and options, compare output
 file sets and exact bytes, and expand coverage through all C++ smoke fixtures.
