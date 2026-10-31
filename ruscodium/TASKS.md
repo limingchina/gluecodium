@@ -109,7 +109,7 @@ of marking the entire port complete after the preview.
 - The existing installed JVM distribution can serve as a differential oracle;
   the Rust compiler must function independently of it.
 
-- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Eleven integration tests cover 345/345 individually tracked inputs, calculator, four coherent smoke groups and two compiled C++ fixture groups.
-- Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (11 integration tests). Template inventory tests: `python3 -m unittest discover -s tools/tests` (2 tests).
+- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Twelve integration tests cover 345/345 individually tracked inputs, calculator, four coherent smoke groups and two compiled C++ fixture groups.
+- Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (12 integration tests). Template inventory tests: `python3 -m unittest discover -s tools/tests` (2 tests).
 - Independent JVM smoke comparison: Rust validates 46 of 49 groups; three need platform filtering (`defaults_const`, `name_clash_overloads`, `skip`). `comments` requires JVM documentation configuration. The JVM accepts some invalid Void positions and duplicate parameters that this preview rejects.
 - Preview remains incomplete: full grammar rejection, complete semantic checks, C++ nested/auxiliary references, feature guards and output parity remain open above. Independent review has not yet occurred.

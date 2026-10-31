@@ -207,3 +207,15 @@ fn annotation_and_descriptor_structure() {
     assert_eq!(d.annotations[0].values[0].values.len(), 2);
     assert_eq!(d.descriptor.as_ref().unwrap().values[0].platform, "cpp");
 }
+
+#[test]
+fn inheritance_constraints() {
+    let mut m = model("package x\nclass Base {}\nclass Child : Base {}\n");
+    assert!(resolve(&mut m).unwrap_err().contains("open"));
+    let mut m = model(
+        "package x\nopen class Base {}\nnarrow interface Extra {}\nclass Child : Base, Extra {}\n",
+    );
+    assert!(resolve(&mut m).is_ok());
+    let mut m = model("package x\ninterface A {}\ninterface B {}\ninterface C : A, B {}\n");
+    assert!(resolve(&mut m).unwrap_err().contains("narrow"));
+}

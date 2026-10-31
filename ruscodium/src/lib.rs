@@ -1203,8 +1203,11 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
             for t in &mut d.parents {
                 ty(t, scope, imports, symbols, path)?;
                 let kind = t.resolved.as_ref().and_then(|n| symbols.get(n));
-                if !matches!(kind.map(String::as_str), Some("class" | "interface"))
-                    || (d.kind == "interface" && kind.map(String::as_str) != Some("interface"))
+                if !matches!(
+                    kind.map(String::as_str),
+                    Some("class" | "interface" | "typealias")
+                ) || (d.kind == "interface"
+                    && !matches!(kind.map(String::as_str), Some("interface" | "typealias")))
                 {
                     return Err(error(path, &t.span, "invalid inheritance target"));
                 }
@@ -1361,6 +1364,60 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
             name.push('?');
         }
         name
+    }
+    let mut containers = BTreeMap::new();
+    fn container_index(
+        ds: &[Decl],
+        scope: &str,
+        out: &mut BTreeMap<String, (String, Vec<String>)>,
+    ) {
+        for d in ds {
+            let full = format!("{scope}.{}", d.name);
+            if d.kind == "class" || d.kind == "interface" {
+                out.insert(full.clone(), (d.kind.clone(), d.modifiers.clone()));
+            }
+            container_index(&d.children, &full, out)
+        }
+    }
+    for f in &model.files {
+        container_index(&f.declarations, &f.package, &mut containers)
+    }
+    fn inheritance(
+        ds: &[Decl],
+        containers: &BTreeMap<String, (String, Vec<String>)>,
+        aliases: &BTreeMap<String, TypeRef>,
+        path: &str,
+    ) -> Result<(), String> {
+        for d in ds {
+            for (i, p) in d.parents.iter().enumerate() {
+                let name = canonical(p, aliases);
+                let (kind, modifiers) = containers
+                    .get(&name)
+                    .ok_or_else(|| error(path, &p.span, "invalid inheritance target"))?;
+                if d.kind == "interface" && kind != "interface" {
+                    return Err(error(
+                        path,
+                        &p.span,
+                        "interface parent must be an interface",
+                    ));
+                }
+                if i == 0 && kind == "class" && !modifiers.iter().any(|m| m == "open") {
+                    return Err(error(path, &p.span, "class parent must be open"));
+                }
+                if i > 0 && (kind != "interface" || !modifiers.iter().any(|m| m == "narrow")) {
+                    return Err(error(
+                        path,
+                        &p.span,
+                        "additional parents must be narrow interfaces",
+                    ));
+                }
+            }
+            inheritance(&d.children, containers, aliases, path)?
+        }
+        Ok(())
+    }
+    for f in &model.files {
+        inheritance(&f.declarations, &containers, &aliases, &f.path)?
     }
     fn signatures(
         ds: &[Decl],
