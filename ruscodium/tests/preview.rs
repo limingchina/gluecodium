@@ -170,3 +170,40 @@ fn reserved_words_newlines_and_alias_overloads() {
         model("package x\ntypealias Count = Int\nclass A { fun f(a: Int) fun f(a: Count) }\n");
     assert!(resolve(&mut m).unwrap_err().contains("duplicate signature"));
 }
+
+#[test]
+fn literal_tree_and_syntax_guards() {
+    let f = parse(
+        "x",
+        "package x\nstruct S {\n list: List<Int> = [1, 2]\n}\n",
+        false,
+    )
+    .unwrap();
+    let literal = f.declarations[0].children[0].literal.as_ref().unwrap();
+    assert_eq!(literal.kind, "list");
+    assert_eq!(literal.children.len(), 2);
+    for bad in [
+        "package x\nfun f()\n",
+        "package x\nstruct S {}\n",
+        "package x\nstruct S { x: Int = 1abc }\n",
+        "package x\nstruct S { x: Int = [1, 2: 3] }\n",
+    ] {
+        assert!(parse("x", bad, false).is_err(), "{bad}");
+    }
+    let mut m = model("package x\nstruct `A` { n: Int }\nstruct B { a: A }\n");
+    assert!(resolve(&mut m).is_ok());
+}
+
+#[test]
+fn annotation_and_descriptor_structure() {
+    let f = parse(
+        "x",
+        "package x\n@Tag(name = [\"a\", \"b\"])\nclass Foo {\n external { cpp name \"Foo\" }\n}\n",
+        false,
+    )
+    .unwrap();
+    let d = &f.declarations[0];
+    assert_eq!(d.annotations[0].name, "Tag");
+    assert_eq!(d.annotations[0].values[0].values.len(), 2);
+    assert_eq!(d.descriptor.as_ref().unwrap().values[0].platform, "cpp");
+}

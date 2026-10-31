@@ -19,13 +19,45 @@ pub struct Token {
     pub kind: String,
 }
 #[derive(Debug, Clone, Serialize)]
+pub struct AnnotationValue {
+    pub name: Option<String>,
+    pub values: Vec<String>,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct Annotation {
+    pub name: String,
+    pub raw: String,
+    pub span: Span,
+    pub values: Vec<AnnotationValue>,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct DescriptorValue {
+    pub platform: String,
+    pub key: String,
+    pub value: String,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct Descriptor {
+    pub raw: String,
+    pub span: Span,
+    pub values: Vec<DescriptorValue>,
+}
+#[derive(Debug, Clone, Serialize)]
 pub struct TypeRef {
     pub name: String,
     pub args: Vec<TypeRef>,
     pub nullable: bool,
-    pub annotations: Vec<String>,
+    pub annotations: Vec<Annotation>,
     pub span: Span,
     pub resolved: Option<String>,
+}
+#[derive(Debug, Clone, Serialize)]
+pub struct Literal {
+    pub kind: String,
+    pub raw: String,
+    pub span: Span,
+    pub name: Option<String>,
+    pub children: Vec<Literal>,
 }
 #[derive(Debug, Clone, Serialize)]
 pub struct Decl {
@@ -33,14 +65,15 @@ pub struct Decl {
     pub name: String,
     pub span: Span,
     pub docs: Vec<String>,
-    pub annotations: Vec<String>,
+    pub annotations: Vec<Annotation>,
     pub modifiers: Vec<String>,
     pub ty: Option<TypeRef>,
     pub parents: Vec<TypeRef>,
     pub params: Vec<Decl>,
     pub children: Vec<Decl>,
     pub value: Option<String>,
-    pub descriptor: Option<String>,
+    pub literal: Option<Literal>,
+    pub descriptor: Option<Descriptor>,
     pub throws: Option<TypeRef>,
     pub return_docs: Vec<String>,
     pub throws_docs: Vec<String>,
@@ -61,6 +94,35 @@ pub struct Model {
 
 fn error(path: &str, span: &Span, message: &str) -> String {
     format!("{}:{}:{}: {}", path, span.line, span.column, message)
+}
+
+fn valid_number(s: &str) -> bool {
+    fn digits(s: &str) -> bool {
+        let b = s.as_bytes();
+        !b.is_empty()
+            && b[0].is_ascii_digit()
+            && b[b.len() - 1].is_ascii_digit()
+            && b.iter().all(|c| c.is_ascii_digit() || *c == b'_')
+    }
+    for suffix in ["min", "ms", "us", "ns", "d", "h", "s"] {
+        if let Some(n) = s.strip_suffix(suffix) {
+            return !n.contains('_') && digits(n) && (n.len() == 1 || !n.starts_with('0'));
+        }
+    }
+    let (mantissa, exp) = match s.find(['e', 'E']) {
+        Some(i) => (&s[..i], Some(&s[i + 1..])),
+        None => (s, None),
+    };
+    if let Some(e) = exp {
+        let e = e.strip_prefix(['+', '-']).unwrap_or(e);
+        if !digits(e) {
+            return false;
+        }
+    }
+    if let Some((a, b)) = mantissa.split_once('.') {
+        return (a.is_empty() || digits(a)) && digits(b);
+    }
+    digits(mantissa) && (exp.is_some() || mantissa.len() == 1 || !mantissa.starts_with('0'))
 }
 
 pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
@@ -177,7 +239,9 @@ pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
                     .unwrap_or(tail.len()),
                 "id",
             )
-        } else if c.is_ascii_digit() {
+        } else if c.is_ascii_digit()
+            || (c == '.' && tail.as_bytes().get(1).is_some_and(u8::is_ascii_digit))
+        {
             let bytes = tail.as_bytes();
             let mut n = 1;
             while n < bytes.len()
@@ -188,6 +252,19 @@ pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
                         && (bytes[n - 1] == b'e' || bytes[n - 1] == b'E')))
             {
                 n += 1
+            }
+            let raw = &tail[..n];
+            if !valid_number(raw) {
+                return Err(error(
+                    path,
+                    &Span {
+                        start,
+                        end: start + n,
+                        line: sl,
+                        column: sc,
+                    },
+                    "invalid numeric literal",
+                ));
             }
             (n, "number")
         } else if tail.starts_with("->") {
@@ -331,7 +408,7 @@ impl<'a> Parser<'a> {
             "Infinity",
         ];
         if self.t[self.i].kind == "id" && !RESERVED.contains(&self.peek()) {
-            Ok(self.next())
+            Ok(self.next().trim_matches('`').to_string())
         } else {
             Err(error(self.path, &self.span(), "expected identifier"))
         }
@@ -344,25 +421,31 @@ impl<'a> Parser<'a> {
         }
         Ok(s)
     }
-    fn meta(&mut self) -> Result<(Vec<String>, Vec<String>), String> {
+    fn meta(&mut self) -> Result<(Vec<String>, Vec<Annotation>), String> {
         let mut docs = Vec::new();
         let mut attrs = Vec::new();
         loop {
             if self.t[self.i].kind == "doc" {
                 docs.push(self.next())
             } else if self.eat("@") {
-                let start = self.t[self.i - 1].span.start;
-                self.id()?;
+                let mut span = self.t[self.i - 1].span.clone();
+                let name = self.id()?;
+                let mut values = Vec::new();
                 if self.eat("(") {
                     loop {
+                        let mut value = AnnotationValue {
+                            name: None,
+                            values: Vec::new(),
+                        };
                         if self.t[self.i].kind == "string" {
-                            self.next();
+                            value.values.push(self.next())
                         } else {
-                            self.id()?;
+                            value.name = Some(self.id()?);
                             if self.eat("=") {
                                 if self.eat("[") {
                                     loop {
                                         self.string()?;
+                                        value.values.push(self.t[self.i - 1].text.clone());
                                         if !self.eat(",") {
                                             break;
                                         }
@@ -370,17 +453,24 @@ impl<'a> Parser<'a> {
                                     self.expect("]")?;
                                 } else {
                                     self.string()?;
+                                    value.values.push(self.t[self.i - 1].text.clone());
                                 }
                             }
                         }
+                        values.push(value);
                         if !self.eat(",") {
                             break;
                         }
                     }
                     self.expect(")")?;
                 }
-                let end = self.t[self.i - 1].span.end;
-                attrs.push(self.src[start..end].into());
+                span.end = self.t[self.i - 1].span.end;
+                attrs.push(Annotation {
+                    name,
+                    raw: self.src[span.start..span.end].into(),
+                    span,
+                    values,
+                });
             } else {
                 break;
             }
@@ -461,6 +551,45 @@ impl<'a> Parser<'a> {
                 ))
             }
         };
+        let allowed = match context {
+            "file" => matches!(
+                kind.as_str(),
+                "class" | "interface" | "struct" | "enum" | "typealias" | "exception" | "lambda"
+            ),
+            "class" | "interface" => matches!(
+                kind.as_str(),
+                "class"
+                    | "interface"
+                    | "struct"
+                    | "enum"
+                    | "typealias"
+                    | "exception"
+                    | "lambda"
+                    | "const"
+                    | "fun"
+                    | "constructor"
+                    | "property"
+            ),
+            "struct" => kind != "property" && kind != "enumerator",
+            "enum" => kind == "enumerator",
+            _ => false,
+        };
+        if !allowed {
+            return Err(error(
+                self.path,
+                &span,
+                &format!("{kind} is not allowed in {context}"),
+            ));
+        }
+        if modifiers.iter().any(|m| match m.as_str() {
+            "open" => kind != "class",
+            "narrow" => kind != "interface",
+            "static" => kind != "fun" && kind != "property",
+            _ => true,
+        }) || modifiers.len() > 1
+        {
+            return Err(error(self.path, &span, "invalid declaration modifier"));
+        }
         let name = if kind == "field_constructor" {
             "constructor".into()
         } else {
@@ -478,6 +607,7 @@ impl<'a> Parser<'a> {
             params: Vec::new(),
             children: Vec::new(),
             value: None,
+            literal: None,
             descriptor: None,
             throws: None,
             return_docs: Vec::new(),
@@ -486,6 +616,13 @@ impl<'a> Parser<'a> {
         match kind.as_str() {
             "class" | "interface" | "struct" | "enum" => {
                 if self.eat(":") {
+                    if kind != "class" && kind != "interface" {
+                        return Err(error(
+                            self.path,
+                            &self.span(),
+                            "only classes and interfaces can inherit",
+                        ));
+                    }
                     loop {
                         d.parents.push(self.typ()?);
                         if !self.eat(",") {
@@ -507,6 +644,9 @@ impl<'a> Parser<'a> {
                     }
                 }
                 self.expect("}")?;
+                if (kind == "struct" || kind == "enum") && d.children.is_empty() {
+                    return Err(error(self.path, &d.span, "empty struct or enum"));
+                }
             }
             "fun" | "constructor" | "field_constructor" => {
                 self.expect("(")?;
@@ -532,6 +672,7 @@ impl<'a> Parser<'a> {
                         params: vec![],
                         children: vec![],
                         value: None,
+                        literal: None,
                         descriptor: None,
                         throws: None,
                         return_docs: Vec::new(),
@@ -561,7 +702,9 @@ impl<'a> Parser<'a> {
                 self.expect(":")?;
                 d.ty = Some(self.typ()?);
                 if self.eat("=") {
-                    d.value = Some(self.literal()?)
+                    let literal = self.literal()?;
+                    d.value = Some(literal.raw.clone());
+                    d.literal = Some(literal)
                 }
                 if self.peek() == "external" {
                     d.descriptor = Some(self.descriptor()?)
@@ -591,6 +734,7 @@ impl<'a> Parser<'a> {
                             params: vec![],
                             children: vec![],
                             value: None,
+                            literal: None,
                             descriptor,
                             throws: None,
                             return_docs: Vec::new(),
@@ -602,7 +746,9 @@ impl<'a> Parser<'a> {
             }
             "enumerator" => {
                 if self.eat("=") {
-                    d.value = Some(self.literal()?)
+                    let literal = self.literal()?;
+                    d.value = Some(literal.raw.clone());
+                    d.literal = Some(literal)
                 }
             }
             "typealias" => {
@@ -639,6 +785,7 @@ impl<'a> Parser<'a> {
                         params: vec![],
                         children: vec![],
                         value: None,
+                        literal: None,
                         descriptor: None,
                         throws: None,
                         return_docs: Vec::new(),
@@ -670,18 +817,23 @@ impl<'a> Parser<'a> {
         }
         Ok(d)
     }
-    fn descriptor(&mut self) -> Result<String, String> {
-        let start = self.span().start;
+    fn descriptor(&mut self) -> Result<Descriptor, String> {
+        let mut span = self.span();
         self.expect("external")?;
         self.expect("{")?;
-        let mut count = 0;
+        let mut values = Vec::new();
         while self.peek() != "}" {
-            self.id()?;
-            self.id()?;
+            let platform = self.id()?;
+            let key = self.id()?;
             self.string()?;
-            count += 1;
+            let value = self.t[self.i - 1].text.clone();
+            values.push(DescriptorValue {
+                platform,
+                key,
+                value,
+            });
         }
-        if count == 0 {
+        if values.is_empty() {
             return Err(error(
                 self.path,
                 &self.span(),
@@ -689,30 +841,54 @@ impl<'a> Parser<'a> {
             ));
         }
         self.expect("}")?;
-        Ok(self.src[start..self.t[self.i - 1].span.end].into())
+        span.end = self.t[self.i - 1].span.end;
+        Ok(Descriptor {
+            raw: self.src[span.start..span.end].into(),
+            span,
+            values,
+        })
     }
-    fn literal(&mut self) -> Result<String, String> {
-        let start = self.span().start;
-        if self.eat("{") {
+    fn literal(&mut self) -> Result<Literal, String> {
+        let span = self.span();
+        let start = span.start;
+        let mut children = Vec::new();
+        let kind = if self.eat("{") {
             if self.peek() != "}" {
                 loop {
-                    if self.t.get(self.i + 1).is_some_and(|t| t.text == "=") {
-                        self.id()?;
+                    let name = if self.t.get(self.i + 1).is_some_and(|t| t.text == "=") {
+                        let n = self.id()?;
                         self.expect("=")?;
-                    }
-                    self.literal()?;
+                        Some(n)
+                    } else {
+                        None
+                    };
+                    let mut item = self.literal()?;
+                    item.name = name;
+                    children.push(item);
                     if !self.eat(",") {
                         break;
                     }
                 }
             }
             self.expect("}")?;
+            "struct"
         } else if self.eat("[") {
+            let mut map = None;
             if self.peek() != "]" {
                 loop {
-                    self.literal()?;
-                    if self.eat(":") {
-                        self.literal()?;
+                    let key = self.literal()?;
+                    let is_map = self.eat(":");
+                    if map.is_some_and(|m| m != is_map) {
+                        return Err(error(
+                            self.path,
+                            &self.span(),
+                            "cannot mix map and list entries",
+                        ));
+                    }
+                    map = Some(is_map);
+                    children.push(key);
+                    if is_map {
+                        children.push(self.literal()?);
                     }
                     if !self.eat(",") {
                         break;
@@ -720,27 +896,59 @@ impl<'a> Parser<'a> {
                 }
             }
             self.expect("]")?;
+            if map == Some(true) {
+                "map"
+            } else {
+                "list"
+            }
         } else {
             let signed = self.eat("+") || self.eat("-");
-            if !["id", "number", "string"].contains(&self.t[self.i].kind.as_str()) {
+            let token = self.t[self.i].clone();
+            if !["id", "number", "string"].contains(&token.kind.as_str()) {
                 return Err(error(self.path, &self.span(), "expected literal"));
             }
-            if signed && self.t[self.i].kind != "number" && self.peek() != "Infinity" {
+            if signed && token.kind != "number" && token.text != "Infinity" {
                 return Err(error(self.path, &self.span(), "expected numeric literal"));
             }
             self.next();
             while self.eat(".") {
                 self.id()?;
             }
-            if self.eat("(") {
+            let positional = if self.eat("(") {
                 if self.t[self.i].kind != "number" {
                     return Err(error(self.path, &self.span(), "expected integer"));
                 }
                 self.next();
                 self.expect(")")?;
+                true
+            } else {
+                false
+            };
+            if positional {
+                "positional_enumerator"
+            } else if token.kind == "string" {
+                "string"
+            } else if token.kind == "number" {
+                "number"
+            } else if token.text == "true" || token.text == "false" {
+                "boolean"
+            } else if token.text == "null" {
+                "null"
+            } else if token.text == "NaN" || token.text == "Infinity" {
+                "number"
+            } else {
+                "reference"
             }
-        }
-        Ok(self.src[start..self.t[self.i - 1].span.end].into())
+        };
+        let mut span = span;
+        span.end = self.t[self.i - 1].span.end;
+        Ok(Literal {
+            kind: kind.into(),
+            raw: self.src[start..span.end].into(),
+            span,
+            name: None,
+            children,
+        })
     }
 }
 pub fn parse(path: &str, src: &str, auxiliary: bool) -> Result<File, String> {
@@ -771,11 +979,19 @@ pub fn parse(path: &str, src: &str, auxiliary: bool) -> Result<File, String> {
 }
 
 pub fn collect(paths: &[PathBuf]) -> Result<Vec<PathBuf>, String> {
-    fn walk(p: &Path, out: &mut BTreeSet<PathBuf>) -> Result<(), String> {
+    fn walk(
+        p: &Path,
+        out: &mut BTreeSet<PathBuf>,
+        visited: &mut BTreeSet<PathBuf>,
+    ) -> Result<(), String> {
         if p.is_dir() {
+            let canonical = fs::canonicalize(p).map_err(|e| format!("{}: {e}", p.display()))?;
+            if !visited.insert(canonical) {
+                return Ok(());
+            }
             let entries = fs::read_dir(p).map_err(|e| format!("{}: {e}", p.display()))?;
             for entry in entries {
-                walk(&entry.map_err(|e| e.to_string())?.path(), out)?
+                walk(&entry.map_err(|e| e.to_string())?.path(), out, visited)?
             }
         } else if p.is_file() {
             if p.extension().is_some_and(|e| e == "lime") {
@@ -787,8 +1003,9 @@ pub fn collect(paths: &[PathBuf]) -> Result<Vec<PathBuf>, String> {
         Ok(())
     }
     let mut out = BTreeSet::new();
+    let mut visited = BTreeSet::new();
     for p in paths {
-        walk(p, &mut out)?
+        walk(p, &mut out, &mut visited)?
     }
     Ok(out.into_iter().collect())
 }
