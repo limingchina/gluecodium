@@ -405,3 +405,18 @@ fn json_generation_is_deterministic() {
     }
     fs::remove_dir_all(dir).unwrap();
 }
+#[test]
+fn ordered_containers_require_comparable_keys() {
+    for t in ["Set<Key>", "Map<Key, String>"] {
+        let mut m = model(&format!(
+            "package x\nstruct Key {{ value: Int }}\nstruct Holder {{ keys: {t} }}\n"
+        ));
+        resolve(&mut m).unwrap();
+        assert!(ruscodium::cpp::generate(&m)
+            .unwrap_err()
+            .contains("ordered container key"));
+    }
+    let mut m = model("package x\nstruct Holder { keys: Set<String> }\n");
+    resolve(&mut m).unwrap();
+    assert!(ruscodium::cpp::generate(&m).is_ok());
+}

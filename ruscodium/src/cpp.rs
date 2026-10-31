@@ -128,6 +128,36 @@ fn typecheck(
             return Err(format!("{}: invalid C++ type arity", t.name));
         }
     }
+    if t.builtin && matches!(t.name.as_str(), "Set" | "Map") {
+        let key = &t.args[0];
+        let ordered_builtin = key.builtin
+            && matches!(
+                key.name.as_str(),
+                "Byte"
+                    | "Short"
+                    | "Int"
+                    | "Long"
+                    | "UByte"
+                    | "UShort"
+                    | "UInt"
+                    | "ULong"
+                    | "Boolean"
+                    | "String"
+                    | "Float"
+                    | "Double"
+            );
+        let ordered_enum = key
+            .resolved
+            .as_ref()
+            .and_then(|n| ctx.kinds.get(n))
+            .is_some_and(|k| k == "enum");
+        if key.nullable || !(ordered_builtin || ordered_enum) {
+            return Err(format!(
+                "{}: C++ ordered container key type {} is unsupported",
+                t.name, key.name
+            ));
+        }
+    }
     if !t.annotations.is_empty() {
         return Err(format!("{}: C++ type annotations are unsupported", t.name));
     }
