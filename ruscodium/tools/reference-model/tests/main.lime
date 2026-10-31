@@ -1,2 +1,3 @@
 package example.main
-class Main {}
+import example.aux.Auxiliary
+struct Main { dependency: Auxiliary }

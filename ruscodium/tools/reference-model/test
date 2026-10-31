@@ -6,6 +6,14 @@ trap 'rm -rf "$tmp"' EXIT
 "$here/export" --main examples/calculator/lime/Calculator.lime --output "$tmp/one.json"
 "$here/export" --main examples/calculator/lime/Calculator.lime --output "$tmp/two.json"
 cmp "$tmp/one.json" "$tmp/two.json"
+python3 - "$tmp/one.json" <<'PYTEST'
+import json, sys
+s = json.load(open(sys.argv[1]))
+nodes = {n['id']: n for n in s['nodes']}
+root = nodes[s['root']['$ref']]['properties']
+ids = {v['$ref'] for v in root['referenceMap'].values()}
+assert any(n['properties'].get('type', {}).get('$ref') in ids for n in nodes.values() if isinstance(n['properties'].get('type'), dict))
+PYTEST
 "$here/export" --main ruscodium/tools/reference-model/tests/main.lime --aux ruscodium/tools/reference-model/tests/aux.lime --output "$tmp/roots.json"
 python3 - "$tmp/roots.json" <<'PY'
 import json, sys
@@ -17,6 +25,12 @@ assert len(root['topElements']) == len(root['auxiliaryElements']) == 1
 assert 'example.main.Main' in root['referenceMap']
 assert 'example.aux.Auxiliary' in root['referenceMap']
 assert root['fileNameMap']['example.main.Main'].endswith('tests/main.lime')
+aux_id = root['referenceMap']['example.aux.Auxiliary']['$ref']
+main_node = nodes[root['referenceMap']['example.main.Main']['$ref']]
+field = nodes[main_node['properties']['fields'][0]['$ref']]
+ref = nodes[field['properties']['typeRef']['$ref']]
+assert ref['properties']['type'] == {'$ref': aux_id}
+assert ref['properties']['element'] == {'$ref': aux_id}
 PY
 mkdir "$tmp/sources"
 cp "$here/tests/main.lime" "$tmp/sources/z.lime"
@@ -39,6 +53,14 @@ PYTEST
 printf 'sentinel\n' > "$tmp/failed.json"
 if "$here/export" --main ruscodium/tools/reference-model/tests/invalid.lime --output "$tmp/failed.json" > "$tmp/stdout" 2> "$tmp/stderr"; then
   echo 'invalid input unexpectedly succeeded' >&2; exit 1
+fi
+[[ $(cat "$tmp/failed.json") == sentinel ]]
+cat > "$tmp/missing.lime" <<'LIME'
+package example.missing
+struct Broken { field: MissingType }
+LIME
+if "$here/export" --main "$tmp/missing.lime" --output "$tmp/failed.json" > "$tmp/stdout" 2> "$tmp/stderr"; then
+  echo 'unresolved reference unexpectedly succeeded' >&2; exit 1
 fi
 [[ $(cat "$tmp/failed.json") == sentinel ]]
 echo 'reference snapshot tests passed'

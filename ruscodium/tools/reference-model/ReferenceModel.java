@@ -55,6 +55,10 @@ public final class ReferenceModel {
                 } catch (NoSuchMethodException ignored) { /* private implementation field */ }
             }
         }
+        if (x instanceof com.here.gluecodium.model.lime.LimeElementRef<?>)
+            properties.put("element", x.getClass().getMethod("getElement"));
+        if (x instanceof com.here.gluecodium.model.lime.LimeTypeRef)
+            properties.put("type", x.getClass().getMethod("getType"));
         Map<String,Object> props = new LinkedHashMap<>();
         if (x instanceof LimeAttributes) {
             LimeAttributes attributes = (LimeAttributes)x;
