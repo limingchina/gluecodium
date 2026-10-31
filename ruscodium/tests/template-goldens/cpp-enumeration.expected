@@ -1,0 +1,18 @@
+/**
+ * Colors available to clients.
+
+ */
+enum class Color {
+    /**
+     * The default color.
+
+     */
+    RED,
+    GREEN = 7,
+    /**
+     * \deprecated Use GREEN
+     */
+    BLUE
+};
+
+

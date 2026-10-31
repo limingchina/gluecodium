@@ -1,0 +1,9 @@
+before
+  first VALUE
+  second
+after
+  first VALUE
+  second
+
+inline=VALUE
+

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+repo=$(cd "$here/../../.." && pwd)
+java=${JAVA_HOME:+$JAVA_HOME/bin/}java
+javac=${JAVA_HOME:+$JAVA_HOME/bin/}javac
+command -v "$javac" >/dev/null && command -v "$java" >/dev/null || { echo 'Java 17 JDK required' >&2; exit 1; }
+lib="$repo/gluecodium/build/install/gluecodium/lib"
+[[ -d "$lib" ]] || { echo "Missing installed JVM libraries: $lib" >&2; exit 1; }
+classes=$(mktemp -d)
+trap 'rm -rf "$classes"' EXIT
+"$javac" -cp "$lib/*" -d "$classes" "$repo/ruscodium/tools/reference-model/ReferenceModel.java" "$here/TemplateOracle.java"
+cd "$repo"
+"$java" -cp "$classes:$here:$lib/*" TemplateOracle "${1:-$repo/ruscodium/tests/template-goldens}"

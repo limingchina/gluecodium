@@ -14,7 +14,10 @@ public final class ReferenceModel {
     private final List<Object> queue = new ArrayList<>();
     private final Path repository = Path.of("").toAbsolutePath().normalize();
 
-    private Object value(Object x, String path) throws Exception {
+    /** Objects discovered so far, in snapshot ID order; intended for bounded oracle observations. */
+    public List<Object> discoveredObjects() { return Collections.unmodifiableList(queue); }
+
+    public Object value(Object x, String path) throws Exception {
         if (x instanceof Double && !Double.isFinite((Double)x) || x instanceof Float && !Float.isFinite((Float)x))
             throw new IllegalArgumentException(path + ": non-finite number");
         if (x == null || x instanceof Boolean || x instanceof Number) return x;
@@ -92,15 +95,21 @@ public final class ReferenceModel {
         result.put("id", id); result.put("class", x.getClass().getName()); result.put("properties", props);
         return result;
     }
-    private String snapshot(Object model) throws Exception {
+    public Map<String,Object> snapshotDocument(Object model) throws Exception {
         Object root = value(model, "root");
         List<Object> nodes = new ArrayList<>();
         for (int i = 0; i < queue.size(); i++) nodes.add(node(queue.get(i), "n" + (i + 1)));
         Map<String,Object> doc = new LinkedHashMap<>();
         doc.put("schema", "gluecodium.reference-model.snapshot"); doc.put("version", 1); doc.put("root", root); doc.put("nodes", nodes);
-        StringBuilder b = new StringBuilder(); json(b, doc); return b.append('\n').toString();
+        return doc;
     }
-    private static void json(StringBuilder b, Object x) {
+    private String snapshot(Object model) throws Exception {
+        return jsonString(snapshotDocument(model));
+    }
+    public static String jsonString(Object x) {
+        StringBuilder b = new StringBuilder(); json(b, x); return b.append('\n').toString();
+    }
+    public static void json(StringBuilder b, Object x) {
         if (x == null) b.append("null");
         else if (x instanceof String) {
             b.append('"'); for (char c : ((String)x).toCharArray()) { switch(c) {

@@ -1,0 +1,1 @@
+::Return< ::std::string, ::std::error_code > risky( const ::internal::optional< ::oracle::Labels >& labels, const ::oracle::Color other )

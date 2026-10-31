@@ -1,0 +1,21 @@
+// -------------------------------------------------------------------------------------------------
+//
+
+//
+// -------------------------------------------------------------------------------------------------
+
+#pragma once
+
+#ifdef GLUE_SHARED
+#   if defined(_WIN32) || defined(__CYGWIN)
+#       ifdef GLUE_INTERNAL
+#           define GLUE_EXPORT __declspec( dllexport )
+#       else
+#           define GLUE_EXPORT __declspec( dllimport )
+#       endif
+#   else
+#       define GLUE_EXPORT __attribute__( ( visibility( "default" ) ) )
+#   endif
+#else
+#   define GLUE_EXPORT
+#endif

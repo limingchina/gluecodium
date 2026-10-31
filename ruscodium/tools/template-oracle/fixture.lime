@@ -1,0 +1,22 @@
+package oracle
+
+// Colors available to clients.
+enum Color {
+    // The default color.
+    RED,
+    GREEN = 7,
+    @Deprecated("Use GREEN")
+    BLUE
+}
+
+typealias Labels = List<String>
+
+exception Problem(Color)
+
+class Service {
+    // Converts a value.
+    @Cpp(Const)
+    fun convert(first: String, count: Int): String
+
+    fun risky(labels: Labels?, other: Color): String throws Problem
+}

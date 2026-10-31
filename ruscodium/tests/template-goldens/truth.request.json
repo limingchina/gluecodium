@@ -1,0 +1,1 @@
+{"schema":"gluecodium.template.render-request","version":1,"template":"oracle/truth","data":{"zero":0,"one":1,"no":false,"emptyString":"","emptyMap":{},"nil":null},"property_overlays":{},"hooks":{"names":[],"predicates":[],"sorters":[]}}

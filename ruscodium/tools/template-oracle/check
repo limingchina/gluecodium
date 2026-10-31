@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+repo=$(cd "$here/../../.." && pwd)
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+cd "$repo"
+python3 "$here/check_templates.py"
+"$here/run" "$tmp"
+python3 - "$repo/ruscodium/tests/template-goldens" "$tmp" <<'PY'
+from pathlib import Path
+import sys
+expected, actual = map(Path, sys.argv[1:])
+expected_files = {p.name for p in expected.iterdir() if p.suffix in ('.json', '.expected')}
+actual_files = {p.name for p in actual.iterdir() if p.suffix in ('.json', '.expected')}
+if expected_files != actual_files:
+    sys.exit(f'Fixture file mismatch: missing {sorted(expected_files - actual_files)}, unexpected {sorted(actual_files - expected_files)}')
+for name in sorted(expected_files):
+    if (expected / name).read_bytes() != (actual / name).read_bytes():
+        sys.exit(f'Fixture bytes differ: {name}')
+print(f'Checked {len(actual_files) // 2} JVM render requests and exact output bytes')
+PY

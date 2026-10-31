@@ -1,0 +1,12 @@
+A
+{{#if yes no}}default-true{{/if}}{{#unless yes no}}default-false{{/unless}}
+{{#if yes no logic="or"}}or-true{{/if}}
+{{#if yes no logic="and"}}and-true{{/if}}
+{{#unless yes no logic="and"}}unless-and{{/unless}}
+{{#items}}[{{iter.index}}:{{iter.index1}}:{{iter.first}}:{{iter.last}}:{{iter.hasNext}}:{{.}}]{{/items}}
+{{join items delimiter=" | "}}
+{{prefix multiline "> "}}
+{{prefix multiline "> " skipFirstLine=true}}
+{{escape special}}
+{{special}}|{{{special}}}|{{&special}}
+{{#missing}}missing{{/missing}}{{^missing}}inverse-missing{{/missing}}/{{#empty}}empty{{/empty}}{{^empty}}inverse-empty{{/empty}}/{{#nil}}nil{{/nil}}{{^nil}}inverse-nil{{/nil}}

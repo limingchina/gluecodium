@@ -1,0 +1,7 @@
+/**
+ * Converts a value.
+ * \param[in] first
+ * \param[in] count
+ * \return
+ */
+::std::string convert( const ::std::string& first, const int32_t count ) const

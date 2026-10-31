@@ -1,0 +1,1 @@
+{"schema":"gluecodium.template.render-request","version":1,"template":"oracle/helpers","data":{"yes":true,"no":false,"items":["one","two","three"],"multiline":"alpha  \n beta\t\n","special":"<a & \"b\">\n","empty":[],"nil":null},"property_overlays":{},"hooks":{"names":[],"predicates":[],"sorters":[]}}
