@@ -42,6 +42,8 @@ pub struct Decl {
     pub value: Option<String>,
     pub descriptor: Option<String>,
     pub throws: Option<TypeRef>,
+    pub return_docs: Vec<String>,
+    pub throws_docs: Vec<String>,
 }
 #[derive(Debug, Clone, Serialize)]
 pub struct File {
@@ -280,7 +282,55 @@ impl<'a> Parser<'a> {
         }
     }
     fn id(&mut self) -> Result<String, String> {
-        if self.t[self.i].kind == "id" {
+        const RESERVED: &[&str] = &[
+            "class",
+            "const",
+            "constructor",
+            "field",
+            "fun",
+            "enum",
+            "exception",
+            "external",
+            "get",
+            "import",
+            "interface",
+            "lambda",
+            "narrow",
+            "open",
+            "package",
+            "property",
+            "set",
+            "static",
+            "struct",
+            "throws",
+            "typealias",
+            "Void",
+            "Boolean",
+            "Float",
+            "Double",
+            "Byte",
+            "Short",
+            "Int",
+            "Long",
+            "UByte",
+            "UShort",
+            "UInt",
+            "ULong",
+            "String",
+            "Blob",
+            "Date",
+            "Duration",
+            "Locale",
+            "List",
+            "Map",
+            "Set",
+            "true",
+            "false",
+            "null",
+            "NaN",
+            "Infinity",
+        ];
+        if self.t[self.i].kind == "id" && !RESERVED.contains(&self.peek()) {
             Ok(self.next())
         } else {
             Err(error(self.path, &self.span(), "expected identifier"))
@@ -303,8 +353,31 @@ impl<'a> Parser<'a> {
             } else if self.eat("@") {
                 let start = self.t[self.i - 1].span.start;
                 self.id()?;
-                if self.peek() == "(" {
-                    self.balanced("(", ")")?;
+                if self.eat("(") {
+                    loop {
+                        if self.t[self.i].kind == "string" {
+                            self.next();
+                        } else {
+                            self.id()?;
+                            if self.eat("=") {
+                                if self.eat("[") {
+                                    loop {
+                                        self.string()?;
+                                        if !self.eat(",") {
+                                            break;
+                                        }
+                                    }
+                                    self.expect("]")?;
+                                } else {
+                                    self.string()?;
+                                }
+                            }
+                        }
+                        if !self.eat(",") {
+                            break;
+                        }
+                    }
+                    self.expect(")")?;
                 }
                 let end = self.t[self.i - 1].span.end;
                 attrs.push(self.src[start..end].into());
@@ -314,27 +387,35 @@ impl<'a> Parser<'a> {
         }
         Ok((docs, attrs))
     }
-    fn balanced(&mut self, open: &str, close: &str) -> Result<(), String> {
-        self.expect(open)?;
-        let mut depth = 1;
-        while depth > 0 {
-            if self.peek() == "<eof>" {
-                return Err(error(self.path, &self.span(), &format!("expected {close}")));
-            }
-            if self.eat(open) {
-                depth += 1
-            } else if self.eat(close) {
-                depth -= 1
-            } else {
-                self.next();
-            }
+    fn string(&mut self) -> Result<(), String> {
+        if self.t[self.i].kind != "string" || self.peek().starts_with("\"\"\"") {
+            return Err(error(
+                self.path,
+                &self.span(),
+                "expected single-line string",
+            ));
         }
+        self.next();
         Ok(())
+    }
+    fn newline(&self) -> Result<(), String> {
+        let previous = &self.t[self.i - 1];
+        if self.peek() == "<eof>"
+            || self.src[previous.span.end..self.span().start].contains(['\n', '\r'])
+        {
+            Ok(())
+        } else {
+            Err(error(self.path, &self.span(), "expected newline"))
+        }
     }
     fn typ(&mut self) -> Result<TypeRef, String> {
         let (_, annotations) = self.meta()?;
         let span = self.span();
-        let name = self.qualified()?;
+        let name = if BUILTINS.contains(&self.peek()) {
+            self.next()
+        } else {
+            self.qualified()?
+        };
         let mut args = Vec::new();
         if self.eat("<") {
             loop {
@@ -399,6 +480,8 @@ impl<'a> Parser<'a> {
             value: None,
             descriptor: None,
             throws: None,
+            return_docs: Vec::new(),
+            throws_docs: Vec::new(),
         };
         match kind.as_str() {
             "class" | "interface" | "struct" | "enum" => {
@@ -451,6 +534,8 @@ impl<'a> Parser<'a> {
                         value: None,
                         descriptor: None,
                         throws: None,
+                        return_docs: Vec::new(),
+                        throws_docs: Vec::new(),
                     });
                     if !self.eat(",") {
                         break;
@@ -458,12 +543,18 @@ impl<'a> Parser<'a> {
                 }
                 self.expect(")")?;
                 if self.eat(":") {
-                    let _ = self.meta()?;
-                    d.ty = Some(self.typ()?)
+                    let (docs, attrs) = self.meta()?;
+                    d.return_docs = docs;
+                    let mut ty = self.typ()?;
+                    ty.annotations.splice(0..0, attrs);
+                    d.ty = Some(ty)
                 }
                 if self.eat("throws") {
-                    let _ = self.meta()?;
-                    d.throws = Some(self.typ()?)
+                    let (docs, attrs) = self.meta()?;
+                    d.throws_docs = docs;
+                    let mut ty = self.typ()?;
+                    ty.annotations.splice(0..0, attrs);
+                    d.throws = Some(ty)
                 }
             }
             "property" | "field" | "const" => {
@@ -502,6 +593,8 @@ impl<'a> Parser<'a> {
                             value: None,
                             descriptor,
                             throws: None,
+                            return_docs: Vec::new(),
+                            throws_docs: Vec::new(),
                         })
                     }
                     self.expect("}")?;
@@ -548,6 +641,8 @@ impl<'a> Parser<'a> {
                         value: None,
                         descriptor: None,
                         throws: None,
+                        return_docs: Vec::new(),
+                        throws_docs: Vec::new(),
                     });
                     if !self.eat(",") {
                         break;
@@ -559,32 +654,90 @@ impl<'a> Parser<'a> {
             }
             _ => {}
         }
+        if matches!(
+            kind.as_str(),
+            "class"
+                | "interface"
+                | "struct"
+                | "enum"
+                | "const"
+                | "typealias"
+                | "exception"
+                | "lambda"
+                | "property"
+        ) {
+            self.newline()?;
+        }
         Ok(d)
     }
     fn descriptor(&mut self) -> Result<String, String> {
         let start = self.span().start;
         self.expect("external")?;
-        self.balanced("{", "}")?;
+        self.expect("{")?;
+        let mut count = 0;
+        while self.peek() != "}" {
+            self.id()?;
+            self.id()?;
+            self.string()?;
+            count += 1;
+        }
+        if count == 0 {
+            return Err(error(
+                self.path,
+                &self.span(),
+                "expected external descriptor value",
+            ));
+        }
+        self.expect("}")?;
         Ok(self.src[start..self.t[self.i - 1].span.end].into())
     }
     fn literal(&mut self) -> Result<String, String> {
         let start = self.span().start;
-        self.eat("+");
-        self.eat("-");
-        match self.peek() {
-            "{" => self.balanced("{", "}")?,
-            "[" => self.balanced("[", "]")?,
-            _ => {
-                if !["id", "number", "string"].contains(&self.t[self.i].kind.as_str()) {
-                    return Err(error(self.path, &self.span(), "expected literal"));
+        if self.eat("{") {
+            if self.peek() != "}" {
+                loop {
+                    if self.t.get(self.i + 1).is_some_and(|t| t.text == "=") {
+                        self.id()?;
+                        self.expect("=")?;
+                    }
+                    self.literal()?;
+                    if !self.eat(",") {
+                        break;
+                    }
+                }
+            }
+            self.expect("}")?;
+        } else if self.eat("[") {
+            if self.peek() != "]" {
+                loop {
+                    self.literal()?;
+                    if self.eat(":") {
+                        self.literal()?;
+                    }
+                    if !self.eat(",") {
+                        break;
+                    }
+                }
+            }
+            self.expect("]")?;
+        } else {
+            let signed = self.eat("+") || self.eat("-");
+            if !["id", "number", "string"].contains(&self.t[self.i].kind.as_str()) {
+                return Err(error(self.path, &self.span(), "expected literal"));
+            }
+            if signed && self.t[self.i].kind != "number" && self.peek() != "Infinity" {
+                return Err(error(self.path, &self.span(), "expected numeric literal"));
+            }
+            self.next();
+            while self.eat(".") {
+                self.id()?;
+            }
+            if self.eat("(") {
+                if self.t[self.i].kind != "number" {
+                    return Err(error(self.path, &self.span(), "expected integer"));
                 }
                 self.next();
-                while self.eat(".") {
-                    self.id()?;
-                }
-                if self.peek() == "(" {
-                    self.balanced("(", ")")?
-                }
+                self.expect(")")?;
             }
         }
         Ok(self.src[start..self.t[self.i - 1].span.end].into())
@@ -595,9 +748,11 @@ pub fn parse(path: &str, src: &str, auxiliary: bool) -> Result<File, String> {
     let mut p = Parser { path, src, t, i: 0 };
     p.expect("package")?;
     let package = p.qualified()?;
+    p.newline()?;
     let mut imports = Vec::new();
     while p.eat("import") {
-        imports.push(p.qualified()?)
+        imports.push(p.qualified()?);
+        p.newline()?
     }
     let mut declarations = Vec::new();
     while p.peek() != "<eof>" {
@@ -758,6 +913,13 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
             }
             return Ok(());
         }
+        if !t.args.is_empty() {
+            return Err(error(
+                path,
+                &t.span,
+                "user-defined types do not accept type arguments",
+            ));
+        }
         let candidates = find(&t.name, scope, imports, symbols);
         match candidates.len() {
             0 => Err(error(path, &t.span, &format!("unresolved type {}", t.name))),
@@ -799,7 +961,21 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
             };
             if let Some(t) = &mut d.ty {
                 ty(t, &inner, imports, symbols, path)?;
-                if t.name == "Void" && d.kind != "fun" && d.kind != "lambda" {
+                if t.resolved
+                    .as_ref()
+                    .and_then(|n| symbols.get(n))
+                    .is_some_and(|k| k == "exception")
+                    && d.kind != "exception"
+                {
+                    return Err(error(
+                        path,
+                        &t.span,
+                        "exception cannot be used as a value type",
+                    ));
+                }
+                if (t.name == "Void" && d.kind != "fun" && d.kind != "lambda")
+                    || (t.name == "Void" && t.nullable)
+                {
                     return Err(error(path, &t.span, "Void is not valid here"));
                 }
                 if t.nullable && d.value.as_deref() == Some("null") {
@@ -808,14 +984,42 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
                 }
             }
             for t in &mut d.parents {
-                ty(t, scope, imports, symbols, path)?
+                ty(t, scope, imports, symbols, path)?;
+                let kind = t.resolved.as_ref().and_then(|n| symbols.get(n));
+                if !matches!(kind.map(String::as_str), Some("class" | "interface"))
+                    || (d.kind == "interface" && kind.map(String::as_str) != Some("interface"))
+                {
+                    return Err(error(path, &t.span, "invalid inheritance target"));
+                }
+            }
+            if d.kind == "struct" {
+                let fields: BTreeSet<_> = d
+                    .children
+                    .iter()
+                    .filter(|c| c.kind == "field")
+                    .map(|c| c.name.as_str())
+                    .collect();
+                for c in &d.children {
+                    if c.kind == "field_constructor" {
+                        for p in &c.params {
+                            if !fields.contains(p.name.as_str()) {
+                                return Err(error(
+                                    path,
+                                    &p.span,
+                                    "field constructor references unknown field",
+                                ));
+                            }
+                        }
+                    }
+                }
             }
             if let Some(t) = &mut d.throws {
                 ty(t, scope, imports, symbols, path)?;
                 if t.resolved
                     .as_ref()
                     .and_then(|n| symbols.get(n))
-                    .is_some_and(|k| k != "exception")
+                    .map(String::as_str)
+                    != Some("exception")
                 {
                     return Err(error(path, &t.span, "throws requires an exception"));
                 }
@@ -850,13 +1054,19 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
         )?
     }
     fn edges(ds: &[Decl], scope: &str, graph: &mut BTreeMap<String, Vec<String>>) {
+        fn type_edges(t: &TypeRef, out: &mut Vec<String>) {
+            if let Some(r) = &t.resolved {
+                out.push(r.clone())
+            }
+            for a in &t.args {
+                type_edges(a, out)
+            }
+        }
         for d in ds {
             let full = format!("{scope}.{}", d.name);
             if d.kind == "typealias" {
                 if let Some(t) = &d.ty {
-                    if let Some(r) = &t.resolved {
-                        graph.entry(full.clone()).or_default().push(r.clone());
-                    }
+                    type_edges(t, graph.entry(full.clone()).or_default())
                 }
             }
             if d.kind == "class" || d.kind == "interface" {
@@ -899,6 +1109,77 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
     let mut done = BTreeSet::new();
     for n in graph.keys() {
         cycle(n, &graph, &mut active, &mut done)?
+    }
+    let mut aliases = BTreeMap::new();
+    fn collect_aliases(ds: &[Decl], scope: &str, aliases: &mut BTreeMap<String, TypeRef>) {
+        for d in ds {
+            let full = format!("{scope}.{}", d.name);
+            if d.kind == "typealias" {
+                if let Some(t) = &d.ty {
+                    aliases.insert(full.clone(), t.clone());
+                }
+            }
+            collect_aliases(&d.children, &full, aliases);
+        }
+    }
+    for f in &model.files {
+        collect_aliases(&f.declarations, &f.package, &mut aliases);
+    }
+    fn canonical(t: &TypeRef, aliases: &BTreeMap<String, TypeRef>) -> String {
+        let mut name = t.resolved.clone().unwrap_or_else(|| t.name.clone());
+        if let Some(a) = aliases.get(&name) {
+            name = canonical(a, aliases);
+        } else if !t.args.is_empty() {
+            name.push('<');
+            name.push_str(
+                &t.args
+                    .iter()
+                    .map(|a| canonical(a, aliases))
+                    .collect::<Vec<_>>()
+                    .join(","),
+            );
+            name.push('>');
+        }
+        if t.nullable {
+            name.push('?');
+        }
+        name
+    }
+    fn signatures(
+        ds: &[Decl],
+        aliases: &BTreeMap<String, TypeRef>,
+        path: &str,
+    ) -> Result<(), String> {
+        let mut seen = BTreeSet::new();
+        for d in ds {
+            if matches!(d.kind.as_str(), "fun" | "constructor" | "field_constructor") {
+                let signature = format!(
+                    "{}({})",
+                    d.name,
+                    d.params
+                        .iter()
+                        .map(|p| p
+                            .ty
+                            .as_ref()
+                            .map(|t| canonical(t, aliases))
+                            .unwrap_or_else(|| p.name.clone()))
+                        .collect::<Vec<_>>()
+                        .join(",")
+                );
+                if !seen.insert(signature.clone()) {
+                    return Err(error(
+                        path,
+                        &d.span,
+                        &format!("duplicate signature {signature}"),
+                    ));
+                }
+            }
+            signatures(&d.children, aliases, path)?
+        }
+        Ok(())
+    }
+    for f in &model.files {
+        signatures(&f.declarations, &aliases, &f.path)?
     }
     Ok(())
 }

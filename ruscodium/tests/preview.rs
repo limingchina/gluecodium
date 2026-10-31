@@ -18,19 +18,19 @@ fn rejects_malformed_input() {
 }
 #[test]
 fn resolution_and_cycles() {
-    let mut m = model("package x\nstruct A { value: Missing }\n");
+    let mut m = model("package x\nstruct A {\n value: Missing\n }\n");
     assert!(resolve(&mut m).unwrap_err().contains("unresolved"));
     let mut m = model("package x\ntypealias A = B\ntypealias B = A\n");
     assert!(resolve(&mut m).unwrap_err().contains("cyclic"));
 }
 #[test]
 fn ambiguity_in_all_scopes() {
-    let mut m=model("package x\nstruct Thing { value: Int }\nclass Outer { struct Thing { value: Int } fun fetch(): Thing }\n");
+    let mut m=model("package x\nstruct Thing {\n value: Int\n }\nclass Outer { struct Thing {\n value: Int\n }\n fun fetch(): Thing }\n");
     assert!(resolve(&mut m).unwrap_err().contains("ambiguous"));
 }
 #[test]
 fn cpp_generation_compiles_and_runs() {
-    let mut m=model("package sample\nstruct Point { x: Int y: Int }\ninterface Service { fun fetch(p: Point): Int }\n");
+    let mut m=model("package sample\nstruct Point {\n x: Int\n y: Int\n }\ninterface Service { fun fetch(p: Point): Int }\n");
     resolve(&mut m).unwrap();
     let header = ruscodium::cpp::generate(&m).unwrap();
     let dir = std::env::temp_dir().join(format!("ruscodium-test-{}", std::process::id()));
@@ -75,4 +75,98 @@ fn tracked_corpus_parses() {
             panic!("{e}")
         }
     }
+}
+
+#[test]
+fn repository_cpp_fixture_and_multiple_inputs() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .to_owned();
+    let paths = [
+        "cmake/tests/unit/gluecodium_generate/cpp-export/lime/common_main_foo.lime",
+        "cmake/tests/unit/gluecodium_generate/cpp-export/lime/main_bar.lime",
+    ]
+    .map(|p| root.join(p));
+    let mut m = ruscodium::load(&paths, &[]).unwrap();
+    resolve(&mut m).unwrap();
+    let header = ruscodium::cpp::generate(&m).unwrap();
+    let dir = std::env::temp_dir().join(format!("ruscodium-repo-{}", std::process::id()));
+    fs::create_dir_all(&dir).unwrap();
+    fs::write(dir.join("api.hpp"), header).unwrap();
+    fs::write(dir.join("main.cpp"),"#include \"api.hpp\"\nint main() { unit::test::CommonMainFoo* p = nullptr; return p != nullptr; }\n").unwrap();
+    assert!(Command::new("c++")
+        .current_dir(&dir)
+        .args([
+            "-std=c++17",
+            "-Wall",
+            "-Wextra",
+            "-Werror",
+            "main.cpp",
+            "-o",
+            "app"
+        ])
+        .status()
+        .unwrap()
+        .success());
+    assert!(Command::new(dir.join("app")).status().unwrap().success());
+    fs::remove_dir_all(dir).unwrap();
+}
+#[test]
+fn unsupported_backend_does_not_write_output() {
+    let dir = std::env::temp_dir().join(format!("ruscodium cli {}", std::process::id()));
+    fs::create_dir_all(&dir).unwrap();
+    let input = dir.join("input.lime");
+    fs::write(
+        &input,
+        "package x\n@Something\nstruct A {\n value: Int\n }\n",
+    )
+    .unwrap();
+    let out = dir.join("out");
+    let status = Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+        .args([
+            "-input",
+            input.to_str().unwrap(),
+            "-generators",
+            "cpp",
+            "-output",
+            out.to_str().unwrap(),
+        ])
+        .status()
+        .unwrap();
+    assert!(!status.success());
+    assert!(!out.exists());
+    fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
+fn coherent_repository_models() {
+    let root = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .parent()
+        .unwrap()
+        .to_owned();
+    let smoke = root.join("gluecodium/src/test/resources/smoke");
+    for scenario in ["generic_types", "expose_internals", "basic_types", "async"] {
+        let base = smoke.join(scenario);
+        let auxiliary = base.join("auxiliary");
+        let aux = if auxiliary.exists() {
+            vec![auxiliary]
+        } else {
+            vec![]
+        };
+        let mut m = ruscodium::load(&[base.join("input")], &aux).unwrap();
+        if let Err(e) = resolve(&mut m) {
+            panic!("{scenario}: {e}")
+        }
+    }
+    let mut calculator = ruscodium::load(&[root.join("examples/calculator/lime")], &[]).unwrap();
+    resolve(&mut calculator).unwrap();
+}
+#[test]
+fn reserved_words_newlines_and_alias_overloads() {
+    assert!(parse("x", "package x class Foo {}\n", false).is_err());
+    assert!(parse("x", "package x\nclass get {}\n", false).is_err());
+    let mut m =
+        model("package x\ntypealias Count = Int\nclass A { fun f(a: Int) fun f(a: Count) }\n");
+    assert!(resolve(&mut m).unwrap_err().contains("duplicate signature"));
 }

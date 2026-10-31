@@ -11,7 +11,7 @@ of marking the entire port complete after the preview.
 - [x] Record the unavailable Claude share and use repository evidence.
 - [x] Write `PLAN.md` and this file before adding implementation code.
 - [x] Commit the plan/task baseline before implementation.
-- [ ] Establish a standalone Cargo library/binary under `ruscodium/` with a
+- [x] Establish a standalone Cargo library/binary under `ruscodium/` with a
   lockfile and local build-output ignore rules.
 
 ## M1: frontend
@@ -27,30 +27,30 @@ of marking the entire port complete after the preview.
 - [ ] Parser: generic/nullable/annotated types and every initializer/reference
   form in the checked-in grammar.
 - [ ] Malformed-input regression cases with precise source diagnostics.
-- [ ] Parse every baseline repository `.lime` file with measured coverage and
+- [x] Parse every baseline repository `.lime` file with measured coverage and
   no silent skips; record and explain any deliberate syntax differences.
 
 ## M2: model and semantics
 
-- [ ] Deterministic recursive input collection, multiple inputs,
+- [x] Deterministic recursive input collection, multiple inputs,
   deduplication, and auxiliary-source loading.
-- [ ] Global symbols, nested qualified names and forward references.
-- [ ] Import validation and Kotlin-equivalent ambiguity across imports and all
+- [x] Global symbols, nested qualified names and forward references.
+- [x] Import validation and Kotlin-equivalent ambiguity across imports and all
   enclosing scopes; include a no-nearest-scope-shadowing regression case.
 - [ ] Duplicate declarations and signatures, while retaining legal overloads.
 - [ ] Type references/target kinds and alias-cycle validation.
 - [ ] Inheritance kinds/cycles and applicable open/narrow constraints.
 - [ ] Parameter/field/enumerator duplicates, `Void` restrictions, throws
   targets, field-constructor references and obvious invalid defaults.
-- [ ] Document the exact validator set and remaining Kotlin validation gaps.
-- [ ] Successfully load the calculator and coherent real repository fixture
+- [x] Document the exact validator set and remaining Kotlin validation gaps.
+- [x] Successfully load the calculator and coherent real repository fixture
   groups with correct input/auxiliary boundaries.
 
 ## M3: CLI and JSON
 
 - [ ] Help/version, input/auxinput/output, validation and syntax/model
   inspection, explicit generator selection and documented legacy flag aliases.
-- [ ] Correct nonzero failures for bad inputs/options/unsupported generators;
+- [x] Correct nonzero failures for bad inputs/options/unsupported generators;
   no output writes during validation.
 - [ ] Versioned, deterministic JSON containing parsed metadata and resolved
   references, usable for the calculator and broad LIME feature inspection.
@@ -58,7 +58,7 @@ of marking the entire port complete after the preview.
 
 ## M4: C++17 backend
 
-- [ ] Define and document supported C++ API/naming/type mappings and limitations.
+- [x] Define and document supported C++ API/naming/type mappings and limitations.
 - [ ] Classes/interfaces, virtual methods/factories, properties, structs,
   enums, aliases and lambdas within that contract.
 - [ ] Primitive/string/blob/container/optional/reference mappings and supported
@@ -75,13 +75,13 @@ of marking the entire port complete after the preview.
 
 ## M5: verification and handoff
 
-- [ ] `cargo fmt --check`.
-- [ ] `cargo clippy --all-targets -- -D warnings`.
+- [x] `cargo fmt --check`.
+- [x] `cargo clippy --all-targets -- -D warnings`.
 - [ ] `cargo test`, including lexer/parser, semantic, corpus, CLI and C++ cases.
 - [ ] Targeted JVM differential validation checks, including success, missing
   references, ambiguous scope/import lookup, and cycles where applicable.
 - [ ] Determinism and failure-output behavior checked.
-- [ ] Write `README.md` with build/run examples, architecture, measured
+- [x] Write `README.md` with build/run examples, architecture, measured
   coverage, compatibility table, supported semantics and exact limitations.
 - [ ] Independent Sol 6.1 xhigh review; fix and recheck material findings.
 - [ ] Update this checklist with evidence and deferred items; create logical
@@ -108,3 +108,8 @@ of marking the entire port complete after the preview.
   for semantic checks because names repeat across fixtures.
 - The existing installed JVM distribution can serve as a differential oracle;
   the Rust compiler must function independently of it.
+
+- Native preview implementation: frontend, resolver, CLI, JSON and limited C++ backend; see README for specific incomplete behavior. Nine integration tests cover 345/345 individually tracked inputs, calculator, four coherent smoke groups and two compiled C++ fixture groups.
+- Rust checks passed: `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`, `cargo test --offline` (9 integration tests). Template inventory tests: `python3 -m unittest discover -s tools/tests` (2 tests).
+- Independent JVM smoke comparison: Rust validates 46 of 49 groups; three need platform filtering (`defaults_const`, `name_clash_overloads`, `skip`). `comments` requires JVM documentation configuration. The JVM accepts some invalid Void positions and duplicate parameters that this preview rejects.
+- Preview remains incomplete: structured literal AST, full grammar rejection, complete semantic checks, C++ nested/auxiliary references, feature guards and output parity remain open above. Independent review has not yet occurred.
