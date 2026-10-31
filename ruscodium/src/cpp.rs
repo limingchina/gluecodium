@@ -139,9 +139,14 @@ fn typecheck(
                 "{r}: C++ reference to auxiliary declaration is unsupported"
             ));
         }
-        dependencies.insert(top.clone());
+        if !matches!(
+            ctx.kinds.get(r).map(String::as_str),
+            Some("class" | "interface")
+        ) {
+            dependencies.insert(top.clone());
+        }
     }
-    if ["Date", "Duration", "Locale"].contains(&t.name.as_str()) {
+    if t.builtin && ["Date", "Duration", "Locale"].contains(&t.name.as_str()) {
         return Err(format!("unsupported C++ runtime type {}", t.name));
     }
     Ok(())
@@ -152,6 +157,26 @@ fn ctype(t: &TypeRef, ctx: &Context) -> Result<String, String> {
         .iter()
         .map(|a| ctype(a, ctx))
         .collect::<Result<Vec<_>, _>>()?;
+    if !t.builtin {
+        let full = t
+            .resolved
+            .as_ref()
+            .ok_or_else(|| format!("unresolved C++ type {}", t.name))?;
+        let name = format!("::{}", full.replace('.', "::"));
+        let mapped = if matches!(
+            ctx.kinds.get(full).map(String::as_str),
+            Some("class" | "interface")
+        ) {
+            format!("std::shared_ptr<{name}>")
+        } else {
+            name
+        };
+        return Ok(if t.nullable {
+            format!("std::optional<{mapped}>")
+        } else {
+            mapped
+        });
+    }
     let s = match t.name.as_str() {
         "Void" => "void".into(),
         "Boolean" => "bool".into(),
@@ -222,6 +247,31 @@ fn inspect(d: &Decl, ctx: &Context, deps: &mut BTreeSet<String>) -> Result<(), S
     }
     for p in &d.params {
         inspect(p, ctx, deps)?
+    }
+    if matches!(d.kind.as_str(), "class" | "interface" | "struct") {
+        let mut names = BTreeSet::new();
+        for c in &d.children {
+            if d.kind == "struct" && c.kind == "fun" && !c.modifiers.iter().any(|m| m == "static") {
+                return Err(format!(
+                    "{}: struct instance methods are unsupported",
+                    c.name
+                ));
+            }
+            let generated: Vec<String> = if c.kind == "property" {
+                let mut v = vec![format!("get_{}", c.name)];
+                if c.children.is_empty() || c.children.iter().any(|a| a.name == "set") {
+                    v.push(format!("set_{}", c.name));
+                }
+                v
+            } else {
+                vec![c.name.clone()]
+            };
+            for name in generated {
+                if !names.insert(name.clone()) {
+                    return Err(format!("{name}: generated C++ member name collision"));
+                }
+            }
+        }
     }
     for c in &d.children {
         inspect(c, ctx, deps)?

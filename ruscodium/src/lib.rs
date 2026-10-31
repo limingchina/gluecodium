@@ -45,6 +45,7 @@ pub struct Descriptor {
 #[derive(Debug, Clone, Serialize)]
 pub struct TypeRef {
     pub name: String,
+    pub builtin: bool,
     pub args: Vec<TypeRef>,
     pub nullable: bool,
     pub annotations: Vec<Annotation>,
@@ -501,7 +502,8 @@ impl<'a> Parser<'a> {
     fn typ(&mut self) -> Result<TypeRef, String> {
         let (_, annotations) = self.meta()?;
         let span = self.span();
-        let name = if BUILTINS.contains(&self.peek()) {
+        let builtin = BUILTINS.contains(&self.peek());
+        let name = if builtin {
             self.next()
         } else {
             self.qualified()?
@@ -519,6 +521,7 @@ impl<'a> Parser<'a> {
         let nullable = self.eat("?");
         Ok(TypeRef {
             name,
+            builtin,
             args,
             nullable,
             annotations,
@@ -1134,7 +1137,7 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
         for a in &mut t.args {
             ty(a, scope, imports, symbols, path)?
         }
-        if BUILTINS.contains(&t.name.as_str()) {
+        if t.builtin {
             let arity = match t.name.as_str() {
                 "List" | "Set" => 1,
                 "Map" => 2,
@@ -1209,8 +1212,9 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
                         "exception cannot be used as a value type",
                     ));
                 }
-                if (t.name == "Void" && d.kind != "fun" && d.kind != "lambda")
-                    || (t.name == "Void" && t.nullable)
+                if t.builtin
+                    && ((t.name == "Void" && d.kind != "fun" && d.kind != "lambda")
+                        || (t.name == "Void" && t.nullable))
                 {
                     return Err(error(path, &t.span, "Void is not valid here"));
                 }

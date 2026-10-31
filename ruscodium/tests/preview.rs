@@ -280,3 +280,23 @@ fn diamond_inheritance_rejected() {
     let mut m=model("package x\nnarrow interface Root {}\nnarrow interface Left : Root {}\nnarrow interface Right : Root {}\ninterface Child : Left, Right {}\n");
     assert!(resolve(&mut m).unwrap_err().contains("diamond"));
 }
+#[test]
+fn quoted_builtins_and_cpp_guards() {
+    let mut m = model("package x\nstruct `Int` { v: Int }\nstruct Box { v: `Int` }\n");
+    resolve(&mut m).unwrap();
+    let t = m.files[0].declarations[1].children[0].ty.as_ref().unwrap();
+    assert_eq!(t.resolved.as_deref(), Some("x.Int"));
+    assert!(!t.builtin);
+    assert!(ruscodium::cpp::generate(&m).unwrap().contains("::x::Int v"));
+    for s in [
+        "package x\ninterface A { fun set_p(value: Int) property p: Int\n}\n",
+        "package x\nstruct A { v: Int fun f(): Int }\n",
+    ] {
+        let mut m = model(s);
+        resolve(&mut m).unwrap();
+        assert!(ruscodium::cpp::generate(&m).is_err());
+    }
+    let mut m = model("package x\ninterface A { fun f(b: B) }\ninterface B { fun f(a: A) }\n");
+    resolve(&mut m).unwrap();
+    assert!(ruscodium::cpp::generate(&m).is_ok());
+}
