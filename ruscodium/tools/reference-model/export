@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+repo=$(cd "$here/../../.." && pwd)
+java_home=${JAVA_HOME:-/workspace/.gluecodium-env/jdk-17.0.16+8}
+lib="$repo/gluecodium/build/install/gluecodium/lib"
+[[ -d "$lib" ]] || { echo "Missing installed JVM libraries: $lib" >&2; exit 1; }
+classes=$(mktemp -d)
+trap 'rm -rf "$classes"' EXIT
+"$java_home/bin/javac" -cp "$lib/*" -d "$classes" "$here/ReferenceModel.java"
+cd "$repo"
+"$java_home/bin/java" -cp "$classes:$lib/*" ReferenceModel "$@"
