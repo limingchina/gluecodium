@@ -450,3 +450,115 @@ fn dependencies_reorder_nested_aliases_in_the_complete_header() {
     assert!(header.find("using EarlierAlias").unwrap() < header.find("using LaterAlias").unwrap());
     assert!(header.contains("#include <unordered_set>"));
 }
+
+fn rename_package(job: &mut Value, old: [&str; 2], new: [&str; 2]) {
+    let root = job["snapshot"]["root"]["$ref"].as_str().unwrap().to_owned();
+    for node in nodes(job) {
+        if node["class"].as_str().unwrap().ends_with(".LimePath")
+            && node["properties"]["head"] == json!(old)
+        {
+            node["properties"]["head"] = json!(new);
+        }
+    }
+    let old_prefix = format!("{}.{}.", old[0], old[1]);
+    let new_prefix = format!("{}.{}.", new[0], new[1]);
+    for map in ["referenceMap", "fileNameMap"] {
+        let map = node_mut(job, &root)["properties"][map]
+            .as_object_mut()
+            .unwrap();
+        let entries = std::mem::take(map);
+        for (key, value) in entries {
+            let key = key
+                .strip_prefix(&old_prefix)
+                .map(|suffix| format!("{new_prefix}{suffix}"))
+                .unwrap_or(key);
+            assert!(map.insert(key, value).is_none());
+        }
+    }
+}
+
+#[test]
+fn raw_package_paths_control_file_ownership_includes_and_namespaces() {
+    let mut job = fixture("default");
+    let original_overlays = job["property_overlays"].clone();
+    rename_package(&mut job, ["oracle", "basic"], ["changed", "api"]);
+    assert_eq!(job["property_overlays"], original_overlays);
+    let generated = generate(TEMPLATES, &job).unwrap();
+    assert!(generated
+        .iter()
+        .any(|f| f.path == Path::new("cpp/include/changed/api/Shade.h")));
+    assert!(generated
+        .iter()
+        .any(|f| f.path == Path::new("cpp/src/changed/api/Data.cpp")));
+    assert!(!generated
+        .iter()
+        .any(|f| f.path.to_string_lossy().contains("oracle/basic/")));
+    let callback = generated
+        .iter()
+        .find(|f| f.path.ends_with("changed/api/Callback.h"))
+        .unwrap();
+    assert!(callback
+        .contents
+        .contains("#include \"changed/api/Shade.h\""));
+    assert!(callback.contents.contains("::changed::api::Shade"));
+    let data = generated
+        .iter()
+        .find(|f| f.path.ends_with("changed/api/Data.cpp"))
+        .unwrap();
+    assert!(data.contents.contains("#include \"changed/api/Data.h\""));
+    assert!(generated
+        .iter()
+        .all(|f| !f.contents.contains("oracle::basic")));
+    assert!(generated
+        .iter()
+        .all(|f| !f.contents.contains("namespace oracle {")));
+
+    let mut job = fixture("custom");
+    rename_package(&mut job, ["oracle", "custom"], ["changed", "api"]);
+    let generated = generate(TEMPLATES, &job).unwrap();
+    let data = generated
+        .iter()
+        .find(|f| f.path.ends_with("acme/api/changed/api/Data.h"))
+        .unwrap();
+    assert!(data
+        .contents
+        .contains("#include \"acme/api/changed/api/RenamedService.h\""));
+    assert!(data.contents.contains("namespace changed {"));
+    assert!(data.contents.contains("class Worker;"));
+    assert!(data.contents.contains("::acme::api::changed::api::Worker"));
+    assert!(!data.contents.contains("oracle::custom"));
+    assert!(!data.contents.contains("namespace oracle {"));
+}
+
+#[test]
+fn raw_declaration_order_changes_bytes_and_preserves_dependency_sorting() {
+    let mut job = fixture("default");
+    let original_overlays = job["property_overlays"].clone();
+    let baseline = generate(TEMPLATES, &job).unwrap();
+    let shade = node_id(&job, "LimeEnumeration", "Shade");
+    node_mut(&mut job, &shade)["properties"]["enumerators"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    assert_eq!(job["property_overlays"], original_overlays);
+    let changed = generate(TEMPLATES, &job).unwrap();
+    let file = |files: Vec<GeneratedFile>, suffix: &str| {
+        files
+            .into_iter()
+            .find(|f| f.path.ends_with(suffix))
+            .unwrap()
+            .contents
+    };
+    let before = file(baseline.clone(), "oracle/basic/Shade.h");
+    let after = file(changed.clone(), "oracle/basic/Shade.h");
+    assert!(before.find("RED,").unwrap() < before.find("BLUE = 7").unwrap());
+    assert!(after.find("BLUE = 7,").unwrap() < after.find("RED").unwrap());
+    assert_ne!(before, after);
+    let data_before = file(baseline, "oracle/basic/Data.h");
+    let data_after = file(changed, "oracle/basic/Data.h");
+    assert_eq!(data_before, data_after);
+    assert!(
+        data_after.find("using EarlierAlias").unwrap()
+            < data_after.find("using LaterAlias").unwrap()
+    );
+}

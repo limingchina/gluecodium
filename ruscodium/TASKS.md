@@ -300,7 +300,7 @@ Mustache unchanged, and the preview C++ generator separate.
 - [x] Compare complete relative paths, source sets and every output byte for
   default and configured jobs; cover all root kinds, nested reorder, auxiliary
   references, forwards/nested includes, generic/nullable values and constructors.
-- [ ] Prove raw type/path/name/declaration mutations affect includes, forwards,
+- [x] Prove raw type/path/name/declaration mutations affect includes, forwards,
   output paths/order/bytes without imported computed generator controls. Cover
   invalid jobs, context/replay injection, missing facts, unsupported content and
   collisions with no partial generated artifacts.
@@ -313,13 +313,14 @@ Mustache unchanged, and the preview C++ generator separate.
 - [ ] Update README, TEMPLATES, oracle, review and measured checklist evidence,
   commit tested increments and push the authorized branch.
 
-Current evidence: 75 Rust tests passed with offline Clippy; the two whole-file
+Current evidence: 77 Rust tests passed with offline Clippy; the two whole-file
 fixtures compare 50 file paths, source sets and byte contents, including 18
 common/export files per job. Native-generated C++ and the JVM captures both
 compiled and ran their consumers with `-std=c++17 -Wall -Wextra -Werror`. The
 default fixture covers a set and nested aliases in dependency-reversed order.
-Type and C++ name mutations are tested; a direct raw path/declaration mutation
-check, the independent review and final aggregate checks remain pending.
+Raw type, C++ name, package path and declaration-order mutations are tested
+without changing getter overlays. The independent review and final aggregate
+checks remain pending.
 
 Completion requires actual full C++ generator file sets for the supported
 snapshot subset, including eighteen common/export files per job. Canonical
