@@ -10,6 +10,8 @@ cargo run -- -input path/to/lime -generators json -output out
 cargo run -- -input path/to/lime -generators cpp -output out
 cargo run -- generate-cpp --job tests/cpp-generation-goldens/default/job.json \
   --templates ../gluecodium/src/main/resources/templates --output out-cpp
+cargo run -- generate-cpp --job tests/cpp-documentation-goldens/docs/job.json \
+  --templates ../gluecodium/src/main/resources/templates --output out-docs
 cargo run -- render --templates ../gluecodium/src/main/resources/templates \
   --request tests/template-goldens/cpp-enumeration.request.json --output enumeration.txt
 cargo test
@@ -52,3 +54,12 @@ UTF-8 file bytes, and both generated consumers compile and run under strict
 C++17 warnings. This job format is distinct from the Rust preview model and the
 `-generators cpp` API sketch. A native frontend adapter and full C++ feature or
 ABI parity remain future work.
+
+Version-2 jobs add [native documentation processing](DOCUMENTATION.md) from
+ordered raw comment sections, including platform selection, placeholders,
+exclusion and a guarded plain-text formatting subset. Version-1 jobs and their
+fixtures retain their previous contract. The
+[smoke inventory](tools/cpp-smoke-matrix/README.md) records complete-scenario
+acceptance separately from the two unmodified upstream documentation files.
+Full Markdown, scoped documentation links and the native frontend adapter remain
+future work.

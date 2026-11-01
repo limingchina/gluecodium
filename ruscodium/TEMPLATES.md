@@ -185,3 +185,11 @@ groups, including eighteen common/export files in each group, and compiles and
 runs consumers. Its snapshot/getter boundary and unsupported cases are
 documented in [GENERATION.md](GENERATION.md); the Rust frontend is not yet an
 adapter for that job.
+
+Version-2 generation jobs attach a complete raw-comment map internally to the
+rendering graph. Native comment names, emptiness and predicates then use the
+selection, expansion and guarded formatting algorithms described in
+[DOCUMENTATION.md](DOCUMENTATION.md). The standalone version-1 `render` request
+keeps its previous contract; it does not accept this raw-comment job field or
+gain arbitrary computed Kotlin getters. The documentation oracle adds whole-file
+evidence independently of the retained template-fragment fixtures.
