@@ -77,6 +77,8 @@ def main():
     java = str(Path(java_home) / 'bin/java') if java_home else 'java'
     javac = str(Path(java_home) / 'bin/javac') if java_home else 'javac'
     cxx = os.environ.get('CXX', 'c++')
+    no_java_env = dict(os.environ, PATH='')
+    no_java_env.pop('JAVA_HOME', None)
     with tempfile.TemporaryDirectory(prefix='frontend-adapter-oracle-') as temporary:
         tmp = Path(temporary)
         classes = tmp / 'classes'
@@ -170,8 +172,7 @@ def main():
                 args = [binary, 'compile-cpp', '--input', main_input, '--templates', TEMPLATES, '--output', cli]
                 if group == 'custom':
                     args.extend(['--auxinput', aux_input, '--options', options])
-                env = dict(os.environ, PATH='')
-                result = subprocess.run([str(x) for x in args], cwd=tmp, env=env, stdout=subprocess.PIPE, check=True)
+                result = subprocess.run([str(x) for x in args], cwd=tmp, env=no_java_env, stdout=subprocess.PIPE, check=True)
                 if result.stdout:
                     raise AssertionError(f'{group}: CLI unexpectedly wrote to stdout')
                 compare_files(native / 'files', cli, f'{group}/CLI')
@@ -216,7 +217,7 @@ def main():
             cli = tmp / f'cli-{group}'
             result = subprocess.run([str(x) for x in [binary, 'compile-cpp', '--input', main_input,
                 '--templates', TEMPLATES, '--output', cli, '--options', docs_options]],
-                cwd=tmp, env=dict(os.environ, PATH=''), stdout=subprocess.PIPE, check=True)
+                cwd=tmp, env=no_java_env, stdout=subprocess.PIPE, check=True)
             if result.stdout:
                 raise AssertionError(f'{group}: CLI unexpectedly wrote to stdout')
             compare_files(native / 'files', cli, f'{group}/CLI')

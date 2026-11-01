@@ -22,7 +22,7 @@ select it). Baselines compare every output path, source set and byte with both
 the live JVM and checked-in captures: 26 default and 24 custom. Both library
 and CLI outputs compile and run the existing consumers with `-std=c++17
 -Wall -Wextra -Werror`. The CLI runs in the temporary working directory with an
-empty `PATH`, receiving real LIME, templates and options. Additional fresh JVM
+empty `PATH` and no `JAVA_HOME`, receiving real LIME, templates and options. Additional fresh JVM
 jobs test renamed packages/types, values and alias ordering, generic and
 nullable references, auxiliary lookup and ownership, open/narrow declarations,
 constructors, static/struct methods, numeric literals, and `@Cpp` names on
