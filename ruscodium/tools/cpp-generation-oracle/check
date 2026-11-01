@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+set -euo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+repo=$(cd "$here/../../.." && pwd)
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+cd "$repo"
+python3 "$repo/ruscodium/tools/template-oracle/check_templates.py"
+"$here/run" "$tmp"
+python3 - "$repo/ruscodium/tests/cpp-generation-goldens" "$tmp" <<'PY'
+import json
+from pathlib import Path
+import sys
+
+expected, actual = map(Path, sys.argv[1:])
+for group in ('default', 'custom'):
+    old, new = expected / group, actual / group
+    old_files = {p.relative_to(old) for p in old.rglob('*') if p.is_file()}
+    new_files = {p.relative_to(new) for p in new.rglob('*') if p.is_file()}
+    if old_files != new_files:
+        sys.exit(f'{group}: missing {sorted(old_files - new_files)}, unexpected {sorted(new_files - old_files)}')
+    for name in sorted(old_files):
+        if (old / name).read_bytes() != (new / name).read_bytes():
+            sys.exit(f'{group}: bytes differ: {name}')
+    inventory = json.loads((new / 'manifest.json').read_text())['files']
+    paths = {p.relative_to(new / 'files').as_posix() for p in (new / 'files').rglob('*') if p.is_file()}
+    if paths != set(inventory) or set(inventory.values()) != {'MAIN', 'COMMON'}:
+        sys.exit(f'{group}: generated file inventory or source sets invalid')
+    if sum(value == 'COMMON' for value in inventory.values()) != 17:
+        sys.exit(f'{group}: expected 17 COMMON files')
+    print(f'{group}: verified {len(paths)} JVM-generated file bytes and source sets, full job snapshot')
+PY
+"$here/compile-consumers" "$tmp"

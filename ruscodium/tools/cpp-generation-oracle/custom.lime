@@ -1,0 +1,15 @@
+package oracle.custom
+
+@Cpp("RenamedService")
+class Service {
+    typealias InnerAlias = Nested
+    struct Nested { amount: Int }
+    fun use(worker: Worker, count: Int): String
+    property value: Int { get set }
+}
+interface Worker { fun process(value: Int): Int }
+struct Data {
+    values: List<String>
+    nested: Service.Nested
+    worker: Worker?
+}

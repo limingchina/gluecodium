@@ -12,6 +12,7 @@ public final class ReferenceModel {
     private static final String PREFIX = "com.here.gluecodium.model.lime.";
     private final IdentityHashMap<Object, String> ids = new IdentityHashMap<>();
     private final List<Object> queue = new ArrayList<>();
+    private final List<Object> stableNodes = new ArrayList<>();
     private final Path repository = Path.of("").toAbsolutePath().normalize();
 
     /** Objects discovered so far, in snapshot ID order; intended for bounded oracle observations. */
@@ -101,6 +102,17 @@ public final class ReferenceModel {
         for (int i = 0; i < queue.size(); i++) nodes.add(node(queue.get(i), "n" + (i + 1)));
         Map<String,Object> doc = new LinkedHashMap<>();
         doc.put("schema", "gluecodium.reference-model.snapshot"); doc.put("version", 1); doc.put("root", root); doc.put("nodes", nodes);
+        return doc;
+    }
+    /** Incremental snapshot for observations that can discover more objects. Each node's
+     * getters are read once, preserving identity when a getter constructs a fresh view. */
+    public Map<String,Object> incrementalSnapshotDocument(Object model) throws Exception {
+        Object root = value(model, "root");
+        for (int i = stableNodes.size(); i < queue.size(); i++)
+            stableNodes.add(node(queue.get(i), "n" + (i + 1)));
+        Map<String,Object> doc = new LinkedHashMap<>();
+        doc.put("schema", "gluecodium.reference-model.snapshot"); doc.put("version", 1);
+        doc.put("root", root); doc.put("nodes", new ArrayList<>(stableNodes));
         return doc;
     }
     private String snapshot(Object model) throws Exception {

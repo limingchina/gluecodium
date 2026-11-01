@@ -1,0 +1,18 @@
+package oracle.basic
+
+enum Shade { RED, BLUE = 7 }
+typealias Labels = List<String>
+lambda Callback = (Shade) -> String
+interface Worker {
+    fun run(value: Int): String
+    property ready: Boolean { get set }
+    property name: String { get }
+    static property version: Int { get }
+}
+struct Data {
+    count: Int = 7
+    label: String
+    maybe: Int?
+    mapping: Map<String, Int>
+    field constructor(label)
+}

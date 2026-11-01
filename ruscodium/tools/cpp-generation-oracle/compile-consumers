@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -euo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+repo=$(cd "$here/../../.." && pwd)
+goldens=${1:-$repo/ruscodium/tests/cpp-generation-goldens}
+cxx=${CXX:-c++}
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+for group in default custom; do
+  root="$goldens/$group/files/cpp"
+  mapfile -d '' sources < <(find "$root/src" -name '*.cpp' -print0 | sort -z)
+  "$cxx" -std=c++17 -Wall -Wextra -Werror -I "$root/include" "${sources[@]}" "$here/$group-consumer.cc" -o "$tmp/$group"
+  "$tmp/$group"
+  echo "Compiled and ran $group consumer (${#sources[@]} generated source files)"
+done
