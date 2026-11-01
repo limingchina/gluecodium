@@ -1,0 +1,1413 @@
+{
+  "build_commands": [
+    [
+      "/workspace/.gluecodium-env/jdk-17.0.16+8/bin/javac",
+      "-cp",
+      "/workspace/gluecodium/gluecodium/build/install/gluecodium/lib/*",
+      "-d",
+      "/tmp/ruscodium-perf-m13-final/warm-classes",
+      "/workspace/gluecodium/ruscodium/tools/performance/WarmJvm.java"
+    ],
+    [
+      "cargo",
+      "build",
+      "--offline",
+      "--release",
+      "--manifest-path",
+      "/workspace/gluecodium/ruscodium/tools/performance/warm-rust/Cargo.toml"
+    ]
+  ],
+  "description": "Persistent process, full load/validation/generate/write API iterations; process startup excluded; not CLI timings",
+  "environment": {
+    "affinity": [
+      0,
+      1,
+      2
+    ],
+    "cc_version": "cc (Debian 14.2.0-19) 14.2.0",
+    "cpu_max": "200000 100000",
+    "cpu_model": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "environment": {
+      "JAVA_HOME": "/workspace/.gluecodium-env/jdk-17.0.16+8",
+      "JAVA_TOOL_OPTIONS": null,
+      "JDK_JAVA_OPTIONS": null,
+      "PATH": "/workspace/.gluecodium-env/bin:/workspace/.gluecodium-env/jdk-17.0.16+8/bin:/workspace/.ruscodium-env/cargo/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/override:/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/node/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin:/opt/codex/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/agent/.local/bin:/opt/codex/runtimes/codex-primary-runtime/dependencies/bin/fallback",
+      "RUSTFLAGS": null,
+      "RUSTUP_TOOLCHAIN": null,
+      "_JAVA_OPTIONS": null
+    },
+    "filesystem": "Filesystem     Type  1K-blocks   Used Available Use% Mounted on\nnone           tmpfs   5103740 201144   4902596   4% /tmp",
+    "git_commit": "9f599c55a6a1692f385c284103a7297f979e9322",
+    "git_status_short": "",
+    "jars_sha256": {
+      "ST4-4.3.4.jar": "f927ac384c46d749f8b5ec68972a53aed21e00313509299616edb73bfa15ff33",
+      "annotations-24.1.0.jar": "27a770dc7ce50500918bb8c3c0660c98290630ec796b5e3cf6b90f403b3033c6",
+      "antlr-runtime-3.5.3.jar": "68bf9f5a33dfcb34033495c587e6236bef4e37aa6612919f5b1e843b90669fb9",
+      "antlr4-4.13.1.jar": "ce261dce69525839aa9fc5bd232ce1b813a7a40a75030713cc4a80ef8170f3d5",
+      "antlr4-runtime-4.13.1.jar": "54665d2838cc66458343468efc539e454fc95b46a8a04b13c6ac43fc9be63505",
+      "checker-qual-3.41.0.jar": "2f9f245bf68e4259d610894f2406dc1f6363dc639302bd566e8272e4f4541172",
+      "commons-cli-1.6.0.jar": "69e1237059acd56f0f8654dcde09d8a1412eee82918bef5564d51f8fb275711b",
+      "error_prone_annotations-2.23.0.jar": "ec6f39f068b6ff9ac323c68e28b9299f8c0a80ca512dccb1d4a70f40ac3ec054",
+      "failureaccess-1.0.2.jar": "8a8f81cf9b359e3f6dfa691a1e776985c061ef2f223c9b2c80753e1b458e8064",
+      "flexmark-0.64.8.jar": "3133878d108f0e1964d7d427f379a7433e1b71a45f9f3c1fab7ed0ac0301d3b0",
+      "flexmark-ext-tables-0.64.8.jar": "cdf82d26e112e96ade7e370138aeb16920b7e2d411d20c6c15cb1acfacd1ef1f",
+      "flexmark-util-0.64.8.jar": "1e24c891dac9532bb722be7122c7026fb47868c3de36c02400eed8e9ad535727",
+      "flexmark-util-ast-0.64.8.jar": "a5342f644c6a5f37d502f225c3a0cb699c263621c82e720d9c08eba5a9f3b8d3",
+      "flexmark-util-builder-0.64.8.jar": "afb9c88d9f652451e75f1ab069ad7ddd791d712eb211c51d8d2a83494240875d",
+      "flexmark-util-collection-0.64.8.jar": "031ff01408d0f54c6235db18d451dc6e6b15b859b0ec1e40ff3429a82375082a",
+      "flexmark-util-data-0.64.8.jar": "83ceb5989ab0205054bf1b42446f55cb6da14c10aa7c2bda05d6a2504670f353",
+      "flexmark-util-dependency-0.64.8.jar": "e41adb5e8144699b61b78d50eb004eeb7de84f90c4c63626609e6cee5ea28b42",
+      "flexmark-util-format-0.64.8.jar": "6c9ac87686474edf0117b3f838d9dcb3b965fa72be4998d2177b598013679f73",
+      "flexmark-util-html-0.64.8.jar": "5b19e6506aff7913c74ad725af7c2b8a9f23958e6324bf0710c5a645a4663017",
+      "flexmark-util-misc-0.64.8.jar": "74472ca81a9080e51ea1a4f11c270898e3d6c242c92275fab47eb993806c8f2b",
+      "flexmark-util-options-0.64.8.jar": "2489f41e9caf1d9f8061833b311b25403925cbb631fff2b8c069192804d6fc88",
+      "flexmark-util-sequence-0.64.8.jar": "6e22976fe4e9b8de94fd529991ecb2d79cc482aad94985367470a93be1d82631",
+      "flexmark-util-visitor-0.64.8.jar": "d9b3002a833a078c45e139568b306dab0ac117ff9046c6a1f9e180c0154563fc",
+      "gluecodium-14.2.2.jar": "fe1bda6ef33ef0abdf6c99abb3af9897b0307bb21050e107563368e7b2a8fac2",
+      "guava-33.0.0-jre.jar": "f4d85c3e4d411694337cb873abea09b242b664bb013320be6105327c45991537",
+      "icu4j-72.1.jar": "3df572b240a68d13b5cd778ad2393e885d26411434cd8f098ac5987ea2e64ce3",
+      "jsr305-3.0.2.jar": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
+      "konfig-1.6.10.0.jar": "d556babc03584553f5fd3cc46894c5ea3331092bfbaae7ea626d5b8d4ce793bb",
+      "kotlin-reflect-1.9.22.jar": "77f311ca1384811d519fda389fcb1268bdaa058d605046e0ede76c03b0df3e97",
+      "kotlin-stdlib-1.9.22.jar": "6abe146c27864138b874ccccfe5f534e3eb923c99a1b7b5d45494ee5694f3e0a",
+      "kotlinx-serialization-core-jvm-1.6.3.jar": "29c821a8d4e25cbfe4f2ce96cdd4526f61f8f4e69a135f9612a34a81d93b65f1",
+      "kotlinx-serialization-json-jvm-1.6.3.jar": "d3234179bcff1886d53d67c11eca47f7f3cf7b63c349d16965f6db51b7f3dd9a",
+      "lime-loader-14.2.2.jar": "445ffc4a9e951c17517dc6170ed482dcc86409ac4fe7b866a5b0ced6837b91cc",
+      "lime-runtime-14.2.2.jar": "15e43d9060d982fe8970f3c26fc91d9b3f4bb49f85c0b41e10499b6173b3734c",
+      "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar": "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99",
+      "log4j-api-2.22.1.jar": "5d7beae7ff15d8516d6517121d7f12a79a6ac180df64b5fcec55d5be21056e53",
+      "log4j-core-2.22.1.jar": "46dccecac556623d8e2ce8648496824a82951d139062a4e61148aff1a25ed18d",
+      "org.abego.treelayout.core-1.0.3.jar": "fa5e31395c39c2e7d46aca0f81f72060931607b2fa41bd36038eb2cb6fb93326",
+      "reload4j-1.2.22.jar": "222f90d3e69541218ef6e70547749d693bd4c1846817e5bd7949b3e28950f99f",
+      "slf4j-api-2.0.10.jar": "b7ddb31a515debbddec8e9145e2cf7b197926f40e454376647724f92e6382043",
+      "slf4j-reload4j-2.0.10.jar": "5287b710d331f97a045c12f1fcd2fb8e73c13f5b7c23f590bbcb6767164b7679",
+      "trimou-core-2.5.1.Final.jar": "b9d06f02653ba1a2e22d45bb33de075d82cfec89b94c3a9fc971ba8a54ad1db3"
+    },
+    "java_binary_sha256": "1c7e3313ab05bef3da61d7659a12cc50622ddc41b6db2b3a88d480445bf9619f",
+    "java_version": "openjdk version \"17.0.16\" 2025-07-15\nOpenJDK Runtime Environment Temurin-17.0.16+8 (build 17.0.16+8)\nOpenJDK 64-Bit Server VM Temurin-17.0.16+8 (build 17.0.16+8, mixed mode, sharing)",
+    "kernel": "6.18.57",
+    "logical_cpus": 3,
+    "meminfo": "MemTotal:       10207480 kB\nMemFree:         5227936 kB\nMemAvailable:    6773244 kB\nBuffers:           28036 kB\nCached:          1901856 kB\nSwapCached:            0 kB\nActive:          1049892 kB\nInactive:        3324980 kB\nActive(anon):     146004 kB\nInactive(anon):  2530028 kB\nActive(file):     903888 kB\nInactive(file):   794952 kB\nUnevictable:       29924 kB\nMlocked:               0 kB\nSwapTotal:             0 kB\nSwapFree:              0 kB\nDirty:               212 kB\nWriteback:             0 kB\nAnonPages:       2474924 kB\nMapped:            95740 kB\nShmem:            201156 kB\nKReclaimable:     151104 kB\nSlab:             222192 kB\nSReclaimable:     151104 kB\nSUnreclaim:        71088 kB\nKernelStack:        2176 kB\nPageTables:         7936 kB\nSecPageTables:         0 kB\nNFS_Unstable:          0 kB\nBounce:                0 kB\nWritebackTmp:          0 kB\nCommitLimit:     5103740 kB\nCommitted_AS:    3015164 kB\nVmallocTotal:   34359738367 kB\nVmallocUsed:        3360 kB\nVmallocChunk:          0 kB\nPercpu:              960 kB\nAnonHugePages:         0 kB\nShmemHugePages:        0 kB\nShmemPmdMapped:        0 kB\nFileHugePages:    595968 kB\nFilePmdMapped:         0 kB\nBalloon:               0 kB\nHugePages_Total:       0\nHugePages_Free:        0\nHugePages_Rsvd:        0\nHugePages_Surp:        0\nHugepagesize:       2048 kB\nHugetlb:               0 kB\nDirectMap4k:      137216 kB\nDirectMap2M:     8583168 kB\nDirectMap1G:    20971520 kB",
+    "memory_max": "8589934592",
+    "native_binary_sha256": "10585d3f82151cec742b7f5dacbe2b91902901e66df69b583f673f6a6ed8d697",
+    "native_build_command": "cargo build --offline --release",
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.14.7 (main, Sep 24 2026, 17:58:18) [Clang 22.1.3 ]",
+    "runner_sha256": "0545fc07b4a1de553237630c4d4270b73e4d31d7c343ee35fae1ded3e9013bf0",
+    "rustc_version": "rustc 1.99.1 (58cf8f9c3 2026-10-13)\nbinary: rustc\ncommit-hash: 58cf8f9c35b355199727627d07ae34a4e2846d67\ncommit-date: 2026-10-13\nhost: x86_64-unknown-linux-gnu\nrelease: 1.99.1\nLLVM version: 23.1.1",
+    "supervisor_sha256": "c723297042da4c4a83abf0f757adc19797ec79de02157bc39e2262021c2a32bd",
+    "supervisor_source_sha256": "f43d1e5ac4cd09cf3ab1ab3bf0013d7aea84d87fa111a6b81ed598342e2242b6",
+    "templates": {
+      "bytes": 935683,
+      "file_count": 315,
+      "files": {
+        "cbridge/CBridgeClassHeader.mustache": {
+          "bytes": 3127,
+          "sha256": "d6e2fd245d7925180e050595346ca5e2459b30ce9cce4ce943e1105f3b3dd59a"
+        },
+        "cbridge/CBridgeClassImpl.mustache": {
+          "bytes": 4617,
+          "sha256": "6d8f8e6e299d0805a48e0f2140ea3d61acf5c687b494061b0a2ec16b8f58b24e"
+        },
+        "cbridge/CBridgeCollectionsHeader.mustache": {
+          "bytes": 3760,
+          "sha256": "1018ec713752355412b3ae7871ab71834a4a8cc01c1779e04aa206b8ea31d165"
+        },
+        "cbridge/CBridgeCollectionsImpl.mustache": {
+          "bytes": 987,
+          "sha256": "397022a84f099993e6c9baf494695678d67f46d583743734eb0ad66deb8007b1"
+        },
+        "cbridge/CBridgeCppProxy.mustache": {
+          "bytes": 7219,
+          "sha256": "875b3d5653781942abbda3759ada7261ee5a196699712ebfe8bfdc6ac61ce2d1"
+        },
+        "cbridge/CBridgeFunctionDefinition.mustache": {
+          "bytes": 4590,
+          "sha256": "ac87cd8478830303336752dbd78a16230ce11e0f8b7a0dfd66d502b788d8ae6f"
+        },
+        "cbridge/CBridgeFunctionSignature.mustache": {
+          "bytes": 1142,
+          "sha256": "866231972b1ada494c67c942f6d2846a7919289cef0dddae67d15981701afcf0"
+        },
+        "cbridge/CBridgeHeader.mustache": {
+          "bytes": 996,
+          "sha256": "44160dd149e59befd5887e767cf7ca0f685d77cdcd8146e02e9a361cc254ee54"
+        },
+        "cbridge/CBridgeImplementation.mustache": {
+          "bytes": 837,
+          "sha256": "2562587e4f0dce7434ed86dcde523a2ef0e7c7a9dc5628ddd25d586e90114684"
+        },
+        "cbridge/CBridgeLambdaHeader.mustache": {
+          "bytes": 1623,
+          "sha256": "dba5d170636089ffbce54006bab6d03411d81628ce5960039efde8c899cdae4f"
+        },
+        "cbridge/CBridgeLambdaImpl.mustache": {
+          "bytes": 1211,
+          "sha256": "a5541860cc5dd82104cec50499a5308fb124e232933a141fa502ae0477fd7163"
+        },
+        "cbridge/CBridgeStructHeader.mustache": {
+          "bytes": 2078,
+          "sha256": "e43e63c6f4eb413a52c93152436cac45cda2541f84f8220387fedc122688ab41"
+        },
+        "cbridge/CBridgeStructImpl.mustache": {
+          "bytes": 6082,
+          "sha256": "bc6911a6db9a41c207458d20b4f135bd582fd9f56e8d5b8b6172e5cc731a5086"
+        },
+        "cbridge/CopyrightHeader.mustache": {
+          "bytes": 777,
+          "sha256": "506c740c8f8ca644a1deebffab5353c363a9412c231dc0d44e7f134036915643"
+        },
+        "cbridge/FunctionReturnType.mustache": {
+          "bytes": 811,
+          "sha256": "f4d1a332b17a36319716b22d6b22af68cc7f80a2de994e5da990ba878527c785"
+        },
+        "cbridge/FunctionTable.mustache": {
+          "bytes": 1621,
+          "sha256": "d4a335b8384988167e460c60c6d2d353bafa3453b25b1b90d1fa3269c28562cc"
+        },
+        "cbridge/LazyListHeader.mustache": {
+          "bytes": 1284,
+          "sha256": "1cbcf9e43ac6f4dacb537ecdf2b8ae2503a4cc2c1c95ab5eeb30c746fc307926"
+        },
+        "cbridge/LazyListImpl.mustache": {
+          "bytes": 2215,
+          "sha256": "df97c4401f5c95068ce0006688ae91614cb8262c5ad416456d64cda67af12391"
+        },
+        "cbridge/ListFunctionImplementations.mustache": {
+          "bytes": 3353,
+          "sha256": "73f262c277a4ea7207ed29807211035d8446eed07dd62917f707336936bdacf2"
+        },
+        "cbridge/MapFunctionImplementations.mustache": {
+          "bytes": 4287,
+          "sha256": "814f9792544a881b0d5a490a3b75c4ec2e3fa8455b9821e203da9b6e928fcb5e"
+        },
+        "cbridge/SetFunctionImplementations.mustache": {
+          "bytes": 3687,
+          "sha256": "e60d25337b806cef673985122f0cc5fb2bda929d9416ecff17855b8095cb6269"
+        },
+        "cbridge/ThrowingFunctionReturnType.mustache": {
+          "bytes": 1028,
+          "sha256": "19b4a85cc599504dc4ea6642b8cd27f969fb0c7d41e553cd87fb79ae20aa3a3c"
+        },
+        "cbridge/common/BaseHandleImpl.mustache": {
+          "bytes": 12256,
+          "sha256": "a8d9955e0ba87ec14d1b3b3cad49f7f7f99ba685c34347473e222763c3fd2936"
+        },
+        "cbridge/common/BuiltinHandle.mustache": {
+          "bytes": 3611,
+          "sha256": "5e9ffa804789288e7044a8fce4556fae9114813ff3e913e8f22394dda9d3be2e"
+        },
+        "cbridge/common/ByteArrayHandle.mustache": {
+          "bytes": 3744,
+          "sha256": "25f4ae3708f4fbc3e29c47dbd8923b646b356452f78d143965a3cb1530bdc974"
+        },
+        "cbridge/common/LocaleHandle.mustache": {
+          "bytes": 4253,
+          "sha256": "163a40640e75fa2eb7ab846d2986cacdeb5d06d99d67cafc938d64de0726ade1"
+        },
+        "cbridge/common/StringHandle.mustache": {
+          "bytes": 3281,
+          "sha256": "62c00490edfb7b5ef579e6b31ef234ca94fb23ca95d6f64cbbd78a9076dd057c"
+        },
+        "cbridge/common/TypeInitRepository.mustache": {
+          "bytes": 2210,
+          "sha256": "674eb2503ffea195830161628b21578319aec093b8df0acd87a795d95c333588"
+        },
+        "cbridge/common/TypeInitRepositoryImpl.mustache": {
+          "bytes": 2485,
+          "sha256": "ae5455f515800af347336c422fe0fc2575ba5ddda761031c5976fa666c409a69"
+        },
+        "cbridge/common/WrapperCacheHeader.mustache": {
+          "bytes": 2330,
+          "sha256": "77fa9eae997ef189aadc48c98d36e8e2c0d9608b6f67d3751d89a42b4bb1775b"
+        },
+        "cbridge/common/WrapperCacheImpl.mustache": {
+          "bytes": 2919,
+          "sha256": "cf662cbc90525cdb9a91de538859177a4f5e35572bfa932282236b2a0c7404d0"
+        },
+        "common/Include.mustache": {
+          "bytes": 800,
+          "sha256": "ec27a4028c396450d68a6327446072679ff1ab278775e4bb3881aae44231ec6a"
+        },
+        "common/InternalInclude.mustache": {
+          "bytes": 758,
+          "sha256": "13e6bb353aa3b8fbbfc07a03f5c9591879667e2a7f8290590f15d0d6ec34b43f"
+        },
+        "common/InternalNamespace.mustache": {
+          "bytes": 761,
+          "sha256": "7e2e54897aaab0e81a7d43f490ebc72bbe2a44ff481816f08b72f89e26c7c2d5"
+        },
+        "cpp/ClassHashImpl.mustache": {
+          "bytes": 1125,
+          "sha256": "4ec27b5191dbe3f21e8efb5ce8b10f15f7782592543346dc815193beaf624b5a"
+        },
+        "cpp/CppAttributes.mustache": {
+          "bytes": 933,
+          "sha256": "45b80f169a0ea798f0252fcf94adb8e36ad0173469acbe1213eaa3010e1116f5"
+        },
+        "cpp/CppAttributesInline.mustache": {
+          "bytes": 800,
+          "sha256": "2f0333644aac4880925ac860ac34b501870319c03fbf919442f74a3e48bb9530"
+        },
+        "cpp/CppClass.mustache": {
+          "bytes": 2804,
+          "sha256": "fec6b9fc696817646169fe94f7bf0a896ab8bbcf2775acc024105fc7ca210485"
+        },
+        "cpp/CppClassImpl.mustache": {
+          "bytes": 1847,
+          "sha256": "6ab63f05f2dd2c82a87f0f72db0f9003e14fbcf39cc5ec5faed2a966f7281502"
+        },
+        "cpp/CppCommentHeader.mustache": {
+          "bytes": 979,
+          "sha256": "06bb48dd661c7ef760992419def6eb1fbcdfc0e5229765e687524b909fd5dd43"
+        },
+        "cpp/CppConstant.mustache": {
+          "bytes": 870,
+          "sha256": "e81d5b6a1d62d59907bde860ccccee3af166af86202be6b92cfb335e5ca119d2"
+        },
+        "cpp/CppDocComment.mustache": {
+          "bytes": 1080,
+          "sha256": "01d998b69c83bc2c22cfe89063d47cf897dc7f523c87ed2f9692903e751f4726"
+        },
+        "cpp/CppEnumeration.mustache": {
+          "bytes": 1357,
+          "sha256": "afbf9510f913c8451498934f7ef33e03fa4a5c012a28c10b17f9c9ceb4a0a3f0"
+        },
+        "cpp/CppEnumerationImpl.mustache": {
+          "bytes": 1894,
+          "sha256": "eacb392c9f66c8fd0e29badbd13a4070ea49fb6a3afd773f3edc880f5480a6c1"
+        },
+        "cpp/CppErrorCallback.mustache": {
+          "bytes": 770,
+          "sha256": "2bd3eb11401bfeb4827fec09608608089200a5344cf31528a0f14d8ce0bbc9a2"
+        },
+        "cpp/CppExportMacro.mustache": {
+          "bytes": 755,
+          "sha256": "cdc286d311892d12e261bd16ab7a7aa1fe8b30d51505b330671bd013aaad586e"
+        },
+        "cpp/CppFieldDoc.mustache": {
+          "bytes": 1299,
+          "sha256": "ad1f78223e71c5a8e73b2fe5f583ba980b5119d6a089a2bbf6a04cf98c26f1a3"
+        },
+        "cpp/CppFunctionDoc.mustache": {
+          "bytes": 1811,
+          "sha256": "687cd66285083c5c815ef214a1259db1164955473051b7360860b1383c425184"
+        },
+        "cpp/CppFunctionSignature.mustache": {
+          "bytes": 1649,
+          "sha256": "f0bae737b44d1e88c2f11a49af09584c47992b9ca1f50ca1e93ec4f699a01412"
+        },
+        "cpp/CppFunctionStaticCheck.mustache": {
+          "bytes": 1235,
+          "sha256": "2633b1d7c7e6506810b552fe5efbd73ae5e3704c84334a30b4d8c96512faa7b0"
+        },
+        "cpp/CppFunctions.mustache": {
+          "bytes": 1116,
+          "sha256": "37bd0e96e6e47e255827f535ccac60cc2844bbbdc3a762e3b4c9be45a33a593c"
+        },
+        "cpp/CppHeader.mustache": {
+          "bytes": 2379,
+          "sha256": "d3c8cc2cf3117d46d36309dc5da6708d55be18e2a0813611ed883c14aacc1265"
+        },
+        "cpp/CppImplementation.mustache": {
+          "bytes": 2198,
+          "sha256": "ae72113628c3d0259bc3ee79e7ffd7cc728b1600eb26a5a614b65c80efa5d239"
+        },
+        "cpp/CppLambda.mustache": {
+          "bytes": 800,
+          "sha256": "0f38b360504e85663f37ed35a5668d823376957ac6ccdd05a697c205f23a564d"
+        },
+        "cpp/CppLambdaDoc.mustache": {
+          "bytes": 1584,
+          "sha256": "ef7a2c627dcde9b9254681beacef810f828afd31758202ea3187b82dc1d24538"
+        },
+        "cpp/CppLambdaType.mustache": {
+          "bytes": 999,
+          "sha256": "ae136d021dd7518876e9227db1488de60b147110c14c60c71186cd991358a62c"
+        },
+        "cpp/CppProperty.mustache": {
+          "bytes": 1617,
+          "sha256": "415354ab9cdf7c9e50cf759a11d0396c359bb1de2c9d50b37f4b9ede5779db8a"
+        },
+        "cpp/CppResultCallback.mustache": {
+          "bytes": 801,
+          "sha256": "d891601a2a05914eb55088499ce8d126d137f954408d0665fc9a845b1f5acf24"
+        },
+        "cpp/CppReturnType.mustache": {
+          "bytes": 1629,
+          "sha256": "e14e58d73273a509961debfe194cc3f1e0e80309e56018a6b2123945ef28b328"
+        },
+        "cpp/CppStruct.mustache": {
+          "bytes": 3854,
+          "sha256": "49d2ca35ae99a0f447661795fcfda84cba0b6a905477f1bd1cc480ac534c12c8"
+        },
+        "cpp/CppStructConstructors.mustache": {
+          "bytes": 2901,
+          "sha256": "935adc0aeae07afda30af0d0edb380504e074972aa6804516e7ccba0a67f7dbe"
+        },
+        "cpp/CppStructConstructorsImpl.mustache": {
+          "bytes": 1979,
+          "sha256": "4076b6f79f19f4f70d4fdd37d7adf7cafa287f606f12d04d7e795f16166acb29"
+        },
+        "cpp/CppStructImpl.mustache": {
+          "bytes": 3354,
+          "sha256": "155c29490b564ecf52fa479857d5377d1a9232c968cb115886dc048613575952"
+        },
+        "cpp/CppTypeAlias.mustache": {
+          "bytes": 802,
+          "sha256": "7f4b58acc04037423dddf2d6953851bc029afc384bbe43db1083a778c6d7b6e9"
+        },
+        "cpp/StructHashImpl.mustache": {
+          "bytes": 1452,
+          "sha256": "182bc7e4e3d320275ed4987cd128654650c2f3a87d96e6629b32972ada1f73b5"
+        },
+        "cpp/common/DurationHash.mustache": {
+          "bytes": 1967,
+          "sha256": "9331ff419968ebf6c842ca80029b4f7f54e61b85d4ef0bf33963336751df0998"
+        },
+        "cpp/common/Export.mustache": {
+          "bytes": 1164,
+          "sha256": "d33c4a7815958c0de40e80d6fa06aafbc938b1b197aa0079f56957d4a1fd6940"
+        },
+        "cpp/common/Hash.mustache": {
+          "bytes": 2698,
+          "sha256": "038a285f2d179f3e6ee3a9655994abe279e878ac965a1f130c95293b34055a7e"
+        },
+        "cpp/common/Locale.mustache": {
+          "bytes": 3396,
+          "sha256": "f673eb91c0c7b27b293dac4f6f369f7d50298876255441f5e054fa8f9a050632"
+        },
+        "cpp/common/LocaleImpl.mustache": {
+          "bytes": 4718,
+          "sha256": "059176b3579810afbf3dc79deed7640b6c6fb865a303a4bf3cf7a9a3e726f7b1"
+        },
+        "cpp/common/Optional.mustache": {
+          "bytes": 4252,
+          "sha256": "0cb4aed75ebf6b8402ded0a5d2633b7a24c277cf6207312d4ac09579d91b997a"
+        },
+        "cpp/common/OptionalImpl.mustache": {
+          "bytes": 19363,
+          "sha256": "c33fc30e35ab3a1cfa98863b9f8136e8d60aba71a4d4396b64ef6fb4d14cc693"
+        },
+        "cpp/common/Return.mustache": {
+          "bytes": 8308,
+          "sha256": "974beca969e52172293d1f1132a7c78321839b755d25c7d7a97b46480f4becc2"
+        },
+        "cpp/common/StringView.mustache": {
+          "bytes": 3050,
+          "sha256": "926f91b15b1e0db036ac637d11dea7b2555d6673e9874bcc3f4e3a5f9ae73350"
+        },
+        "cpp/common/StringViewImpl.mustache": {
+          "bytes": 18291,
+          "sha256": "78689b5f3d191ad1f6529eb1bad474fc64581c117de0cf498d6da19a622e1a5f"
+        },
+        "cpp/common/StringViewImplDefs.mustache": {
+          "bytes": 2102,
+          "sha256": "1f9391f6be2a9924f13091273ee204f4c69c009a8cafe3cfa396143801d70d7f"
+        },
+        "cpp/common/TimePointHash.mustache": {
+          "bytes": 2017,
+          "sha256": "2805b3599f631470a4ff7c10231ee483b677d12008f5bbc30c4d22bc8c126cda"
+        },
+        "cpp/common/TypeRepository.mustache": {
+          "bytes": 2222,
+          "sha256": "d83e93c19f99ff6a59504d237cc828eb3349b2ac1d429092be71eaa36881c0d2"
+        },
+        "cpp/common/TypeRepositoryImpl.mustache": {
+          "bytes": 2715,
+          "sha256": "93a82c97c133bc8e3c47ff231652f45f5ee7b7a4e64a614d7af3662c004ea34c"
+        },
+        "cpp/common/UnorderedMapHash.mustache": {
+          "bytes": 2265,
+          "sha256": "e8b6e314b4723fb9ac0776e2ca4df43374aa432aaffbe1579f1383af9c0191a5"
+        },
+        "cpp/common/UnorderedSetHash.mustache": {
+          "bytes": 2120,
+          "sha256": "728e781272d6dbfcbe48b47f9cef5fb2d9c1e9639b57e5e5ca2e7750589eec32"
+        },
+        "cpp/common/VectorHash.mustache": {
+          "bytes": 2093,
+          "sha256": "9c7eb96c0f6c1282062c971308e2aa480e0f5c35e709feec17326484c0ac61e8"
+        },
+        "dart/DartAttributes.mustache": {
+          "bytes": 983,
+          "sha256": "2c5ac80470b1241877943d6ef55a3749186a65ad4dda7b04dfa87dea13c49b8f"
+        },
+        "dart/DartAttributesInline.mustache": {
+          "bytes": 818,
+          "sha256": "5719df0afa7518a4fc082219013d1af1f1cd880c812e2d1fc1f45b65e40d18ea"
+        },
+        "dart/DartBuiltInTypesConversion.mustache": {
+          "bytes": 9746,
+          "sha256": "362892002542f6783324f84c785153aa10548596b60c3ad587c6d4969ba7aa7b"
+        },
+        "dart/DartClass.mustache": {
+          "bytes": 9097,
+          "sha256": "f2f6c94115b483330a8338dfee81ad915fc0f4bafaf753353e4ac7e4619f1547"
+        },
+        "dart/DartConstant.mustache": {
+          "bytes": 890,
+          "sha256": "cbac670a255f544573e6ed1f34a093b6550ba668ef6a5dfe3f8a5103c02d9785"
+        },
+        "dart/DartConstructorName.mustache": {
+          "bytes": 980,
+          "sha256": "2c387696dc03de1304ba1ca3ffef21bf026ffa06afab74b3969cf4a0c772d39d"
+        },
+        "dart/DartDescribeProperty.mustache": {
+          "bytes": 930,
+          "sha256": "461ef630712f3bbd8092043d3586f6ad9fbc491ad7e725120710d1a933e69c30"
+        },
+        "dart/DartDocumentation.mustache": {
+          "bytes": 1007,
+          "sha256": "f5a706bf6688a87bef6ebcd45f0e43f22ba2b04c614481025f6297facb3028e2"
+        },
+        "dart/DartEnumeration.mustache": {
+          "bytes": 2910,
+          "sha256": "dc6a5c46fc6fb14ce92c3456285107ff842c24e30c870aac76c11b47412b1dcb"
+        },
+        "dart/DartEnumerator.mustache": {
+          "bytes": 803,
+          "sha256": "11ca44c01452c2457809085376ce2b315820a14bf233688869d9ffbc4c59bd1f"
+        },
+        "dart/DartEqualityOperator.mustache": {
+          "bytes": 901,
+          "sha256": "56feb95ff9eae10c46bb936c92c8ad4a9890fb70c203c78387e3a397fb9dea0d"
+        },
+        "dart/DartException.mustache": {
+          "bytes": 879,
+          "sha256": "e72584e84ed76203e9bcfccb89dae20c0f7e272ff5950601e718ab82ae516f9a"
+        },
+        "dart/DartExports.mustache": {
+          "bytes": 870,
+          "sha256": "a6096d87b457ee0e1344fa80b35b16b23cc7e9e63f79ddea5c4a6326276fe8c2"
+        },
+        "dart/DartFfiConversionCall.mustache": {
+          "bytes": 1344,
+          "sha256": "900fdf71cecd8bef1f4f5e77147fa84b2ea5a5cd3c806d7c99f2b1505a76dfa0"
+        },
+        "dart/DartFfiEqualityFunction.mustache": {
+          "bytes": 956,
+          "sha256": "1a691c6b7b6d58b5f26c9ef71bf9e82a858f9e9607fc51f42ca22d11f922ac0e"
+        },
+        "dart/DartFfiReleaseHandle.mustache": {
+          "bytes": 1418,
+          "sha256": "30ed6b2cc44463567b548f79c00d42cd09cf6da76d7b6f48ec7f39b3f0400a99"
+        },
+        "dart/DartField.mustache": {
+          "bytes": 884,
+          "sha256": "bd5b81988240c9fce1b3d66bc4ac5a60ed0f9e4b3eec1b33990792c570b0ee4b"
+        },
+        "dart/DartFile.mustache": {
+          "bytes": 1194,
+          "sha256": "9fa846cc5dd0fee030aeddae6dc8fc64f21ae3fd08f08332d5bcc68dd78c6e6a"
+        },
+        "dart/DartFunction.mustache": {
+          "bytes": 1533,
+          "sha256": "a679efd3fdc75a3cf49801c72084cfc3401c9e9ca98ef8bdd658be06bbb436c0"
+        },
+        "dart/DartFunctionBody.mustache": {
+          "bytes": 4487,
+          "sha256": "54c912cca50bcd7efcf3e15f9ab942073b74e20ee969919943489af4d03c86f1"
+        },
+        "dart/DartFunctionDocs.mustache": {
+          "bytes": 2218,
+          "sha256": "30a9e7cd7da2cf056fc0a659631ad265a849a6449a2ccecfed9a069f4a851844"
+        },
+        "dart/DartFunctionException.mustache": {
+          "bytes": 2008,
+          "sha256": "09aa330de16598ab89f21afdf23d582adb13d54f90f96918442a7b6a177ae57d"
+        },
+        "dart/DartFunctionFfiName.mustache": {
+          "bytes": 910,
+          "sha256": "6e183ab1c04aab73e16a4acd43212bf82571daaa547eff66a389229c565ca616"
+        },
+        "dart/DartFunctionParameters.mustache": {
+          "bytes": 836,
+          "sha256": "d8300dbd5087398a7949af5aa85ee13495849438c2d3e57e6cc6b1bb70be07bc"
+        },
+        "dart/DartFunctionSignature.mustache": {
+          "bytes": 1445,
+          "sha256": "3a5c50f1c996422b267ae224bb9fc5b9832b5e1a3c83152f5059b25365572768"
+        },
+        "dart/DartGenericTypesConversion.mustache": {
+          "bytes": 7214,
+          "sha256": "016cb5688b36577d7375f148c064ef86e86d4c752c0930ee79164facde0120ac"
+        },
+        "dart/DartImport.mustache": {
+          "bytes": 981,
+          "sha256": "9825f591a0217db69e97049331e55fd6c31a25f8c745d6a2d235afe08d1f9722"
+        },
+        "dart/DartInterface.mustache": {
+          "bytes": 16391,
+          "sha256": "ab126cc4bafe993912c76142c2995400852d34ae9333ed11b63625ecd4707593"
+        },
+        "dart/DartLambda.mustache": {
+          "bytes": 6164,
+          "sha256": "e1e19077eefaf9838b80ff3bf06ecbbe6d4feea4fca55f22219672b92438695c"
+        },
+        "dart/DartLambdaDocs.mustache": {
+          "bytes": 1417,
+          "sha256": "1b4e6f5cdb3c7f56af99e777a51c3bca2e51e1e31f237a936a5e0e23dbd1e112"
+        },
+        "dart/DartLambdaType.mustache": {
+          "bytes": 901,
+          "sha256": "4e18403df56bf4d6082a64a89a50948e6cd35a8cda78d64d40b6aa7d40679ad0"
+        },
+        "dart/DartLazyList.mustache": {
+          "bytes": 4657,
+          "sha256": "5e7796b9175c280db3d0a2e5582dee6eb6d790155c870c37c3132a1f180acff9"
+        },
+        "dart/DartLibraryContext.mustache": {
+          "bytes": 6278,
+          "sha256": "637697f238381ab22177749ef2fa45b004cb286cd7ad8e438241fbd6c365f0a4"
+        },
+        "dart/DartLibraryContextExport.mustache": {
+          "bytes": 843,
+          "sha256": "3572c5b8c805c35b71c9388c94153e77287041325b12dbd44c03a05c809991d6"
+        },
+        "dart/DartNativeBase.mustache": {
+          "bytes": 1064,
+          "sha256": "a75189f477c91827a62b43fdc0a266dd2f183fb294a0c1f5a675eebcc47a14c4"
+        },
+        "dart/DartNullableTypeConversion.mustache": {
+          "bytes": 2446,
+          "sha256": "6c851af07fc0bda13bdb52cdcfacd49728a09c908b7df034960271635d91fccd"
+        },
+        "dart/DartOptimizedLists.mustache": {
+          "bytes": 2051,
+          "sha256": "d59b6968660f35f82d3bc58a07d6c95566407a0928f7c980a71d3bb44becace1"
+        },
+        "dart/DartProperty.mustache": {
+          "bytes": 1283,
+          "sha256": "276391b4c0aee31bf5cc6e13ee5627c2f5f47820ce5438a9496520e537619662"
+        },
+        "dart/DartPubspec.mustache": {
+          "bytes": 804,
+          "sha256": "dcac008baa655c7c366afaef9ab9d4bcadcc4b10f93bd0b9139f811c64c49571"
+        },
+        "dart/DartRedirectFunction.mustache": {
+          "bytes": 857,
+          "sha256": "c05fc73b4564123ee8765dd12bc6e3ae4162f9f35d70edb8971f419b42e2baea"
+        },
+        "dart/DartRedirectImpl.mustache": {
+          "bytes": 1006,
+          "sha256": "d3060372a790a51cef42ad39a13e6653c537560f646b74d3dde62829a4714856"
+        },
+        "dart/DartRedirectProperty.mustache": {
+          "bytes": 1362,
+          "sha256": "e73d502626f76fcb8584a1d0f886ce681b0379627b459f7ae7ff4383f05ea3cc"
+        },
+        "dart/DartStruct.mustache": {
+          "bytes": 10206,
+          "sha256": "c54fef2c20691f5456a897e6fb105f70174a21d530f01cad5b35168816bf013c"
+        },
+        "dart/DartStructConstructors.mustache": {
+          "bytes": 6003,
+          "sha256": "012e085cf50b2ceac42903f247850a4dd44296d7161c9d8d2bbc3cb92673cda8"
+        },
+        "dart/DartTokenCache.mustache": {
+          "bytes": 2135,
+          "sha256": "b11adb9d026ac8ccbd69b45840b22720d046cc9594a04328f1ca2a79625a3155"
+        },
+        "dart/DartTypeAlias.mustache": {
+          "bytes": 811,
+          "sha256": "9eb8dc82843d9cccdcc3a2839b1fc378a5d725b51d0d0ab8014810a43d8901f3"
+        },
+        "dart/DartTypeRepository.mustache": {
+          "bytes": 992,
+          "sha256": "fbcbf0f07becb6424c5e5118caa7ed1b0a608ca039e32df810d81ea8ff895af9"
+        },
+        "dart/InitLazyList.mustache": {
+          "bytes": 1355,
+          "sha256": "760cf5e4cd06364df026589a1f15d74aee324c60018b679c1adafe5c6fad12af"
+        },
+        "ffi/FfiBlobHandleHeader.mustache": {
+          "bytes": 1269,
+          "sha256": "886fc9316d0e61defe358fbb7c253b545bff30891a29dbf1ce24073131319b99"
+        },
+        "ffi/FfiBlobHandleImpl.mustache": {
+          "bytes": 1511,
+          "sha256": "6d13033f9919fa43ad15f033653c0fc00755bb547352e122e5b68a79414863fa"
+        },
+        "ffi/FfiCallbacksHandleHeader.mustache": {
+          "bytes": 1345,
+          "sha256": "f92a7ca3036216548fc42309f7b46c359998ea72c113694cc3ff7db7a5522cbc"
+        },
+        "ffi/FfiCallbacksHandleImpl.mustache": {
+          "bytes": 2956,
+          "sha256": "7dbcffac85ccf2a8c2d359d2c5850e71b2bc0bcbb1d07dadcea49268ee769c45"
+        },
+        "ffi/FfiCallbacksQueueHeader.mustache": {
+          "bytes": 3984,
+          "sha256": "c7f125f5e9bbfc1056588735c55dc30fed3dd31ad556e5338edefe9e8c99f20c"
+        },
+        "ffi/FfiCallbacksQueueImpl.mustache": {
+          "bytes": 5224,
+          "sha256": "90935e275f80bc5ff4502836affa6681b5c4479a2917438f76bb508f4c2cd96a"
+        },
+        "ffi/FfiConversionBase.mustache": {
+          "bytes": 7824,
+          "sha256": "0eef724ef32438f4458d34a917a32bed4b27e151059555c7c92e65c2b164b00f"
+        },
+        "ffi/FfiCopyrightHeader.mustache": {
+          "bytes": 778,
+          "sha256": "714d9c78c46766a23d13f8075bfff25ee7758a2070df18e4ef208c6690787061"
+        },
+        "ffi/FfiDartDLInitHeader.mustache": {
+          "bytes": 1135,
+          "sha256": "b0555156d6e844883d9144bc88b1cad73598e473cab10c15d9e3d927a49fa782"
+        },
+        "ffi/FfiDartDLInitImpl.mustache": {
+          "bytes": 1881,
+          "sha256": "f21d75fd8e10804804589286cdf2709f46d0082a870ab4b7ead93f22e14d7147"
+        },
+        "ffi/FfiExport.mustache": {
+          "bytes": 997,
+          "sha256": "3b1bba42fc996dd3a9c838c9906bd3170f14e54b056612cb3ac25ed477b5304b"
+        },
+        "ffi/FfiFinalizerDataHeader.mustache": {
+          "bytes": 1087,
+          "sha256": "afaa74dce3bfc4ccf57a87c9b36b3abbd5eae062115aa0e22b5ad2c4827e8ca5"
+        },
+        "ffi/FfiFinalizerDataImpl.mustache": {
+          "bytes": 1268,
+          "sha256": "3b93e55860d2de193a5ee30c3d8be594de7ecd63842224793af8202f45786028"
+        },
+        "ffi/FfiFunctionName.mustache": {
+          "bytes": 871,
+          "sha256": "43863a7692bca8e61c34a5bf03d86c31e360bf73970f12046d524d57f11d4189"
+        },
+        "ffi/FfiGenericTypesHeader.mustache": {
+          "bytes": 2553,
+          "sha256": "f0e9504ee843138bf8cddbe716177279d50b0ea80afb0054fdcdb5bca17cb5f9"
+        },
+        "ffi/FfiGenericTypesImpl.mustache": {
+          "bytes": 4097,
+          "sha256": "1a1dd5ca35678bf06d9b4931566c987aa83292a2337d3345fed7beb24907faac"
+        },
+        "ffi/FfiHeader.mustache": {
+          "bytes": 5807,
+          "sha256": "027dea4e4244fcd764a8ebeba34a2b442cd33cee0d16ceb20bc67e60ec5f8ef6"
+        },
+        "ffi/FfiImplementation.mustache": {
+          "bytes": 17206,
+          "sha256": "b70ebb7a33e552f4898645fb16623833ef9c2a7f4f9b0a89eef9d27d28f7b410"
+        },
+        "ffi/FfiInstanceCacheHeader.mustache": {
+          "bytes": 1383,
+          "sha256": "86391f6dfe963c0ee900d27c9820199590ef538e930a7aa7dfae9f179d1db1ef"
+        },
+        "ffi/FfiInstanceCacheImpl.mustache": {
+          "bytes": 3963,
+          "sha256": "6927e776a114b2ab2ef83e193a41bc5f326185db362df5e72bbb5a606ab17db7"
+        },
+        "ffi/FfiInternal.mustache": {
+          "bytes": 762,
+          "sha256": "ed7d47150de432f74cb99134a1d59cc4c67fba248eefb745abdfea780a30d574"
+        },
+        "ffi/FfiIsolateContextHeader.mustache": {
+          "bytes": 1174,
+          "sha256": "deb1a4c2e1a1e0fc2de096e71cf9c4ecae6d5b625af05d953642e1f424a62b56"
+        },
+        "ffi/FfiIsolateContextImpl.mustache": {
+          "bytes": 1265,
+          "sha256": "2aaad04de4477d49e4f7bb3c3bb91bfc36a23f441ddaf2c294ce4db49b64842d"
+        },
+        "ffi/FfiLazyListHeader.mustache": {
+          "bytes": 1394,
+          "sha256": "53afc954d15fff4b4849fdd782dee5b4fa17b2c040c72f4e54ff2444a870ba82"
+        },
+        "ffi/FfiLazyListImpl.mustache": {
+          "bytes": 2401,
+          "sha256": "a9bf7ccd08444f7ed3a892b7e2376426321f8340ccb9a56ef585cebc5186ce44"
+        },
+        "ffi/FfiLocaleHandleHeader.mustache": {
+          "bytes": 1575,
+          "sha256": "232122c236ed5793229500c9942a71f9da2a4c911e3dc67f2bb9db9d513c7e20"
+        },
+        "ffi/FfiLocaleHandleImpl.mustache": {
+          "bytes": 3627,
+          "sha256": "b94e3b57ea5961c5b61dfbad2bf5b7d1ace9a2a09f5287ac2a05baaebeb7161d"
+        },
+        "ffi/FfiNullableDeclaration.mustache": {
+          "bytes": 1116,
+          "sha256": "c0ada5c6e14e76c28281b64436ddb5e6860d8b2d1c205c99720d8ab05f2d4552"
+        },
+        "ffi/FfiNullableHandlesHeader.mustache": {
+          "bytes": 1300,
+          "sha256": "7f465947811a6e36ace3a5fbd6d8dbed4ed065548843b6ba3e01fe3c93f67026"
+        },
+        "ffi/FfiNullableHandlesImpl.mustache": {
+          "bytes": 2106,
+          "sha256": "b88037970b4de419e0811f3c0a7409c6b910d1596122aa2268c55e8ffb715d74"
+        },
+        "ffi/FfiNullableImpl.mustache": {
+          "bytes": 2500,
+          "sha256": "490c1157b40dbb71ea0256bde5699b73bbab6b1298181536924459c6eef3d035"
+        },
+        "ffi/FfiOpaqueHandle.mustache": {
+          "bytes": 887,
+          "sha256": "f3d6caa380736ca5e7e4bcaf9144b12bf1b751916f9299357434b94c764abe89"
+        },
+        "ffi/FfiProxyCacheHeader.mustache": {
+          "bytes": 1765,
+          "sha256": "aab53d4cc14b069636f84c4bb459d9d1224f99daf6e09afe51856cf9c15ed590"
+        },
+        "ffi/FfiProxyCacheImpl.mustache": {
+          "bytes": 2482,
+          "sha256": "f7777ca1b23fbd3fb7319807094f9be435b6212a1b190d838aba382dfeeb9b3b"
+        },
+        "ffi/FfiProxyDeclaration.mustache": {
+          "bytes": 10143,
+          "sha256": "bd4861b7e7340745b0ea49b194204e8905e54943b819c37b5598a814c8e18fc7"
+        },
+        "ffi/FfiStringHandleHeader.mustache": {
+          "bytes": 1159,
+          "sha256": "8cd6c974ca5c8ef3419515f304b1ce4899db8539fcd4bfbabdaf826cf18fb2ca"
+        },
+        "ffi/FfiStringHandleImpl.mustache": {
+          "bytes": 1296,
+          "sha256": "4a72d979e3dd456eebb956043e0d6c5bb08850b7b120bcbda42966b4661e1aca"
+        },
+        "java/AbstractNativeList.mustache": {
+          "bytes": 5892,
+          "sha256": "ef37c9126b0bfeb6447529046d2f5f0e478a841278df2fab4c6a46577531ac8f"
+        },
+        "java/CopyrightHeader.mustache": {
+          "bytes": 781,
+          "sha256": "dc01a48e8fe50a266d378c2dd545cfa1cb2722f120af4d97d801b1ed974db4dd"
+        },
+        "java/Duration.mustache": {
+          "bytes": 12114,
+          "sha256": "99fdf19611a8ec686ab878c36d4b4a8ecb88e395369a6518028177782136b126"
+        },
+        "java/EqualsAndHashCode.mustache": {
+          "bytes": 3576,
+          "sha256": "bd66cf2d2f6f1a8651bdfa33274621a9faebdbb2ca27a6c6722e26463c57e2ad"
+        },
+        "java/HashMapBuilder.mustache": {
+          "bytes": 2045,
+          "sha256": "446cec2889f9f2ba0cbb421bca408ca897f938985b68e89818ae061964b665b1"
+        },
+        "java/JavaAttributes.mustache": {
+          "bytes": 1003,
+          "sha256": "97921979da047e22a04a8aa66b676622cd712e7e0c8c21e36c00a0794fe07c40"
+        },
+        "java/JavaAttributesInline.mustache": {
+          "bytes": 818,
+          "sha256": "e7b1aa0251ef2f6a32b8eb22f41c554d6504b6943dbdc8b8625cec240f9355ea"
+        },
+        "java/JavaClass.mustache": {
+          "bytes": 4962,
+          "sha256": "fdec3e1a1ef3d1cf84e24bb4c76aaffe5b74d37929c3e3fa563a0ac64e56a4da"
+        },
+        "java/JavaConstant.mustache": {
+          "bytes": 862,
+          "sha256": "5be9b368a3e9a8ae9a4dff83addd7d242f31114428ab898f2153c7d9a6a3d4cf"
+        },
+        "java/JavaContainerContents.mustache": {
+          "bytes": 1265,
+          "sha256": "eb25e30685811adbd6d149a7c9acca1190b8c9aadc0e3b963cec0595dda1118d"
+        },
+        "java/JavaDocComment.mustache": {
+          "bytes": 1108,
+          "sha256": "c45dff29ecf1f78fbf9d5214840dea3f68468c7d7107b854dbb88e7d91d9b7d1"
+        },
+        "java/JavaEnumeration.mustache": {
+          "bytes": 1183,
+          "sha256": "d3d1a7ed0e46a018543211fd9bacc7ddab92b8c5ffc8738aac5ce51dfc76adbc"
+        },
+        "java/JavaEnumerator.mustache": {
+          "bytes": 1058,
+          "sha256": "c61a01f8ec61f3c5f40cdaf996a2ce378bfb0b7750285e7175864ab44093cf24"
+        },
+        "java/JavaException.mustache": {
+          "bytes": 1195,
+          "sha256": "880cb9da78de7dfe3a96d52c4a6583d90f5c0a1f2b62d61898b8c3ffbf92be92"
+        },
+        "java/JavaField.mustache": {
+          "bytes": 897,
+          "sha256": "25aa484c9692504db9751221cb2baa18b387d30b245dce242170012d1b087f40"
+        },
+        "java/JavaFile.mustache": {
+          "bytes": 948,
+          "sha256": "dbc416ef0d75570d18d027b969a5f484c8b34bd2339ce6412c0718a06f04ea84"
+        },
+        "java/JavaFunction.mustache": {
+          "bytes": 1714,
+          "sha256": "dd5915666691175267802ece65b6a6977820810270348eb65df075ac1b9cbe5f"
+        },
+        "java/JavaImplClass.mustache": {
+          "bytes": 2160,
+          "sha256": "b109bde4b2be0e179506368c8b5207e40ea259c66fefdb8b99f1639589394a1f"
+        },
+        "java/JavaInterface.mustache": {
+          "bytes": 2372,
+          "sha256": "b863be553eff37da1560af90f500598bf9e57551bb6dbf045ae1140166f8cc6a"
+        },
+        "java/JavaLambda.mustache": {
+          "bytes": 972,
+          "sha256": "a2dc062220815800c5dcc7405f10c67880a4ed294bb8675edb6f5138e12b8e41"
+        },
+        "java/JavaMethodComment.mustache": {
+          "bytes": 2280,
+          "sha256": "58ae2eba1b2966b96dedf2de2cc41a143e63ec9e30b949d5473641d44b96d7cf"
+        },
+        "java/JavaMethodSignature.mustache": {
+          "bytes": 1474,
+          "sha256": "82752a21406dc6a91508185b8776585c63e61196e17a0851f9830232d03328aa"
+        },
+        "java/JavaParameter.mustache": {
+          "bytes": 1103,
+          "sha256": "66afddc774b3d88066ddadbde908cd091565e262e5df1d3a2b0011bd1185760c"
+        },
+        "java/JavaStruct.mustache": {
+          "bytes": 2449,
+          "sha256": "88396048a42beadfca39cddce68295cb40431a2eff97d706665016b2275af0ca"
+        },
+        "java/JavaStructConstructors.mustache": {
+          "bytes": 5369,
+          "sha256": "03e6b6233165953c1d579c52efc3a05ca9b13198c8e92502e680cdb48f2a9117"
+        },
+        "java/LazyNativeList.mustache": {
+          "bytes": 1292,
+          "sha256": "de8f2cb0d7015b94c29ec1394aae56e12b059082c8988a53a6ad5d76db53f5d3"
+        },
+        "java/NativeBase.mustache": {
+          "bytes": 5133,
+          "sha256": "46cc45c90b7c2aa9197cef3389753db3ba557e8cda117dc04760987ffb09adfb"
+        },
+        "java/NullabilityAnnotations.mustache": {
+          "bytes": 926,
+          "sha256": "f271cff6b84750824a8ab0c2e008c2be9e3a4b684b2a030b80396d1c13b3f151"
+        },
+        "java/ParcelableCreator.mustache": {
+          "bytes": 1049,
+          "sha256": "dc48f4393a59a2d8b68ded78e610f5faca28de596beae1fb4e207b1b900ab54d"
+        },
+        "java/ParcelableImpl.mustache": {
+          "bytes": 4038,
+          "sha256": "35c7a7020e0976765f38fbe06b4cd2736bdd4954ec85418ac323e5237f85177e"
+        },
+        "jni/CppProxyHeader.mustache": {
+          "bytes": 2831,
+          "sha256": "176e133ea26cd547e3abd952396093d70b4a0a22df381724bd581ade17046bde"
+        },
+        "jni/CppProxyImplementation.mustache": {
+          "bytes": 5578,
+          "sha256": "64e7c8e83da49bb1f814fdaea4199da21762c2808e2e375fd3ae33385081a4ae"
+        },
+        "jni/CppProxyMethodParameter.mustache": {
+          "bytes": 818,
+          "sha256": "cab9da6cf4ccafcf53ac79f8221acfe7506c4b48a7dcfa1d2ea12cfd11fa7f60"
+        },
+        "jni/EnumConversionHeader.mustache": {
+          "bytes": 1655,
+          "sha256": "ded27bd50ce370e7f7615006c09a32c395651d11e9e42e16c5b45fb0fd9b7f60"
+        },
+        "jni/EnumConversionImplementation.mustache": {
+          "bytes": 3892,
+          "sha256": "ded1db78df0504e3a527c9451b0630d3ff9ebb7d45ce682783908398edface86"
+        },
+        "jni/ExternalConversionClassCache.mustache": {
+          "bytes": 959,
+          "sha256": "2c081594969e6fd9fb762130e53b6ef36d9d1bbfdd64fb73ad6040e43b759572"
+        },
+        "jni/ExternalConversionFromJni.mustache": {
+          "bytes": 1357,
+          "sha256": "0e59811dc24b0b0e27037ab89eb7a077e7cd6478807abfa8d0ae7005da844aee"
+        },
+        "jni/ExternalConversionToJni.mustache": {
+          "bytes": 1353,
+          "sha256": "5276d2b562fe0a6931753b5e24982cace62d17bf14710dd3a5fb33b1a0d45da1"
+        },
+        "jni/FunctionSignature.mustache": {
+          "bytes": 1043,
+          "sha256": "0775fbdf60daec0647208a7107b3f3bf9f8c533492c1f879f2c8763935cd709b"
+        },
+        "jni/FunctionSignaturePrefix.mustache": {
+          "bytes": 1100,
+          "sha256": "a706cd3685d23e52b7d0bd4eb3a8f08f69db7f312dcd9e8593b6a02556145da0"
+        },
+        "jni/Header.mustache": {
+          "bytes": 2472,
+          "sha256": "f9c989697c0b5dd1a1ea4994c0c3516940084455f92f731c562bd5bd1a911adb"
+        },
+        "jni/Implementation.mustache": {
+          "bytes": 10921,
+          "sha256": "9415798f557673a2c737490b48feab0ea17560af3a93d3741ed40696e39ac7c8"
+        },
+        "jni/InstanceConversionHeader.mustache": {
+          "bytes": 2003,
+          "sha256": "f8ac3a01e209b0520e327aa370546fff3294ee519a029fdf8a58e9d47c6ab025"
+        },
+        "jni/InstanceConversionImplementation.mustache": {
+          "bytes": 6588,
+          "sha256": "7cee4a653d2b6239a0d34c64090c26efb31edc15c9aa3891e0ecf06b20989244"
+        },
+        "jni/JniConversionPrefix.mustache": {
+          "bytes": 844,
+          "sha256": "d65b34d73f16f925bcf6808d27a0defcf18623eed41c3c1522f528587a9d1faf"
+        },
+        "jni/LambdaOverloadedConversionHeader.mustache": {
+          "bytes": 4450,
+          "sha256": "d9e673277853076966e0385af3f40bac8709d0fc2c1750a32d7af4cba9e1dd79"
+        },
+        "jni/LambdaOverloadedConversionImpl.mustache": {
+          "bytes": 3408,
+          "sha256": "dfe5040cb8209f6973d328acd7d4e00cd02e2ed6bf4f98c7098caddda69f087c"
+        },
+        "jni/LazyNativeListHeader.mustache": {
+          "bytes": 1287,
+          "sha256": "f2b019ebf6f620ae17602e3d1fbef48853de223c06be28eb6103742843ea7e65"
+        },
+        "jni/LazyNativeListImpl.mustache": {
+          "bytes": 2560,
+          "sha256": "ac0489a6a121b855fd599334341e92f8fded92b1822609699ee3bebd4dede383"
+        },
+        "jni/StructConversionHeader.mustache": {
+          "bytes": 1865,
+          "sha256": "30e3b96b1f2d2b19d0464079aa449356fc74111567d139f79e4947524bb6c248"
+        },
+        "jni/StructConversionImplementation.mustache": {
+          "bytes": 8160,
+          "sha256": "025f68f44a8bfeb6ec6586e0cf7d1da8a8092b8492eda849ddd56069435f3d0c"
+        },
+        "jni/utils/ArrayConversionUtilsHeader.mustache": {
+          "bytes": 10333,
+          "sha256": "712ff285ef1318dadabec849104a93de6fd036e79ae9f74a857eec90bf7aeb15"
+        },
+        "jni/utils/BoxingConversionUtilsHeader.mustache": {
+          "bytes": 7067,
+          "sha256": "c1cbc521cac07858781afe6d57c1d3bad2f723bf80fa3bb95c3c63da7e3368d7"
+        },
+        "jni/utils/BoxingConversionUtilsImplementation.mustache": {
+          "bytes": 12608,
+          "sha256": "0fcf5d318381f1ff4474cb97cae0138cd51b63a3a1114112efb22f48a65af74e"
+        },
+        "jni/utils/CppProxyBaseHeader.mustache": {
+          "bytes": 4735,
+          "sha256": "7d84cc4f8ecfc17b33b8b529e8db140f48d6f6cb3dbb2790d75d9f82f4a902f4"
+        },
+        "jni/utils/CppProxyBaseImplementation.mustache": {
+          "bytes": 6112,
+          "sha256": "52e7cf05d9fbbe52d2dbc33ed28e2b1b725b3e329094748137bb9f0df7bff2fd"
+        },
+        "jni/utils/FieldAccessMethodsHeader.mustache": {
+          "bytes": 19143,
+          "sha256": "cd322b6fcbfb31d13d6aefe2aa0b9368daf4cd4be0a35751b063e5f03c800223"
+        },
+        "jni/utils/FieldAccessMethodsImplementation.mustache": {
+          "bytes": 23097,
+          "sha256": "2b39e16178eb7c556622809f31bea04e788046675576ce7396b02279e12bb634"
+        },
+        "jni/utils/JniBaseHeader.mustache": {
+          "bytes": 1408,
+          "sha256": "e42df9190e184d3555acb02889671c8d98c8173c85ee8db314773bf8f33a9939"
+        },
+        "jni/utils/JniBaseImplementation.mustache": {
+          "bytes": 3208,
+          "sha256": "da8c4e2094b32f9285ec88ca3de195b39c5fb309121345f92a11d2e31f1c3c70"
+        },
+        "jni/utils/JniCallJavaMethodHeader.mustache": {
+          "bytes": 5522,
+          "sha256": "b0a91d769d40e8b0ce9cc15579f1242e337bce4f725ae8276b3bb9ca872af306"
+        },
+        "jni/utils/JniCallbackErrorCheckingHeader.mustache": {
+          "bytes": 959,
+          "sha256": "017ce1f350ffa824121bbffd029c16bfa679db3d37f2a31cd6f7dd8dd3610bbe"
+        },
+        "jni/utils/JniCallbackErrorCheckingImplementation.mustache": {
+          "bytes": 2443,
+          "sha256": "6f9a2558723325f4b7bb908bfdf2851ddd3bda595d1d195510f8be02d56bc9ec"
+        },
+        "jni/utils/JniClassCacheHeader.mustache": {
+          "bytes": 3371,
+          "sha256": "e705b45c13dbe3ea0847f91701abd520996dfd477d076d9c445ab51d692dc125"
+        },
+        "jni/utils/JniClassCacheImplementation.mustache": {
+          "bytes": 4054,
+          "sha256": "1f130ba5abfd3da1026facaddfc4660c97e7c099bb55cd7309719e0d52a05fd0"
+        },
+        "jni/utils/JniCppConversionUtilsHeader.mustache": {
+          "bytes": 9701,
+          "sha256": "f3350fac0a819ca31e25a925fe1b0e64ff4683968022b8aaa8b2f229896b0b97"
+        },
+        "jni/utils/JniCppConversionUtilsImplementation.mustache": {
+          "bytes": 11137,
+          "sha256": "635aec90d6b9ab4c9b52d5a9f8faf4e24a4a8bb3d81ca7617674f6cee6243d48"
+        },
+        "jni/utils/JniExceptionThrowerHeader.mustache": {
+          "bytes": 1208,
+          "sha256": "dbddf5e5b859719086542950059fccf741fc0fc4909509f4cb75c1ed67a76d58"
+        },
+        "jni/utils/JniExceptionThrowerImplementation.mustache": {
+          "bytes": 1327,
+          "sha256": "365a0ea5d512167d7e7dcf7c0eb30c51da603e5b55ce5140865998ad50e10f8d"
+        },
+        "jni/utils/JniJavaContainersHeader.mustache": {
+          "bytes": 4305,
+          "sha256": "e4e02b66d761e5bf203cfb8e26b7a4ea47e36c98445e4c1294e121f1d8557d43"
+        },
+        "jni/utils/JniJavaContainersImplementation.mustache": {
+          "bytes": 6658,
+          "sha256": "8eabc7d3d0e7b1ea1832f7b9b98466128bda568634c3ce2803b75045987de720"
+        },
+        "jni/utils/JniNativeHandleHeader.mustache": {
+          "bytes": 1153,
+          "sha256": "c3a2bda8aa918afdefc1d4ff8c31d7c4bb1ff804146684da223a20d9393fa94d"
+        },
+        "jni/utils/JniNativeHandleImplementation.mustache": {
+          "bytes": 1311,
+          "sha256": "fad276e40472727ddd26e96c3737a5b613e51197c596b029e6e37874effec93e"
+        },
+        "jni/utils/JniReferenceHeader.mustache": {
+          "bytes": 4790,
+          "sha256": "976a1fde1322ae18d0c96a83d3096c67ad3b1b4927979981459e33ea71c1a047"
+        },
+        "jni/utils/JniReferenceImplementation.mustache": {
+          "bytes": 3413,
+          "sha256": "5d5f24c164beeb86c78551e9eae56055522d94bce25c1aa2ecb082b0139dc37d"
+        },
+        "jni/utils/JniTemplateMetainfoHeader.mustache": {
+          "bytes": 4350,
+          "sha256": "0cc0c52563403bee27ebfed07bceb3b4d80f16fe514b2898a92e3c6a260c9668"
+        },
+        "jni/utils/JniThrowNewExceptionHeader.mustache": {
+          "bytes": 1262,
+          "sha256": "12bfff518332a2c987eabcf2fde7ae7a1df9527f5db4300152f384244c065dab"
+        },
+        "jni/utils/JniThrowNewExceptionImplementation.mustache": {
+          "bytes": 1921,
+          "sha256": "bf1c937867228aa54ad9e6bde86b7d261142e6401fffeb2e21767a8b4f7655bd"
+        },
+        "jni/utils/JniTypeIdHeader.mustache": {
+          "bytes": 962,
+          "sha256": "2f394e021c960aa7694177d01733a636edf90a0f14547c27e487f7a739bd1c8b"
+        },
+        "jni/utils/JniWrapperCacheHeader.mustache": {
+          "bytes": 1832,
+          "sha256": "19c0930f864fe9a89a7d44bf96a49ba212a94a454459fe2e65871f322357d4c6"
+        },
+        "jni/utils/JniWrapperCacheImplementation.mustache": {
+          "bytes": 4688,
+          "sha256": "fbca2b92f0101ae821b3d9cad483e308f5c02298dc373befdf1bb5592c11d2d6"
+        },
+        "kotlin/KotlinAbstractNativeList.mustache": {
+          "bytes": 5407,
+          "sha256": "e4980feed28e2940c9b24ddf107ee54e8df5f241941bbb6bda78849f898f4534"
+        },
+        "kotlin/KotlinAttributes.mustache": {
+          "bytes": 862,
+          "sha256": "824a14b487b5900bad32ffb29a8a0e7d2c09f991d03aaa5fbebb87b575c632c4"
+        },
+        "kotlin/KotlinAttributesInline.mustache": {
+          "bytes": 824,
+          "sha256": "fe912c763172fed2169b3b91e6b4891380837448282517f4fada41bd806233dd"
+        },
+        "kotlin/KotlinClass.mustache": {
+          "bytes": 5522,
+          "sha256": "57e985cff42ba58c55928000cf8f3ce04023a0c05a371ec64d47ddaab88caa9e"
+        },
+        "kotlin/KotlinConstant.mustache": {
+          "bytes": 958,
+          "sha256": "78f2f569c4c91bbc48269ad1a0d4682590436bdd7fa340ebfe434142fd15e44e"
+        },
+        "kotlin/KotlinContainerContents.mustache": {
+          "bytes": 1172,
+          "sha256": "b92d4e21fbcb65775d2aa7d5240164029076a390dc329d674dc729ce3d114e7c"
+        },
+        "kotlin/KotlinCoroutineMembers.mustache": {
+          "bytes": 1569,
+          "sha256": "b3408b147be2876bfd837be829bcd79ef2ccfef43de5b2b2a442662edb0010d1"
+        },
+        "kotlin/KotlinCoroutines.mustache": {
+          "bytes": 5464,
+          "sha256": "ace95d8638e047e6c4ca6c6d5e84589d9aaa142dffadd390d7c4d4b5650d21d2"
+        },
+        "kotlin/KotlinDocComment.mustache": {
+          "bytes": 1337,
+          "sha256": "bdcab18725f2761d0206fbd2d6ca50870fb39b2abf21aff147453211240b805b"
+        },
+        "kotlin/KotlinDuration.mustache": {
+          "bytes": 12858,
+          "sha256": "187b9bd75dd788d36c38ac27e75eff9f3d9793b3839c4d1621eefef9400b5704"
+        },
+        "kotlin/KotlinEnumeration.mustache": {
+          "bytes": 1470,
+          "sha256": "12c61fbafc2b9b57e4039c3715517f0b5c7725164eafcadfadb0a95b41437f15"
+        },
+        "kotlin/KotlinEnumerator.mustache": {
+          "bytes": 1140,
+          "sha256": "e4339715d1c573036d9f3491353c8467139be67384c6d2f0922d8e39b591c016"
+        },
+        "kotlin/KotlinEqualsAndHashCode.mustache": {
+          "bytes": 3710,
+          "sha256": "a960f11870e60140db9e00acdb90e968469323ab226e5ea0ed544a80ca855a60"
+        },
+        "kotlin/KotlinException.mustache": {
+          "bytes": 905,
+          "sha256": "4a0b5a5b46c3e12c4a98d8addb04a1c4d193d4049145b422103e8b29b661d5dc"
+        },
+        "kotlin/KotlinFile.mustache": {
+          "bytes": 1125,
+          "sha256": "478a728751a98b4d00fabf361095edefe5967ab4cd4b61187c5b7e1f0c62f468"
+        },
+        "kotlin/KotlinFunction.mustache": {
+          "bytes": 1954,
+          "sha256": "091cc591073ad65ac80edbf9100bc291c52f0d9e3dbd988a41d8e86bd164a6ce"
+        },
+        "kotlin/KotlinImplClass.mustache": {
+          "bytes": 2741,
+          "sha256": "16d9fd21898c941224607758116da2fa650b82c6c4cd59b300f9dc65b4beed06"
+        },
+        "kotlin/KotlinInterface.mustache": {
+          "bytes": 2667,
+          "sha256": "8464087b300367f1d259e959ddf90a80d9e064b13e6f43f95baa27445b678678"
+        },
+        "kotlin/KotlinInternalApiAnnotation.mustache": {
+          "bytes": 1661,
+          "sha256": "f61e51d67b5f45e08d268ca539f3f5b9ee2ac83beeb2d270a5541ecf32793df8"
+        },
+        "kotlin/KotlinLambda.mustache": {
+          "bytes": 1013,
+          "sha256": "a2c1193ecffe50839af47dce19df75426d82113a53e9cba6af7d950d3354344c"
+        },
+        "kotlin/KotlinLazyNativeList.mustache": {
+          "bytes": 1167,
+          "sha256": "c77114bd5b514d7ffa4105f23c9c579fe4e19a34decf76494a6647dc0dbe3623"
+        },
+        "kotlin/KotlinMethodComment.mustache": {
+          "bytes": 2039,
+          "sha256": "63bf17f2aa483d0bdc041b4ee4fb3bd33bfc42b53c3375dcfa6723917b2c528a"
+        },
+        "kotlin/KotlinNativeBase.mustache": {
+          "bytes": 5023,
+          "sha256": "a29ed853905ee3a483e2c7deb1aa42e393457d81e32a07d12c95715c19fbd45c"
+        },
+        "kotlin/KotlinParcelableCreator.mustache": {
+          "bytes": 933,
+          "sha256": "a1f5b5b60c115799c3ef89acd9783e490d9d829ef7b282ee17230455ca75c14d"
+        },
+        "kotlin/KotlinParcelableImpl.mustache": {
+          "bytes": 4327,
+          "sha256": "fc5663c60ca39ca63c4c28ae8c2b434768f862fadcf3bb871d64d46510626357"
+        },
+        "kotlin/KotlinProperty.mustache": {
+          "bytes": 2692,
+          "sha256": "9c9bea4a97d6cec2526af183c8937dafeaf3dcdceaaa401631e7293c81ae8657"
+        },
+        "kotlin/KotlinStaticProperty.mustache": {
+          "bytes": 1457,
+          "sha256": "e909c4447645725a71bcd722252f9e469f5ac5fe85ff510086fd9c55b75413f0"
+        },
+        "kotlin/KotlinStruct.mustache": {
+          "bytes": 8292,
+          "sha256": "79f831c5eb5a9b474f0eaa453c629d1010e24619f5009a62a5d89260fbb20a22"
+        },
+        "kotlin/KotlinTypeAlias.mustache": {
+          "bytes": 788,
+          "sha256": "cdef962cb314ff28ddda55966d1dda881c2c14aa4eb5cbe3dfd1b709bc01e704"
+        },
+        "kotlin/KotlinTypeVisibility.mustache": {
+          "bytes": 928,
+          "sha256": "a28df139526df95da57305c6d7ee405bd2d3fc9dac9a55354c9cfdaf9f3b9ee3"
+        },
+        "swift/BuiltinOptionals.mustache": {
+          "bytes": 1637,
+          "sha256": "4c9a705c8cdbf929892e272b0f9c646f447c16931307ea1d0151b17200e38ed2"
+        },
+        "swift/CommonClassParts.mustache": {
+          "bytes": 2766,
+          "sha256": "8ea0382b1122709057c1cc326d3a07f9926267a9b3dfbe751b89a38b8f284829"
+        },
+        "swift/ConversionPrefixFrom.mustache": {
+          "bytes": 1452,
+          "sha256": "0a478018f954cf136d9ad96f8fbc2c691644b4ddd52dea5bbee0691f2e798f77"
+        },
+        "swift/ConversionPrefixTo.mustache": {
+          "bytes": 1274,
+          "sha256": "0e65f728120d3e37177ec365b1ddbaacf9f401dd10e917226d486c3a73d15308"
+        },
+        "swift/ConversionVisibility.mustache": {
+          "bytes": 857,
+          "sha256": "fe089b5a4175df46f0d2cefac9c0ec3931e787628038c574718a25b87b571871"
+        },
+        "swift/EnumOptionSetDefinition.mustache": {
+          "bytes": 1559,
+          "sha256": "f5eddd4a55a8cdce021717394598ab8bcf19711ffcdf7a9eceec9d74bca5b393"
+        },
+        "swift/GetReference.mustache": {
+          "bytes": 7425,
+          "sha256": "e14fe1449bc08c3562a58e1c7482cd2f84ba509410535f5d377469e35eb8ca8d"
+        },
+        "swift/InitCollectionOf.mustache": {
+          "bytes": 1281,
+          "sha256": "80525af3477d0e4de188893cafda5c1e78dbd23253f3404ada74717a32755f65"
+        },
+        "swift/RefHolder.mustache": {
+          "bytes": 1369,
+          "sha256": "888eede8485abbdb8930855af3c3405a33d586e940460a0942bff326a6bf1b37"
+        },
+        "swift/SwiftAttributes.mustache": {
+          "bytes": 839,
+          "sha256": "5c892dee372572fef6cd9944c537f17eb1e5467beee956e09c530819ce3199e3"
+        },
+        "swift/SwiftAttributesInline.mustache": {
+          "bytes": 836,
+          "sha256": "c44bad091cc95a0ce28770ac79fecac7a0e4a323e97bfbe5cde8240d15eb8786"
+        },
+        "swift/SwiftClassConversion.mustache": {
+          "bytes": 8583,
+          "sha256": "1dd5984de505a96a38508f339d5a1c41116a320199a9cb545842f4cc80f6f75b"
+        },
+        "swift/SwiftClassDefinition.mustache": {
+          "bytes": 3309,
+          "sha256": "997199c14a769701c36fcc5248366ec46e149516ffeaf43909efdb7380d9d922"
+        },
+        "swift/SwiftComment.mustache": {
+          "bytes": 1068,
+          "sha256": "68d6896cdd41b3b3f986f60d0d9f21823617cf4012be51a716f5df49abaf669e"
+        },
+        "swift/SwiftConstant.mustache": {
+          "bytes": 863,
+          "sha256": "842931ee3581231492cc6feacddf60783fafddafbd9bb0124c9143f0216dff5d"
+        },
+        "swift/SwiftEnumConversion.mustache": {
+          "bytes": 4266,
+          "sha256": "99569983696202410eefd3bbc2dd8c81dd2921442ffa0098b0219e2df2ed78a9"
+        },
+        "swift/SwiftEnumDefinition.mustache": {
+          "bytes": 3019,
+          "sha256": "a654b4d94753270fa5878842552650d90bcbe5cfa0e89dd047fe161c5ce951c3"
+        },
+        "swift/SwiftException.mustache": {
+          "bytes": 938,
+          "sha256": "5a93f4849e49a4f85f456e338039a9e2eee214cdbc3903ed9b6f511b7901c8e9"
+        },
+        "swift/SwiftFile.mustache": {
+          "bytes": 1070,
+          "sha256": "c0506be3e09008fadfb0b14c4aba050816724c8d2eaef9f8bc3e8027a4dcf3e8"
+        },
+        "swift/SwiftFunctionBody.mustache": {
+          "bytes": 2469,
+          "sha256": "e4dcd9b104b7eca7dc6aad9e68fd21a98e971d7e6444174d7de9c0a8324da62e"
+        },
+        "swift/SwiftFunctionComment.mustache": {
+          "bytes": 2370,
+          "sha256": "3783e650f0121b359269c4407402d8702acc6a079a20c07e5cf75056dc750f3f"
+        },
+        "swift/SwiftFunctionParameters.mustache": {
+          "bytes": 1035,
+          "sha256": "867cabef5fecc154072f999f78215cdb4ec0e925630db5a4aa901eff86f44879"
+        },
+        "swift/SwiftFunctionSignature.mustache": {
+          "bytes": 1137,
+          "sha256": "deac7ae0f622bf487cdc4dacbf6538cdb9997572f1b3bcf824969d43aaa49469"
+        },
+        "swift/SwiftInterfaceDefinition.mustache": {
+          "bytes": 2291,
+          "sha256": "f17ab8a19f2635616f5193c3cda9ebe3ab380665491b92617eab876191e75eb0"
+        },
+        "swift/SwiftLambdaComment.mustache": {
+          "bytes": 1506,
+          "sha256": "edf2c300804e4d29fb32f79e361d88abd00398de89fbadf6948406b43e59733b"
+        },
+        "swift/SwiftLambdaConversion.mustache": {
+          "bytes": 4953,
+          "sha256": "15938ba49b5b7dea51f68fbd681d92833cb521fbf73d2e92d174373b6c743f12"
+        },
+        "swift/SwiftLambdaDefinition.mustache": {
+          "bytes": 1164,
+          "sha256": "39573ffeb787abd4f3a2eb907f473e96d8a46cc4d0481613f42a255a0527586c"
+        },
+        "swift/SwiftLists.mustache": {
+          "bytes": 3704,
+          "sha256": "4b43137845c6b7c3dc4248c4f7471ade64151da39f3a28a8b806ebfc23a83eb2"
+        },
+        "swift/SwiftMaps.mustache": {
+          "bytes": 4302,
+          "sha256": "4fdca4ab2e459df4a8ece1aa990e6e5a86e8d3d914a235ee5ca11fb38fb3236a"
+        },
+        "swift/SwiftProperty.mustache": {
+          "bytes": 1639,
+          "sha256": "92aff25aedd57f910137302e632a02c8baf699782eb585da19b0ba01f64dc7d4"
+        },
+        "swift/SwiftSets.mustache": {
+          "bytes": 4325,
+          "sha256": "99d258e9d20b0cc0bd1ba2643f9924c78f847a48e95b6ff44d748df4bb0c8ae6"
+        },
+        "swift/SwiftStructConstructors.mustache": {
+          "bytes": 5123,
+          "sha256": "a8e0e906cf2e05d086bf7fbbf2caf29cea9acab21d5e5e27cfe63a6722d79291"
+        },
+        "swift/SwiftStructConversion.mustache": {
+          "bytes": 4560,
+          "sha256": "c8dde6b1f9c72ee506a53166191d04591b723b9e4466a5531a18f7370c9f6552"
+        },
+        "swift/SwiftStructDefinition.mustache": {
+          "bytes": 5433,
+          "sha256": "6334f0a253137381991bc75187531f3162a3f7e0804759fec8584e75ec74b36f"
+        },
+        "swift/SwiftTypeAlias.mustache": {
+          "bytes": 873,
+          "sha256": "a5973c7b64117ad52db291602c2d60d4f802666bdb9b79fc89f33bf2dcc31dd7"
+        },
+        "swift/TypeVisibility.mustache": {
+          "bytes": 830,
+          "sha256": "f6f2f449178436251ad0e75bf5869cec56966f0cc7ea628693d1ad3ae76cc4b3"
+        },
+        "xml/CopyrightHeader.mustache": {
+          "bytes": 780,
+          "sha256": "22db3fe35e27288d9d9503b48e7bebf35fb21c29cf5924a5ce96791e2161b42d"
+        }
+      },
+      "sha256": "b972c7bfbf9797260cc58d7f6fabf350acdd95e67671278181c23aaea21a841e"
+    },
+    "utc": "2026-11-01T21:32:08.928765+00:00",
+    "work_dir": "/tmp/ruscodium-perf-m13-final"
+  },
+  "runs": {
+    "structs-10": {
+      "jvm": {
+        "argv": [
+          "/workspace/.gluecodium-env/jdk-17.0.16+8/bin/java",
+          "-cp",
+          "/tmp/ruscodium-perf-m13-final/warm-classes:/workspace/gluecodium/gluecodium/build/install/gluecodium/lib/*",
+          "WarmJvm",
+          "/tmp/ruscodium-perf-m13-final/inputs/structs-10.lime",
+          "/tmp/ruscodium-perf-m13-final/persistent/structs-10/jvm",
+          "20"
+        ],
+        "exit_code": 1,
+        "samples": [
+          {
+            "iteration": 0,
+            "matches_baseline": false,
+            "phase": "warmup",
+            "success": false,
+            "wall_seconds": 2.451648137
+          }
+        ],
+        "statistics": null,
+        "stderr": "Can't load log handler \"java.util.logging.FileHandler\"\njava.nio.file.FileSystemException: /home/agent/java0.log.lck: Read-only file system\njava.nio.file.FileSystemException: /home/agent/java0.log.lck: Read-only file system\n\tat java.base/sun.nio.fs.UnixException.translateToIOException(UnixException.java:100)\n\tat java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:106)\n\tat java.base/sun.nio.fs.UnixException.rethrowAsIOException(UnixException.java:111)\n\tat java.base/sun.nio.fs.UnixFileSystemProvider.newFileChannel(UnixFileSystemProvider.java:181)\n\tat java.base/java.nio.channels.FileChannel.open(FileChannel.java:298)\n\tat java.base/java.nio.channels.FileChannel.open(FileChannel.java:357)\n\tat java.logging/java.util.logging.FileHandler.openFiles(FileHandler.java:512)\n\tat java.logging/java.util.logging.FileHandler.<init>(FileHandler.java:279)\n\tat java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)\n\tat java.base/jdk.internal.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:77)\n\tat java.base/jdk.internal.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)\n\tat java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:500)\n\tat java.base/java.lang.reflect.ReflectAccess.newInstance(ReflectAccess.java:128)\n\tat java.base/jdk.internal.reflect.ReflectionFactory.newInstance(ReflectionFactory.java:347)\n\tat java.base/java.lang.Class.newInstance(Class.java:645)\n\tat java.logging/java.util.logging.LogManager.createLoggerHandlers(LogManager.java:1005)\n\tat java.logging/java.util.logging.LogManager$4.run(LogManager.java:975)\n\tat java.logging/java.util.logging.LogManager$4.run(LogManager.java:971)\n\tat java.base/java.security.AccessController.doPrivileged(AccessController.java:318)\n\tat java.logging/java.util.logging.LogManager.loadLoggerHandlers(LogManager.java:971)\n\tat java.logging/java.util.logging.LogManager.initializeGlobalHandlers(LogManager.java:2424)\n\tat java.logging/java.util.logging.LogManager$RootLogger.accessCheckedHandlers(LogManager.java:2526)\n\tat java.logging/java.util.logging.Logger.getHandlers(Logger.java:2090)\n\tat java.logging/java.util.logging.Logger.log(Logger.java:977)\n\tat java.logging/java.util.logging.Logger.doLog(Logger.java:1007)\n\tat java.logging/java.util.logging.Logger.log(Logger.java:1030)\n\tat java.logging/java.util.logging.Logger.severe(Logger.java:1777)\n\tat com.here.gluecodium.Gluecodium$Companion.saveToDirectory(Gluecodium.kt:269)\n\tat com.here.gluecodium.Gluecodium$Companion.access$saveToDirectory(Gluecodium.kt:221)\n\tat com.here.gluecodium.Gluecodium.output$gluecodium(Gluecodium.kt:171)\n\tat com.here.gluecodium.Gluecodium.executeGenerator$gluecodium(Gluecodium.kt:146)\n\tat com.here.gluecodium.Gluecodium.execute(Gluecodium.kt:117)\n\tat WarmJvm.main(WarmJvm.java:17)\nSEVERE: com.here.gluecodium.Gluecodium$Companion saveToDirectory: Cannot open output directory '/tmp/ruscodium-perf-m13-final/persistent/structs-10/jvm/0' for writing\n",
+        "stdout": "0 2451648137 false\n",
+        "valid": false
+      }
+    }
+  },
+  "schema": "ruscodium.performance.persistent.v1",
+  "selected": [
+    "structs-10"
+  ],
+  "selection_rule": "10 and 100 struct probes only, if both fresh pilot invocations each complete in at most 3 seconds with parity; 500 excluded to bound repeated cost.",
+  "source_sha256": {
+    "WarmJvm.java": "a795a74b697a7f5bc6257955031523d430268e53a6f1a12cf6f1e2645ddbb784",
+    "warm-rust/Cargo.toml": "7cd177a5483ef9a829c26309e9744561d21f610e4cbe311c5e65ff1495d3afc9",
+    "warm-rust/src/main.rs": "2ad272b8eaea55e4f276009d2218f6ac80a2fa8c4f098466b164aefeb589b214",
+    "warm.py": "ee51e4ad4df4365ff3317e950821a6bd72934ecf8c295d0ec4404ea93581e498"
+  },
+  "timed_iterations": 10,
+  "warm_binary_sha256": "2a5feb8c2585469321c32ae7379e2fa6234760b0c92cff35e7811323cdcc8978",
+  "warmup_iterations": 10
+}
