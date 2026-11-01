@@ -183,8 +183,9 @@ or template contexts. The independent [whole-file oracle](tools/cpp-generation-o
 compares all 50 generated files and source sets across default and custom option
 groups, including eighteen common/export files in each group, and compiles and
 runs consumers. Its snapshot/getter boundary and unsupported cases are
-documented in [GENERATION.md](GENERATION.md); the Rust frontend is not yet an
-adapter for that job.
+documented in [GENERATION.md](GENERATION.md). The bounded
+[native frontend adapter](FRONTEND_ADAPTER.md) now constructs such jobs from
+real LIME for its admitted source subset; complete canonical parity remains open.
 
 Version-2 generation jobs attach a complete raw-comment map internally to the
 rendering graph. Native comment names, emptiness and predicates then use the

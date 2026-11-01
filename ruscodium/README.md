@@ -8,6 +8,8 @@ cargo run -- -input ../examples/calculator/lime -validate
 cargo run -- -input ../examples/calculator/lime --model > calculator.json
 cargo run -- -input path/to/lime -generators json -output out
 cargo run -- -input path/to/lime -generators cpp -output out
+cargo run -- compile-cpp --input tools/cpp-generation-oracle/default.lime \
+  --templates ../gluecodium/src/main/resources/templates --output out-native
 cargo run -- generate-cpp --job tests/cpp-generation-goldens/default/job.json \
   --templates ../gluecodium/src/main/resources/templates --output out-cpp
 cargo run -- generate-cpp --job tests/cpp-documentation-goldens/docs/job.json \
@@ -52,8 +54,9 @@ model headers and implementations plus all eighteen upstream common/export
 files. The default and custom JVM fixtures compare all 50 paths, source sets and
 UTF-8 file bytes, and both generated consumers compile and run under strict
 C++17 warnings. This job format is distinct from the Rust preview model and the
-`-generators cpp` API sketch. A native frontend adapter and full C++ feature or
-ABI parity remain future work.
+`-generators cpp` API sketch. The bounded
+[native frontend adapter](FRONTEND_ADAPTER.md) builds this backend's input from
+real LIME. Full canonical-model, C++ feature and ABI parity remain future work.
 
 Version-2 jobs add [native documentation processing](DOCUMENTATION.md) from
 ordered raw comment sections, including platform selection, placeholders,
@@ -61,5 +64,14 @@ exclusion and a guarded plain-text formatting subset. Version-1 jobs and their
 fixtures retain their previous contract. The
 [smoke inventory](tools/cpp-smoke-matrix/README.md) records complete-scenario
 acceptance separately from the two unmodified upstream documentation files.
-Full Markdown, scoped documentation links and the native frontend adapter remain
-future work.
+Full Markdown, scoped documentation links and complete frontend/canonical-model
+parity remain future work.
+
+[`compile-cpp`](FRONTEND_ADAPTER.md) provides the native LIME → Rust model →
+compatibility backend path. It accepts main/auxiliary source inputs and strict
+generator options, reconstructs the backend graph natively and renders the
+unchanged Mustache templates without Java or captured model inputs. The
+[adapter oracle](tools/frontend-adapter-oracle/README.md) compares 90 baseline
+files across default/custom inputs and two isolated upstream documentation
+files, plus model facts and live source mutations. This is the dedicated M12
+adapter slice; the snapshot-driven CLI and preview emitter remain separate.

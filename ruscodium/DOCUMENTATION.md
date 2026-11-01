@@ -20,8 +20,10 @@ selected text, formatted Doxygen, or comment predicate results. Version 1 reject
 
 The JVM oracle exports the private ordered `LimeComment.taggedSections` field
 through a narrowly scoped, checked reflection adapter. These are raw model facts,
-not formatted output. The snapshot and other allowed getter views still come
-from the JVM frontend; this is not a native LIME or Limedoc parser.
+not formatted output. Those captured snapshots and allowed getter views come
+from the JVM frontend. The separate [native adapter](FRONTEND_ADAPTER.md)
+constructs raw comments from its bounded native source parser; the two paths
+share the same backend formatter.
 
 Rust derives three different views. Raw `isEmpty` tests whether every section's
 payload is empty, across all platforms. Selected C++ text concatenates universal,
@@ -65,4 +67,4 @@ The three fixtures contain 63 complete output files: 23 in the focused job and
 job. All paths, source sets and UTF-8 bytes are compared.
 The [smoke inventory](tools/cpp-smoke-matrix/README.md) reports complete-group
 results separately from these per-file cases. Full Markdown, scoped documentation
-links and native frontend integration remain future work.
+links and complete native frontend/documentation parity remain future work.

@@ -9,6 +9,10 @@ outputs. An I/O failure during writing can leave a partial update. Existing
 unrelated files are retained. The earlier `-generators cpp` preview is a separate
 backend and does not consume this job format.
 
+For native LIME input, use [`compile-cpp`](FRONTEND_ADAPTER.md). Its bounded
+adapter constructs a version-2 job from the Rust model and calls this same
+generator, without importing a JVM snapshot or invoking Java.
+
 Both versions accept `schema`, `version`, `snapshot`, optional
 `property_overlays`, `absent_properties`, and `options`. Version 2 also requires
 `raw_comments`, a complete map of raw ordered comment sections, and forbids
