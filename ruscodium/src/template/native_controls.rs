@@ -673,11 +673,20 @@ impl<'a> Context<'a> {
             _ => unreachable!(),
         }
     }
+    fn checked_list(&self, v: &Value, key: &str, expected: &str) -> Result<&'a Vec<Value>, String> {
+        let values = self.list(v, key)?;
+        for value in values {
+            if self.class(value) != expected {
+                return Err(format!("native controls invalid {key} member"));
+            }
+        }
+        Ok(values)
+    }
     fn inner(&self, v: &Value) -> Result<Vec<Value>, String> {
         Ok(self
-            .list(v, "interfaces")?
+            .checked_list(v, "interfaces", "LimeInterface")?
             .iter()
-            .chain(self.list(v, "classes")?)
+            .chain(self.checked_list(v, "classes", "LimeClass")?)
             .cloned()
             .collect())
     }
@@ -709,32 +718,32 @@ impl<'a> Context<'a> {
             return Err("native controls cyclic nested types".into());
         }
         if self.is_container(v) {
-            for c in self.list(v, "constants")? {
+            for c in self.checked_list(v, "constants", "LimeConstant")? {
                 self.import_ref(self.get(c, "typeRef")?, out, &mut BTreeSet::new())?
             }
             if self.class(v) == "LimeStruct" {
-                for f in self.list(v, "fields")? {
+                for f in self.checked_list(v, "fields", "LimeField")? {
                     self.import_ref(self.get(f, "typeRef")?, out, &mut BTreeSet::new())?
                 }
             }
-            for f in self.list(v, "functions")? {
+            for f in self.checked_list(v, "functions", "LimeFunction")? {
                 self.import_function(f, out, true)?
             }
             if self.inheritance(v) {
-                for p in self.list(v, "properties")? {
+                for p in self.checked_list(v, "properties", "LimeProperty")? {
                     self.import_ref(self.get(p, "typeRef")?, out, &mut BTreeSet::new())?
                 }
             }
-            for k in [
-                "structs",
-                "enumerations",
-                "exceptions",
-                "typeAliases",
-                "classes",
-                "interfaces",
-                "lambdas",
+            for (k, kind) in [
+                ("structs", "LimeStruct"),
+                ("enumerations", "LimeEnumeration"),
+                ("exceptions", "LimeException"),
+                ("typeAliases", "LimeTypeAlias"),
+                ("classes", "LimeClass"),
+                ("interfaces", "LimeInterface"),
+                ("lambdas", "LimeLambda"),
             ] {
-                for child in self.list(v, k)? {
+                for child in self.checked_list(v, k, kind)? {
                     self.collect_imports(child, out, active)?
                 }
             }

@@ -315,6 +315,16 @@ fn malformed_receiver_types_and_struct_members_fail() {
     )
     .unwrap_err()
     .contains("invalid type class"));
+    let mut malformed_inner = matrix();
+    node_mut(&mut malformed_inner, "n44")["properties"]["classes"] =
+        serde_json::json!([{"$ref":"n49"}]);
+    assert!(predicate(
+        &graph(&malformed_inner),
+        "needsInnerForwardDeclarations",
+        &serde_json::json!({"$ref":"n44"})
+    )
+    .unwrap_err()
+    .contains("invalid classes"));
     let mut req = matrix();
     node_mut(&mut req, "n49")["properties"]["fields"] = serde_json::json!([{"$ref":"n49"}]);
     assert!(sort(&graph(&req), "", &[serde_json::json!({"$ref":"n49"})])
