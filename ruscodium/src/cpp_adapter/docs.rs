@@ -28,6 +28,9 @@ pub(super) fn parse_documentation(docs: &[String]) -> Result<ParsedDocumentation
         if line.contains(['\n', '\r']) {
             return Err("multiline line-comment token is unsupported".into());
         }
+        if line.chars().any(|ch| ch.is_control() && ch != '\t') {
+            return Err("control character in documentation is unsupported".into());
+        }
         lines.push(line);
     }
     while lines.first().is_some_and(|line| line.trim().is_empty()) {
@@ -391,5 +394,22 @@ mod tests {
                 "accepted {input}"
             );
         }
+    }
+
+    #[test]
+    fn rejects_control_characters_before_normalization() {
+        for control in ['\0', '\u{b}', '\u{c}', '\u{7f}', '\u{85}'] {
+            for input in [
+                format!("//{control}Text"),
+                format!("// Text{control}"),
+                format!("// {{@Cpp{control}text}}"),
+            ] {
+                assert!(
+                    parse_documentation(&[input.clone()]).is_err(),
+                    "accepted {input:?}"
+                );
+            }
+        }
+        assert_eq!(text(&parse(&["// A\tword."]).description), "A\tword.");
     }
 }
