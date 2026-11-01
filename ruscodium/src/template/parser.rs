@@ -19,6 +19,7 @@ struct Tag {
     end: usize,
     content: String,
     indent: String,
+    suppress_definition_newline: bool,
 }
 
 pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
@@ -56,83 +57,87 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
             end,
             content,
             indent: String::new(),
+            suppress_definition_newline: false,
         });
         pos = end;
     }
-    // Trimou treats a line containing several structural tags as standalone too.
+    // Tags can span physical lines. Trimou decides standalone status on the
+    // text between tags, so newlines inside a comment do not split the line.
+    // Track those logical lines without changing the original source offsets.
     let mut line_start = 0;
     let mut first_tag = 0;
-    while line_start < source.len() {
-        let line_end = source[line_start..]
-            .find('\n')
-            .map_or(source.len(), |i| line_start + i + 1);
-        while first_tag < tags.len() && tags[first_tag].end <= line_start {
-            first_tag += 1;
-        }
-        let mut indices = Vec::new();
-        let mut i = first_tag;
-        while i < tags.len() && tags[i].start < line_end {
-            if tags[i].start >= line_start && tags[i].end <= line_end {
-                indices.push(i);
+    let mut cursor = 0;
+    while cursor < source.len() || first_tag < tags.len() {
+        let mut next_tag = first_tag;
+        let mut end = cursor;
+        loop {
+            let text_end = tags.get(next_tag).map_or(source.len(), |tag| tag.start);
+            if let Some(newline) = source[end..text_end].find('\n') {
+                end += newline + 1;
+                break;
             }
-            i += 1;
-        }
-        if indices.len() > 1
-            && indices.iter().all(|i| {
-                matches!(
-                    tags[*i].content.chars().next(),
-                    Some('!' | '#' | '^' | '/' | '>')
-                )
-            })
-        {
-            let mut cursor = line_start;
-            let mut standalone = true;
-            for i in &indices {
-                if !source[cursor..tags[*i].start]
-                    .chars()
-                    .all(|c| c == ' ' || c == '\t' || c == '\r' || c == '\n')
-                {
-                    standalone = false;
-                    break;
-                }
-                cursor = tags[*i].end;
-            }
-            if standalone
-                && source[cursor..line_end]
-                    .chars()
-                    .all(|c| c == ' ' || c == '\t' || c == '\r' || c == '\n')
-            {
-                if tags[indices[0]].start >= line_start {
-                    tags[indices[0]].start = line_start;
-                }
-                let last = *indices.last().unwrap();
-                if tags[last].end <= line_end {
-                    tags[last].end = line_end;
-                }
+            if let Some(tag) = tags.get(next_tag) {
+                end = tag.end;
+                next_tag += 1;
+            } else {
+                end = source.len();
+                break;
             }
         }
-        line_start = line_end;
-    }
-    // Standalone structural tags consume their surrounding indentation and newline.
-    for tag in &mut tags {
-        let c = tag.content.as_str();
-        if !matches!(c.chars().next(), Some('!' | '#' | '^' | '/' | '>' | '+')) {
-            continue;
-        }
-        let line_start = source[..tag.start].rfind('\n').map_or(0, |i| i + 1);
-        let line_end = source[tag.end..]
-            .find('\n')
-            .map_or(source.len(), |i| tag.end + i + 1);
-        let before = &source[line_start..tag.start];
-        let after = &source[tag.end..line_end];
-        if before.chars().all(|c| c == ' ' || c == '\t')
-            && after
+        let indices = first_tag..next_tag;
+        // A definition disappears before Trimou decides whether the preceding
+        // tags are standalone. Its closing newline is then consumed along
+        // with those tags if they occupy the rest of the logical line.
+        let mut prefix_cursor = line_start;
+        let mut prefix_structural = true;
+        for i in indices.clone() {
+            let tag = &tags[i];
+            prefix_structural &= source[prefix_cursor..tag.start]
                 .chars()
-                .all(|c| c == ' ' || c == '\t' || c == '\r' || c == '\n')
-        {
-            tag.indent = before.to_string();
-            tag.start = line_start;
-            tag.end = line_end;
+                .all(|c| c == ' ' || c == '\t' || c == '\r');
+            if tag.content.starts_with('+') && i > first_tag && prefix_structural {
+                tags[i].suppress_definition_newline = true;
+            }
+            prefix_structural &= matches!(
+                tags[i].content.chars().next(),
+                Some('!' | '#' | '^' | '/' | '>')
+            );
+            prefix_cursor = tags[i].end;
+        }
+        let mut text_cursor = line_start;
+        let standalone = !indices.is_empty()
+            && indices.clone().all(|i| {
+                let tag = &tags[i];
+                let valid = matches!(
+                    tag.content.chars().next(),
+                    Some('!' | '#' | '^' | '/' | '>' | '+')
+                ) && source[text_cursor..tag.start]
+                    .chars()
+                    .all(|c| c == ' ' || c == '\t' || c == '\r');
+                text_cursor = tag.end;
+                valid
+            })
+            && source[text_cursor..end]
+                .chars()
+                .all(|c| c == ' ' || c == '\t' || c == '\r' || c == '\n');
+        if standalone {
+            let indent = source[line_start..tags[first_tag].start].to_string();
+            if let Some(i) = indices.clone().find(|&i| tags[i].content.starts_with('>')) {
+                tags[i].indent = indent;
+            }
+            tags[first_tag].start = line_start;
+            for i in first_tag..next_tag - 1 {
+                tags[i].end = tags[i + 1].start;
+            }
+            if !tags[next_tag - 1].content.starts_with('+') {
+                tags[next_tag - 1].end = end;
+            }
+        }
+        first_tag = next_tag;
+        line_start = end;
+        cursor = end;
+        if end == source.len() {
+            break;
         }
     }
     #[allow(clippy::too_many_arguments)]
@@ -205,10 +210,28 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
                     if c.starts_with('+') {
                         nodes.push(Node::Definition(key, body));
                         let closing = &tags[*index - 1];
-                        if closing.end > closing.start
+                        if tag.suppress_definition_newline
+                            && !source[closing.start..closing.end].ends_with('\n')
+                        {
+                            let rest = &source[*cursor..];
+                            let line_len = rest.find('\n').map_or(rest.len(), |i| i + 1);
+                            if rest[..line_len]
+                                .chars()
+                                .all(|c| matches!(c, ' ' | '\t' | '\r' | '\n'))
+                            {
+                                *cursor += line_len;
+                            }
+                        }
+                        if !tag.suppress_definition_newline
+                            && closing.end > closing.start
                             && source[closing.start..closing.end].ends_with('\n')
                         {
-                            nodes.push(Node::Text("\n".into()));
+                            let ending = if source[closing.start..closing.end].ends_with("\r\n") {
+                                "\r\n"
+                            } else {
+                                "\n"
+                            };
+                            nodes.push(Node::Text(ending.into()));
                         }
                     } else {
                         nodes.push(Node::Section {
