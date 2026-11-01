@@ -79,7 +79,8 @@ def main():
                 n = run([native, 'generate-cpp', '--job', out / 'job.json', '--templates', TEMPLATES, '--output', native_dir])
                 row['native_exit'] = n.returncode
                 if n.returncode:
-                    row['status'] = 'native_rejected'; row['diagnostic'] = n.stderr.strip()
+                    row['status'] = ('native_failure' if n.returncode < 0 or n.returncode == 101 or 'panicked at' in n.stderr else 'native_rejected')
+                    row['diagnostic'] = n.stderr.strip()
                 else:
                     expected, actual = tree(out / 'files'), tree(native_dir)
                     row['expected_files'] = len(expected); row['actual_files'] = len(actual)
