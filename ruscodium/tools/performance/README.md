@@ -20,7 +20,7 @@ python3 ruscodium/tools/performance/warm.py --work /tmp/ruscodium-perf-new
 uses the actual JVM main and native `compile-cpp`, with caching off and complete
 file bytes and path inventories checked for equality. It records a 60-second
 per-invocation limit. If 500 structs times out it also pilots 125 structs.
-Every parity-passing pilot is included, regardless of relative speed. The
+Every parity-passing pilot is included, regardless of relative speed. Each JVM receives a new, writable `-Duser.home` directory prepared outside the timer so its default Java logging handler can initialize successfully; logging initialization failures invalidate that invocation. The
 normalized default fixture corrects the missing required field-constructor
 parameters; custom uses the original auxiliary file and custom options. Scale
 inputs are generated independent one-field structs, not representative projects.

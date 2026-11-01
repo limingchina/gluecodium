@@ -46,7 +46,7 @@ def prepare(work):
     return {name: {'input': str(inputs / (name + '.lime')), 'aux': str(inputs / 'aux.lime') if name == 'custom' else None, 'native_options': str(inputs / 'custom-options.json') if name == 'custom' else None, 'copyright': str(copyright_file) if name == 'custom' else None, 'declarations': {'custom': 3, 'default-normalized': 5}.get(name, int(name.split('-')[-1]) if name.startswith('structs-') else None)} for name in names}
 
 def commands(spec, output):
-    j = [str(JAVA), '-cp', str(LIB / '*'), 'com.here.gluecodium.Gluecodium', '-input', spec['input'], '-generators', 'cpp', '-output', str(output)]
+    j = [str(JAVA), '-Duser.home=' + str(output.parent / (output.name + '.jvm-home')), '-cp', str(LIB / '*'), 'com.here.gluecodium.Gluecodium', '-input', spec['input'], '-generators', 'cpp', '-output', str(output)]
     r = [str(NATIVE), 'compile-cpp', '--input', spec['input'], '--templates', str(TEMPLATES), '--output', str(output)]
     if spec['aux']: j += ['-auxinput', spec['aux']]; r += ['--auxinput', spec['aux']]
     if spec['native_options']:
@@ -57,12 +57,17 @@ def commands(spec, output):
 def invoke(cmd, out, timeout=TIMEOUT):
     out.parent.mkdir(parents=True, exist_ok=True)
     if out.exists(): raise RuntimeError(f'output already exists: {out}')
+    if cmd[0] == str(JAVA):
+        jvm_home = out.parent / (out.name + '.jvm-home')
+        if jvm_home.exists(): raise RuntimeError(f'JVM home already exists: {jvm_home}')
+        jvm_home.mkdir()
     log = out.parent / (out.name + '.log')
     completed = subprocess.run([str(SUPERVISOR), str(timeout), str(log)] + cmd, cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
     result = json.loads(completed.stdout)
     result['cpu_seconds'] = result['user_seconds'] + result['system_seconds']
     result['argv'] = cmd
     result['log'] = log.read_text(errors='replace'); log.unlink()
+    result['logging_error'] = cmd[0] == str(JAVA) and ('Can\'t load log handler' in result['log'] or 'java.nio.file.FileSystemException' in result['log'])
     return result
 
 def environment(work):
@@ -86,7 +91,7 @@ def pilot(work):
         for side in ('jvm', 'rust'):
             out = work / 'pilot' / name / side
             result = invoke(commands(spec, out)[side], out)
-            if result['exit_code'] == 0 and not result['timeout']: inventories[side] = manifest(out)
+            if result['exit_code'] == 0 and not result['timeout'] and not result['logging_error']: inventories[side] = manifest(out)
             entry['runs'][side] = result
             print('pilot', name, side, round(result['wall_seconds'], 3), result['exit_code'], flush=True)
         entry['parity'] = len(inventories) == 2 and inventories['jvm'] == inventories['rust'] and inventories['jvm']['file_count'] > 0
@@ -127,14 +132,14 @@ def measure(work):
         for side in ('jvm', 'rust'):
             out = work / 'warmup' / name / side
             result = invoke(commands(data['workloads'][name]['spec'], out)[side], out)
-            result.update({'workload': name, 'implementation': side, 'matches_baseline': result['exit_code'] == 0 and manifest(out) == data['workloads'][name]['inventories']['jvm']})
+            result.update({'workload': name, 'implementation': side, 'matches_baseline': result['exit_code'] == 0 and not result['logging_error'] and manifest(out) == data['workloads'][name]['inventories']['jvm']})
             report['warmups'].append(result); write_json(work / 'fresh.json', report)
             if not result['matches_baseline']: raise RuntimeError(f'warmup failed {name} {side}')
     for pair in schedule:
         for position, side in enumerate(pair['order'], 1):
             name = pair['workload']; out = work / 'timed' / name / str(pair['round']) / side
             result = invoke(commands(data['workloads'][name]['spec'], out)[side], out)
-            result.update({'workload': name, 'round': pair['round'], 'position': position, 'implementation': side, 'matches_baseline': result['exit_code'] == 0 and not result['timeout'] and manifest(out) == data['workloads'][name]['inventories']['jvm']})
+            result.update({'workload': name, 'round': pair['round'], 'position': position, 'implementation': side, 'matches_baseline': result['exit_code'] == 0 and not result['timeout'] and not result['logging_error'] and manifest(out) == data['workloads'][name]['inventories']['jvm']})
             report['samples'].append(result); write_json(work / 'fresh.json', report)
             print('sample', name, pair['round'], side, round(result['wall_seconds'],3), result['matches_baseline'], flush=True)
     for name in names:

@@ -30,7 +30,11 @@ def main():
             output = work / 'persistent' / name / side
             if output.exists(): raise RuntimeError(f'output already exists: {output}')
             output.mkdir(parents=True)
-            if side == 'jvm': cmd = [str(b.JAVA), '-cp', str(classes) + ':' + str(b.LIB / '*'), 'WarmJvm', spec['input'], str(output), str(ITERATIONS)]
+            if side == 'jvm':
+                jvm_home = output.parent / (output.name + '.jvm-home')
+                if jvm_home.exists(): raise RuntimeError(f'JVM home already exists: {jvm_home}')
+                jvm_home.mkdir()
+                cmd = [str(b.JAVA), '-Duser.home=' + str(jvm_home), '-cp', str(classes) + ':' + str(b.LIB / '*'), 'WarmJvm', spec['input'], str(output), str(ITERATIONS)]
             else: cmd = [str(binary), spec['input'], str(output), str(ITERATIONS), str(b.TEMPLATES)]
             try:
                 result = subprocess.run(cmd, cwd=b.ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=300)
@@ -44,8 +48,9 @@ def main():
                 if len(parts)==3 and parts[0].isdigit() and parts[1].isdigit():
                     i = int(parts[0]); out = output / str(i)
                     entries.append({'iteration': i, 'phase': 'warmup' if i < WARMUPS else 'timed', 'wall_seconds': int(parts[1])/1e9, 'success': parts[2] == 'true', 'matches_baseline': out.is_dir() and b.manifest(out) == pilot['workloads'][name]['inventories']['jvm']})
-            ok = result.returncode==0 and len(entries)==ITERATIONS and all(e['success'] and e['matches_baseline'] for e in entries)
-            data['runs'][name][side] = {'argv': cmd, 'exit_code': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr, 'samples': entries, 'valid': ok, 'statistics': b.quantiles([e['wall_seconds'] for e in entries if e['phase']=='timed']) if ok else None}
+            logging_error = side == 'jvm' and ('Can\'t load log handler' in result.stderr or 'java.nio.file.FileSystemException' in result.stderr)
+            ok = result.returncode==0 and not logging_error and len(entries)==ITERATIONS and all(e['success'] and e['matches_baseline'] for e in entries)
+            data['runs'][name][side] = {'argv': cmd, 'exit_code': result.returncode, 'logging_error': logging_error, 'stdout': result.stdout, 'stderr': result.stderr, 'samples': entries, 'valid': ok, 'statistics': b.quantiles([e['wall_seconds'] for e in entries if e['phase']=='timed']) if ok else None}
             b.write_json(work / 'warm.json', data)
             print('persistent', name, side, 'valid', ok, flush=True)
             if not ok: raise RuntimeError(f'persistent failure {name} {side}')
