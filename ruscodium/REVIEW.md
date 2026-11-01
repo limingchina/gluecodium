@@ -467,3 +467,81 @@ attached parameter/accessor/return documentation, full Markdown/scoped links,
 inheritance, throws/errors, externals, filtering, arbitrary attributes and
 unimplemented forms remain guarded. Complete canonical/frontend validation,
 all-feature C++ or runtime/ABI parity and other platform backends remain deferred.
+
+## M13 independent performance review — 2026-11-01
+
+Independent Sol 6.1 xhigh review covers the measurement contract in
+`141fe1cd5`, the benchmark implementation through `311528689`, and corrected
+results/report in `e8eca0c31`. The measured native executable was rebuilt with
+`cargo build --offline --release` from `141fe1cd5`; its production sources are
+unchanged from `12e45a188`. Its SHA-256 is
+`10585d3f82151cec742b7f5dacbe2b91902901e66df69b583f673f6a6ed8d697`.
+The final pilot, fresh and persistent records all identify clean source
+`311528689`, and their recorded binary, Java runtime, application/dependency
+jars, helper sources, inputs, options and 315 template hashes match the actual
+artifacts independently inspected during review. Production Rust sources,
+dependencies and templates remain unchanged.
+
+The primary boundary is the actual installed Gluecodium 14.2.2 main with
+`-generators cpp` and caching off, versus optimized native `compile-cpp`.
+Both receive raw LIME and write every C++ file to fresh destinations. The JVM
+runs its normal full validators; native admission remains bounded. The copied
+default fixture's required constructor arguments are corrected explicitly,
+while the real custom fixture retains auxiliary lookup and custom options.
+No reference-model exporter, captured graph or preview generator is timed.
+Builds, setup and full output verification are outside the measured boundary.
+
+Review findings and disposition:
+
+- The initial runner's 5 ms polling could inflate short wall times, and a
+  Python fork origin could contaminate target RSS with Python's pre-exec
+  high-water mark. Both were replaced before formal sampling by a small native
+  supervisor using monotonic time and blocking per-child `wait4`. Independent
+  probes confirmed a 384 KiB target peak for `/bin/true` even with a touched
+  64 MiB Python parent, correct exit/log capture, and process-group timeout
+  reporting. Strict C syntax/warning checks pass.
+- The persistent driver's missing output parent was fixed outside iteration
+  timers; the failed setup record is retained. More materially, the first
+  formal experiment's JVM logger could not write its read-only home and emitted
+  exception traces, including once per persistent iteration. The complete
+  experiment was rerun with pre-created writable `-Duser.home` directories,
+  preserving the same workload and eight-pair schedule. Logging failures now
+  invalidate runs. Historical records remain under
+  `tools/performance/results/initial-logging-error/` and are excluded from final
+  statistics. No logger initialization error occurs in the corrected evidence.
+
+Independent checks of the corrected evidence pass:
+
+- All 80 timed outputs, ten filesystem warmups and forty persistent iteration
+  outputs are successful and match the complete baseline inventories. Including
+  successful pilots, review independently rehashed 141 actual output trees and
+  14,018 files, checked per-file bytes/hashes and aggregate inventory hashes,
+  and found no mismatch. Committed final and historical JSON copies are
+  byte-identical to the original records.
+- All 300 fresh scalar statistics and five wall-time ratios were recomputed
+  independently using inclusive interpolated quartiles and medians. The forty
+  paired rounds have exactly four JVM-first and four Rust-first orders for
+  each workload, with eighty unique fresh destinations. All twelve persistent
+  statistics and its ratio agree as well. Every displayed fresh table value
+  agrees with the corrected raw data at its stated rounding precision.
+- The 500-struct native pilot was killed after 60.006 seconds without completed
+  output parity. It is retained as censored evidence with no speed ratio. The
+  predefined 125-struct fallback was admitted before final sampling. Slower
+  native results at both 100 and 125 structs are included.
+
+The conclusions follow the data: fresh native processes win on the two real
+fixtures and ten structs; the JVM wins at 100 and 125 structs and in the small
+persistent API experiment. Native peak RSS is lower on all completed fresh
+workloads. The persistent experiment uses one process per implementation,
+ten warmups and ten measured iterations, so those iterations are correlated
+and do not establish JIT steady state; it reports no per-iteration CPU/RSS.
+Its larger cases are excluded by the declared pilot budget. Fresh-process
+filesystem warmup is not warmed JVM code or an OS-cache-cold experiment.
+
+The source visibly repeats whole-graph import and class-wide absence scans
+during file rendering, supporting a scaling hypothesis without establishing a
+profiled bottleneck. Buffered tmpfs writes, shared-host variation and broader
+JVM validation remain explicit limits. These measurements neither isolate
+language overhead nor establish full compiler compatibility or statistical
+significance. No reported material finding remains unresolved within the M13
+measurement contract.
