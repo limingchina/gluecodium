@@ -65,7 +65,7 @@ class Outer {
 }
 struct WithFunction {
     value: Int
-    fun take(kind: Kind): Kind throws Failure
+    fun take(value: Int): Int throws Failure
 }
 struct Container {
     enum E { A, B }
