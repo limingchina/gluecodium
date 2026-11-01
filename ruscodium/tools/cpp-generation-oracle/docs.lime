@@ -1,0 +1,30 @@
+package oracle.docs
+
+// A café description with {@Cpp C++ text}{@Java Java text} in order.
+//
+// A second paragraph with {@Placeholder subject}.
+interface Service {
+    // Transforms input.
+    // @param[value] Input value.
+    // @return Result value.
+    fun transform(value: Int): Int
+    // @value Current value.
+    // @get Reads the value.
+    // @set Writes the value.
+    property value: Int { get set }
+    // @exclude
+    fun hidden()
+}
+
+// A data container.
+// @constructor Constructs data.
+struct Data {
+    // Label text.
+    label: String
+    // Count text.
+    count: Int
+    field constructor(label, count)
+}
+
+// {@Java Text only for Java.}
+typealias OnlyJava = Int

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+here=$(cd "$(dirname "$0")" && pwd)
+repo=$(cd "$here/../../.." && pwd)
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+"$here/run-docs" "$tmp"
+for group in docs comments-file-interface comments-file-lambda; do
+  diff -qr "$repo/ruscodium/tests/cpp-documentation-goldens/$group" "$tmp/$group"
+done
+for group in docs comments-file-interface comments-file-lambda; do
+  mapfile -d '' sources < <(find "$tmp/$group/files/cpp/src" -name '*.cpp' -print0 | sort -z)
+  "${CXX:-c++}" -std=c++17 -Wall -Wextra -Werror -I "$tmp/$group/files/cpp/include" "${sources[@]}" "$here/$group-consumer.cc" -o "$tmp/$group-consumer"
+  "$tmp/$group-consumer"
+done
+echo 'Verified complete JVM documentation captures; compiled and ran all three consumers.'
