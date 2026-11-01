@@ -183,9 +183,9 @@ library pipeline from the CLI, tests, and generators.
 
 This is the preview's inspectable model format. The experimental JVM snapshot
 described in P0 is a separate representation. P1a imports that bounded snapshot
-in Rust. A template-complete canonical schema, an adapter from the preview
-model, and JSON-consuming compatibility generators remain planned work;
-neither existing emitter delivers that complete boundary by itself.
+in Rust. A template-complete canonical schema and an adapter from the preview
+model remain planned work. M10 generates guarded whole C++ file sets from the
+reference snapshot; it does not supply that complete canonical/frontend boundary.
 
 ### M4: useful, honest C++17 generation
 
@@ -263,8 +263,9 @@ syntax so the report can guide later typed Rust template views.
 
 The following phases adopt the supplied analysis's backend-first approach.
 P0 has delivered bounded investigation tooling, P1a a native template/runtime
-slice, M8 a bounded native C++ name resolver, and M9 native C++ predicates and
-declaration sorting. The complete canonical boundary and subsequent backend
+slice, M8 a bounded native C++ name resolver, M9 native C++ predicates and
+declaration sorting, and M10 whole C++ file sets for a guarded snapshot subset.
+The complete canonical boundary, remaining C++ features and platform backend
 phases remain incomplete until their own acceptance evidence exists.
 
 ### P0: experimental snapshot delivered; canonical boundary incomplete
@@ -430,9 +431,9 @@ parity.
 
 Full Trimou syntax validation and consistent source-position diagnostics, the
 standalone CLI graph inspector, and unimplemented helper/view contracts remain
-open within this experimental runtime. The native frontend-to-canonical
-adapter, remaining native C++ helper implementations and whole-file compatibility
-backend remain pending in the following phases.
+open within this experimental runtime. M10 below delivers a guarded whole-file
+C++ backend using these native providers. The native frontend-to-canonical
+adapter and complete model/helper/backend coverage remain pending.
 
 ### M8 / P1a.1: strict native C++ naming — bounded implementation delivered
 
@@ -440,8 +441,9 @@ Delivered a separate Rust name resolver over the imported identity graph in
 [`src/template/native_cpp.rs`](src/template/native_cpp.rs), with JVM-generated
 fixtures in commit `931251088` and native implementation in `5d9828539`.
 It computes a measured subset of C++ names without recorded name results and
-keeps all 315 production Mustache templates unchanged. This continues P1a; P1b,
-the canonical frontend adapter and whole-C++ output/runtime parity remain open.
+keeps all 315 production Mustache templates unchanged. This continues P1a;
+the complete P1b backend, canonical frontend adapter and whole-C++ runtime parity
+remain open. M10 adds whole-file output evidence for its guarded subset below.
 
 Sol 6.1 max committed the initial plan/checklist in `1b456d4a2` before code;
 Terra 6.1 xhigh owns implementation and evidence, and Sol 6.1 xhigh independently
@@ -705,185 +707,184 @@ templates. Review fixes, verification commands and publication commits belong
 to the linked evidence documents. These measurements establish this bounded
 slice rather than whole-backend parity.
 
-Remaining work includes nonempty/native documentation, arbitrary externals and
-name-rule files, complete attribute/view/helper coverage, canonical frontend
-adaptation, complete headers/output sets and C++ runtime/ABI. M9's exact native
-fragments narrow the replay boundary; they do not complete P1b or full parity.
+Work remaining after M9 included nonempty/native documentation, arbitrary
+externals and name-rule files, complete attribute/view/helper coverage, canonical
+frontend adaptation, complete headers/output sets and C++ runtime/ABI. M10 below
+delivers headers/output sets for its guarded subset; broader P1b remains open.
 
-### M10 / P1b.1: native C++ whole-file generation from snapshots — planned
+### M10 / P1b.1: native C++ whole-file generation from snapshots — guarded subset delivered
 
-Planning baseline: `d2e69b620`, the verified M9 publication on
-`origin/ruscodium/rust-port`. Commit this contract and its checklist before
-implementation. Keep all changes under `ruscodium/`, all 315 production
-Mustache templates unchanged, and the existing standalone `-generators cpp`
-preview separate. Sol 6.1 max plans, Terra 6.1 xhigh implements, and independent
-Sol 6.1 xhigh reviews. This milestone starts P1b with actual generator outputs;
-another collection of selected template fragments does not complete it.
+The M10 plan/checklist was committed in `d1f31d095` before implementation,
+from the verified M9 baseline `d2e69b620`. Delivered the native generator in
+[`src/cpp_generation/mod.rs`](src/cpp_generation/mod.rs) and raw dependency
+collectors in [`src/cpp_generation/collect.rs`](src/cpp_generation/collect.rs).
+Initial collector and generator commits are `b116f2743` and `ea16f63f4`;
+whole-file fixture and raw-mutation evidence extends through `6b1de0233`.
+All changes remain under `ruscodium/`, all 315 production Mustache templates
+remain unchanged, and the standalone `-generators cpp` preview stays separate.
+Sol 6.1 max owns planning, Terra 6.1 xhigh implementation and evidence, and
+Sol 6.1 xhigh independent review. The exact job/view contract is documented in
+[GENERATION.md](GENERATION.md); final verification, review disposition and
+publication are tracked in [TASKS.md](TASKS.md) and [REVIEW.md](REVIEW.md).
 
 #### Native input and execution contract
 
-Add a library C++ generation entry point and the following distinct CLI:
+The native CLI is:
 
 ```text
 ruscodium generate-cpp --job FILE --templates DIR --output DIR
 ```
 
-Use one strict versioned JSON job with
+The library `cpp_generation::generate` returns all relative output paths,
+`MAIN`/`COMMON` source sets and file contents in memory. Its separate
+`write_files` step performs filesystem preflight and writes the inventory.
+The command consumes a strict JSON job with
 `schema: "gluecodium.cpp-generation-job"`, `version: 1`, `snapshot` containing
 the full version-1 `LimeModel` reference graph, optional `property_overlays`
 and `absent_properties`, and optional `options`. The permitted options are
 `root_namespace`, `internal_namespace`, `export`, `export_common`, and
 `copyright_header`. Namespace defaults are `[]`, export defaults to
 `_GLUECODIUM_CPP`, common export defaults to the main export, and copyright
-defaults to null, matching `GeneratorOptions`. Validate keys, types, namespace
-components, supported macro/name spellings and graph completeness. Do not accept
-a render request, selected `data` root, caller-selected template, helper hooks,
-generator context or precomputed output inventory. Native names, all eleven
-predicates and the default sorter are mandatory; no provider can fall back to
-recordings. The Rust command must run without starting a JVM.
+defaults to null, matching `GeneratorOptions`. Keys, types, ASCII C++ identifier
+spellings and graph relationships are validated. A render request, selected
+`data` root, caller-selected template, helper hooks, generator context or
+precomputed output inventory is rejected. Native names, all eleven predicates
+and the default sorter are mandatory, with no replay fallback or JVM subprocess.
 
-Snapshots and measured getters are a frozen frontend boundary, not a completed
-native frontend adapter. Define a small, documented allowlist of measured getter
-overlays/absences by model class; reject unknown additions and contradictions.
-Existing measured empty-comment views and constructor/function model views may
-be retained where needed by unchanged templates. Record every such admission
-and its JVM provenance. Native providers and generator collectors must derive
-their decisions from stored graph facts and raw reference edges, as in M9.
-Never admit overlaid header contexts, includes, forward-declaration groups,
-dependency/sorted-order lists, resolved names or predicate answers. No generated
-text, file paths or controls belong in the imported frontend views.
+Snapshots and measured getters remain a frozen frontend boundary. The snapshot
+requires the full model root, main/auxiliary roots, reference map, builtin types
+and enclosing declarations; the admitted stored fields and their typed edges
+are validated. Output ownership comes from `topElements`; auxiliary roots are
+available for lookup and own no output. Selected-object graphs and missing or
+contradictory owners/references fail instead of acquiring invented context.
 
-Traverse actual `LimeModel.topElements` for output ownership, with complete
-`referenceMap`, enclosing/nested declarations and auxiliary references available
-for lookup. Auxiliary elements must not become generated roots. Require the full
-model root and validate the needed relationships instead of inventing omitted
-parents or accepting a selected-object graph as a full compilation input.
+The measured getter allowlist is `name`/`fullName` on named elements,
+`actualType` on types, `isEmpty` on comments, `isVoid` on return types,
+`exception` on functions, `uniqueEnumerators` on enumerations,
+`uninitializedFields` on structs, and `fields`/`struct` on field constructors.
+Each getter value has a checked kind/class. Generation recomputes declaration
+path names, void returns, uninitialized fields, unique enumerators and field
+constructor membership/ownership from raw graph facts. Function exceptions must
+be null, and the native providers resolve aliases from raw references.
+Empty-comment evidence remains measured because snapshot fields omit private
+comment text. Permitted absences are limited to verified lexical lookup fallback
+names; the renderer supplies its own verified missing partial-local names.
+The [oracle documentation](tools/cpp-generation-oracle/README.md) records their
+provenance and complete lists. Generated includes, forward groups, dependencies,
+sorted orders, resolved C++ names and predicate answers cannot be imported as
+frontend views or stored generator contexts.
 
-#### First supported C++ model and file-set contract
+#### Supported C++ model and complete file sets
 
-Support comment-free ordinary classes/interfaces, structs, enumerations, aliases
-and lambdas with a documented matrix of the existing native type/name/value
-surface. Include nonthrowing synchronous methods, properties, field-bearing
-structs with ordinary defaults and field constructors, nested declarations and
-cross-root references. Exercise numeric/string types, containers, nullable
-values and class/interface references. Initially reject inheritance and inherited
-overloads rather than supplying captured `functionUsings`; supporting them later
-requires the actual signature/overload algorithm. Initial user code can provide
-concrete implementations of generated abstract interfaces.
+The guarded backend accepts comment-free ordinary classes/interfaces, structs,
+enumerations, aliases and lambdas within the native type/name/control surface.
+The [fixture matrix](GENERATION.md) proves synchronous nonthrowing methods,
+read/write, read-only and static properties, field-bearing structs, literal
+defaults, field constructors, nested declarations and cross-root references.
+It includes numeric/string types, list/map/set fields, nullable values and
+class/interface references. Literal and null values are admitted; other value
+variants are rejected. The only admitted attribute is `@Cpp(Name)` with a
+supported identifier. Existing native-provider limitations still apply to any
+unimplemented type/name/value combination.
 
-Reject unsupported documentation, external descriptors, errors/throws/error
-enumerations, equality, async/runtime-affecting attributes, filtering/tags,
-custom naming rules and unsupported values/types before writing anything.
-Preserve the explicit M8/M9 restrictions unless their native implementation and
-JVM evidence are extended. Check unsupported declarations and annotations across
-the generation roots, nested declarations and referenced dependencies, including
-code-affecting content in auxiliary types. Unknown attributes must not silently
-select an unsupported generator branch. Record the exact supported combinations
-after implementation; named categories alone do not prove all their variants.
+Preflight rejects nonempty/excluded/unavailable documentation, nonempty comment
+placeholders, external descriptors, inheritance, exceptions/throws/error enums,
+equality, async, filtering/tags, custom naming rules, unknown attributes/classes
+and malformed type graphs. Repeated mapped method and property-accessor names
+are also rejected until the upstream signature/overload validator is ported.
+Validation covers the whole admitted graph, including auxiliary declarations.
+User code supplies concrete implementations of abstract generated APIs. Generated
+parameter documentation may still occur in files from comment-free LIME input.
 
-For supported jobs, reproduce the complete `CppGenerator.generate` output set,
-not merely a projection of headers. Port `needsHeader`/`needsImplementation` and
-template selection: classes/interfaces and structs require their upstream
-`.h` and `.cpp`; enums also get the upstream implementation file even when its
-body is empty; aliases and lambdas get headers. Render the unchanged
-`cpp/CppHeader` and `cpp/CppImplementation` with their actual transitive partials,
-including constructors/destructors and struct-constructor implementations.
-
-Always produce the same eighteen common/export files as `CppGenerator`: the
-thirteen common headers (`DurationHash`, `Hash`, `Locale`, `Optional`,
-`OptionalImpl`, `Return`, `StringView`, `StringViewImpl`, `TimePointHash`,
-`TypeRepository`, `UnorderedMapHash`, `UnorderedSetHash`, `VectorHash`), three
-common implementations (`LocaleImpl`, `StringViewImplDefs`, `TypeRepositoryImpl`)
-and two export headers. Render the unchanged `cpp/common` templates with native
-configuration, including unused helpers. Keep their upstream `COMMON`/`MAIN`
-source-set identity in the library output/verification inventory while the CLI
-materializes their existing `cpp/include` and `cpp/src` paths under one output
-directory. This is complete C++ file-set parity for the guarded input subset,
-not full C++ language-feature or runtime/ABI parity.
+For accepted jobs, generation follows upstream file ownership and template
+selection: classes/interfaces, structs and enums have `.h` and `.cpp` files;
+aliases and lambdas have headers. The unchanged `cpp/CppHeader` and
+`cpp/CppImplementation` execute their transitive partials, including class
+constructors/destructors and struct constructors. Empty-body enum implementation
+files are retained. Every job also generates all eighteen common/export files:
+thirteen common headers, three common implementations and the two export headers.
+Unused helpers are included and rendered from the unchanged `cpp/common`
+templates. The output preserves `MAIN`/`COMMON` identity and the upstream
+`cpp/include` and `cpp/src` paths. Exact evidence covers complete C++ file sets
+for the fixture subset; broader language-feature and runtime/ABI parity remain
+open.
 
 #### Native generator decisions
 
-Port the actual algorithms in `CppGenerator`, `LimeTypeHelper`,
-`CppImportsCollector`, `CppIncludeResolver`, `CppIncludesCache`,
-`CppHeaderIncludesCollector`, `CppImplIncludesCollector` and
-`CppForwardDeclarationsCollector`, bounded by the supported model contract.
-Collect nested types, raw type references/generic children, constants/default
-values and parents from the graph; do not infer include dependencies by scanning
-rendered C++ text. Match alias handling, owning-root includes, class/interface
-forward-declaration eligibility, nested-type exclusions and namespace grouping.
-Deduplicate and sort includes exactly as `Include.compareTo` (internal before
-system, then filename), remove header self-includes with the upstream rule,
-and add the main export include and required helper includes. Implementation
-includes must follow their own collector and contain the actual self-header.
+The collectors port the supported branches of `LimeTypeHelper`,
+`CppImportsCollector`, `CppIncludeResolver`, `CppIncludesCache`, both C++ include
+collectors and `CppForwardDeclarationsCollector`. They walk raw nested types,
+type references/generic children and supported values, preserving alias and
+owning-root include behavior, class/interface forward eligibility, nested-type
+exclusions and namespace grouping. Include ordering is internal before system,
+then filename, with deduplication, upstream self-header filtering and native
+export/helper includes. Implementation includes use their own collector and
+self-header. No dependency decision comes from scanning generated C++ text.
 
-Port `CppNameRules.getOutputFilePath`: root namespace plus `LimePath.head` plus
-the outer container's default type name or supported `@Cpp(Name)` override.
-Preserve package path components and use the real owning declaration for nested
-references; namespaces, type spellings and output filenames are distinct rules.
-Port export filename construction (`Export`/`ExportCommon` plus upper camel
-export name) and macro configuration. Produce native general data (`namespace`,
-`rootNamespace`, `internalNamespace`, model, empty or derived supported control
-lists and selected content template) inside the generator, never in the job.
-Supply the measured `CopyrightHeaderResolver` behavior to every model/common
-file, including null and multiline custom headers and exact final newlines.
-There is no generated-version banner in these source templates: keep protocol
-version and oracle compiler/template provenance separate from generated bytes.
+Paths follow `CppNameRules.getOutputFilePath`: root namespace, package path and
+the owning outer type's default name or supported rename. Export filenames use
+`Export`/`ExportCommon` plus upper camel export names. Namespace, export and
+model/header/implementation data are assembled inside the generator. Its scoped
+copyright resolver applies null or multiline custom contents to model/common
+files with the exact template whitespace and final newlines; protocol/compiler
+version metadata does not invent a generated banner. The inline-definition
+whitespace fixes culminating in `682b44479` support genuine full headers while
+retaining the earlier JVM template fixtures.
 
-Build and render the entire output set in memory, validate relative paths and
-detect collisions among model and helper/export files before opening outputs.
-Derive every path natively; validate root/package/container/override components
-as supported identifiers or equivalently strict safe relative components.
-Reject separators, absolute paths and `..` in `@Cpp(Name)` and other path inputs
-before any filesystem write, including collisions across model/common outputs.
-All model/configuration/unsupported/render/path-collision failures must preserve
-existing output files and create no new generated artifacts. Match the current
-renderer limits and report IO failures explicitly; do not claim transactional
-filesystem recovery for arbitrary failures during final writes. No stdout
-generation stream is necessary for this multi-file command. Repeated jobs must
-produce deterministic inventories and bytes without deleting unrelated files.
+The generator renders every output and validates its relative path and model/
+helper collisions before any write. Identifier/path guards reject separators,
+absolute paths and parent traversal; the writer also preflights existing output
+symlinks. Input/model/configuration/render/path preflight errors preserve existing
+files and create no generated artifacts. Repeated jobs have deterministic
+inventories/bytes and retain unrelated files. An I/O failure during the final
+write loop may leave a partial update; filesystem transactions and concurrent
+filesystem-change guarantees are outside this contract.
 
 #### Oracle and completion evidence
 
-Add a reproducible JVM whole-file oracle that loads the same LIME inputs and
-invokes the real unchanged Kotlin `CppGenerator` with matching options. Export
-the full raw graph/allowlisted measured views separately from generated expected
-files. Do not obtain expected headers by assembling a captured render context or
-by rendering a native-built context in the JVM. Record source grouping, main/
-auxiliary roles, compiler distribution, template hash, options and source sets.
-Compare the exact relative file sets, source-set identity and UTF-8 bytes from
-both generators; report every file, including empty-body implementations and all
-eighteen helpers. Reproduce the oracle from separate fresh JVM processes when
-copyright options differ because its resolver initializes once per process.
+The reproducible [whole-file oracle](tools/cpp-generation-oracle/README.md)
+loads actual LIME and invokes the installed unchanged Kotlin
+`CppGenerator.initialize`/`generate`. It exports the full raw graph and measured
+views separately from expected files/source-set manifests; neither a captured
+render context nor native-built template data supplies the expectation. The
+oracle records compiler/template provenance, source grouping and options, and
+runs each group in a fresh JVM because copyright initialization is process-wide.
 
-Use at least a default-options group and a group with nonempty root/internal
-namespaces, distinct main/common exports, multiline copyright, a renamed root,
-auxiliary references, class forwards and nested-type includes. Across the matrix
-exercise all five supported root categories, real declaration reordering, alias
-and generic/nullable includes, field/default/constructor implementations and
-cross-file ownership. Mutate raw type, path/name attribute and declaration facts
-without changing frontend getter overlays, and prove that generated includes,
-forwards, paths, ordering and bytes change or fail from those raw facts. Negative
-jobs must cover replay/context injection (including forged header-context keys),
-malformed/incomplete graphs, unknown
-options/overlays, unsupported content, invalid output paths and collisions.
+The default and custom groups compare every relative path, `MAIN`/`COMMON`
+identity and UTF-8 byte, including all helpers and empty-body implementations.
+The default group exercises the root kinds, fields/defaults/field constructors,
+properties, containers and genuinely dependency-reversed nested aliases. The
+custom group adds nonempty root/internal namespaces, distinct exports, multiline
+copyright, a renamed root, class forwards and nested-type includes. Its
+auxiliary root is unreferenced: the fixture proves its indexed presence and
+output exclusion, not referenced-auxiliary whole-file parity. Exact fixture
+inventories and current comparison counts are maintained in
+[GENERATION.md](GENERATION.md) and [TASKS.md](TASKS.md).
 
-Compile all generated model/common implementation files needed by the accepted
-fixture with `-std=c++17 -Wall -Wextra -Werror`, and run a consumer that constructs
-and uses value types and derives from/calls a generated interface. Use the
-generated support files, without handwritten copies of runtime code. Compilation
-and execution supplement exact whole-file comparisons; neither replaces them.
-Retain formatting, offline Clippy/Cargo tests, Python/reference-model checks,
-the 41-case JVM template baseline, all 315 unchanged templates, preview corpus
-and existing C++ consumers. Obtain independent Sol 6.1 xhigh review, fix material
-findings, and update README/TEMPLATES/oracle/review/tasks with exact counts,
-allowlisted views and limitations before committing/pushing the tested increment.
-Broader P1b, native frontend adaptation and platform backends remain open.
+[`tests/cpp_generation.rs`](tests/cpp_generation.rs) proves raw type, name,
+package-path and declaration-order mutations affect generated dependencies,
+forwards, paths and bytes without changing getter overlays. Negative cases
+cover forged context/replay input, invalid stored fields/typed edges, overlays,
+reference maps, auxiliary cycles, unsupported content, paths/collisions and
+output-sentinel preservation. Native outputs and the JVM captures compile all
+their generated implementation files and run consumers with
+`-std=c++17 -Wall -Wextra -Werror`, exercising generated value constructors and
+concrete API implementations with the generated common runtime sources.
+
+The acceptance checks retain formatting, offline Clippy/Cargo, Python and
+reference-model tests, JVM template reproduction, all 315 unchanged templates,
+the preview corpus and prior C++ consumers. Final aggregate commands/counts,
+independent review and publication remain recorded in the linked task/review
+documents. This delivers the guarded snapshot backend; canonical native
+frontend adaptation, nonempty comments, overload/inheritance validation,
+remaining C++ features/ABI and Dart/Swift/JNI/platform outputs remain open.
 
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
-Implement C++ generation from the canonical snapshots before tying it to Rust
-frontend fidelity. Use the template-surface report to implement typed property
-views and helper contracts rather than assuming `serde_json` lookup reproduces
+Extend M10's snapshot-driven C++ generation toward complete canonical model
+coverage before tying it to Rust frontend fidelity. Use the template-surface
+report to implement typed property views and helper contracts rather than
+assuming `serde_json` lookup reproduces
 Kotlin reflection. Extend M8's native resolver through the remaining name,
 comment, external-descriptor and configurable-name-rule contracts, and extend
 M9's predicates/sorter beyond the bounded imported model and comment facts.
@@ -896,8 +897,8 @@ The acceptance criterion is byte-for-byte compatibility on existing smoke
 outputs, including whitespace; normalizing generated source or merely compiling
 it is insufficient. Selected-template equality from P1a, native naming from M8
 and native C++ predicate/sorter fragments from M9 do not satisfy this whole-backend
-criterion. M10 begins complete file-set generation for its guarded snapshot
-subset; a complete canonical adapter, all-feature C++ generation, native
+criterion. M10 supplies complete file-set comparisons for its guarded snapshot
+fixtures; a complete canonical adapter, all-feature C++ generation, native
 comments and remaining model/helper coverage remain pending until verified.
 
 Run both generators on the same canonical inputs and options, compare output
@@ -935,7 +936,7 @@ drop-in replacement claim.
 | --- | --- | --- |
 | Canonical boundary | Extend the bounded snapshot/importer to a template-complete canonical schema and implement the native frontend adapter | Golden snapshots for coherent fixtures and completeness/schema/adapter tests |
 | Template compatibility | Extend P1a's custom Rust runtime, property views and helper contracts while preserving original Mustache templates | Template inventory plus byte-exact helper/whitespace and smoke comparisons |
-| C++ parity | Name-rule files, every C++ attribute, constructors/accessors/equality, constants, external types, `Return`, error categories, runtime helpers, API/internal outputs | Existing C++ golden outputs and functional C++ tests |
+| C++ parity | Extend M10's guarded constructors/accessors/constants and common-helper output through every C++ attribute, name-rule files, equality, external types, `Return`, error categories and full API/runtime behavior | Existing C++ golden outputs and functional C++ tests |
 | Runtime and binding core | Common conversion/runtime model, name resolvers, ownership, cache and lifetime contracts | Native conversion and lifetime regression tests |
 | Dart | FFI then Dart source, finalizers, async and ownership semantics | Existing Dart smoke outputs and functional tests |
 | Apple | CBridge then Swift source, nullable/external/generic/ownership behavior | Existing Swift smoke outputs and platform functional tests |
