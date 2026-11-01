@@ -535,6 +535,50 @@ byte parity is separate from baseline compilation evidence. See
 independent review, plan and verification were pushed through `cb9893cb6` to
 `origin/ruscodium/rust-port`; this checklist records the confirmed publication.
 
+## M13: reproducible Kotlin/JVM versus Rust performance comparison
+
+Execute [the M13 contract](PLAN.md#m13-reproducible-kotlinjvm-versus-rust-performance-comparison--planned)
+using the actual JVM CLI and rebuilt optimized native `compile-cpp` path.
+Keep all additions under `ruscodium/` on `ruscodium/rust-port`; preserve all
+315 production templates and production compiler behavior. Roles remain
+Sol 6.1 max planning, Terra 6.1 xhigh implementation, Sol 6.1 xhigh review.
+
+- [x] Define and commit this plan/checklist before benchmark implementation.
+- [ ] Inspect actual JVM main/options/version and rebuild native release from
+  the measured revision with `cargo build --offline --release`; record hashes.
+- [ ] Add deterministic workload preparation, equivalent explicit settings and
+  fresh output directories, using valid real inputs plus 10/100/500-struct
+  initial scaling probes. Preserve original fixtures; record any copied-default
+  `field constructor(label, mapping, tags)` normalization and both validators.
+- [ ] Gate every workload on successful actual CLI exits and exact complete
+  output inventories/bytes, including common/export files, before timing.
+- [ ] Run and retain a bounded pilot, select and save the final workload/trial
+  matrix before measurement, and preserve slow/failure/timeout evidence with
+  its elapsed bound rather than hiding unfavorable scales.
+- [ ] Implement a reproducible runner under `tools/performance/` for fresh
+  processes with warm filesystem, monotonic wall time, user/system CPU and
+  independently attributed per-process peak RSS; exclude builds/setup/parity
+  verification from timings and use no oracle/export/pre-parsed timing path.
+- [ ] Save a seeded balanced/interleaved sequential schedule and collect seven
+  or more successful trials per side/workload where the pilot permits; record
+  any predeclared reduced count, warmups, every raw sample and unsuccessful run.
+- [ ] Verify each timed output outside its timer against the parity baseline;
+  exclude failed/mismatched runs from successful comparisons without erasing
+  them from the committed evidence.
+- [ ] Save source/dirty state, exact argv/environment, binary/jar/input/options/
+  template hashes, toolchains, UTC time, OS/CPU/affinity, cgroup quotas/RAM and
+  output-filesystem metadata alongside raw JSON and output-hash manifests.
+- [ ] Document reproducible commands and runner behavior in the tool README;
+  publish `PERFORMANCE.md` with all selected workloads, output sizes, medians,
+  quartiles/IQR, min/max, CPU/RSS and clearly defined JVM/Rust wall-time ratios.
+- [ ] Explain process/JVM/JIT/filesystem state, shared-host uncertainty, guarded
+  native validation versus full JVM validation and measured-subset limits;
+  keep any optional persistent-API experiment explicitly separate.
+- [ ] Run appropriate tooling checks and verify all 315 templates unchanged;
+  obtain independent Sol 6.1 xhigh review and resolve material findings.
+- [ ] Finalize plan/task/review evidence, commit the reproducible results and
+  leave the branch clean. Publish only within the user's existing authorization.
+
 ## Deferred full-parity work
 
 - [ ] Complete every upstream semantic validator, filters/tags, documentation

@@ -1172,6 +1172,127 @@ comments for the measured C++ compatibility subset. Full canonical/Kotlin-model
 parity, complete validation/documentation, all-feature C++ runtime/ABI parity and
 Dart/Swift/JNI/platform outputs remain open.
 
+### M13: reproducible Kotlin/JVM versus Rust performance comparison — planned
+
+Measure the delivered M12 native C++ path against the actual Kotlin/JVM
+compiler on the same valid LIME, equivalent C++ options and complete generated
+outputs. This is a measurement milestone, not a production optimization or a
+new compatibility claim. Keep every new fixture, runner, result and document
+under `ruscodium/` on `ruscodium/rust-port`; leave all 315 production templates
+and existing compiler behavior unchanged. Sol 6.1 max defines this contract,
+Terra 6.1 xhigh implements it after the plan commit, and Sol 6.1 xhigh reviews
+the runner, evidence and conclusions independently.
+
+#### Primary measurement boundary
+
+The primary comparison is a fresh process per invocation, from launch through
+successful process exit after all output files have been written. The JVM side
+must invoke the installed distribution's actual
+`com.here.gluecodium.Gluecodium` main with `-generators cpp`, its full normal
+load/validation/generation path, and documented CLI options. Direct `java`
+invocation with the distribution's exact classpath is permitted to exclude a
+launcher shell; record that choice and the complete argv. The Rust side must
+invoke a newly built optimized `ruscodium compile-cpp` binary from the measured
+source revision. Both sides receive raw LIME and templates, parse and validate
+their admitted inputs, adapt models, generate every selected C++ file and
+write to separate fresh empty output directories on the same filesystem.
+Reference-model exporters, `CppGenerationOracle`, captured graph jobs, preview
+declaration generation and pre-parsed models are not primary timing entry
+points. Build, JVM helper compilation if any, fixture setup and result
+verification stay outside the timed boundary.
+
+Rebuild with `cargo build --offline --release` before timing; an existing
+release binary can predate M12. Record the binary hash, build command and source
+commit. Verify the JVM distribution version and hash its application/runtime
+jars rather than assuming the installation matches repository HEAD. Pin
+namespace, internal namespace, export/common export, copyright and selected
+generator behavior equivalently; enumerate defaults explicitly in the run
+manifest. Fail the comparison gate if those settings cannot be made equal.
+
+#### Inputs and exact-output gate
+
+Use at least one valid real repository fixture and controlled scale workloads
+inside the admitted native surface. Start with the existing custom fixture,
+including its intended auxiliary input/options where applicable, and a copied
+default fixture corrected to pass the actual JVM CLI's validators. The current
+`default.lime` uses `field constructor(label)` while `mapping` and `tags` have
+no defaults; an oracle accepting that model does not establish CLI validity.
+For the benchmark copy, try `field constructor(label, mapping, tags)`, validate
+it with both real frontends, and record the exact normalization and input hash.
+Do not alter the original fixture or bypass JVM validators. If a candidate
+remains invalid or unsupported, record the diagnostic and use another valid
+real input instead of timing mismatched work.
+
+Generate deterministic struct workloads at initially 10, 100 and 500 structs
+with valid fields, matching package/options and the same workload construction
+at every scale. Record source bytes/lines/declarations and output files/bytes;
+these are controlled scaling probes, not representative application corpora.
+Run a bounded untimed pilot before fixing the final matrix and trial count.
+Native graph re-import during per-file generation may scale poorly; retain
+such evidence, including slow Rust results. If a pilot exceeds the documented
+per-invocation limit, record the censored workload, elapsed bound and reason,
+then choose a smaller intermediate scale for completed trials. Do not omit a
+size because it reverses a speedup or choose sizes after inspecting final
+statistics. Save the selected matrix and randomized schedule before timed
+trials. Large persistent-process measurements are not a prerequisite.
+
+Every workload must first exit successfully in both actual CLIs and match
+complete relative file inventories and exact bytes, including common/export
+files, before timing it. Store per-file hashes plus an unambiguous aggregate
+inventory hash and output totals. Verify each timed run's exit code and full
+output against that baseline outside the timer; a failure or mismatch remains
+in raw evidence and invalidates its timing as a successful comparison. Outputs
+must never be replayed or supplied as compiler input.
+
+#### Sampling, environment and artifacts
+
+Use sequential, paired, balanced/interleaved process trials with a fixed
+recorded random seed; never run the competing generators concurrently. Perform
+explicit untimed filesystem warmups, then collect at least seven successful
+trials per implementation/workload when the bounded pilot permits it. Fix and
+disclose any smaller count before the timed schedule, including why it is
+necessary. Name this mode **fresh process, warm filesystem**: each Java process
+starts a new JVM, so filesystem warmup does not mean warmed JIT code. Do not
+claim OS-cache-cold results without a controlled cache experiment.
+
+Record wall time with a monotonic clock, user/system CPU time and per-process
+peak RSS using a method that attributes each invocation independently; a
+cumulative maximum from prior children is not a per-process RSS measurement.
+State the RSS units and platform semantics. Preserve all raw samples, timeouts,
+failures, command argv, environment overrides and per-run output checks in
+machine-readable JSON. Report median, Q1/Q3 or IQR, minimum and maximum for
+wall time, CPU and RSS, and define speedup as JVM median wall time divided by
+Rust median wall time. Include the actual time/RSS values with each ratio;
+do not infer statistical significance from a small shared-host sample.
+
+Capture UTC time, source revision/dirty state, input/options/template hashes,
+JVM distribution and jar hashes, Rust executable hash, toolchain versions,
+OS/kernel, CPU model/count, affinity, cgroup CPU quota and memory limit,
+available RAM, filesystem/output location and relevant Java/Rust settings.
+Explain shared-host contention and JVM startup/JIT costs. The JVM implements
+broader validation than the bounded native adapter; equal output for these
+inputs does not make their complete semantic obligations equivalent or isolate
+programming-language/runtime overhead.
+
+Deliver a reproducible runner and README under `tools/performance/`, committed
+raw run JSON and a concise `PERFORMANCE.md` report linking commands, workload
+definitions, parity manifests and environment evidence. Include limitations
+and every selected workload, including slower/failed/censored cases. An
+optional separate warmed persistent-API experiment may follow only if both
+implementations perform equivalent full frontend/generation/output work and
+warmup/JIT behavior is explicit; never mix it with the fresh-process results.
+
+#### Acceptance
+
+The milestone is complete when the committed runner can reproduce the
+comparison, all reported successful samples have passed the complete-output
+gate, the report answers which implementation is faster and uses less memory
+for each measured workload without a full-port claim, independent review has
+no unresolved material finding, and the measured source revision and results
+are traceable. Run checks appropriate to benchmark tooling plus retained
+production-template equality; production Rust changes require their ordinary
+checks and are outside this milestone's authorized scope.
+
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
 Extend M10's snapshot-driven C++ generation and M11's bounded documentation
