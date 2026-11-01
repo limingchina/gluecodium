@@ -529,6 +529,15 @@ impl<'a> Context<'a> {
             if self.class(ctor) != "LimeFieldConstructor" {
                 return Err("native controls invalid field constructor".into());
             }
+            for field_ref in self.list(ctor, "fieldRefs")? {
+                if self.class(field_ref) != "LimeLazyFieldRef" {
+                    return Err("native controls invalid field reference class".into());
+                }
+                let field = self.get(field_ref, "element")?;
+                if self.class(field) != "LimeField" || !fields.contains(field) {
+                    return Err("native controls field constructor references invalid field".into());
+                }
+            }
         }
         if name == "needsAllFieldsConstructor" {
             if ctors.is_empty() {

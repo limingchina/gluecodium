@@ -388,6 +388,16 @@ fn malformed_facts_are_not_hidden_by_other_true_conditions() {
     )
     .unwrap_err()
     .contains("missing returnType"));
+    let mut wrong_kind = matrix();
+    node_mut(&mut wrong_kind, "n270")["properties"]["returnType"] =
+        serde_json::json!({"$ref":"n49"});
+    assert!(predicate(
+        &graph(&wrong_kind),
+        "hasAnyComment",
+        &serde_json::json!({"$ref":"n270"})
+    )
+    .unwrap_err()
+    .contains("invalid return type class"));
     let mut req = matrix();
     node_mut(&mut req, "n239")["properties"]["attributes"]["EQUATABLE"] = Value::Null;
     assert!(predicate(
@@ -397,4 +407,82 @@ fn malformed_facts_are_not_hidden_by_other_true_conditions() {
     )
     .unwrap_err()
     .contains("invalid attribute group"));
+}
+
+#[test]
+fn constructor_predicates_follow_raw_field_defaults() {
+    let mut req: Value =
+        serde_json::from_slice(&fs::read("tests/template-goldens/m9-matrix.request.json").unwrap())
+            .unwrap();
+    let root = req["snapshot"]["root"]["$ref"].as_str().unwrap().to_owned();
+    let model = node_mut(&mut req, &root);
+    let defaults = model["properties"]["referenceMap"]["m9.matrix.Defaults"].clone();
+    let first = model["properties"]["referenceMap"]["m9.matrix.Defaults.first"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    assert!(predicate(&graph(&req), "hasPartialDefaults", &defaults).unwrap());
+    node_mut(&mut req, &first)["properties"]["defaultValue"] = Value::Null;
+    assert!(!predicate(&graph(&req), "hasPartialDefaults", &defaults).unwrap());
+    assert!(predicate(&graph(&req), "hasDefaultConstructor", &defaults).unwrap());
+}
+
+#[test]
+fn common_immutable_traversal_unwraps_generic_field_values() {
+    let mut req: Value =
+        serde_json::from_slice(&fs::read("tests/template-goldens/m9-matrix.request.json").unwrap())
+            .unwrap();
+    let root = req["snapshot"]["root"]["$ref"].as_str().unwrap().to_owned();
+    let model = node_mut(&mut req, &root);
+    let types = model["properties"]["referenceMap"]["m9.matrix.FieldTypes"].clone();
+    let types_id = types["$ref"].as_str().unwrap().to_owned();
+    let partial_id = model["properties"]["referenceMap"]["m9.matrix.ExplicitPartial"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let frozen_id = model["properties"]["referenceMap"]["m9.matrix.Frozen"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let ctor = node_mut(&mut req, &partial_id)["properties"]["fieldConstructors"][0].clone();
+    let first_field = node_mut(&mut req, &types_id)["properties"]["fields"][0].clone();
+    let ref_id = node_mut(&mut req, ctor["$ref"].as_str().unwrap())["properties"]["fieldRefs"][0]
+        ["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    node_mut(&mut req, &ref_id)["properties"]["element"] = first_field;
+    node_mut(&mut req, &types_id)["properties"]["fieldConstructors"] = serde_json::json!([ctor]);
+    assert!(predicate(&graph(&req), "needsAllFieldsConstructor", &types).unwrap());
+    let attrs_id = node_mut(&mut req, &frozen_id)["properties"]["attributes"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    node_mut(&mut req, &attrs_id)["properties"]["attributes"]
+        .as_object_mut()
+        .unwrap()
+        .remove("IMMUTABLE");
+    assert!(!predicate(&graph(&req), "needsAllFieldsConstructor", &types).unwrap());
+}
+
+#[test]
+fn invalid_constructor_field_references_fail() {
+    let mut req: Value =
+        serde_json::from_slice(&fs::read("tests/template-goldens/m9-matrix.request.json").unwrap())
+            .unwrap();
+    let root = req["snapshot"]["root"]["$ref"].as_str().unwrap().to_owned();
+    let structure =
+        node_mut(&mut req, &root)["properties"]["referenceMap"]["m9.matrix.ExplicitAll"].clone();
+    let struct_id = structure["$ref"].as_str().unwrap();
+    let comment = node_mut(&mut req, struct_id)["properties"]["comment"].clone();
+    let ctor = node_mut(&mut req, struct_id)["properties"]["fieldConstructors"][0]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    node_mut(&mut req, &ctor)["properties"]["fieldRefs"][0] = comment;
+    assert!(
+        predicate(&graph(&req), "needsAllFieldsConstructor", &structure)
+            .unwrap_err()
+            .contains("invalid field reference class")
+    );
 }
