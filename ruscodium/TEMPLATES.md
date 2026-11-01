@@ -60,9 +60,14 @@ identifier components, both defaulting to `[]`; unknown options are errors.
 For the older oracle configuration use `{"root_namespace":[],
 "internal_namespace":["internal"]}`. Native requests must omit or empty
 `hooks.names`. Selectors `""`, `"C++"` and `"FQN"` are registered directly;
-the `ref` mode is unsupported. Predicates, sorters and property overlays still
-use the measured replay contract. The public library entry point
-`template::native_cpp::resolve` also resolves one receiver against a `Graph`.
+the `ref` mode is unsupported. Optional boolean fields `predicates` and `sorters`
+default to false and independently select the native C++ providers. Enabled
+predicates reject nonempty `hooks.predicates` and `hooks.registered_predicates`;
+enabled sorting rejects nonempty `hooks.sorters`. Unknown selectors fail even on
+empty input. Disabled providers retain the measured replay contract. Public
+library entry points `template::native_cpp::resolve`,
+`template::native_controls::predicate` and `template::native_controls::sort`
+operate on a `Graph`.
 
 The native slice includes default ASCII C++ naming, qualified declarations,
 primitive and generic types, nullability, aliases, basic literals and accessor
@@ -71,6 +76,21 @@ requires its actual parent nodes, including their attributes. Missing parents,
 nonempty or unavailable comment content, external descriptors, unsupported
 C++ attributes, complex values and custom rules report errors. This is not a
 complete C++ backend or a replacement for the canonical frontend model.
+
+The predicate provider implements the eleven C++ selectors from raw type, field,
+constructor and attribute facts, including actual alias targets, immutable field
+traversal and inner-class references. It requires the actual enclosing declarations
+for nested paths and rejects missing facts, malformed cycles and unsupported model
+classes. Comment text is not exported: an observed empty comment is supported,
+and exclusion, deprecation and non-null warnings can establish a result. Nonempty
+or unavailable comment text remains unsupported when needed. The sorter filters
+non-named inputs and uses the C++ topological dependencies and first-eligible input
+order; duplicate full names and cycles are errors. Neither provider reads captured
+predicate answers, imported dependency lists, or sorted lists. Measured property
+getters remain a separate template-view boundary. The M9 recorded-control
+inventory checks 853 exact predicate calls and 12 exact sorts; four predicate
+calls reject nonempty comment text. The fixture suite exercises unchanged class
+and struct partials with all three native providers enabled.
 
 For example, turn the recorded full-model enumeration fixture into a native
 request, retaining its measured predicate and sorter entries:

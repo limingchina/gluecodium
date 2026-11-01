@@ -1,5 +1,6 @@
 //! A bounded Trimou-compatible renderer for explicit reference snapshots.
 mod graph;
+pub mod native_controls;
 pub mod native_cpp;
 mod parser;
 pub use graph::Graph;
@@ -46,6 +47,24 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
     {
         return Err("native_cpp cannot be combined with name hooks".into());
     }
+    let native_predicates = native_cpp.as_ref().is_some_and(|c| c.predicates);
+    let native_sorters = native_cpp.as_ref().is_some_and(|c| c.sorters);
+    for (enabled, category) in [
+        (native_predicates, "predicates"),
+        (native_predicates, "registered_predicates"),
+        (native_sorters, "sorters"),
+    ] {
+        if enabled
+            && hooks
+                .get(category)
+                .and_then(Value::as_array)
+                .is_some_and(|v| !v.is_empty())
+        {
+            return Err(format!(
+                "native_cpp cannot be combined with {category} hooks"
+            ));
+        }
+    }
     let native_cpp = native_cpp
         .map(|config| native_cpp::NativeCppResolver::new(&graph, config))
         .transpose()?;
@@ -62,6 +81,8 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
         graph,
         hooks,
         native_cpp,
+        native_predicates,
+        native_sorters,
         definitions: BTreeMap::new(),
         frames: vec![Frame {
             value: data,
@@ -164,6 +185,8 @@ struct Engine {
     graph: Graph,
     hooks: Value,
     native_cpp: Option<native_cpp::NativeCppResolver>,
+    native_predicates: bool,
+    native_sorters: bool,
     definitions: BTreeMap<String, Vec<Node>>,
     frames: Vec<Frame>,
     depth: usize,
@@ -408,6 +431,9 @@ impl Engine {
         )
     }
     fn predicate(&self, name: &str, receiver: &Value) -> Result<bool, String> {
+        if self.native_predicates {
+            return native_controls::predicate(&self.graph, name, receiver);
+        }
         self.hook(
             "predicates",
             |v| {
@@ -420,6 +446,9 @@ impl Engine {
         .ok_or_else(|| format!("predicate {name} result must be boolean"))
     }
     fn require_predicate(&self, name: &str) -> Result<(), String> {
+        if self.native_predicates {
+            return native_controls::require_predicate(name);
+        }
         let registered = self
             .hooks
             .get("registered_predicates")
@@ -765,14 +794,18 @@ impl Engine {
                     .cloned()
                     .collect();
                 let sorter = self.hash(&e, "sorter", "")?;
-                let sorted = self.hook(
-                    "sorters",
-                    |v| {
-                        v.get("name").and_then(Value::as_str) == Some(&sorter)
-                            && v.get("input") == Some(&Value::Array(values.clone()))
-                    },
-                    &format!("sorter {sorter}"),
-                )?;
+                let sorted = if self.native_sorters {
+                    Value::Array(native_controls::sort(&self.graph, &sorter, &values)?)
+                } else {
+                    self.hook(
+                        "sorters",
+                        |v| {
+                            v.get("name").and_then(Value::as_str) == Some(&sorter)
+                                && v.get("input") == Some(&Value::Array(values.clone()))
+                        },
+                        &format!("sorter {sorter}"),
+                    )?
+                };
                 let sorted = sorted.as_array().ok_or("sorter result must be a list")?;
                 let mut output = String::new();
                 for value in sorted {

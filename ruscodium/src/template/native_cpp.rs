@@ -7,14 +7,21 @@ use std::collections::{BTreeMap, BTreeSet};
 pub struct NativeCppConfig {
     pub root_namespace: Vec<String>,
     pub internal_namespace: Vec<String>,
+    pub predicates: bool,
+    pub sorters: bool,
 }
 impl NativeCppConfig {
     pub fn parse(value: &Value) -> Result<Self, String> {
         let object = value.as_object().ok_or("native_cpp must be an object")?;
-        if let Some(key) = object
-            .keys()
-            .find(|k| !["root_namespace", "internal_namespace"].contains(&k.as_str()))
-        {
+        if let Some(key) = object.keys().find(|k| {
+            ![
+                "root_namespace",
+                "internal_namespace",
+                "predicates",
+                "sorters",
+            ]
+            .contains(&k.as_str())
+        }) {
             return Err(format!("unsupported native_cpp option {key}"));
         }
         let parse = |key: &str| -> Result<Vec<String>, String> {
@@ -44,8 +51,21 @@ impl NativeCppConfig {
         Ok(Self {
             root_namespace: parse("root_namespace")?,
             internal_namespace: parse("internal_namespace")?,
+            predicates: flag(object, "predicates")?,
+            sorters: flag(object, "sorters")?,
         })
     }
+}
+
+fn flag(object: &serde_json::Map<String, Value>, key: &str) -> Result<bool, String> {
+    object
+        .get(key)
+        .map(|v| {
+            v.as_bool()
+                .ok_or_else(|| format!("native_cpp.{key} must be a boolean"))
+        })
+        .transpose()
+        .map(|v| v.unwrap_or(false))
 }
 
 #[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]

@@ -43,6 +43,7 @@ fn every_recorded_name_cell_is_compared_or_explicitly_unsupported() {
     let mut supported = 0;
     let mut unsupported = BTreeMap::new();
     let mut matrix = 0;
+    let mut m9 = 0;
     for path in paths {
         let name = path
             .file_name()
@@ -68,6 +69,9 @@ fn every_recorded_name_cell_is_compared_or_explicitly_unsupported() {
                         "fixture {name}, cell {cell}"
                     );
                     supported += 1;
+                    if name.starts_with("m9-") {
+                        m9 += 1;
+                    }
                     if name == "native-matrix" {
                         matrix += 1;
                     }
@@ -88,7 +92,8 @@ fn every_recorded_name_cell_is_compared_or_explicitly_unsupported() {
         }
     }
     assert_eq!(matrix, 162);
-    assert_eq!(supported, 203);
+    assert_eq!(m9, 35);
+    assert_eq!(supported, 238);
     assert_eq!(
         unsupported,
         BTreeMap::from([
