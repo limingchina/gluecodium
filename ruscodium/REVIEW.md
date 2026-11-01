@@ -162,3 +162,63 @@ sorters still require measured replay; computed views still require supplied
 observations. Nonempty comments, external descriptors, custom name rules,
 complex values, a complete canonical model adapter, whole-file generation and
 full compiler/output parity remain later work.
+
+## Native C++ predicates and sorting continuation review
+
+Reviewer: Sol 6.1, xhigh effort, as requested. Date: 2026-11-01.
+Final reviewed implementation and fixture candidate: `8eecc1b3b`, including
+oracle evidence from `30562b676`, controls through `2d4302b58`, and the renderer
+whitespace correction in `3c81755f5`. Earlier review sections remain historical
+records of their respective milestones.
+
+The bounded M9 review covered the public native control APIs, boolean opt-ins,
+provider registration and replay isolation, raw model/type/attribute traversal,
+constructor decisions, sibling imports, ancestor skips, default declaration
+sorting, malformed-input failures and unchanged production fragments. The
+normative algorithms were `CppGeneratorPredicates`, `CommonGeneratorPredicates`,
+`CppImportsCollector`, `LimeTypeHelper` and `TopologicalSort`. Existing M8 naming
+behavior was checked for regressions without reopening its broader deferred
+scope.
+
+### Findings and disposition
+
+| Problem found during review | Final behavior and evidence |
+| --- | --- |
+| Exclusion on an empty return, parameter, thrown-type or owning constructor comment incorrectly established `hasAnyComment`. | Only the receiver's own comment exclusion contributes directly. Actual JVM comment mutations and the native exclusion regression preserve the source distinctions. |
+| Unknown classes, malformed reference objects, invalid actual types and null attribute groups could produce ordinary booleans or be filtered from a sort. Constructor references could be counted without checking their resolved fields. | Explicit reference/class/context and attribute-shape checks reject these inputs. Raw field-constructor references resolve to fields belonging to the structure. Canonical wrong receiver kinds retain their source behavior, and resolved positional type references are supported. |
+| Malformed struct members could enter unbounded sorter recursion, while long immutable-struct traversals lacked a separate depth bound. | Concrete member checks and bounded traversal reject malformed or excessive graphs. Independent legal recursive-struct and self-dependency probes still succeed. |
+| A temporary comment-proof implementation could hide malformed required facts behind another true condition. | Only unsupported nonempty comment text can remain uncertain while an independent term establishes the predicate. Missing return/context facts and malformed classes or attributes remain errors; dedicated regressions cover those cases. Native comment-string rendering remains a separate unsupported boundary. |
+| The control inventory initially accepted arbitrary provider errors as measured results. | Tests pin all 1,095 exact predicate matches, four specific nonempty-comment rejections and 15 exact sorter records, and reject every unexpected error. Generic sorting derives children from raw element/key/value edges rather than supplied `childTypes`. |
+| Real class rendering emitted extra blank lines around multiline comments and inline definitions. Initial struct fragments also omitted field/constructor rendering and did not exercise the two distinct generic immutable traversals. | The parser correction in `3c81755f5` matches measured Trimou whitespace. Five unchanged production fragments now include defaults, immutable fields and accessors with a field constructor. JVM list/set/map-value partial-constructor cases require all-fields constructors while the immutable map-key-only case does not. |
+
+### Final independent verification
+
+- `cargo fmt --check`, offline all-target Clippy with `-D warnings`, and the
+  complete 66-test Rust suite passed at the final candidate. This retains the
+  preview corpus and compiled C++ consumers, all baseline naming/runtime tests,
+  15 native control tests and two whitespace tests with measured edge cases.
+- The JVM oracle independently regenerated all 41 request/output pairs with
+  exact bytes and verified all 315 installed production templates against
+  unchanged source. Its negative checks include actual sorter cycles and
+  repeated identities.
+- All five M9 production fragments match JVM bytes with name, predicate and
+  sorter hooks removed. These cover actual nested declaration reordering,
+  sibling forward declarations, partial defaults, immutable fields and C++
+  accessors. Measured template getter overlays remain separate from the native
+  predicate and dependency algorithms.
+- Independent CLI probes matched the class golden in all four predicate/sorter
+  opt-in combinations. Separate direct-API probes checked malformed reference
+  rejection, null attribute-group rejection, skips distributed across a
+  function and two enclosing classes, legal recursive struct traversal and
+  self-dependency removal. Failure regressions check empty stdout and existing
+  output sentinel preservation.
+- The updated complete naming inventory has 295 exact native matches and the
+  same 20 explicitly bounded rejections, with no new naming error category.
+
+No reported material finding remains unresolved within this bounded M9 review.
+The increment provides native C++ names, predicates and declaration sorting for
+the documented imported graph facts. Nonempty/native documentation processing,
+a complete canonical frontend adapter, whole-header/output-set generation and
+C++ runtime or other-language ABI parity remain deferred. Measured template
+views and successful fragments do not establish complete compiler parity.
+
