@@ -333,6 +333,67 @@ snapshot subset, including eighteen common/export files per job. Canonical
 adaptation, native comments, unsupported C++ features/runtime ABI and all
 Dart/Swift/JNI/platform outputs remain deferred.
 
+## M11 / P1b.2: smoke acceptance inventory and bounded native documentation
+
+Execute [the M11 contract](PLAN.md#m11--p1b2-smoke-acceptance-inventory-and-bounded-native-documentation--planned)
+from clean `d9dc5b901`, with Sol 6.1 max planning, Terra 6.1 xhigh implementation
+and independent Sol 6.1 xhigh review. Keep every change under `ruscodium/` and
+all 315 production templates unchanged. M10 evidence above remains historical.
+
+- [x] Inspect the snapshot/private-comment boundary, native names/controls,
+  unchanged C++ documentation partials, upstream comment processing and actual
+  smoke inputs/options; define bounded scope and exact acceptance first.
+- [x] Commit this M11 plan/checklist before new implementation starts.
+- [ ] First add a reproducible acceptance runner/report for the thirteen named
+  complete smoke groups; pin baseline outcomes, exact input/auxiliary hashes,
+  placeholders/options/tags, compiler/template provenance and native revision.
+- [ ] Export the original unfiltered loader model and invoke the real JVM C++
+  generator independently with effective smoke options. Distinguish native
+  rejection, output mismatch, JVM failure and exporter failure; retain all rows.
+- [ ] For admitted cases compare every path, source set and byte, including all
+  common/export files; report baseline-to-final counts and concrete blockers
+  without counting guarded rejections as compatibility successes.
+- [ ] Add version-2 generation jobs with complete ordered `raw_comments` pairs
+  per `LimeComment`; keep snapshot v1 and existing default/custom v1 fixtures
+  unchanged, reject the new field in v1 and forbid v2 measured-empty fallback.
+- [ ] Add opt-in, narrowly checked oracle reflection for raw tagged sections;
+  record its schema/provenance without changing production Kotlin or default
+  reference export. Reject selected/formatted comment projections and v2
+  comment `isEmpty` overlays.
+- [ ] Implement native raw emptiness, exact Cpp/universal section selection,
+  ordered placeholder expansion and source trimming/blankness; validate complete
+  maps, pair/value/target shapes, keys and IDs with cycle/depth/size bounds.
+- [ ] Measure and implement a documented plain Unicode/paragraph/newline
+  formatting subset; guard Markdown and documentation links after expansion,
+  with actual JVM positive and rejected-syntax evidence.
+- [ ] Integrate native comment names, template `isEmpty`, `hasAnyComment`, raw
+  exclusion, function/property/field/constructor docs, and path-derived lambda
+  `parameterName`; preserve legacy requests and unrelated feature guards.
+- [ ] Match complete JVM outputs for the separately loaded, unmodified
+  `CommentsInterface.lime` and `CommentsLambda.lime` upstream files; keep the
+  complete comments-group outcome separate from these focused successes.
+- [ ] Add focused real-LIME whole-file evidence for Unicode, paragraphs,
+  platform-only/mixed text, ordering, placeholders, exclusion, parameters,
+  returns, properties and struct/field-constructor documentation.
+- [ ] Prove raw mutations change comments/presence/platform/placeholder output
+  without recorded results; cover raw-empty versus selected-empty/blank text,
+  other-platform-only text and empty placeholder expansions.
+- [ ] Reject incomplete/malformed/cyclic documentation, forged answers and
+  unsupported expanded Markdown/links, including auxiliary and late cases,
+  before writes; preserve stdout/output sentinels and deterministic repetition.
+- [ ] Compile all new generated implementations with strict C++17 flags and run
+  a meaningful consumer; reproduce native output with the JVM unavailable.
+- [ ] Pass formatting, offline all-target Clippy/Cargo, Python/reference-model
+  checks, retained whole-file/template oracles, all 315 unchanged templates,
+  preview corpus and compiled consumers, plus new smoke/documentation evidence.
+- [ ] Obtain independent Sol 6.1 xhigh review, fix material findings, update
+  measured docs/evidence with exact counts, and commit/push tested increments.
+
+Full Markdown/link processing, native structured-documentation/LIME frontend
+adaptation, filtering, inheritance, externals, new attributes and broader C++
+runtime/ABI compatibility remain deferred. The smoke inventory determines the
+impact ordering for later feature increments; M11 does not relax those guards.
+
 ## Deferred full-parity work
 
 - [ ] Complete every upstream semantic validator, filters/tags, documentation

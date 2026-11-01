@@ -879,6 +879,140 @@ documents. This delivers the guarded snapshot backend; canonical native
 frontend adaptation, nonempty comments, overload/inheritance validation,
 remaining C++ features/ABI and Dart/Swift/JNI/platform outputs remain open.
 
+### M11 / P1b.2: smoke acceptance inventory and bounded native documentation — planned
+
+Planning baseline: clean `d9dc5b901` on `ruscodium/rust-port`. Commit this
+contract and its checklist before new implementation. Sol 6.1 max owns planning,
+Terra 6.1 xhigh implementation and evidence, and an independent Sol 6.1 xhigh
+reviewer checks the final candidate. Keep every change under `ruscodium/`, all
+315 production Mustache templates unchanged, and the preview backend separate.
+This increment measures the next C++ compatibility gaps, then removes the
+measured-empty-comment admission for a bounded new snapshot-job profile.
+
+#### First deliverable: reproducible upstream smoke inventory
+
+Before expanding generation, add a runner and a checked acceptance report for
+these thirteen complete upstream smoke groups: `basic_types`, `enums`,
+`typedefs`, `lambdas`, `properties`, `structs`, `nesting`, `comments`,
+`inheritance`, `async`, `external_types`, `namespace_basic`, and `skip`.
+Record each group's exact main/auxiliary files and hashes, loader placeholders,
+generator options, tags, compiler/template provenance and native revision.
+Reproduce `SmokeTest.getOptions`: a group's `commandlineoptions.txt` replaces
+the test defaults; otherwise the C++ internal namespace is `gluecodium`.
+Use the real option reader where practical and record the effective options.
+
+Load the original complete, unfiltered JVM model for export. Invoke the actual
+JVM C++ generator with those options independently for expected results; do not
+export a JVM-filtered graph that silently supplies native filtering. Compare
+fresh outputs rather than assuming checked-in smoke files use default options.
+For native successes, compare the entire relative path set, `MAIN`/`COMMON`
+source sets and every UTF-8 byte, including all eighteen common/export files.
+No whitespace normalization, C++-only subset of files, or compilation-only pass
+counts as an exact match.
+
+Report exact matches, native unsupported diagnostics, output mismatches, JVM
+load/generation failures and export failures separately. Pin the baseline
+outcomes before documentation changes, retain every selected group, and report
+the final delta and concrete blockers. An expected rejection is coverage of a
+guard, not a compatibility success. The inventory ranks subsequent work by
+measured affected cases; inheritance, filtering, externals, other attributes
+and full Markdown remain later increments rather than implicit M11 scope.
+
+Add two separately identified, unmodified upstream-file acceptance units:
+`comments/input/CommentsInterface.lime` and
+`comments/input/CommentsLambda.lime`. Load each as its own explicitly recorded
+case, without editing or extracting declarations. Their plain documentation
+can establish bounded progress while the complete `comments` group remains
+rejected for its other unsupported features. Per-file success must never be
+reported as full-group acceptance.
+
+#### Explicit raw-documentation boundary
+
+Keep the reference snapshot schema at version 1 and retain the existing default
+and custom version-1 generation jobs and expected bytes unchanged. Add generation
+job version 2 with a required `raw_comments` object mapping every `LimeComment`
+node ID, including empty and placeholder comments, to an ordered array of
+`[tag, text]` string pairs. It supplies the otherwise omitted `taggedSections`;
+`path`, `isExcluded` and placeholder references remain stored graph facts.
+Validate complete coverage, exact pair shapes, strings, node classes and unknown
+IDs/keys before generation. Version-1 jobs reject this new field and retain their
+documented measured-empty fallback; version-2 jobs never fall back to it.
+
+The oracle may use a narrowly scoped, opt-in reflective read of
+`LimeComment.taggedSections` solely to export those raw pairs. Fail if the field
+or its type/shape changes, and record the export profile and JVM provenance.
+Leave the default reference exporter and production Kotlin model untouched.
+Do not substitute `getFor`, `getForWithoutResolvingPlaceholder`, `toString`,
+formatted Doxygen strings or captured C++ name results: these project or lose
+source facts. This is a new experimental imported-model profile, not a native
+LIME/structured-documentation frontend or a complete canonical adapter.
+
+For version 2, reject caller-supplied comment `isEmpty` overlays and any supplied
+selected/formatted text or predicate answers. Derive template comment views and
+provider behavior from `raw_comments`; keep remaining measured getter/absence
+boundaries explicit. No formatted comment cache in a job may replace processing,
+and no replay/JVM path may handle unsupported native content.
+
+#### Bounded native algorithm and integration
+
+Port the applicable `LimeComment` algorithms: `isEmpty` means all raw section
+payloads are empty, even when a nonempty payload belongs only to another
+platform; C++ text selects universal, exact `Cpp`, and `Placeholder` sections
+in original order, recursively expands named placeholder comments, then applies
+the source trimming rules. Validate referenced placeholder targets and required
+keys, and bound recursion, cycles and expansion size. Distinguish raw emptiness,
+selected text emptiness and selected text blankness. Preserve Unicode text and
+match the source's whitespace decisions for admitted inputs.
+
+Implement a conservative, explicitly documented plain-text/paragraph/newline
+subset of `CommentsProcessor` plus `DoxygenCommentsProcessor`, with exact fresh
+JVM measurements defining its formatting. Check for unsupported Markdown and
+documentation-link syntax after platform selection and placeholder expansion;
+reject rather than treating unimplemented formatting as ordinary text. Full
+Flexmark formatting, scoped reference/name-map resolution, inline/fenced code,
+lists, headings, tables, HTML and other unproved syntax stay guarded. Measure
+representative rejected syntax with the JVM too, so the guard is observable.
+
+Use the native text in C++ `resolveName` for comments, native `hasAnyComment`
+and unchanged documentation partials. Preserve the source distinctions among
+own exclusion, parameter/return comments, constructor comments and non-null
+warnings. Support raw `isExcluded`/`@exclude` rendering. `@Deprecated` and other
+previously unsupported attributes remain rejected in this increment. Derive
+`LimeLambdaParameter.parameterName()` from its raw path for the unchanged lambda
+documentation partial; do not capture another computed output. Keep the legacy
+template-request and version-1 generation behavior and all prior comparisons.
+
+#### Acceptance and completion
+
+Require complete JVM byte/path/source-set equality for both upstream-file units
+and at least one focused real-LIME fixture covering Unicode, multiple paragraphs,
+platform-only and mixed sections, ordered concatenation, configured placeholders,
+excluded comments, function parameter/return and property documentation, and
+struct/field-constructor comments. Cases may be split into small coherent jobs.
+Use loader-supported one-level configured placeholders; label recursive raw
+placeholder tests as synthetic graph evidence rather than loader acceptance.
+Keep expected files produced by the actual JVM generator. Compile all generated
+implementations and run a meaningful C++17 consumer with `-Wall -Wextra -Werror`.
+
+Raw mutations must change rendered text, platform selection, placeholder output,
+comment presence and exclusion without refreshing captured answers. Cover empty
+sections, whitespace-only text, other-platform-only text, empty placeholder
+expansions and malformed/missing/cyclic placeholder data. Reject incomplete
+maps, wrong IDs/classes/pairs, forged projections, unsupported expanded Markdown
+or links, and unsupported content in auxiliary declarations before writes.
+Check empty stdout and byte-preserved existing outputs on failure, including a
+late invalid documentation case, and deterministic repeated native output with
+the JVM unavailable.
+
+Retain formatting, offline all-target Clippy/Cargo, Python/reference-export
+checks, both existing whole-file jobs, the 41 template cases, the 315-template
+equality check, preview corpus and compiled consumers. Reproduce the smoke
+inventory and new JVM documentation evidence, obtain independent review, fix
+material findings, update measured documentation/checklists, and commit/push
+tested increments. Publish exact success/rejection counts and remaining gaps;
+completion establishes this documentation slice, not full smoke, Markdown,
+frontend, C++ feature/runtime ABI or platform-backend parity.
+
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
 Extend M10's snapshot-driven C++ generation toward complete canonical model
