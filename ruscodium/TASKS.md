@@ -238,7 +238,7 @@ implementation and independent Sol 6.1 xhigh review. Keep every change under
   JVM fixture reproduction and 315-template equality; retain 49-test/34-case
   baseline coverage, preview corpus and compiled C++ consumers, recording counts.
 - [x] Obtain independent Sol 6.1 xhigh review and fix material findings.
-- [ ] Update README, TEMPLATES, oracle, review and measured evidence/checklist;
+- [x] Update README, TEMPLATES, oracle, review and measured evidence/checklist;
   commit tested increments and push the authorized branch.
 
 The current control inventory compares 1,095 actual predicate calls and 15
@@ -251,6 +251,72 @@ list, set, map-value and map-key fields with partial field constructors.
 
 M9 does not complete canonical adaptation, raw/native comments, header/file-set
 generation or C++ runtime/ABI parity. Keep those gaps explicit after delivery.
+
+M9 was verified and published through `d2e69b620` on
+`origin/ruscodium/rust-port`, including the independent review in `8667cbf1e`.
+Final checks passed formatting, offline Clippy, 66 Rust tests, four Python tests,
+reference-model checks, 41 JVM oracle cases, 315 unchanged templates and release
+build. See [REVIEW.md](REVIEW.md) for the review artifact and exact disposition.
+
+## M10 / P1b.1: native C++ whole-file generation from snapshots
+
+Execute [the M10 contract](PLAN.md#m10--p1b1-native-c-whole-file-generation-from-snapshots--planned)
+from `d2e69b620`, with Sol 6.1 max planning, Terra 6.1 xhigh implementation and
+independent Sol 6.1 xhigh review. Keep changes under `ruscodium/`, production
+Mustache unchanged, and the preview C++ generator separate.
+
+- [x] Inspect actual C++ generator, include/forward collectors, output name
+  rules, helper inventory, copyright resolver and existing native/view boundary.
+- [x] Define the guarded full-file contract, strict versioned job, native
+  collector/path ownership, frozen-getter allowlist policy and exact evidence.
+- [x] Commit this plan/checklist before M10 implementation starts.
+- [ ] Add the library generator and `generate-cpp --job FILE --templates DIR
+  --output DIR`, validating schema/options and full `LimeModel` graph; forbid
+  render contexts, output inventories, helper hooks and replay fallbacks.
+- [ ] Define/test/document class-specific allowed measured getters/absences;
+  reject generated includes/forwards/order/names/predicate controls and unknown
+  overlays. Keep all native algorithms on raw model/reference facts.
+- [ ] Implement fail-fast model/attribute/dependency guards for the documented
+  comment-free class/interface, struct, enum, alias and lambda subset, including
+  unsupported inheritance/docs/external/errors/equality/async/filtering cases.
+- [ ] Derive generation roots and nested/reference/auxiliary ownership from the
+  full graph; port output filename/path and namespace/export rules, including
+  supported root renaming, defaults and distinct common exports.
+- [ ] Port raw type/value walks, include resolution, header and implementation
+  include collectors, self-includes, exact dedup/sort and forward groups, with
+  generic, alias, nullable, class-reference and nested-type cases.
+- [ ] Build actual header/implementation contexts internally and render unchanged
+  `CppHeader`/`CppImplementation` plus transitive partials; generate the upstream
+  .h/.cpp selection, including struct constructors and class destruction.
+- [ ] Render all thirteen common headers, three common implementations and two
+  exports with correct paths, source sets, macro/configuration data and copyright
+  bytes. No unneeded helper may be silently omitted from full-file comparisons.
+- [ ] Render/validate every output in memory before writes, detect model/helper
+  path collisions/escapes and preserve existing output on input/render failures;
+  verify determinism and leave unrelated files alone.
+- [ ] Add a JVM oracle invoking actual `CppGenerator.generate` over independently
+  loaded LIME, exporting snapshots/views separately from exact expected files;
+  record compiler/template/input/options/source-set provenance and reproduction.
+- [ ] Compare complete relative paths, source sets and every output byte for
+  default and configured jobs; cover all root kinds, nested reorder, auxiliary
+  references, forwards/nested includes, generic/nullable values and constructors.
+- [ ] Prove raw type/path/name/declaration mutations affect includes, forwards,
+  output paths/order/bytes without imported computed generator controls. Cover
+  invalid jobs, context/replay injection, missing facts, unsupported content and
+  collisions with no partial generated artifacts.
+- [ ] Compile generated model/common implementations with strict C++17 flags and
+  run a consumer using generated value types and an implemented interface.
+- [ ] Pass formatting, offline Clippy/Cargo, Python/reference-model checks,
+  whole-file oracle reproduction, retained 41 JVM template cases and 315-template
+  equality, preview corpus and existing compiled consumers; record exact counts.
+- [ ] Obtain independent Sol 6.1 xhigh review and fix material findings.
+- [ ] Update README, TEMPLATES, oracle, review and measured checklist evidence,
+  commit tested increments and push the authorized branch.
+
+Completion requires actual full C++ generator file sets for the supported
+snapshot subset, including eighteen common/export files per job. Canonical
+adaptation, native comments, unsupported C++ features/runtime ABI and all
+Dart/Swift/JNI/platform outputs remain deferred.
 
 ## Deferred full-parity work
 
