@@ -13,6 +13,7 @@ pub struct Graph {
     pub nodes: BTreeMap<String, ModelNode>,
     pub root: Option<Value>,
     absent: BTreeMap<String, BTreeSet<String>>,
+    pub(super) raw_comments: Option<super::native_comments::RawComments>,
 }
 impl Graph {
     pub fn import(snapshot: Option<&Value>, overlays: Option<&Value>) -> Result<Self, String> {
@@ -132,6 +133,10 @@ impl Graph {
         }
         Ok(graph)
     }
+    pub(crate) fn attach_raw_comments(&mut self, raw: &Value) -> Result<(), String> {
+        self.raw_comments = Some(super::native_comments::import(self, raw)?);
+        Ok(())
+    }
     pub fn validate(&self, value: &Value) -> Result<(), String> {
         validate_value(value, &self.nodes.keys().cloned().collect(), 0)
     }
@@ -141,6 +146,36 @@ impl Graph {
                 .nodes
                 .get(id)
                 .ok_or_else(|| format!("dangling reference {id}"))?;
+            if node.class == "com.here.gluecodium.model.lime.LimeComment" && key == "isEmpty" {
+                if let Some(raw) = &self.raw_comments {
+                    let sections = raw.get(id).ok_or("missing raw comment")?;
+                    return Ok(Some(Value::Bool(
+                        sections.iter().all(|(_, text)| text.is_empty()),
+                    )));
+                }
+            }
+            if node.class == "com.here.gluecodium.model.lime.LimeLambdaParameter"
+                && key == "parameterName"
+                && self.raw_comments.is_some()
+            {
+                let path = node
+                    .properties
+                    .get("path")
+                    .ok_or("missing lambda parameter path")?;
+                let path_id = reference(path).ok_or("invalid lambda parameter path")?;
+                let tail = self
+                    .nodes
+                    .get(path_id)
+                    .and_then(|n| n.properties.get("tail"))
+                    .and_then(Value::as_array)
+                    .ok_or("invalid lambda parameter path tail")?;
+                return Ok(Some(
+                    tail.last()
+                        .and_then(Value::as_str)
+                        .ok_or("empty lambda parameter path")?
+                        .into(),
+                ));
+            }
             if node.class == "com.here.gluecodium.model.lime.LimeAttributes" {
                 let attributes = node
                     .properties

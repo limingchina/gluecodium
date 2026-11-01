@@ -1,5 +1,6 @@
 //! A bounded Trimou-compatible renderer for explicit reference snapshots.
 mod graph;
+pub(crate) mod native_comments;
 pub mod native_controls;
 pub mod native_cpp;
 mod parser;
@@ -27,21 +28,33 @@ pub(crate) fn render_with_copyright(
     root: &Path,
     request: &Value,
     copyright: Value,
+    raw_comments: Option<&Value>,
 ) -> Result<String, String> {
-    render_impl(root, request, Some(copyright))
+    render_impl_with_raw(root, request, Some(copyright), raw_comments)
 }
 
 fn render_impl(root: &Path, request: &Value, copyright: Option<Value>) -> Result<String, String> {
+    render_impl_with_raw(root, request, copyright, None)
+}
+fn render_impl_with_raw(
+    root: &Path,
+    request: &Value,
+    copyright: Option<Value>,
+    raw_comments: Option<&Value>,
+) -> Result<String, String> {
     if request.get("schema").and_then(Value::as_str) != Some("gluecodium.template.render-request")
         || request.get("version").and_then(Value::as_u64) != Some(1)
     {
         return Err("unsupported render request schema or version".into());
     }
-    let graph = Graph::import_with_absences(
+    let mut graph = Graph::import_with_absences(
         request.get("snapshot"),
         request.get("property_overlays"),
         request.get("absent_properties"),
     )?;
+    if let Some(raw) = raw_comments {
+        graph.attach_raw_comments(raw)?;
+    }
     let data = request
         .get("data")
         .ok_or("render request has no data")?

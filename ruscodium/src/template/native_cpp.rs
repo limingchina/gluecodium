@@ -100,7 +100,25 @@ impl NativeCppResolver {
             config: &config,
             parents: &empty,
         };
+        let indexed: Option<BTreeSet<String>> = graph.raw_comments.as_ref().and_then(|_| {
+            let root = graph.root.as_ref().and_then(reference)?;
+            let map = graph
+                .nodes
+                .get(root)?
+                .properties
+                .get("referenceMap")?
+                .as_object()?;
+            Some(
+                map.values()
+                    .filter_map(reference)
+                    .map(str::to_owned)
+                    .collect(),
+            )
+        });
         for (id, node) in &graph.nodes {
+            if indexed.as_ref().is_some_and(|ids| !ids.contains(id)) {
+                continue;
+            }
             if node.properties.contains_key("attributes")
                 && node.properties.contains_key("external")
                 && node.properties.contains_key("path")
@@ -269,6 +287,7 @@ impl<'a> Resolver<'a> {
         match self.parents.get(&path).map(Vec::as_slice) {
             Some([id]) => Ok(Some(serde_json::json!({"$ref": id}))),
             Some(_) => Err("duplicate native C++ parent path".into()),
+            None if self.graph.raw_comments.is_some() => Ok(None),
             None => Err(format!(
                 "native C++ missing parent context for {}",
                 path.tail.join(".")
@@ -536,7 +555,9 @@ impl<'a> Resolver<'a> {
         }
         match class {
             "LimeComment" => {
-                if self.node(v)?.properties.get("isEmpty") == Some(&Value::Bool(true)) {
+                if let Some(text) = super::native_comments::selected(self.graph, v)? {
+                    super::native_comments::format(&text)
+                } else if self.node(v)?.properties.get("isEmpty") == Some(&Value::Bool(true)) {
                     Ok(String::new())
                 } else {
                     Err("native C++ nonempty or unavailable comment unsupported".into())

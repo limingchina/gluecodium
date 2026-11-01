@@ -392,7 +392,9 @@ impl<'a> Context<'a> {
         if self.class(v) != "LimeComment" {
             return Err("native controls invalid comment class".into());
         }
-        if self.boolean(v, "isEmpty")? {
+        if let Some(text) = super::native_comments::selected(self.graph, v)? {
+            Ok(!text.is_empty())
+        } else if self.boolean(v, "isEmpty")? {
             Ok(false)
         } else {
             Err("native controls nonempty comment content unsupported".into())

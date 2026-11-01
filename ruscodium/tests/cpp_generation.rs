@@ -562,3 +562,263 @@ fn raw_declaration_order_changes_bytes_and_preserves_dependency_sorting() {
             < data_after.find("using LaterAlias").unwrap()
     );
 }
+
+fn raw_comment_job() -> Value {
+    let mut job = fixture("default");
+    job["version"] = json!(2);
+    let ids: Vec<String> = job["snapshot"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|n| n["class"].as_str().unwrap().ends_with(".LimeComment"))
+        .map(|n| n["id"].as_str().unwrap().to_string())
+        .collect();
+    let mut raw = serde_json::Map::new();
+    for id in ids {
+        raw.insert(id.clone(), json!([]));
+        if let Some(fields) = job["property_overlays"][&id].as_object_mut() {
+            fields.remove("isEmpty");
+        }
+    }
+    job["raw_comments"] = raw.into();
+    job
+}
+fn comment_id(job: &mut Value, kind: &str, name: &str) -> String {
+    let id = node_id(job, kind, name);
+    node_mut(job, &id)["properties"]["comment"]["$ref"]
+        .as_str()
+        .unwrap()
+        .into()
+}
+fn data_header(job: &Value) -> String {
+    generate(TEMPLATES, job)
+        .unwrap()
+        .into_iter()
+        .find(|f| f.path.ends_with("oracle/basic/Data.h"))
+        .unwrap()
+        .contents
+}
+#[test]
+fn version_two_comments_are_computed_from_raw_facts() {
+    let mut job = raw_comment_job();
+    let id = comment_id(&mut job, "LimeStruct", "Data");
+    let base = data_header(&job);
+    job["raw_comments"][&id] = json!([
+        ["", "Hello "],
+        ["Java", "ignored"],
+        ["Cpp", "world."],
+        ["", "\n\nNext paragraph."]
+    ]);
+    let documented = data_header(&job);
+    assert!(
+        documented.contains(" * Hello world.\n *\n * Next paragraph."),
+        "{documented}"
+    );
+    assert_ne!(documented, base);
+    job["raw_comments"][&id] = json!([["Java", "nonempty elsewhere"]]);
+    assert_eq!(data_header(&job), base);
+    job["raw_comments"][&id] = json!([["Cpp", "Changed text."]]);
+    assert!(data_header(&job).contains(" * Changed text."));
+    node_mut(&mut job, &id)["properties"]["isExcluded"] = json!(true);
+    assert!(data_header(&job).contains(" * \\private"));
+    job["raw_comments"][&id] = json!([["", "  \t "]]);
+    let excluded = data_header(&job);
+    assert!(excluded.contains(" * \\private"));
+    assert!(!excluded.contains("Changed text."));
+}
+#[test]
+fn version_two_rejects_invalid_raw_comments_and_unsupported_syntax() {
+    let base = raw_comment_job();
+    let mut cases = Vec::new();
+    let mut job = base.clone();
+    let id = comment_id(&mut job, "LimeStruct", "Data");
+    job["raw_comments"].as_object_mut().unwrap().remove(&id);
+    cases.push(job);
+    let mut job = base.clone();
+    job["raw_comments"]["unknown"] = json!([]);
+    cases.push(job);
+    let mut job = base.clone();
+    job["raw_comments"][&id] = json!([["Cpp"]]);
+    cases.push(job);
+    let mut job = base.clone();
+    job["raw_comments"][&id] = json!([["Cpp", 4]]);
+    cases.push(job);
+    let mut job = base.clone();
+    job["property_overlays"][&id]["isEmpty"] = json!(true);
+    cases.push(job);
+    let mut job = base.clone();
+    job["raw_comments"][&id] = json!([["Placeholder", "missing"]]);
+    cases.push(job);
+    let mut job = base.clone();
+    node_mut(&mut job, &id)["properties"]["placeholders"] = json!({"self":{"$ref":id}});
+    cases.push(job);
+    let mut job = base.clone();
+    job["raw_comments"][&id] = json!([["", "See [Other]."]]);
+    cases.push(job);
+    let mut job = base.clone();
+    job["raw_comments"][&id] = json!([["", "**bold**"]]);
+    cases.push(job);
+    let mut job = base.clone();
+    let alias = node_id(&job, "LimeTypeAlias", "Labels");
+    let alias_comment = comment_id(&mut job, "LimeTypeAlias", "Labels");
+    let root = job["snapshot"]["root"]["$ref"].as_str().unwrap().to_owned();
+    node_mut(&mut job, &root)["properties"]["topElements"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|item| item["$ref"] != alias);
+    node_mut(&mut job, &root)["properties"]["auxiliaryElements"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"$ref":alias}));
+    job["raw_comments"][&alias_comment] = json!([["Cpp", "[unsupported auxiliary link]"]]);
+    cases.push(job);
+    let mut job = base.clone();
+    job["version"] = json!(1);
+    cases.push(job);
+    let mut job = base.clone();
+    job.as_object_mut().unwrap().remove("raw_comments");
+    cases.push(job);
+    let mut job = fixture("default");
+    job["raw_comments"] = Value::Null;
+    cases.push(job);
+    let mut job = base.clone();
+    job["raw_comments"] = Value::Null;
+    cases.push(job);
+    let mut job = base.clone();
+    node_mut(&mut job, &id)["properties"]["isEmpty"] = json!(true);
+    cases.push(job);
+    let mut job = base.clone();
+    node_mut(&mut job, &id)["properties"]["selectedText"] = json!("forged");
+    cases.push(job);
+    let mut job = base.clone();
+    let owner = node_id(&job, "LimeStruct", "Data");
+    node_mut(&mut job, &id)["properties"]["placeholders"] = json!({"bad": {"$ref":owner}});
+    cases.push(job);
+    for job in cases {
+        assert!(generate(TEMPLATES, &job).is_err());
+    }
+    let mut ignored = base;
+    ignored["raw_comments"][&id] = json!([["Java", "[not cpp] **bold**"]]);
+    assert!(generate(TEMPLATES, &ignored).is_ok());
+}
+
+#[test]
+fn version_two_resolves_placeholder_mutations_and_rejects_cycles() {
+    let mut job = raw_comment_job();
+    let owner = comment_id(&mut job, "LimeStruct", "Data");
+    let target = comment_id(&mut job, "LimeField", "count");
+    node_mut(&mut job, &owner)["properties"]["placeholders"] = json!({"part": {"$ref": target}});
+    job["raw_comments"][&owner] =
+        json!([["", "Prefix "], ["Placeholder", "part"], ["", " suffix."]]);
+    job["raw_comments"][&target] = json!([["", " first "], ["Java", "ignored"], ["Cpp", "word "]]);
+    assert!(data_header(&job).contains(" * Prefix first word suffix."));
+    job["raw_comments"][&target] = json!([["Cpp", " second "]]);
+    assert!(data_header(&job).contains(" * Prefix second suffix."));
+    job["raw_comments"][&target] = json!([]);
+    assert!(data_header(&job).contains(" * Prefix  suffix."));
+    node_mut(&mut job, &target)["properties"]["placeholders"] = json!({"back": {"$ref": owner}});
+    assert!(generate(TEMPLATES, &job).is_err());
+}
+
+#[test]
+fn invalid_late_raw_documentation_preserves_existing_output() {
+    let dir = tmp("comment-preflight");
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(dir.join("out/cpp/include")).unwrap();
+    fs::write(dir.join("out/cpp/include/existing.h"), b"preserve this").unwrap();
+    let mut job = raw_comment_job();
+    let id = comment_id(&mut job, "LimeTypeAlias", "Labels");
+    job["raw_comments"][&id] = json!([["Cpp", "Invalid [reference]."]]);
+    let path = dir.join("job.json");
+    fs::write(&path, serde_json::to_vec(&job).unwrap()).unwrap();
+    let result = Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+        .args(["generate-cpp", "--job"])
+        .arg(&path)
+        .args(["--templates", TEMPLATES, "--output"])
+        .arg(dir.join("out"))
+        .output()
+        .unwrap();
+    assert!(!result.status.success());
+    assert!(result.stdout.is_empty());
+    assert_eq!(
+        fs::read(dir.join("out/cpp/include/existing.h")).unwrap(),
+        b"preserve this"
+    );
+    fs::remove_dir_all(dir).unwrap();
+}
+
+#[test]
+fn documentation_file_sets_match_jvm_bytes_and_source_sets() {
+    for case in ["docs", "comments-file-interface", "comments-file-lambda"] {
+        let root = Path::new("tests/cpp-documentation-goldens").join(case);
+        let job: Value = serde_json::from_slice(&fs::read(root.join("job.json")).unwrap()).unwrap();
+        let manifest: Value =
+            serde_json::from_slice(&fs::read(root.join("manifest.json")).unwrap()).unwrap();
+        let expected = manifest["files"].as_object().unwrap();
+        let generated = generate(TEMPLATES, &job).unwrap();
+        assert_eq!(generated.len(), expected.len(), "{case}");
+        for file in generated {
+            let path = file.path.to_str().unwrap();
+            let source_set = match file.source_set {
+                SourceSet::MAIN => "MAIN",
+                SourceSet::COMMON => "COMMON",
+            };
+            assert_eq!(expected[path], source_set, "{case}/{path}");
+            assert_eq!(
+                file.contents.as_bytes(),
+                fs::read(root.join("files").join(path)).unwrap(),
+                "{case}/{path}"
+            );
+        }
+    }
+}
+
+#[test]
+fn empty_placeholder_dag_does_not_expand_exponentially() {
+    let mut job = raw_comment_job();
+    let ids: Vec<String> = job["raw_comments"]
+        .as_object()
+        .unwrap()
+        .keys()
+        .take(40)
+        .cloned()
+        .collect();
+    for pair in ids.windows(2) {
+        node_mut(&mut job, &pair[0])["properties"]["placeholders"] =
+            json!({"next":{"$ref":pair[1]}});
+        job["raw_comments"][&pair[0]] = json!([["Placeholder", "next"], ["Placeholder", "next"]]);
+    }
+    assert!(generate(TEMPLATES, &job).is_ok());
+}
+
+#[test]
+fn documentation_generation_is_deterministic_without_jvm_on_path() {
+    let root = Path::new("tests/cpp-documentation-goldens/docs");
+    let manifest: Value =
+        serde_json::from_slice(&fs::read(root.join("manifest.json")).unwrap()).unwrap();
+    let dir = tmp("comment-no-jvm");
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(&dir).unwrap();
+    for name in ["first", "second"] {
+        let output = Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+            .args(["generate-cpp", "--job"])
+            .arg(root.join("job.json"))
+            .args(["--templates", TEMPLATES, "--output"])
+            .arg(dir.join(name))
+            .env("PATH", "")
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        assert!(output.stdout.is_empty());
+    }
+    for path in manifest["files"].as_object().unwrap().keys() {
+        let expected = fs::read(root.join("files").join(path)).unwrap();
+        assert_eq!(fs::read(dir.join("first").join(path)).unwrap(), expected);
+        assert_eq!(fs::read(dir.join("second").join(path)).unwrap(), expected);
+    }
+    fs::remove_dir_all(dir).unwrap();
+}

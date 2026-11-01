@@ -29,6 +29,8 @@ struct Job {
     version: u64,
     snapshot: Value,
     #[serde(default)]
+    raw_comments: Option<Value>,
+    #[serde(default)]
     property_overlays: Option<Value>,
     #[serde(default)]
     absent_properties: Option<Value>,
@@ -227,17 +229,44 @@ fn array(graph: &Graph, value: &Value, key: &str) -> Result<Vec<Value>, String> 
 pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<GeneratedFile>, String> {
     let job: Job =
         serde_json::from_value(input.clone()).map_err(|e| format!("generation job: {e}"))?;
-    if job.schema != "gluecodium.cpp-generation-job" || job.version != 1 {
+    if job.schema != "gluecodium.cpp-generation-job" || ![1, 2].contains(&job.version) {
         return Err("unsupported C++ generation job schema or version".into());
+    }
+    if (job.version == 1 && input.get("raw_comments").is_some())
+        || (job.version == 2 && job.raw_comments.is_none())
+    {
+        return Err("raw_comments requires generation job version 2".into());
     }
     check_options(&job.options)?;
     validate_snapshot_shape(&job.snapshot)?;
-    let graph = Graph::import_with_absences(
+    let mut graph = Graph::import_with_absences(
         Some(&job.snapshot),
         job.property_overlays.as_ref(),
         job.absent_properties.as_ref(),
     )?;
     validate_snapshot_values(&graph, &job.snapshot)?;
+    if let Some(raw) = &job.raw_comments {
+        if let Some(overlays) = &job.property_overlays {
+            for (id, fields) in overlays.as_object().ok_or("invalid overlays")? {
+                if graph
+                    .nodes
+                    .get(id)
+                    .is_some_and(|n| n.class.ends_with(".LimeComment"))
+                    && fields.get("isEmpty").is_some()
+                {
+                    return Err("version 2 forbids comment isEmpty overlay".into());
+                }
+            }
+        }
+        graph.attach_raw_comments(raw)?;
+        for (id, node) in &graph.nodes {
+            if node.class.ends_with(".LimeComment") {
+                let text = template::native_comments::selected(&graph, &json!({"$ref":id}))?
+                    .ok_or("missing raw comments")?;
+                template::native_comments::format(&text)?;
+            }
+        }
+    }
     validate_graph(&graph, &job)?;
     validate_type_cycles(&graph)?;
     validate_method_names(&graph, &job.options)?;
@@ -287,6 +316,7 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             templates.as_ref(),
             &req,
             json!(job.options.copyright_header),
+            job.raw_comments.as_ref(),
         )
     };
     for element in roots {
@@ -841,7 +871,8 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 }
             }
         }
-        if kind == "LimeComment"
+        if job.version == 1
+            && kind == "LimeComment"
             && (node.properties.get("isEmpty") != Some(&Value::Bool(true))
                 || node.properties.get("isExcluded") != Some(&Value::Bool(false))
                 || node
@@ -860,10 +891,23 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             }
             let tail = array(graph, &v, "tail")?;
             for (i, part) in tail.iter().enumerate() {
-                if !part
-                    .as_str()
-                    .is_some_and(|s| identifier(s) || (s.is_empty() && i + 1 == tail.len()))
-                {
+                let comment_only = job.version == 2
+                    && graph
+                        .nodes
+                        .values()
+                        .any(|owner| owner.properties.get("path") == Some(&v))
+                    && graph
+                        .nodes
+                        .values()
+                        .filter(|owner| owner.properties.get("path") == Some(&v))
+                        .all(|owner| owner.class.ends_with(".LimeComment"));
+                if !part.as_str().is_some_and(|s| {
+                    identifier(s)
+                        || (s.is_empty() && i + 1 == tail.len())
+                        || (comment_only
+                            && i + 1 == tail.len()
+                            && s.strip_prefix('@').is_some_and(identifier))
+                }) {
                     return Err("invalid declaration path".into());
                 }
             }
