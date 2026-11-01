@@ -126,3 +126,47 @@ fn inline_definition_preserves_nested_namespace_whitespace() {
         assert_eq!(render_template(template, None), expected, "{template:?}");
     }
 }
+
+#[test]
+fn tags_after_inline_definition_rejoin_enclosing_line() {
+    for (template, expected) in [
+        (
+            "{{>p}}\n{{+p}}\n{{#one}}\nX\n{{/one}}\n{{/p}}{{#one}}\nY\n{{/one}}\n",
+            "\n\nX\n\nY\n",
+        ),
+        (
+            "{{>p}}\n{{+p}}\nx\n{{/p}}  {{#one}}\nY\n{{/one}}\n",
+            "\nx\nY\n",
+        ),
+        (
+            "{{>p}}\n{{+p}}\nx\n  {{/p}}  {{#one}}\nY\n{{/one}}\n",
+            "\nx\n  Y\n",
+        ),
+        ("{{>p}}\n{{+p}}\nx\n{{/p}}  {{#no}}\nY\n{{/no}}\n", "\nx\n"),
+        ("{{>p}}\n{{+p}}\nx\n{{/p}}{{!comment}}\nY\n", "\nx\nY\n"),
+        ("{{>p}}\n{{+p}}\nx\n{{/p}}{{#one}}{{/one}}\nY", "\nx\nY"),
+        (
+            "{{>p}}\n{{+p}}\nx\n{{/p}}{{#one}}\r\nY\r\n{{/one}}\r\n",
+            "\nx\nY\r\n",
+        ),
+        ("{{>p}}\n{{+p}}x{{/p}}{{#one}}\nY\n{{/one}}\n", "xY\n"),
+        ("A{{+p}}x{{/p}}{{#one}}\nY\n{{/one}}\n", "A\nY\n"),
+        ("{{name}}{{+p}}x{{/p}}{{#one}}\nY\n{{/one}}\n", "outer\nY\n"),
+        ("  {{+p}}x{{/p}}{{#one}}\nY\n{{/one}}\n", "Y\n"),
+        ("{{>p}}\n{{+p}}\nx\n{{/p}}{{name}}\nY", "\nx\nouter\nY"),
+    ] {
+        assert_eq!(render_template(template, None), expected, "{template:?}");
+    }
+    assert_eq!(
+        render_template("{{+p}}\nq\n{{/p}}  {{>part}}\nZ", Some("x\ny\n")),
+        "  x\n  y\nZ"
+    );
+    assert_eq!(
+        render_template("  {{+p}}q{{/p}}{{>part}}\nZ", Some("x\ny\n")),
+        "  x\n  y\nZ"
+    );
+    assert_eq!(
+        render_template("  {{+p}}q{{/p}}    {{>part}}\nZ", Some("x\ny\n")),
+        "  x\n  y\nZ"
+    );
+}

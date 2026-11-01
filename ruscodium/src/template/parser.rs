@@ -67,7 +67,7 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
     let mut line_start = 0;
     let mut first_tag = 0;
     let mut cursor = 0;
-    let mut containers: Vec<(String, bool)> = Vec::new();
+    let mut containers: Vec<(String, bool, usize)> = Vec::new();
     let mut definition_depth = 0usize;
     while cursor < source.len() || first_tag < tags.len() {
         let mut next_tag = first_tag;
@@ -142,6 +142,7 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
                 tags[next_tag - 1].end = end;
             }
         }
+        let mut closed_definition = None;
         for i in indices.clone() {
             let content = &tags[i].content;
             match content.chars().next() {
@@ -149,19 +150,87 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
                     if let Some(name) = content[1..].split_whitespace().next() {
                         let definition = content.starts_with('+');
                         definition_depth += usize::from(definition);
-                        containers.push((name.to_string(), definition));
+                        containers.push((name.to_string(), definition, i));
                     }
                 }
                 Some('/')
                     if containers
                         .last()
-                        .is_some_and(|(name, _)| name == content[1..].trim()) =>
+                        .is_some_and(|(name, _, _)| name == content[1..].trim()) =>
                 {
-                    if containers.pop().is_some_and(|(_, definition)| definition) {
-                        definition_depth -= 1;
+                    let (_, definition, opening) = containers.pop().unwrap();
+                    definition_depth -= usize::from(definition);
+                    if definition {
+                        closed_definition = Some((opening, i));
                     }
                 }
                 _ => {}
+            }
+        }
+        // The text following a definition is again in the enclosing template.
+        // It can form a standalone line even when the definition's closing tag
+        // shares that line. Preserve all text before the closing tag as body.
+        if let Some((opening, closing)) = closed_definition {
+            let same_line = opening >= first_tag;
+            let mut prefix_cursor = line_start;
+            let standalone_prefix = !same_line
+                || ((first_tag..opening).all(|i| {
+                    let tag = &tags[i];
+                    let valid = matches!(
+                        tag.content.chars().next(),
+                        Some('!' | '#' | '^' | '/' | '>')
+                    ) && source[prefix_cursor..tag.start]
+                        .chars()
+                        .all(|c| matches!(c, ' ' | '\t' | '\r'));
+                    prefix_cursor = tag.end;
+                    valid
+                }) && source[prefix_cursor..tags[opening].start]
+                    .chars()
+                    .all(|c| matches!(c, ' ' | '\t' | '\r')));
+            let suffix = closing + 1..next_tag;
+            let mut text_cursor = tags[closing].end;
+            let standalone_suffix = standalone_prefix
+                && !suffix.is_empty()
+                && suffix.clone().all(|i| {
+                    let tag = &tags[i];
+                    let valid = matches!(
+                        tag.content.chars().next(),
+                        Some('!' | '#' | '^' | '/' | '>')
+                    ) && source[text_cursor..tag.start]
+                        .chars()
+                        .all(|c| matches!(c, ' ' | '\t' | '\r'));
+                    text_cursor = tag.end;
+                    valid
+                })
+                && source[text_cursor..end]
+                    .chars()
+                    .all(|c| matches!(c, ' ' | '\t' | '\r' | '\n'));
+            if standalone_suffix {
+                let prefix_indent = if same_line {
+                    &source[line_start..tags[first_tag].start]
+                } else {
+                    ""
+                };
+                let first = closing + 1;
+                let indent = if prefix_indent.is_empty() {
+                    source[tags[closing].end..tags[first].start].to_string()
+                } else {
+                    prefix_indent.to_string()
+                };
+                if same_line {
+                    tags[first_tag].start = line_start;
+                    for i in first_tag..opening {
+                        tags[i].end = tags[i + 1].start;
+                    }
+                }
+                if let Some(i) = suffix.clone().find(|&i| tags[i].content.starts_with('>')) {
+                    tags[i].indent = indent;
+                }
+                tags[first].start = tags[closing].end;
+                for i in first..next_tag - 1 {
+                    tags[i].end = tags[i + 1].start;
+                }
+                tags[next_tag - 1].end = end;
             }
         }
         first_tag = next_tag;
