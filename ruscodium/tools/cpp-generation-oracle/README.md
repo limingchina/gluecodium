@@ -77,3 +77,25 @@ The 315-template corpus digest is
 computed by SHA-256 over each sorted relative UTF-8 path, a NUL byte, and its
 exact bytes, concatenated. The check compares each file directly instead of
 relying on the digest.
+
+## Raw documentation profile
+
+`run-docs` captures version-2 jobs in a separate directory and `check-docs`
+regenerates their complete output sets, compiles every generated implementation
+with strict C++17 flags, and runs three consumers. The `docs` real-LIME fixture
+covers Unicode, paragraphs, platform selection, configured placeholder text,
+exclusion, functions, properties and struct/field-constructor documentation.
+The other two groups load unmodified upstream `CommentsInterface.lime` and
+`CommentsLambda.lime` independently; neither represents the complete comments
+smoke scenario.
+
+The opt-in `CPP_ORACLE_RAW_COMMENTS=1` profile reflectively reads the private
+`LimeComment.taggedSections` field, checking its shape and exporting one ordered
+array of `[tag,text]` string pairs for every comment node, including empties and
+placeholder nodes. The snapshot stays version 1; the generation job is version
+2 and does not supply comment `isEmpty` overlays. Paths, exclusions and
+placeholder references remain in the snapshot. The oracle never exports selected
+or formatted comment text. Ordinary loader placeholder values are parsed without
+nested placeholder mappings, so the fixture uses the loader-supported one-level
+case; deeper recursion must be labeled synthetic model evidence. Default/custom
+version-1 captures and the reference-model exporter remain unchanged.

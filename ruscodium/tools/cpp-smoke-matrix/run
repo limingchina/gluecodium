@@ -1,0 +1,126 @@
+#!/usr/bin/env python3
+"""Capture complete JVM output and compare a native generate-cpp executable."""
+import argparse
+import hashlib
+import json
+import os
+from pathlib import Path
+import subprocess
+import tempfile
+
+ROOT = Path(__file__).resolve().parents[3]
+TOOL = ROOT / 'ruscodium/tools/cpp-generation-oracle'
+SMOKE = ROOT / 'gluecodium/src/test/resources/smoke'
+TEMPLATES = ROOT / 'gluecodium/src/main/resources/templates'
+GROUPS = ('basic_types', 'enums', 'typedefs', 'lambdas', 'properties', 'structs',
+          'nesting', 'comments', 'inheritance', 'async', 'external_types',
+          'namespace_basic', 'skip', 'comments-file-interface', 'comments-file-lambda')
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def tree(root):
+    return {p.relative_to(root).as_posix(): digest(p) for p in sorted(root.rglob('*')) if p.is_file()} if root.exists() else {}
+
+def run(cmd, **kw):
+    return subprocess.run([str(x) for x in cmd], cwd=ROOT, text=True, capture_output=True, **kw)
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--native', required=True, type=Path)
+    parser.add_argument('--report', required=True, type=Path)
+    parser.add_argument('--capture', required=True, type=Path)
+    parser.add_argument('--job-version', choices=('1', '2'), default='1')
+    parser.add_argument('--revision', required=True)
+    parser.add_argument('--inventory', type=Path)
+    parser.add_argument('--baseline', type=Path, help='require identical source/options/JVM outputs to this report')
+    args = parser.parse_args()
+    native = args.native.resolve(); capture = args.capture.resolve()
+    baseline = {r['case']: r for r in json.loads(args.baseline.read_text())['rows']} if args.baseline else {}
+    capture.mkdir(parents=True, exist_ok=True)
+    lib = ROOT / 'gluecodium/build/install/gluecodium/lib'
+    java = Path(os.environ['JAVA_HOME']) / 'bin/java' if os.environ.get('JAVA_HOME') else 'java'
+    javac = Path(os.environ['JAVA_HOME']) / 'bin/javac' if os.environ.get('JAVA_HOME') else 'javac'
+    with tempfile.TemporaryDirectory() as d:
+        classes = Path(d)
+        result = run([javac, '-cp', str(lib / '*'), '-d', classes,
+                      ROOT / 'ruscodium/tools/reference-model/ReferenceModel.java', TOOL / 'CppGenerationOracle.java'])
+        if result.returncode: raise SystemExit(result.stderr)
+        rows = []
+        for group in GROUPS:
+            out = capture / group
+            if out.exists() and any(out.iterdir()):
+                raise SystemExit(f'capture case already exists and is not empty: {out}')
+            out.mkdir(parents=True, exist_ok=True)
+            env = dict(os.environ, CPP_ORACLE_RAW_COMMENTS='1' if args.job_version == '2' else '0')
+            jvm = run([java, '-cp', f'{classes}:{lib}/*', 'CppGenerationOracle', group, out], env=env)
+            stage = (out / 'stage.txt').read_text().strip() if (out / 'stage.txt').exists() else 'setup'
+            scenario = 'comments' if group.startswith('comments-file-') else group
+            input_dir = SMOKE / scenario / 'input'
+            aux_dir = SMOKE / scenario / 'auxiliary'
+            paths = sorted(input_dir.rglob('*')) + (sorted(aux_dir.rglob('*')) if aux_dir.exists() else [])
+            if group.startswith('comments-file-'):
+                filename = 'CommentsInterface.lime' if group.endswith('interface') else 'CommentsLambda.lime'
+                paths = [p for p in paths if not p.name.endswith('.lime') or p.name == filename or aux_dir in p.parents]
+            hashes = {p.relative_to(ROOT).as_posix(): digest(p) for p in paths if p.is_file()}
+            row = {'case': group, 'scope': 'single-file' if group.startswith('comments-file-') else 'complete-group',
+                   'input_hashes': hashes, 'stage': stage, 'jvm_exit': jvm.returncode}
+            if (out / 'metadata.json').exists(): row['effective'] = json.loads((out / 'metadata.json').read_text())
+            if (out / 'job.json').exists(): row['job_sha256'] = digest(out / 'job.json')
+            if (out / 'manifest.json').exists():
+                row['jvm_source_sets'] = json.loads((out / 'manifest.json').read_text())['files']
+                row['jvm_files_sha256'] = tree(out / 'files')
+            if jvm.returncode:
+                row['status'] = 'exporter_failure' if stage == 'export' else 'jvm_failure'
+                row['diagnostic'] = jvm.stderr[-4000:]
+            else:
+                native_dir = out / 'native'
+                n = run([native, 'generate-cpp', '--job', out / 'job.json', '--templates', TEMPLATES, '--output', native_dir])
+                row['native_exit'] = n.returncode
+                if n.returncode:
+                    row['status'] = 'native_rejected'; row['diagnostic'] = n.stderr.strip()
+                else:
+                    expected, actual = tree(out / 'files'), tree(native_dir)
+                    row['expected_files'] = len(expected); row['actual_files'] = len(actual)
+                    row['missing'] = sorted(expected.keys() - actual.keys())
+                    row['unexpected'] = sorted(actual.keys() - expected.keys())
+                    row['different'] = sorted(k for k in expected.keys() & actual.keys() if expected[k] != actual[k])
+                    row['status'] = 'path_and_bytes_match' if not (row['missing'] or row['unexpected'] or row['different']) else 'output_mismatch'
+                    row['source_sets'] = 'unobserved by generate-cpp CLI'
+                    if args.inventory:
+                        inventory = run([args.inventory.resolve(), out / 'job.json', TEMPLATES])
+                        if inventory.returncode:
+                            row['source_sets'] = 'inventory_failure'; row['inventory_diagnostic'] = inventory.stderr.strip()
+                            row['status'] = 'inventory_failure'
+                        else:
+                            entries = json.loads(inventory.stdout)
+                            native_sets = {entry['path']: entry['source_set'] for entry in entries}
+                            native_hashes = {entry['path']: hashlib.sha256(entry['contents'].encode()).hexdigest() for entry in entries}
+                            row['source_sets'] = 'match' if len(entries) == len(native_sets) and native_sets == row['jvm_source_sets'] else 'mismatch'
+                            row['inventory_bytes_match_cli'] = native_hashes == actual
+                            if row['source_sets'] != 'match' or not row['inventory_bytes_match_cli']:
+                                row['status'] = 'output_mismatch'
+                            elif row['status'] == 'path_and_bytes_match':
+                                row['status'] = 'exact_match'
+            if baseline:
+                old = baseline.get(group)
+                keys = ('scope', 'input_hashes', 'effective', 'jvm_exit', 'jvm_source_sets', 'jvm_files_sha256')
+                differences = [key for key in keys if old is None or old.get(key) != row.get(key)]
+                row['baseline_comparison'] = 'match' if not differences else {'different_fields': differences}
+                if differences:
+                    row['status_before_provenance_failure'] = row['status']
+                    row['status'] = 'provenance_mismatch'
+            rows.append(row)
+            print(group, row['status'], row.get('diagnostic', '').splitlines()[-1:] or '', flush=True)
+        version = run([java, '-version'])
+        report = {'profile': 'gluecodium.cpp-smoke-matrix', 'version': 1,
+                  'job_version': int(args.job_version), 'native_binary_sha256': digest(native),
+                  'native_revision': args.revision,
+                  'cxx_version': run([os.environ.get('CXX', 'c++'), '--version']).stdout.splitlines()[0],
+                  'java_version': version.stderr.strip(),
+                  'jvm_jar_sha256': {p.name: digest(p) for p in sorted(lib.glob('gluecodium-*.jar'))},
+                  'templates': tree(TEMPLATES), 'rows': rows}
+        args.report.parent.mkdir(parents=True, exist_ok=True)
+        args.report.write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
+
+if __name__ == '__main__': main()
