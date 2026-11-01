@@ -10,9 +10,12 @@ interface Worker {
     static property version: Int { get }
 }
 struct Data {
+    typealias LaterAlias = EarlierAlias
+    typealias EarlierAlias = Int
     count: Int = 7
     label: String
     maybe: Int?
     mapping: Map<String, Int>
+    tags: Set<String>
     field constructor(label)
 }

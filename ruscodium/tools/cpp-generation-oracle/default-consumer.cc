@@ -20,6 +20,10 @@ int main() {
     assert(data.count == 7 && data.label == "sample" && !data.maybe);
     data.mapping.emplace("key", 9);
     assert(data.mapping.at("key") == 9);
+    data.tags.insert("ready");
+    assert(data.tags.count("ready") == 1);
+    oracle::basic::Data::LaterAlias number = 12;
+    assert(number == 12);
     ConcreteWorker worker;
     worker.set_ready(true);
     assert(worker.is_ready() && worker.run(42) == "42" && worker.get_name() == "worker");

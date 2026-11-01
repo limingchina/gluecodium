@@ -11,7 +11,7 @@ namespace oracle {
 namespace basic {
 
 Data::Data( )
-    : label{ }, mapping{ }
+    : label{ }, mapping{ }, tags{ }
 {
 }
 

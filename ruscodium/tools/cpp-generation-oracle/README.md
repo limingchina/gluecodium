@@ -39,8 +39,9 @@ The `default` group loads [default.lime](default.lime) as main input with actual
 `GeneratorOptions` defaults: empty root/internal namespaces, `_GLUECODIUM_CPP`
 export, common export inherited from it, and null copyright. It has enum, alias,
 lambda, interface, and struct roots; numeric and string values, map/nullable
-fields, defaults, a field constructor, and readonly, mutable and static
-properties. The `custom` group loads [custom.lime](custom.lime) as main and
+fields, a string set, defaults, a field constructor, and readonly, mutable and
+static properties. Two nested aliases occur in dependent-first source order;
+the C++ generator moves the dependency first within the same alias collection. The `custom` group loads [custom.lime](custom.lime) as main and
 [aux.lime](aux.lime) as an unreferenced auxiliary input. It uses root namespace
 `acme::api`, internal namespace `acme::detail`, `ACME_API` and `ACME_COMMON`
 exports, and a multiline copyright. Its renamed class, reordered nested alias

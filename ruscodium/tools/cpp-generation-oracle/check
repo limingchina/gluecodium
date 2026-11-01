@@ -28,6 +28,15 @@ for group in ('default', 'custom'):
         sys.exit(f'{group}: generated file inventory or source sets invalid')
     if sum(value == 'COMMON' for value in inventory.values()) != 17:
         sys.exit(f'{group}: expected 17 COMMON files')
+    if group == 'default':
+        job = json.loads((new / 'job.json').read_text())
+        nodes = {node['id']: node for node in job['snapshot']['nodes']}
+        root = nodes[job['snapshot']['root']['$ref']]['properties']
+        data = nodes[root['referenceMap']['oracle.basic.Data']['$ref']]['properties']
+        aliases = [job['property_overlays'][ref['$ref']]['name'] for ref in data['typeAliases']]
+        header = (new / 'files/cpp/include/oracle/basic/Data.h').read_text()
+        if aliases != ['LaterAlias', 'EarlierAlias'] or not (header.index('using EarlierAlias') < header.index('using LaterAlias')):
+            sys.exit('default: fixture no longer demonstrates dependency reordering within aliases')
     print(f'{group}: verified {len(paths)} JVM-generated file bytes and source sets, full job snapshot')
 PY
 "$here/compile-consumers" "$tmp"
