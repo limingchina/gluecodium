@@ -405,7 +405,7 @@ mod tests {
                 format!("// {{@Cpp{control}text}}"),
             ] {
                 assert!(
-                    parse_documentation(&[input.clone()]).is_err(),
+                    parse_documentation(std::slice::from_ref(&input)).is_err(),
                     "accepted {input:?}"
                 );
             }
