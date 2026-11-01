@@ -92,8 +92,8 @@ fn every_recorded_name_cell_is_compared_or_explicitly_unsupported() {
         }
     }
     assert_eq!(matrix, 162);
-    assert_eq!(m9, 35);
-    assert_eq!(supported, 238);
+    assert_eq!(m9, 92);
+    assert_eq!(supported, 295);
     assert_eq!(
         unsupported,
         BTreeMap::from([

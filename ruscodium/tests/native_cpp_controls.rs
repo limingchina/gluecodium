@@ -73,12 +73,12 @@ fn inventory_recorded_controls() {
     assert_eq!(
         counts,
         BTreeMap::from([
-            ("predicate exact".into(), 853),
+            ("predicate exact".into(), 1095),
             (
                 "predicate error: native controls nonempty comment content unsupported".into(),
                 4
             ),
-            ("sort exact".into(), 12),
+            ("sort exact".into(), 15),
         ])
     );
     assert_eq!(
@@ -178,7 +178,13 @@ fn config_and_empty_selection_guards() {
 
 #[test]
 fn unchanged_fragments_render_with_all_native_controls() {
-    for name in ["m9-class", "m9-struct"] {
+    for name in [
+        "m9-class",
+        "m9-struct",
+        "m9-field-defaults",
+        "m9-field-frozen",
+        "m9-field-accessors",
+    ] {
         let mut req: Value = serde_json::from_slice(
             &fs::read(format!("tests/template-goldens/{name}.request.json")).unwrap(),
         )
@@ -485,4 +491,56 @@ fn invalid_constructor_field_references_fail() {
             .unwrap_err()
             .contains("invalid field reference class")
     );
+}
+
+#[test]
+fn jvm_generic_constructor_cases_exercise_distinct_immutable_traversals() {
+    let req: Value =
+        serde_json::from_slice(&fs::read("tests/template-goldens/m9-matrix.request.json").unwrap())
+            .unwrap();
+    let root = req["snapshot"]["root"]["$ref"].as_str().unwrap();
+    let model = req["snapshot"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|n| n["id"] == root)
+        .unwrap();
+    let graph = graph(&req);
+    for (name, all_fields) in [
+        ("GenericListCtor", true),
+        ("GenericSetCtor", true),
+        ("GenericMapCtor", true),
+        ("GenericMapKeyCtor", false),
+    ] {
+        let structure = &model["properties"]["referenceMap"][format!("m9.matrix.{name}")];
+        assert!(
+            predicate(&graph, "hasDefaultConstructor", structure).unwrap(),
+            "{name}"
+        );
+        assert!(
+            !predicate(&graph, "hasPartialDefaults", structure).unwrap(),
+            "{name}"
+        );
+        assert_eq!(
+            predicate(&graph, "needsAllFieldsConstructor", structure).unwrap(),
+            all_fields,
+            "{name}"
+        );
+        for (selector, expected) in [
+            ("hasDefaultConstructor", true),
+            ("hasPartialDefaults", false),
+            ("needsAllFieldsConstructor", all_fields),
+        ] {
+            assert!(
+                req["hooks"]["predicates"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .any(|cell| cell["receiver"] == *structure
+                        && cell["name"] == selector
+                        && cell["result"] == expected),
+                "missing JVM record {name}/{selector}"
+            );
+        }
+    }
 }

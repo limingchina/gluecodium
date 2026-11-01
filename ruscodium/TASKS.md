@@ -198,7 +198,7 @@ complete naming or backend parity. Published this verified increment through
 
 ## M9 / P1a.2: strict native C++ predicates and declaration sorting
 
-Execute [the M9 contract](PLAN.md#m9--p1a2-strict-native-c-predicates-and-declaration-sorting--next-increment)
+Execute [the M9 contract](PLAN.md#m9--p1a2-strict-native-c-predicates-and-declaration-sorting--bounded-implementation-final-verification-pending)
 from baseline `96b7c3421`, with Sol 6.1 max planning, Terra 6.1 xhigh
 implementation and independent Sol 6.1 xhigh review. Keep every change under
 `ruscodium/` and all 315 upstream Mustache templates unchanged.
@@ -208,30 +208,30 @@ implementation and independent Sol 6.1 xhigh review. Keep every change under
 - [x] Define explicit native predicate/sorter options, exact algorithm scope,
   comment/getter boundary, anti-replay rules and completion evidence.
 - [x] Commit this plan/checklist before M9 implementation starts.
-- [ ] Add validated `native_cpp.predicates` and `.sorters` boolean opt-ins,
+- [x] Add validated `native_cpp.predicates` and `.sorters` boolean opt-ins,
   default false; retain M8/legacy dispatch and reject enabled-provider replay
   hooks/catalog, including configuration and empty-input selector guards.
-- [ ] Port all eleven C++ predicate selectors from raw model facts, preserving
+- [x] Port all eleven C++ predicate selectors from raw model facts, preserving
   actual receiver-kind behavior, aliases, nullability, constructors/defaults,
   the two immutable-field traversals, sibling imports and ancestor skip rules.
-- [ ] Keep missing/nonempty comment content strict; honor empty-comment
+- [x] Keep missing/nonempty comment content strict; honor empty-comment
   exclusion/deprecation and non-null warnings without captured predicate answers.
-- [ ] Port the actual default sorter: named-element filtering, exact dependency
+- [x] Port the actual default sorter: named-element filtering, exact dependency
   dispatch, generic children and direct alias identities, input-order ties,
   self-dependency removal, idempotence and explicit cycle/duplicate handling.
-- [ ] Add bounded graph projections needed by genuine `CppStruct`/`CppClass`
+- [x] Add bounded graph projections needed by genuine `CppStruct`/`CppClass`
   partials; document each measured getter/ambient value. Native algorithms must
   not consume computed predicate answers, sorted lists or imported dependency
   collections. Prefer raw-derived views where the native logic already exists.
-- [ ] Inventory and compare every existing actual predicate cell and sorter
+- [x] Inventory and compare every existing actual predicate cell and sorter
   record, with exact-match and explicit-rejection counts/reasons.
-- [ ] Extend reproducible full-model JVM predicate/sort matrices through the M9
+- [x] Extend reproducible full-model JVM predicate/sort matrices through the M9
   cases, including actual reordering, constructors/defaults, nested/alias and
   class refs, immutable containers, forward declarations and inherited skips.
-- [ ] Match JVM bytes for two or three unchanged comment-free C++ struct/class
+- [x] Match JVM bytes for two or three unchanged comment-free C++ struct/class
   fragments with all hooks removed, native names/predicates/sorting enabled and
   at least one real declaration reordering; retain existing native fragments.
-- [ ] Verify raw-fact mutations change native results; cover hook/catalog
+- [x] Verify raw-fact mutations change native results; cover hook/catalog
   anti-replay, empty lists, unknown selectors, missing facts, unsupported content
   and legal/invalid cycles with pre-write/stdout preservation checks.
 - [ ] Pass formatting, offline Clippy, Cargo, Python/reference-model checks,
@@ -240,6 +240,14 @@ implementation and independent Sol 6.1 xhigh review. Keep every change under
 - [ ] Obtain independent Sol 6.1 xhigh review and fix material findings.
 - [ ] Update README, TEMPLATES, oracle, review and measured evidence/checklist;
   commit tested increments and push the authorized branch.
+
+The current control inventory compares 1,095 actual predicate calls and 15
+sort records exactly, with four explicit nonempty-comment rejections. Native
+name comparison covers 295 exact calls and 20 documented rejections. Five
+unchanged C++ partials match JVM bytes with all native providers enabled,
+including fieldful defaults, immutable fields and an explicit field constructor;
+the class case reorders a nested declaration. Actual JVM cases cover immutable
+list, set, map-value and map-key fields with partial field constructors.
 
 M9 does not complete canonical adaptation, raw/native comments, header/file-set
 generation or C++ runtime/ABI parity. Keep those gaps explicit after delivery.

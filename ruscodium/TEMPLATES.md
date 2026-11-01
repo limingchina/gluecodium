@@ -88,9 +88,12 @@ non-named inputs and uses the C++ topological dependencies and first-eligible in
 order; duplicate full names and cycles are errors. Neither provider reads captured
 predicate answers, imported dependency lists, or sorted lists. Measured property
 getters remain a separate template-view boundary. The M9 recorded-control
-inventory checks 853 exact predicate calls and 12 exact sorts; four predicate
-calls reject nonempty comment text. The fixture suite exercises unchanged class
-and struct partials with all three native providers enabled.
+inventory checks 1,095 exact predicate calls and 15 exact sorts; four predicate
+calls reject nonempty comment text. Five unchanged class and struct partials match
+JVM bytes with all three native providers enabled, including fields, partial
+defaults, immutable fields and an explicit field constructor. One class fragment
+reorders a nested struct before an alias. The JVM matrix independently records
+constructor behavior for immutable list, set, map-value and map-key fields.
 
 For example, turn the recorded full-model enumeration fixture into a native
 request, retaining its measured predicate and sorter entries:
@@ -107,6 +110,23 @@ Path('/tmp/native-enumeration.request.json').write_text(json.dumps(request))
 PY
 cargo run -- render --templates ../gluecodium/src/main/resources/templates \
   --request /tmp/native-enumeration.request.json --output /tmp/native-enumeration.txt
+```
+
+To enable all three providers for the recorded full-model class fragment:
+
+```sh
+python3 - <<'PYEXAMPLE'
+import json
+from pathlib import Path
+
+request = json.loads(Path('tests/template-goldens/m9-class.request.json').read_text())
+request['native_cpp'] = {'predicates': True, 'sorters': True}
+request.pop('hooks', None)
+Path('/tmp/native-class.request.json').write_text(json.dumps(request))
+PYEXAMPLE
+cargo run -- render --templates ../gluecodium/src/main/resources/templates \
+  --request /tmp/native-class.request.json --output /tmp/native-class.txt
+cmp /tmp/native-class.txt tests/template-goldens/m9-class.expected
 ```
 
 The CLI is the same `render` command: the JSON request selects native naming.
