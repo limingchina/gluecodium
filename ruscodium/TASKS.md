@@ -576,7 +576,7 @@ Sol 6.1 max planning, Terra 6.1 xhigh implementation, Sol 6.1 xhigh review.
   keep any optional persistent-API experiment explicitly separate.
 - [x] Run appropriate tooling checks and verify all 315 templates unchanged;
   obtain independent Sol 6.1 xhigh review and resolve material findings.
-- [ ] Finalize plan/task/review evidence, commit the reproducible results and
+- [x] Finalize plan/task/review evidence, commit the reproducible results and
   leave the branch clean. Publish only within the user's existing authorization.
 
 Measured evidence: harness `9f599c55a`, persistent setup correction
@@ -611,8 +611,10 @@ final statistics. No unresolved material finding remains in this bounded
 experiment. See [PERFORMANCE.md](PERFORMANCE.md),
 [reproduction](tools/performance/README.md), the raw JSON and REVIEW.md.
 Shared-host, tmpfs, broader JVM validation and native-subset limits remain
-explicit; this is not a general language or full-parity claim. Publication
-remains pending.
+explicit; this is not a general language or full-parity claim. The benchmark,
+corrected results, chart, independent review and verification were pushed
+through `bb6fa7f59` to `origin/ruscodium/rust-port`; this checklist records that
+confirmed publication.
 
 ## Deferred full-parity work
 
