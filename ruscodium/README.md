@@ -8,6 +8,8 @@ cargo run -- -input ../examples/calculator/lime -validate
 cargo run -- -input ../examples/calculator/lime --model > calculator.json
 cargo run -- -input path/to/lime -generators json -output out
 cargo run -- -input path/to/lime -generators cpp -output out
+cargo run -- generate-cpp --job tests/cpp-generation-goldens/default/job.json \
+  --templates ../gluecodium/src/main/resources/templates --output out-cpp
 cargo run -- render --templates ../gluecodium/src/main/resources/templates \
   --request tests/template-goldens/cpp-enumeration.request.json --output enumeration.txt
 cargo test
@@ -25,7 +27,7 @@ The JSON has `schema_version: 1`, ordered source files, declarations, type refer
 | C++ | Experimental single `api.hpp`, using LIME package components as C++ namespaces and LIME names as identifiers. Classes/interfaces use virtual methods, virtual destructors and `shared_ptr` references; named constructors become static factory declarations. Struct fields, enums without explicit values, aliases, lambdas, ordinary properties, primitives, strings, blobs, standard containers and nullable values have standalone C++17 mappings. Top-level cross-file dependencies are ordered. No Gluecodium runtime or ABI compatibility is claimed. |
 | Remaining targets | Java/Kotlin/JNI, Swift/CBridge and Dart/FFI are not implemented. |
 
-The C++ generator rejects annotations, external descriptors, throws, inheritance, explicit initializers, runtime types (`Date`, `Duration`, `Locale`), references to auxiliary or nested declarations, C++ reserved identifiers, and cyclic by-value dependencies. Some other constructs such as constants, struct instance methods and field constructors are also rejected. Ordered Set elements and Map keys are limited to non-null primitive, string, and enum types; aliases and value types are rejected because their ordering is not established. It renders before creating the output directory, so a backend diagnostic does not leave generated files. Nested declarations can be emitted, but references to them are currently rejected. The output is an API sketch rather than Gluecodium-compatible generated code. Do not use it for production integration.
+The preview C++ generator rejects annotations, external descriptors, throws, inheritance, explicit initializers, runtime types (`Date`, `Duration`, `Locale`), references to auxiliary or nested declarations, C++ reserved identifiers, and cyclic by-value dependencies. Some other constructs such as constants, struct instance methods and field constructors are also rejected. Ordered Set elements and Map keys are limited to non-null primitive, string, and enum types; aliases and value types are rejected because their ordering is not established. It renders before creating the output directory, so a backend diagnostic does not leave generated files. Nested declarations can be emitted, but references to them are currently rejected. The output is an API sketch rather than Gluecodium-compatible generated code. Do not use it for production integration.
 
 The corpus test checks the 345 upstream baseline inputs separately because smoke scenarios reuse names. Additional tests validate the calculator and selected coherent smoke groups, and compile and execute a C++17 consumer as well as two checked-in C++ export fixtures. An independent comparison of 49 smoke scenarios with the JVM found Rust success on 46; three (`defaults_const`, `name_clash_overloads`, and `skip`) encounter duplicate names that require Gluecodium's platform filtering. The JVM `comments` scenario also requires extra documentation configuration. The preview is deliberately stricter than JVM validation in some cases: for example, it rejects duplicate parameters and invalid direct `Void` positions that the JVM validation command can accept. The preview also treats alias nullability as inherited for defaults and overload identity; the JVM currently behaves differently in those cases. Neither corpus acceptance nor these comparisons establish complete frontend or output parity.
 
@@ -33,8 +35,20 @@ The corpus test checks the 345 upstream baseline inputs separately because smoke
 
 The experimental [JVM reference snapshot tool](tools/reference-model/README.md) records a bounded view of the existing model for migration research. The native template runtime imports its version-1 identity graph and supports measured property overlays and explicitly absent properties. The library exposes `Graph`, `parse`, and `render`; the CLI renders a request against a template root. The snapshot and preview model JSON are distinct formats, and a complete canonical adapter remains future work.
 
-The [native Mustache runtime](TEMPLATES.md) reads the 315 existing templates unchanged and implements a bounded set of Trimou helpers, lookup and whitespace behavior. Requests can select native C++ naming with `"native_cpp": {}` and independently enable its eleven predicates and default declaration sorter with `"predicates": true` and `"sorters": true`. Each enabled provider rejects its recorded hooks; disabled providers retain the replay contract. The native algorithms use model facts, actual enclosing declarations and default C++ rules. They reject missing facts, unsupported comment content and malformed cycles rather than inventing results. The [JVM oracle](tools/template-oracle/README.md) captures reproducible predicate and sort calls and byte-exact unchanged C++ fragments, including class and fieldful struct partials rendered with all three native providers. Whole-file C++ generation and complete model, helper and naming parity remain future work.
+The [native Mustache runtime](TEMPLATES.md) reads the 315 existing templates unchanged and implements a bounded set of Trimou helpers, lookup and whitespace behavior. Requests can select native C++ naming with `"native_cpp": {}` and independently enable its eleven predicates and default declaration sorter with `"predicates": true` and `"sorters": true`. Each enabled provider rejects its recorded hooks; disabled providers retain the replay contract. The native algorithms use model facts, actual enclosing declarations and default C++ rules. They reject missing facts, unsupported comment content and malformed cycles rather than inventing results. The [JVM oracle](tools/template-oracle/README.md) captures reproducible predicate and sort calls and byte-exact unchanged C++ fragments, including class and fieldful struct partials rendered with all three native providers. Complete model, helper and naming parity remain future work.
 
 For examples of native naming and all three native providers, see the request
 conversion and unchanged `render` CLI examples in [TEMPLATES.md](TEMPLATES.md).
 This path is separate from the preview `-generators cpp` backend described above.
+
+The separate [`generate-cpp` whole-file backend](GENERATION.md) consumes a strict
+versioned job containing a full JVM reference-model snapshot and measured
+frontend getter views. It derives paths, includes, forward declarations and
+render contexts natively, with all C++ name, predicate and sorting providers
+enabled; it runs without a JVM. For its guarded comment-free subset it emits
+model headers and implementations plus all eighteen upstream common/export
+files. The default and custom JVM fixtures compare all 50 paths, source sets and
+UTF-8 file bytes, and both generated consumers compile and run under strict
+C++17 warnings. This job format is distinct from the Rust preview model and the
+`-generators cpp` API sketch. A native frontend adapter and full C++ feature or
+ABI parity remain future work.

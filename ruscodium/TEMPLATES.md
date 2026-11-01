@@ -3,9 +3,8 @@
 The Rust renderer executes a bounded compatibility slice of the existing Trimou
 Mustache dialect against JSON data and the experimental reference-model snapshot.
 It reads the original `.mustache` files directly and never starts a JVM. It is
-not yet a replacement for the Kotlin compiler, a complete template model, or a
-C++ generator. Parsing the corpus does not imply every helper or model getter is
-implemented.
+not yet a replacement for the Kotlin compiler or a complete template model.
+Parsing the corpus does not imply every helper or model getter is implemented.
 
 ```sh
 ruscodium render --templates ../gluecodium/src/main/resources/templates \
@@ -176,3 +175,13 @@ The checked-in JVM-oracle fixtures and their reproduction instructions are in
 [template-oracle](tools/template-oracle/). Their byte comparisons cover selected
 real C++ template fragments and measured helper behavior; they do not establish
 whole-file or compiler parity.
+
+The separate [`generate-cpp` backend](GENERATION.md) uses this runtime to render
+complete files from a guarded full-model job. It always enables native C++ names,
+all eleven predicates and the native sorter; callers cannot supply replay hooks
+or template contexts. The independent [whole-file oracle](tools/cpp-generation-oracle/)
+compares all 50 generated files and source sets across default and custom option
+groups, including eighteen common/export files in each group, and compiles and
+runs consumers. Its snapshot/getter boundary and unsupported cases are
+documented in [GENERATION.md](GENERATION.md); the Rust frontend is not yet an
+adapter for that job.
