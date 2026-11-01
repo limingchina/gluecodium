@@ -291,3 +291,81 @@ Canonical native frontend adaptation, nonempty documentation, externals,
 custom naming rules, inheritance and overload validation, errors, equality,
 async, filtering and other platform backends remain deferred or explicitly
 rejected. Measured fixtures do not establish unsupported combinations.
+
+## Independent review: M11 native documentation and smoke inventory
+
+Reviewed on 2026-11-01 by the independent Sol 6.1 xhigh reviewer against the
+committed M11 contract `1b3151a81`, baseline `d9dc5b901`, native implementation
+`84377ae1e`, documentation `956cc0e62`, and final oracle/report tools through
+`1dedc2ac8`. No native source changed after the implementation commit. This
+review appended only this section; earlier milestone reviews remain historical.
+
+The review compared `LimeComment`, the C++ comment/name/predicate processors,
+Flexmark formatting, loader placeholder construction, unchanged documentation
+partials and smoke option handling with the new Rust/importer/oracle paths.
+It checked complete raw-comment coverage, ordered section types and IDs,
+placeholder targets and keys, global cycles, expansion limits, raw versus
+selected emptiness, Kotlin whitespace, exclusion rules, lambda parameter names,
+per-file graph import and retained version-1 behavior. The version-2 parent
+lookup follows the actual reference map, including absent synthetic parents;
+indexed declaration ownership remains validated. The comment-only `@` path
+allowance cannot authorize declaration paths.
+
+### Findings and disposition
+
+| Finding during independent review | Final behavior and evidence |
+| --- | --- |
+| An acyclic graph repeatedly referring to an empty placeholder could do exponential work without reaching the output-size bound. | Expansion is memoized, with independently checked depth and size limits. An 80-node duplicated empty DAG and a 128-level chain complete with unchanged output; a 129-level chain and oversized expansion reject. |
+| The first plain-text guard admitted unimplemented setext headings and list markers, including tab separators and bare markers. | Conservative checks reject the measured syntax, including marker lines with trailing whitespace. Fresh JVM counterexamples and focused Rust regressions cover the failures. |
+| Trailing mixed tabs/spaces, paragraph-final hard breaks and tabs following a paragraph break could produce different Flexmark bytes or admit indented code. | The unproved forms reject. An independent deterministic sample of 7,203 whitespace, Unicode and marker inputs admitted 1,643 cases; every admitted result matched fresh JVM formatter bytes. Another 40 Unicode whitespace-line cases also matched. |
+
+### Final independent verification
+
+- `cargo fmt --check`, offline all-target Clippy with `-D warnings`, and all
+  87 Rust tests passed: four library units, fifteen whole-file generation,
+  fifteen controls, eight names, twenty-two preview, nineteen template runtime
+  and four whitespace tests. The preview corpus and compiled consumer remain
+  covered.
+- Fresh JVM checks reproduced all 41 template request/output pairs and all
+  315 installed production templates. The legacy whole-file oracle reproduced
+  both complete version-1 snapshots, source sets and fifty generated files.
+  The default reference exporter and legacy fixtures are unchanged from the
+  baseline. Four Python tooling tests and the reference-model tests passed.
+- The three new real-LIME captures reproduced all 63 complete JVM files and
+  actual source sets: 23 for the focused fixture and 20 for each separately
+  loaded, unmodified upstream interface/lambda file. Every raw-comment map
+  exactly covers its snapshot's comment nodes, with no `isEmpty` overlays;
+  the snapshots remain version 1. Each job includes all eighteen helper/export
+  files. The native CLI produced identical inventories and bytes twice with
+  an empty `PATH`.
+- All generated implementations and meaningful consumers compiled and ran
+  with C++17, `-Wall -Wextra -Werror`, for both legacy native groups and all
+  three native documentation groups. The corresponding fresh JVM consumers
+  passed independently. Each legacy group compiled six generated sources;
+  the documentation groups compiled five, four and four respectively.
+- Thirty-seven saved independent negative CLI probes rejected malformed or
+  incomplete raw maps, wrong pairs/IDs/classes/targets, missing placeholders,
+  unused cycles, forged comment answers, unsupported expanded text, auxiliary
+  documentation, invalid version boundaries and excessive depth/expansion.
+  Every rejection had empty stdout and preserved the complete existing output
+  inventory and bytes. Aggregate tests also retain late-template/path failure
+  and symlink preflight checks.
+- An independent fresh fifteen-case matrix reproduced the checked final
+  outcomes, effective options, input hashes, complete JVM output hashes and
+  source sets. All baseline case/provenance comparisons matched, including
+  Java, the installed JVM compiler jar and all 315 templates. Among thirteen
+  complete groups, `namespace_basic` is exact and twelve remain guarded
+  rejections, with no output mismatch or JVM/export failure. The two separately
+  labeled upstream comment files move from rejection to exact match; the full
+  comments group remains rejected. Actual native library source sets and CLI
+  bytes agree. The final process-failure classification and compiler/helper
+  provenance follow-ups were also reviewed.
+
+No reported material finding remains unresolved within the bounded M11 contract.
+This establishes the conservative imported raw-comment documentation profile
+and the measured acceptance inventory. Full Markdown and scoped links, native
+LIME/Limedoc adaptation, filtering, inheritance, externals, additional attributes,
+overloads and broader C++ runtime/ABI or platform parity remain deferred or
+guarded. Synthetic recursive-placeholder evidence does not imply that the
+configured loader supports nested placeholder definitions. Existing write-phase
+I/O rollback limitations are unchanged.
