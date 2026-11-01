@@ -1,0 +1,254 @@
+#!/usr/bin/env python3
+"""Project independently built C++ jobs onto explicitly enumerated model facts."""
+import json
+from pathlib import PurePath
+import sys
+
+
+COMMON = 'attributes comment external path'.split()
+TYPE = COMMON + ['childTypes']
+CONTAINER = TYPE + 'classes constants enumerations exceptions functions interfaces lambdas properties structs typeAliases'.split()
+SCHEMA = {
+    'LimeModel': 'auxiliaryElements fileNameMap referenceMap topElements'.split(),
+    'LimePath': 'disambiguator head tail'.split(),
+    'LimeAttributes': ['attributes'],
+    'LimeComment': 'isExcluded path placeholders'.split(),
+    'LimeBasicType': TYPE + ['typeId'],
+    'LimeClass': CONTAINER + 'isOpen parents'.split(),
+    'LimeInterface': CONTAINER + 'isNarrow isOpen parents'.split(),
+    'LimeStruct': CONTAINER + 'constructorComment fieldConstructors fields'.split(),
+    'LimeEnumeration': TYPE + ['enumerators'],
+    'LimeTypeAlias': TYPE + ['typeRef'],
+    'LimeLambda': TYPE + 'parameters returnType'.split(),
+    'LimeList': TYPE + ['elementType'],
+    'LimeSet': TYPE + ['elementType'],
+    'LimeMap': TYPE + 'keyType valueType'.split(),
+    'LimeField': COMMON + 'defaultValue typeRef'.split(),
+    'LimeEnumerator': COMMON + ['explicitValue'],
+    'LimeParameter': COMMON + ['typeRef'],
+    'LimeLambdaParameter': COMMON + 'isNamedParameter typeRef'.split(),
+    'LimeFunction': COMMON + 'isConstructor isStatic parameters returnType thrownType'.split(),
+    'LimeProperty': COMMON + 'additionalDescriptionComment getter isStatic setter typeRef valueComment'.split(),
+    'LimeReturnType': 'attributes comment typeRef'.split(),
+    'LimeFieldConstructor': COMMON + 'fieldRefs structRef'.split(),
+    'LimeLazyFieldRef': 'attributes element'.split(),
+    'LimeValue$Literal': 'attributes typeRef value'.split(),
+    'LimeValue$Null': 'attributes typeRef'.split(),
+    'LimeBasicTypeRef': 'attributes element elementFullName isNullable type'.split(),
+    'LimeLazyTypeRef': 'attributes element elementFullName isNullable type'.split(),
+    'LimeAmbiguousTypeRef': 'attributes element isNullable type'.split(),
+    'LimeDirectTypeRef': 'attributes element isNullable type'.split(),
+}
+MEMBERS = 'classes constants enumerations exceptions functions interfaces lambdas properties structs typeAliases fields fieldConstructors enumerators parameters'.split()
+REFS = {'LimeBasicTypeRef', 'LimeLazyTypeRef', 'LimeAmbiguousTypeRef', 'LimeDirectTypeRef'}
+OVERLAYS = {
+    'LimeBasicType': {'name', 'fullName', 'actualType'},
+    'LimeClass': {'name', 'fullName', 'actualType'},
+    'LimeInterface': {'name', 'fullName', 'actualType'},
+    'LimeStruct': {'name', 'fullName', 'actualType', 'uninitializedFields'},
+    'LimeEnumeration': {'name', 'fullName', 'actualType', 'uniqueEnumerators'},
+    'LimeTypeAlias': {'name', 'fullName', 'actualType'},
+    'LimeLambda': {'name', 'fullName', 'actualType'},
+    'LimeList': {'name', 'fullName', 'actualType'},
+    'LimeSet': {'name', 'fullName', 'actualType'},
+    'LimeMap': {'name', 'fullName', 'actualType'},
+    'LimeField': {'name', 'fullName'},
+    'LimeEnumerator': {'name', 'fullName'},
+    'LimeParameter': {'name', 'fullName'},
+    'LimeLambdaParameter': {'name', 'fullName'},
+    'LimeFunction': {'name', 'fullName', 'exception'},
+    'LimeProperty': {'name', 'fullName'},
+    'LimeFieldConstructor': {'name', 'fullName', 'fields', 'struct'},
+    'LimeReturnType': {'isVoid'},
+    'LimeComment': {'isEmpty'},
+}
+
+
+class Projection:
+    def __init__(self, job):
+        self.job = job
+        self.nodes = {n['id']: n for n in job['snapshot']['nodes']}
+        if len(self.nodes) != len(job['snapshot']['nodes']):
+            raise ValueError('duplicate node identity')
+        self.overlays = job.get('property_overlays', {})
+        self.comments = job.get('raw_comments', {})
+        for node in self.nodes.values():
+            kind = self.kind(node)
+            if kind not in SCHEMA or set(node['properties']) != set(SCHEMA[kind]):
+                raise ValueError(f'unhandled node/fields: {kind}: {sorted(node["properties"])}')
+        for ident, values in self.overlays.items():
+            kind = self.kind(self.nodes[ident])
+            if set(values) - OVERLAYS.get(kind, set()):
+                raise ValueError(f'unhandled getter properties: {kind}: {sorted(values)}')
+
+    @staticmethod
+    def kind(node):
+        return node['class'].rsplit('.', 1)[-1]
+
+    def node(self, ref):
+        if not isinstance(ref, dict) or set(ref) != {'$ref'}:
+            raise ValueError(f'expected reference: {ref!r}')
+        return self.nodes[ref['$ref']]
+
+    def props(self, ref):
+        return self.node(ref)['properties']
+
+    def path(self, ref):
+        p = self.props(ref)
+        return {'head': p['head'], 'tail': p['tail'], 'disambiguator': p['disambiguator']}
+
+    def named(self, ref):
+        node = self.node(ref)
+        p = node['properties']
+        path = self.path(p['path'])
+        result = {'kind': self.kind(node), 'path': path}
+        if self.kind(node) == 'LimeBasicType':
+            # Builtin wrappers often have empty paths and fresh allocations.
+            result['typeId'] = p['typeId']
+        return result
+
+    def attrs(self, ref):
+        return self.props(ref)['attributes']
+
+    def comment(self, ref):
+        p = self.props(ref)
+        if p['placeholders']:
+            raise ValueError('comment placeholders are outside this projection')
+        ident = ref['$ref']
+        if ident in self.comments:
+            sections = self.comments[ident]
+            empty = not sections
+        else:
+            sections = None
+            empty = self.overlays.get(ident, {}).get('isEmpty')
+            if empty is None:
+                raise ValueError(f'comment emptiness unavailable: {ident}')
+        return {'empty': empty, 'excluded': p['isExcluded'], 'path': self.path(p['path']),
+                'placeholders': p['placeholders'], 'sections': sections if sections else []}
+
+    def target(self, ref, trail=()):
+        node = self.node(ref)
+        kind = self.kind(node)
+        p = node['properties']
+        if kind in REFS:
+            return self.typeref(ref, trail)
+        if kind in ('LimeList', 'LimeSet'):
+            return {'kind': kind, 'attributes': self.attrs(p['attributes']),
+                    'comment': self.comment(p['comment']), 'external': p['external'],
+                    'path': self.path(p['path']), 'argument': self.typeref(p['elementType'], trail),
+                    'childTypes': [self.typeref(x, trail) for x in p['childTypes']]}
+        if kind == 'LimeMap':
+            return {'kind': kind, 'attributes': self.attrs(p['attributes']),
+                    'comment': self.comment(p['comment']), 'external': p['external'],
+                    'path': self.path(p['path']), 'key': self.typeref(p['keyType'], trail),
+                    'value': self.typeref(p['valueType'], trail),
+                    'childTypes': [self.typeref(x, trail) for x in p['childTypes']]}
+        return self.named(ref)
+
+    def typeref(self, ref, trail=()):
+        node = self.node(ref)
+        kind = self.kind(node)
+        if kind not in REFS:
+            raise ValueError(f'expected type ref, got {kind}')
+        p = node['properties']
+        target = p['element']
+        # element and type are separate backend facts; compare both. Getter-created
+        # equivalent objects are represented structurally instead of by allocation ID.
+        direct = self.target(target, trail)
+        resolved = self.target(p['type'], trail)
+        actual = target
+        while self.kind(self.node(actual)) == 'LimeTypeAlias':
+            if actual['$ref'] in trail:
+                raise ValueError('cyclic alias')
+            trail = (*trail, actual['$ref'])
+            actual = self.props(self.props(actual)['typeRef'])['type']
+        return {'nullable': p['isNullable'], 'attributes': self.attrs(p['attributes']),
+                'element': direct, 'type': resolved, 'actual': self.target(actual, trail)}
+
+    def value(self, ref):
+        if ref is None:
+            return None
+        node = self.node(ref)
+        p = node['properties']
+        kind = self.kind(node)
+        if kind not in ('LimeValue$Null', 'LimeValue$Literal'):
+            raise ValueError(f'unhandled value: {kind}')
+        return {'kind': kind, 'attributes': self.attrs(p['attributes']),
+                'type': self.typeref(p['typeRef']), 'value': p.get('value')}
+
+    def return_type(self, ref):
+        p = self.props(ref)
+        return {'attributes': self.attrs(p['attributes']), 'comment': self.comment(p['comment']),
+                'type': self.typeref(p['typeRef'])}
+
+    def declaration(self, ref):
+        node = self.node(ref)
+        kind, p = self.kind(node), node['properties']
+        result = {'kind': kind, 'path': self.path(p['path']), 'attributes': self.attrs(p['attributes']),
+                  'comment': self.comment(p['comment']), 'external': p['external']}
+        for key in MEMBERS:
+            if key in p:
+                result[key] = [self.declaration(x) for x in p[key]]
+        for key in ('isStatic', 'isConstructor', 'isNamedParameter', 'isOpen', 'isNarrow'):
+            if key in p:
+                result[key] = p[key]
+        if 'parents' in p:
+            result['parents'] = [self.typeref(x) for x in p['parents']]
+        if 'typeRef' in p:
+            result['typeRef'] = self.typeref(p['typeRef'])
+        if 'childTypes' in p:
+            result['childTypes'] = [self.typeref(x) for x in p['childTypes']]
+        if 'returnType' in p:
+            result['returnType'] = self.return_type(p['returnType'])
+        if 'thrownType' in p:
+            result['thrownType'] = None if p['thrownType'] is None else self.typeref(p['thrownType'])
+        for key in ('getter', 'setter'):
+            if key in p:
+                result[key] = None if p[key] is None else self.declaration(p[key])
+        for key in ('additionalDescriptionComment', 'valueComment', 'constructorComment'):
+            if key in p:
+                result[key] = self.comment(p[key])
+        for key in ('defaultValue', 'explicitValue'):
+            if key in p:
+                result[key] = self.value(p[key])
+        if 'fieldRefs' in p:
+            result['fieldRefs'] = [self.named(self.props(x)['element']) for x in p['fieldRefs']]
+            result['structRef'] = self.typeref(p['structRef'])
+        return result
+
+    def project(self):
+        # Getter-created views may be separately allocated. Check their semantic
+        # targets rather than comparing identities or silently discarding them.
+        for ident, overlay in self.overlays.items():
+            if 'actualType' not in overlay:
+                continue
+            ref = {'$ref': ident}
+            node = self.node(ref)
+            if self.kind(node) == 'LimeTypeAlias':
+                expected = self.typeref(node['properties']['typeRef'])['actual']
+            else:
+                expected = self.target(ref)
+            if self.target(overlay['actualType']) != expected:
+                raise ValueError(f'inconsistent actualType getter: {ident}')
+        root = self.props(self.job['snapshot']['root'])
+        refs = {key: self.named(ref) for key, ref in sorted(root['referenceMap'].items())}
+        builtins = {}
+        for key, ref in sorted(root['referenceMap'].items()):
+            node = self.node(ref)
+            if self.kind(node) == 'LimeBasicType':
+                p = node['properties']
+                builtins[key] = {'identity': self.named(ref), 'typeId': p['typeId'],
+                                 'attributes': self.attrs(p['attributes']),
+                                 'comment': self.comment(p['comment']), 'external': p['external'],
+                                 'childTypes': [self.typeref(x) for x in p['childTypes']]}
+        return {'main': [self.declaration(x) for x in root['topElements']],
+                'auxiliary': [self.declaration(x) for x in root['auxiliaryElements']],
+                'referenceMap': refs, 'builtins': builtins,
+                'fileNameMap': {key: PurePath(path).name for key, path in sorted(root['fileNameMap'].items())}}
+
+
+if __name__ == '__main__':
+    if len(sys.argv) != 2:
+        sys.exit('usage: project.py JOB')
+    with open(sys.argv[1], encoding='utf-8') as source:
+        print(json.dumps(Projection(json.load(source)).project(), indent=2, sort_keys=True))

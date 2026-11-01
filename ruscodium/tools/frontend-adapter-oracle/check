@@ -1,0 +1,153 @@
+#!/usr/bin/env python3
+"""Run the native adapter against actual independent JVM generations."""
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[2]
+RUST = REPO / 'ruscodium'
+OLD = RUST / 'tools/cpp-generation-oracle'
+GOLDENS = RUST / 'tests/cpp-generation-goldens'
+TEMPLATES = REPO / 'gluecodium/src/main/resources/templates'
+LIB = REPO / 'gluecodium/build/install/gluecodium/lib'
+sys.path.insert(0, str(HERE))
+from project import Projection
+
+
+def run(args, **kwargs):
+    subprocess.run([str(x) for x in args], check=True, **kwargs)
+
+
+def read(path):
+    return json.loads(path.read_text(encoding='utf-8'))
+
+
+def compare_files(expected, actual, label):
+    def files(root):
+        return {p.relative_to(root).as_posix(): p.read_bytes() for p in root.rglob('*') if p.is_file()}
+    a, b = files(expected), files(actual)
+    if a.keys() != b.keys():
+        raise AssertionError(f'{label}: missing {sorted(a.keys() - b.keys())}; extra {sorted(b.keys() - a.keys())}')
+    for key in a:
+        if a[key] != b[key]:
+            raise AssertionError(f'{label}: bytes differ: {key}')
+
+
+def compare_jobs(expected, actual, label):
+    a, b = Projection(read(expected)).project(), Projection(read(actual)).project()
+    if a != b:
+        import difflib
+        left = json.dumps(a, indent=2, sort_keys=True).splitlines()
+        right = json.dumps(b, indent=2, sort_keys=True).splitlines()
+        diff = '\n'.join(difflib.unified_diff(left, right, 'jvm', 'native', lineterm=''))
+        raise AssertionError(f'{label}: semantic model differs\n{diff[:16000]}')
+
+
+def compare(expected, actual, label):
+    a, b = read(expected / 'manifest.json')['files'], read(actual / 'manifest.json')['files']
+    if a != b:
+        raise AssertionError(f'{label}: path/source set inventory differs: {a!r} != {b!r}')
+    compare_files(expected / 'files', actual / 'files', label)
+    compare_jobs(expected / 'job.json', actual / 'job.json', label)
+    print(f'{label}: {len(a)} files, bytes, source sets and model projection match', flush=True)
+
+
+def replace(text, old, new):
+    if text.count(old) != 1:
+        raise ValueError(f'mutation target count is not one: {old!r}')
+    return text.replace(old, new)
+
+
+def main():
+    if not LIB.is_dir():
+        raise SystemExit(f'missing JVM distribution: {LIB}')
+    run(['cargo', 'build', '--manifest-path', RUST / 'Cargo.toml', '--bin', 'ruscodium', '--example', 'frontend_cpp_inventory'])
+    binary = RUST / 'target/debug/ruscodium'
+    example = RUST / 'target/debug/examples/frontend_cpp_inventory'
+    java_home = os.environ.get('JAVA_HOME')
+    java = str(Path(java_home) / 'bin/java') if java_home else 'java'
+    javac = str(Path(java_home) / 'bin/javac') if java_home else 'javac'
+    cxx = os.environ.get('CXX', 'c++')
+    with tempfile.TemporaryDirectory(prefix='frontend-adapter-oracle-') as temporary:
+        tmp = Path(temporary)
+        classes = tmp / 'classes'
+        classes.mkdir()
+        run([javac, '-cp', f'{LIB}/*', '-d', classes, RUST / 'tools/reference-model/ReferenceModel.java', OLD / 'CppGenerationOracle.java'])
+        copied = tmp / 'ruscodium/tools/cpp-generation-oracle'
+        copied.mkdir(parents=True)
+        originals = {g: (OLD / f'{g}.lime').read_text(encoding='utf-8') for g in ('default', 'custom', 'aux')}
+        custom_options = {'schema': 'gluecodium.native-cpp-options', 'version': 1,
+                          'root_namespace': ['acme', 'api'], 'internal_namespace': ['acme', 'detail'],
+                          'export': 'ACME_API', 'export_common': 'ACME_COMMON',
+                          'copyright_header': 'Copyright 2026 Example\nAll rights reserved.'}
+        options = tmp / 'custom.json'
+        options.write_text(json.dumps(custom_options), encoding='utf-8')
+
+        # Each change uses copied LIME and an independent fresh JVM generator.
+        cases = [
+            ('default', 'baseline', {}), ('custom', 'baseline', {}),
+            ('default', 'names-package', {'default': [('oracle.basic', 'oracle.renamed'), ('Shade', 'Tone')]}),
+            ('default', 'values-order', {'default': [('BLUE = 7', 'BLUE = 11'), ('count: Int = 7', 'count: Int = 13'),
+                ('    typealias LaterAlias = EarlierAlias\n    typealias EarlierAlias = Int',
+                 '    typealias EarlierAlias = Int\n    typealias LaterAlias = EarlierAlias')]}),
+            ('custom', 'references', {'custom': [('List<String>', 'List<Int>'), ('worker: Worker?', 'worker: Worker')]}),
+            ('custom', 'auxiliary', {'custom': [('worker: Worker?', 'worker: oracle.auxiliary.Unused?')],
+                                    'aux': [('value: Int', 'value: String')]}),
+        ]
+        for index, (group, name, changes) in enumerate(cases):
+            sources = dict(originals)
+            for source, substitutions in changes.items():
+                for old, new in substitutions:
+                    # Deliberate global renames are validated to change every occurrence.
+                    if old in ('oracle.basic', 'Shade'):
+                        if old not in sources[source]:
+                            raise ValueError(f'missing mutation {old}')
+                        sources[source] = sources[source].replace(old, new)
+                    else:
+                        sources[source] = replace(sources[source], old, new)
+            for source, content in sources.items():
+                (copied / f'{source}.lime').write_text(content, encoding='utf-8')
+            jvm = tmp / f'jvm-{index}'
+            native = tmp / f'native-{index}'
+            run([java, '-cp', f'{classes}:{LIB}/*', 'CppGenerationOracle', group, jvm], cwd=tmp)
+            main_input = copied / f'{group}.lime'
+            aux_input = copied / 'aux.lime' if group == 'custom' else '-'
+            run([example, group, main_input, aux_input, TEMPLATES, native], cwd=tmp)
+            compare(jvm, native, f'{group}/{name}')
+            if name == 'baseline':
+                inventory = read(native / 'manifest.json')['files']
+                if len(inventory) != (26 if group == 'default' else 24) or list(inventory.values()).count('COMMON') != 17:
+                    raise AssertionError(f'{group}: unexpected baseline source-set counts')
+                compare(GOLDENS / group, native, f'{group}/capture')
+                repeated = tmp / f'repeated-{group}'
+                run([example, group, main_input, aux_input, TEMPLATES, repeated], cwd=tmp)
+                compare(native, repeated, f'{group}/repeat')
+                cli = tmp / f'cli-{group}'
+                args = [binary, 'compile-cpp', '--input', main_input, '--templates', TEMPLATES, '--output', cli]
+                if group == 'custom':
+                    args.extend(['--auxinput', aux_input, '--options', options])
+                env = dict(os.environ, PATH='')
+                result = subprocess.run([str(x) for x in args], cwd=tmp, env=env, stdout=subprocess.PIPE, check=True)
+                if result.stdout:
+                    raise AssertionError(f'{group}: CLI unexpectedly wrote to stdout')
+                compare_files(native / 'files', cli, f'{group}/CLI')
+                sources = sorted((native / 'files/cpp/src').rglob('*.cpp'))
+                executable = tmp / f'consumer-{group}'
+                run([cxx, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-I', native / 'files/cpp/include',
+                     *sources, OLD / f'{group}-consumer.cc', '-o', executable])
+                run([executable])
+                # Recompile against CLI artifacts too, independently of library output.
+                sources = sorted((cli / 'cpp/src').rglob('*.cpp'))
+                run([cxx, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-I', cli / 'cpp/include',
+                     *sources, OLD / f'{group}-consumer.cc', '-o', executable])
+                run([executable])
+                print(f'{group}: library and empty-PATH CLI C++ consumers passed', flush=True)
+
+
+if __name__ == '__main__':
+    main()
