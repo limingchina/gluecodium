@@ -429,3 +429,24 @@ fn deterministic_inventory() {
     };
     assert_eq!(index(one), index(two));
 }
+
+#[test]
+fn dependencies_reorder_nested_aliases_in_the_complete_header() {
+    let mut job = fixture("default");
+    let data = node_id(&job, "LimeStruct", "Data");
+    let later = node_id(&job, "LimeTypeAlias", "LaterAlias");
+    let earlier = node_id(&job, "LimeTypeAlias", "EarlierAlias");
+    let aliases = node_mut(&mut job, &data)["properties"]["typeAliases"]
+        .as_array()
+        .unwrap();
+    assert_eq!(aliases[0]["$ref"], later);
+    assert_eq!(aliases[1]["$ref"], earlier);
+    let header = generate(TEMPLATES, &job)
+        .unwrap()
+        .into_iter()
+        .find(|f| f.path.ends_with("oracle/basic/Data.h"))
+        .unwrap()
+        .contents;
+    assert!(header.find("using EarlierAlias").unwrap() < header.find("using LaterAlias").unwrap());
+    assert!(header.contains("#include <unordered_set>"));
+}

@@ -54,7 +54,7 @@ Whole-file JVM comparisons currently cover:
 
 | Fixture | Model cases | Options and output |
 | --- | --- | --- |
-| `default` | Enum with explicit integer; list alias; lambda; interface with synchronous method, read/write, read-only and static properties; struct with integer and string fields, integer default, nullable integer, map and field constructor. | Default options; 26 files. |
+| `default` | Enum with explicit integer; list alias; lambda; interface with synchronous method, read/write, read-only and static properties; struct with integer and string fields, integer default, nullable integer, map, set and field constructor; nested aliases declared in dependency-reversed order. | Default options; 26 files. |
 | `custom` | Renamed class with nested struct and alias, interface and cross-root class forward references, list and nullable class reference, auxiliary root. | Root and internal namespaces, distinct exports, multiline copyright; 24 files. |
 
 Every file's UTF-8 bytes and source set are compared against a fresh JVM
