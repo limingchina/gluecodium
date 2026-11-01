@@ -29,6 +29,7 @@ def main():
         for side in ('jvm','rust'):
             output = work / 'persistent' / name / side
             if output.exists(): raise RuntimeError(f'output already exists: {output}')
+            output.mkdir(parents=True)
             if side == 'jvm': cmd = [str(b.JAVA), '-cp', str(classes) + ':' + str(b.LIB / '*'), 'WarmJvm', spec['input'], str(output), str(ITERATIONS)]
             else: cmd = [str(binary), spec['input'], str(output), str(ITERATIONS), str(b.TEMPLATES)]
             try:
