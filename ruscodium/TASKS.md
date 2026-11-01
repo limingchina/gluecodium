@@ -310,7 +310,7 @@ Mustache unchanged, and the preview C++ generator separate.
   whole-file oracle reproduction, retained 41 JVM template cases and 315-template
   equality, preview corpus and existing compiled consumers; record exact counts.
 - [x] Obtain independent Sol 6.1 xhigh review and fix material findings.
-- [ ] Update README, TEMPLATES, oracle, review and measured checklist evidence,
+- [x] Update README, TEMPLATES, oracle, review and measured checklist evidence,
   commit tested increments and push the authorized branch.
 
 Current evidence: 77 Rust tests passed with offline Clippy; the two whole-file
@@ -324,8 +324,9 @@ without changing getter overlays. Independent Sol 6.1 xhigh review passed at
 within the guarded scope. Final formatting, offline all-target Clippy, the 77
 Rust tests (including the 345-input preview corpus and compiled consumers),
 four Python tests, reference-model checks, both fresh JVM oracles, all 315
-unchanged templates and the release build passed. Publication is the remaining
-step.
+unchanged templates and the release build passed. M10 implementation, review,
+plan and verification were pushed through `ab1f9a5b1` to
+`origin/ruscodium/rust-port`; this checklist records that confirmed publication.
 
 Completion requires actual full C++ generator file sets for the supported
 snapshot subset, including eighteen common/export files per job. Canonical
