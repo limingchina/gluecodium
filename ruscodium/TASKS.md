@@ -537,47 +537,82 @@ independent review, plan and verification were pushed through `cb9893cb6` to
 
 ## M13: reproducible Kotlin/JVM versus Rust performance comparison
 
-Execute [the M13 contract](PLAN.md#m13-reproducible-kotlinjvm-versus-rust-performance-comparison--planned)
+Execute [the M13 contract](PLAN.md#m13-reproducible-kotlinjvm-versus-rust-performance-comparison--bounded-measurement-delivered)
 using the actual JVM CLI and rebuilt optimized native `compile-cpp` path.
 Keep all additions under `ruscodium/` on `ruscodium/rust-port`; preserve all
 315 production templates and production compiler behavior. Roles remain
 Sol 6.1 max planning, Terra 6.1 xhigh implementation, Sol 6.1 xhigh review.
 
 - [x] Define and commit this plan/checklist before benchmark implementation.
-- [ ] Inspect actual JVM main/options/version and rebuild native release from
+- [x] Inspect actual JVM main/options/version and rebuild native release from
   the measured revision with `cargo build --offline --release`; record hashes.
-- [ ] Add deterministic workload preparation, equivalent explicit settings and
+- [x] Add deterministic workload preparation, equivalent explicit settings and
   fresh output directories, using valid real inputs plus 10/100/500-struct
   initial scaling probes. Preserve original fixtures; record any copied-default
   `field constructor(label, mapping, tags)` normalization and both validators.
-- [ ] Gate every workload on successful actual CLI exits and exact complete
+- [x] Gate every workload on successful actual CLI exits and exact complete
   output inventories/bytes, including common/export files, before timing.
-- [ ] Run and retain a bounded pilot, select and save the final workload/trial
+- [x] Run and retain a bounded pilot, select and save the final workload/trial
   matrix before measurement, and preserve slow/failure/timeout evidence with
   its elapsed bound rather than hiding unfavorable scales.
-- [ ] Implement a reproducible runner under `tools/performance/` for fresh
+- [x] Implement a reproducible runner under `tools/performance/` for fresh
   processes with warm filesystem, monotonic wall time, user/system CPU and
   independently attributed per-process peak RSS; exclude builds/setup/parity
   verification from timings and use no oracle/export/pre-parsed timing path.
-- [ ] Save a seeded balanced/interleaved sequential schedule and collect seven
+- [x] Save a seeded balanced/interleaved sequential schedule and collect seven
   or more successful trials per side/workload where the pilot permits; record
   any predeclared reduced count, warmups, every raw sample and unsuccessful run.
-- [ ] Verify each timed output outside its timer against the parity baseline;
+- [x] Verify each timed output outside its timer against the parity baseline;
   exclude failed/mismatched runs from successful comparisons without erasing
   them from the committed evidence.
-- [ ] Save source/dirty state, exact argv/environment, binary/jar/input/options/
+- [x] Save source/dirty state, exact argv/environment, binary/jar/input/options/
   template hashes, toolchains, UTC time, OS/CPU/affinity, cgroup quotas/RAM and
   output-filesystem metadata alongside raw JSON and output-hash manifests.
-- [ ] Document reproducible commands and runner behavior in the tool README;
+- [x] Document reproducible commands and runner behavior in the tool README;
   publish `PERFORMANCE.md` with all selected workloads, output sizes, medians,
   quartiles/IQR, min/max, CPU/RSS and clearly defined JVM/Rust wall-time ratios.
-- [ ] Explain process/JVM/JIT/filesystem state, shared-host uncertainty, guarded
+- [x] Explain process/JVM/JIT/filesystem state, shared-host uncertainty, guarded
   native validation versus full JVM validation and measured-subset limits;
   keep any optional persistent-API experiment explicitly separate.
-- [ ] Run appropriate tooling checks and verify all 315 templates unchanged;
+- [x] Run appropriate tooling checks and verify all 315 templates unchanged;
   obtain independent Sol 6.1 xhigh review and resolve material findings.
 - [ ] Finalize plan/task/review evidence, commit the reproducible results and
   leave the branch clean. Publish only within the user's existing authorization.
+
+Measured evidence: harness `9f599c55a`, persistent setup correction
+`6d37f613d`, writable-Java-home correction `311528689`, corrected report/raw
+data `e8eca0c31`, independent Sol 6.1 xhigh review `7462775b8`, and chart
+`cdf5ef5c1`. Production compiler code, dependencies and all 315 templates
+remain unchanged from `12e45a188`. Native release was rebuilt before runs.
+
+Five parity-gated workloads complete eight balanced randomized pairs each:
+80 fresh invocations, all exact-output and logging-clean. Fresh-process
+median JVM/Rust seconds are custom 1.248/0.113, corrected default
+1.374/0.160, 10 structs 1.106/0.145, 100 structs 1.686/21.018, and 125
+structs 2.053/33.096. Rust has lower median peak RSS on all completed
+workloads. The 500-struct Rust pilot hits the 60-second bound; no matched
+parity or speed ratio is claimed for that case. The predeclared fallback
+125-struct case completes and remains in the report.
+
+Separate persistent API runs on 10 structs retain ten warmups and ten
+timed iterations per implementation, with all 40 output trees matching.
+Post-warmup median wall is JVM 0.0313 seconds and Rust 0.1580 seconds.
+These correlated within-process samples do not establish JIT steady state
+or isolate startup overhead. Per-iteration CPU/RSS is not claimed.
+
+Independent review recomputed 300 fresh metric statistics and five ratios,
+warm statistics, order balance and unique destinations; rehashed 141 output
+trees containing 14,018 files; checked identities and clean JVM logs; and
+verified native supervisor memory attribution, exit/log handling and timeout.
+The initial Python RSS/polling faults and read-only Java-home logger failure
+were corrected before the accepted figures. Earlier logging-error data and
+the warm setup failure remain labeled historical evidence, excluded from
+final statistics. No unresolved material finding remains in this bounded
+experiment. See [PERFORMANCE.md](PERFORMANCE.md),
+[reproduction](tools/performance/README.md), the raw JSON and REVIEW.md.
+Shared-host, tmpfs, broader JVM validation and native-subset limits remain
+explicit; this is not a general language or full-parity claim. Publication
+remains pending.
 
 ## Deferred full-parity work
 
