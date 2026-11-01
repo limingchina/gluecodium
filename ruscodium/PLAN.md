@@ -263,9 +263,9 @@ syntax so the report can guide later typed Rust template views.
 
 The following phases adopt the supplied analysis's backend-first approach.
 P0 has delivered bounded investigation tooling, P1a a native template/runtime
-slice, and M8 a bounded native C++ name resolver. The complete canonical boundary
-and subsequent backend phases remain incomplete until their own acceptance
-evidence exists.
+slice, M8 a bounded native C++ name resolver, and M9 native C++ predicates and
+declaration sorting. The complete canonical boundary and subsequent backend
+phases remain incomplete until their own acceptance evidence exists.
 
 ### P0: experimental snapshot delivered; canonical boundary incomplete
 
@@ -334,9 +334,9 @@ The delivered slice comprises:
    additional measured helpers documented in `TEMPLATES.md`. Selected scope,
    standalone tags, indentation, prefix trimming and final newlines have exact
    JVM fixtures. Legacy requests replay `resolveName` results; M8 adds explicit
-   native C++ naming as described below. Predicates and sorters still replay
-   measured results. Unknown selectors and unsupported executed helpers,
-   options and views fail explicitly.
+   native C++ naming as described below. M9 adds separate predicate/sorter
+   opt-ins; disabled providers retain measured replay. Unknown selectors and
+   unsupported executed helpers, options and views fail explicitly.
 5. Public library `parse`, `Graph` and `render` entry points and the native
    `render` CLI below. Requests are validated and rendered in memory before
    output is opened, preserving an existing output file on import/render
@@ -403,9 +403,10 @@ be replaced by fabricated per-receiver results. With neither catalog evidence
 nor an observed result for a name, even an empty filter fails. Every evaluated
 receiver still needs its measured boolean result. This strict rejection of
 unknown predicates is intentional even where JVM filtering would skip them.
-The serialized hooks remain an explicit offline replay boundary. M8 ports the
-bounded native naming surface below; broader naming, native predicates/sorters
-and future helper-provider interfaces remain implementation work.
+The serialized hooks remain an explicit offline replay boundary for legacy
+requests. M8 ports the bounded native naming surface below; M9 adds explicit
+native C++ predicates and declaration sorting. Broader naming and future
+helper-provider interfaces remain implementation work.
 
 The real-template matrix covers `cpp/CppEnumeration`, `cpp/CppTypeAlias`,
 `cpp/CppFunctionSignature` and `cpp/CppReturnType` with unchanged transitive
@@ -540,65 +541,86 @@ reproduction and 315-template equality checks, together with the preview corpus
 and C++ consumers. The independent review must resolve material findings and
 record its final verification before final review approval is claimed.
 
-### M9 / P1a.2: strict native C++ predicates and declaration sorting — next increment
+### M9 / P1a.2: strict native C++ predicates and declaration sorting — bounded implementation delivered
 
-Planning baseline: `96b7c3421`. Replace the remaining C++ predicate and default
-sorter replay for a bounded, useful model slice, building on M8's native names.
-The deliverable is exact JVM output for two or three unchanged, comment-free
-`cpp/CppStruct` and `cpp/CppClass` fragments with **all hooks removed**. It is
-not header/file-set generation, runtime/ABI compatibility, or a frontend adapter.
-All changes remain under `ruscodium/`; preserve the 315 production templates.
-Sol 6.1 max owns this plan and commits it before implementation; Terra 6.1 xhigh
-owns implementation and evidence; Sol 6.1 xhigh independently reviews the result.
+Planning baseline: `96b7c3421`; the plan/checklist was committed in `04058aaaa`
+before implementation. The separate Rust provider in
+[`src/template/native_controls.rs`](src/template/native_controls.rs) implements
+the eleven C++ predicates and default declaration sorter over the imported
+identity graph. Implementation began in `65b9c483a`; strict model/reference
+guards and raw constructor/default handling were completed through `2d4302b58`.
+The renderer whitespace correction in `3c81755f5` permits the unchanged original
+`cpp/CppStruct` and `cpp/CppClass` partials to match the JVM byte-for-byte.
+Field-bearing fragment support and its full-model JVM proof are committed in
+`8eecc1b3b` and `30562b676`.
+
+The bounded deliverable combines native names, predicates and sorting in
+comment-free, full-model fragments with **all hooks removed**. All changes
+remain under `ruscodium/`; the 315 production templates remain unchanged.
+Sol 6.1 max owns planning, Terra 6.1 xhigh implementation and evidence, and
+Sol 6.1 xhigh independent review. The acceptance evidence, final verification
+and review disposition are tracked in [TASKS.md](TASKS.md),
+[REVIEW.md](REVIEW.md) and the
+[oracle documentation](tools/template-oracle/README.md#native-c-predicates-and-sorting).
+This is not header/file-set generation, runtime/ABI compatibility, or a frontend
+adapter.
 
 #### Explicit dispatch and strict input boundary
 
-Extend the existing `native_cpp` object with boolean `predicates` and `sorters`,
-both defaulting to `false`. Presence of the object continues to select native
+The `native_cpp` object now accepts boolean `predicates` and `sorters`, both
+defaulting to `false`. Presence of the object continues to select native
 names as in M8. `native_cpp: {}` and old requests therefore retain their current
-predicate/sorter replay behavior; omission retains all legacy behavior. Reject
-nonboolean options and unknown keys before rendering. With `predicates: true`,
-register the actual eleven C++ predicate names directly and reject nonempty
+predicate/sorter replay behavior; omission retains all legacy behavior.
+Nonboolean options and unknown keys fail before rendering. The
+`predicates: true` provider registers the actual eleven C++ predicate names
+directly and rejects nonempty
 `hooks.predicates` **and** `hooks.registered_predicates`. With `sorters: true`,
-register only the default sorter selector `""` and reject nonempty
+the provider registers only the default sorter selector `""` and rejects nonempty
 `hooks.sorters`. Empty arrays or omitted hooks are allowed. Each enabled provider
-must reject unknown selectors even for empty inputs, and must never consult
-recorded results or fall back to replay for unsupported receivers. Disabled
+rejects unknown selectors even for empty inputs and never consults recorded
+results or falls back to replay for unsupported receivers. Disabled
 providers retain their existing strict replay contract.
 
-Compute algorithms from stored model facts, resolved type/element edges, the
-actual parent/reference index, and attributes. Native predicates and sorting
-must not use overlaid `actualType`, `exception`, `uninitializedFields`,
+The algorithms use stored model facts, resolved type/element edges, the actual
+parent/reference index, and attributes. Native predicates and sorting do not
+use overlaid `actualType`, `exception`, `uninitializedFields`,
 `allFieldsConstructor`, collected-import sets, dependency lists, or helper result
-booleans as substitutes for their algorithms. Derive alias targets, function
-exceptions, uninitialized fields and field-constructor membership from raw
-references. Missing required facts produce an explicit error rather than an
-empty collection or a guessed `false`. Preserve Kotlin's `false` result for
-ordinary wrong receiver kinds where no model fact is needed.
+booleans as substitutes for their algorithms. Alias targets, function exceptions,
+uninitialized fields and field-constructor membership derive from raw references.
+Generic children derive from actual list/set element or map key/value fields,
+not an overrideable `childTypes` projection. Required shapes, node/type kinds,
+membership, ownership and lazy field-reference targets are checked, with bounded
+depth and cycle guards. Missing or malformed required facts produce an explicit
+error. Ordinary wrong receiver kinds retain Kotlin's `false` behavior where no
+model fact is needed.
 
 Measured getter overlays remain permitted for separately documented template
-views, such as `uninitializedFields` or field-constructor `fields`; every added
-getter must be selected explicitly, generated by the JVM oracle, and identified
-in the evidence. Prefer native projections derived from raw fields for any view
-already implemented by the native algorithms. Do not import computed sorted
-declaration lists, predicate answers or dependency/import collections. Keep
-snapshot schema version 1 unless the implementation proves a schema change is
-necessary. Preserve reference identity and strict absence handling.
+views. The added `LimeNamedElement.name`/`fullName`,
+`LimeStruct.uninitializedFields` and `LimeFieldConstructor.fields` overlays come
+from actual public JVM getters and are documented in the oracle evidence.
+Their presence does not replace native algorithms. Computed sorted declaration
+lists, predicate answers and dependency/import collections are not imported.
+Snapshot schema version 1, reference identity and strict absence handling remain
+unchanged.
 
 M9 retains M8's comment boundary: an observed `LimeComment.isEmpty == true`
 establishes a comment-free input, with raw `isExcluded` and deprecation attributes
-still honored. Nonempty or unavailable comment content is unsupported; do not
-invent a platform comment string or return `false` merely because the exporter
-omits private tagged sections. Porting raw comments, placeholders and Doxygen
-processing is deferred. `hasAnyComment` can nevertheless be true for an empty
-comment through exclusion, deprecation or C++ non-null warnings.
+still honored. Required nonempty or unavailable comment content is unsupported;
+the provider does not invent platform text from omitted private tagged sections.
+`hasAnyComment` can prove true through an independent valid exclusion,
+deprecation or C++ non-null-warning operand even when another operand has
+unsupported nonempty text. This exception is limited to uncertain text;
+malformed/missing required model facts remain errors. Exclusion applies only
+where the Kotlin algorithm reads it, not to return/parameter/thrown-type or
+owning-struct constructor comments. Raw comments, placeholders and Doxygen
+processing remain deferred.
 
-#### Predicate algorithms to port
+#### Implemented predicate algorithms
 
 The source of truth is `CppGeneratorPredicates.kt`, together with
 `CppNameResolver.needsRefSuffix`, `CommonGeneratorPredicates`,
 `CppImportsCollector.collectTypeRefs` and `LimeTypeHelper.getAllTypes`.
-Implement all eleven selectors within the facts/comment boundary above:
+All eleven selectors are implemented within the facts/comment boundary above:
 
 | Selectors | Required native behavior |
 | --- | --- |
@@ -609,74 +631,79 @@ Implement all eleven selectors within the facts/comment boundary above:
 | `isUsedInAnotherInnerClasses`, `needsInnerForwardDeclarations` | Traverse actual nested types and the source collector's constants, struct fields, function parameters/returns/exceptions, class properties, aliases, lambdas and container child references. Preserve sibling identity, parent-kind checks and enum-exception handling; this is not inheritance reachability. |
 | `asyncFunNeedsSynchronousVersion` | Evaluate Java, Kotlin and Swift skip attributes on the function and its actual enclosing named elements; return true when at least one platform remains unskipped. |
 
-Use bounded visited sets for legal recursive struct traversal, and explicit
-errors for malformed alias/parent/container cycles or incomplete context that
-would otherwise recurse indefinitely. Do not broaden M8's supported naming
-attributes or raw-comment contract merely to force a fragment to render.
+Bounded visited sets permit legal recursive struct traversal; malformed
+alias/parent/container cycles and incomplete required context fail explicitly.
+M8's supported naming attributes and raw-comment contract remain bounded.
 
 #### Exact default sorter
 
-Port `TopologicalSort.kt`, not a generic inheritance/type graph sort. The actual
-C++ registration first filters the helper's concatenated input to
-`LimeNamedElement` instances. Dependencies are keyed by full name and limited to
-names present in that input; recursively visit generic type-reference children,
-then include the referenced type's own full name. Do **not** unwrap aliases in
-place of the referenced alias: an alias declaration contributes its own target
-dependency when processed separately. Remove each element's self dependency.
+The provider implements `TopologicalSort.kt`. The actual C++ registration first
+filters the helper's concatenated input to `LimeNamedElement` instances.
+Dependencies are keyed by full name and limited to names present in that input;
+they recursively visit generic type-reference children, then include the
+referenced type's own full name. Aliases retain their referenced
+identity: an alias declaration contributes its own target dependency when
+processed separately. Each element's self dependency is removed.
 
-Dispatch dependency collection exactly as upstream: typed elements use their
+Dependency collection dispatches as upstream: typed elements use their
 type reference; structs use fields, functions and constants; aliases use their
 target type reference; functions use parameter, return and exception error-type
 references; lambdas use parameters and return; other named elements contribute
 none. Inheritance and arbitrary nested declarations do not add edges here.
-Repeatedly select the **first eligible element in original input order**, remove
-its full name from all remaining dependency sets, and report
-`Cycle detected in C++ elements dependencies.` if no element is eligible. Retain
-input order for independent/tied elements and idempotence for already sorted
-inputs. Cover repeated identities/full-name collisions explicitly: never
-silently deduplicate or hang; preserve the upstream failure or document a strict
-input rejection where the graph cannot represent valid distinct declarations.
+Each iteration selects the **first eligible element in original input order**,
+removes its full name from all remaining dependency sets, and reports
+`Cycle detected in C++ elements dependencies.` if no element is eligible.
+Independent/tied elements retain input order, and already sorted inputs are
+idempotent. Duplicate input full names, including repeated instances, are a
+strict input error; the provider does not silently deduplicate or reproduce the
+upstream duplicate-instance pseudo-cycle behavior.
 
 #### Oracle and completion evidence
 
-1. Inventory every actual recorded predicate cell and sorter record across the
-   existing fixtures. Invoke native providers directly, keeping recordings only
-   as expectations outside the rendered request. Account for each exact match
-   and explicit unsupported case with a reason; do not delete difficult records.
-2. Extend the actual JVM-loaded full-model matrix for all eleven selectors:
-   alias and nullable primitive/class refs, equatable classes, all/partial/no
-   defaults, explicit zero/partial/all field constructors, nested immutable
-   structs and list/set/map values, sibling inner references and platform skip
-   inheritance. Include wrong-kind receivers and missing-fact rejections.
-3. Capture JVM default-sort records for real reordering, stable independent
-   ties, aliases, nested declarations, generic child refs, constants, struct
-   functions, function exception error types, lambdas, filtered non-named inputs,
-   self refs and idempotence. Compare exact referenced-instance output order.
-   Measure cycle failures using direct JVM construction if the loader itself
-   rejects/crashes before sorting; preserve strict native cycle diagnostics.
-4. Add two or three full-model, comment-free real-template cases: a struct with
-   defaults/constructor decisions, an accessor or immutable struct, and a class
-   containing dependent nested declarations and sibling forward-reference
-   behavior. At least one case must execute a sorter that changes input order.
-   Render unchanged `cpp/CppStruct`/`cpp/CppClass` and their transitive partials
-   with `native_cpp.predicates` and `.sorters` enabled and the entire `hooks`
-   object removed; compare exact JVM UTF-8 bytes, whitespace and final newline.
-   Record any measured template getter/ambient context separately. Existing M8
-   native fragments and all legacy fixtures remain reproducible.
-5. Cover mixed-mode validation, hooks/catalog anti-replay checks, malformed
-   options, unknown predicate/sorter selectors on empty/nonempty inputs, legal
-   recursion versus invalid cycles, unavailable parents/facts/comments and
-   existing output/stdout preservation on failures. Mutate raw facts to show
-   native answers change independently of recorded expectations or computed
-   getter overlays.
-6. Pass formatting, offline Clippy with warnings denied, all Cargo tests and
-   existing Python/reference-model checks; reproduce all JVM fixtures and verify
-   all 315 production templates remain byte-identical. Retain the baseline 49
-   Rust tests, 34 JVM cases, preview corpus and compiled C++ consumer coverage;
-   record new counts and measured cell/record coverage without a whole-backend
-   parity claim. Complete independent review, fix material findings, update
-   README/TEMPLATES/oracle/review/tasks evidence, commit logical increments and
-   push the authorized branch after verification.
+[`tests/native_cpp_controls.rs`](tests/native_cpp_controls.rs) inventories every
+actual recorded predicate cell and sorter record across the fixtures, invoking
+native providers with recordings used only as expectations. The expanded
+inventory has 1,095 exact predicate matches, four explicitly rejected
+nonempty-comment cases, and 15 exact sort records. The JVM full-model matrix
+exercises all eleven selectors through aliases, nullable and non-nullable type
+refs, equatable classes, defaults, zero/partial/all-field constructors, nested
+immutable structs, sibling inner references and inherited platform skips.
+Wrong receiver kinds and missing/malformed required facts have separate tests.
+
+The generic immutable-field cases pin the distinction between C++ default
+construction and common immutable traversal: with explicit partial constructors,
+list/set/map-value cases measure `hasDefaultConstructor == true` and
+`needsAllFieldsConstructor == true`, whereas an immutable map key alone measures
+true and false respectively. The default-sort records include stable orders,
+actual reordering, aliases and generic children, constants, struct functions,
+function exception error types, lambdas and filtered non-named inputs.
+Raw generic children, self references, idempotence, duplicate rejection and
+cycle diagnostics have native regressions; the oracle also constructs actual
+JVM alias-cycle inputs directly to isolate sorter failures from loader behavior.
+
+Five whole-model, comment-free fixtures render the unchanged production
+`cpp/CppClass` or `cpp/CppStruct` and their transitive partials with both native
+controls enabled and the **entire hooks object removed**. The class case really
+moves a nested struct ahead of its alias and exercises sibling forward
+declarations. The struct cases cover nested type collections, partial defaults,
+immutable fields and C++ accessors with an explicit field constructor. Exact
+JVM UTF-8 bytes, whitespace and final newlines match. Measured public getter
+overlays and absent properties remain identified separately in the oracle
+documentation. M8 fragments and all original 34 JVM fixture pairs retain their
+existing comparison coverage.
+
+Strict regressions cover mixed modes, replay hooks/catalog rejection, invalid
+options, empty-input selector registration, unavailable context, nonempty text,
+legal recursion, invalid cycles and existing output/stdout preservation. Raw
+fact mutations demonstrate that native results do not depend on captured
+answers or computed getter overlays. The release verification remains
+formatting, offline Clippy with warnings denied, all Cargo tests, Python and
+reference-model checks, JVM fixture reproduction, 315-template byte equality,
+preview corpus and compiled C++ consumers. The final acceptance run passed 66
+Rust tests, reproduced all 41 JVM fixture pairs and verified all 315 source
+templates. Review fixes, verification commands and publication commits belong
+to the linked evidence documents. These measurements establish this bounded
+slice rather than whole-backend parity.
 
 Remaining work includes nonempty/native documentation, arbitrary externals and
 name-rule files, complete attribute/view/helper coverage, canonical frontend
@@ -689,8 +716,8 @@ Implement C++ generation from the canonical snapshots before tying it to Rust
 frontend fidelity. Use the template-surface report to implement typed property
 views and helper contracts rather than assuming `serde_json` lookup reproduces
 Kotlin reflection. Extend M8's native resolver through the remaining name,
-comment, external-descriptor and configurable-name-rule contracts together with
-native predicate/sorter implementations.
+comment, external-descriptor and configurable-name-rule contracts, and extend
+M9's predicates/sorter beyond the bounded imported model and comment facts.
 
 Build on P1a's measured custom runtime and extend the explicit property/helper
 contracts through the C++ backend. Template conversion is outside the chosen
@@ -698,9 +725,10 @@ approach. Preserve standalone tags, missing/null values, section context, helper
 scope, indentation from `prefixPartial`, and final newlines as coverage grows.
 The acceptance criterion is byte-for-byte compatibility on existing smoke
 outputs, including whitespace; normalizing generated source or merely compiling
-it is insufficient. Selected-template equality from P1a and native naming from
-M8 do not satisfy this whole-backend criterion. A complete canonical adapter,
-full C++ file generation and native comments/predicates/sorters remain pending.
+it is insufficient. Selected-template equality from P1a, native naming from M8
+and native C++ predicate/sorter fragments from M9 do not satisfy this whole-backend
+criterion. A complete canonical adapter, full C++ file generation, native
+comments and remaining model/helper coverage remain pending.
 
 Run both generators on the same canonical inputs and options, compare output
 file sets and exact bytes, and expand coverage through all C++ smoke fixtures.
