@@ -51,3 +51,11 @@ process-lifetime RSS and CPU cannot be assigned to individual iterations.
 Java `Gluecodium.execute()` runs broader validators than the native supported
 subset. Even byte-identical output does not imply equal validation obligations,
 full port parity, or isolate language/runtime overhead.
+
+The reviewed report is [PERFORMANCE.md](../../PERFORMANCE.md). The active files
+under `results/` are the corrected writable-Java-home run; the earlier logging
+failure run remains under `results/initial-logging-error/` as historical evidence.
+To regenerate the runtime/RSS chart, install Matplotlib and run
+`python3 ruscodium/tools/performance/plot.py` from the repository root. Plotting
+is outside measurement and validates that all displayed samples passed parity,
+exit and logging gates.

@@ -2,6 +2,10 @@
 
 On these five parity-checked inputs, fresh Rust processes were faster for the two real fixtures and 10 simple structs. At 100 and 125 structs the JVM was faster. Rust used less peak resident memory on every completed workload. This is a bounded experiment on a shared host and does not establish complete compiler parity or a general language benchmark.
 
+![Fresh-process runtime and peak memory, median and interquartile range](tools/performance/results/comparison.png)
+
+[Vector chart](tools/performance/results/comparison.svg).
+
 ## Fresh process, warm filesystem
 
 Each row summarizes eight separately launched processes per implementation, paired in a fixed-seed balanced randomized order. Each metric is **median [Q1, Q3]; min–max**. Wall and CPU are seconds; peak RSS is KiB. CPU is per-invocation user + system time. Quartiles interpolate at `(n - 1) * p`. The ratio is JVM median wall divided by Rust median wall; values above 1 favor Rust.
