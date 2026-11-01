@@ -67,6 +67,8 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
     let mut line_start = 0;
     let mut first_tag = 0;
     let mut cursor = 0;
+    let mut containers: Vec<(String, bool)> = Vec::new();
+    let mut definition_depth = 0usize;
     while cursor < source.len() || first_tag < tags.len() {
         let mut next_tag = first_tag;
         let mut end = cursor;
@@ -120,7 +122,14 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
             && source[text_cursor..end]
                 .chars()
                 .all(|c| c == ' ' || c == '\t' || c == '\r' || c == '\n');
-        if standalone {
+        // Whitespace inside an inline definition is part of the partial,
+        // including indentation next to its boundary tags. A boundary line
+        // can also contain body tags, so track containers in lexical order.
+        let inside_definition = definition_depth > 0
+            || indices
+                .clone()
+                .any(|i| tags[i].content.starts_with('+') && (i == first_tag || i + 1 < next_tag));
+        if standalone && !inside_definition {
             let indent = source[line_start..tags[first_tag].start].to_string();
             if let Some(i) = indices.clone().find(|&i| tags[i].content.starts_with('>')) {
                 tags[i].indent = indent;
@@ -131,6 +140,28 @@ pub fn parse(name: &str, source: &str) -> Result<Vec<Node>, String> {
             }
             if !tags[next_tag - 1].content.starts_with('+') {
                 tags[next_tag - 1].end = end;
+            }
+        }
+        for i in indices.clone() {
+            let content = &tags[i].content;
+            match content.chars().next() {
+                Some('#' | '^' | '+') => {
+                    if let Some(name) = content[1..].split_whitespace().next() {
+                        let definition = content.starts_with('+');
+                        definition_depth += usize::from(definition);
+                        containers.push((name.to_string(), definition));
+                    }
+                }
+                Some('/')
+                    if containers
+                        .last()
+                        .is_some_and(|(name, _)| name == content[1..].trim()) =>
+                {
+                    if containers.pop().is_some_and(|(_, definition)| definition) {
+                        definition_depth -= 1;
+                    }
+                }
+                _ => {}
             }
         }
         first_tag = next_tag;

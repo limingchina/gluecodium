@@ -23,7 +23,11 @@ fn render_template(template: &str, partial: Option<&str>) -> String {
         &dir,
         &json!({
             "schema": "gluecodium.template.render-request", "version": 1,
-            "template": "main", "data": {"one": true, "no": false, "name": "outer"}
+            "template": "main", "data": {
+                "one": true, "no": false, "p": true, "name": "outer",
+                "groups": [{"namespace": "acme", "types": ["Worker"],
+                    "subGroups": [{"namespace": "api", "types": ["Service"], "subGroups": []}]}]
+            }
         }),
     )
     .unwrap();
@@ -82,5 +86,43 @@ fn inline_definitions_and_nested_partials_match_trimou() {
         ("  {{#no}}{{>part}}{{/no}}{{>part}}\nZ", "x\ny\nZ"),
     ] {
         assert_eq!(render_template(template, Some("x\ny\n")), expected);
+    }
+}
+
+#[test]
+fn inline_definition_preserves_nested_namespace_whitespace() {
+    let template = "{{#groups}}\n{{>group}}\n{{/groups}}\n{{+group}}\nnamespace {{namespace}} {\n{{#types}}\n    class {{this}};\n{{/types}}\n{{#subGroups}}\n{{>group}}\n{{/subGroups}}\n}\n{{/group}}\n";
+    let expected = "\nnamespace acme {\n\n    class Worker;\n\n\n\nnamespace api {\n\n    class Service;\n\n\n}\n\n\n}\n\n";
+    assert_eq!(render_template(template, None), expected);
+    assert_eq!(
+        render_template("{{>p}}\n{{+p}}\n  {{>part}}\n{{/p}}\n", Some("x\ny\n")),
+        "\n  x\ny\n\n\n"
+    );
+    assert_eq!(
+        render_template(
+            "{{>p}}\n{{+p}}\n{{#no}}\n  {{>part}}\n{{/no}}\n{{/p}}\n",
+            Some("x\ny\n")
+        ),
+        "\n\n\n"
+    );
+
+    for (template, expected) in [
+        ("{{>p}}\n{{+p}}{{#one}}\nX\n{{/one}}\n{{/p}}\n", "\nX\n\n\n"),
+        (
+            "{{>p}}\n{{+p}}\n{{#one}}\nX\n  {{/one}}{{/p}}  \nY",
+            "\n\nX\n    \nY",
+        ),
+        ("{{>p}}\n{{+p}}\nx\n  {{/p}}  \nY", "\nx\n    \nY"),
+        ("  {{+p}}{{#one}}\nX\n{{/one}}\n{{/p}}\nY", "  \nY"),
+        (
+            "{{>p}}\n{{+p}}\n{{#p}}\n{{#one}}\nX\n{{/one}}\n{{/p}}\n{{/p}}\n",
+            "\n\n\nX\n\n\n\n",
+        ),
+        (
+            "{{>p}}\n{{+p}}{{#one}}\r\nX\r\n{{/one}}\r\n{{/p}}\r\n",
+            "\r\nX\r\n\r\n\r\n",
+        ),
+    ] {
+        assert_eq!(render_template(template, None), expected, "{template:?}");
     }
 }
