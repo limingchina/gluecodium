@@ -155,7 +155,7 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
             // The loader selects a block by the actual parameter name. A
             // recognized but unmatched @param block has no selected comment.
             "param" if matches!(d.kind.as_str(), "fun" | "constructor" | "lambda") => true,
-            "return" => matches!(d.kind.as_str(), "fun" | "lambda"),
+            "return" => matches!(d.kind.as_str(), "fun" | "lambda") && d.ty.is_some(),
             "constructor" => d.kind == "struct",
             "value" | "description" | "get" | "set" => d.kind == "property",
             _ => false,
@@ -214,8 +214,8 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
             return Err("inconsistent annotation source".into());
         }
     }
-    if parent == "field_constructor" && !d.annotations.is_empty() {
-        return Err("field constructor parameter annotations are unsupported".into());
+    if matches!(parent, "field_constructor" | "lambda") && !d.annotations.is_empty() {
+        return Err("annotations on this parameter are unsupported".into());
     }
     if !d.annotations.is_empty()
         && !matches!(
@@ -759,7 +759,9 @@ impl Builder {
                     ["comment"]
                     .clone();
                 let mut block_path = names.clone();
-                block_path.push(p.name.clone());
+                if d.kind != "lambda" {
+                    block_path.push(p.name.clone());
+                }
                 let block_path = self.path(head, &block_path, "");
                 self.update_comment(&comment, &block_path, block);
             }
@@ -863,7 +865,7 @@ impl Builder {
                 } else {
                     self.basic_ref("Void", false)?
                 };
-                let return_path = if d.kind == "constructor" {
+                let return_path = if d.kind == "constructor" || d.ty.is_none() {
                     self.empty_path.clone()
                 } else {
                     path.clone()
@@ -888,7 +890,7 @@ impl Builder {
                 let ty = self.type_ref(d.ty.as_ref().unwrap())?;
                 p["typeRef"] = ty.clone();
                 p["isStatic"] = json!(static_);
-                if let Some(value) = doc
+                let value_comment = if let Some(value) = doc
                     .blocks
                     .get(&("value".into(), String::new()))
                     .filter(|c| c.sections.iter().any(|(_, s)| !s.is_empty()))
@@ -901,9 +903,23 @@ impl Builder {
                     let mut parts = names.clone();
                     parts.push("@value".into());
                     let value_path = self.path(head, &parts, "");
-                    self.update_comment(&comment, &value_path, &value);
-                }
-                p["valueComment"] = comment.clone();
+                    self.comment_data(&value_path, &value)
+                } else {
+                    let empty = docs::Comment {
+                        is_excluded: doc.description.is_excluded,
+                        ..Default::default()
+                    };
+                    self.comment_data(&path, &empty)
+                };
+                let description_has_text =
+                    doc.description.sections.iter().any(|(_, s)| !s.is_empty());
+                let accessor_comment = if description_has_text {
+                    comment.clone()
+                } else {
+                    value_comment.clone()
+                };
+                p["comment"] = accessor_comment.clone();
+                p["valueComment"] = value_comment;
                 p["additionalDescriptionComment"] = if let Some(block) = doc
                     .blocks
                     .get(&("description".into(), String::new()))
@@ -932,7 +948,7 @@ impl Builder {
                     - 1;
                 let ret = self.nodes[getter_index]["properties"]["returnType"].clone();
                 let ret_index = ret["$ref"].as_str().unwrap()[1..].parse::<usize>().unwrap() - 1;
-                self.nodes[ret_index]["properties"]["comment"] = comment.clone();
+                self.nodes[ret_index]["properties"]["comment"] = accessor_comment.clone();
                 let getter_comment = self.nodes[getter_index]["properties"]["comment"].clone();
                 let mut getter_doc = doc
                     .blocks
@@ -953,7 +969,7 @@ impl Builder {
                     param_path.push("value".into());
                     let pp = self.path(head, &param_path, "");
                     let pa = self.attr(None)?;
-                    let pc = comment.clone();
+                    let pc = accessor_comment.clone();
                     let param=self.node("LimeParameter",json!({"attributes":pa,"comment":pc,"external":null,"path":pp,"typeRef":ty}));
                     let mut set_path = names.clone();
                     set_path.push("set".into());

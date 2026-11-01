@@ -54,6 +54,15 @@ fn literals_and_annotations_are_checked_before_mapping() {
         .raw
         .push_str("\nclass Injected {}");
     assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    let annotation = model("package sample\n@Cpp(\"Renamed\")\nclass Item {}\n").files[0]
+        .declarations[0]
+        .annotations[0]
+        .clone();
+    let mut m = model("package sample\nlambda Item = (Int) -> Int\n");
+    m.files[0].declarations[0].params[0]
+        .annotations
+        .push(annotation);
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
 }
 
 #[test]
@@ -95,6 +104,43 @@ fn documentation_is_mapped_or_rejected_before_rendering() {
         .values()
         .any(|sections| sections.to_string().contains("Output")));
     assert!(job("package sample\n// {@Placeholder subject}\nclass Item {}\n").is_err());
+}
+
+#[test]
+fn description_only_property_keeps_value_comment_empty() {
+    let value =
+        job("package sample\ninterface Item {\n// Property description.\nproperty value: Int\n}\n")
+            .unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    let prop = nodes
+        .iter()
+        .find(|n| n["class"].as_str().unwrap().ends_with(".LimeProperty"))
+        .unwrap();
+    let raw = value["raw_comments"].as_object().unwrap();
+    let comment = prop["properties"]["comment"]["$ref"].as_str().unwrap();
+    let value_comment = prop["properties"]["valueComment"]["$ref"].as_str().unwrap();
+    assert!(raw[comment].to_string().contains("Property description"));
+    assert_eq!(raw[value_comment], serde_json::json!([]));
+}
+
+#[test]
+fn documented_lambda_parameter_uses_owner_comment_path() {
+    let adapted =
+        job("package sample\n// @param[p0] Input.\nlambda Item = (Int) -> Int\n").unwrap();
+    let nodes = adapted["snapshot"]["nodes"].as_array().unwrap();
+    let node = |id: &str| nodes.iter().find(|n| n["id"] == id).unwrap();
+    let param = nodes
+        .iter()
+        .find(|n| {
+            n["class"]
+                .as_str()
+                .unwrap()
+                .ends_with(".LimeLambdaParameter")
+        })
+        .unwrap();
+    let comment = node(param["properties"]["comment"]["$ref"].as_str().unwrap());
+    let path = node(comment["properties"]["path"]["$ref"].as_str().unwrap());
+    assert_eq!(path["properties"]["tail"], serde_json::json!(["Item"]));
 }
 
 #[test]
