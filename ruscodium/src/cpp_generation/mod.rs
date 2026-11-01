@@ -176,6 +176,10 @@ fn check_options(options: &Options) -> Result<(), String> {
     }
     Ok(())
 }
+pub(crate) fn validate_options(value: &Value) -> Result<(), String> {
+    let options = serde_json::from_value(value.clone()).map_err(|e| format!("options: {e}"))?;
+    check_options(&options)
+}
 fn export_file_name(name: &str, infix: &str) -> String {
     // NameHelper.toUpperCamelCase uses lower-underscore conversion when an
     // underscore is present, even when the input is already uppercase.
@@ -1459,18 +1463,31 @@ fn validate_literal(graph: &Graph, literal: &Value) -> Result<(), String> {
     let id = id["name"].as_str().ok_or("invalid literal type")?;
     let value = field(graph, literal, "value")?;
     let text = value.as_str().ok_or("invalid literal")?;
+    // Kotlin retains digit separators in the model's literal token. Validate
+    // the number without changing the token passed to the templates.
+    let numeric = text.replace('_', "");
+    if id != "STRING"
+        && text.contains('_')
+        && !crate::valid_number(text.strip_prefix(['-', '+']).unwrap_or(text))
+    {
+        return Err("invalid numeric literal separators".into());
+    }
     let valid = match id {
         "BOOLEAN" => ["true", "false"].contains(&text),
-        "INT8" => text.parse::<i8>().is_ok(),
-        "UINT8" => text.parse::<u8>().is_ok(),
-        "INT16" => text.parse::<i16>().is_ok(),
-        "UINT16" => text.parse::<u16>().is_ok(),
-        "INT32" => text.parse::<i32>().is_ok(),
-        "UINT32" => text.parse::<u32>().is_ok(),
-        "INT64" => text.parse::<i64>().is_ok(),
-        "UINT64" => text.parse::<u64>().is_ok(),
-        "FLOAT" => text.contains(['.', 'e', 'E']) && text.parse::<f32>().is_ok_and(f32::is_finite),
-        "DOUBLE" => text.contains(['.', 'e', 'E']) && text.parse::<f64>().is_ok_and(f64::is_finite),
+        "INT8" => numeric.parse::<i8>().is_ok(),
+        "UINT8" => numeric.parse::<u8>().is_ok(),
+        "INT16" => numeric.parse::<i16>().is_ok(),
+        "UINT16" => numeric.parse::<u16>().is_ok(),
+        "INT32" => numeric.parse::<i32>().is_ok(),
+        "UINT32" => numeric.parse::<u32>().is_ok(),
+        "INT64" => numeric.parse::<i64>().is_ok(),
+        "UINT64" => numeric.parse::<u64>().is_ok(),
+        "FLOAT" => {
+            numeric.contains(['.', 'e', 'E']) && numeric.parse::<f32>().is_ok_and(f32::is_finite)
+        }
+        "DOUBLE" => {
+            numeric.contains(['.', 'e', 'E']) && numeric.parse::<f64>().is_ok_and(f64::is_finite)
+        }
         "STRING" => text
             .chars()
             .all(|c| !c.is_control() || ['\n', '\r', '\t', '\u{8}'].contains(&c)),

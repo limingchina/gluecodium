@@ -48,6 +48,8 @@ pub struct TypeRef {
     pub builtin: bool,
     pub args: Vec<TypeRef>,
     pub nullable: bool,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    pub docs: Vec<String>,
     pub annotations: Vec<Annotation>,
     pub span: Span,
     pub resolved: Option<String>,
@@ -516,7 +518,7 @@ impl<'a> Parser<'a> {
         }
     }
     fn typ(&mut self) -> Result<TypeRef, String> {
-        let (_, annotations) = self.meta()?;
+        let (docs, annotations) = self.meta()?;
         let span = self.span();
         let builtin = BUILTINS.contains(&self.peek());
         let name = if builtin {
@@ -560,6 +562,7 @@ impl<'a> Parser<'a> {
             builtin,
             args,
             nullable,
+            docs,
             annotations,
             span,
             resolved: None,
@@ -670,6 +673,7 @@ impl<'a> Parser<'a> {
                             builtin: false,
                             args: vec![],
                             nullable: false,
+                            docs: vec![],
                             annotations: vec![],
                             span,
                             resolved: None,
@@ -1622,6 +1626,7 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
 }
 
 pub mod cpp;
+pub mod cpp_adapter;
 pub mod cpp_generation;
 
 pub mod template;

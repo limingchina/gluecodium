@@ -1,0 +1,109 @@
+use ruscodium::{
+    cpp_adapter::{self, Options},
+    parse, Model,
+};
+
+fn model(source: &str) -> Model {
+    Model {
+        schema_version: 1,
+        files: vec![parse("input.lime", source, false).unwrap()],
+    }
+}
+fn job(source: &str) -> Result<serde_json::Value, String> {
+    cpp_adapter::build_job(&model(source), &Options::default())
+}
+
+#[test]
+fn fresh_resolution_and_untrusted_shape_guards() {
+    let source = "package sample\nstruct Item {\nvalue: Int\n}\nstruct Box {\nvalue: Item\n}\n";
+    let mut m = model(source);
+    m.files[0].declarations[1].children[0]
+        .ty
+        .as_mut()
+        .unwrap()
+        .resolved = Some("forged.Target".into());
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_ok());
+    m.files[0].declarations[1].children[0]
+        .ty
+        .as_mut()
+        .unwrap()
+        .builtin = true;
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    let mut m = model(source);
+    m.files[0].declarations[0].children.clear();
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    let mut m = model(source);
+    let forged = m.files[0].declarations[0].children[0].ty.clone().unwrap();
+    m.files[0].declarations[0].children[0].parents.push(forged);
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+}
+
+#[test]
+fn literals_and_annotations_are_checked_before_mapping() {
+    assert!(job("package sample\nstruct Item {\nvalue: Int = \"7\"\n}\n").is_err());
+    assert!(job("package sample\nstruct Item {\nvalue: String = 7\n}\n").is_err());
+    let mut m = model("package sample\nstruct Item {\nvalue: Int = 7\n}\n");
+    m.files[0].declarations[0].children[0]
+        .literal
+        .as_mut()
+        .unwrap()
+        .kind = "boolean".into();
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    let mut m = model("package sample\n@Cpp(\"Renamed\")\nclass Item {}\n");
+    m.files[0].declarations[0].annotations[0]
+        .raw
+        .push_str("\nclass Injected {}");
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+}
+
+#[test]
+fn retained_type_documentation_and_auxiliary_facts_are_checked() {
+    let mut m = model("package sample\nstruct Item {\nvalue: Int\n}\n");
+    m.files[0].declarations[0].children[0]
+        .ty
+        .as_mut()
+        .unwrap()
+        .docs
+        .push("// type docs".into());
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    let aux = parse("aux.lime", "package sample\n@Unknown\nclass Aux {}\n", true).unwrap();
+    let mut m = model("package sample\nclass Main {}\n");
+    m.files.push(aux);
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    assert!(job("package sample\nstruct Item {\nvalue: List<// type doc\nInt>\n}\n").is_err());
+}
+
+#[test]
+fn strict_options_are_validated_by_build_job() {
+    let mut options = Options::default();
+    options.root_namespace.push("class".into());
+    assert!(cpp_adapter::build_job(&model("package sample\nclass Item {}\n"), &options).is_err());
+}
+
+#[test]
+fn documentation_is_mapped_or_rejected_before_rendering() {
+    let input = "package sample\n// A description.\n// @param[value] Input.\n// @return Output.\ninterface Item {\n    fun run(value: Int): Int\n}\n";
+    // Function-specific blocks belong on the function itself.
+    assert!(job(input).is_err());
+    let input = "package sample\ninterface Item {\n// A description.\n// @param[value] Input.\n// @return Output.\nfun run(value: Int): Int\n}\n";
+    let adapted = job(input).unwrap();
+    let raw = adapted["raw_comments"].as_object().unwrap();
+    assert!(raw
+        .values()
+        .any(|sections| sections.to_string().contains("Input")));
+    assert!(raw
+        .values()
+        .any(|sections| sections.to_string().contains("Output")));
+    assert!(job("package sample\n// {@Placeholder subject}\nclass Item {}\n").is_err());
+}
+
+#[test]
+fn cli_rejects_missing_values_before_writing() {
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+        .args(["compile-cpp", "--input", "--output", "target/unused"])
+        .output()
+        .unwrap();
+    assert!(!output.status.success());
+    assert!(output.stdout.is_empty());
+    assert!(String::from_utf8_lossy(&output.stderr).contains("missing argument"));
+}

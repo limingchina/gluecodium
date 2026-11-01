@@ -1,5 +1,28 @@
 use std::{env, fs, path::PathBuf, process};
+
+#[derive(serde::Deserialize)]
+#[serde(deny_unknown_fields)]
+struct NativeCppOptionsFile {
+    schema: String,
+    version: u64,
+    #[serde(default)]
+    root_namespace: Vec<String>,
+    #[serde(default)]
+    internal_namespace: Vec<String>,
+    #[serde(default = "native_default_export")]
+    export: String,
+    #[serde(default)]
+    export_common: Option<String>,
+    #[serde(default)]
+    copyright_header: Option<String>,
+}
+fn native_default_export() -> String {
+    "_GLUECODIUM_CPP".into()
+}
 fn run() -> Result<(), String> {
+    if env::args().nth(1).as_deref() == Some("compile-cpp") {
+        return compile_cpp_cli();
+    }
     if env::args().nth(1).as_deref() == Some("generate-cpp") {
         return generate_cpp_cli();
     }
@@ -17,7 +40,7 @@ fn run() -> Result<(), String> {
         let a = &args[i];
         match a.as_str() {
             "-h" | "-help" | "--help" => {
-                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\n       ruscodium render --templates DIR --request FILE [--output FILE]\n       ruscodium generate-cpp --job FILE --templates DIR --output DIR\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators\nRun 'ruscodium render --help' for the experimental template renderer.");
+                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\n       ruscodium render --templates DIR --request FILE [--output FILE]\n       ruscodium generate-cpp --job FILE --templates DIR --output DIR\n       ruscodium compile-cpp --input PATH [--auxinput PATH] --templates DIR --output DIR [--options FILE]\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators\nRun 'ruscodium render --help' for the experimental template renderer.");
                 return Ok(());
             }
             "--version" | "-version" => {
@@ -86,6 +109,72 @@ fn run() -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     }
     Ok(())
+}
+
+fn compile_cpp_cli() -> Result<(), String> {
+    let mut inputs = Vec::new();
+    let mut aux = Vec::new();
+    let (mut templates, mut output, mut options) = (None, None, None);
+    let mut args = env::args().skip(2);
+    while let Some(arg) = args.next() {
+        if arg == "--help" || arg == "-h" {
+            println!("Usage: ruscodium compile-cpp --input PATH [--input PATH] [--auxinput PATH] --templates DIR --output DIR [--options FILE]");
+            return Ok(());
+        }
+        if !matches!(
+            arg.as_str(),
+            "--input" | "--auxinput" | "--templates" | "--output" | "--options"
+        ) {
+            return Err(format!("unknown compile-cpp option: {arg}"));
+        }
+        let value = PathBuf::from(
+            args.next()
+                .filter(|v| !v.starts_with('-'))
+                .ok_or_else(|| format!("missing argument for {arg}"))?,
+        );
+        match arg.as_str() {
+            "--input" => inputs.push(value),
+            "--auxinput" => aux.push(value),
+            _ => {
+                let slot = match arg.as_str() {
+                    "--templates" => &mut templates,
+                    "--output" => &mut output,
+                    _ => &mut options,
+                };
+                if slot.replace(value).is_some() {
+                    return Err(format!("duplicate option: {arg}"));
+                }
+            }
+        }
+    }
+    if inputs.is_empty() {
+        return Err("compile-cpp requires --input".into());
+    }
+    let templates = templates.ok_or("compile-cpp requires --templates")?;
+    let output = output.ok_or("compile-cpp requires --output")?;
+    let options = if let Some(path) = options {
+        let bytes = fs::read(path).map_err(|e| format!("options: {e}"))?;
+        if bytes.len() > 1024 * 1024 {
+            return Err("options exceed size limit".into());
+        }
+        let value: NativeCppOptionsFile =
+            serde_json::from_slice(&bytes).map_err(|e| format!("options JSON: {e}"))?;
+        if value.schema != "gluecodium.native-cpp-options" || value.version != 1 {
+            return Err("unsupported native C++ options schema or version".into());
+        }
+        ruscodium::cpp_adapter::Options {
+            root_namespace: value.root_namespace,
+            internal_namespace: value.internal_namespace,
+            export: value.export,
+            export_common: value.export_common,
+            copyright_header: value.copyright_header,
+        }
+    } else {
+        ruscodium::cpp_adapter::Options::default()
+    };
+    let model = ruscodium::load(&inputs, &aux)?;
+    let files = ruscodium::cpp_adapter::generate(&model, templates, &options)?;
+    ruscodium::cpp_generation::write_files(output, &files)
 }
 
 fn generate_cpp_cli() -> Result<(), String> {
