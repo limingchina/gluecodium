@@ -490,7 +490,7 @@ preview generator/API separate. M6's full canonical parity item remains open.
   checks, retained whole-file/documentation/template oracles, preview corpus
   and compiled consumers, and equality of all 315 production templates.
 - [x] Obtain independent Sol 6.1 xhigh review and fix material findings.
-- [ ] Finalize README, generation/model/oracle/review documentation and measured
+- [x] Finalize README, generation/model/oracle/review documentation and measured
   checklist evidence with exact counts/limits, then commit/push tested increments.
 
 The mandatory first acceptance gate is the native LIME pipeline's fifty exact
@@ -531,8 +531,9 @@ Full M6 canonical/frontend parity remains open. Integer-separator mutations
 match JVM bytes but retain its invalid C++ underscore spelling; mutation
 byte parity is separate from baseline compilation evidence. See
 [FRONTEND_ADAPTER.md](FRONTEND_ADAPTER.md) and the
-[adapter oracle](tools/frontend-adapter-oracle/README.md). Publication
-remains pending.
+[adapter oracle](tools/frontend-adapter-oracle/README.md). Implementation,
+independent review, plan and verification were pushed through `cb9893cb6` to
+`origin/ruscodium/rust-port`; this checklist records the confirmed publication.
 
 ## Deferred full-parity work
 
