@@ -14,8 +14,10 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
         options.export = "ACME_API".into();
         options.export_common = Some("ACME_COMMON".into());
         options.copyright_header = Some("Copyright 2026 Example\nAll rights reserved.".into());
+    } else if args[0] == "docs" {
+        options.internal_namespace = vec!["gluecodium".into()];
     } else if args[0] != "default" {
-        return Err("group must be default or custom".into());
+        return Err("group must be default, custom or docs".into());
     }
     let main = vec![PathBuf::from(&args[1])];
     let aux = if args[2] == "-" {

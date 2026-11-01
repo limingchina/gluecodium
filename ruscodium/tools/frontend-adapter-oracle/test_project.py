@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import unittest
 
-from project import Projection
+from project import Projection, normalize_sections
 
 JOB = Path(__file__).resolve().parents[2] / 'tests/cpp-generation-goldens/default/job.json'
 
@@ -34,10 +34,34 @@ class ProjectionTests(unittest.TestCase):
         self.root['fileNameMap']['oracle.basic.Data'] = '/elsewhere/other.lime'
         self.assertNotEqual(self.expected, Projection(self.job).project())
 
+    def test_ambiguous_source_basenames_fail_closed(self):
+        self.root['fileNameMap']['oracle.basic.Data'] = '/elsewhere/default.lime'
+        with self.assertRaisesRegex(ValueError, 'basenames collide'):
+            Projection(self.job).project()
+
     def test_builtin_type_identity(self):
         field = self.nodes[self.root['referenceMap']['oracle.basic.Data.count']['$ref']]['properties']
         ref = self.nodes[field['typeRef']['$ref']]['properties']
         self.nodes[ref['element']['$ref']]['properties']['typeId']['name'] = 'UINT32'
+        self.assertNotEqual(self.expected, Projection(self.job).project())
+
+    def test_distinct_same_path_type_target_is_rejected(self):
+        original = self.nodes[self.root['referenceMap']['oracle.basic.Shade']['$ref']]
+        clone = copy.deepcopy(original)
+        clone['id'] = 'forged-clone'
+        self.job['snapshot']['nodes'].append(clone)
+        callback = self.nodes[self.root['referenceMap']['oracle.basic.Callback']['$ref']]['properties']
+        parameter = self.nodes[callback['parameters'][0]['$ref']]['properties']
+        typeref = self.nodes[parameter['typeRef']['$ref']]['properties']
+        typeref['element'] = {'$ref': clone['id']}
+        typeref['type'] = {'$ref': clone['id']}
+        with self.assertRaisesRegex(ValueError, 'noncanonical declaration target'):
+            Projection(self.job).project()
+
+    def test_constructor_link_attributes(self):
+        constructor = self.nodes[self.root['referenceMap']['oracle.basic.Data.:0']['$ref']]['properties']
+        ref = self.nodes[constructor['fieldRefs'][0]['$ref']]['properties']
+        self.nodes[ref['attributes']['$ref']]['properties']['attributes'] = {'CPP': {'NAME': 'changed'}}
         self.assertNotEqual(self.expected, Projection(self.job).project())
 
     def test_direct_nullable_edge(self):
@@ -54,6 +78,23 @@ class ProjectionTests(unittest.TestCase):
         self.nodes[self.root['topElements'][0]['$ref']]['properties']['surprise'] = True
         with self.assertRaisesRegex(ValueError, 'unhandled node/fields'):
             Projection(self.job)
+
+    def test_adjacent_comment_fragments_preserve_text_and_tags(self):
+        ident = self.nodes[self.root['topElements'][0]['$ref']]['properties']['comment']['$ref']
+        self.job['raw_comments'] = {ident: [['', 'hello'], ['', ' world'], ['Cpp', 'cpp']]}
+        expected = Projection(self.job).project()
+        self.job['raw_comments'][ident] = [['', 'hello world'], ['Cpp', 'cpp']]
+        self.assertEqual(expected, Projection(self.job).project())
+        self.job['raw_comments'][ident] = [['Cpp', 'hello world'], ['', 'cpp']]
+        self.assertNotEqual(expected, Projection(self.job).project())
+
+    def test_adjacent_placeholders_never_coalesce(self):
+        sections = [['Placeholder', 'first'], ['Placeholder', 'second']]
+        self.assertEqual(sections, normalize_sections(sections))
+
+    def test_empty_tag_transition_is_retained(self):
+        sections = [['', 'one'], ['Cpp', ''], ['', 'two']]
+        self.assertEqual(sections, normalize_sections(sections))
 
 
 if __name__ == '__main__':

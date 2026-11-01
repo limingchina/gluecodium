@@ -24,6 +24,7 @@ SCHEMA = {
     'LimeSet': TYPE + ['elementType'],
     'LimeMap': TYPE + 'keyType valueType'.split(),
     'LimeField': COMMON + 'defaultValue typeRef'.split(),
+    'LimeConstant': COMMON + 'typeRef value'.split(),
     'LimeEnumerator': COMMON + ['explicitValue'],
     'LimeParameter': COMMON + ['typeRef'],
     'LimeLambdaParameter': COMMON + 'isNamedParameter typeRef'.split(),
@@ -53,6 +54,7 @@ OVERLAYS = {
     'LimeSet': {'name', 'fullName', 'actualType'},
     'LimeMap': {'name', 'fullName', 'actualType'},
     'LimeField': {'name', 'fullName'},
+    'LimeConstant': {'name', 'fullName'},
     'LimeEnumerator': {'name', 'fullName'},
     'LimeParameter': {'name', 'fullName'},
     'LimeLambdaParameter': {'name', 'fullName'},
@@ -62,6 +64,17 @@ OVERLAYS = {
     'LimeReturnType': {'isVoid'},
     'LimeComment': {'isEmpty'},
 }
+
+
+def normalize_sections(raw):
+    """Join adjacent ordinary same-tag fragments without merging placeholders."""
+    sections = []
+    for tag, fragment in raw:
+        if sections and sections[-1][0] == tag and tag != 'Placeholder':
+            sections[-1][1] += fragment
+        else:
+            sections.append([tag, fragment])
+    return sections
 
 
 class Projection:
@@ -80,6 +93,7 @@ class Projection:
             kind = self.kind(self.nodes[ident])
             if set(values) - OVERLAYS.get(kind, set()):
                 raise ValueError(f'unhandled getter properties: {kind}: {sorted(values)}')
+        self.reference_map = self.props(job['snapshot']['root'])['referenceMap']
 
     @staticmethod
     def kind(node):
@@ -107,6 +121,21 @@ class Projection:
             result['typeId'] = p['typeId']
         return result
 
+    def declared(self, ref):
+        """Named type and field links must share the canonical model object."""
+        node = self.node(ref)
+        if self.kind(node) != 'LimeBasicType':
+            path = self.path(node['properties']['path'])
+            key = self.path_key(path)
+            if self.reference_map.get(key) != ref:
+                raise ValueError(f'noncanonical declaration target: {key}')
+        return self.named(ref)
+
+    @staticmethod
+    def path_key(path):
+        key = '.'.join(path['head'] + path['tail'])
+        return key + (':' + path['disambiguator'] if path['disambiguator'] else '')
+
     def attrs(self, ref):
         return self.props(ref)['attributes']
 
@@ -116,8 +145,14 @@ class Projection:
             raise ValueError('comment placeholders are outside this projection')
         ident = ref['$ref']
         if ident in self.comments:
-            sections = self.comments[ident]
-            empty = not sections
+            # Consecutive fragments with the same tag concatenate in order;
+            # the JVM lexer may split words/punctuation while the native loader
+            # retains a single contiguous fragment. Preserve tag transitions.
+            raw = self.comments[ident]
+            if any(tag == 'Placeholder' for tag, _ in raw):
+                raise ValueError('comment placeholders are outside this projection')
+            sections = normalize_sections(raw)
+            empty = all(not fragment for _, fragment in raw)
         else:
             sections = None
             empty = self.overlays.get(ident, {}).get('isEmpty')
@@ -143,7 +178,7 @@ class Projection:
                     'path': self.path(p['path']), 'key': self.typeref(p['keyType'], trail),
                     'value': self.typeref(p['valueType'], trail),
                     'childTypes': [self.typeref(x, trail) for x in p['childTypes']]}
-        return self.named(ref)
+        return self.declared(ref)
 
     def typeref(self, ref, trail=()):
         node = self.node(ref)
@@ -184,7 +219,11 @@ class Projection:
     def declaration(self, ref):
         node = self.node(ref)
         kind, p = self.kind(node), node['properties']
-        result = {'kind': kind, 'path': self.path(p['path']), 'attributes': self.attrs(p['attributes']),
+        path = self.path(p['path'])
+        key = self.path_key(path)
+        if key in self.reference_map and self.reference_map[key] != ref:
+            raise ValueError(f'noncanonical owned declaration: {key}')
+        result = {'kind': kind, 'path': path, 'attributes': self.attrs(p['attributes']),
                   'comment': self.comment(p['comment']), 'external': p['external']}
         for key in MEMBERS:
             if key in p:
@@ -211,8 +250,12 @@ class Projection:
         for key in ('defaultValue', 'explicitValue'):
             if key in p:
                 result[key] = self.value(p[key])
+        if kind == 'LimeConstant':
+            result['value'] = self.value(p['value'])
         if 'fieldRefs' in p:
-            result['fieldRefs'] = [self.named(self.props(x)['element']) for x in p['fieldRefs']]
+            result['fieldRefs'] = [{'attributes': self.attrs(self.props(x)['attributes']),
+                                    'element': self.declared(self.props(x)['element'])}
+                                   for x in p['fieldRefs']]
             result['structRef'] = self.typeref(p['structRef'])
         return result
 
@@ -241,6 +284,9 @@ class Projection:
                                  'attributes': self.attrs(p['attributes']),
                                  'comment': self.comment(p['comment']), 'external': p['external'],
                                  'childTypes': [self.typeref(x) for x in p['childTypes']]}
+        source_paths = set(root['fileNameMap'].values())
+        if len({PurePath(path).name for path in source_paths}) != len(source_paths):
+            raise ValueError('source basenames collide; cannot normalize ownership')
         return {'main': [self.declaration(x) for x in root['topElements']],
                 'auxiliary': [self.declaration(x) for x in root['auxiliaryElements']],
                 'referenceMap': refs, 'builtins': builtins,

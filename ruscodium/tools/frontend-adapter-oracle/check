@@ -64,6 +64,10 @@ def replace(text, old, new):
 
 
 def main():
+    if any(arg not in ('--core-only', '--docs-only') and not arg.startswith('--case=')
+           for arg in sys.argv[1:]) or len(sys.argv) > 2:
+        raise SystemExit('usage: check [--core-only | --docs-only | --case=NAME]')
+    selected_case = next((arg.split('=', 1)[1] for arg in sys.argv[1:] if arg.startswith('--case=')), None)
     if not LIB.is_dir():
         raise SystemExit(f'missing JVM distribution: {LIB}')
     run(['cargo', 'build', '--manifest-path', RUST / 'Cargo.toml', '--bin', 'ruscodium', '--example', 'frontend_cpp_inventory'])
@@ -95,10 +99,44 @@ def main():
             ('default', 'values-order', {'default': [('BLUE = 7', 'BLUE = 11'), ('count: Int = 7', 'count: Int = 13'),
                 ('    typealias LaterAlias = EarlierAlias\n    typealias EarlierAlias = Int',
                  '    typealias EarlierAlias = Int\n    typealias LaterAlias = EarlierAlias')]}),
+            ('default', 'integer-separator', {'default': [('count: Int = 7', 'count: Int = 1_000')]}),
+            ('default', 'negative-float', {'default': [('count: Int = 7', 'count: Int = 7\n    ratio: Double = -1.25')]}),
             ('custom', 'references', {'custom': [('List<String>', 'List<Int>'), ('worker: Worker?', 'worker: Worker')]}),
             ('custom', 'auxiliary', {'custom': [('worker: Worker?', 'worker: oracle.auxiliary.Unused?')],
                                     'aux': [('value: Int', 'value: String')]}),
+            ('custom', 'open-class', {'custom': [('class Service {', 'open class Service {')]}),
+            ('custom', 'narrow-interface', {'custom': [('interface Worker {', 'narrow interface Worker {')]}),
+            ('custom', 'constructor', {'custom': [('class Service {', 'class Service {\n    constructor create(value: Int)')]}),
+            ('custom', 'static-function', {'custom': [('fun use(worker: Worker, count: Int): String',
+                                                        'static fun use(worker: Worker, count: Int): String')]}),
+            ('custom', 'struct-method', {'custom': [('struct Data {', 'struct Data {\n    static fun size(value: Int): Int')]}),
+            ('custom', 'cpp-nested-struct', {'custom': [('struct Nested {', '@Cpp("RenamedNested") struct Nested {')]}),
+            ('custom', 'cpp-field', {'custom': [('amount: Int', '@Cpp("renamedAmount") amount: Int')]}),
+            ('custom', 'cpp-function', {'custom': [('fun use(worker: Worker', '@Cpp("renamedUse") fun use(worker: Worker')]}),
+            ('custom', 'cpp-parameter', {'custom': [('count: Int): String', '@Cpp("renamedCount") count: Int): String')]}),
+            ('custom', 'cpp-property', {'custom': [('property value: Int', '@Cpp("renamedValue") property value: Int')]}),
+            ('custom', 'cpp-alias', {'custom': [('typealias InnerAlias = Nested', '@Cpp("RenamedAlias") typealias InnerAlias = Nested')]}),
+            ('custom', 'cpp-enum', {'custom': [('interface Worker {', '@Cpp("RenamedChoice") enum Choice { RED, BLUE }\ninterface Worker {')]}),
+            ('custom', 'cpp-enumerator', {'custom': [('interface Worker {', 'enum Choice { @Cpp("RenamedRed") RED, BLUE }\ninterface Worker {')]}),
+            ('custom', 'property-plain-doc', {'custom': [('    property value: Int',
+                                    '    // Ordinary property text.\n    property value: Int')]}),
+            ('custom', 'property-value-doc', {'custom': [('    property value: Int',
+                                    '    // @value Property value text.\n    property value: Int')]}),
+            ('custom', 'property-description-doc', {'custom': [('    property value: Int',
+                                    '    // @description Property description text.\n    property value: Int')]}),
+            ('default', 'documentation-blocks', {'default': [
+                ('interface Worker {', '// A café worker with {@Cpp C++ text}{@Java Java text}.\n//\n// A second paragraph.\ninterface Worker {'),
+                ('    fun run(value: Int): String', '    // Hidden operation.\n    // @exclude\n    fun run(value: Int): String'),
+                ('struct Data {', '// A data container.\n// @constructor Constructs data.\nstruct Data {'),
+                ('    label: String', '    // Label text.\n    label: String'),
+                ('    field constructor(label)', '    // Constructs a value.\n    field constructor(label)')]}),
         ]
+        if '--docs-only' in sys.argv:
+            cases = []
+        if selected_case is not None:
+            cases = [case for case in cases if case[1] == selected_case]
+            if not cases:
+                raise SystemExit(f'unknown case: {selected_case}')
         for index, (group, name, changes) in enumerate(cases):
             sources = dict(originals)
             for source, substitutions in changes.items():
@@ -114,7 +152,8 @@ def main():
                 (copied / f'{source}.lime').write_text(content, encoding='utf-8')
             jvm = tmp / f'jvm-{index}'
             native = tmp / f'native-{index}'
-            run([java, '-cp', f'{classes}:{LIB}/*', 'CppGenerationOracle', group, jvm], cwd=tmp)
+            run([java, '-cp', f'{classes}:{LIB}/*', 'CppGenerationOracle', group, jvm], cwd=tmp,
+                env=dict(os.environ, CPP_ORACLE_RAW_COMMENTS='1'))
             main_input = copied / f'{group}.lime'
             aux_input = copied / 'aux.lime' if group == 'custom' else '-'
             run([example, group, main_input, aux_input, TEMPLATES, native], cwd=tmp)
@@ -147,6 +186,47 @@ def main():
                      *sources, OLD / f'{group}-consumer.cc', '-o', executable])
                 run([executable])
                 print(f'{group}: library and empty-PATH CLI C++ consumers passed', flush=True)
+
+        # The two upstream documentation files do not use configured placeholders.
+        # Leave commandlineoptions.txt absent in this temporary copy: the JVM's
+        # documented fallback uses the same namespace and an empty placeholder map
+        # as the native API. The frozen M11 jobs include extra configured (unused)
+        # placeholders, so compare their output bytes/inventory separately.
+        if '--core-only' in sys.argv or selected_case is not None:
+            return
+        smoke = REPO / 'gluecodium/src/test/resources/smoke/comments'
+        temp_smoke = tmp / 'gluecodium/src/test/resources/smoke/comments'
+        (temp_smoke / 'input').mkdir(parents=True)
+        docs_options = tmp / 'docs-options.json'
+        docs_options.write_text(json.dumps({'schema': 'gluecodium.native-cpp-options', 'version': 1,
+                                            'internal_namespace': ['gluecodium']}), encoding='utf-8')
+        for group, filename in [('comments-file-interface', 'CommentsInterface.lime'),
+                                ('comments-file-lambda', 'CommentsLambda.lime')]:
+            main_input = temp_smoke / 'input' / filename
+            shutil.copyfile(smoke / 'input' / filename, main_input)
+            jvm, native = tmp / f'jvm-{group}', tmp / f'native-{group}'
+            run([java, '-cp', f'{classes}:{LIB}/*', 'CppGenerationOracle', group, jvm], cwd=tmp,
+                env=dict(os.environ, CPP_ORACLE_RAW_COMMENTS='1'))
+            run([example, 'docs', main_input, '-', TEMPLATES, native], cwd=tmp)
+            compare(jvm, native, group)
+            frozen = RUST / 'tests/cpp-documentation-goldens' / group
+            if read(frozen / 'manifest.json')['files'] != read(native / 'manifest.json')['files']:
+                raise AssertionError(f'{group}: frozen source sets differ')
+            compare_files(frozen / 'files', native / 'files', f'{group}/capture')
+            cli = tmp / f'cli-{group}'
+            result = subprocess.run([str(x) for x in [binary, 'compile-cpp', '--input', main_input,
+                '--templates', TEMPLATES, '--output', cli, '--options', docs_options]],
+                cwd=tmp, env=dict(os.environ, PATH=''), stdout=subprocess.PIPE, check=True)
+            if result.stdout:
+                raise AssertionError(f'{group}: CLI unexpectedly wrote to stdout')
+            compare_files(native / 'files', cli, f'{group}/CLI')
+            for output in (native / 'files', cli):
+                sources = sorted((output / 'cpp/src').rglob('*.cpp'))
+                executable = tmp / f'consumer-{group}'
+                run([cxx, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-I', output / 'cpp/include',
+                     *sources, OLD / f'{group}-consumer.cc', '-o', executable])
+                run([executable])
+            print(f'{group}: frozen files/source sets and strict library/empty-PATH CLI consumers match', flush=True)
 
 
 if __name__ == '__main__':
