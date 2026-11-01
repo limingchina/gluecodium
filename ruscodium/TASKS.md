@@ -92,7 +92,7 @@ of marking the entire port complete after the preview.
 - [x] Inventory template helpers and model access sites with a reproducible static tool; see [TEMPLATE_SURFACE.md](TEMPLATE_SURFACE.md).
 - [x] Implement a bounded experimental JVM reference-model snapshot tool with documented schema and tests; see [reference-model](tools/reference-model/README.md).
 - [x] Add a reproducible JVM/Rust validation comparison runner covering core cases and coherent smoke groups.
-- [ ] Build the complete canonical Kotlin model adapter and establish full template and generated-output parity. The experimental reference snapshot and Rust preview JSON are distinct schemas.
+- [ ] Define the template-complete canonical model contract, implement the native Rust frontend adapter with full Kotlin-model semantic parity, and establish full template/generated-output parity. The experimental reference snapshot and Rust preview JSON are distinct schemas; M12's bounded adapter to the existing compatibility backend is tracked separately and does not complete this item.
 - [x] Keep the existing Mustache templates unchanged and execute the bounded Rust compatibility runtime against selected Trimou helper, model-view, lookup, partial and whitespace fixtures with byte-exact comparisons.
 
 ## M7 / P1a: executable template and graph-import slice
@@ -420,6 +420,84 @@ the one-level real-loader fixture. See [REVIEW.md](REVIEW.md) for exact
 candidate hashes and findings. Implementation, oracle/report, independent
 review, plan and verification were pushed through `47e86a969` to
 `origin/ruscodium/rust-port`; this checklist records the confirmed publication.
+
+## M12 / P1c: native frontend adapter to the C++ compatibility backend
+
+Execute [the M12 contract](PLAN.md#m12--p1c-native-frontend-adapter-to-the-c-compatibility-backend--planned)
+from clean `d1966f390` on `ruscodium/rust-port`, with Sol 6.1 max planning,
+Terra 6.1 xhigh implementation and independent Sol 6.1 xhigh review. Keep all
+changes under `ruscodium/`, all 315 production templates unchanged, and the
+preview generator/API separate. M6's full canonical parity item remains open.
+
+- [x] Inspect the native model/parser/resolver, strict backend graph/getter
+  contract and independently captured default/custom inputs/options/outputs.
+- [x] Define the bounded native adapter, no-JVM compile path, source-fact guards,
+  separate CLI/options contract and exact acceptance gates in PLAN/TASKS.
+- [x] Commit this M12 plan/checklist before implementation starts.
+- [ ] Retain type-position docs in `TypeRef.docs`, omitting empty values from
+  preview JSON; account for every consumed metadata position before adaptation.
+- [ ] Add public `cpp_adapter` adaptation/generation APIs accepting native
+  `Model` plus options; clone, recursively clear resolved caches and re-resolve/
+  validate caller-constructed models, never trust stale targets or accept backend
+  graph/view/context/replay injection.
+- [ ] Define explicit AST kind/field/attribute/literal guards for the admitted
+  surface, including schema/names/imports, builtin consistency, raw/structured
+  value agreement, auxiliary/late declarations and recursive type metadata;
+  reject unsupported facts before constructing empty replacements, with no
+  fixture-name/path/input allowlist.
+- [ ] Build deterministic complete typed backend graphs with all seventeen
+  builtins, main/auxiliary roots, reference/file-name maps, paths/owners,
+  attributes/comments, ordered members, type refs/containers/aliases,
+  methods/returns/parameters/accessors, defaults/enumerators/field constructors.
+- [ ] Derive getter views, child-type collections, implicit accessor/return
+  semantics and checked missing properties from native facts; keep strict
+  backend shape/reference/ownership validation enabled with no generic fallback.
+- [ ] Produce v2 jobs with complete raw comment arrays, deriving emptiness only
+  after guarding all retained source docs, including type-local/auxiliary docs;
+  do not reuse legacy measured comment-emptiness answers.
+- [ ] Add `compile-cpp` with repeated `--input`/`--auxinput`, required
+  `--templates`/`--output` and optional `--options`; reject unknown, duplicate
+  scalar and missing options while preserving the existing preview commands.
+- [ ] Add strict `gluecodium.native-cpp-options` v1 configuration for
+  root/internal namespaces, export/common-export and nullable copyright text,
+  with existing defaults, identifier checks and no generated model controls.
+- [ ] Reuse `cpp_generation::generate` and `write_files`; render every output
+  before writes and preserve stdout/output sentinels on all pre-write failures.
+- [ ] Compare native-LIME default/custom output to all 26/24 existing actual
+  JVM-captured paths, source sets and bytes, including eighteen common/export
+  files per job; assert auxiliary ownership and exact fifty-file totals.
+- [ ] Compare a documented semantic graph projection with independently loaded
+  JVM models, normalizing IDs/source roots while preserving meaningful order,
+  kinds/owners/types/attributes/accessors/defaults/constructor links/comments;
+  enumerate field coverage and exclusions without a full canonical claim.
+- [ ] Compile all native-generated model/common implementations and run both
+  existing consumers with strict C++17 warnings; cover library and CLI paths.
+- [ ] Run native LIME compilation from a temporary working directory with empty
+  `PATH`, no JVM/captured job dependency and deterministic repetition.
+- [ ] Differentially test native source mutations for names/paths/order,
+  generic/nullable/class refs, values and auxiliary lookup/ownership against
+  independently generated JVM files for admitted cases.
+- [ ] Test malformed/forged mutable models, stale refs, invalid config,
+  unsupported source/metadata, collisions and render failures, including
+  auxiliary/late cases, with no partial output and retained sentinels.
+- [ ] After the fifty-file gate, map feasible bounded source documentation to
+  M11's raw v2 contract with real-LIME/JVM whole-file evidence; preserve facts,
+  reject unsupported forms and report exact admission/deferment blockers.
+- [ ] Retain all 63 existing documentation files as backend regressions; label
+  which real-LIME units the native adapter admits without gating on full
+  Markdown/link or complete comments-group parity.
+- [ ] Pass formatting, offline all-target Clippy/Cargo, Python/reference-model
+  checks, retained whole-file/documentation/template oracles, preview corpus
+  and compiled consumers, and equality of all 315 production templates.
+- [ ] Obtain independent Sol 6.1 xhigh review and fix material findings.
+- [ ] Update README, generation/model/oracle/review documentation and measured
+  checklist evidence with exact counts/limits, then commit/push tested increments.
+
+The mandatory first acceptance gate is the native LIME pipeline's fifty exact
+default/custom files plus semantic, no-JVM, failure and compiled-consumer
+evidence. Bounded documentation follows and is reported separately; unsupported
+source facts must be diagnosed. Full canonical/Kotlin-model parity, complete
+documentation/validation and broader C++ runtime/platform work remain deferred.
 
 ## Deferred full-parity work
 

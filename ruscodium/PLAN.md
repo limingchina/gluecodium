@@ -266,8 +266,10 @@ P0 has delivered bounded investigation tooling, P1a a native template/runtime
 slice, M8 a bounded native C++ name resolver, M9 native C++ predicates and
 declaration sorting, M10 whole C++ file sets for a guarded snapshot subset,
 and M11 bounded native documentation with a reproducible smoke inventory.
-The complete canonical boundary, remaining C++ features and platform backend
-phases remain incomplete until their own acceptance evidence exists.
+M12 below now prioritizes a bounded adapter from the existing Rust frontend to
+that working compatibility backend. The complete canonical boundary, remaining
+C++ features and platform backend phases remain incomplete until their own
+acceptance evidence exists.
 
 ### P0: experimental snapshot delivered; canonical boundary incomplete
 
@@ -1011,11 +1013,173 @@ recorded in the linked task/review/oracle documents. This delivers a bounded
 native documentation slice; full smoke, Markdown, native frontend, C++ feature/
 runtime ABI and platform-backend parity remain open.
 
+### M12 / P1c: native frontend adapter to the C++ compatibility backend — planned
+
+Start from clean `d1966f390` on `ruscodium/rust-port`. Use Sol 6.1 max for this
+plan, Terra 6.1 xhigh for implementation, and independent Sol 6.1 xhigh review.
+Commit this contract and its checklist before implementation. Keep all changes
+under `ruscodium/`, preserve the 315 production Mustache templates exactly, and
+retain the existing preview API/CLI and standalone `cpp` generator as separate
+interfaces. The user has authorized committing and pushing tested increments.
+
+The immediate deliverable is a native path from LIME through Rust loading,
+resolution and adaptation into the existing `cpp_generation` whole-file
+generator and its unchanged compatibility templates. It must work without a
+JVM, reference-export subprocess, captured model, job fixture, imported getter
+answer, or rendered context on the native compile path. Reusing the existing
+strict backend model schema internally is allowed and preferred; reconstructing
+its facts from native declarations is the work. This bounded adapter does not
+complete the template-complete canonical model or full Kotlin frontend parity
+tracked in M6/P0/P3.
+
+#### Native model and adapter contract
+
+Add a public `cpp_adapter` library module accepting the native `Model` and
+explicit native C++ options, plus a library generation entry point returning
+the existing `GeneratedFile` records. The adapter may construct an internal
+generation job, then call `cpp_generation::generate`; it must not bypass that generator with the
+preview emitter, copy expected files, or accept caller-supplied backend
+snapshots, overlays, absent-property maps, helper hooks or output inventories.
+Use `cpp_generation::write_files` for CLI output after all files have rendered.
+
+Treat a public, caller-constructed `Model` as untrusted structured input. Clone
+it, clear incoming `resolved` targets recursively (including builtins), then
+resolve/revalidate it and derive targets afresh. Check schema version, contextual
+names/package/import syntax, builtin/name/arity consistency, raw/structured
+annotation and literal consistency, and the complete per-kind field shape of
+every admitted declaration, parameter, type reference and literal. A resolution
+pass alone is insufficient. Never trust a stale target or silently ignore
+unexpected AST fields. Check main and auxiliary files, including declarations
+that own no generated output.
+Retain type-position documentation currently consumed by `Parser::typ` in
+`TypeRef.docs`; omit that new field from serialization when empty to preserve
+existing comment-free preview JSON. Traverse documentation in recursive type
+arguments, parents, return/throws types and every retained declaration position.
+Unsupported source facts must survive until a diagnostic or be rejected by an
+explicit source preflight, never disappear before adaptation.
+
+Use deterministic allocation/indexing followed by link construction. Build the
+complete typed identity graph expected by the existing strict backend: all
+seventeen basic types, ordered main/auxiliary roots, reference and file-name
+maps, package/nested paths and ownership, attributes/comments, ordered member
+collections, type/generic/nullability and alias edges, function/return/parameter
+objects, property accessors, field defaults, enumerators and field-constructor
+links. Preserve meaningful source order and sharing. Derive required child-type
+collections, `actualType`, names, constructor/return views and other admitted
+getter properties from native/raw facts, reusing existing native derivation
+where possible. Define missing getters through a closed class-based contract,
+not through universal null/false/empty fallback. The strict graph and ownership
+validators remain enabled.
+
+First admit the comment-free surface of the existing default/custom whole-file
+fixtures: integer enum values with measured implicit-value semantics, aliases
+including nested dependency order, named/positional lambdas, classes/interfaces,
+methods with omitted or explicit return types, readonly/mutable/static properties, structs,
+nested declarations, primitive and supported container/nullable references,
+supported field defaults and field constructors, and the measured `@Cpp` name
+annotation. Derive omitted returns and implicit accessor objects using measured
+loader semantics. Reject unsupported inheritance, exceptions/throws, external
+descriptors, filtering or other annotations/modifiers, unimplemented overload or
+literal forms, and incompatible field/default semantics before rendering. A
+feature is admitted by an explicit mapping with evidence, not merely because
+the preview parser accepts it. Admission must follow source kinds and semantics,
+never fixture paths, names, known inputs or expected output inventories. State
+the final support table precisely.
+
+For this first gate, reject all nonempty retained documentation, including
+type-local and auxiliary documentation. Construct version-2 jobs with complete
+`raw_comments` entries for every real or synthetic comment node, deriving empty
+arrays only after establishing absence of source documentation. Do not reuse a
+captured or asserted legacy `isEmpty` getter. Continue to derive genuine empty
+comments for builtins/synthetic elements; do not replace user comments with
+emptiness to make the strict backend accept them.
+
+#### Separate native CLI and configuration
+
+Expose `ruscodium compile-cpp --input PATH [--input PATH] [--auxinput PATH]
+--templates DIR --output DIR [--options FILE]`. Reuse deterministic input
+discovery/deduplication and the native library pipeline. Require a main input,
+template directory and explicit output directory; reject unknown options,
+missing values and duplicate scalar options. Repeated input/auxiliary flags are
+intentional. This command must not accept `--job` or model/context injection.
+
+Use a small strict JSON configuration with schema
+`gluecodium.native-cpp-options`, version `1`, and only `root_namespace`,
+`internal_namespace`, `export`, `export_common` and `copyright_header` beyond
+the schema/version fields. Apply the existing generator defaults when omitted:
+empty namespace arrays, `_GLUECODIUM_CPP` export, inherited common export, null
+copyright. Namespace arrays contain components; copyright is a nullable string
+and preserves supplied newlines. Reject unknown fields, invalid types, unsafe
+identifiers and unsupported versions before generation. No configuration field
+may contain backend graph data or precomputed generator decisions.
+
+Validate/adapt/render the entire model and every common/export file in memory
+before any output write. On input, configuration, adaptation or render failure,
+return nonzero, keep stdout empty, preserve existing output sentinels and create
+no partial generated artifacts. Retain the documented final-write I/O limits
+and unrelated-file behavior of `write_files`; do not promise filesystem
+transactionality beyond its actual contract.
+
+#### Acceptance evidence and execution order
+
+1. First prove the comment-free native pipeline using the existing actual JVM
+   captures from `tools/cpp-generation-oracle/{default,custom,aux}.lime`, with
+   independently supplied equivalent options. Compare all 26 default and 24
+   custom relative paths, `MAIN`/`COMMON` source sets and every byte, including
+   eighteen common/export files per job. The custom auxiliary root is indexed
+   but owns no output. These fifty files are the mandatory first gate.
+2. Compare an explicit native/JVM semantic graph projection for those loaded
+   inputs. Normalize traversal IDs and source roots, use declaration paths and
+   contextual roles for identity, preserve meaningful ordering, and compare
+   kinds/owners, main/auxiliary membership, attributes, resolved type/generic/
+   alias/nullability edges, parameters/returns/accessors/static state, defaults,
+   enumerators, field-constructor links and comment emptiness. Enumerate relevant
+   fields and intentional exclusions; do not require JVM allocation artifacts
+   or claim full canonical equivalence. Test-only graph/inventory export is
+   sufficient; a product output manifest is not required.
+3. Compile all native-generated model/common implementations and run the
+   existing default/custom consumers with `-std=c++17 -Wall -Wextra -Werror`.
+   Exercise library and CLI entry points. Run the native executable from a
+   temporary working directory with an empty `PATH` and no Java dependency,
+   passing real LIME/configuration/templates, never a captured job. Repetition
+   must preserve paths, source sets and bytes.
+4. Add native-source mutations covering names/package paths, dependency order,
+   generic/nullable/class references, values and auxiliary lookup/ownership.
+   Where the JVM accepts the admitted variant, generate its expected outputs
+   independently and compare exact bytes rather than merely asserting a change.
+   Cover malformed/forged public models, stale targets, unknown configuration,
+   unsupported facts in auxiliary or late declarations, collisions and template
+   failures with pre-write preservation checks. Do not duplicate the existing
+   Java oracle when its temporary-input execution can provide this evidence.
+5. After the first gate works, add bounded native documentation only where raw
+   source facts can be retained and mapped honestly into M11's existing v2
+   comment contract. Preserve section ordering, tags, exclusions, paths and
+   placeholders for every admitted form. Use focused real-LIME/JVM differential
+   evidence and whole-file comparisons; retain explicit rejection for unsupported
+   forms. Full Markdown/link processing is not a prerequisite for this adapter.
+   The three existing documentation jobs (63 files, including two separately
+   loaded upstream files) are available regression targets, not permission to
+   import their jobs or erase unsupported source syntax. Report the exact
+   admitted/rejected documentation boundary separately from the fifty-file
+   core; if an additional form remains deferred, record its concrete blocker.
+6. Pass formatting, offline all-target Clippy and Cargo tests, Python and
+   reference-model checks, retained whole-file/documentation/template oracles,
+   preview corpus/consumers and direct equality of all 315 production templates.
+   Obtain independent Sol 6.1 xhigh review, fix material findings, record exact
+   commands/counts/limitations, and commit/push tested increments.
+
+Completion of the core means actual native LIME reaches the compatibility
+backend with the fifty-file evidence above. It does not imply all-feature
+canonical adaptation, complete validation or documentation, runtime/ABI parity,
+or any Dart/Swift/JNI/platform output. Preserve those later stages explicitly.
+
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
 Extend M10's snapshot-driven C++ generation and M11's bounded documentation
-profile toward complete canonical model coverage before tying them to Rust
-frontend fidelity. Use the template-surface report to implement typed property
+profile alongside M12's bounded native adapter toward complete canonical model
+and frontend coverage. M12 joins the existing frontend and backend now; full
+backend coverage is not a prerequisite for that bounded path. Use the
+template-surface report to implement typed property
 views and helper contracts rather than assuming `serde_json` lookup reproduces
 Kotlin reflection. Extend the native resolver through the remaining name,
 Markdown/documentation-reference, external-descriptor and configurable-name-rule
@@ -1052,12 +1216,12 @@ bridge ABI or ownership compatibility.
 
 ### P3: frontend convergence and tooling — deferred
 
-After backend comparisons isolate generation behavior, compare the native
-frontend's adapted canonical models against the Kotlin-export goldens. Complete
+Extend M12's bounded native/JVM model comparisons and pipeline toward the
+template-complete canonical contract and Kotlin-export goldens. Complete
 all remaining model semantics, validators, Limedoc behavior and attribute rules.
 The frontend built for the preview supplies a starting point without being
 declared equivalent in advance. Compare negative diagnostics as well as valid
-models, then join the proven frontend and backends into one native pipeline.
+models, then broaden the proven native pipeline to every supported backend.
 
 Complete options files/configuration, every supported CLI flag, static generator
 selection, `Skip`/`EnableIf`, output caching and stale-file removal, split outputs,
