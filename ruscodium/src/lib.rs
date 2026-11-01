@@ -1622,5 +1622,6 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
 }
 
 pub mod cpp;
+pub mod cpp_generation;
 
 pub mod template;

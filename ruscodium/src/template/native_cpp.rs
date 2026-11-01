@@ -586,6 +586,10 @@ impl<'a> Resolver<'a> {
                 self.get(self.get(v, "valueRef")?, "element")?,
                 &mut BTreeSet::new(),
             ),
+            "LimeValue$Null" => Ok(format!(
+                "{}()",
+                self.type_ref(self.get(v, "typeRef")?, active)?
+            )),
             c if c.starts_with("LimeValue$") => Err(format!("unsupported native C++ value {c}")),
             "LimeBasicType" | "LimeException" | "LimeList" | "LimeSet" | "LimeMap"
             | "LimeEnumeration" | "LimeTypeAlias" | "LimeStruct" | "LimeClass"

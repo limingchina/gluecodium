@@ -530,10 +530,8 @@ pub(super) fn collect(
             "LimeInterface" => {
                 header.insert(c.internal("TypeRepository.h"));
             }
-            "LimeClass" => {
-                if c.get(t, "isOpen")?.as_bool().ok_or("invalid isOpen")? {
-                    header.insert(c.internal("TypeRepository.h"));
-                }
+            "LimeClass" if c.get(t, "isOpen")?.as_bool().ok_or("invalid isOpen")? => {
+                header.insert(c.internal("TypeRepository.h"));
             }
             _ => (),
         }

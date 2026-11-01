@@ -18,6 +18,20 @@ const MAX_DEPTH: usize = 128;
 
 /// Render a version 1 render-request. The returned bytes are complete before any output is written.
 pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String> {
+    render_impl(root.as_ref(), request, None)
+}
+
+/// Render with the generator's global copyright resolver. `Some(null)` represents
+/// the upstream resolver configured with no copyright header.
+pub(crate) fn render_with_copyright(
+    root: &Path,
+    request: &Value,
+    copyright: Value,
+) -> Result<String, String> {
+    render_impl(root, request, Some(copyright))
+}
+
+fn render_impl(root: &Path, request: &Value, copyright: Option<Value>) -> Result<String, String> {
     if request.get("schema").and_then(Value::as_str) != Some("gluecodium.template.render-request")
         || request.get("version").and_then(Value::as_u64) != Some(1)
     {
@@ -68,7 +82,7 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
     let native_cpp = native_cpp
         .map(|config| native_cpp::NativeCppResolver::new(&graph, config))
         .transpose()?;
-    let root = fs::canonicalize(root.as_ref()).map_err(|e| format!("template root: {e}"))?;
+    let root = fs::canonicalize(root).map_err(|e| format!("template root: {e}"))?;
     if !root.is_dir() {
         return Err("template root is not a directory".into());
     }
@@ -83,6 +97,7 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
         native_cpp,
         native_predicates,
         native_sorters,
+        copyright,
         definitions: BTreeMap::new(),
         frames: vec![Frame {
             value: data,
@@ -187,6 +202,7 @@ struct Engine {
     native_cpp: Option<native_cpp::NativeCppResolver>,
     native_predicates: bool,
     native_sorters: bool,
+    copyright: Option<Value>,
     definitions: BTreeMap<String, Vec<Node>>,
     frames: Vec<Frame>,
     depth: usize,
@@ -289,6 +305,11 @@ impl Engine {
         self.lookup(s)
     }
     fn lookup(&self, path: &str) -> Result<Value, String> {
+        if path == "copyrightHeader" {
+            if let Some(value) = &self.copyright {
+                return Ok(value.clone());
+            }
+        }
         if path == "." || path == "this" {
             return Ok(self.current().clone());
         }

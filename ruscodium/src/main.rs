@@ -1,5 +1,8 @@
 use std::{env, fs, path::PathBuf, process};
 fn run() -> Result<(), String> {
+    if env::args().nth(1).as_deref() == Some("generate-cpp") {
+        return generate_cpp_cli();
+    }
     if env::args().nth(1).as_deref() == Some("render") {
         return render_cli();
     }
@@ -14,7 +17,7 @@ fn run() -> Result<(), String> {
         let a = &args[i];
         match a.as_str() {
             "-h" | "-help" | "--help" => {
-                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\n       ruscodium render --templates DIR --request FILE [--output FILE]\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators\nRun 'ruscodium render --help' for the experimental template renderer.");
+                println!("ruscodium 0.1.0\nUsage: ruscodium -input PATH [-input PATH] [-auxinput PATH] [-validate | --syntax-only | -generators json|cpp -output DIR]\n       ruscodium render --templates DIR --request FILE [--output FILE]\n       ruscodium generate-cpp --job FILE --templates DIR --output DIR\nOptions: --help --version --input --auxinput --output --validate --syntax-only --model --generators\nRun 'ruscodium render --help' for the experimental template renderer.");
                 return Ok(());
             }
             "--version" | "-version" => {
@@ -83,6 +86,44 @@ fn run() -> Result<(), String> {
         .map_err(|e| e.to_string())?;
     }
     Ok(())
+}
+
+fn generate_cpp_cli() -> Result<(), String> {
+    let mut templates = None;
+    let mut job = None;
+    let mut output = None;
+    let mut args = env::args().skip(2);
+    while let Some(arg) = args.next() {
+        if arg == "--help" || arg == "-h" {
+            println!("Usage: ruscodium generate-cpp --job FILE --templates DIR --output DIR");
+            return Ok(());
+        }
+        if !matches!(arg.as_str(), "--job" | "--templates" | "--output") {
+            return Err(format!("unknown generate-cpp option: {arg}"));
+        }
+        let value = PathBuf::from(
+            args.next()
+                .ok_or_else(|| format!("missing argument for {arg}"))?,
+        );
+        let target = match arg.as_str() {
+            "--job" => &mut job,
+            "--templates" => &mut templates,
+            _ => &mut output,
+        };
+        if target.replace(value).is_some() {
+            return Err(format!("duplicate option: {arg}"));
+        }
+    }
+    let templates = templates.ok_or("generate-cpp requires --templates")?;
+    let path = job.ok_or("generate-cpp requires --job")?;
+    let output = output.ok_or("generate-cpp requires --output")?;
+    let bytes = fs::read(path).map_err(|e| format!("job: {e}"))?;
+    if bytes.len() > 64 * 1024 * 1024 {
+        return Err("job exceeds size limit".into());
+    }
+    let value = serde_json::from_slice(&bytes).map_err(|e| format!("job JSON: {e}"))?;
+    let files = ruscodium::cpp_generation::generate(templates, &value)?;
+    ruscodium::cpp_generation::write_files(output, &files)
 }
 fn main() {
     if let Err(e) = run() {
