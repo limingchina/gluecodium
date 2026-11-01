@@ -1,0 +1,9 @@
+struct Defaults {
+    int32_t first = 1;
+    ::std::string second;
+
+    Defaults( );
+    explicit Defaults( ::std::string second );
+    Defaults( int32_t first, ::std::string second );
+
+};

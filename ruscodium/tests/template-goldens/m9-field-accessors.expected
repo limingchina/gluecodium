@@ -1,0 +1,24 @@
+struct AccessorFields {
+private:
+    int32_t value;
+    ::std::string text = "initial";
+public:
+
+    AccessorFields( );
+
+    explicit AccessorFields( int32_t value );
+
+
+
+    int32_t get_value( ) const { return value; }
+
+    void set_value( int32_t value_ ) { value = value_; }
+
+    const ::std::string& get_text( ) const & { return text; }
+    ::std::string&& get_text( ) && { return std::move(text); }
+    const ::std::string&& get_text( ) const && { return std::move(text); }
+
+    void set_text( const ::std::string& value_ ) { text = value_; }
+    void set_text( ::std::string&& value_ ) { text = std::move(value_); }
+
+};

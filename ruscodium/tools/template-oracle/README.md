@@ -14,7 +14,7 @@ ruscodium/tools/template-oracle/run
 
 `check` first compares the complete set of 315 templates inside the installed
 Gluecodium jar to the corresponding source files, then runs negative checks,
-renders 38 cases into a temporary directory and compares every request and
+renders 41 cases into a temporary directory and compares every request and
 output byte. `run` renders every
 case and constructs every request in memory before writing any fixture. A
 render or graph-export failure therefore does not replace a subset of the
@@ -137,10 +137,10 @@ parity or support for nonempty comment processing.
 
 ## Native C++ predicates and sorting
 
-The four `m9-*` fixtures use a separate, comment-free [m9.lime](m9.lime)
+The seven `m9-*` fixtures use a separate, comment-free [m9.lime](m9.lime)
 loaded as a full JVM model. The original 34 fixture pairs retain their bytes.
-`m9-matrix` calls all eleven registered C++ predicates on 83 model elements
-and 25 type references where applicable: 797 recorded calls. It covers
+`m9-matrix` calls all eleven registered C++ predicates on 103 model elements
+and 35 type references where applicable: 997 recorded calls. It covers
 aliases, nullable and non-nullable references, equatable and ordinary
 classes, defaults, explicit zero/partial/all-field constructors, immutable
 structs and container values, sibling inner references and inherited platform
@@ -149,6 +149,10 @@ input orders, actual reordering, aliases and generic child types, a constant,
 a struct with a function, a lambda, a function with an exception, and a
 filtered scalar and type reference. Every result is captured from the actual
 JVM predicate or `TopologicalSort`; no expected answer is hand-authored.
+The list, set and map-value cases with explicit partial field constructors
+each measure `hasDefaultConstructor == true` and
+`needsAllFieldsConstructor == true`. A map with the immutable type as its key
+instead measures true and false respectively.
 
 `m9-class` and `m9-struct` render the unchanged production partials. The class
 sort really moves a nested struct ahead of an alias to it and also exercises
@@ -159,6 +163,17 @@ getter overlays, M9 exports `LimeNamedElement.name` and `fullName` from their pu
 template lookup. The M9 absence list separately checks `exportName`,
 `functionUsings`, `needsExport`, and `storageQualifier` for public accessors. The overlays are template views, not
 predicate or sorter answers.
+
+`m9-field-defaults`, `m9-field-frozen` and `m9-field-accessors` render the
+unchanged struct template with partial defaults, immutable fields and C++
+accessors with an explicit field constructor, respectively. These three cases
+add 42 predicate calls, three sort calls and 57 name calls. Their additional
+template views are actual public `LimeStruct.uninitializedFields` and
+`LimeFieldConstructor.fields` and `struct` getter results; algorithms continue to use raw
+fields and references. Constructor comment emptiness is measured from the
+actual model's public `LimeComment.isEmpty` getter. Their additional absence
+checks establish whether `structElement`, `struct`, `iter` and
+`constructorComment` have public accessors on each model object.
 
 `m9-comments` reloads the model independently, then uses reflection to mark
 individual real, empty comments as excluded. Actual predicate calls record

@@ -197,6 +197,12 @@ public final class TemplateOracle {
                 props.put("name", ((LimeNamedElement)obj).getName());
                 props.put("fullName", ((LimeNamedElement)obj).getFullName());
             }
+            if (caseName.startsWith("m9-field-") && obj instanceof LimeStruct)
+                props.put("uninitializedFields", graph.value(((LimeStruct)obj).getUninitializedFields(), "uninitializedFields"));
+            if (caseName.startsWith("m9-field-") && obj instanceof LimeFieldConstructor) {
+                props.put("fields", graph.value(((LimeFieldConstructor)obj).getFields(), "fields"));
+                props.put("struct", graph.value(((LimeFieldConstructor)obj).getStruct(), "struct"));
+            }
             if (obj instanceof LimeComment) props.put("isEmpty", ((LimeComment)obj).isEmpty());
             if (obj instanceof LimeType) props.put("actualType", graph.value(((LimeType)obj).getActualType(), "actualType"));
             if (obj instanceof LimeReturnType) props.put("isVoid", ((LimeReturnType)obj).isVoid());
@@ -216,6 +222,7 @@ public final class TemplateOracle {
             var candidates = new ArrayList<>(List.of("propertyElement", "isVirtual", "isConst", "isAsyncHelper", "internalNamespace"));
             if (caseName.equals("review-sort")) candidates.add("iter");
             if (caseName.startsWith("m9-")) candidates.addAll(List.of("exportName", "functionUsings", "needsExport", "storageQualifier"));
+            if (caseName.startsWith("m9-field-")) candidates.addAll(List.of("structElement", "struct", "iter", "constructorComment"));
             for (String property : candidates) {
                 String suffix = Character.toUpperCase(property.charAt(0)) + property.substring(1);
                 boolean present = Arrays.stream(obj.getClass().getMethods()).anyMatch(method ->
@@ -270,6 +277,11 @@ public final class TemplateOracle {
             "m9-class", "cpp/CppClass", List.of(), List.of());
         modelFixture(out, m9Model, Objects.requireNonNull(m9refs.get("m9.matrix.Container")), m9Model,
             "m9-struct", "cpp/CppStruct", List.of(), List.of());
+        for (var entry : Map.of("m9-field-defaults", "m9.matrix.Defaults",
+                "m9-field-frozen", "m9.matrix.Frozen", "m9-field-accessors", "m9.matrix.AccessorFields").entrySet()) {
+            modelFixture(out, m9Model, Objects.requireNonNull(m9refs.get(entry.getValue())), m9Model,
+                entry.getKey(), "cpp/CppStruct", List.of(), List.of());
+        }
         // Use a separately loaded real model so that the targeted excluded-comment
         // mutations do not alter any other fixture. Each value still comes from
         // the JVM model and each predicate result is measured by the real registry.

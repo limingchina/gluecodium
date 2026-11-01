@@ -38,6 +38,32 @@ struct ExplicitAll {
 }
 @Immutable
 struct Frozen { value: Int }
+struct GenericListCtor {
+    values: List<Frozen>
+    other: Int
+    field constructor(other)
+}
+struct GenericSetCtor {
+    values: Set<Frozen>
+    other: Int
+    field constructor(other)
+}
+struct GenericMapCtor {
+    values: Map<String, Frozen>
+    other: Int
+    field constructor(other)
+}
+struct GenericMapKeyCtor {
+    values: Map<Frozen, Int>
+    other: Int
+    field constructor(other)
+}
+@Cpp(Accessors)
+struct AccessorFields {
+    value: Int
+    text: String = "initial"
+    field constructor(value)
+}
 struct NestedFrozen { value: Frozen }
 struct FieldTypes {
     count: Count

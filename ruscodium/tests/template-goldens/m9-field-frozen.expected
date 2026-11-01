@@ -1,0 +1,7 @@
+struct Frozen {
+    const int32_t value;
+
+
+    explicit Frozen( int32_t value );
+
+};
