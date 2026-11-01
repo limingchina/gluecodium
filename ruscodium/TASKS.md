@@ -260,7 +260,7 @@ build. See [REVIEW.md](REVIEW.md) for the review artifact and exact disposition.
 
 ## M10 / P1b.1: native C++ whole-file generation from snapshots
 
-Execute [the M10 contract](PLAN.md#m10--p1b1-native-c-whole-file-generation-from-snapshots--planned)
+Execute [the M10 contract](PLAN.md#m10--p1b1-native-c-whole-file-generation-from-snapshots--guarded-subset-delivered)
 from `d2e69b620`, with Sol 6.1 max planning, Terra 6.1 xhigh implementation and
 independent Sol 6.1 xhigh review. Keep changes under `ruscodium/`, production
 Mustache unchanged, and the preview C++ generator separate.
@@ -306,10 +306,10 @@ Mustache unchanged, and the preview C++ generator separate.
   collisions with no partial generated artifacts.
 - [x] Compile generated model/common implementations with strict C++17 flags and
   run a consumer using generated value types and an implemented interface.
-- [ ] Pass formatting, offline Clippy/Cargo, Python/reference-model checks,
+- [x] Pass formatting, offline Clippy/Cargo, Python/reference-model checks,
   whole-file oracle reproduction, retained 41 JVM template cases and 315-template
   equality, preview corpus and existing compiled consumers; record exact counts.
-- [ ] Obtain independent Sol 6.1 xhigh review and fix material findings.
+- [x] Obtain independent Sol 6.1 xhigh review and fix material findings.
 - [ ] Update README, TEMPLATES, oracle, review and measured checklist evidence,
   commit tested increments and push the authorized branch.
 
@@ -319,8 +319,13 @@ common/export files per job. Native-generated C++ and the JVM captures both
 compiled and ran their consumers with `-std=c++17 -Wall -Wextra -Werror`. The
 default fixture covers a set and nested aliases in dependency-reversed order.
 Raw type, C++ name, package path and declaration-order mutations are tested
-without changing getter overlays. The independent review and final aggregate
-checks remain pending.
+without changing getter overlays. Independent Sol 6.1 xhigh review passed at
+`6b1de0233` and is recorded in `18bea9403`; no material finding remains open
+within the guarded scope. Final formatting, offline all-target Clippy, the 77
+Rust tests (including the 345-input preview corpus and compiled consumers),
+four Python tests, reference-model checks, both fresh JVM oracles, all 315
+unchanged templates and the release build passed. Publication is the remaining
+step.
 
 Completion requires actual full C++ generator file sets for the supported
 snapshot subset, including eighteen common/export files per job. Canonical
