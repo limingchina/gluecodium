@@ -2367,5 +2367,7 @@
       "baseline_comparison": "match"
     }
   ],
-  "baseline_environment_comparison": "match"
+  "baseline_environment_comparison": "match",
+  "native_compiler": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "inventory_binary_sha256": "285b98295fb0b8fea6bd69efad0dfd555e7504a2b4a66ab4e59c828a4a26eba4"
 }

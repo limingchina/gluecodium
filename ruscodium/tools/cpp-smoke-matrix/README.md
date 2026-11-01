@@ -7,7 +7,8 @@ its input and auxiliary directories as `SmokeTest` does. In its absence the smok
 C++ internal namespace is `gluecodium` and internal prefix is `foobar_`. The
 report records effective C++ options, tags, placeholders, source/configuration
 hashes, generator output hashes and source sets, JVM version and jar hashes,
-template hashes, compiler version and native revision. The C++ generator gets
+template hashes, compiler version and native revision. The caller supplies the compiler used to
+build the executable; it is not inferred from whichever toolchain is on PATH. The C++ generator gets
 the original, unfiltered loader model and applies its own filtering. General
 `Gluecodium.validateModel` is not invoked; a JVM load/generator error is reported
 separately from export and native errors. The `skip` tags cannot be represented
@@ -36,7 +37,7 @@ cd ..
 ruscodium/tools/cpp-smoke-matrix/run \
   --native ruscodium/target/release/ruscodium \
   --inventory ruscodium/target/release/examples/cpp_inventory \
-  --revision ACTUAL_REVISION --job-version 2 \
+  --revision ACTUAL_REVISION --native-compiler "$(rustc --version)" --job-version 2 \
   --baseline ruscodium/tools/cpp-smoke-matrix/baseline.json \
   --capture /tmp/new-empty-smoke-capture --report /tmp/new-smoke-report.json
 ```

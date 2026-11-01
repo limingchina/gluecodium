@@ -32,6 +32,7 @@ def main():
     parser.add_argument('--capture', required=True, type=Path)
     parser.add_argument('--job-version', choices=('1', '2'), default='1')
     parser.add_argument('--revision', required=True)
+    parser.add_argument('--native-compiler', required=True, help='compiler used to build the native executable')
     parser.add_argument('--inventory', type=Path)
     parser.add_argument('--baseline', type=Path, help='require identical source/options/JVM outputs to this report')
     args = parser.parse_args()
@@ -117,7 +118,8 @@ def main():
         version = run([java, '-version'])
         report = {'profile': 'gluecodium.cpp-smoke-matrix', 'version': 1,
                   'job_version': int(args.job_version), 'native_binary_sha256': digest(native),
-                  'native_revision': args.revision,
+                  'native_revision': args.revision, 'native_compiler': args.native_compiler,
+                  'inventory_binary_sha256': digest(args.inventory.resolve()) if args.inventory else None,
                   'cxx_version': run([os.environ.get('CXX', 'c++'), '--version']).stdout.splitlines()[0],
                   'java_version': version.stderr.strip(),
                   'jvm_jar_sha256': {p.name: digest(p) for p in sorted(lib.glob('gluecodium-*.jar'))},

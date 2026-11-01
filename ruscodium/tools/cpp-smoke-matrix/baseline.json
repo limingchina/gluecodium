@@ -2354,5 +2354,7 @@
       "diagnostic": "nonempty or unavailable documentation is unsupported",
       "baseline_comparison": "match"
     }
-  ]
+  ],
+  "native_compiler": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "inventory_binary_sha256": "cc380ad44374404cf4f133533ccdbfc955e42f01c98d619c7fa948517410c5c1"
 }
