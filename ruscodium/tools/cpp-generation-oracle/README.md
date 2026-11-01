@@ -99,3 +99,6 @@ or formatted comment text. Ordinary loader placeholder values are parsed without
 nested placeholder mappings, so the fixture uses the loader-supported one-level
 case; deeper recursion must be labeled synthetic model evidence. Default/custom
 version-1 captures and the reference-model exporter remain unchanged.
+
+`compile-docs [CAPTURE_ROOT]` also accepts actual native-generated output in
+`GROUP/files/cpp` layout, and compiles/runs each consumer against that output.

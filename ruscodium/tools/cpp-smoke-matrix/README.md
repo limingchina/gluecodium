@@ -57,3 +57,13 @@ observed guard is an unsupported `LimeException` node in six; one each reports
 an unsupported INTERNAL, JAVA, or CACHED attribute, a parent-property shape,
 an external descriptor, or unsupported tags. These counts report first guards
 only, not all features present in a case.
+
+The final report measures native revision
+`84377ae1ef1a68a590660893b882c500ab667ba0` using a version-2 job. The complete
+groups remain at 1 exact match and 12 native rejections, with no mismatches or
+JVM/export failures. The two isolated upstream documentation files each move
+from native rejection to exact match, including all 20 generated files and their
+source sets. The full comments group remains rejected. All 15 case input hashes,
+effective options, JVM output hashes and source sets match baseline; Java,
+installed JVM jar and all 315 template hashes also match. The first observed
+guards for the complete groups are unchanged.

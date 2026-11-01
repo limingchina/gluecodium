@@ -36,7 +36,8 @@ def main():
     parser.add_argument('--baseline', type=Path, help='require identical source/options/JVM outputs to this report')
     args = parser.parse_args()
     native = args.native.resolve(); capture = args.capture.resolve()
-    baseline = {r['case']: r for r in json.loads(args.baseline.read_text())['rows']} if args.baseline else {}
+    baseline_report = json.loads(args.baseline.read_text()) if args.baseline else None
+    baseline = {r['case']: r for r in baseline_report['rows']} if baseline_report else {}
     capture.mkdir(parents=True, exist_ok=True)
     lib = ROOT / 'gluecodium/build/install/gluecodium/lib'
     java = Path(os.environ['JAVA_HOME']) / 'bin/java' if os.environ.get('JAVA_HOME') else 'java'
@@ -120,6 +121,14 @@ def main():
                   'java_version': version.stderr.strip(),
                   'jvm_jar_sha256': {p.name: digest(p) for p in sorted(lib.glob('gluecodium-*.jar'))},
                   'templates': tree(TEMPLATES), 'rows': rows}
+        if baseline_report:
+            keys = ('java_version', 'jvm_jar_sha256', 'templates')
+            differences = [key for key in keys if baseline_report.get(key) != report.get(key)]
+            report['baseline_environment_comparison'] = 'match' if not differences else {'different_fields': differences}
+            if differences:
+                for row in rows:
+                    row['status_before_provenance_failure'] = row['status']
+                    row['status'] = 'provenance_mismatch'
         args.report.parent.mkdir(parents=True, exist_ok=True)
         args.report.write_text(json.dumps(report, indent=2, ensure_ascii=False) + '\n')
 
