@@ -369,3 +369,101 @@ overloads and broader C++ runtime/ABI or platform parity remain deferred or
 guarded. Synthetic recursive-placeholder evidence does not imply that the
 configured loader supports nested placeholder definitions. Existing write-phase
 I/O rollback limitations are unchanged.
+
+## Independent review: M12 native frontend adapter
+
+Reviewed on 2026-11-01 by the independent Sol 6.1 xhigh reviewer against the
+M12 contract `a1a75760c` and baseline `d1966f390`. The final implementation is
+`231604388`, with source corrections through `b73b483be`, differential tooling
+through `0d2fa01fb`, and scope documentation at `4c91e507a`. This review changed
+only this appended section. Earlier milestone reviews remain historical.
+
+The review followed real LIME through the native parser, resolver, public-model
+preflight, graph construction and existing C++ generator. It compared loader
+semantics in `AntlrLimeModelBuilder`, `AntlrTypeMapper`, `AntlrLimeConverter`,
+`AntlrLimedocBuilder` and the runtime model classes. It also checked strict
+options/CLI parsing, synthetic ownership and comments, model projection,
+generation-before-write behavior, and isolation from reference fixtures and JVM
+execution. All changes remain under `ruscodium/`; the 315 production Mustache
+templates are unchanged. The preview backend and snapshot-driven command remain
+separate interfaces.
+
+### Findings and disposition
+
+| Finding during independent review | Final behavior and evidence |
+| --- | --- |
+| A public mutable model can contain stale targets, inconsistent builtin flags, impossible declaration fields, or literal/annotation source inconsistent with its structured representation. Existing resolution alone does not establish the adapter's admission contract. | The adapter clones, guards and resolves the complete model afresh, including auxiliary and late declarations. Type docs survive in `TypeRef.docs`; unknown kinds, metadata, modifiers, children and incompatible literals reject. Source consistency checks and focused forged-model tests cover the boundary. |
+| Field-constructor parameter annotations and forged lambda parameter annotations could be admitted where graph construction did not preserve their actual source semantics. | Those unsupported annotation positions reject explicitly. Ordinary supported parameter annotations are mapped and independently compared with a fresh JVM load. |
+| Missing-value CLI parsing could consume another option as a pathname. | Option-like next tokens reject as missing values before loading or writing. Independent probes also cover duplicate scalar options, job injection and invalid strict options documents. |
+| The initial semantic projection could overlook changed field-reference attributes or a divergent same-path clone used as a type target. | Constructor links include attributes, and named targets must share the declaration object indexed under their path. Fourteen adversarial projection tests cover identity, membership, ordering, ownership, nullable edges, fragment normalization and fail-closed unknown fields. |
+| Documentation normalization could erase NEL before validation, changing accepted output; VT, FF and NEL could also act as inline-tag separators that the JVM grammar rejects. | Retained control characters other than tab reject before normalization. The independent live-JVM counterexamples now reject; eight additional admitted plain-text/platform/escape/Unicode cases match JVM bytes. |
+| Property description/value comments and synthetic return/lambda comment paths require their actual loader distinctions even when output bytes coincide. | The adapter preserves the measured public property-comment view while keeping description-only `valueComment` empty, and uses measured synthetic comment paths. Focused Rust tests and live semantic/whole-file comparisons cover these cases. |
+
+### Final independent verification
+
+- `cargo fmt --check`, `cargo clippy --offline --all-targets -- -D warnings`,
+  and `cargo test --offline --all-targets` passed. All 100 Rust tests passed:
+  nine library units, eight adapter, fifteen whole-file generation, fifteen
+  controls, eight names, twenty-two preview, nineteen template runtime and four
+  whitespace tests. The preview's 345-input corpus and compiled consumers remain
+  covered. An offline binary build also passed.
+- `python3 -m unittest discover -s ruscodium/tools/tests -v` passed four tests;
+  discovery under `tools/frontend-adapter-oracle` passed fourteen adversarial
+  tests. `tools/reference-model/test` passed. The retained template oracle
+  reproduced all 41 JVM request/output pairs and directly checked all 315
+  installed templates against unchanged source.
+- The retained `tools/cpp-generation-oracle/check` reproduced both complete
+  version-1 jobs, actual source sets and all fifty JVM files, then compiled and
+  ran both consumers. `check-docs` reproduced all 63 version-2 documentation
+  files and ran all three strict C++ consumers. These imported-model regressions
+  remain separate from native frontend admission.
+- The final `tools/frontend-adapter-oracle/check` independently reproduced all
+  four native-LIME baseline jobs: 26 default, 24 custom and 20 for each isolated
+  upstream interface/lambda documentation input, totaling ninety files. The
+  mandatory first fifty files match both live JVM generation and frozen paths,
+  actual `MAIN`/`COMMON` source sets and every byte. Each baseline job includes
+  all eighteen helper/export files; seventeen files belong to `COMMON`.
+- The same full oracle passed twenty-three live source mutations covering
+  package/name changes, values and dependency order, generic/nullable/class and
+  auxiliary references, open/narrow declarations, constructors, static/struct
+  methods, supported name annotations and bounded documentation. Expectations
+  come from fresh JVM generation of temporary LIME copies. Production native
+  generation never reads a captured job, snapshot, output inventory or helper
+  answer.
+- Baseline library output repeats deterministically. All four CLI baselines run
+  from a temporary directory with empty `PATH` and `JAVA_HOME` removed, receiving
+  real LIME, options and templates. Every library/CLI output set compiles all its
+  generated implementations with `-std=c++17 -Wall -Wextra -Werror` and runs its
+  existing consumer. The integer-separator mutation is byte-parity evidence
+  only: both generators retain `1_000`, which is invalid C++. Compilation claims
+  apply to the four baseline jobs, not every mutated numeric form.
+- Eighteen additional independent CLI rejection probes checked malformed LIME,
+  configuration and option sequences, unsupported late/auxiliary facts,
+  incompatible defaults, alias cycles, output collisions, missing placeholder
+  support, documentation controls and a late common-template failure. Every
+  failure had nonzero status, empty stdout and a byte-preserved output sentinel
+  with no generated artifacts. Existing write-phase I/O rollback limitations
+  remain unchanged.
+
+The semantic comparison preserves ordered roots/member collections, main and
+auxiliary membership, declaration paths/kinds, canonical named-reference
+identity, attributes, direct nullable and alias edges, generic arguments,
+parameters/returns/accessors, defaults, enumerators, constructor links and raw
+comment content/exclusions/paths. It normalizes allocation IDs, equivalent
+builtin/generic copies, reference-wrapper implementation classes, cached names,
+physical source prefixes and spans. Filename ownership is compared by basename
+with ambiguous basenames rejected. Adjacent ordinary raw fragments normalize
+JVM tokenization while preserving text and tag transitions; placeholders remain
+outside this projection. The isolated documentation JVM loads intentionally omit
+the original captures' unrelated auxiliary inputs and unused configured
+placeholders; frozen output files/source sets are compared separately.
+
+No reported material finding remains unresolved within this bounded M12
+contract. Native LIME now reaches the actual compatibility backend with the
+fifty-file core gate and a separately measured forty-file documentation slice.
+The focused M11 placeholder fixture remains a backend regression: the native
+options profile has no placeholder map. Block comments, type-local and directly
+attached parameter/accessor/return documentation, full Markdown/scoped links,
+inheritance, throws/errors, externals, filtering, arbitrary attributes and
+unimplemented forms remain guarded. Complete canonical/frontend validation,
+all-feature C++ or runtime/ABI parity and other platform backends remain deferred.
