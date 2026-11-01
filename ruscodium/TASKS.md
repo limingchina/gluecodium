@@ -198,7 +198,7 @@ complete naming or backend parity. Published this verified increment through
 
 ## M9 / P1a.2: strict native C++ predicates and declaration sorting
 
-Execute [the M9 contract](PLAN.md#m9--p1a2-strict-native-c-predicates-and-declaration-sorting--bounded-implementation-final-verification-pending)
+Execute [the M9 contract](PLAN.md#m9--p1a2-strict-native-c-predicates-and-declaration-sorting--bounded-implementation-delivered)
 from baseline `96b7c3421`, with Sol 6.1 max planning, Terra 6.1 xhigh
 implementation and independent Sol 6.1 xhigh review. Keep every change under
 `ruscodium/` and all 315 upstream Mustache templates unchanged.
@@ -234,10 +234,10 @@ implementation and independent Sol 6.1 xhigh review. Keep every change under
 - [x] Verify raw-fact mutations change native results; cover hook/catalog
   anti-replay, empty lists, unknown selectors, missing facts, unsupported content
   and legal/invalid cycles with pre-write/stdout preservation checks.
-- [ ] Pass formatting, offline Clippy, Cargo, Python/reference-model checks,
+- [x] Pass formatting, offline Clippy, Cargo, Python/reference-model checks,
   JVM fixture reproduction and 315-template equality; retain 49-test/34-case
   baseline coverage, preview corpus and compiled C++ consumers, recording counts.
-- [ ] Obtain independent Sol 6.1 xhigh review and fix material findings.
+- [x] Obtain independent Sol 6.1 xhigh review and fix material findings.
 - [ ] Update README, TEMPLATES, oracle, review and measured evidence/checklist;
   commit tested increments and push the authorized branch.
 

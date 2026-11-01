@@ -221,4 +221,3 @@ the documented imported graph facts. Nonempty/native documentation processing,
 a complete canonical frontend adapter, whole-header/output-set generation and
 C++ runtime or other-language ABI parity remain deferred. Measured template
 views and successful fragments do not establish complete compiler parity.
-
