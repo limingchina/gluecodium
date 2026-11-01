@@ -387,7 +387,7 @@ all 315 production templates unchanged. M10 evidence above remains historical.
   checks, retained whole-file/template oracles, all 315 unchanged templates,
   preview corpus and compiled consumers, plus new smoke/documentation evidence.
 - [x] Obtain independent Sol 6.1 xhigh review and fix material findings.
-- [ ] Finalize measured docs/evidence with exact counts and commit/push tested
+- [x] Finalize measured docs/evidence with exact counts and commit/push tested
   increments.
 
 Full Markdown/link processing, native structured-documentation/LIME frontend
@@ -417,7 +417,9 @@ cases with no JVM byte mismatch; other forms remain guarded. Thirty-seven
 negative CLI probes kept stdout empty and preserved existing files. Synthetic empty
 placeholder DAG/depth checks exercise bounded expansion independently of
 the one-level real-loader fixture. See [REVIEW.md](REVIEW.md) for exact
-candidate hashes and findings. Final publication remains pending.
+candidate hashes and findings. Implementation, oracle/report, independent
+review, plan and verification were pushed through `47e86a969` to
+`origin/ruscodium/rust-port`; this checklist records the confirmed publication.
 
 ## Deferred full-parity work
 
