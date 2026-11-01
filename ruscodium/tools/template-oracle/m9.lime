@@ -1,0 +1,85 @@
+package m9.matrix
+
+enum Kind { FIRST, SECOND }
+typealias Count = Int
+typealias Handle = Service
+typealias Kinds = List<Kind>
+lambda Callback = (Kind) -> Kind
+exception Failure(Kind)
+@Equatable
+class Service { }
+class PlainService { }
+struct Defaults {
+    first: Int = 1
+    second: String
+}
+struct AllDefaults {
+    first: Int = 1
+    second: Boolean = true
+}
+struct NoDefaults {
+    first: Int
+    second: String
+}
+struct ExplicitZero {
+    first: Int
+    field constructor()
+}
+struct ExplicitPartial {
+    first: Int
+    second: String
+    field constructor(first)
+}
+@Immutable
+struct ExplicitAll {
+    first: Int
+    second: String
+    field constructor(first, second)
+}
+@Immutable
+struct Frozen { value: Int }
+struct NestedFrozen { value: Frozen }
+struct FieldTypes {
+    count: Count
+    nullableCount: Count?
+    service: Service
+    nullableService: Service?
+    aliasService: Handle?
+    plain: PlainService?
+    text: String
+    custom: @Cpp(Type = "const char*") String
+    values: List<Frozen>
+    mapping: Map<String, Frozen>
+    setValues: Set<Frozen>
+}
+class Outer {
+    class First { fun use(value: Second): Void }
+    class Second { }
+    enum E { A, B }
+    struct Nested {
+        enum Value { A, B }
+    }
+    typealias EAlias = E
+    typealias NestedAlias = Nested
+    const CHOICE: E = E.A
+}
+struct WithFunction {
+    value: Int
+    fun take(kind: Kind): Kind throws Failure
+}
+struct Container {
+    enum E { A, B }
+    typealias EAlias = E
+}
+@Skip(Java, Kotlin, Swift)
+class Skipped { @Async fun operation(): Void }
+class PartialSkip { @Skip(Java, Kotlin) @Async fun operation(): Void }
+class CommentCases {
+    fun returnCase(): Int
+    fun parameterCase(value: Int): Int
+    fun thrownCase(): Int throws Failure
+    fun ownCase(): Int
+    @Async fun falseSkip(): Int
+    @Async fun nullSkip(): Int
+    @Async fun trueSkip(): Int
+}

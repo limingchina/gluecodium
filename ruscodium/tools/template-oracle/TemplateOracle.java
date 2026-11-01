@@ -76,6 +76,39 @@ public final class TemplateOracle {
     private static void checkError(MustacheException error, String code) {
         if (error.getClass() != MustacheException.class || !error.getMessage().startsWith(code + ":")) throw error;
     }
+    private static void negativeSortCases(LimeModel model) {
+        var refs = model.getReferenceMap();
+        LimeType a = (LimeType)Objects.requireNonNull(refs.get("m9.matrix.Service"));
+        LimeType b = (LimeType)Objects.requireNonNull(refs.get("m9.matrix.PlainService"));
+        var attrs = new LimeAttributes.Builder().build();
+        var first = new LimeTypeAlias(a.getPath(), new LimeComment(), attrs, new LimeDirectTypeRef(b, false, attrs));
+        var second = new LimeTypeAlias(b.getPath(), new LimeComment(), attrs, new LimeDirectTypeRef(a, false, attrs));
+        checkSortFailure(List.of(first, second));
+        checkSortFailure(List.of(a, a));
+    }
+    private static void checkSortFailure(List<LimeNamedElement> elements) {
+        try {
+            new TopologicalSort(elements).sort();
+            throw new IllegalStateException("Sorter unexpectedly accepted cycle or duplicate identity");
+        } catch (com.here.gluecodium.cli.GluecodiumExecutionException error) {
+            if (error.getClass() != com.here.gluecodium.cli.GluecodiumExecutionException.class ||
+                !"Cycle detected in C++ elements dependencies.".equals(error.getMessage())) throw error;
+        }
+    }
+    private static void excludedComment(Object receiver, Class<?> owner, String name, LimeComment original) throws Exception {
+        var field = owner.getDeclaredField(name);
+        field.setAccessible(true);
+        field.set(receiver, original.withExcluded(true));
+    }
+    private static void setPlatformSkips(LimeFunction receiver, Boolean javaValue) throws Exception {
+        var builder = new LimeAttributes.Builder();
+        builder.addAttribute(LimeAttributeType.JAVA, LimeAttributeValueType.SKIP, javaValue);
+        builder.addAttribute(LimeAttributeType.KOTLIN, LimeAttributeValueType.SKIP, true);
+        builder.addAttribute(LimeAttributeType.SWIFT, LimeAttributeValueType.SKIP, true);
+        var field = LimeElement.class.getDeclaredField("attributes");
+        field.setAccessible(true);
+        field.set(receiver, builder.build());
+    }
     private static void fixture(Path dir, String name, String template, Object data) throws Exception {
         var hooks = map("names", List.of(), "predicates", List.of(), "sorters", List.of());
         var request = map("schema", "gluecodium.template.render-request", "version", 1,
@@ -160,6 +193,10 @@ public final class TemplateOracle {
         Map<String,Object> overlays = new LinkedHashMap<>();
         for (int i = 0; i < graph.discoveredObjects().size(); i++) {
             Object obj = graph.discoveredObjects().get(i); Map<String,Object> props = new LinkedHashMap<>();
+            if (caseName.startsWith("m9-") && obj instanceof LimeNamedElement) {
+                props.put("name", ((LimeNamedElement)obj).getName());
+                props.put("fullName", ((LimeNamedElement)obj).getFullName());
+            }
             if (obj instanceof LimeComment) props.put("isEmpty", ((LimeComment)obj).isEmpty());
             if (obj instanceof LimeType) props.put("actualType", graph.value(((LimeType)obj).getActualType(), "actualType"));
             if (obj instanceof LimeReturnType) props.put("isVoid", ((LimeReturnType)obj).isVoid());
@@ -178,6 +215,7 @@ public final class TemplateOracle {
             List<String> missing = new ArrayList<>();
             var candidates = new ArrayList<>(List.of("propertyElement", "isVirtual", "isConst", "isAsyncHelper", "internalNamespace"));
             if (caseName.equals("review-sort")) candidates.add("iter");
+            if (caseName.startsWith("m9-")) candidates.addAll(List.of("exportName", "functionUsings", "needsExport", "storageQualifier"));
             for (String property : candidates) {
                 String suffix = Character.toUpperCase(property.charAt(0)) + property.substring(1);
                 boolean present = Arrays.stream(obj.getClass().getMethods()).anyMatch(method ->
@@ -200,6 +238,63 @@ public final class TemplateOracle {
             List.of(Path.of("ruscodium/tools/template-oracle/fixture.lime").toAbsolutePath().toString()), List.of(), Map.of());
         LimeModel nativeModel = new LimeBasedLimeModelLoader().loadModel(
             List.of(Path.of("ruscodium/tools/template-oracle/native.lime").toAbsolutePath().toString()), List.of(), Map.of());
+        LimeModel m9Model = new LimeBasedLimeModelLoader().loadModel(
+            List.of(Path.of("ruscodium/tools/template-oracle/m9.lime").toAbsolutePath().toString()), List.of(), Map.of());
+        negativeSortCases(m9Model);
+        var m9refs = m9Model.getReferenceMap();
+        List<Object> m9elements = new ArrayList<>(), m9types = new ArrayList<>();
+        for (var entry : new TreeMap<>(m9refs).entrySet()) {
+            if (!entry.getKey().startsWith("m9.matrix.")) continue;
+            Object value = entry.getValue();
+            m9elements.add(value);
+            if (value instanceof LimeField) m9types.add(((LimeField)value).getTypeRef());
+        }
+        Object alias = Objects.requireNonNull(m9refs.get("m9.matrix.Outer.EAlias"));
+        Object enumeration = Objects.requireNonNull(m9refs.get("m9.matrix.Outer.E"));
+        Object service = Objects.requireNonNull(m9refs.get("m9.matrix.Service"));
+        Object kind = Objects.requireNonNull(m9refs.get("m9.matrix.Kind"));
+        Object kinds = Objects.requireNonNull(m9refs.get("m9.matrix.Kinds"));
+        Object callback = Objects.requireNonNull(m9refs.get("m9.matrix.Callback"));
+        Object withFunction = Objects.requireNonNull(m9refs.get("m9.matrix.WithFunction"));
+        Object choice = Objects.requireNonNull(m9refs.get("m9.matrix.Outer.CHOICE"));
+        Object method = Objects.requireNonNull(m9refs.get("m9.matrix.WithFunction.take"));
+        List<Object> extraOrders = List.of(
+            List.of(kinds, callback, withFunction, kind),
+            List.of(choice, enumeration, "filtered scalar", m9types.get(0)),
+            List.of(kind, callback, kinds, withFunction), List.of(method, kind));
+        modelFixture(out, m9Model, map("refs", m9types, "elements", m9elements,
+            "order", List.of(alias, service, enumeration), "reverse", List.of(enumeration, service, alias),
+            "sorted", List.of(service, enumeration, alias), "extraOrders", extraOrders), m9Model,
+            "m9-matrix", "oracle/m9-matrix", List.of(), List.of());
+        modelFixture(out, m9Model, Objects.requireNonNull(m9refs.get("m9.matrix.Outer")), m9Model,
+            "m9-class", "cpp/CppClass", List.of(), List.of());
+        modelFixture(out, m9Model, Objects.requireNonNull(m9refs.get("m9.matrix.Container")), m9Model,
+            "m9-struct", "cpp/CppStruct", List.of(), List.of());
+        // Use a separately loaded real model so that the targeted excluded-comment
+        // mutations do not alter any other fixture. Each value still comes from
+        // the JVM model and each predicate result is measured by the real registry.
+        LimeModel commentsModel = new LimeBasedLimeModelLoader().loadModel(
+            List.of(Path.of("ruscodium/tools/template-oracle/m9.lime").toAbsolutePath().toString()), List.of(), Map.of());
+        var commentRefs = commentsModel.getReferenceMap();
+        LimeFunction returnCase = (LimeFunction)commentRefs.get("m9.matrix.CommentCases.returnCase");
+        LimeFunction parameterCase = (LimeFunction)commentRefs.get("m9.matrix.CommentCases.parameterCase");
+        LimeFunction thrownCase = (LimeFunction)commentRefs.get("m9.matrix.CommentCases.thrownCase");
+        LimeFunction ownCase = (LimeFunction)commentRefs.get("m9.matrix.CommentCases.ownCase");
+        LimeStruct constructorStruct = (LimeStruct)commentRefs.get("m9.matrix.ExplicitPartial");
+        excludedComment(returnCase.getReturnType(), LimeReturnType.class, "comment", returnCase.getReturnType().getComment());
+        excludedComment(parameterCase.getParameters().get(0), LimeNamedElement.class, "comment", parameterCase.getParameters().get(0).getComment());
+        excludedComment(thrownCase.getThrownType(), LimeThrownType.class, "comment", thrownCase.getThrownType().getComment());
+        excludedComment(ownCase, LimeNamedElement.class, "comment", ownCase.getComment());
+        excludedComment(constructorStruct, LimeStruct.class, "constructorComment", constructorStruct.getConstructorComment());
+        LimeFunction falseSkip = (LimeFunction)commentRefs.get("m9.matrix.CommentCases.falseSkip");
+        LimeFunction nullSkip = (LimeFunction)commentRefs.get("m9.matrix.CommentCases.nullSkip");
+        LimeFunction trueSkip = (LimeFunction)commentRefs.get("m9.matrix.CommentCases.trueSkip");
+        setPlatformSkips(falseSkip, false);
+        setPlatformSkips(nullSkip, null);
+        setPlatformSkips(trueSkip, true);
+        modelFixture(out, commentsModel, map("elements", List.of(returnCase, parameterCase, thrownCase, ownCase,
+            constructorStruct.getFieldConstructors().get(0)), "skips", List.of(falseSkip, nullSkip, trueSkip)), commentsModel,
+            "m9-comments", "oracle/m9-comments", List.of(), List.of());
         var refs = nativeModel.getReferenceMap();
         for (var entry : Map.of("native-enumeration", "native.matrix.Shade", "native-alias", "native.matrix.Labels",
                 "native-function", "native.matrix.Service.fetchURL", "native-return", "native.matrix.Service.fetchURL").entrySet()) {

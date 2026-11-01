@@ -1,0 +1,55 @@
+class Outer {
+public:
+    Outer();
+    virtual ~Outer();
+
+public:
+    class Second;
+
+public:
+    enum class E {
+        A,
+        B
+    };
+
+
+
+    using EAlias = ::m9::matrix::Outer::E;
+
+    struct Nested {
+        enum class Value {
+            A,
+            B
+        };
+
+
+
+    };
+
+    using NestedAlias = ::m9::matrix::Outer::Nested;
+
+    static const ::m9::matrix::Outer::E CHOICE;
+
+    class First {
+    public:
+        First();
+        virtual ~First();
+
+
+    public:
+        /**
+         *
+         * \param[in] value @NotNull
+         */
+        virtual void use( const ::std::shared_ptr< ::m9::matrix::Outer::Second >& value ) = 0;
+    };
+
+    class Second {
+    public:
+        Second();
+        virtual ~Second();
+
+
+    };
+
+};

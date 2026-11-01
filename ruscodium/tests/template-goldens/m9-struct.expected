@@ -1,0 +1,11 @@
+struct Container {
+    enum class E {
+        A,
+        B
+    };
+
+
+
+    using EAlias = ::m9::matrix::Container::E;
+
+};

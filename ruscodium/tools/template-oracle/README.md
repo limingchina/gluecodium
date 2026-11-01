@@ -14,7 +14,7 @@ ruscodium/tools/template-oracle/run
 
 `check` first compares the complete set of 315 templates inside the installed
 Gluecodium jar to the corresponding source files, then runs negative checks,
-renders 34 cases into a temporary directory and compares every request and
+renders 38 cases into a temporary directory and compares every request and
 output byte. `run` renders every
 case and constructs every request in memory before writing any fixture. A
 render or graph-export failure therefore does not replace a subset of the
@@ -134,3 +134,44 @@ The matrix config deliberately exercises nonempty root and internal namespaces;
 the production fixtures use the actual `GeneratorOptions` empty defaults.
 These records establish a bounded differential surface, not whole-generator
 parity or support for nonempty comment processing.
+
+## Native C++ predicates and sorting
+
+The four `m9-*` fixtures use a separate, comment-free [m9.lime](m9.lime)
+loaded as a full JVM model. The original 34 fixture pairs retain their bytes.
+`m9-matrix` calls all eleven registered C++ predicates on 83 model elements
+and 25 type references where applicable: 797 recorded calls. It covers
+aliases, nullable and non-nullable references, equatable and ordinary
+classes, defaults, explicit zero/partial/all-field constructors, immutable
+structs and container values, sibling inner references and inherited platform
+skips. Wrong receiver kinds are included. The seven sort calls cover stable
+input orders, actual reordering, aliases and generic child types, a constant,
+a struct with a function, a lambda, a function with an exception, and a
+filtered scalar and type reference. Every result is captured from the actual
+JVM predicate or `TopologicalSort`; no expected answer is hand-authored.
+
+`m9-class` and `m9-struct` render the unchanged production partials. The class
+sort really moves a nested struct ahead of an alias to it and also exercises
+inner-class forward declarations. These cases add 26 predicate calls, three
+sort calls and 35 name calls. They use empty C++ root and internal namespaces.
+Their graph remains the actual whole model. Alongside the existing measured
+getter overlays, M9 exports `LimeNamedElement.name` and `fullName` from their public getters for
+template lookup. The M9 absence list separately checks `exportName`,
+`functionUsings`, `needsExport`, and `storageQualifier` for public accessors. The overlays are template views, not
+predicate or sorter answers.
+
+`m9-comments` reloads the model independently, then uses reflection to mark
+individual real, empty comments as excluded. Actual predicate calls record
+false for excluded return, parameter, thrown-type and owning constructor
+comments, and true for the function's own excluded comment. These mutations
+do not affect the other fixtures. Three further receivers use actual
+`LimeAttributes.Builder` values of false, null and true for Java `Skip`,
+with Kotlin and Swift skipped: the JVM synchronous-version results are true,
+true and false. The builder omits the null value.
+
+The oracle also constructs two aliases whose type references form a cycle and
+checks the exact `GluecodiumExecutionException` and message at the sorting
+phase. It independently checks the same error for a repeated object identity.
+These negative JVM observations are not replayed as successful sort results.
+They do not establish general support for nonempty comments or complete C++
+output sets.

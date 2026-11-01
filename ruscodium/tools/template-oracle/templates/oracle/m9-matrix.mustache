@@ -1,0 +1,16 @@
+{{#filter refs predicate="needsRefSuffix"}}{{#this}}R{{/this}}{{/filter}}
+{{#filter refs predicate="needsNotNullComment"}}{{#this}}N{{/this}}{{/filter}}
+{{#filter elements predicate="hasAnyComment"}}{{#this}}C{{/this}}{{/filter}}
+{{#filter elements predicate="hasDefaultConstructor"}}{{#this}}D{{/this}}{{/filter}}
+{{#filter elements predicate="hasPartialDefaults"}}{{#this}}P{{/this}}{{/filter}}
+{{#filter elements predicate="needsAllFieldsConstructor"}}{{#this}}A{{/this}}{{/filter}}
+{{#filter elements predicate="needsPointerValueEqual"}}{{#this}}V{{/this}}{{/filter}}
+{{#filter elements predicate="needsRawPointerEqual"}}{{#this}}Q{{/this}}{{/filter}}
+{{#filter elements predicate="isUsedInAnotherInnerClasses"}}{{#this}}I{{/this}}{{/filter}}
+{{#filter elements predicate="needsInnerForwardDeclarations"}}{{#this}}F{{/this}}{{/filter}}
+{{#filter elements predicate="asyncFunNeedsSynchronousVersion"}}{{#this}}S{{/this}}{{/filter}}
+{{#sort order}}{{this.name}};{{/sort}}
+{{#sort reverse}}{{this.name}};{{/sort}}
+{{#sort sorted}}{{this.name}};{{/sort}}
+{{#each extraOrders}}{{#sort this}}{{this.name}};{{/sort}}
+{{/each}}
