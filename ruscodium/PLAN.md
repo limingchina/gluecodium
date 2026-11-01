@@ -1172,126 +1172,116 @@ comments for the measured C++ compatibility subset. Full canonical/Kotlin-model
 parity, complete validation/documentation, all-feature C++ runtime/ABI parity and
 Dart/Swift/JNI/platform outputs remain open.
 
-### M13: reproducible Kotlin/JVM versus Rust performance comparison — planned
+### M13: reproducible Kotlin/JVM versus Rust performance comparison — bounded measurement delivered
 
-Measure the delivered M12 native C++ path against the actual Kotlin/JVM
-compiler on the same valid LIME, equivalent C++ options and complete generated
-outputs. This is a measurement milestone, not a production optimization or a
-new compatibility claim. Keep every new fixture, runner, result and document
-under `ruscodium/` on `ruscodium/rust-port`; leave all 315 production templates
-and existing compiler behavior unchanged. Sol 6.1 max defines this contract,
-Terra 6.1 xhigh implements it after the plan commit, and Sol 6.1 xhigh reviews
-the runner, evidence and conclusions independently.
+The contract was committed in `141fe1cd5` before benchmark implementation.
+Sol 6.1 max planned this milestone, Terra 6.1 xhigh implemented the experiment,
+and Sol 6.1 xhigh independently reviewed its corrected evidence. The delivered
+[performance report](PERFORMANCE.md), [reproduction README](tools/performance/README.md)
+and [independent review](REVIEW.md#m13-independent-performance-review--2026-11-01)
+record the final methods, results and limitations. All additions stay under
+`ruscodium/` on `ruscodium/rust-port`; production compiler behavior and all
+315 production templates remain unchanged. This milestone measures the M12
+subset and implements no production optimization.
 
-#### Primary measurement boundary
+#### Actual compiler boundary and source identity
 
-The primary comparison is a fresh process per invocation, from launch through
-successful process exit after all output files have been written. The JVM side
-must invoke the installed distribution's actual
-`com.here.gluecodium.Gluecodium` main with `-generators cpp`, its full normal
-load/validation/generation path, and documented CLI options. Direct `java`
-invocation with the distribution's exact classpath is permitted to exclude a
-launcher shell; record that choice and the complete argv. The Rust side must
-invoke a newly built optimized `ruscodium compile-cpp` binary from the measured
-source revision. Both sides receive raw LIME and templates, parse and validate
-their admitted inputs, adapt models, generate every selected C++ file and
-write to separate fresh empty output directories on the same filesystem.
-Reference-model exporters, `CppGenerationOracle`, captured graph jobs, preview
-declaration generation and pre-parsed models are not primary timing entry
-points. Build, JVM helper compilation if any, fixture setup and result
-verification stay outside the timed boundary.
+The primary experiment measures fresh processes from launch through exit after
+complete C++ output writes. The JVM side invokes installed Gluecodium 14.2.2's
+actual `com.here.gluecodium.Gluecodium` main directly with `-generators cpp`,
+caching disabled and its normal full load/validation/generation path. The Rust
+side invokes the rebuilt optimized native `ruscodium compile-cpp` command.
+Both receive the same raw LIME and equivalent namespace/export/copyright
+settings and write complete output trees to fresh separate destinations on the
+same filesystem. Neither timing path consumes a reference-model export,
+captured graph, preview declaration generator or pre-parsed input. Builds,
+fixture preparation and complete output verification occur outside timers.
 
-Rebuild with `cargo build --offline --release` before timing; an existing
-release binary can predate M12. Record the binary hash, build command and source
-commit. Verify the JVM distribution version and hash its application/runtime
-jars rather than assuming the installation matches repository HEAD. Pin
-namespace, internal namespace, export/common export, copyright and selected
-generator behavior equivalently; enumerate defaults explicitly in the run
-manifest. Fail the comparison gate if those settings cannot be made equal.
+The release binary was built with `cargo build --offline --release` from
+`141fe1cd5`, whose production sources equal `12e45a188`; the intervening commit
+only added this milestone's plan. Corrected run manifests identify clean
+benchmark source `311528689`, and the final results/report are committed in
+`e8eca0c31`. Independent review is committed in `7462775b8`. Raw records pin
+the native binary, JVM runtime/application/dependency jars, helper sources,
+input/options and template hashes; review checked those identities against
+the actual artifacts. The report records toolchain and environment details
+without assuming that the installed JVM distribution equals repository HEAD.
 
-#### Inputs and exact-output gate
+#### Valid inputs, parity and scaling
 
-Use at least one valid real repository fixture and controlled scale workloads
-inside the admitted native surface. Start with the existing custom fixture,
-including its intended auxiliary input/options where applicable, and a copied
-default fixture corrected to pass the actual JVM CLI's validators. The current
-`default.lime` uses `field constructor(label)` while `mapping` and `tags` have
-no defaults; an oracle accepting that model does not establish CLI validity.
-For the benchmark copy, try `field constructor(label, mapping, tags)`, validate
-it with both real frontends, and record the exact normalization and input hash.
-Do not alter the original fixture or bypass JVM validators. If a candidate
-remains invalid or unsupported, record the diagnostic and use another valid
-real input instead of timing mismatched work.
+The completed matrix includes the real custom fixture with auxiliary lookup
+and custom options, a copied default fixture and deterministic independent
+one-field-struct workloads at 10, 100 and 125 structs. The default benchmark
+copy changes `field constructor(label)` to
+`field constructor(label, mapping, tags)` so the actual JVM validators accept
+its required nondefault fields; the original fixture is unchanged. Both
+frontends receive and validate each workload. Controlled struct scales probe
+this admitted surface rather than represent complete application projects.
 
-Generate deterministic struct workloads at initially 10, 100 and 500 structs
-with valid fields, matching package/options and the same workload construction
-at every scale. Record source bytes/lines/declarations and output files/bytes;
-these are controlled scaling probes, not representative application corpora.
-Run a bounded untimed pilot before fixing the final matrix and trial count.
-Native graph re-import during per-file generation may scale poorly; retain
-such evidence, including slow Rust results. If a pilot exceeds the documented
-per-invocation limit, record the censored workload, elapsed bound and reason,
-then choose a smaller intermediate scale for completed trials. Do not omit a
-size because it reverses a speedup or choose sizes after inspecting final
-statistics. Save the selected matrix and randomized schedule before timed
-trials. Large persistent-process measurements are not a prerequisite.
+Every completed workload passed a pilot gate comparing full relative file
+inventories and exact bytes, including common/export files. Every formal
+sample, filesystem warmup and persistent iteration was independently checked
+against its complete baseline outside the timer. Per-file and aggregate hashes,
+source/output sizes and precise counts are retained in the linked report and
+raw [pilot](tools/performance/results/pilot.json),
+[fresh-process](tools/performance/results/fresh.json) and
+[persistent-process](tools/performance/results/warm.json) records. Independent
+review rehashed the actual generated output trees and found no mismatch.
 
-Every workload must first exit successfully in both actual CLIs and match
-complete relative file inventories and exact bytes, including common/export
-files, before timing it. Store per-file hashes plus an unambiguous aggregate
-inventory hash and output totals. Verify each timed run's exit code and full
-output against that baseline outside the timer; a failure or mismatch remains
-in raw evidence and invalidates its timing as a successful comparison. Outputs
-must never be replayed or supplied as compiler input.
+The 500-struct pilot succeeded on the JVM but the native process was killed at
+its predeclared 60-second limit without completed output parity. Its censored
+record remains visible and has no parity or speed-ratio claim. The 125-struct
+fallback was defined before the pilot and admitted after that timeout. Slower
+native results at both 100 and 125 structs remain in the completed matrix.
+No favorable timing result was used as an input-selection gate.
 
-#### Sampling, environment and artifacts
+#### Sampling and corrected measurement evidence
 
-Use sequential, paired, balanced/interleaved process trials with a fixed
-recorded random seed; never run the competing generators concurrently. Perform
-explicit untimed filesystem warmups, then collect at least seven successful
-trials per implementation/workload when the bounded pilot permits it. Fix and
-disclose any smaller count before the timed schedule, including why it is
-necessary. Name this mode **fresh process, warm filesystem**: each Java process
-starts a new JVM, so filesystem warmup does not mean warmed JIT code. Do not
-claim OS-cache-cold results without a controlled cache experiment.
+Fresh-process trials use warm filesystem caches, separate JVMs, a saved seeded
+balanced/interleaved schedule and sequential paired invocations. Each completed
+workload has eight pairs. A small native C supervisor measures monotonic wall
+time, per-child user/system CPU and Linux per-process peak RSS through blocking
+`wait4`, avoiding Python polling delay and Python-parent RSS contamination.
+The report gives medians, interpolated quartiles, ranges and the JVM/Rust median
+wall-time ratio with actual times and memory values. Shared-host contention,
+a two-CPU cgroup quota, an 8 GiB memory limit and buffered tmpfs output remain
+explicit limits; filesystem warmup is neither warmed JVM JIT nor a controlled
+OS-cache-cold experiment.
 
-Record wall time with a monotonic clock, user/system CPU time and per-process
-peak RSS using a method that attributes each invocation independently; a
-cumulative maximum from prior children is not a per-process RSS measurement.
-State the RSS units and platform semantics. Preserve all raw samples, timeouts,
-failures, command argv, environment overrides and per-run output checks in
-machine-readable JSON. Report median, Q1/Q3 or IQR, minimum and maximum for
-wall time, CPU and RSS, and define speedup as JVM median wall time divided by
-Rust median wall time. Include the actual time/RSS values with each ratio;
-do not infer statistical significance from a small shared-host sample.
+An initial logging configuration could not write the JVM home and emitted
+exception traces. The complete experiment was rerun with a pre-created writable
+`-Duser.home`; logger initialization failures now invalidate invocations.
+Historical diagnostics and preliminary measurements remain under
+[initial-logging-error](tools/performance/results/initial-logging-error/) and
+are excluded from final statistics. The corrected evidence is log-clean.
+Independent review also verified timeout/exit handling, source identities,
+complete-output parity and every reported statistic and ratio.
 
-Capture UTC time, source revision/dirty state, input/options/template hashes,
-JVM distribution and jar hashes, Rust executable hash, toolchain versions,
-OS/kernel, CPU model/count, affinity, cgroup CPU quota and memory limit,
-available RAM, filesystem/output location and relevant Java/Rust settings.
-Explain shared-host contention and JVM startup/JIT costs. The JVM implements
-broader validation than the bounded native adapter; equal output for these
-inputs does not make their complete semantic obligations equivalent or isolate
-programming-language/runtime overhead.
+A separate persistent API experiment repeats full load, validation, generation
+and writing for the 10-struct workload after explicit warmup. Options are parsed
+outside iteration timers and outputs have fresh destinations. It measures wall
+time only, uses one process per implementation and has correlated iterations;
+it does not establish JIT steady state or per-iteration CPU/RSS. Larger cases
+were excluded by the declared pilot budget. Its results remain separate from
+the fresh CLI comparison.
 
-Deliver a reproducible runner and README under `tools/performance/`, committed
-raw run JSON and a concise `PERFORMANCE.md` report linking commands, workload
-definitions, parity manifests and environment evidence. Include limitations
-and every selected workload, including slower/failed/censored cases. An
-optional separate warmed persistent-API experiment may follow only if both
-implementations perform equivalent full frontend/generation/output work and
-warmup/JIT behavior is explicit; never mix it with the fresh-process results.
+#### Delivered conclusions and remaining work
 
-#### Acceptance
+Fresh native processes are faster on the two real fixtures and 10 structs;
+the JVM is faster at 100 and 125 structs and in the small persistent experiment.
+Native peak RSS is lower on every completed fresh workload. The report links
+the exact measured values, raw samples, commands and reproduction steps.
+Visible repeated whole-graph import and class-wide absence scans during native
+file rendering support a scaling hypothesis; no profile establishes a
+bottleneck and no optimization was implemented in this milestone.
 
-The milestone is complete when the committed runner can reproduce the
-comparison, all reported successful samples have passed the complete-output
-gate, the report answers which implementation is faster and uses less memory
-for each measured workload without a full-port claim, independent review has
-no unresolved material finding, and the measured source revision and results
-are traceable. Run checks appropriate to benchmark tooling plus retained
-production-template equality; production Rust changes require their ordinary
-checks and are outside this milestone's authorized scope.
+Independent review reports no unresolved material finding within the M13
+measurement contract. Equal generated bytes for these inputs do not equate
+the guarded native frontend's validation obligations with the broader JVM
+validators, establish statistical significance, isolate language overhead or
+claim full compiler compatibility. Complete canonical/frontend validation,
+all-feature C++ and platform parity, further performance work and migration/
+cutover policy remain open in the roadmap below.
 
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
