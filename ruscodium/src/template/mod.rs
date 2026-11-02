@@ -1160,4 +1160,86 @@ mod prepared_tests {
         );
         fs::remove_dir_all(root).unwrap();
     }
+    #[test]
+    fn cached_nested_forward_definitions_are_registered_on_every_encounter() {
+        let root = std::env::temp_dir().join(format!(
+            "ruscodium-prepared-nested-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir_all(&root).unwrap();
+        for (name, source) in [
+            ("entry", "{{>a}}{{>part}}|{{>b}}{{>part}}|{{>a}}{{>part}}"),
+            (
+                "a",
+                "{{#if false}}{{+outer}}{{+part}}A-{{name}}{{/part}}{{/outer}}{{/if}}",
+            ),
+            ("b", "{{+part}}B-{{name}}{{/part}}"),
+        ] {
+            fs::write(root.join(format!("{name}.mustache")), source).unwrap();
+        }
+        let mut prepared = PreparedRenderer::new(
+            &root,
+            Graph::default(),
+            None,
+            native_cpp::NativeCppConfig::default(),
+            Value::Null,
+            &json!({}),
+        )
+        .unwrap();
+        for value in ["one", "two"] {
+            let data = json!({"name":value});
+            let request = json!({"schema":"gluecodium.template.render-request","version":1,
+                "template":"entry","data":data,"native_cpp":{}});
+            let expected = format!("A-{value}|B-{value}|A-{value}");
+            assert_eq!(render(&root, &request).unwrap(), expected);
+            assert_eq!(prepared.render("entry", data).unwrap(), expected);
+        }
+        fs::remove_dir_all(root).unwrap();
+    }
+
+    #[test]
+    fn prepared_renderers_keep_template_roots_and_copyright_separate() {
+        let root = std::env::temp_dir().join(format!(
+            "ruscodium-prepared-roots-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        let a = root.join("a");
+        let b = root.join("b");
+        fs::create_dir_all(&a).unwrap();
+        fs::create_dir_all(&b).unwrap();
+        for (dir, prefix) in [(&a, "A"), (&b, "B")] {
+            fs::write(dir.join("entry.mustache"), "{{>part}}/{{copyrightHeader}}/{{#items}}{{iter.position}}{{/items}}/{{#switch n}}{{#case 1}}one{{/case}}{{#default}}other{{/default}}{{/switch}}").unwrap();
+            fs::write(dir.join("part.mustache"), prefix).unwrap();
+        }
+        let make = |dir: &Path, copyright: &str| {
+            PreparedRenderer::new(
+                dir,
+                Graph::default(),
+                None,
+                native_cpp::NativeCppConfig::default(),
+                json!(copyright),
+                &json!({}),
+            )
+            .unwrap()
+        };
+        let mut first = make(&a, "alpha");
+        let mut second = make(&b, "beta");
+        let data = json!({"items":[1,2],"n":1});
+        assert_eq!(
+            first.render("entry", data.clone()).unwrap(),
+            "A/alpha/01/one"
+        );
+        assert_eq!(
+            second.render("entry", data.clone()).unwrap(),
+            "B/beta/01/one"
+        );
+        assert_eq!(
+            first.render("entry", json!({"items":[3],"n":2})).unwrap(),
+            "A/alpha/0/other"
+        );
+        assert_eq!(second.render("entry", data).unwrap(), "B/beta/01/one");
+        fs::remove_dir_all(root).unwrap();
+    }
 }
