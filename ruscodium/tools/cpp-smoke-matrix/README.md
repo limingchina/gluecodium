@@ -68,3 +68,25 @@ source sets. The full comments group remains rejected. All 15 case input hashes,
 effective options, JVM output hashes and source sets match baseline; Java,
 installed JVM jar and all 315 template hashes also match. The first observed
 guards for the complete groups are unchanged.
+
+The separate [M15 report](m15.json) uses version-2 jobs and release source
+`3d07f3232` after adding direct enum-backed exceptions and synchronous throws.
+It retains 1 exact complete group and 12 guarded complete-group rejections;
+both isolated documentation cases also remain exact matches (64 files across
+the three accepted cases). No row has an output mismatch, JVM/export failure
+or provenance change. All fifteen source/options/JVM output inventories and the
+Java, application-jar and 315-template identities match the M11 final report.
+
+The six complete groups previously stopped by `LimeException` now reach their
+next guards: `DART` in `basic_types`, `LimeValue$Constant` in `enums`, `structs`
+and `nesting`, unsupported Markdown in `comments`, and `ASYNC` in `async`.
+These are first observed blockers, not complete inventories of the remaining
+work. Focused native-LIME exception acceptance and executable error-code/Return
+consumers are recorded separately by the
+[enum-error oracle](../enum-errors-oracle/README.md).
+
+To reproduce this comparison, use the command above with `--job-version 2`,
+`--baseline ruscodium/tools/cpp-smoke-matrix/final.json`, a fresh capture
+directory, a separate report path, and the actual source revision and compiler
+used to build both native executables. The earlier baseline and final reports
+remain historical records.

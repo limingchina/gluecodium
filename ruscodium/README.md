@@ -76,6 +76,15 @@ files across default/custom inputs and two isolated upstream documentation
 files, plus model facts and live source mutations. This is the dedicated M12
 adapter slice; the snapshot-driven CLI and preview emitter remain separate.
 
+The native C++ path also supports direct enum-backed exceptions and synchronous
+throwing methods. It emits error categories, `std::error_code` and
+`Return<T, std::error_code>` through the unchanged templates. Exception
+declarations retain their model identity and produce no C++ file. The
+[enum-error oracle](tools/enum-errors-oracle/README.md) compares live JVM output
+and model facts, and compiles consumers exercising generated success and error
+results. Non-enum or aliased payloads, throwing constructors and unsupported
+metadata remain guarded; full C++ compatibility is still unfinished.
+
 The [original performance experiment](PERFORMANCE.md) compares real Kotlin/JVM and
 release Rust C++ pipelines with matched outputs, fresh-process runtime, CPU and
 peak RSS, plus a separate persistent-process API test. It records the native
