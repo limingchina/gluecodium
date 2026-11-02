@@ -650,3 +650,103 @@ broader JVM validation obligations. Fresh processes do not establish warmed
 API behavior, asymptotic bounds, statistical significance, language/runtime
 overhead or full compiler compatibility. No reported material finding remains
 unresolved within the bounded M14 contract.
+
+## M15 independent enum-error review — 2026-11-02
+
+Sol 6.1 xhigh independently reviewed the bounded contract in `9caabcc88` and
+`01d0f1223`, the implementation in `3d07f3232`, the focused oracle in
+`b27701d3b`, and the comparative smoke report in `77bdee61e`. The reviewed
+increment admits direct nonnullable enum-backed exceptions and ordinary
+synchronous throwing methods through the native LIME-to-C++ pipeline. All
+changes remain under `ruscodium/`; all 315 production templates are unchanged.
+No material finding remains unresolved within this contract.
+
+### Findings and disposition
+
+Pre-commit review identified the risk that admitting `LimeException` as a type
+could also admit it in ordinary parameters, returns, aliases or generic
+arguments. The final adapter recursively rejects exception value uses, and the
+graph boundary checks each stored reference use, including a reference object
+also used by a valid throws clause. Throws wrappers must have exactly one
+function owner. Payload and throws targets must be canonical indexed objects;
+nullable, aliased, non-enum or misplaced forms remain rejected.
+
+Review also required contradictory new getter views to fail instead of being
+accepted or silently replaced. The final validator compares supplied
+`LimeFunction.exception` and enum/exception `actualType` views with the stored
+edges. Missing permitted views are derived for rendering. The oracle exposed
+the JVM's function-owned path for an empty throws comment, which the adapter
+now reproduces. Review then found that selected C++ text was too weak an
+emptiness test: other-platform text and whitespace can select an empty string.
+The final guard requires global comment emptiness, no exclusion/placeholders,
+the function's path, and an empty raw-section array in version 2. These fixes
+landed before the implementation commit.
+
+Upstream source inspection confirmed that global error-enum discovery visits
+main roots and nested declarations, including unused exceptions, while
+auxiliary exceptions do not independently mark enums. The final implementation
+matches that boundary and preserves the owning root's type-traversal order.
+Enum-backed throws alone do not introduce a remote payload header; nested
+exception declarations can contribute their payload imports. Top-level
+exceptions retain model/file ownership but reserve no generated path. Both
+default-name collisions and the admitted safe exception `@Cpp` annotation have
+fresh JVM evidence. Exception-only input still emits the common/export files.
+
+### Final independent verification
+
+- All 106 Rust tests passed, including the retained whole-file/documentation
+  goldens and new native-model/graph rejection cases. Formatting and offline
+  all-target Clippy with warnings denied passed. The 14 projection unit tests
+  also passed independently.
+- The final focused oracle passed all eight fresh JVM/native cases: 196
+  complete paths, actual source sets and exact file bytes, with semantic model
+  comparisons for exceptions, thrown references/comments and derived targets.
+  Twelve strict C++17 consumer builds/runs covered JVM, native library and
+  empty-`PATH`, Java-free CLI output for baseline, class/struct owners, actual
+  default options and custom namespaces. They exercised category names/messages,
+  unknown enum values, enum conversion, void/value success and failure, nullable
+  results and static methods. Three live source mutations changed names/values,
+  package or throws target. Shared/unused exceptions, ordered nested error
+  enums, main/auxiliary discovery and zero-output exception roots were covered.
+- Review independently compared the committed focused evidence with its own
+  retained run. All 32 source/tool hashes, native executable hashes, JVM library
+  identities, 315 template hashes and all eight input/options/file inventories
+  agree. All 196 generated-file hashes were independently recomputed. The
+  recorded source head `77bdee61e` contains production implementation
+  `3d07f3232`; the oracle and fixtures are separately identified by their hashes.
+- The complete existing frontend-adapter oracle passed its 90 baseline files
+  and 23 live mutations, including model projections, repeated generation,
+  frozen captures and strict library/Java-free CLI consumers. Four additional
+  independently constructed fresh JVM/native cases matched all 84 files and
+  model facts: exception-only main input, documented throwing struct methods,
+  cross-root nested payload ownership and a default C++ name collision.
+- Forty additional rejected CLI probes preserved the entire pre-existing
+  output tree and produced no stdout with Java unavailable. They covered stale
+  same-class/null getters, raw throws metadata, bad paths/owners/references,
+  stored-field and overlay replay, exception references reused as values,
+  absence conflicts, schema errors, payload bounds, throwing constructors and
+  unsupported source metadata. Positive omission of derived getters and a
+  valid version-1 empty-comment job both reproduced every fresh JVM file.
+  A direct public-model probe additionally verified forged payload/throws cache
+  clearing, category movement after successive source mutations, and rejection
+  of unresolved source names despite previously valid cached targets.
+
+The retained live checks run separately during implementation also passed:
+50 whole-file and 63 documentation capture files with their consumers, all 41
+JVM template pairs and the 315-template identity gate. These complement the
+reviewer's independent native golden, adapter and focused runs.
+
+Review checked the comparative smoke report without rerunning its matrix.
+All fifteen input/options/JVM file inventories and source sets match M11's
+final report; Java, application-jar and 315-template identities also agree.
+The recorded release executable hashes match the actual binaries. Results
+remain one exact complete group, twelve rejected complete groups and two exact
+isolated documentation files, totaling 64 accepted files, with no mismatch or
+provenance failure. Six first guards advance from exceptions to `DART`, three
+`LimeValue$Constant` cases, Markdown and `ASYNC`; this does not establish new
+whole-group compatibility.
+
+Aliases in the new exception positions, non-enum/external payloads, throwing
+constructors/accessors/lambdas, async, full documentation processing and the
+remaining model/attribute/value forms remain outside this bounded result.
+Neither complete C++/frontend parity nor calculator compatibility is claimed.
