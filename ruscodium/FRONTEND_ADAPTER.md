@@ -53,8 +53,13 @@ The initial compatibility surface includes the existing default/custom fixtures:
 classes/interfaces, structs, enums, aliases, lambdas, synchronous members,
 properties, supported literal defaults, field constructors, nested types,
 containers, nullable references and supported `@Cpp` names. Admission remains
-guarded. Inheritance, throws/errors, external descriptors, filtering, arbitrary
-attributes and unimplemented source/model forms fail explicitly. Type-position
+guarded. Top-level and nested exceptions with direct nonnullable enum payloads
+and ordinary synchronous instance or static throwing methods are supported.
+Enum and exception aliases in these positions, non-enum payloads, throwing
+constructors, accessors and lambdas, async, inheritance, external descriptors,
+filtering, arbitrary attributes and unimplemented source/model forms fail
+explicitly. Exception declarations accept the existing bounded `@Cpp(Name)`
+annotation. Throws comments and documentation blocks remain unsupported. Type-position
 documentation is retained in `TypeRef.docs` so unsupported metadata can be
 diagnosed; the field is omitted from preview JSON when empty. Full frontend and
 canonical-model parity remain unfinished.
@@ -98,3 +103,12 @@ upstream documentation input. Live JVM mutation cases exercise additional source
 forms and model facts. Documentation model comparisons use fresh JVM loads of
 the isolated main files; frozen M11 outputs are compared independently, without
 claiming equality to their unrelated auxiliary or placeholder configuration.
+
+The focused [enum-errors oracle](tools/enum-errors-oracle/) compares complete
+JVM and native output and semantic model projections, including nested and
+cross-root payloads, shared and unused exceptions, auxiliary lookup, custom
+namespaces and `@Cpp` names. Void methods return `std::error_code`; value
+methods use the configured `Return<T, std::error_code>` helper. Main exception
+declarations mark their payload enums for category generation even when unused;
+auxiliary exceptions do not independently mark enums, and auxiliary roots do
+not own generated files. Exception declarations themselves emit no files.

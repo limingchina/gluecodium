@@ -331,7 +331,16 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             .expect("renderer initialized")
             .render(name, data)
     };
-    let mut collection = None;
+    let context = collect::Context::new(&graph, &config)?;
+    let mut all_error_enums = BTreeSet::new();
+    for root in &roots {
+        for ty in context.all_types(root)? {
+            if class(&graph, &ty)? == "LimeException" {
+                let error = field(&graph, &ty, "errorType")?;
+                all_error_enums.insert(ref_id(&field(&graph, &error, "type")?)?.to_owned());
+            }
+        }
+    }
     for element in roots {
         let kind = class(&graph, &element)?;
         let content = match kind {
@@ -340,14 +349,16 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             "LimeEnumeration" => "cpp/CppEnumeration",
             "LimeTypeAlias" => "cpp/CppTypeAlias",
             "LimeLambda" => "cpp/CppLambda",
+            "LimeException" => continue,
             _ => return Err(format!("unsupported generation root {kind}")),
         };
-        if collection.is_none() {
-            collection = Some(collect::Context::new(&graph, &config)?);
-        }
-        let context = collection.as_ref().expect("collector initialized");
         let filename = context.output(&element)?;
-        let imports = collect::collect(context, &element)?;
+        let error_enums = context
+            .all_types(&element)?
+            .into_iter()
+            .filter(|v| ref_id(v).is_ok_and(|id| all_error_enums.contains(id)))
+            .collect::<Vec<_>>();
+        let imports = collect::collect(&context, &element, !error_enums.is_empty())?;
         let path = field(&graph, &element, "path")?;
         let mut namespace = job.options.root_namespace.clone();
         namespace.extend(
@@ -369,7 +380,7 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
         header_includes.dedup();
         let header_path = format!("cpp/include/{filename}.h");
         header_includes.retain(|i| !header_path.ends_with(&i.file_name));
-        let mut data = json!({"namespace":namespace,"rootNamespace":job.options.root_namespace,"internalNamespace":job.options.internal_namespace,"exportName":job.options.export,"model":element,"equatables":[],"errorEnums":[],"forwardDeclarations":imports.forward_declarations,"functionUsings":{},"includes":header_includes.iter().map(|i| json!({"fileName":i.file_name,"isSystem":i.is_system})).collect::<Vec<_>>(),"contentTemplate":content});
+        let mut data = json!({"namespace":namespace,"rootNamespace":job.options.root_namespace,"internalNamespace":job.options.internal_namespace,"exportName":job.options.export,"model":element,"equatables":[],"errorEnums":error_enums,"forwardDeclarations":imports.forward_declarations,"functionUsings":{},"includes":header_includes.iter().map(|i| json!({"fileName":i.file_name,"isSystem":i.is_system})).collect::<Vec<_>>(),"contentTemplate":content});
         files.push(GeneratedFile {
             path: header_path.into(),
             source_set: SourceSet::MAIN,
@@ -649,6 +660,7 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 "LimeInterface" => "interfaces",
                 "LimeStruct" => "structs",
                 "LimeEnumeration" => "enumerations",
+                "LimeException" => "exceptions",
                 "LimeTypeAlias" => "typeAliases",
                 "LimeLambda" => "lambdas",
                 "LimeConstant" => "constants",
@@ -665,6 +677,46 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                     "indexed declaration {name} is absent from its parent"
                 ));
             }
+        }
+    }
+    // Exception references are valid solely as the owned throws clause of an
+    // ordinary indexed function. Check each use, including generic children,
+    // rather than trusting a reference node merely because it is also thrown.
+    let mut thrown_owners = std::collections::BTreeMap::<String, usize>::new();
+    for (id, node) in &graph.nodes {
+        let kind = node.class.rsplit('.').next().unwrap_or("");
+        for key in [
+            "typeRef",
+            "errorType",
+            "structRef",
+            "elementType",
+            "keyType",
+            "valueType",
+        ] {
+            if let Some(reference) = node.properties.get(key) {
+                if is_type_ref(class(graph, reference)?) {
+                    let target = field(graph, reference, "type")?;
+                    if class(graph, &target)? == "LimeException"
+                        && !(kind == "LimeThrownType" && key == "typeRef")
+                    {
+                        return Err("exception cannot be used as a value type".into());
+                    }
+                }
+            }
+        }
+        if kind == "LimeFunction" {
+            let thrown = &node.properties["thrownType"];
+            if !thrown.is_null() {
+                *thrown_owners.entry(ref_id(thrown)?.to_owned()).or_default() += 1;
+            }
+        }
+        if kind == "LimeThrownType" && !node.properties.contains_key("typeRef") {
+            return Err(format!("invalid thrown type {id}"));
+        }
+    }
+    for (id, node) in &graph.nodes {
+        if node.class.ends_with(".LimeThrownType") && thrown_owners.get(id) != Some(&1) {
+            return Err("thrown type must have exactly one function owner".into());
         }
     }
     // Measured getter views are constrained by class. Names here are LIME
@@ -692,6 +744,7 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                                     | "LimeInterface"
                                     | "LimeStruct"
                                     | "LimeEnumeration"
+                                    | "LimeException"
                                     | "LimeTypeAlias"
                                     | "LimeLambda"
                                     | "LimeBasicType"
@@ -714,13 +767,14 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 let valid = match key.as_str() {
                     "name" | "fullName" => value.is_string(),
                     "isEmpty" | "isVoid" => value.is_boolean(),
-                    "exception" => value.is_null(),
+                    "exception" => value.is_null() || class(graph, value) == Ok("LimeException"),
                     "actualType" => matches!(
                         class(graph, value),
                         Ok("LimeClass"
                             | "LimeInterface"
                             | "LimeStruct"
                             | "LimeEnumeration"
+                            | "LimeException"
                             | "LimeTypeAlias"
                             | "LimeLambda"
                             | "LimeBasicType"
@@ -805,6 +859,8 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 | "LimeInterface"
                 | "LimeStruct"
                 | "LimeEnumeration"
+                | "LimeException"
+                | "LimeThrownType"
                 | "LimeEnumerator"
                 | "LimeTypeAlias"
                 | "LimeLambda"
@@ -860,15 +916,87 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
         {
             return Err("inheritance is unsupported".into());
         }
-        if node
-            .properties
-            .get("thrownType")
-            .is_some_and(|v| !v.is_null())
+        if matches!(kind, "LimeException" | "LimeEnumeration")
+            && job
+                .property_overlays
+                .as_ref()
+                .and_then(|o| o.get(id))
+                .and_then(|o| o.get("actualType"))
+                .is_some_and(|actual| actual != &v)
         {
-            return Err("throwing functions are unsupported".into());
+            return Err("contradictory actualType getter".into());
         }
         if kind == "LimeException" {
-            return Err("exceptions are unsupported".into());
+            if !all_references.contains(id) {
+                return Err("unindexed exception".into());
+            }
+            let reference = field(graph, &v, "errorType")?;
+            let target = field(graph, &reference, "type")?;
+            if field(graph, &reference, "isNullable")? != json!(false)
+                || class(graph, &target)? != "LimeEnumeration"
+                || !all_references.contains(ref_id(&target)?)
+            {
+                return Err(
+                    "exception payload must be an indexed direct nonnullable enumeration".into(),
+                );
+            }
+        }
+        if kind == "LimeProperty" {
+            for key in ["getter", "setter"] {
+                let accessor = field(graph, &v, key)?;
+                if !accessor.is_null() && !field(graph, &accessor, "thrownType")?.is_null() {
+                    return Err("throwing property accessor is unsupported".into());
+                }
+            }
+        }
+        if kind == "LimeFunction" {
+            let thrown = field(graph, &v, "thrownType")?;
+            if !thrown.is_null() {
+                let reference = field(graph, &thrown, "typeRef")?;
+                let target = field(graph, &reference, "type")?;
+                let comment = field(graph, &thrown, "comment")?;
+                let comment_path = field(graph, &comment, "path")?;
+                let function_path = field(graph, &v, "path")?;
+                let same_path = ["head", "tail", "disambiguator"].iter().all(|key| {
+                    field(graph, &comment_path, key).ok() == field(graph, &function_path, key).ok()
+                });
+                let empty_comment = field(graph, &comment, "isEmpty")? == json!(true)
+                    && job.raw_comments.as_ref().is_none_or(|raw| {
+                        raw.get(ref_id(&comment).unwrap_or(""))
+                            .and_then(Value::as_array)
+                            .is_some_and(Vec::is_empty)
+                    });
+                if !same_path
+                    || !empty_comment
+                    || field(graph, &comment, "isExcluded")? != json!(false)
+                    || field(graph, &comment, "placeholders")? != json!({})
+                {
+                    return Err("throws comment must be empty and owned by its function".into());
+                }
+                if field(graph, &reference, "isNullable")? != json!(false)
+                    || class(graph, &target)? != "LimeException"
+                    || !all_references.contains(ref_id(&target)?)
+                    || !all_references.contains(id)
+                    || field(graph, &v, "isConstructor")? != json!(false)
+                {
+                    return Err("unsupported throwing function".into());
+                }
+            }
+            let expected = if thrown.is_null() {
+                Value::Null
+            } else {
+                let reference = field(graph, &thrown, "typeRef")?;
+                field(graph, &reference, "type")?
+            };
+            if job
+                .property_overlays
+                .as_ref()
+                .and_then(|v| v.get(id))
+                .and_then(|v| v.get("exception"))
+                .is_some_and(|supplied| supplied != &expected)
+            {
+                return Err("contradictory function exception getter".into());
+            }
         }
         if kind == "LimeAttributes" {
             let attrs = node
@@ -945,6 +1073,7 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             "interfaces",
             "structs",
             "enumerations",
+            "exceptions",
             "typeAliases",
             "lambdas",
             "constants",
@@ -1030,6 +1159,18 @@ fn derived_overlays(graph: &Graph, job: &Job) -> Result<Value, String> {
                 );
             }
         }
+        if is_type(kind) {
+            let mut target = this.clone();
+            let mut seen = BTreeSet::new();
+            while class(graph, &target)? == "LimeTypeAlias" {
+                if !seen.insert(ref_id(&target)?.to_owned()) {
+                    return Err("cyclic type alias".into());
+                }
+                let reference = field(graph, &target, "typeRef")?;
+                target = field(graph, &reference, "type")?;
+            }
+            updates.insert("actualType".into(), target);
+        }
         match kind {
             "LimeStruct" => {
                 let fields = array(graph, &this, "fields")?;
@@ -1061,7 +1202,14 @@ fn derived_overlays(graph: &Graph, job: &Job) -> Result<Value, String> {
                 updates.insert("fields".into(), json!(fields));
             }
             "LimeFunction" => {
-                updates.insert("exception".into(), Value::Null);
+                let thrown = field(graph, &this, "thrownType")?;
+                let exception = if thrown.is_null() {
+                    Value::Null
+                } else {
+                    let reference = field(graph, &thrown, "typeRef")?;
+                    field(graph, &reference, "type")?
+                };
+                updates.insert("exception".into(), exception);
             }
             "LimeReturnType" => {
                 let reference = field(graph, &this, "typeRef")?;
@@ -1137,6 +1285,8 @@ fn validate_snapshot_shape(snapshot: &Value) -> Result<(), String> {
             "LimeInterface" => "attributes childTypes classes comment constants enumerations exceptions external functions interfaces isNarrow isOpen lambdas parents path properties structs typeAliases",
             "LimeStruct" => "attributes childTypes classes comment constants constructorComment enumerations exceptions external fieldConstructors fields functions interfaces lambdas path properties structs typeAliases",
             "LimeEnumeration" => "attributes childTypes comment enumerators external path",
+            "LimeException" => "attributes childTypes comment errorType external path",
+            "LimeThrownType" => "comment typeRef",
             "LimeEnumerator" => "attributes comment explicitValue external path",
             "LimeTypeAlias" => "attributes childTypes comment external path typeRef",
             "LimeLambda" => "attributes childTypes comment external parameters path returnType",
@@ -1186,6 +1336,7 @@ fn is_type(kind: &str) -> bool {
             | "LimeInterface"
             | "LimeStruct"
             | "LimeEnumeration"
+            | "LimeException"
             | "LimeTypeAlias"
             | "LimeLambda"
     )
@@ -1213,6 +1364,7 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                                 | "LimeInterface"
                                 | "LimeStruct"
                                 | "LimeEnumeration"
+                                | "LimeException"
                                 | "LimeTypeAlias"
                                 | "LimeLambda"
                         ),
@@ -1271,8 +1423,9 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                     },
                 ),
                 "fieldRefs" => list(value, "LimeLazyFieldRef"),
-                "parents" | "exceptions" => value.as_array().is_some_and(Vec::is_empty),
-                "typeRef" | "structRef" | "elementType" | "keyType" | "valueType" => {
+                "parents" => value.as_array().is_some_and(Vec::is_empty),
+                "exceptions" => list(value, "LimeException"),
+                "typeRef" | "errorType" | "structRef" | "elementType" | "keyType" | "valueType" => {
                     target(value, "typeRef")
                 }
                 "returnType" => target(value, "LimeReturnType"),
@@ -1296,7 +1449,8 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                 "getter" | "setter" => value.is_null() || target(value, "LimeFunction"),
                 "explicitValue" | "defaultValue" => value.is_null() || target(value, "value"),
                 "value" if kind == "LimeConstant" => target(value, "value"),
-                "external" | "thrownType" => value.is_null(),
+                "external" => value.is_null(),
+                "thrownType" => value.is_null() || target(value, "LimeThrownType"),
                 "typeId" => {
                     value.get("enum").and_then(Value::as_str)
                         == Some("com.here.gluecodium.model.lime.LimeBasicType$TypeId")

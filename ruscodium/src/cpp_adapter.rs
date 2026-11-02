@@ -95,7 +95,7 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
     let allowed = match parent {
         "file" => matches!(
             d.kind.as_str(),
-            "class" | "interface" | "struct" | "enum" | "typealias" | "lambda"
+            "class" | "interface" | "struct" | "enum" | "typealias" | "lambda" | "exception"
         ),
         "class" | "interface" => matches!(
             d.kind.as_str(),
@@ -105,6 +105,7 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
                 | "enum"
                 | "typealias"
                 | "lambda"
+                | "exception"
                 | "const"
                 | "fun"
                 | "constructor"
@@ -118,6 +119,7 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
                 | "enum"
                 | "typealias"
                 | "lambda"
+                | "exception"
                 | "const"
                 | "fun"
                 | "constructor"
@@ -167,8 +169,14 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
             ));
         }
     }
-    if !d.parents.is_empty() || d.throws.is_some() || d.descriptor.is_some() {
-        return Err("inheritance, throws and external descriptors are unsupported".into());
+    if !d.parents.is_empty() || d.descriptor.is_some() {
+        return Err("inheritance and external descriptors are unsupported".into());
+    }
+    if let Some(t) = &mut d.throws {
+        if d.kind != "fun" || !matches!(parent, "class" | "interface" | "struct") || t.nullable {
+            return Err("unsupported throws placement or nullability".into());
+        }
+        guard_type(t)?;
     }
     if d.modifiers.len() > 1
         || d.modifiers.iter().any(|m| {
@@ -226,6 +234,7 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
                 | "enum"
                 | "typealias"
                 | "lambda"
+                | "exception"
                 | "field"
                 | "fun"
                 | "property"
@@ -238,7 +247,7 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
     }
     let needs_type = matches!(
         d.kind.as_str(),
-        "field" | "const" | "property" | "typealias" | "lambda"
+        "field" | "const" | "property" | "typealias" | "lambda" | "exception"
     ) || (d.kind == "parameter" && parent != "field_constructor");
     let permits_type = needs_type || d.kind == "fun";
     if needs_type && d.ty.is_none() || !permits_type && d.ty.is_some() {
@@ -558,6 +567,7 @@ impl Builder {
             "interface" => "LimeInterface",
             "struct" => "LimeStruct",
             "enum" => "LimeEnumeration",
+            "exception" => "LimeException",
             "typealias" => "LimeTypeAlias",
             "lambda" => "LimeLambda",
             "fun" | "constructor" => "LimeFunction",
@@ -711,6 +721,7 @@ impl Builder {
                 "interface" => "interfaces",
                 "struct" => "structs",
                 "enum" => "enumerations",
+                "exception" => "exceptions",
                 "typealias" => "typeAliases",
                 "lambda" => "lambdas",
                 "fun" | "constructor" => "functions",
@@ -775,6 +786,7 @@ impl Builder {
                     "interfaces",
                     "structs",
                     "enumerations",
+                    "exceptions",
                     "typeAliases",
                     "lambdas",
                     "functions",
@@ -783,7 +795,6 @@ impl Builder {
                 ] {
                     p[group] = json!(groups.remove(group).unwrap_or_default());
                 }
-                p["exceptions"] = json!([]);
                 p["childTypes"] = json!([]);
                 if d.kind == "struct" {
                     let fields = groups.remove("fields").unwrap_or_default();
@@ -819,6 +830,10 @@ impl Builder {
             "enum" => {
                 p["childTypes"] = json!([]);
                 p["enumerators"] = json!(groups.remove("enumerators").unwrap_or_default());
+            }
+            "exception" => {
+                p["childTypes"] = json!([]);
+                p["errorType"] = self.type_ref(d.ty.as_ref().unwrap())?;
             }
             "typealias" => {
                 p["childTypes"] = json!([]);
@@ -884,7 +899,16 @@ impl Builder {
                     let c = self.nodes[i]["properties"]["comment"].clone();
                     self.update_comment(&c, &block_path, block);
                 }
-                p["thrownType"] = Value::Null;
+                p["thrownType"] = if let Some(throws) = &d.throws {
+                    let reference = self.type_ref(throws)?;
+                    let comment = self.comment(&path);
+                    self.node(
+                        "LimeThrownType",
+                        json!({"typeRef":reference,"comment":comment}),
+                    )
+                } else {
+                    Value::Null
+                };
             }
             "property" => {
                 let ty = self.type_ref(d.ty.as_ref().unwrap())?;
@@ -1087,6 +1111,61 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
         }
     }
     crate::resolve(&mut model)?;
+    fn collect_kinds(decls: &[Decl], scope: &str, kinds: &mut BTreeMap<String, String>) {
+        for d in decls {
+            let name = format!("{scope}.{}", d.name);
+            kinds.insert(name.clone(), d.kind.clone());
+            collect_kinds(&d.children, &name, kinds);
+        }
+    }
+    fn check_value_type(ty: &TypeRef, kinds: &BTreeMap<String, String>) -> Result<(), String> {
+        if ty
+            .resolved
+            .as_ref()
+            .and_then(|s| kinds.get(s))
+            .map(String::as_str)
+            == Some("exception")
+        {
+            return Err("exception cannot be used as a value type".into());
+        }
+        for arg in &ty.args {
+            check_value_type(arg, kinds)?;
+        }
+        Ok(())
+    }
+    fn check_exceptions(decls: &[Decl], kinds: &BTreeMap<String, String>) -> Result<(), String> {
+        for d in decls {
+            if d.kind == "exception" {
+                let ty = d.ty.as_ref().ok_or("missing exception payload")?;
+                if ty.nullable
+                    || ty.builtin
+                    || ty
+                        .resolved
+                        .as_ref()
+                        .and_then(|s| kinds.get(s))
+                        .map(String::as_str)
+                        != Some("enum")
+                {
+                    return Err("exception payload must be a direct nonnullable enumeration".into());
+                }
+            }
+            if d.kind != "exception" {
+                if let Some(ty) = &d.ty {
+                    check_value_type(ty, kinds)?;
+                }
+            }
+            check_exceptions(&d.params, kinds)?;
+            check_exceptions(&d.children, kinds)?;
+        }
+        Ok(())
+    }
+    let mut kinds = BTreeMap::new();
+    for f in &model.files {
+        collect_kinds(&f.declarations, &f.package, &mut kinds);
+    }
+    for f in &model.files {
+        check_exceptions(&f.declarations, &kinds)?;
+    }
     check_literal_types(&model)?;
     let mut b = Builder::new();
     let root = b.reserve("LimeModel");
@@ -1140,6 +1219,7 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
                 | "LimeInterface"
                 | "LimeStruct"
                 | "LimeEnumeration"
+                | "LimeException"
                 | "LimeLambda"
                 | "LimeTypeAlias"
         ) {

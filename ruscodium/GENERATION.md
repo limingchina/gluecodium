@@ -35,15 +35,16 @@ are LIME `name` and `fullName` on named elements; `actualType` on types;
 `isEmpty` on comments in version 1; `isVoid` on return types; `exception` on functions;
 `uniqueEnumerators` on enumerations; `uninitializedFields` on structs; and
 `fields` and `struct` on field constructors. Getter values must have the
-expected kind and class. Native generation recomputes path names, return void,
-uninitialized fields, unique enumerators, and constructor fields and owner from
+expected kind and class; supplied exception getters and enum/exception actual-type
+views must agree with their underlying graph. Native generation recomputes path names, return void,
+uninitialized fields, unique enumerators, type views, function exceptions, and constructor fields and owner from
 raw graph facts; it does not use overlays as precomputed C++ names or generator
 decisions. Version 1 retains measured comment emptiness because the reference
 snapshot does not expose private comment text; nonempty placeholders, excluded
 or nonempty comments and unavailable empty-comment views fail its preflight.
 Version 2 derives comment views natively from the raw sections and supports the
 bounded documentation subset. In both versions, an external descriptor,
-inheritance, exceptions/throws, unknown attribute or unknown model class fails
+inheritance, unsupported exception/throws shapes, unknown attribute or unknown model class fails
 preflight. Repeated mapped C++ method and property-accessor names are also
 rejected until the upstream overload validator is ported. The sole accepted
 attribute is `@Cpp(Name)` with an identifier value.
@@ -54,7 +55,14 @@ supplies verified absent lexical names for its own header and property partials.
 For accepted inputs, classes/interfaces, structs, enumerations, aliases and
 lambdas use upstream template selection and file ownership; classes/interfaces,
 structs and enums have a header and implementation, while aliases and lambdas
-have headers. The complete output includes the thirteen common headers, three
+have headers. Direct nonnullable enum-backed exceptions can be declared at top
+level or nested in supported containers; ordinary synchronous functions can
+throw them. Exception-only roots emit no file. Error enum categories are
+selected from exception declarations in main roots and nested types, including
+unused exceptions; auxiliary exceptions do not independently select categories,
+and auxiliary roots produce no files. Enum/exception aliases in these positions,
+non-enum payloads, throwing constructors, accessors and lambdas, async, and
+throws documentation are rejected. The complete output includes the thirteen common headers, three
 common implementations, and two export headers. Header and implementation
 imports and forward declarations are derived from graph references, including
 nested types. The unchanged production templates are rendered with native name,
@@ -75,7 +83,8 @@ are compiled and run with C++17, `-Wall -Wextra -Werror` by
 `tools/cpp-generation-oracle/compile-consumers`. The fixtures are evidence for
 these combinations, not a claim of full language, frontend, ABI or platform
 backend parity. Version-2 documentation fixtures and separately loaded upstream
-files are documented in [DOCUMENTATION.md](DOCUMENTATION.md). Equality, error
-enums, async, full Markdown/documentation links, filtering, custom
+files are documented in [DOCUMENTATION.md](DOCUMENTATION.md). Focused live
+exception and error-enum coverage is in [enum-errors-oracle](tools/enum-errors-oracle/).
+Equality, async, full Markdown/documentation links, filtering, custom
 naming rules, other annotations, external bindings, and unimplemented value
 variants remain outside this guarded contract.

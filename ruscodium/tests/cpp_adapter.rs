@@ -153,3 +153,40 @@ fn cli_rejects_missing_values_before_writing() {
     assert!(output.stdout.is_empty());
     assert!(String::from_utf8_lossy(&output.stderr).contains("missing argument"));
 }
+
+#[test]
+fn enum_exceptions_reject_unbounded_native_models_and_reresolve_targets() {
+    let source = "package sample\nenum Code { GOOD, BAD }\nexception Failure(Code)\ninterface Service { fun run(): Int throws Failure }\n";
+    let mut m = model(source);
+    let throws = m.files[0].declarations[2].children[0]
+        .throws
+        .as_mut()
+        .unwrap();
+    throws.resolved = Some("forged.Failure".into());
+    assert!(cpp_adapter::generate(
+        &m,
+        "../gluecodium/src/main/resources/templates",
+        &Options::default()
+    )
+    .is_ok());
+    let mut m = model(source);
+    m.files[0].declarations[1].ty.as_mut().unwrap().nullable = true;
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    let mut m = model(source);
+    m.files[0].declarations[2].children[0]
+        .throws
+        .as_mut()
+        .unwrap()
+        .nullable = true;
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    assert!(job("package sample\ntypealias Alias = Int\nexception Failure(Alias)\n").is_err());
+    assert!(job(
+        "package sample\nenum Code { GOOD }\ntypealias Alias = Code\nexception Failure(Alias)\n"
+    )
+    .is_err());
+    assert!(job("package sample\nexception Failure(Int)\n").is_err());
+    assert!(job("package sample\nenum Code { GOOD }\nexception Failure(Code)\nstruct Box { item: List<Failure> }\n").is_err());
+    let mut m = model(source);
+    m.files[0].declarations[2].children[0].kind = "constructor".into();
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+}

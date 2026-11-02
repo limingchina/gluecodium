@@ -258,6 +258,11 @@ impl<'a> Context<'a> {
         }
         Ok(())
     }
+    pub(super) fn all_types(&self, root: &Value) -> Result<Vec<Value>, String> {
+        let mut types = Vec::new();
+        self.types(root, &mut types, &mut BTreeSet::new())?;
+        Ok(types)
+    }
     fn function_refs(&self, v: &Value, out: &mut Vec<Value>) -> Result<(), String> {
         for p in self.array(v, "parameters")? {
             out.push(self.get(&p, "typeRef")?);
@@ -478,7 +483,11 @@ impl<'a> Context<'a> {
     }
 }
 
-pub(super) fn collect(c: &Context<'_>, root: &Value) -> Result<Collected, String> {
+pub(super) fn collect(
+    c: &Context<'_>,
+    root: &Value,
+    has_error_enums: bool,
+) -> Result<Collected, String> {
     let mut types = vec![];
     c.types(root, &mut types, &mut BTreeSet::new())?;
     let refs = c.refs(&types)?;
@@ -511,6 +520,31 @@ pub(super) fn collect(c: &Context<'_>, root: &Value) -> Result<Collected, String
     candidates.dedup_by(|a, b| a.0 == b.0);
     let mut header = BTreeSet::new();
     let mut implementation = BTreeSet::new();
+    if has_error_enums {
+        header.insert(Context::system("system_error"));
+        implementation.insert(Context::system("string"));
+    }
+    for t in &types {
+        if matches!(c.class(t)?, "LimeStruct" | "LimeClass" | "LimeInterface") {
+            for function in c.array(t, "functions")? {
+                if !c.get(&function, "thrownType")?.is_null() {
+                    header.insert(Context::system("system_error"));
+                    let ret = c.get(&function, "returnType")?;
+                    let r = c.get(&ret, "typeRef")?;
+                    let ty = c.actual(&c.get(&r, "type")?)?;
+                    let is_void = !c
+                        .get(&r, "isNullable")?
+                        .as_bool()
+                        .ok_or("invalid nullability")?
+                        && c.class(&ty)? == "LimeBasicType"
+                        && c.get(&ty, "typeId")?["name"] == "VOID";
+                    if !is_void {
+                        header.insert(c.internal("Return.h"));
+                    }
+                }
+            }
+        }
+    }
     for r in &refs {
         c.ref_includes(r, &mut header, &mut BTreeSet::new())?;
         let t = c.get(r, "type")?;
@@ -616,7 +650,7 @@ mod tests {
                 .unwrap()
             {
                 let path = c.output(&root).unwrap();
-                let result = collect(&c, &root).unwrap();
+                let result = collect(&c, &root, false).unwrap();
                 let expected = |kind: &str| -> Option<Vec<Include>> {
                     let (dir, ext) = if kind == "header" {
                         ("include", "h")

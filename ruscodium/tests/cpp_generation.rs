@@ -822,3 +822,130 @@ fn documentation_generation_is_deterministic_without_jvm_on_path() {
     }
     fs::remove_dir_all(dir).unwrap();
 }
+
+#[test]
+fn forged_enum_exception_graphs_fail_before_any_output() {
+    let source = "package sample\nenum Code { GOOD, BAD }\nenum Other { FIRST, SECOND }\nexception Failure(Code)\nexception Alternate(Other)\ninterface Service { fun run(): Int throws Failure }\n";
+    let model = ruscodium::Model {
+        schema_version: 1,
+        files: vec![ruscodium::parse("input.lime", source, false).unwrap()],
+    };
+    let base = ruscodium::cpp_adapter::build_job(&model, &Default::default()).unwrap();
+    assert!(generate(TEMPLATES, &base).is_ok());
+    let function = node_id(&base, "LimeFunction", "run");
+    let failure = node_id(&base, "LimeException", "Failure");
+    let alternate = node_id(&base, "LimeException", "Alternate");
+    let code = node_id(&base, "LimeEnumeration", "Code");
+    let thrown = base["snapshot"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|n| n["id"] == function)
+        .unwrap()["properties"]["thrownType"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let thrown_ref = base["snapshot"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|n| n["id"] == thrown)
+        .unwrap()["properties"]["typeRef"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let comment = base["snapshot"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|n| n["id"] == thrown)
+        .unwrap()["properties"]["comment"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let payload = base["snapshot"]["nodes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|n| n["id"] == failure)
+        .unwrap()["properties"]["errorType"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let mut cases = Vec::new();
+    let mut j = base.clone();
+    j["property_overlays"][&function]["exception"] = json!(null);
+    cases.push(j);
+    let mut j = base.clone();
+    j["property_overlays"][&function]["exception"] = json!({"$ref":alternate});
+    cases.push(j);
+    let mut j = base.clone();
+    j["property_overlays"][&failure]["actualType"] = json!({"$ref":code});
+    cases.push(j);
+    let mut j = base.clone();
+    node_mut(&mut j, &thrown_ref)["properties"]["isNullable"] = json!(true);
+    cases.push(j);
+    let mut j = base.clone();
+    node_mut(&mut j, &payload)["properties"]["isNullable"] = json!(true);
+    cases.push(j);
+    let mut j = base.clone();
+    node_mut(&mut j, &function)["properties"]["isConstructor"] = json!(true);
+    cases.push(j);
+    let mut j = base.clone();
+    j["raw_comments"][&comment] = json!([["Cpp", "unsupported throws documentation"]]);
+    cases.push(j);
+    for sections in [
+        json!([["Java", "hidden documentation"]]),
+        json!([["Cpp", "   "]]),
+    ] {
+        let mut j = base.clone();
+        j["raw_comments"][&comment] = sections;
+        cases.push(j);
+    }
+    let mut j = base.clone();
+    let ret = node_mut(&mut j, &function)["properties"]["returnType"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    node_mut(&mut j, &ret)["properties"]["typeRef"] = json!({"$ref":thrown_ref});
+    cases.push(j);
+    let mut j = base.clone();
+    node_mut(&mut j, &function)["properties"]["thrownType"] = json!(null);
+    cases.push(j);
+    let mut j = base.clone();
+    node_mut(&mut j, &thrown)["properties"]["unexpected"] = json!(true);
+    cases.push(j);
+    let mut j = base.clone();
+    node_mut(&mut j, &thrown_ref)["properties"]["type"] = json!({"$ref":alternate});
+    cases.push(j);
+    let mut j = base.clone();
+    let root = j["snapshot"]["root"]["$ref"].as_str().unwrap().to_owned();
+    node_mut(&mut j, &root)["properties"]["referenceMap"]
+        .as_object_mut()
+        .unwrap()
+        .remove("sample.Failure");
+    cases.push(j);
+    let dir = tmp("exception-invalid");
+    let _ = fs::remove_dir_all(&dir);
+    fs::create_dir_all(dir.join("out/cpp/include")).unwrap();
+    fs::write(dir.join("out/cpp/include/existing.h"), b"preserved").unwrap();
+    for (i, job) in cases.iter().enumerate() {
+        assert!(generate(TEMPLATES, job).is_err(), "case {i}");
+        let path = dir.join("job.json");
+        fs::write(&path, serde_json::to_vec(job).unwrap()).unwrap();
+        let out = Command::new(env!("CARGO_BIN_EXE_ruscodium"))
+            .args(["generate-cpp", "--job"])
+            .arg(path)
+            .args(["--templates", TEMPLATES, "--output"])
+            .arg(dir.join("out"))
+            .output()
+            .unwrap();
+        assert!(!out.status.success(), "case {i}");
+        assert!(out.stdout.is_empty());
+        assert_eq!(
+            fs::read(dir.join("out/cpp/include/existing.h")).unwrap(),
+            b"preserved"
+        );
+    }
+    fs::remove_dir_all(dir).unwrap();
+}
