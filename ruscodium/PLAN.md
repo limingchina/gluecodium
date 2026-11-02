@@ -1412,8 +1412,9 @@ explicit limits. These few scales do not establish asymptotic complexity,
 statistical significance or language/runtime overhead. Fresh filesystem-warm
 processes retain no JVM JIT state; M13's persistent API experiment remains
 separate and no new warmed-API improvement is claimed. Broader compatibility
-and further optimization remain open in the roadmap. Publication of the
-reviewed M14 commits remains pending within the user's existing authorization.
+and further optimization remain open in the roadmap. The reviewed M14 commits
+were pushed through `347792270` to `origin/ruscodium/rust-port`; the remote tip
+was verified within the user's existing publication authorization.
 
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 

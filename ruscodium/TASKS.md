@@ -670,7 +670,7 @@ all new work stays under `ruscodium/` on `ruscodium/rust-port`.
   resolve material findings and rerun affected checks only as needed.
 - [x] Update plan/tasks/review and usage documentation and commit tested logical
   increments.
-- [ ] Publish the reviewed M14 commits within the user's existing authorization.
+- [x] Publish the reviewed M14 commits within the user's existing authorization.
 
 Delivered evidence: contract `965a9ed96`; production changes `6ccea17bc`;
 additional prepared-renderer tests `ec381af93`; diagnostic counts `8888fb09c`;
@@ -726,7 +726,10 @@ the bounded M14 contract. See [OPTIMIZATION.md](OPTIMIZATION.md) and
 two-CPU quota, 8 GiB limit, buffered tmpfs writes, synthetic scales, broader JVM
 validation and fresh-process/JIT distinctions limit interpretation. M13 evidence,
 all templates, supported schemas and admission boundaries remain unchanged;
-full port parity and warmed-API performance remain open. Publication is pending.
+full port parity and warmed-API performance remain open. The reviewed M14
+implementation, measurements and verification were pushed through `347792270`
+to `origin/ruscodium/rust-port`, and the remote tip was verified. This records
+the confirmed publication.
 
 ## Deferred full-parity work
 
