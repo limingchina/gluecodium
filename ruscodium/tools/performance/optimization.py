@@ -79,7 +79,8 @@ def invoke_attempt(item, specs, binaries, work, reference):
         result['inventory'] = inventory
         result['matches_reference'] = check_result(run, inventory, reference)
     except Exception as exc:
-        result.update({'harness_error': f'{type(exc).__name__}: {exc}', 'inventory': b.manifest(out) if out.is_dir() else None, 'matches_reference': False})
+        log = out.parent / (out.name + '.log')
+        result.update({'harness_error': f'{type(exc).__name__}: {exc}', 'harness_stderr': getattr(exc, 'stderr', None), 'log': log.read_text(errors='replace') if log.is_file() else None, 'inventory': b.manifest(out) if out.is_dir() else None, 'matches_reference': False})
     return result
 
 
