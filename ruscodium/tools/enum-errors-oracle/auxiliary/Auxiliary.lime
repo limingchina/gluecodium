@@ -1,0 +1,5 @@
+package oracle.auxiliary
+
+enum AuxCode { OK, BAD }
+exception RemoteFailure(oracle.errors.GlobalError)
+exception AuxiliaryOnlyFailure(oracle.errors.AuxiliaryOnly)

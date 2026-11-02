@@ -1,0 +1,8 @@
+package oracle.customerrors
+
+@Cpp("RenamedError") enum ErrorCode { NONE = 0, BAD = 5 }
+exception Failure(ErrorCode)
+interface Worker {
+    fun call(fail: Boolean) throws Failure
+    fun value(fail: Boolean): Int throws Failure
+}

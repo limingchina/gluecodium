@@ -1,0 +1,9 @@
+package oracle.errors
+
+@Cpp("RenamedError")
+enum GlobalError { NONE = 0, MISSING = 4, DENIED = 7 }
+exception RenamedError(GlobalError)
+@Cpp("NamedShared") exception Shared(GlobalError)
+exception AuxiliaryPayload(oracle.auxiliary.AuxCode)
+enum AuxiliaryOnly { FIRST = 0, SECOND = 1 }
+enum Ordinary { RED, BLUE }

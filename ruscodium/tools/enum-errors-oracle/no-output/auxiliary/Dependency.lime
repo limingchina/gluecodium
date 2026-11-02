@@ -1,0 +1,2 @@
+package oracle.dependency
+enum Code { FIRST, SECOND }

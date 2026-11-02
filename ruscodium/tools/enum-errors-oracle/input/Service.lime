@@ -1,0 +1,12 @@
+package oracle.errors
+
+interface Service {
+    enum LocalError { NONE = 0, FAILED = 3 }
+    enum OtherError { NONE = 0, RETRY = 9 }
+    exception Failure(LocalError)
+    exception OtherFailure(OtherError)
+    fun perform(fail: Boolean): Void throws Failure
+    fun fetch(fail: Boolean): Int throws Failure
+    fun maybe(fail: Boolean): Int? throws oracle.auxiliary.RemoteFailure
+    static fun refresh(fail: Boolean): Int throws OtherFailure
+}

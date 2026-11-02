@@ -1,0 +1,1345 @@
+{
+  "cases": {
+    "baseline": {
+      "consumer_compiled_and_ran": true,
+      "files": {
+        "cpp/include/gluecodium/DurationHash.h": {
+          "sha256": "9ee25f10c5dd058f0829485046a460353033b6f3b0cfa33bdc0ca95b6c85c400",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportCommonGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "MAIN"
+        },
+        "cpp/include/gluecodium/Hash.h": {
+          "sha256": "058c195637dcd0a3139a92e81d9fe4d98eb69ea56d531bdde186e8dd47a8e44d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Locale.h": {
+          "sha256": "71c45f53a85538f93c364e0b94d3892284528ec71d38bfedbb1d6dc349086d31",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Optional.h": {
+          "sha256": "a8d72d82ab75d34d0ff06651550e6086ce7457ef68087b138ae8393706cca8dd",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/OptionalImpl.h": {
+          "sha256": "a55a29de4e9261baecf8ca879211318c73c4739de5863afb5d65d0fc2be82731",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Return.h": {
+          "sha256": "80f87f3315523913645d4edd12df82e22bc62f500820cf3b3ab6e098fe697663",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringView.h": {
+          "sha256": "924ed3dd61bc888125144753277daea7818dd92ff635475cf272a1baa35e360f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringViewImpl.h": {
+          "sha256": "be0da540958016d77b6a285f97f07852e83e6044069cf2f54cd0d14f213fa3bc",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TimePointHash.h": {
+          "sha256": "5742323dfe52017a008e1273c478551b47a996e3e6fa7230161419a65de78e1f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TypeRepository.h": {
+          "sha256": "df87049acb78e3c7611e4d529eac2a4e243b3f40a4010736c481e3444f378360",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedMapHash.h": {
+          "sha256": "25327f1a2413825b37a858a1502bfeb45bd41d6ec602e1b57f4a585b74eaa2e9",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedSetHash.h": {
+          "sha256": "88b779e3be9b82d0995a524b63f2149ee48a193e49b75ef30e3ef9e86cc83824",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/VectorHash.h": {
+          "sha256": "9175be29ed8a33a95473e0405dc04413976369afac410da7e2a2b91697b647cf",
+          "source_set": "COMMON"
+        },
+        "cpp/include/oracle/errors/AuxiliaryOnly.h": {
+          "sha256": "dba799d04380db95987d2735123ebfc613a55bb5c222ca32bf7d2d9f99d9e608",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Ordinary.h": {
+          "sha256": "adac0307d78f120a560764f69e2b536a853a80df422fe9de57f5e44c9ffbe398",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/RenamedError.h": {
+          "sha256": "7d6f1813f7e409ac97aff8d83f26bc9bf6e35119d5a1b74bfcc2e88888d9ea14",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Service.h": {
+          "sha256": "c91e7bca5b8d9a4f622f91ed91f4156df54e8361815e3ea73251730479276570",
+          "source_set": "MAIN"
+        },
+        "cpp/src/gluecodium/LocaleImpl.cpp": {
+          "sha256": "ef2d82066a439432090acdc1dd94b32816f3e4d2030992d8ef2e792c549db4c7",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/StringViewImplDefs.cpp": {
+          "sha256": "72c45a37e69f5d120eee7beb5db2c9bf0207066f44e98c4680ad962bdea220b5",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/TypeRepositoryImpl.cpp": {
+          "sha256": "33c5904eb506f291bf96ab0731af67dd76aa50509635737329b0cebc30b12044",
+          "source_set": "COMMON"
+        },
+        "cpp/src/oracle/errors/AuxiliaryOnly.cpp": {
+          "sha256": "b0b35327c194ba250bcdfa5912f00ce0410c1e568615f2df6d6cee6f4e4f2493",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Ordinary.cpp": {
+          "sha256": "eb78608a358141c3d6f3dd71b97b4ad3d141691562bf4516b2e9dd9c770f7f00",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/RenamedError.cpp": {
+          "sha256": "73ba53d7c070b88f7fe36d3a970aa6a66933c3ed4b048e94dd278153d7d783bd",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Service.cpp": {
+          "sha256": "8cb54cce1830daa6c32ba35624bc247bd41dbda50af8adf71aa1a032bcd6843b",
+          "source_set": "MAIN"
+        }
+      },
+      "inputs_sha256": {
+        "gluecodium/src/test/resources/smoke/enum-errors/auxiliary/Auxiliary.lime": "74ea2283f7cddf6244e69e57b466c0659de94e0959501302b891907936187ab6",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Errors.lime": "2b00d3db9d8f0e27b94c637c8886d49c4fb8d8bd0c8a01bfce448e16aa16e4ba",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Service.lime": "3c633adc44ba1976d6648679434afa628b1a21275991db9c5639141b9536ae16"
+      },
+      "jvm_job_sha256": "f2b41579e4f30e32ab76adf591c66a74680c03e2b17a55ce30c17e6d6f4af195",
+      "native_job_sha256": "ee20500f3ac15e7978eb06ad09cce7c147d1c31a09638f3dc2989e3fec06a3fc",
+      "options": {
+        "internal_namespace": [
+          "gluecodium"
+        ],
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    },
+    "custom": {
+      "consumer_compiled_and_ran": true,
+      "files": {
+        "cpp/include/acme/api/oracle/customerrors/RenamedError.h": {
+          "sha256": "9a2f17bf492f10b7c7363de937f47d03cb9917cd41d955190cbb042fe273a22f",
+          "source_set": "MAIN"
+        },
+        "cpp/include/acme/api/oracle/customerrors/Worker.h": {
+          "sha256": "b0b1aefbc79cf364b8d8391657910d0cf53a69372736751fea68be2051bd485c",
+          "source_set": "MAIN"
+        },
+        "cpp/include/acme/detail/DurationHash.h": {
+          "sha256": "ab4b7b20c9737c4a123756b238afe99b71dc0aece434ba96cd2da7d4ce0ad713",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/ExportAcmeApi.h": {
+          "sha256": "99b222a3e10f3caeb69ac1ccd178b7e185fb2a7536d9bf1c206e86fc5fa1aeab",
+          "source_set": "MAIN"
+        },
+        "cpp/include/acme/detail/ExportCommonAcmeCommon.h": {
+          "sha256": "eeaeae8987fcb64001e6063d1272dd28e4368ea3b4ecde00ac32d8d9c097a77f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/Hash.h": {
+          "sha256": "d2191fbbf97a048e76939f8e5405eac48e20f8f7fd5b09e683454a3ac41932f7",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/Locale.h": {
+          "sha256": "3c22e6b1aaa467de9df6f4d5a47ce5872c89ecfffd7fb49b78b7ef0428ba9466",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/Optional.h": {
+          "sha256": "e6de186397578b7d02f20be872ed1ab2d33287e8edf4401159f303437c6bb760",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/OptionalImpl.h": {
+          "sha256": "8a7142e4931e1f8c3c95592785043646272b18bc32112f5d31a9cbbbc6a6f9c1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/Return.h": {
+          "sha256": "b078c0e6cddf60f40ad14d49cbd900c3e02159a7974ae62674472ae6ffed7f4c",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/StringView.h": {
+          "sha256": "e1a0be809ebeec6ddd6221e351a46329f313cc237bc903fe6558011fa5e5454e",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/StringViewImpl.h": {
+          "sha256": "42c7ccbc63f0cdb49d361cb79f338ea9440a809bbce6bc8f75a8d56649007e37",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/TimePointHash.h": {
+          "sha256": "bc8b9d22b9a4db961e679198f97ad054e4fe3d2c0248ca4eb4b197975af0b52d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/TypeRepository.h": {
+          "sha256": "16a88e9bf02bbd79456afc68cbe419b4ac0db52e3c51a4d5767080ff9edade2c",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/UnorderedMapHash.h": {
+          "sha256": "99b303d18328c3557ec07247d7d0256294a1507cda51360bab041a0fc45c63e2",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/UnorderedSetHash.h": {
+          "sha256": "fc1ae249af742c8442abb4f2f09a62c5eadbab1fd47b6f18a44de4d4bfa6c630",
+          "source_set": "COMMON"
+        },
+        "cpp/include/acme/detail/VectorHash.h": {
+          "sha256": "06098d5a4c75e34316e511294ff8eb90cd842492587c670aa780a5e6ba736495",
+          "source_set": "COMMON"
+        },
+        "cpp/src/acme/api/oracle/customerrors/RenamedError.cpp": {
+          "sha256": "6e7c0a7a56b3dae06e00973582e487ec50574db5aa45bd2bca7289ad2ce044ab",
+          "source_set": "MAIN"
+        },
+        "cpp/src/acme/api/oracle/customerrors/Worker.cpp": {
+          "sha256": "008f8767de29efe05dc3ef5553b381a63b6abe4fe955c9b52259cc041a84f7f7",
+          "source_set": "MAIN"
+        },
+        "cpp/src/acme/detail/LocaleImpl.cpp": {
+          "sha256": "30b51a6e99af01437c424ae8c44c8599b11f787ca8b9f47f65d8929657a35eec",
+          "source_set": "COMMON"
+        },
+        "cpp/src/acme/detail/StringViewImplDefs.cpp": {
+          "sha256": "793a4c2d62aa05d1c6927ad4cbcf26230e1ab2fe892b183ba0fa668cbc697627",
+          "source_set": "COMMON"
+        },
+        "cpp/src/acme/detail/TypeRepositoryImpl.cpp": {
+          "sha256": "144cd0147ba85015ae2af4553a08f3471bc0d2dd4bb154f0a1e4a82672a35273",
+          "source_set": "COMMON"
+        }
+      },
+      "inputs_sha256": {
+        "ruscodium/tools/cpp-generation-oracle/aux.lime": "ed3f5f29b6e8d6bd7b7a7143ce6853b8a4e6c9145af1468b1dec62a8d5ea5434",
+        "ruscodium/tools/cpp-generation-oracle/custom.lime": "4957873e5c9e73ebcb6bfe2e6d2453103d69e5fec7436560c2b36102ff023cbe"
+      },
+      "jvm_job_sha256": "0991a43cb7728ffef5724c20b2f4cf1a16008e1e60cdc1eba1bf6de81e578c0f",
+      "native_job_sha256": "618441d938be61fc5ed6bc52f7ba5f6b3ed6edf589610b46fa82d0c738fa927f",
+      "options": {
+        "copyright_header": "Copyright 2026 Example\nAll rights reserved.",
+        "export": "ACME_API",
+        "export_common": "ACME_COMMON",
+        "internal_namespace": [
+          "acme",
+          "detail"
+        ],
+        "root_namespace": [
+          "acme",
+          "api"
+        ],
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    },
+    "default": {
+      "consumer_compiled_and_ran": true,
+      "files": {
+        "cpp/include/DurationHash.h": {
+          "sha256": "ec2823dcf214b81e4cd30b5d8bf8417cbc131b407c36b4acd96617c70cc06c70",
+          "source_set": "COMMON"
+        },
+        "cpp/include/ExportCommonGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/ExportGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "MAIN"
+        },
+        "cpp/include/Hash.h": {
+          "sha256": "ef3069d66979f84377ac26029dada7869e398b20ffa12372d6b07150e109142f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/Locale.h": {
+          "sha256": "5c4dc757c38755edc0eb9a10c3391670bd761f5a5dd3ee1356bfcad79a48741c",
+          "source_set": "COMMON"
+        },
+        "cpp/include/Optional.h": {
+          "sha256": "0be20507089f46daa752149d6ca3f729fffa542233cc18c9e76a73600e6714c5",
+          "source_set": "COMMON"
+        },
+        "cpp/include/OptionalImpl.h": {
+          "sha256": "a2fd0d3b9c15dcf6f42b4244d3cb2ddb84667e4bdde0b39611fecc21697446c3",
+          "source_set": "COMMON"
+        },
+        "cpp/include/Return.h": {
+          "sha256": "af24418fbba1391d2fabc1553b5a346eb8141a5573f6cbfae21fb5a49fd301ad",
+          "source_set": "COMMON"
+        },
+        "cpp/include/StringView.h": {
+          "sha256": "673506522f2e7e6615368262665042b54ced55aca4cca15f022396b4f0261695",
+          "source_set": "COMMON"
+        },
+        "cpp/include/StringViewImpl.h": {
+          "sha256": "e70afc41e3e97c5a491ce7c671ae893ab6a8c8b7fba5e0060343dbfd0cb1379d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/TimePointHash.h": {
+          "sha256": "08d2aa39df1c945efe5ce9d0517e5aed3647f27131be7d857df335a9a1cedf6b",
+          "source_set": "COMMON"
+        },
+        "cpp/include/TypeRepository.h": {
+          "sha256": "07c0e7aa76b6d30035c6f99544306b47464c5f73956dff1c7f87db835c59c232",
+          "source_set": "COMMON"
+        },
+        "cpp/include/UnorderedMapHash.h": {
+          "sha256": "08cfdc59cf518a9e4c10f6f00662be236455144f3ff8cc3767e46cfa0e125fc6",
+          "source_set": "COMMON"
+        },
+        "cpp/include/UnorderedSetHash.h": {
+          "sha256": "0f79ab677dcc1abf08855eb9a409d74a813b6697cb2001dd88b555fa10344d4f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/VectorHash.h": {
+          "sha256": "177412666a9e685833faff42af6894e537ed9abe3e0503240493a946ec122ed2",
+          "source_set": "COMMON"
+        },
+        "cpp/include/oracle/customerrors/RenamedError.h": {
+          "sha256": "08c08d6b1d860dc46bfe5eec5d93d51dd131058c6850a9483e7d3b02605d72d6",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/customerrors/Worker.h": {
+          "sha256": "0147d2ce722b058358851d86d632c5d002fc4faf327cd12f71dbda92cc100aef",
+          "source_set": "MAIN"
+        },
+        "cpp/src/LocaleImpl.cpp": {
+          "sha256": "554942625e9c50ed79f325d2dd716089c1146f91cb45a54708c1052a4a57b59c",
+          "source_set": "COMMON"
+        },
+        "cpp/src/StringViewImplDefs.cpp": {
+          "sha256": "bad00ec945fc9d536555372a9a711ea48b558c358a524cb9f80b22a09ba49f62",
+          "source_set": "COMMON"
+        },
+        "cpp/src/TypeRepositoryImpl.cpp": {
+          "sha256": "00d0a3cdad3e8d8e5bd4a194b080bfc9ed8dbe888a6e67ba047f74431de94631",
+          "source_set": "COMMON"
+        },
+        "cpp/src/oracle/customerrors/RenamedError.cpp": {
+          "sha256": "d41a8b37d85222fec2367c1d96d0950ce56e9a1bb7bdeb129d683f96eb611732",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/customerrors/Worker.cpp": {
+          "sha256": "5f2083daf950c3795d146c5707be3f0a50f0aa47568460e78f162f21cf67e065",
+          "source_set": "MAIN"
+        }
+      },
+      "inputs_sha256": {
+        "ruscodium/tools/cpp-generation-oracle/default.lime": "4957873e5c9e73ebcb6bfe2e6d2453103d69e5fec7436560c2b36102ff023cbe"
+      },
+      "jvm_job_sha256": "957ddeb9fc777e5c6a6cf8c4c9414664d82a8a63f144daa9bf4629c609387c54",
+      "native_job_sha256": "9200dea99f5c5fb79f845fab3c823a710ebcb021d617f08221d7350326f099f2",
+      "options": {
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    },
+    "names-values": {
+      "consumer_compiled_and_ran": false,
+      "files": {
+        "cpp/include/gluecodium/DurationHash.h": {
+          "sha256": "9ee25f10c5dd058f0829485046a460353033b6f3b0cfa33bdc0ca95b6c85c400",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportCommonGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "MAIN"
+        },
+        "cpp/include/gluecodium/Hash.h": {
+          "sha256": "058c195637dcd0a3139a92e81d9fe4d98eb69ea56d531bdde186e8dd47a8e44d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Locale.h": {
+          "sha256": "71c45f53a85538f93c364e0b94d3892284528ec71d38bfedbb1d6dc349086d31",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Optional.h": {
+          "sha256": "a8d72d82ab75d34d0ff06651550e6086ce7457ef68087b138ae8393706cca8dd",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/OptionalImpl.h": {
+          "sha256": "a55a29de4e9261baecf8ca879211318c73c4739de5863afb5d65d0fc2be82731",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Return.h": {
+          "sha256": "80f87f3315523913645d4edd12df82e22bc62f500820cf3b3ab6e098fe697663",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringView.h": {
+          "sha256": "924ed3dd61bc888125144753277daea7818dd92ff635475cf272a1baa35e360f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringViewImpl.h": {
+          "sha256": "be0da540958016d77b6a285f97f07852e83e6044069cf2f54cd0d14f213fa3bc",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TimePointHash.h": {
+          "sha256": "5742323dfe52017a008e1273c478551b47a996e3e6fa7230161419a65de78e1f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TypeRepository.h": {
+          "sha256": "df87049acb78e3c7611e4d529eac2a4e243b3f40a4010736c481e3444f378360",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedMapHash.h": {
+          "sha256": "25327f1a2413825b37a858a1502bfeb45bd41d6ec602e1b57f4a585b74eaa2e9",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedSetHash.h": {
+          "sha256": "88b779e3be9b82d0995a524b63f2149ee48a193e49b75ef30e3ef9e86cc83824",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/VectorHash.h": {
+          "sha256": "9175be29ed8a33a95473e0405dc04413976369afac410da7e2a2b91697b647cf",
+          "source_set": "COMMON"
+        },
+        "cpp/include/oracle/errors/AuxiliaryOnly.h": {
+          "sha256": "dba799d04380db95987d2735123ebfc613a55bb5c222ca32bf7d2d9f99d9e608",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Ordinary.h": {
+          "sha256": "adac0307d78f120a560764f69e2b536a853a80df422fe9de57f5e44c9ffbe398",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/RenamedError.h": {
+          "sha256": "05502eb87d934bad802ed34e6e95361a444f07bc4493725e9d70e545bc4a1901",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Service.h": {
+          "sha256": "b51a4bbf6539e15526543b5a0c2d0947c8da9a6e32f0ee008c211a8d8086905c",
+          "source_set": "MAIN"
+        },
+        "cpp/src/gluecodium/LocaleImpl.cpp": {
+          "sha256": "ef2d82066a439432090acdc1dd94b32816f3e4d2030992d8ef2e792c549db4c7",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/StringViewImplDefs.cpp": {
+          "sha256": "72c45a37e69f5d120eee7beb5db2c9bf0207066f44e98c4680ad962bdea220b5",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/TypeRepositoryImpl.cpp": {
+          "sha256": "33c5904eb506f291bf96ab0731af67dd76aa50509635737329b0cebc30b12044",
+          "source_set": "COMMON"
+        },
+        "cpp/src/oracle/errors/AuxiliaryOnly.cpp": {
+          "sha256": "b0b35327c194ba250bcdfa5912f00ce0410c1e568615f2df6d6cee6f4e4f2493",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Ordinary.cpp": {
+          "sha256": "eb78608a358141c3d6f3dd71b97b4ad3d141691562bf4516b2e9dd9c770f7f00",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/RenamedError.cpp": {
+          "sha256": "73ba53d7c070b88f7fe36d3a970aa6a66933c3ed4b048e94dd278153d7d783bd",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Service.cpp": {
+          "sha256": "8cb54cce1830daa6c32ba35624bc247bd41dbda50af8adf71aa1a032bcd6843b",
+          "source_set": "MAIN"
+        }
+      },
+      "inputs_sha256": {
+        "gluecodium/src/test/resources/smoke/enum-errors/auxiliary/Auxiliary.lime": "e82b1c21604f47930ff3951dbc8c8b2c9626c601975337c8b88bdbff8ccded4e",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Errors.lime": "2e643e9ca242ee283585e78934e27b7b992729334f48cca035e0ee35d3ed8187",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Service.lime": "7ad19f7b4c942b0e392020194beaa4bd3a0fa1c95efbefe59c01d2f17b729d2f"
+      },
+      "jvm_job_sha256": "f2d57f8c752f572b9533963f70c6db17c9eae43107fb3cd775809c6a55d5e8af",
+      "native_job_sha256": "28f89d93ca4958c06e9c07fa93f0fd85ca2bda480e4aaac83483aa92e908c1e0",
+      "options": {
+        "internal_namespace": [
+          "gluecodium"
+        ],
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    },
+    "no-output": {
+      "consumer_compiled_and_ran": false,
+      "files": {
+        "cpp/include/gluecodium/DurationHash.h": {
+          "sha256": "9ee25f10c5dd058f0829485046a460353033b6f3b0cfa33bdc0ca95b6c85c400",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportCommonGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "MAIN"
+        },
+        "cpp/include/gluecodium/Hash.h": {
+          "sha256": "058c195637dcd0a3139a92e81d9fe4d98eb69ea56d531bdde186e8dd47a8e44d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Locale.h": {
+          "sha256": "71c45f53a85538f93c364e0b94d3892284528ec71d38bfedbb1d6dc349086d31",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Optional.h": {
+          "sha256": "a8d72d82ab75d34d0ff06651550e6086ce7457ef68087b138ae8393706cca8dd",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/OptionalImpl.h": {
+          "sha256": "a55a29de4e9261baecf8ca879211318c73c4739de5863afb5d65d0fc2be82731",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Return.h": {
+          "sha256": "80f87f3315523913645d4edd12df82e22bc62f500820cf3b3ab6e098fe697663",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringView.h": {
+          "sha256": "924ed3dd61bc888125144753277daea7818dd92ff635475cf272a1baa35e360f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringViewImpl.h": {
+          "sha256": "be0da540958016d77b6a285f97f07852e83e6044069cf2f54cd0d14f213fa3bc",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TimePointHash.h": {
+          "sha256": "5742323dfe52017a008e1273c478551b47a996e3e6fa7230161419a65de78e1f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TypeRepository.h": {
+          "sha256": "df87049acb78e3c7611e4d529eac2a4e243b3f40a4010736c481e3444f378360",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedMapHash.h": {
+          "sha256": "25327f1a2413825b37a858a1502bfeb45bd41d6ec602e1b57f4a585b74eaa2e9",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedSetHash.h": {
+          "sha256": "88b779e3be9b82d0995a524b63f2149ee48a193e49b75ef30e3ef9e86cc83824",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/VectorHash.h": {
+          "sha256": "9175be29ed8a33a95473e0405dc04413976369afac410da7e2a2b91697b647cf",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/LocaleImpl.cpp": {
+          "sha256": "ef2d82066a439432090acdc1dd94b32816f3e4d2030992d8ef2e792c549db4c7",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/StringViewImplDefs.cpp": {
+          "sha256": "72c45a37e69f5d120eee7beb5db2c9bf0207066f44e98c4680ad962bdea220b5",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/TypeRepositoryImpl.cpp": {
+          "sha256": "33c5904eb506f291bf96ab0731af67dd76aa50509635737329b0cebc30b12044",
+          "source_set": "COMMON"
+        }
+      },
+      "inputs_sha256": {
+        "gluecodium/src/test/resources/smoke/enum-errors/auxiliary/Dependency.lime": "aa38bc68e70c6159827f5ef7c1218ec9fde706505611e86a990affce9750a4fe",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/OnlyException.lime": "1dafd4b5ac26f3711d1c40e3730f36c984b36aede31382851dfdc45f041a728a"
+      },
+      "jvm_job_sha256": "d9baa8def8eaf74a6e329c74777ceda09c38a5144aa939ab0e0f565c109c259e",
+      "native_job_sha256": "c68c7822883c6c135a571cdcf3e8292a0ef3b533404aba247cfd491a3065cde3",
+      "options": {
+        "internal_namespace": [
+          "gluecodium"
+        ],
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    },
+    "owners": {
+      "consumer_compiled_and_ran": true,
+      "files": {
+        "cpp/include/gluecodium/DurationHash.h": {
+          "sha256": "9ee25f10c5dd058f0829485046a460353033b6f3b0cfa33bdc0ca95b6c85c400",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportCommonGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "MAIN"
+        },
+        "cpp/include/gluecodium/Hash.h": {
+          "sha256": "058c195637dcd0a3139a92e81d9fe4d98eb69ea56d531bdde186e8dd47a8e44d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Locale.h": {
+          "sha256": "71c45f53a85538f93c364e0b94d3892284528ec71d38bfedbb1d6dc349086d31",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Optional.h": {
+          "sha256": "a8d72d82ab75d34d0ff06651550e6086ce7457ef68087b138ae8393706cca8dd",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/OptionalImpl.h": {
+          "sha256": "a55a29de4e9261baecf8ca879211318c73c4739de5863afb5d65d0fc2be82731",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Return.h": {
+          "sha256": "80f87f3315523913645d4edd12df82e22bc62f500820cf3b3ab6e098fe697663",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringView.h": {
+          "sha256": "924ed3dd61bc888125144753277daea7818dd92ff635475cf272a1baa35e360f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringViewImpl.h": {
+          "sha256": "be0da540958016d77b6a285f97f07852e83e6044069cf2f54cd0d14f213fa3bc",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TimePointHash.h": {
+          "sha256": "5742323dfe52017a008e1273c478551b47a996e3e6fa7230161419a65de78e1f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TypeRepository.h": {
+          "sha256": "df87049acb78e3c7611e4d529eac2a4e243b3f40a4010736c481e3444f378360",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedMapHash.h": {
+          "sha256": "25327f1a2413825b37a858a1502bfeb45bd41d6ec602e1b57f4a585b74eaa2e9",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedSetHash.h": {
+          "sha256": "88b779e3be9b82d0995a524b63f2149ee48a193e49b75ef30e3ef9e86cc83824",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/VectorHash.h": {
+          "sha256": "9175be29ed8a33a95473e0405dc04413976369afac410da7e2a2b91697b647cf",
+          "source_set": "COMMON"
+        },
+        "cpp/include/oracle/errors/AuxiliaryOnly.h": {
+          "sha256": "dba799d04380db95987d2735123ebfc613a55bb5c222ca32bf7d2d9f99d9e608",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/ConcreteClass.h": {
+          "sha256": "80285ac41f7432ab2d5c3f7e05e5a2b314a3584ce39fd6dd0fcb2d6387ea5a6b",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/ConcreteStruct.h": {
+          "sha256": "6eabae42f4b711c7777405911f819ab91736438b85255156e88af63f74a83425",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Ordinary.h": {
+          "sha256": "adac0307d78f120a560764f69e2b536a853a80df422fe9de57f5e44c9ffbe398",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/RenamedError.h": {
+          "sha256": "7d6f1813f7e409ac97aff8d83f26bc9bf6e35119d5a1b74bfcc2e88888d9ea14",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Service.h": {
+          "sha256": "c91e7bca5b8d9a4f622f91ed91f4156df54e8361815e3ea73251730479276570",
+          "source_set": "MAIN"
+        },
+        "cpp/src/gluecodium/LocaleImpl.cpp": {
+          "sha256": "ef2d82066a439432090acdc1dd94b32816f3e4d2030992d8ef2e792c549db4c7",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/StringViewImplDefs.cpp": {
+          "sha256": "72c45a37e69f5d120eee7beb5db2c9bf0207066f44e98c4680ad962bdea220b5",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/TypeRepositoryImpl.cpp": {
+          "sha256": "33c5904eb506f291bf96ab0731af67dd76aa50509635737329b0cebc30b12044",
+          "source_set": "COMMON"
+        },
+        "cpp/src/oracle/errors/AuxiliaryOnly.cpp": {
+          "sha256": "b0b35327c194ba250bcdfa5912f00ce0410c1e568615f2df6d6cee6f4e4f2493",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/ConcreteClass.cpp": {
+          "sha256": "3c74b6e849f411218e037f58800dd48738371deae9245ceef1dc81bf303d6986",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/ConcreteStruct.cpp": {
+          "sha256": "081d4884427cc504033e006f7129c7b40f6d2e185a9eaab38e0bcbeec7f179bc",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Ordinary.cpp": {
+          "sha256": "eb78608a358141c3d6f3dd71b97b4ad3d141691562bf4516b2e9dd9c770f7f00",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/RenamedError.cpp": {
+          "sha256": "73ba53d7c070b88f7fe36d3a970aa6a66933c3ed4b048e94dd278153d7d783bd",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Service.cpp": {
+          "sha256": "8cb54cce1830daa6c32ba35624bc247bd41dbda50af8adf71aa1a032bcd6843b",
+          "source_set": "MAIN"
+        }
+      },
+      "inputs_sha256": {
+        "gluecodium/src/test/resources/smoke/enum-errors/auxiliary/Auxiliary.lime": "74ea2283f7cddf6244e69e57b466c0659de94e0959501302b891907936187ab6",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Errors.lime": "2b00d3db9d8f0e27b94c637c8886d49c4fb8d8bd0c8a01bfce448e16aa16e4ba",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Service.lime": "e73634810a28f291413e3c90df9ed7b28b2aabe63f50b7f9fb9acd3efd503c16"
+      },
+      "jvm_job_sha256": "2600446a5384a67cebf3a8a1618caaa608bafe124e44c0025936c3402569b7ab",
+      "native_job_sha256": "61d9fa41256af44be70822e31cd79db1145f5eb6511c904c1c971189b6340b66",
+      "options": {
+        "internal_namespace": [
+          "gluecodium"
+        ],
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    },
+    "package": {
+      "consumer_compiled_and_ran": false,
+      "files": {
+        "cpp/include/gluecodium/DurationHash.h": {
+          "sha256": "9ee25f10c5dd058f0829485046a460353033b6f3b0cfa33bdc0ca95b6c85c400",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportCommonGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "MAIN"
+        },
+        "cpp/include/gluecodium/Hash.h": {
+          "sha256": "058c195637dcd0a3139a92e81d9fe4d98eb69ea56d531bdde186e8dd47a8e44d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Locale.h": {
+          "sha256": "71c45f53a85538f93c364e0b94d3892284528ec71d38bfedbb1d6dc349086d31",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Optional.h": {
+          "sha256": "a8d72d82ab75d34d0ff06651550e6086ce7457ef68087b138ae8393706cca8dd",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/OptionalImpl.h": {
+          "sha256": "a55a29de4e9261baecf8ca879211318c73c4739de5863afb5d65d0fc2be82731",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Return.h": {
+          "sha256": "80f87f3315523913645d4edd12df82e22bc62f500820cf3b3ab6e098fe697663",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringView.h": {
+          "sha256": "924ed3dd61bc888125144753277daea7818dd92ff635475cf272a1baa35e360f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringViewImpl.h": {
+          "sha256": "be0da540958016d77b6a285f97f07852e83e6044069cf2f54cd0d14f213fa3bc",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TimePointHash.h": {
+          "sha256": "5742323dfe52017a008e1273c478551b47a996e3e6fa7230161419a65de78e1f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TypeRepository.h": {
+          "sha256": "df87049acb78e3c7611e4d529eac2a4e243b3f40a4010736c481e3444f378360",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedMapHash.h": {
+          "sha256": "25327f1a2413825b37a858a1502bfeb45bd41d6ec602e1b57f4a585b74eaa2e9",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedSetHash.h": {
+          "sha256": "88b779e3be9b82d0995a524b63f2149ee48a193e49b75ef30e3ef9e86cc83824",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/VectorHash.h": {
+          "sha256": "9175be29ed8a33a95473e0405dc04413976369afac410da7e2a2b91697b647cf",
+          "source_set": "COMMON"
+        },
+        "cpp/include/oracle/renamederrors/AuxiliaryOnly.h": {
+          "sha256": "15aa905505aec602ea18fca75b579055d616439228eb20d38023d3b493878dc9",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/renamederrors/Ordinary.h": {
+          "sha256": "1667add9a6a11f1ad3fbb17f999d09bbd302c2b60ee80ecea8369bcb448e15ee",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/renamederrors/RenamedError.h": {
+          "sha256": "b9486f4ae1b5f90c1e96f46dc5c9d088d5cd43c4fe80d8cb86349016a2f921f6",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/renamederrors/Service.h": {
+          "sha256": "710635e88eaf871aca114eff86337598d3b6ea79a580127a34f6d9e5a4ca1516",
+          "source_set": "MAIN"
+        },
+        "cpp/src/gluecodium/LocaleImpl.cpp": {
+          "sha256": "ef2d82066a439432090acdc1dd94b32816f3e4d2030992d8ef2e792c549db4c7",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/StringViewImplDefs.cpp": {
+          "sha256": "72c45a37e69f5d120eee7beb5db2c9bf0207066f44e98c4680ad962bdea220b5",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/TypeRepositoryImpl.cpp": {
+          "sha256": "33c5904eb506f291bf96ab0731af67dd76aa50509635737329b0cebc30b12044",
+          "source_set": "COMMON"
+        },
+        "cpp/src/oracle/renamederrors/AuxiliaryOnly.cpp": {
+          "sha256": "68302d2b4ba094a16c566e6b3f0f73a91627c4403bc7d5e91021fc1697ac5489",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/renamederrors/Ordinary.cpp": {
+          "sha256": "2d3d45b5fc828ddde3d82f2bc2feabb876a88802f2d4f64060d86cb1dd138fa8",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/renamederrors/RenamedError.cpp": {
+          "sha256": "abc032d4659a3c3cda72304d8bf27837b324121ab96ff16ca941a5a52703c4c8",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/renamederrors/Service.cpp": {
+          "sha256": "0b89ccb585e6099dcc530ca07fc593c8df63088b9b7cb87c7153623e7ddf3799",
+          "source_set": "MAIN"
+        }
+      },
+      "inputs_sha256": {
+        "gluecodium/src/test/resources/smoke/enum-errors/auxiliary/Auxiliary.lime": "b5fd6ed9394382f3c4722f7eded53742597f0e9246bf43c1be7ad0fb9c94aeb1",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Errors.lime": "6869045a53198b06631979f356d6e9d93e389e0f06de3e4311b198fbc2094e89",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Service.lime": "75188ca906adda4a4345227fbc24f68bcb2bbd5bb60b860978a01ef3f99369d3"
+      },
+      "jvm_job_sha256": "433bc12cb892333d6d62a533ec6854d2b77d2cf543566dbc155a180bf3e5030b",
+      "native_job_sha256": "1ca3370ee69e3327e67ca9c9fc687ae467ff3809220163922793ff0a407670f6",
+      "options": {
+        "internal_namespace": [
+          "gluecodium"
+        ],
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    },
+    "throw-target": {
+      "consumer_compiled_and_ran": false,
+      "files": {
+        "cpp/include/gluecodium/DurationHash.h": {
+          "sha256": "9ee25f10c5dd058f0829485046a460353033b6f3b0cfa33bdc0ca95b6c85c400",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportCommonGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/ExportGluecodiumCpp.h": {
+          "sha256": "a2d25168382058383cb364a684d58a13b8021ab23cc8d514c7603174d05b55b1",
+          "source_set": "MAIN"
+        },
+        "cpp/include/gluecodium/Hash.h": {
+          "sha256": "058c195637dcd0a3139a92e81d9fe4d98eb69ea56d531bdde186e8dd47a8e44d",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Locale.h": {
+          "sha256": "71c45f53a85538f93c364e0b94d3892284528ec71d38bfedbb1d6dc349086d31",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Optional.h": {
+          "sha256": "a8d72d82ab75d34d0ff06651550e6086ce7457ef68087b138ae8393706cca8dd",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/OptionalImpl.h": {
+          "sha256": "a55a29de4e9261baecf8ca879211318c73c4739de5863afb5d65d0fc2be82731",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/Return.h": {
+          "sha256": "80f87f3315523913645d4edd12df82e22bc62f500820cf3b3ab6e098fe697663",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringView.h": {
+          "sha256": "924ed3dd61bc888125144753277daea7818dd92ff635475cf272a1baa35e360f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/StringViewImpl.h": {
+          "sha256": "be0da540958016d77b6a285f97f07852e83e6044069cf2f54cd0d14f213fa3bc",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TimePointHash.h": {
+          "sha256": "5742323dfe52017a008e1273c478551b47a996e3e6fa7230161419a65de78e1f",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/TypeRepository.h": {
+          "sha256": "df87049acb78e3c7611e4d529eac2a4e243b3f40a4010736c481e3444f378360",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedMapHash.h": {
+          "sha256": "25327f1a2413825b37a858a1502bfeb45bd41d6ec602e1b57f4a585b74eaa2e9",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/UnorderedSetHash.h": {
+          "sha256": "88b779e3be9b82d0995a524b63f2149ee48a193e49b75ef30e3ef9e86cc83824",
+          "source_set": "COMMON"
+        },
+        "cpp/include/gluecodium/VectorHash.h": {
+          "sha256": "9175be29ed8a33a95473e0405dc04413976369afac410da7e2a2b91697b647cf",
+          "source_set": "COMMON"
+        },
+        "cpp/include/oracle/errors/AuxiliaryOnly.h": {
+          "sha256": "dba799d04380db95987d2735123ebfc613a55bb5c222ca32bf7d2d9f99d9e608",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Ordinary.h": {
+          "sha256": "adac0307d78f120a560764f69e2b536a853a80df422fe9de57f5e44c9ffbe398",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/RenamedError.h": {
+          "sha256": "7d6f1813f7e409ac97aff8d83f26bc9bf6e35119d5a1b74bfcc2e88888d9ea14",
+          "source_set": "MAIN"
+        },
+        "cpp/include/oracle/errors/Service.h": {
+          "sha256": "c91e7bca5b8d9a4f622f91ed91f4156df54e8361815e3ea73251730479276570",
+          "source_set": "MAIN"
+        },
+        "cpp/src/gluecodium/LocaleImpl.cpp": {
+          "sha256": "ef2d82066a439432090acdc1dd94b32816f3e4d2030992d8ef2e792c549db4c7",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/StringViewImplDefs.cpp": {
+          "sha256": "72c45a37e69f5d120eee7beb5db2c9bf0207066f44e98c4680ad962bdea220b5",
+          "source_set": "COMMON"
+        },
+        "cpp/src/gluecodium/TypeRepositoryImpl.cpp": {
+          "sha256": "33c5904eb506f291bf96ab0731af67dd76aa50509635737329b0cebc30b12044",
+          "source_set": "COMMON"
+        },
+        "cpp/src/oracle/errors/AuxiliaryOnly.cpp": {
+          "sha256": "b0b35327c194ba250bcdfa5912f00ce0410c1e568615f2df6d6cee6f4e4f2493",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Ordinary.cpp": {
+          "sha256": "eb78608a358141c3d6f3dd71b97b4ad3d141691562bf4516b2e9dd9c770f7f00",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/RenamedError.cpp": {
+          "sha256": "73ba53d7c070b88f7fe36d3a970aa6a66933c3ed4b048e94dd278153d7d783bd",
+          "source_set": "MAIN"
+        },
+        "cpp/src/oracle/errors/Service.cpp": {
+          "sha256": "8cb54cce1830daa6c32ba35624bc247bd41dbda50af8adf71aa1a032bcd6843b",
+          "source_set": "MAIN"
+        }
+      },
+      "inputs_sha256": {
+        "gluecodium/src/test/resources/smoke/enum-errors/auxiliary/Auxiliary.lime": "74ea2283f7cddf6244e69e57b466c0659de94e0959501302b891907936187ab6",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Errors.lime": "2b00d3db9d8f0e27b94c637c8886d49c4fb8d8bd0c8a01bfce448e16aa16e4ba",
+        "gluecodium/src/test/resources/smoke/enum-errors/input/Service.lime": "46c6ebd8c753c2b646dc839cb32f822d2062636428659bd0a6d3fe975d699960"
+      },
+      "jvm_job_sha256": "fdc28db602d2386ddc78a149b7659bfb8e096ead94426604139d7477072067ed",
+      "native_job_sha256": "6de0a7181c304cfc9144dcdf809b933e3e1fd342026168bcfb3df9737c4c0341",
+      "options": {
+        "internal_namespace": [
+          "gluecodium"
+        ],
+        "schema": "gluecodium.native-cpp-options",
+        "version": 1
+      }
+    }
+  },
+  "cxx_version": "c++ (Debian 14.2.0-19) 14.2.0",
+  "git_head": "77bdee61e18d803aebbce2a86382c1d365bb8f05",
+  "inventory_example_sha256": "72978c5a40d26d226e645734a40b9ab1247f834e15c94768029a8157cacd8341",
+  "java_version": "openjdk version \"17.0.16\" 2025-07-15\nOpenJDK Runtime Environment Temurin-17.0.16+8 (build 17.0.16+8)\nOpenJDK 64-Bit Server VM Temurin-17.0.16+8 (build 17.0.16+8, mixed mode, sharing)",
+  "jvm_libraries_sha256": {
+    "ST4-4.3.4.jar": "f927ac384c46d749f8b5ec68972a53aed21e00313509299616edb73bfa15ff33",
+    "annotations-24.1.0.jar": "27a770dc7ce50500918bb8c3c0660c98290630ec796b5e3cf6b90f403b3033c6",
+    "antlr-runtime-3.5.3.jar": "68bf9f5a33dfcb34033495c587e6236bef4e37aa6612919f5b1e843b90669fb9",
+    "antlr4-4.13.1.jar": "ce261dce69525839aa9fc5bd232ce1b813a7a40a75030713cc4a80ef8170f3d5",
+    "antlr4-runtime-4.13.1.jar": "54665d2838cc66458343468efc539e454fc95b46a8a04b13c6ac43fc9be63505",
+    "checker-qual-3.41.0.jar": "2f9f245bf68e4259d610894f2406dc1f6363dc639302bd566e8272e4f4541172",
+    "commons-cli-1.6.0.jar": "69e1237059acd56f0f8654dcde09d8a1412eee82918bef5564d51f8fb275711b",
+    "error_prone_annotations-2.23.0.jar": "ec6f39f068b6ff9ac323c68e28b9299f8c0a80ca512dccb1d4a70f40ac3ec054",
+    "failureaccess-1.0.2.jar": "8a8f81cf9b359e3f6dfa691a1e776985c061ef2f223c9b2c80753e1b458e8064",
+    "flexmark-0.64.8.jar": "3133878d108f0e1964d7d427f379a7433e1b71a45f9f3c1fab7ed0ac0301d3b0",
+    "flexmark-ext-tables-0.64.8.jar": "cdf82d26e112e96ade7e370138aeb16920b7e2d411d20c6c15cb1acfacd1ef1f",
+    "flexmark-util-0.64.8.jar": "1e24c891dac9532bb722be7122c7026fb47868c3de36c02400eed8e9ad535727",
+    "flexmark-util-ast-0.64.8.jar": "a5342f644c6a5f37d502f225c3a0cb699c263621c82e720d9c08eba5a9f3b8d3",
+    "flexmark-util-builder-0.64.8.jar": "afb9c88d9f652451e75f1ab069ad7ddd791d712eb211c51d8d2a83494240875d",
+    "flexmark-util-collection-0.64.8.jar": "031ff01408d0f54c6235db18d451dc6e6b15b859b0ec1e40ff3429a82375082a",
+    "flexmark-util-data-0.64.8.jar": "83ceb5989ab0205054bf1b42446f55cb6da14c10aa7c2bda05d6a2504670f353",
+    "flexmark-util-dependency-0.64.8.jar": "e41adb5e8144699b61b78d50eb004eeb7de84f90c4c63626609e6cee5ea28b42",
+    "flexmark-util-format-0.64.8.jar": "6c9ac87686474edf0117b3f838d9dcb3b965fa72be4998d2177b598013679f73",
+    "flexmark-util-html-0.64.8.jar": "5b19e6506aff7913c74ad725af7c2b8a9f23958e6324bf0710c5a645a4663017",
+    "flexmark-util-misc-0.64.8.jar": "74472ca81a9080e51ea1a4f11c270898e3d6c242c92275fab47eb993806c8f2b",
+    "flexmark-util-options-0.64.8.jar": "2489f41e9caf1d9f8061833b311b25403925cbb631fff2b8c069192804d6fc88",
+    "flexmark-util-sequence-0.64.8.jar": "6e22976fe4e9b8de94fd529991ecb2d79cc482aad94985367470a93be1d82631",
+    "flexmark-util-visitor-0.64.8.jar": "d9b3002a833a078c45e139568b306dab0ac117ff9046c6a1f9e180c0154563fc",
+    "gluecodium-14.2.2.jar": "fe1bda6ef33ef0abdf6c99abb3af9897b0307bb21050e107563368e7b2a8fac2",
+    "guava-33.0.0-jre.jar": "f4d85c3e4d411694337cb873abea09b242b664bb013320be6105327c45991537",
+    "icu4j-72.1.jar": "3df572b240a68d13b5cd778ad2393e885d26411434cd8f098ac5987ea2e64ce3",
+    "jsr305-3.0.2.jar": "766ad2a0783f2687962c8ad74ceecc38a28b9f72a2d085ee438b7813e928d0c7",
+    "konfig-1.6.10.0.jar": "d556babc03584553f5fd3cc46894c5ea3331092bfbaae7ea626d5b8d4ce793bb",
+    "kotlin-reflect-1.9.22.jar": "77f311ca1384811d519fda389fcb1268bdaa058d605046e0ede76c03b0df3e97",
+    "kotlin-stdlib-1.9.22.jar": "6abe146c27864138b874ccccfe5f534e3eb923c99a1b7b5d45494ee5694f3e0a",
+    "kotlinx-serialization-core-jvm-1.6.3.jar": "29c821a8d4e25cbfe4f2ce96cdd4526f61f8f4e69a135f9612a34a81d93b65f1",
+    "kotlinx-serialization-json-jvm-1.6.3.jar": "d3234179bcff1886d53d67c11eca47f7f3cf7b63c349d16965f6db51b7f3dd9a",
+    "lime-loader-14.2.2.jar": "445ffc4a9e951c17517dc6170ed482dcc86409ac4fe7b866a5b0ced6837b91cc",
+    "lime-runtime-14.2.2.jar": "15e43d9060d982fe8970f3c26fc91d9b3f4bb49f85c0b41e10499b6173b3734c",
+    "listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar": "b372a037d4230aa57fbeffdef30fd6123f9c0c2db85d0aced00c91b974f33f99",
+    "log4j-api-2.22.1.jar": "5d7beae7ff15d8516d6517121d7f12a79a6ac180df64b5fcec55d5be21056e53",
+    "log4j-core-2.22.1.jar": "46dccecac556623d8e2ce8648496824a82951d139062a4e61148aff1a25ed18d",
+    "org.abego.treelayout.core-1.0.3.jar": "fa5e31395c39c2e7d46aca0f81f72060931607b2fa41bd36038eb2cb6fb93326",
+    "reload4j-1.2.22.jar": "222f90d3e69541218ef6e70547749d693bd4c1846817e5bd7949b3e28950f99f",
+    "slf4j-api-2.0.10.jar": "b7ddb31a515debbddec8e9145e2cf7b197926f40e454376647724f92e6382043",
+    "slf4j-reload4j-2.0.10.jar": "5287b710d331f97a045c12f1fcd2fb8e73c13f5b7c23f590bbcb6767164b7679",
+    "trimou-core-2.5.1.Final.jar": "b9d06f02653ba1a2e22d45bb33de075d82cfec89b94c3a9fc971ba8a54ad1db3"
+  },
+  "native_binary_sha256": "caca5826dd5384d93d4719c248d6502ea01427707c941288848a28348f88d4b3",
+  "recorded_at_utc": "2026-11-02T05:08:42.214654+00:00",
+  "rustc_version": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+  "schema": "gluecodium.m15-enum-errors-evidence",
+  "source_sha256": {
+    "ruscodium/Cargo.lock": "c68909cd3b8f20eb9e68b7f22759a69d88b78b086bfa4f73fa0823003116df92",
+    "ruscodium/Cargo.toml": "98fcb08473a9295bd3d4b7e6139675b7c44f1bdbc45c282744800dbfc1aa0d21",
+    "ruscodium/examples/frontend_cpp_inventory.rs": "6b98f7fea11b7ece2f4e3eff4aeac1badaf105f3e8aeec489f890a6cfdc8d104",
+    "ruscodium/src/cpp.rs": "91072ddb367e91c897c9e63cae93ff26783e29aa41c6987d291b30907ac87c78",
+    "ruscodium/src/cpp_adapter.rs": "d5c875ad3c5ff8377ff0e25536bc96e61181bf37bd9769abbcc78e49dbe4e302",
+    "ruscodium/src/cpp_adapter/docs.rs": "65ca092c6194572db5c25df086cb2c5d1a5de45fb7045c2bf3251469889cb7b5",
+    "ruscodium/src/cpp_generation/collect.rs": "edbd05b446ccfd46a4d4c4952591278122233f7945de7131c03463e7bc478249",
+    "ruscodium/src/cpp_generation/mod.rs": "00142423181d431cd23f6fa7074f65ede6c0aa5aa8e44b931cf774e7c4bc891a",
+    "ruscodium/src/lib.rs": "501159cd60b7023e7812966730abe1b607cba40ae3c14d86fb1ee93dfd487308",
+    "ruscodium/src/main.rs": "7b16c7185b6243cb0398a239c4ccca9aceca85ab443f5e1e724a8c925b6e11f1",
+    "ruscodium/src/template/graph.rs": "d79b5a24142673c66b5a96f82f43fe8aac687714740fff797003b209d9435a77",
+    "ruscodium/src/template/mod.rs": "3b7c845d9799917504978fe7bc37ebcca6d08a7fe2272976e5d2fc18b9b5c1b8",
+    "ruscodium/src/template/native_comments.rs": "0eb45c13aaa751ca3a9b6cff3fb405789ca59698041ae549e9cb118832c324e6",
+    "ruscodium/src/template/native_controls.rs": "ddb6e7a463c42af8602dd8aa2ef87a83deefda847784248badfe2dfcdff8f1ef",
+    "ruscodium/src/template/native_cpp.rs": "7858cdbe011acfdef292ea9ffc0097e6c62a89367e17e44aa39d6ebe9ccb8a96",
+    "ruscodium/src/template/parser.rs": "6e285673a43619e1388617a53ee41a7df271a672407ef089f28776238ce086bd",
+    "ruscodium/tools/cpp-generation-oracle/CppGenerationOracle.java": "e27c089a43fba8542b8d78d6e86671b1d8de5e13b36eeaa91e796b9d57d06ecf",
+    "ruscodium/tools/enum-errors-oracle/auxiliary/Auxiliary.lime": "74ea2283f7cddf6244e69e57b466c0659de94e0959501302b891907936187ab6",
+    "ruscodium/tools/enum-errors-oracle/check": "a0bf80a435bc2f61af80386b3c6d4e8b5fe880e4968c9c169cabdd9a043c7bc1",
+    "ruscodium/tools/enum-errors-oracle/consumer.cc": "8db0c1c42068680e4c457c2067837215d6ccfcff1f895960ba9e11fc3d1ccea7",
+    "ruscodium/tools/enum-errors-oracle/custom-consumer.cc": "124cb08d6381c4953a5709c94115397e244727ce6aaaf0cac4a6a143a82cae57",
+    "ruscodium/tools/enum-errors-oracle/custom.lime": "4957873e5c9e73ebcb6bfe2e6d2453103d69e5fec7436560c2b36102ff023cbe",
+    "ruscodium/tools/enum-errors-oracle/default-consumer.cc": "a7f054fd58a3ec9ea257a73d51f13c285f6d951db9b58d49eb609ea5496adec0",
+    "ruscodium/tools/enum-errors-oracle/input/Errors.lime": "2b00d3db9d8f0e27b94c637c8886d49c4fb8d8bd0c8a01bfce448e16aa16e4ba",
+    "ruscodium/tools/enum-errors-oracle/input/Service.lime": "3c633adc44ba1976d6648679434afa628b1a21275991db9c5639141b9536ae16",
+    "ruscodium/tools/enum-errors-oracle/no-output/auxiliary/Dependency.lime": "aa38bc68e70c6159827f5ef7c1218ec9fde706505611e86a990affce9750a4fe",
+    "ruscodium/tools/enum-errors-oracle/no-output/input/OnlyException.lime": "1dafd4b5ac26f3711d1c40e3730f36c984b36aede31382851dfdc45f041a728a",
+    "ruscodium/tools/enum-errors-oracle/owners-consumer.cc": "88366943b4e127bf2581d3a45e673e24b5b0dbaaf2e4df88bd8dc852edba8fc7",
+    "ruscodium/tools/frontend-adapter-oracle/check": "7923556ca5356667c0676812156cecb69b4ee67556e05a7a9e58686f0af21e95",
+    "ruscodium/tools/frontend-adapter-oracle/project.py": "caf1de48866a45da0d64b7cdcd91ac75d0cce69ec2ba1d48d68cc0771b06a614",
+    "ruscodium/tools/frontend-adapter-oracle/test_project.py": "20cba5f624933e87c498c3a548c35c97e60647bdc9f7a0c5355ebd3cd8706e0b",
+    "ruscodium/tools/reference-model/ReferenceModel.java": "577b19ab6f8c9542fbbca5b78a9cb963f2c84ab00501eab13ae5a9840fca30fd"
+  },
+  "template_sha256": {
+    "cbridge/CBridgeClassHeader.mustache": "d6e2fd245d7925180e050595346ca5e2459b30ce9cce4ce943e1105f3b3dd59a",
+    "cbridge/CBridgeClassImpl.mustache": "6d8f8e6e299d0805a48e0f2140ea3d61acf5c687b494061b0a2ec16b8f58b24e",
+    "cbridge/CBridgeCollectionsHeader.mustache": "1018ec713752355412b3ae7871ab71834a4a8cc01c1779e04aa206b8ea31d165",
+    "cbridge/CBridgeCollectionsImpl.mustache": "397022a84f099993e6c9baf494695678d67f46d583743734eb0ad66deb8007b1",
+    "cbridge/CBridgeCppProxy.mustache": "875b3d5653781942abbda3759ada7261ee5a196699712ebfe8bfdc6ac61ce2d1",
+    "cbridge/CBridgeFunctionDefinition.mustache": "ac87cd8478830303336752dbd78a16230ce11e0f8b7a0dfd66d502b788d8ae6f",
+    "cbridge/CBridgeFunctionSignature.mustache": "866231972b1ada494c67c942f6d2846a7919289cef0dddae67d15981701afcf0",
+    "cbridge/CBridgeHeader.mustache": "44160dd149e59befd5887e767cf7ca0f685d77cdcd8146e02e9a361cc254ee54",
+    "cbridge/CBridgeImplementation.mustache": "2562587e4f0dce7434ed86dcde523a2ef0e7c7a9dc5628ddd25d586e90114684",
+    "cbridge/CBridgeLambdaHeader.mustache": "dba5d170636089ffbce54006bab6d03411d81628ce5960039efde8c899cdae4f",
+    "cbridge/CBridgeLambdaImpl.mustache": "a5541860cc5dd82104cec50499a5308fb124e232933a141fa502ae0477fd7163",
+    "cbridge/CBridgeStructHeader.mustache": "e43e63c6f4eb413a52c93152436cac45cda2541f84f8220387fedc122688ab41",
+    "cbridge/CBridgeStructImpl.mustache": "bc6911a6db9a41c207458d20b4f135bd582fd9f56e8d5b8b6172e5cc731a5086",
+    "cbridge/CopyrightHeader.mustache": "506c740c8f8ca644a1deebffab5353c363a9412c231dc0d44e7f134036915643",
+    "cbridge/FunctionReturnType.mustache": "f4d1a332b17a36319716b22d6b22af68cc7f80a2de994e5da990ba878527c785",
+    "cbridge/FunctionTable.mustache": "d4a335b8384988167e460c60c6d2d353bafa3453b25b1b90d1fa3269c28562cc",
+    "cbridge/LazyListHeader.mustache": "1cbcf9e43ac6f4dacb537ecdf2b8ae2503a4cc2c1c95ab5eeb30c746fc307926",
+    "cbridge/LazyListImpl.mustache": "df97c4401f5c95068ce0006688ae91614cb8262c5ad416456d64cda67af12391",
+    "cbridge/ListFunctionImplementations.mustache": "73f262c277a4ea7207ed29807211035d8446eed07dd62917f707336936bdacf2",
+    "cbridge/MapFunctionImplementations.mustache": "814f9792544a881b0d5a490a3b75c4ec2e3fa8455b9821e203da9b6e928fcb5e",
+    "cbridge/SetFunctionImplementations.mustache": "e60d25337b806cef673985122f0cc5fb2bda929d9416ecff17855b8095cb6269",
+    "cbridge/ThrowingFunctionReturnType.mustache": "19b4a85cc599504dc4ea6642b8cd27f969fb0c7d41e553cd87fb79ae20aa3a3c",
+    "cbridge/common/BaseHandleImpl.mustache": "a8d9955e0ba87ec14d1b3b3cad49f7f7f99ba685c34347473e222763c3fd2936",
+    "cbridge/common/BuiltinHandle.mustache": "5e9ffa804789288e7044a8fce4556fae9114813ff3e913e8f22394dda9d3be2e",
+    "cbridge/common/ByteArrayHandle.mustache": "25f4ae3708f4fbc3e29c47dbd8923b646b356452f78d143965a3cb1530bdc974",
+    "cbridge/common/LocaleHandle.mustache": "163a40640e75fa2eb7ab846d2986cacdeb5d06d99d67cafc938d64de0726ade1",
+    "cbridge/common/StringHandle.mustache": "62c00490edfb7b5ef579e6b31ef234ca94fb23ca95d6f64cbbd78a9076dd057c",
+    "cbridge/common/TypeInitRepository.mustache": "674eb2503ffea195830161628b21578319aec093b8df0acd87a795d95c333588",
+    "cbridge/common/TypeInitRepositoryImpl.mustache": "ae5455f515800af347336c422fe0fc2575ba5ddda761031c5976fa666c409a69",
+    "cbridge/common/WrapperCacheHeader.mustache": "77fa9eae997ef189aadc48c98d36e8e2c0d9608b6f67d3751d89a42b4bb1775b",
+    "cbridge/common/WrapperCacheImpl.mustache": "cf662cbc90525cdb9a91de538859177a4f5e35572bfa932282236b2a0c7404d0",
+    "common/Include.mustache": "ec27a4028c396450d68a6327446072679ff1ab278775e4bb3881aae44231ec6a",
+    "common/InternalInclude.mustache": "13e6bb353aa3b8fbbfc07a03f5c9591879667e2a7f8290590f15d0d6ec34b43f",
+    "common/InternalNamespace.mustache": "7e2e54897aaab0e81a7d43f490ebc72bbe2a44ff481816f08b72f89e26c7c2d5",
+    "cpp/ClassHashImpl.mustache": "4ec27b5191dbe3f21e8efb5ce8b10f15f7782592543346dc815193beaf624b5a",
+    "cpp/CppAttributes.mustache": "45b80f169a0ea798f0252fcf94adb8e36ad0173469acbe1213eaa3010e1116f5",
+    "cpp/CppAttributesInline.mustache": "2f0333644aac4880925ac860ac34b501870319c03fbf919442f74a3e48bb9530",
+    "cpp/CppClass.mustache": "fec6b9fc696817646169fe94f7bf0a896ab8bbcf2775acc024105fc7ca210485",
+    "cpp/CppClassImpl.mustache": "6ab63f05f2dd2c82a87f0f72db0f9003e14fbcf39cc5ec5faed2a966f7281502",
+    "cpp/CppCommentHeader.mustache": "06bb48dd661c7ef760992419def6eb1fbcdfc0e5229765e687524b909fd5dd43",
+    "cpp/CppConstant.mustache": "e81d5b6a1d62d59907bde860ccccee3af166af86202be6b92cfb335e5ca119d2",
+    "cpp/CppDocComment.mustache": "01d998b69c83bc2c22cfe89063d47cf897dc7f523c87ed2f9692903e751f4726",
+    "cpp/CppEnumeration.mustache": "afbf9510f913c8451498934f7ef33e03fa4a5c012a28c10b17f9c9ceb4a0a3f0",
+    "cpp/CppEnumerationImpl.mustache": "eacb392c9f66c8fd0e29badbd13a4070ea49fb6a3afd773f3edc880f5480a6c1",
+    "cpp/CppErrorCallback.mustache": "2bd3eb11401bfeb4827fec09608608089200a5344cf31528a0f14d8ce0bbc9a2",
+    "cpp/CppExportMacro.mustache": "cdc286d311892d12e261bd16ab7a7aa1fe8b30d51505b330671bd013aaad586e",
+    "cpp/CppFieldDoc.mustache": "ad1f78223e71c5a8e73b2fe5f583ba980b5119d6a089a2bbf6a04cf98c26f1a3",
+    "cpp/CppFunctionDoc.mustache": "687cd66285083c5c815ef214a1259db1164955473051b7360860b1383c425184",
+    "cpp/CppFunctionSignature.mustache": "f0bae737b44d1e88c2f11a49af09584c47992b9ca1f50ca1e93ec4f699a01412",
+    "cpp/CppFunctionStaticCheck.mustache": "2633b1d7c7e6506810b552fe5efbd73ae5e3704c84334a30b4d8c96512faa7b0",
+    "cpp/CppFunctions.mustache": "37bd0e96e6e47e255827f535ccac60cc2844bbbdc3a762e3b4c9be45a33a593c",
+    "cpp/CppHeader.mustache": "d3c8cc2cf3117d46d36309dc5da6708d55be18e2a0813611ed883c14aacc1265",
+    "cpp/CppImplementation.mustache": "ae72113628c3d0259bc3ee79e7ffd7cc728b1600eb26a5a614b65c80efa5d239",
+    "cpp/CppLambda.mustache": "0f38b360504e85663f37ed35a5668d823376957ac6ccdd05a697c205f23a564d",
+    "cpp/CppLambdaDoc.mustache": "ef7a2c627dcde9b9254681beacef810f828afd31758202ea3187b82dc1d24538",
+    "cpp/CppLambdaType.mustache": "ae136d021dd7518876e9227db1488de60b147110c14c60c71186cd991358a62c",
+    "cpp/CppProperty.mustache": "415354ab9cdf7c9e50cf759a11d0396c359bb1de2c9d50b37f4b9ede5779db8a",
+    "cpp/CppResultCallback.mustache": "d891601a2a05914eb55088499ce8d126d137f954408d0665fc9a845b1f5acf24",
+    "cpp/CppReturnType.mustache": "e14e58d73273a509961debfe194cc3f1e0e80309e56018a6b2123945ef28b328",
+    "cpp/CppStruct.mustache": "49d2ca35ae99a0f447661795fcfda84cba0b6a905477f1bd1cc480ac534c12c8",
+    "cpp/CppStructConstructors.mustache": "935adc0aeae07afda30af0d0edb380504e074972aa6804516e7ccba0a67f7dbe",
+    "cpp/CppStructConstructorsImpl.mustache": "4076b6f79f19f4f70d4fdd37d7adf7cafa287f606f12d04d7e795f16166acb29",
+    "cpp/CppStructImpl.mustache": "155c29490b564ecf52fa479857d5377d1a9232c968cb115886dc048613575952",
+    "cpp/CppTypeAlias.mustache": "7f4b58acc04037423dddf2d6953851bc029afc384bbe43db1083a778c6d7b6e9",
+    "cpp/StructHashImpl.mustache": "182bc7e4e3d320275ed4987cd128654650c2f3a87d96e6629b32972ada1f73b5",
+    "cpp/common/DurationHash.mustache": "9331ff419968ebf6c842ca80029b4f7f54e61b85d4ef0bf33963336751df0998",
+    "cpp/common/Export.mustache": "d33c4a7815958c0de40e80d6fa06aafbc938b1b197aa0079f56957d4a1fd6940",
+    "cpp/common/Hash.mustache": "038a285f2d179f3e6ee3a9655994abe279e878ac965a1f130c95293b34055a7e",
+    "cpp/common/Locale.mustache": "f673eb91c0c7b27b293dac4f6f369f7d50298876255441f5e054fa8f9a050632",
+    "cpp/common/LocaleImpl.mustache": "059176b3579810afbf3dc79deed7640b6c6fb865a303a4bf3cf7a9a3e726f7b1",
+    "cpp/common/Optional.mustache": "0cb4aed75ebf6b8402ded0a5d2633b7a24c277cf6207312d4ac09579d91b997a",
+    "cpp/common/OptionalImpl.mustache": "c33fc30e35ab3a1cfa98863b9f8136e8d60aba71a4d4396b64ef6fb4d14cc693",
+    "cpp/common/Return.mustache": "974beca969e52172293d1f1132a7c78321839b755d25c7d7a97b46480f4becc2",
+    "cpp/common/StringView.mustache": "926f91b15b1e0db036ac637d11dea7b2555d6673e9874bcc3f4e3a5f9ae73350",
+    "cpp/common/StringViewImpl.mustache": "78689b5f3d191ad1f6529eb1bad474fc64581c117de0cf498d6da19a622e1a5f",
+    "cpp/common/StringViewImplDefs.mustache": "1f9391f6be2a9924f13091273ee204f4c69c009a8cafe3cfa396143801d70d7f",
+    "cpp/common/TimePointHash.mustache": "2805b3599f631470a4ff7c10231ee483b677d12008f5bbc30c4d22bc8c126cda",
+    "cpp/common/TypeRepository.mustache": "d83e93c19f99ff6a59504d237cc828eb3349b2ac1d429092be71eaa36881c0d2",
+    "cpp/common/TypeRepositoryImpl.mustache": "93a82c97c133bc8e3c47ff231652f45f5ee7b7a4e64a614d7af3662c004ea34c",
+    "cpp/common/UnorderedMapHash.mustache": "e8b6e314b4723fb9ac0776e2ca4df43374aa432aaffbe1579f1383af9c0191a5",
+    "cpp/common/UnorderedSetHash.mustache": "728e781272d6dbfcbe48b47f9cef5fb2d9c1e9639b57e5e5ca2e7750589eec32",
+    "cpp/common/VectorHash.mustache": "9c7eb96c0f6c1282062c971308e2aa480e0f5c35e709feec17326484c0ac61e8",
+    "dart/DartAttributes.mustache": "2c5ac80470b1241877943d6ef55a3749186a65ad4dda7b04dfa87dea13c49b8f",
+    "dart/DartAttributesInline.mustache": "5719df0afa7518a4fc082219013d1af1f1cd880c812e2d1fc1f45b65e40d18ea",
+    "dart/DartBuiltInTypesConversion.mustache": "362892002542f6783324f84c785153aa10548596b60c3ad587c6d4969ba7aa7b",
+    "dart/DartClass.mustache": "f2f6c94115b483330a8338dfee81ad915fc0f4bafaf753353e4ac7e4619f1547",
+    "dart/DartConstant.mustache": "cbac670a255f544573e6ed1f34a093b6550ba668ef6a5dfe3f8a5103c02d9785",
+    "dart/DartConstructorName.mustache": "2c387696dc03de1304ba1ca3ffef21bf026ffa06afab74b3969cf4a0c772d39d",
+    "dart/DartDescribeProperty.mustache": "461ef630712f3bbd8092043d3586f6ad9fbc491ad7e725120710d1a933e69c30",
+    "dart/DartDocumentation.mustache": "f5a706bf6688a87bef6ebcd45f0e43f22ba2b04c614481025f6297facb3028e2",
+    "dart/DartEnumeration.mustache": "dc6a5c46fc6fb14ce92c3456285107ff842c24e30c870aac76c11b47412b1dcb",
+    "dart/DartEnumerator.mustache": "11ca44c01452c2457809085376ce2b315820a14bf233688869d9ffbc4c59bd1f",
+    "dart/DartEqualityOperator.mustache": "56feb95ff9eae10c46bb936c92c8ad4a9890fb70c203c78387e3a397fb9dea0d",
+    "dart/DartException.mustache": "e72584e84ed76203e9bcfccb89dae20c0f7e272ff5950601e718ab82ae516f9a",
+    "dart/DartExports.mustache": "a6096d87b457ee0e1344fa80b35b16b23cc7e9e63f79ddea5c4a6326276fe8c2",
+    "dart/DartFfiConversionCall.mustache": "900fdf71cecd8bef1f4f5e77147fa84b2ea5a5cd3c806d7c99f2b1505a76dfa0",
+    "dart/DartFfiEqualityFunction.mustache": "1a691c6b7b6d58b5f26c9ef71bf9e82a858f9e9607fc51f42ca22d11f922ac0e",
+    "dart/DartFfiReleaseHandle.mustache": "30ed6b2cc44463567b548f79c00d42cd09cf6da76d7b6f48ec7f39b3f0400a99",
+    "dart/DartField.mustache": "bd5b81988240c9fce1b3d66bc4ac5a60ed0f9e4b3eec1b33990792c570b0ee4b",
+    "dart/DartFile.mustache": "9fa846cc5dd0fee030aeddae6dc8fc64f21ae3fd08f08332d5bcc68dd78c6e6a",
+    "dart/DartFunction.mustache": "a679efd3fdc75a3cf49801c72084cfc3401c9e9ca98ef8bdd658be06bbb436c0",
+    "dart/DartFunctionBody.mustache": "54c912cca50bcd7efcf3e15f9ab942073b74e20ee969919943489af4d03c86f1",
+    "dart/DartFunctionDocs.mustache": "30a9e7cd7da2cf056fc0a659631ad265a849a6449a2ccecfed9a069f4a851844",
+    "dart/DartFunctionException.mustache": "09aa330de16598ab89f21afdf23d582adb13d54f90f96918442a7b6a177ae57d",
+    "dart/DartFunctionFfiName.mustache": "6e183ab1c04aab73e16a4acd43212bf82571daaa547eff66a389229c565ca616",
+    "dart/DartFunctionParameters.mustache": "d8300dbd5087398a7949af5aa85ee13495849438c2d3e57e6cc6b1bb70be07bc",
+    "dart/DartFunctionSignature.mustache": "3a5c50f1c996422b267ae224bb9fc5b9832b5e1a3c83152f5059b25365572768",
+    "dart/DartGenericTypesConversion.mustache": "016cb5688b36577d7375f148c064ef86e86d4c752c0930ee79164facde0120ac",
+    "dart/DartImport.mustache": "9825f591a0217db69e97049331e55fd6c31a25f8c745d6a2d235afe08d1f9722",
+    "dart/DartInterface.mustache": "ab126cc4bafe993912c76142c2995400852d34ae9333ed11b63625ecd4707593",
+    "dart/DartLambda.mustache": "e1e19077eefaf9838b80ff3bf06ecbbe6d4feea4fca55f22219672b92438695c",
+    "dart/DartLambdaDocs.mustache": "1b4e6f5cdb3c7f56af99e777a51c3bca2e51e1e31f237a936a5e0e23dbd1e112",
+    "dart/DartLambdaType.mustache": "4e18403df56bf4d6082a64a89a50948e6cd35a8cda78d64d40b6aa7d40679ad0",
+    "dart/DartLazyList.mustache": "5e7796b9175c280db3d0a2e5582dee6eb6d790155c870c37c3132a1f180acff9",
+    "dart/DartLibraryContext.mustache": "637697f238381ab22177749ef2fa45b004cb286cd7ad8e438241fbd6c365f0a4",
+    "dart/DartLibraryContextExport.mustache": "3572c5b8c805c35b71c9388c94153e77287041325b12dbd44c03a05c809991d6",
+    "dart/DartNativeBase.mustache": "a75189f477c91827a62b43fdc0a266dd2f183fb294a0c1f5a675eebcc47a14c4",
+    "dart/DartNullableTypeConversion.mustache": "6c851af07fc0bda13bdb52cdcfacd49728a09c908b7df034960271635d91fccd",
+    "dart/DartOptimizedLists.mustache": "d59b6968660f35f82d3bc58a07d6c95566407a0928f7c980a71d3bb44becace1",
+    "dart/DartProperty.mustache": "276391b4c0aee31bf5cc6e13ee5627c2f5f47820ce5438a9496520e537619662",
+    "dart/DartPubspec.mustache": "dcac008baa655c7c366afaef9ab9d4bcadcc4b10f93bd0b9139f811c64c49571",
+    "dart/DartRedirectFunction.mustache": "c05fc73b4564123ee8765dd12bc6e3ae4162f9f35d70edb8971f419b42e2baea",
+    "dart/DartRedirectImpl.mustache": "d3060372a790a51cef42ad39a13e6653c537560f646b74d3dde62829a4714856",
+    "dart/DartRedirectProperty.mustache": "e73d502626f76fcb8584a1d0f886ce681b0379627b459f7ae7ff4383f05ea3cc",
+    "dart/DartStruct.mustache": "c54fef2c20691f5456a897e6fb105f70174a21d530f01cad5b35168816bf013c",
+    "dart/DartStructConstructors.mustache": "012e085cf50b2ceac42903f247850a4dd44296d7161c9d8d2bbc3cb92673cda8",
+    "dart/DartTokenCache.mustache": "b11adb9d026ac8ccbd69b45840b22720d046cc9594a04328f1ca2a79625a3155",
+    "dart/DartTypeAlias.mustache": "9eb8dc82843d9cccdcc3a2839b1fc378a5d725b51d0d0ab8014810a43d8901f3",
+    "dart/DartTypeRepository.mustache": "fbcbf0f07becb6424c5e5118caa7ed1b0a608ca039e32df810d81ea8ff895af9",
+    "dart/InitLazyList.mustache": "760cf5e4cd06364df026589a1f15d74aee324c60018b679c1adafe5c6fad12af",
+    "ffi/FfiBlobHandleHeader.mustache": "886fc9316d0e61defe358fbb7c253b545bff30891a29dbf1ce24073131319b99",
+    "ffi/FfiBlobHandleImpl.mustache": "6d13033f9919fa43ad15f033653c0fc00755bb547352e122e5b68a79414863fa",
+    "ffi/FfiCallbacksHandleHeader.mustache": "f92a7ca3036216548fc42309f7b46c359998ea72c113694cc3ff7db7a5522cbc",
+    "ffi/FfiCallbacksHandleImpl.mustache": "7dbcffac85ccf2a8c2d359d2c5850e71b2bc0bcbb1d07dadcea49268ee769c45",
+    "ffi/FfiCallbacksQueueHeader.mustache": "c7f125f5e9bbfc1056588735c55dc30fed3dd31ad556e5338edefe9e8c99f20c",
+    "ffi/FfiCallbacksQueueImpl.mustache": "90935e275f80bc5ff4502836affa6681b5c4479a2917438f76bb508f4c2cd96a",
+    "ffi/FfiConversionBase.mustache": "0eef724ef32438f4458d34a917a32bed4b27e151059555c7c92e65c2b164b00f",
+    "ffi/FfiCopyrightHeader.mustache": "714d9c78c46766a23d13f8075bfff25ee7758a2070df18e4ef208c6690787061",
+    "ffi/FfiDartDLInitHeader.mustache": "b0555156d6e844883d9144bc88b1cad73598e473cab10c15d9e3d927a49fa782",
+    "ffi/FfiDartDLInitImpl.mustache": "f21d75fd8e10804804589286cdf2709f46d0082a870ab4b7ead93f22e14d7147",
+    "ffi/FfiExport.mustache": "3b1bba42fc996dd3a9c838c9906bd3170f14e54b056612cb3ac25ed477b5304b",
+    "ffi/FfiFinalizerDataHeader.mustache": "afaa74dce3bfc4ccf57a87c9b36b3abbd5eae062115aa0e22b5ad2c4827e8ca5",
+    "ffi/FfiFinalizerDataImpl.mustache": "3b93e55860d2de193a5ee30c3d8be594de7ecd63842224793af8202f45786028",
+    "ffi/FfiFunctionName.mustache": "43863a7692bca8e61c34a5bf03d86c31e360bf73970f12046d524d57f11d4189",
+    "ffi/FfiGenericTypesHeader.mustache": "f0e9504ee843138bf8cddbe716177279d50b0ea80afb0054fdcdb5bca17cb5f9",
+    "ffi/FfiGenericTypesImpl.mustache": "1a1dd5ca35678bf06d9b4931566c987aa83292a2337d3345fed7beb24907faac",
+    "ffi/FfiHeader.mustache": "027dea4e4244fcd764a8ebeba34a2b442cd33cee0d16ceb20bc67e60ec5f8ef6",
+    "ffi/FfiImplementation.mustache": "b70ebb7a33e552f4898645fb16623833ef9c2a7f4f9b0a89eef9d27d28f7b410",
+    "ffi/FfiInstanceCacheHeader.mustache": "86391f6dfe963c0ee900d27c9820199590ef538e930a7aa7dfae9f179d1db1ef",
+    "ffi/FfiInstanceCacheImpl.mustache": "6927e776a114b2ab2ef83e193a41bc5f326185db362df5e72bbb5a606ab17db7",
+    "ffi/FfiInternal.mustache": "ed7d47150de432f74cb99134a1d59cc4c67fba248eefb745abdfea780a30d574",
+    "ffi/FfiIsolateContextHeader.mustache": "deb1a4c2e1a1e0fc2de096e71cf9c4ecae6d5b625af05d953642e1f424a62b56",
+    "ffi/FfiIsolateContextImpl.mustache": "2aaad04de4477d49e4f7bb3c3bb91bfc36a23f441ddaf2c294ce4db49b64842d",
+    "ffi/FfiLazyListHeader.mustache": "53afc954d15fff4b4849fdd782dee5b4fa17b2c040c72f4e54ff2444a870ba82",
+    "ffi/FfiLazyListImpl.mustache": "a9bf7ccd08444f7ed3a892b7e2376426321f8340ccb9a56ef585cebc5186ce44",
+    "ffi/FfiLocaleHandleHeader.mustache": "232122c236ed5793229500c9942a71f9da2a4c911e3dc67f2bb9db9d513c7e20",
+    "ffi/FfiLocaleHandleImpl.mustache": "b94e3b57ea5961c5b61dfbad2bf5b7d1ace9a2a09f5287ac2a05baaebeb7161d",
+    "ffi/FfiNullableDeclaration.mustache": "c0ada5c6e14e76c28281b64436ddb5e6860d8b2d1c205c99720d8ab05f2d4552",
+    "ffi/FfiNullableHandlesHeader.mustache": "7f465947811a6e36ace3a5fbd6d8dbed4ed065548843b6ba3e01fe3c93f67026",
+    "ffi/FfiNullableHandlesImpl.mustache": "b88037970b4de419e0811f3c0a7409c6b910d1596122aa2268c55e8ffb715d74",
+    "ffi/FfiNullableImpl.mustache": "490c1157b40dbb71ea0256bde5699b73bbab6b1298181536924459c6eef3d035",
+    "ffi/FfiOpaqueHandle.mustache": "f3d6caa380736ca5e7e4bcaf9144b12bf1b751916f9299357434b94c764abe89",
+    "ffi/FfiProxyCacheHeader.mustache": "aab53d4cc14b069636f84c4bb459d9d1224f99daf6e09afe51856cf9c15ed590",
+    "ffi/FfiProxyCacheImpl.mustache": "f7777ca1b23fbd3fb7319807094f9be435b6212a1b190d838aba382dfeeb9b3b",
+    "ffi/FfiProxyDeclaration.mustache": "bd4861b7e7340745b0ea49b194204e8905e54943b819c37b5598a814c8e18fc7",
+    "ffi/FfiStringHandleHeader.mustache": "8cd6c974ca5c8ef3419515f304b1ce4899db8539fcd4bfbabdaf826cf18fb2ca",
+    "ffi/FfiStringHandleImpl.mustache": "4a72d979e3dd456eebb956043e0d6c5bb08850b7b120bcbda42966b4661e1aca",
+    "java/AbstractNativeList.mustache": "ef37c9126b0bfeb6447529046d2f5f0e478a841278df2fab4c6a46577531ac8f",
+    "java/CopyrightHeader.mustache": "dc01a48e8fe50a266d378c2dd545cfa1cb2722f120af4d97d801b1ed974db4dd",
+    "java/Duration.mustache": "99fdf19611a8ec686ab878c36d4b4a8ecb88e395369a6518028177782136b126",
+    "java/EqualsAndHashCode.mustache": "bd66cf2d2f6f1a8651bdfa33274621a9faebdbb2ca27a6c6722e26463c57e2ad",
+    "java/HashMapBuilder.mustache": "446cec2889f9f2ba0cbb421bca408ca897f938985b68e89818ae061964b665b1",
+    "java/JavaAttributes.mustache": "97921979da047e22a04a8aa66b676622cd712e7e0c8c21e36c00a0794fe07c40",
+    "java/JavaAttributesInline.mustache": "e7b1aa0251ef2f6a32b8eb22f41c554d6504b6943dbdc8b8625cec240f9355ea",
+    "java/JavaClass.mustache": "fdec3e1a1ef3d1cf84e24bb4c76aaffe5b74d37929c3e3fa563a0ac64e56a4da",
+    "java/JavaConstant.mustache": "5be9b368a3e9a8ae9a4dff83addd7d242f31114428ab898f2153c7d9a6a3d4cf",
+    "java/JavaContainerContents.mustache": "eb25e30685811adbd6d149a7c9acca1190b8c9aadc0e3b963cec0595dda1118d",
+    "java/JavaDocComment.mustache": "c45dff29ecf1f78fbf9d5214840dea3f68468c7d7107b854dbb88e7d91d9b7d1",
+    "java/JavaEnumeration.mustache": "d3d1a7ed0e46a018543211fd9bacc7ddab92b8c5ffc8738aac5ce51dfc76adbc",
+    "java/JavaEnumerator.mustache": "c61a01f8ec61f3c5f40cdaf996a2ce378bfb0b7750285e7175864ab44093cf24",
+    "java/JavaException.mustache": "880cb9da78de7dfe3a96d52c4a6583d90f5c0a1f2b62d61898b8c3ffbf92be92",
+    "java/JavaField.mustache": "25aa484c9692504db9751221cb2baa18b387d30b245dce242170012d1b087f40",
+    "java/JavaFile.mustache": "dbc416ef0d75570d18d027b969a5f484c8b34bd2339ce6412c0718a06f04ea84",
+    "java/JavaFunction.mustache": "dd5915666691175267802ece65b6a6977820810270348eb65df075ac1b9cbe5f",
+    "java/JavaImplClass.mustache": "b109bde4b2be0e179506368c8b5207e40ea259c66fefdb8b99f1639589394a1f",
+    "java/JavaInterface.mustache": "b863be553eff37da1560af90f500598bf9e57551bb6dbf045ae1140166f8cc6a",
+    "java/JavaLambda.mustache": "a2dc062220815800c5dcc7405f10c67880a4ed294bb8675edb6f5138e12b8e41",
+    "java/JavaMethodComment.mustache": "58ae2eba1b2966b96dedf2de2cc41a143e63ec9e30b949d5473641d44b96d7cf",
+    "java/JavaMethodSignature.mustache": "82752a21406dc6a91508185b8776585c63e61196e17a0851f9830232d03328aa",
+    "java/JavaParameter.mustache": "66afddc774b3d88066ddadbde908cd091565e262e5df1d3a2b0011bd1185760c",
+    "java/JavaStruct.mustache": "88396048a42beadfca39cddce68295cb40431a2eff97d706665016b2275af0ca",
+    "java/JavaStructConstructors.mustache": "03e6b6233165953c1d579c52efc3a05ca9b13198c8e92502e680cdb48f2a9117",
+    "java/LazyNativeList.mustache": "de8f2cb0d7015b94c29ec1394aae56e12b059082c8988a53a6ad5d76db53f5d3",
+    "java/NativeBase.mustache": "46cc45c90b7c2aa9197cef3389753db3ba557e8cda117dc04760987ffb09adfb",
+    "java/NullabilityAnnotations.mustache": "f271cff6b84750824a8ab0c2e008c2be9e3a4b684b2a030b80396d1c13b3f151",
+    "java/ParcelableCreator.mustache": "dc48f4393a59a2d8b68ded78e610f5faca28de596beae1fb4e207b1b900ab54d",
+    "java/ParcelableImpl.mustache": "35c7a7020e0976765f38fbe06b4cd2736bdd4954ec85418ac323e5237f85177e",
+    "jni/CppProxyHeader.mustache": "176e133ea26cd547e3abd952396093d70b4a0a22df381724bd581ade17046bde",
+    "jni/CppProxyImplementation.mustache": "64e7c8e83da49bb1f814fdaea4199da21762c2808e2e375fd3ae33385081a4ae",
+    "jni/CppProxyMethodParameter.mustache": "cab9da6cf4ccafcf53ac79f8221acfe7506c4b48a7dcfa1d2ea12cfd11fa7f60",
+    "jni/EnumConversionHeader.mustache": "ded27bd50ce370e7f7615006c09a32c395651d11e9e42e16c5b45fb0fd9b7f60",
+    "jni/EnumConversionImplementation.mustache": "ded1db78df0504e3a527c9451b0630d3ff9ebb7d45ce682783908398edface86",
+    "jni/ExternalConversionClassCache.mustache": "2c081594969e6fd9fb762130e53b6ef36d9d1bbfdd64fb73ad6040e43b759572",
+    "jni/ExternalConversionFromJni.mustache": "0e59811dc24b0b0e27037ab89eb7a077e7cd6478807abfa8d0ae7005da844aee",
+    "jni/ExternalConversionToJni.mustache": "5276d2b562fe0a6931753b5e24982cace62d17bf14710dd3a5fb33b1a0d45da1",
+    "jni/FunctionSignature.mustache": "0775fbdf60daec0647208a7107b3f3bf9f8c533492c1f879f2c8763935cd709b",
+    "jni/FunctionSignaturePrefix.mustache": "a706cd3685d23e52b7d0bd4eb3a8f08f69db7f312dcd9e8593b6a02556145da0",
+    "jni/Header.mustache": "f9c989697c0b5dd1a1ea4994c0c3516940084455f92f731c562bd5bd1a911adb",
+    "jni/Implementation.mustache": "9415798f557673a2c737490b48feab0ea17560af3a93d3741ed40696e39ac7c8",
+    "jni/InstanceConversionHeader.mustache": "f8ac3a01e209b0520e327aa370546fff3294ee519a029fdf8a58e9d47c6ab025",
+    "jni/InstanceConversionImplementation.mustache": "7cee4a653d2b6239a0d34c64090c26efb31edc15c9aa3891e0ecf06b20989244",
+    "jni/JniConversionPrefix.mustache": "d65b34d73f16f925bcf6808d27a0defcf18623eed41c3c1522f528587a9d1faf",
+    "jni/LambdaOverloadedConversionHeader.mustache": "d9e673277853076966e0385af3f40bac8709d0fc2c1750a32d7af4cba9e1dd79",
+    "jni/LambdaOverloadedConversionImpl.mustache": "dfe5040cb8209f6973d328acd7d4e00cd02e2ed6bf4f98c7098caddda69f087c",
+    "jni/LazyNativeListHeader.mustache": "f2b019ebf6f620ae17602e3d1fbef48853de223c06be28eb6103742843ea7e65",
+    "jni/LazyNativeListImpl.mustache": "ac0489a6a121b855fd599334341e92f8fded92b1822609699ee3bebd4dede383",
+    "jni/StructConversionHeader.mustache": "30e3b96b1f2d2b19d0464079aa449356fc74111567d139f79e4947524bb6c248",
+    "jni/StructConversionImplementation.mustache": "025f68f44a8bfeb6ec6586e0cf7d1da8a8092b8492eda849ddd56069435f3d0c",
+    "jni/utils/ArrayConversionUtilsHeader.mustache": "712ff285ef1318dadabec849104a93de6fd036e79ae9f74a857eec90bf7aeb15",
+    "jni/utils/BoxingConversionUtilsHeader.mustache": "c1cbc521cac07858781afe6d57c1d3bad2f723bf80fa3bb95c3c63da7e3368d7",
+    "jni/utils/BoxingConversionUtilsImplementation.mustache": "0fcf5d318381f1ff4474cb97cae0138cd51b63a3a1114112efb22f48a65af74e",
+    "jni/utils/CppProxyBaseHeader.mustache": "7d84cc4f8ecfc17b33b8b529e8db140f48d6f6cb3dbb2790d75d9f82f4a902f4",
+    "jni/utils/CppProxyBaseImplementation.mustache": "52e7cf05d9fbbe52d2dbc33ed28e2b1b725b3e329094748137bb9f0df7bff2fd",
+    "jni/utils/FieldAccessMethodsHeader.mustache": "cd322b6fcbfb31d13d6aefe2aa0b9368daf4cd4be0a35751b063e5f03c800223",
+    "jni/utils/FieldAccessMethodsImplementation.mustache": "2b39e16178eb7c556622809f31bea04e788046675576ce7396b02279e12bb634",
+    "jni/utils/JniBaseHeader.mustache": "e42df9190e184d3555acb02889671c8d98c8173c85ee8db314773bf8f33a9939",
+    "jni/utils/JniBaseImplementation.mustache": "da8c4e2094b32f9285ec88ca3de195b39c5fb309121345f92a11d2e31f1c3c70",
+    "jni/utils/JniCallJavaMethodHeader.mustache": "b0a91d769d40e8b0ce9cc15579f1242e337bce4f725ae8276b3bb9ca872af306",
+    "jni/utils/JniCallbackErrorCheckingHeader.mustache": "017ce1f350ffa824121bbffd029c16bfa679db3d37f2a31cd6f7dd8dd3610bbe",
+    "jni/utils/JniCallbackErrorCheckingImplementation.mustache": "6f9a2558723325f4b7bb908bfdf2851ddd3bda595d1d195510f8be02d56bc9ec",
+    "jni/utils/JniClassCacheHeader.mustache": "e705b45c13dbe3ea0847f91701abd520996dfd477d076d9c445ab51d692dc125",
+    "jni/utils/JniClassCacheImplementation.mustache": "1f130ba5abfd3da1026facaddfc4660c97e7c099bb55cd7309719e0d52a05fd0",
+    "jni/utils/JniCppConversionUtilsHeader.mustache": "f3350fac0a819ca31e25a925fe1b0e64ff4683968022b8aaa8b2f229896b0b97",
+    "jni/utils/JniCppConversionUtilsImplementation.mustache": "635aec90d6b9ab4c9b52d5a9f8faf4e24a4a8bb3d81ca7617674f6cee6243d48",
+    "jni/utils/JniExceptionThrowerHeader.mustache": "dbddf5e5b859719086542950059fccf741fc0fc4909509f4cb75c1ed67a76d58",
+    "jni/utils/JniExceptionThrowerImplementation.mustache": "365a0ea5d512167d7e7dcf7c0eb30c51da603e5b55ce5140865998ad50e10f8d",
+    "jni/utils/JniJavaContainersHeader.mustache": "e4e02b66d761e5bf203cfb8e26b7a4ea47e36c98445e4c1294e121f1d8557d43",
+    "jni/utils/JniJavaContainersImplementation.mustache": "8eabc7d3d0e7b1ea1832f7b9b98466128bda568634c3ce2803b75045987de720",
+    "jni/utils/JniNativeHandleHeader.mustache": "c3a2bda8aa918afdefc1d4ff8c31d7c4bb1ff804146684da223a20d9393fa94d",
+    "jni/utils/JniNativeHandleImplementation.mustache": "fad276e40472727ddd26e96c3737a5b613e51197c596b029e6e37874effec93e",
+    "jni/utils/JniReferenceHeader.mustache": "976a1fde1322ae18d0c96a83d3096c67ad3b1b4927979981459e33ea71c1a047",
+    "jni/utils/JniReferenceImplementation.mustache": "5d5f24c164beeb86c78551e9eae56055522d94bce25c1aa2ecb082b0139dc37d",
+    "jni/utils/JniTemplateMetainfoHeader.mustache": "0cc0c52563403bee27ebfed07bceb3b4d80f16fe514b2898a92e3c6a260c9668",
+    "jni/utils/JniThrowNewExceptionHeader.mustache": "12bfff518332a2c987eabcf2fde7ae7a1df9527f5db4300152f384244c065dab",
+    "jni/utils/JniThrowNewExceptionImplementation.mustache": "bf1c937867228aa54ad9e6bde86b7d261142e6401fffeb2e21767a8b4f7655bd",
+    "jni/utils/JniTypeIdHeader.mustache": "2f394e021c960aa7694177d01733a636edf90a0f14547c27e487f7a739bd1c8b",
+    "jni/utils/JniWrapperCacheHeader.mustache": "19c0930f864fe9a89a7d44bf96a49ba212a94a454459fe2e65871f322357d4c6",
+    "jni/utils/JniWrapperCacheImplementation.mustache": "fbca2b92f0101ae821b3d9cad483e308f5c02298dc373befdf1bb5592c11d2d6",
+    "kotlin/KotlinAbstractNativeList.mustache": "e4980feed28e2940c9b24ddf107ee54e8df5f241941bbb6bda78849f898f4534",
+    "kotlin/KotlinAttributes.mustache": "824a14b487b5900bad32ffb29a8a0e7d2c09f991d03aaa5fbebb87b575c632c4",
+    "kotlin/KotlinAttributesInline.mustache": "fe912c763172fed2169b3b91e6b4891380837448282517f4fada41bd806233dd",
+    "kotlin/KotlinClass.mustache": "57e985cff42ba58c55928000cf8f3ce04023a0c05a371ec64d47ddaab88caa9e",
+    "kotlin/KotlinConstant.mustache": "78f2f569c4c91bbc48269ad1a0d4682590436bdd7fa340ebfe434142fd15e44e",
+    "kotlin/KotlinContainerContents.mustache": "b92d4e21fbcb65775d2aa7d5240164029076a390dc329d674dc729ce3d114e7c",
+    "kotlin/KotlinCoroutineMembers.mustache": "b3408b147be2876bfd837be829bcd79ef2ccfef43de5b2b2a442662edb0010d1",
+    "kotlin/KotlinCoroutines.mustache": "ace95d8638e047e6c4ca6c6d5e84589d9aaa142dffadd390d7c4d4b5650d21d2",
+    "kotlin/KotlinDocComment.mustache": "bdcab18725f2761d0206fbd2d6ca50870fb39b2abf21aff147453211240b805b",
+    "kotlin/KotlinDuration.mustache": "187b9bd75dd788d36c38ac27e75eff9f3d9793b3839c4d1621eefef9400b5704",
+    "kotlin/KotlinEnumeration.mustache": "12c61fbafc2b9b57e4039c3715517f0b5c7725164eafcadfadb0a95b41437f15",
+    "kotlin/KotlinEnumerator.mustache": "e4339715d1c573036d9f3491353c8467139be67384c6d2f0922d8e39b591c016",
+    "kotlin/KotlinEqualsAndHashCode.mustache": "a960f11870e60140db9e00acdb90e968469323ab226e5ea0ed544a80ca855a60",
+    "kotlin/KotlinException.mustache": "4a0b5a5b46c3e12c4a98d8addb04a1c4d193d4049145b422103e8b29b661d5dc",
+    "kotlin/KotlinFile.mustache": "478a728751a98b4d00fabf361095edefe5967ab4cd4b61187c5b7e1f0c62f468",
+    "kotlin/KotlinFunction.mustache": "091cc591073ad65ac80edbf9100bc291c52f0d9e3dbd988a41d8e86bd164a6ce",
+    "kotlin/KotlinImplClass.mustache": "16d9fd21898c941224607758116da2fa650b82c6c4cd59b300f9dc65b4beed06",
+    "kotlin/KotlinInterface.mustache": "8464087b300367f1d259e959ddf90a80d9e064b13e6f43f95baa27445b678678",
+    "kotlin/KotlinInternalApiAnnotation.mustache": "f61e51d67b5f45e08d268ca539f3f5b9ee2ac83beeb2d270a5541ecf32793df8",
+    "kotlin/KotlinLambda.mustache": "a2c1193ecffe50839af47dce19df75426d82113a53e9cba6af7d950d3354344c",
+    "kotlin/KotlinLazyNativeList.mustache": "c77114bd5b514d7ffa4105f23c9c579fe4e19a34decf76494a6647dc0dbe3623",
+    "kotlin/KotlinMethodComment.mustache": "63bf17f2aa483d0bdc041b4ee4fb3bd33bfc42b53c3375dcfa6723917b2c528a",
+    "kotlin/KotlinNativeBase.mustache": "a29ed853905ee3a483e2c7deb1aa42e393457d81e32a07d12c95715c19fbd45c",
+    "kotlin/KotlinParcelableCreator.mustache": "a1f5b5b60c115799c3ef89acd9783e490d9d829ef7b282ee17230455ca75c14d",
+    "kotlin/KotlinParcelableImpl.mustache": "fc5663c60ca39ca63c4c28ae8c2b434768f862fadcf3bb871d64d46510626357",
+    "kotlin/KotlinProperty.mustache": "9c9bea4a97d6cec2526af183c8937dafeaf3dcdceaaa401631e7293c81ae8657",
+    "kotlin/KotlinStaticProperty.mustache": "e909c4447645725a71bcd722252f9e469f5ac5fe85ff510086fd9c55b75413f0",
+    "kotlin/KotlinStruct.mustache": "79f831c5eb5a9b474f0eaa453c629d1010e24619f5009a62a5d89260fbb20a22",
+    "kotlin/KotlinTypeAlias.mustache": "cdef962cb314ff28ddda55966d1dda881c2c14aa4eb5cbe3dfd1b709bc01e704",
+    "kotlin/KotlinTypeVisibility.mustache": "a28df139526df95da57305c6d7ee405bd2d3fc9dac9a55354c9cfdaf9f3b9ee3",
+    "swift/BuiltinOptionals.mustache": "4c9a705c8cdbf929892e272b0f9c646f447c16931307ea1d0151b17200e38ed2",
+    "swift/CommonClassParts.mustache": "8ea0382b1122709057c1cc326d3a07f9926267a9b3dfbe751b89a38b8f284829",
+    "swift/ConversionPrefixFrom.mustache": "0a478018f954cf136d9ad96f8fbc2c691644b4ddd52dea5bbee0691f2e798f77",
+    "swift/ConversionPrefixTo.mustache": "0e65f728120d3e37177ec365b1ddbaacf9f401dd10e917226d486c3a73d15308",
+    "swift/ConversionVisibility.mustache": "fe089b5a4175df46f0d2cefac9c0ec3931e787628038c574718a25b87b571871",
+    "swift/EnumOptionSetDefinition.mustache": "f5eddd4a55a8cdce021717394598ab8bcf19711ffcdf7a9eceec9d74bca5b393",
+    "swift/GetReference.mustache": "e14fe1449bc08c3562a58e1c7482cd2f84ba509410535f5d377469e35eb8ca8d",
+    "swift/InitCollectionOf.mustache": "80525af3477d0e4de188893cafda5c1e78dbd23253f3404ada74717a32755f65",
+    "swift/RefHolder.mustache": "888eede8485abbdb8930855af3c3405a33d586e940460a0942bff326a6bf1b37",
+    "swift/SwiftAttributes.mustache": "5c892dee372572fef6cd9944c537f17eb1e5467beee956e09c530819ce3199e3",
+    "swift/SwiftAttributesInline.mustache": "c44bad091cc95a0ce28770ac79fecac7a0e4a323e97bfbe5cde8240d15eb8786",
+    "swift/SwiftClassConversion.mustache": "1dd5984de505a96a38508f339d5a1c41116a320199a9cb545842f4cc80f6f75b",
+    "swift/SwiftClassDefinition.mustache": "997199c14a769701c36fcc5248366ec46e149516ffeaf43909efdb7380d9d922",
+    "swift/SwiftComment.mustache": "68d6896cdd41b3b3f986f60d0d9f21823617cf4012be51a716f5df49abaf669e",
+    "swift/SwiftConstant.mustache": "842931ee3581231492cc6feacddf60783fafddafbd9bb0124c9143f0216dff5d",
+    "swift/SwiftEnumConversion.mustache": "99569983696202410eefd3bbc2dd8c81dd2921442ffa0098b0219e2df2ed78a9",
+    "swift/SwiftEnumDefinition.mustache": "a654b4d94753270fa5878842552650d90bcbe5cfa0e89dd047fe161c5ce951c3",
+    "swift/SwiftException.mustache": "5a93f4849e49a4f85f456e338039a9e2eee214cdbc3903ed9b6f511b7901c8e9",
+    "swift/SwiftFile.mustache": "c0506be3e09008fadfb0b14c4aba050816724c8d2eaef9f8bc3e8027a4dcf3e8",
+    "swift/SwiftFunctionBody.mustache": "e4dcd9b104b7eca7dc6aad9e68fd21a98e971d7e6444174d7de9c0a8324da62e",
+    "swift/SwiftFunctionComment.mustache": "3783e650f0121b359269c4407402d8702acc6a079a20c07e5cf75056dc750f3f",
+    "swift/SwiftFunctionParameters.mustache": "867cabef5fecc154072f999f78215cdb4ec0e925630db5a4aa901eff86f44879",
+    "swift/SwiftFunctionSignature.mustache": "deac7ae0f622bf487cdc4dacbf6538cdb9997572f1b3bcf824969d43aaa49469",
+    "swift/SwiftInterfaceDefinition.mustache": "f17ab8a19f2635616f5193c3cda9ebe3ab380665491b92617eab876191e75eb0",
+    "swift/SwiftLambdaComment.mustache": "edf2c300804e4d29fb32f79e361d88abd00398de89fbadf6948406b43e59733b",
+    "swift/SwiftLambdaConversion.mustache": "15938ba49b5b7dea51f68fbd681d92833cb521fbf73d2e92d174373b6c743f12",
+    "swift/SwiftLambdaDefinition.mustache": "39573ffeb787abd4f3a2eb907f473e96d8a46cc4d0481613f42a255a0527586c",
+    "swift/SwiftLists.mustache": "4b43137845c6b7c3dc4248c4f7471ade64151da39f3a28a8b806ebfc23a83eb2",
+    "swift/SwiftMaps.mustache": "4fdca4ab2e459df4a8ece1aa990e6e5a86e8d3d914a235ee5ca11fb38fb3236a",
+    "swift/SwiftProperty.mustache": "92aff25aedd57f910137302e632a02c8baf699782eb585da19b0ba01f64dc7d4",
+    "swift/SwiftSets.mustache": "99d258e9d20b0cc0bd1ba2643f9924c78f847a48e95b6ff44d748df4bb0c8ae6",
+    "swift/SwiftStructConstructors.mustache": "a8e0e906cf2e05d086bf7fbbf2caf29cea9acab21d5e5e27cfe63a6722d79291",
+    "swift/SwiftStructConversion.mustache": "c8dde6b1f9c72ee506a53166191d04591b723b9e4466a5531a18f7370c9f6552",
+    "swift/SwiftStructDefinition.mustache": "6334f0a253137381991bc75187531f3162a3f7e0804759fec8584e75ec74b36f",
+    "swift/SwiftTypeAlias.mustache": "a5973c7b64117ad52db291602c2d60d4f802666bdb9b79fc89f33bf2dcc31dd7",
+    "swift/TypeVisibility.mustache": "f6f2f449178436251ad0e75bf5869cec56966f0cc7ea628693d1ad3ae76cc4b3",
+    "xml/CopyrightHeader.mustache": "22db3fe35e27288d9d9503b48e7bebf35fb21c29cf5924a5ce96791e2161b42d"
+  },
+  "version": 1
+}

@@ -1,0 +1,250 @@
+#!/usr/bin/env python3
+"""Focused M15 parity against a fresh JVM and real LIME frontend."""
+import copy
+from contextlib import nullcontext
+from datetime import datetime, timezone
+import difflib
+import hashlib
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import sys
+import tempfile
+
+HERE = Path(__file__).resolve().parent
+REPO = HERE.parents[2]
+RUST = REPO / 'ruscodium'
+OLD = RUST / 'tools/cpp-generation-oracle'
+LIB = REPO / 'gluecodium/build/install/gluecodium/lib'
+TEMPLATES = REPO / 'gluecodium/src/main/resources/templates'
+sys.path.insert(0, str(RUST / 'tools/frontend-adapter-oracle'))
+from project import Projection
+
+
+def run(args, **kwargs):
+    return subprocess.run([str(x) for x in args], check=True, **kwargs)
+
+
+def read(path):
+    return json.loads(path.read_text(encoding='utf-8'))
+
+
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def files(root):
+    return {p.relative_to(root).as_posix(): p.read_bytes() for p in root.rglob('*') if p.is_file()}
+
+
+def compare_files(a, b, label):
+    left, right = files(a), files(b)
+    if left.keys() != right.keys():
+        raise AssertionError(f'{label}: missing {sorted(left.keys() - right.keys())}; extra {sorted(right.keys() - left.keys())}')
+    for path in left:
+        if left[path] != right[path]:
+            raise AssertionError(f'{label}: differing bytes: {path}')
+
+
+def compare_jobs(jvm, native, label):
+    a, b = Projection(read(jvm)).project(), Projection(read(native)).project()
+    if a != b:
+        diff = difflib.unified_diff(json.dumps(a, indent=2, sort_keys=True).splitlines(),
+                                    json.dumps(b, indent=2, sort_keys=True).splitlines(),
+                                    'jvm', 'native', lineterm='')
+        raise AssertionError(f'{label}: model differs\n' + '\n'.join(diff)[:20000])
+
+
+def check_projection(job):
+    original = Projection(job).project()
+    root = {n['id']: n for n in job['snapshot']['nodes']}
+    refmap = root[job['snapshot']['root']['$ref']]['properties']['referenceMap']
+    def changed(mutator):
+        modified = copy.deepcopy(job)
+        nodes = {n['id']: n for n in modified['snapshot']['nodes']}
+        mutator(modified, nodes)
+        try:
+            projected = Projection(modified).project()
+        except ValueError:
+            return
+        if projected == original:
+            raise AssertionError('projection missed a relevant mutation')
+    def payload(_, nodes):
+        exc = nodes[refmap['oracle.errors.RenamedError']['$ref']]['properties']
+        target = nodes[exc['errorType']['$ref']]['properties']
+        replacement = refmap['oracle.errors.Service.LocalError']
+        target['element'] = target['type'] = replacement
+    def thrown(_, nodes):
+        fun = nodes[refmap['oracle.errors.Service.fetch']['$ref']]['properties']
+        wrapper = nodes[fun['thrownType']['$ref']]['properties']
+        target = nodes[wrapper['typeRef']['$ref']]['properties']
+        replacement = refmap['oracle.errors.RenamedError']
+        target['element'] = target['type'] = replacement
+    def getter(modified, _):
+        modified['property_overlays'][refmap['oracle.errors.Service.fetch']['$ref']]['exception'] = refmap['oracle.errors.RenamedError']
+    for mutation in (payload, thrown, getter):
+        changed(mutation)
+    print('M15 projection: payload, thrown edge, and exception getter mutations detected', flush=True)
+
+
+def compile_consumer(output, consumer, compiler, executable):
+    cpp = output / 'cpp'
+    sources = sorted((cpp / 'src').rglob('*.cpp'))
+    run([compiler, '-std=c++17', '-Wall', '-Wextra', '-Werror', '-I', cpp / 'include',
+         *sources, HERE / consumer, '-o', executable])
+    run([executable])
+
+
+def main():
+    if not LIB.is_dir():
+        raise SystemExit(f'missing JVM distribution: {LIB}')
+    run(['cargo', 'build', '--offline', '--manifest-path', RUST / 'Cargo.toml', '--bin', 'ruscodium', '--example', 'frontend_cpp_inventory'])
+    run([sys.executable, RUST / 'tools/template-oracle/check_templates.py'], cwd=REPO)
+    java_home = os.environ.get('JAVA_HOME')
+    java = Path(java_home) / 'bin/java' if java_home else 'java'
+    javac = Path(java_home) / 'bin/javac' if java_home else 'javac'
+    compiler = os.environ.get('CXX', 'c++')
+    no_java = dict(os.environ, PATH='')
+    no_java.pop('JAVA_HOME', None)
+    retained = os.environ.get('M15_ORACLE_OUTPUT')
+    if retained:
+        Path(retained).mkdir(parents=True, exist_ok=False)
+    directory = nullcontext(retained) if retained else tempfile.TemporaryDirectory(prefix='m15-enum-errors-')
+    with directory as temporary:
+        tmp = Path(temporary)
+        classes = tmp / 'classes'
+        classes.mkdir()
+        run([javac, '-cp', f'{LIB}/*', '-d', classes, RUST / 'tools/reference-model/ReferenceModel.java', OLD / 'CppGenerationOracle.java'])
+        cases = [
+            ('baseline', 'enum-errors', 'docs', 'consumer.cc', {},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1, 'internal_namespace': ['gluecodium']}),
+            ('names-values', 'enum-errors', 'docs', None,
+             {'input/Errors.lime': [('GlobalError', 'ProblemCode'), ('MISSING = 4', 'MISSING = 12')],
+              'input/Service.lime': [('fetch(', 'lookup(')],
+              'auxiliary/Auxiliary.lime': [('GlobalError', 'ProblemCode')]},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1, 'internal_namespace': ['gluecodium']}),
+            ('package', 'enum-errors', 'docs', None,
+             {path: [('oracle.errors', 'oracle.renamederrors')] for path in
+              ('input/Errors.lime', 'input/Service.lime', 'auxiliary/Auxiliary.lime')},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1, 'internal_namespace': ['gluecodium']}),
+            ('throw-target', 'enum-errors', 'docs', None,
+             {'input/Service.lime': [('fun fetch(fail: Boolean): Int throws Failure',
+                                     'fun fetch(fail: Boolean): Int throws OtherFailure')]},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1, 'internal_namespace': ['gluecodium']}),
+            ('owners', 'enum-errors', 'docs', 'owners-consumer.cc',
+             {'input/Service.lime': [('package oracle.errors', '''package oracle.errors
+class ConcreteClass { static fun go(): Int throws RenamedError }
+struct ConcreteStruct { static fun go(): Void throws RenamedError }''')]},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1, 'internal_namespace': ['gluecodium']}),
+            ('no-output', 'enum-errors', 'docs', None, {},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1, 'internal_namespace': ['gluecodium']}),
+            ('default', 'default', 'default', 'default-consumer.cc', {},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1}),
+            ('custom', 'custom', 'custom', 'custom-consumer.cc', {},
+             {'schema': 'gluecodium.native-cpp-options', 'version': 1, 'root_namespace': ['acme', 'api'],
+              'internal_namespace': ['acme', 'detail'], 'export': 'ACME_API', 'export_common': 'ACME_COMMON',
+              'copyright_header': 'Copyright 2026 Example\nAll rights reserved.'}),
+        ]
+        report = {'schema': 'gluecodium.m15-enum-errors-evidence', 'version': 1, 'cases': {}}
+        report['recorded_at_utc'] = datetime.now(timezone.utc).isoformat()
+        report['git_head'] = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=REPO, capture_output=True, text=True, check=True).stdout.strip()
+        report['rustc_version'] = subprocess.run(['rustc', '--version'], capture_output=True, text=True, check=True).stdout.strip()
+        report['cxx_version'] = subprocess.run([compiler, '--version'], capture_output=True, text=True, check=True).stdout.splitlines()[0]
+        report['native_binary_sha256'] = sha(RUST / 'target/debug/ruscodium')
+        report['inventory_example_sha256'] = sha(RUST / 'target/debug/examples/frontend_cpp_inventory')
+        report['jvm_libraries_sha256'] = {p.name: sha(p) for p in sorted(LIB.glob('*.jar'))}
+        report['java_version'] = subprocess.run([str(java), '-version'], capture_output=True, text=True, check=True).stderr.strip()
+        report['source_sha256'] = {p.relative_to(REPO).as_posix(): sha(p) for root in
+                                   (RUST / 'src', HERE, RUST / 'tools/frontend-adapter-oracle')
+                                   for p in sorted(root.rglob('*')) if p.is_file() and
+                                   (p.suffix in ('.rs', '.py', '.lime', '.cc') or p.name == 'check')}
+        for p in (RUST / 'Cargo.toml', RUST / 'Cargo.lock', RUST / 'examples/frontend_cpp_inventory.rs',
+                  RUST / 'tools/reference-model/ReferenceModel.java', OLD / 'CppGenerationOracle.java'):
+            report['source_sha256'][p.relative_to(REPO).as_posix()] = sha(p)
+        report['template_sha256'] = {p.relative_to(TEMPLATES).as_posix(): sha(p)
+                                     for p in sorted(TEMPLATES.rglob('*')) if p.is_file()}
+        baseline_projection = None
+        for name, group, profile, consumer, mutations, options in cases:
+            working = tmp / f'{name}-work'
+            if group == 'enum-errors':
+                smoke = working / 'gluecodium/src/test/resources/smoke/enum-errors'
+                fixture = HERE / 'no-output' if name == 'no-output' else HERE
+                shutil.copytree(fixture / 'input', smoke / 'input')
+                shutil.copytree(fixture / 'auxiliary', smoke / 'auxiliary')
+                for relative, changes in mutations.items():
+                    path = smoke / relative
+                    text = path.read_text(encoding='utf-8')
+                    for old, new in changes:
+                        if old not in text:
+                            raise ValueError(f'{name}: missing mutation target {old!r}')
+                        text = text.replace(old, new)
+                    path.write_text(text, encoding='utf-8')
+                main_input, auxiliary = smoke / 'input', smoke / 'auxiliary'
+            else:
+                custom = working / 'ruscodium/tools/cpp-generation-oracle'
+                custom.mkdir(parents=True)
+                shutil.copyfile(HERE / 'custom.lime', custom / f'{group}.lime')
+                if group == 'custom':
+                    shutil.copyfile(OLD / 'aux.lime', custom / 'aux.lime')
+                main_input = custom / f'{group}.lime'
+                auxiliary = custom / 'aux.lime' if group == 'custom' else None
+            jvm, native, cli = (tmp / f'{name}-{kind}' for kind in ('jvm', 'native', 'cli'))
+            run([java, '-cp', f'{classes}:{LIB}/*', 'CppGenerationOracle', group, jvm], cwd=working,
+                env=dict(os.environ, CPP_ORACLE_RAW_COMMENTS='1'))
+            run([RUST / 'target/debug/examples/frontend_cpp_inventory', profile, main_input, auxiliary or '-', TEMPLATES, native], cwd=working)
+            expected, actual = read(jvm / 'manifest.json')['files'], read(native / 'manifest.json')['files']
+            if expected != actual or set(expected.values()) != {'MAIN', 'COMMON'} or list(expected.values()).count('COMMON') != 17:
+                raise AssertionError(f'{group}: file/source-set inventory differs')
+            compare_files(jvm / 'files', native / 'files', f'{group}/library')
+            compare_jobs(jvm / 'job.json', native / 'job.json', group)
+            projected = Projection(read(jvm / 'job.json')).project()
+            if name == 'baseline':
+                baseline_projection = projected
+            if name in ('names-values', 'package', 'throw-target') and projected == baseline_projection:
+                raise AssertionError(f'{name}: source mutation left the model unchanged')
+            option_file = tmp / f'{name}-options.json'
+            option_file.write_text(json.dumps(options), encoding='utf-8')
+            args = [RUST / 'target/debug/ruscodium', 'compile-cpp', '--input', main_input,
+                    '--templates', TEMPLATES, '--options', option_file, '--output', cli]
+            if auxiliary:
+                args.extend(['--auxinput', auxiliary])
+            result = run(args,
+                         cwd=working, env=no_java, stdout=subprocess.PIPE)
+            if result.stdout:
+                raise AssertionError(f'{group}: unexpected CLI stdout')
+            compare_files(jvm / 'files', cli, f'{group}/CLI')
+            if consumer:
+                for output in (jvm / 'files', native / 'files', cli):
+                    compile_consumer(output, consumer, compiler, tmp / f'{name}-consumer')
+            if name == 'baseline':
+                check_projection(read(jvm / 'job.json'))
+                paths = set(expected)
+                if any('Shared.' in p or 'AuxiliaryPayload.' in p or 'AuxCode.' in p for p in paths):
+                    raise AssertionError('exception or auxiliary declarations unexpectedly generated files')
+                error_source = (jvm / 'files/cpp/src/oracle/errors/RenamedError.cpp').read_text()
+                if error_source.count('make_error_code(') != 1:
+                    raise AssertionError('shared error enum did not produce exactly one definition')
+                service_source = (jvm / 'files/cpp/src/oracle/errors/Service.cpp').read_text()
+                if not (0 <= service_source.find('make_error_code( ::oracle::errors::Service::LocalError') <
+                        service_source.find('make_error_code( ::oracle::errors::Service::OtherError')):
+                    raise AssertionError('nested error enum traversal order differs')
+            if name == 'no-output' and (len(expected) != 18 or any('/oracle/' in path for path in expected)):
+                raise AssertionError('exception-only input unexpectedly emitted a declaration file')
+            report['cases'][name] = {'options': options, 'jvm_job_sha256': sha(jvm / 'job.json'),
+                                     'native_job_sha256': sha(native / 'job.json'),
+                                     'inputs_sha256': {p.relative_to(working).as_posix(): sha(p) for p in
+                                                       sorted(working.rglob('*.lime'))},
+                                     'files': {path: {'source_set': source_set,
+                                                      'sha256': sha(jvm / 'files' / path)}
+                                               for path, source_set in expected.items()},
+                                     'consumer_compiled_and_ran': bool(consumer)}
+            print(f'M15 {name}: {len(expected)} paths/source sets, bytes and model facts match' +
+                  ('; JVM, native and empty-PATH CLI consumers pass' if consumer else ''), flush=True)
+        if os.environ.get('M15_ORACLE_REPORT'):
+            Path(os.environ['M15_ORACLE_REPORT']).write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
+
+
+if __name__ == '__main__':
+    main()

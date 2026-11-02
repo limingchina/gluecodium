@@ -18,6 +18,7 @@ SCHEMA = {
     'LimeInterface': CONTAINER + 'isNarrow isOpen parents'.split(),
     'LimeStruct': CONTAINER + 'constructorComment fieldConstructors fields'.split(),
     'LimeEnumeration': TYPE + ['enumerators'],
+    'LimeException': TYPE + ['errorType'],
     'LimeTypeAlias': TYPE + ['typeRef'],
     'LimeLambda': TYPE + 'parameters returnType'.split(),
     'LimeList': TYPE + ['elementType'],
@@ -31,6 +32,7 @@ SCHEMA = {
     'LimeFunction': COMMON + 'isConstructor isStatic parameters returnType thrownType'.split(),
     'LimeProperty': COMMON + 'additionalDescriptionComment getter isStatic setter typeRef valueComment'.split(),
     'LimeReturnType': 'attributes comment typeRef'.split(),
+    'LimeThrownType': 'comment typeRef'.split(),
     'LimeFieldConstructor': COMMON + 'fieldRefs structRef'.split(),
     'LimeLazyFieldRef': 'attributes element'.split(),
     'LimeValue$Literal': 'attributes typeRef value'.split(),
@@ -48,6 +50,7 @@ OVERLAYS = {
     'LimeInterface': {'name', 'fullName', 'actualType'},
     'LimeStruct': {'name', 'fullName', 'actualType', 'uninitializedFields'},
     'LimeEnumeration': {'name', 'fullName', 'actualType', 'uniqueEnumerators'},
+    'LimeException': {'name', 'fullName', 'actualType'},
     'LimeTypeAlias': {'name', 'fullName', 'actualType'},
     'LimeLambda': {'name', 'fullName', 'actualType'},
     'LimeList': {'name', 'fullName', 'actualType'},
@@ -235,12 +238,31 @@ class Projection:
             result['parents'] = [self.typeref(x) for x in p['parents']]
         if 'typeRef' in p:
             result['typeRef'] = self.typeref(p['typeRef'])
+        if 'errorType' in p:
+            result['errorType'] = self.typeref(p['errorType'])
         if 'childTypes' in p:
             result['childTypes'] = [self.typeref(x) for x in p['childTypes']]
         if 'returnType' in p:
             result['returnType'] = self.return_type(p['returnType'])
         if 'thrownType' in p:
-            result['thrownType'] = None if p['thrownType'] is None else self.typeref(p['thrownType'])
+            thrown = p['thrownType']
+            if thrown is None:
+                result['thrownType'] = None
+                exception = None
+            else:
+                if self.kind(self.node(thrown)) != 'LimeThrownType':
+                    raise ValueError('expected LimeThrownType')
+                tp = self.props(thrown)
+                result['thrownType'] = {'typeRef': self.typeref(tp['typeRef']),
+                                        'comment': self.comment(tp['comment'])}
+                actual = result['thrownType']['typeRef']['actual']
+                exception = actual if actual['kind'] == 'LimeException' else None
+            overlay = self.overlays.get(ref['$ref'], {})
+            if 'exception' in overlay:
+                observed = None if overlay['exception'] is None else self.declared(overlay['exception'])
+                if observed != exception:
+                    raise ValueError(f'inconsistent exception getter: {ref["$ref"]}')
+            result['exception'] = exception
         for key in ('getter', 'setter'):
             if key in p:
                 result[key] = None if p[key] is None else self.declaration(p[key])
