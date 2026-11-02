@@ -545,3 +545,108 @@ JVM validation remain explicit limits. These measurements neither isolate
 language overhead nor establish full compiler compatibility or statistical
 significance. No reported material finding remains unresolved within the M13
 measurement contract.
+
+## M14 independent optimization review — 2026-11-02
+
+Independent Sol 6.1 xhigh review covers the M14 contract in `965a9ed96`,
+production optimization in `6ccea17bc`, prepared-renderer regressions in
+`ec381af93`, measurement harness through `3f90a57a0`, and results/report through
+`0cd968bc4`. The measured optimized executable was built from clean
+`ec381af93117e66f583c1ea21cb339d9586a1bca`; its SHA-256 is
+`10a2e27ce4750bc1e7d961b04bdae204c943722494998d8aa07c8aafcc00f716`.
+The separately rebuilt baseline is
+`15b1db4c48ef0fbf7a86aefa6750f6ebcd5a5e88`, with SHA-256
+`10585d3f82151cec742b7f5dacbe2b91902901e66df69b583f673f6a6ed8d697`,
+identical to the M13 executable. Review compared both source trees with their
+recorded commits and checked the actual executable identities. All changes
+remain under `ruscodium/`; the production templates and original M13 report,
+results and measurement implementation remain unchanged.
+
+Source review found no material correctness defect. Generation retains its
+original-job validation followed by a separately imported computed rendering
+view, including overlay conflicts, exact-class absence conflicts and raw
+comments. Reused dependency and naming indexes borrow their corresponding
+immutable graph. `Graph::validate` reads the current public node map, so adding
+or removing nodes cannot leave a stale ID cache. Class-property unions include
+overlays and count null as a stored getter. Schema, native-name/hook, unsupported
+feature and late-output rejection responsibilities remain in place; complete
+generation still precedes filesystem writes.
+
+The partial cache stores parsed file syntax within one generation. Each output
+gets fresh definitions, frames, locals, iteration/switch state and recursion
+depth. Inline definitions are checked before the file cache, and definitions
+are collected again on every partial encounter, including cached entries.
+Template path and canonical-root checks remain on file loading. Independent
+render/generation calls own separate caches and observe changed files or roots.
+Review requested stronger prepared-path regression coverage for nested forward
+definitions, repeated cached definition registration, separate roots,
+copyright, iteration and switches; `ec381af93` supplies those cases. This was a
+coverage improvement, not a discovered production bug.
+
+Independent correctness verification passed:
+
+- The live template oracle checked all 315 installed/source template identities
+  and all 41 JVM render-request/output pairs. Forty-seven focused Rust tests
+  passed: 15 whole-file generation, eight native-name, 20 template-runtime and
+  four whitespace tests. The final three prepared-renderer unit tests also
+  passed independently. The implementation's full 102-test suite, formatting
+  and strict all-target Clippy had passed before the two additional prepared
+  regressions; final formatting and Clippy passed afterward.
+- The complete live frontend-adapter oracle passed default/custom and both
+  upstream documentation baselines, covering 90 baseline files, plus all 23
+  mutations. It compared complete paths, bytes, source sets and model facts,
+  repeated generation and retained captures, and compiled and ran strict C++17
+  consumers against library and Java-free CLI output.
+- Eighteen additional CLI probes passed. They covered cached inline-definition
+  re-registration, nested inactive forward definitions, two roots and changed
+  files, traversal/symlink/recursion rejection, unsupported request versions,
+  malformed absence entries, different-class independence, overlay-created
+  null getters and same-class cross-node stored null/string/false getters.
+  Every rejected probe preserved an existing output. The final four harness
+  tests passed, including binary/options selection and invalid-output gates.
+
+The operation-count instrumentation is separate from the timed binaries. Its
+recorded historical script and instrumented executable hashes match the actual
+artifacts. For successful baseline imports, each absence query must exhaust
+the node map because any matching getter returns an error; the recorded
+`node count × absent-name count` sum therefore correctly counts graph-import
+absence-node probes. The 10/100-struct counts of 39/219 imports also equal
+38/218 emitted files plus initial preparation. The report correctly limits
+these probes to import absence validation and makes no sampled bottleneck or
+time-attribution claim.
+
+Independent measurement and report verification passed:
+
+- The saved seeded schedule contains exactly 112 attempts: eight JVM/optimized
+  pairs for each of six workloads, three baseline samples for the first five,
+  and one capped baseline 500-struct pilot. Each workload has four JVM-first
+  and four optimized-first pairs. All 118 destinations, including the six
+  reference preflights, are unique; argv selects the intended raw-LIME
+  compiler, inputs, options and template root. Preflights are excluded from
+  sample statistics.
+- Review independently rehashed all 117 completed output trees and 28,786
+  files. All six preflights and 111 completed samples match their full JVM
+  reference inventories, including common/export files. The five previously
+  completed workloads also match M13's inventories, and all six input hashes
+  match M13. The committed raw result is byte-identical to the original run.
+- All 306 scalar wall/CPU/RSS statistics and eleven wall-median ratios were
+  recomputed independently, including interpolated quartiles. All displayed
+  wall, CPU and RSS table cells agree at their stated rounding precision.
+  Before/after identities are equal and match actual binaries, Java, jars,
+  templates, inputs/options, harness and supervisor artifacts. No invocation
+  has a JVM logging initialization failure or unreported harness failure.
+- The sole incomplete attempt is baseline Rust at 500 structs, killed by
+  signal 9 after 60.008794850 seconds, with no output tree. It remains in the
+  raw record and supplies neither a parity result nor a numeric baseline
+  speed ratio. Supervisor failure diagnostics are retained by the harness.
+
+The reported objective is met for these workloads: current-host baseline to
+optimized medians are 20.844 to 0.089 seconds at 100 structs and 44.499 to
+0.157 seconds at 125 structs; optimized 500 structs completes at a 1.296-second
+median with JVM-equivalent output. Small fixtures and CPU/RSS results remain
+visible. The report preserves the unequal three/eight sample counts, shared
+host variation, synthetic workload limits, tmpfs buffered-write boundary and
+broader JVM validation obligations. Fresh processes do not establish warmed
+API behavior, asymptotic bounds, statistical significance, language/runtime
+overhead or full compiler compatibility. No reported material finding remains
+unresolved within the bounded M14 contract.
