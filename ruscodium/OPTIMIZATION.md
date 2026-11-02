@@ -2,6 +2,31 @@
 
 The optimized Rust generator completed all six workloads and matched the JVM output inventories. On 100 structs, the same-host median fell from 20.844 s to 0.089 s (234.7×); on 125 structs it fell from 44.499 s to 0.157 s (283.2×). The optimized 500-struct median was 1.296 s; the baseline hit its predeclared 60 s cap, so there is no baseline/optimized ratio for that workload. These are bounded observations on a shared host, not a general language benchmark.
 
+## Implementation and correctness checks
+
+Whole-file generation now shares prepared model graphs, C++ resolvers and
+dependency/path indexes across its output files. It validates the original
+model and computed rendering views at their existing boundaries, without
+cloning a whole-model render request for each file. Class-property indexes
+replace repeated scans during absence validation and derivation; reference
+validation queries the current graph directly.
+
+Parsed Mustache file partials are cached within a generation. Each output
+still gets fresh variables, inline definitions, iteration and switch state.
+Inline definitions retain precedence over cached file partials, and separate
+generation calls have independent template caches. Production templates,
+request schemas and the admitted feature set are unchanged.
+
+The 102-test Rust suite passed after the implementation, followed by two
+additional prepared-renderer regressions. Final formatting and strict
+all-target Clippy checks passed. Independent verification passed all 41 JVM
+template cases and the 315-template identity check, the live native-adapter
+model/output comparisons and 23 mutations, and strict C++ consumers through
+both library and Java-free CLI paths. Cache/root/definition isolation,
+overlay/null absence conflicts, malformed requests, recursion, symlink/path
+guards and rejected-output preservation also passed focused checks. The
+independent review is recorded in [REVIEW.md](REVIEW.md).
+
 ## Fresh-process wall time
 
 Each completed baseline has three samples; optimized Rust and JVM have eight each. Values are median [Q1, Q3] in seconds. Ratios divide the baseline or JVM median by the optimized median. Quartiles interpolate at `(n - 1) * p`; raw data also retain minima, maxima, CPU and RSS distributions.

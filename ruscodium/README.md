@@ -76,9 +76,14 @@ files across default/custom inputs and two isolated upstream documentation
 files, plus model facts and live source mutations. This is the dedicated M12
 adapter slice; the snapshot-driven CLI and preview emitter remain separate.
 
-The [performance experiment](PERFORMANCE.md) compares real Kotlin/JVM and
+The [original performance experiment](PERFORMANCE.md) compares real Kotlin/JVM and
 release Rust C++ pipelines with matched outputs, fresh-process runtime, CPU and
 peak RSS, plus a separate persistent-process API test. It records the native
 port's small-input advantage and poor larger-model scaling, with raw samples,
-reproduction steps and an independently reviewed method. These measurements
-cover the supported workloads rather than full compiler or language parity.
+reproduction steps and an independently reviewed method. The follow-up
+[optimization comparison](OPTIMIZATION.md) measures the original Rust binary,
+the optimized generator and Kotlin/JVM on the same host. The generator now
+shares prepared graphs and resolver indexes, indexes class properties and
+caches parsed Mustache templates with fresh state for each output file.
+Both experiments cover the supported workloads; complete compiler parity
+remains future work.
