@@ -402,3 +402,29 @@ fn render_help_is_discoverable() {
         assert!(String::from_utf8(output.stdout).unwrap().contains("render"));
     }
 }
+
+#[test]
+fn graph_absence_checks_include_overlays_and_live_node_updates() {
+    let snapshot = json!({"schema":"gluecodium.reference-model.snapshot","version":1,
+    "root":{"$ref":"a"},"nodes":[
+        {"id":"a","class":"A","properties":{}},
+        {"id":"b","class":"A","properties":{}},
+        {"id":"c","class":"B","properties":{"field":null}}
+    ]});
+    let absent = json!({"a":["field"]});
+    let mut graph = Graph::import_with_absences(Some(&snapshot), None, Some(&absent)).unwrap();
+    assert_eq!(graph.property(&json!({"$ref":"a"}), "field").unwrap(), None);
+    let overlay = json!({"b":{"field":null}});
+    assert!(
+        Graph::import_with_absences(Some(&snapshot), Some(&overlay), Some(&absent))
+            .unwrap_err()
+            .contains("conflicts")
+    );
+    graph.nodes.remove("b");
+    assert!(graph
+        .validate(&json!({"$ref":"b"}))
+        .unwrap_err()
+        .contains("dangling"));
+    graph.nodes.insert("new".into(), graph.nodes["a"].clone());
+    assert!(graph.validate(&json!({"$ref":"new"})).is_ok());
+}

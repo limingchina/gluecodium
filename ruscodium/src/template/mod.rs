@@ -12,6 +12,7 @@ use std::{
     collections::BTreeMap,
     fs,
     path::{Component, Path, PathBuf},
+    rc::Rc,
 };
 
 const MAX_OUTPUT: usize = 16 * 1024 * 1024;
@@ -22,39 +23,17 @@ pub fn render(root: impl AsRef<Path>, request: &Value) -> Result<String, String>
     render_impl(root.as_ref(), request, None)
 }
 
-/// Render with the generator's global copyright resolver. `Some(null)` represents
-/// the upstream resolver configured with no copyright header.
-pub(crate) fn render_with_copyright(
-    root: &Path,
-    request: &Value,
-    copyright: Value,
-    raw_comments: Option<&Value>,
-) -> Result<String, String> {
-    render_impl_with_raw(root, request, Some(copyright), raw_comments)
-}
-
 fn render_impl(root: &Path, request: &Value, copyright: Option<Value>) -> Result<String, String> {
-    render_impl_with_raw(root, request, copyright, None)
-}
-fn render_impl_with_raw(
-    root: &Path,
-    request: &Value,
-    copyright: Option<Value>,
-    raw_comments: Option<&Value>,
-) -> Result<String, String> {
     if request.get("schema").and_then(Value::as_str) != Some("gluecodium.template.render-request")
         || request.get("version").and_then(Value::as_u64) != Some(1)
     {
         return Err("unsupported render request schema or version".into());
     }
-    let mut graph = Graph::import_with_absences(
+    let graph = Graph::import_with_absences(
         request.get("snapshot"),
         request.get("property_overlays"),
         request.get("absent_properties"),
     )?;
-    if let Some(raw) = raw_comments {
-        graph.attach_raw_comments(raw)?;
-    }
     let data = request
         .get("data")
         .ok_or("render request has no data")?
@@ -103,14 +82,16 @@ fn render_impl_with_raw(
         .get("template")
         .and_then(Value::as_str)
         .ok_or("render request has no template name")?;
+    let mut cache = BTreeMap::new();
     let mut engine = Engine {
-        root,
-        graph,
-        hooks,
-        native_cpp,
+        root: &root,
+        graph: &graph,
+        hooks: &hooks,
+        native_cpp: native_cpp.as_ref(),
         native_predicates,
         native_sorters,
-        copyright,
+        copyright: copyright.as_ref(),
+        cache: &mut cache,
         definitions: BTreeMap::new(),
         frames: vec![Frame {
             value: data,
@@ -120,6 +101,71 @@ fn render_impl_with_raw(
         switches: Vec::new(),
     };
     engine.partial(name)
+}
+
+/// State shared only by the files of one validated generation job.
+pub(crate) struct PreparedRenderer {
+    root: PathBuf,
+    graph: Graph,
+    native_cpp: native_cpp::NativeCppResolver,
+    native_predicates: bool,
+    native_sorters: bool,
+    copyright: Value,
+    hooks: Value,
+    cache: BTreeMap<String, Rc<Vec<Node>>>,
+}
+impl PreparedRenderer {
+    pub(crate) fn new(
+        root: &Path,
+        mut graph: Graph,
+        raw_comments: Option<&Value>,
+        config: native_cpp::NativeCppConfig,
+        copyright: Value,
+        first_data: &Value,
+    ) -> Result<Self, String> {
+        if let Some(raw) = raw_comments {
+            graph.attach_raw_comments(raw)?;
+        }
+        graph.validate(first_data)?;
+        let native_predicates = config.predicates;
+        let native_sorters = config.sorters;
+        let native_cpp = native_cpp::NativeCppResolver::new(&graph, config)?;
+        let root = fs::canonicalize(root).map_err(|e| format!("template root: {e}"))?;
+        if !root.is_dir() {
+            return Err("template root is not a directory".into());
+        }
+        Ok(Self {
+            root,
+            graph,
+            native_cpp,
+            native_predicates,
+            native_sorters,
+            copyright,
+            hooks: json!({}),
+            cache: BTreeMap::new(),
+        })
+    }
+    pub(crate) fn render(&mut self, name: &str, data: Value) -> Result<String, String> {
+        self.graph.validate(&data)?;
+        let mut engine = Engine {
+            root: &self.root,
+            graph: &self.graph,
+            hooks: &self.hooks,
+            native_cpp: Some(&self.native_cpp),
+            native_predicates: self.native_predicates,
+            native_sorters: self.native_sorters,
+            copyright: Some(&self.copyright),
+            cache: &mut self.cache,
+            definitions: BTreeMap::new(),
+            frames: vec![Frame {
+                value: data,
+                locals: Map::new(),
+            }],
+            depth: 0,
+            switches: Vec::new(),
+        };
+        engine.partial(name)
+    }
 }
 fn validate_hooks(graph: &Graph, hooks: &Value) -> Result<(), String> {
     let object = hooks.as_object().ok_or("hooks must be an object")?;
@@ -208,20 +254,21 @@ struct Frame {
     value: Value,
     locals: Map<String, Value>,
 }
-struct Engine {
-    root: PathBuf,
-    graph: Graph,
-    hooks: Value,
-    native_cpp: Option<native_cpp::NativeCppResolver>,
+struct Engine<'a> {
+    root: &'a Path,
+    graph: &'a Graph,
+    hooks: &'a Value,
+    native_cpp: Option<&'a native_cpp::NativeCppResolver>,
     native_predicates: bool,
     native_sorters: bool,
-    copyright: Option<Value>,
-    definitions: BTreeMap<String, Vec<Node>>,
+    copyright: Option<&'a Value>,
+    cache: &'a mut BTreeMap<String, Rc<Vec<Node>>>,
+    definitions: BTreeMap<String, Rc<Vec<Node>>>,
     frames: Vec<Frame>,
     depth: usize,
     switches: Vec<(Value, bool, bool)>,
 }
-impl Engine {
+impl Engine<'_> {
     fn partial(&mut self, name: &str) -> Result<String, String> {
         if self.depth >= MAX_DEPTH {
             return Err("template recursion limit exceeded".into());
@@ -230,6 +277,8 @@ impl Engine {
         let result = (|| {
             let nodes = if let Some(n) = self.definitions.get(name) {
                 n.clone()
+            } else if let Some(nodes) = self.cache.get(name) {
+                Rc::clone(nodes)
             } else {
                 let path = Path::new(name);
                 if name.is_empty()
@@ -243,12 +292,14 @@ impl Engine {
                 let file = self.root.join(format!("{name}.mustache"));
                 let canonical =
                     fs::canonicalize(&file).map_err(|e| format!("partial {name}: {e}"))?;
-                if !canonical.starts_with(&self.root) {
+                if !canonical.starts_with(self.root) {
                     return Err(format!("partial {name} escapes template root"));
                 }
                 let source =
                     fs::read_to_string(canonical).map_err(|e| format!("partial {name}: {e}"))?;
-                parse(name, &source)?
+                let nodes = Rc::new(parse(name, &source)?);
+                self.cache.insert(name.to_owned(), Rc::clone(&nodes));
+                nodes
             };
             self.collect_definitions(&nodes);
             self.nodes(&nodes)
@@ -260,7 +311,7 @@ impl Engine {
         for node in nodes {
             match node {
                 Node::Definition(name, body) => {
-                    self.definitions.insert(name.clone(), body.clone());
+                    self.definitions.insert(name.clone(), Rc::new(body.clone()));
                     self.collect_definitions(body);
                 }
                 Node::Section { body, .. } => self.collect_definitions(body),
@@ -319,7 +370,7 @@ impl Engine {
     }
     fn lookup(&self, path: &str) -> Result<Value, String> {
         if path == "copyrightHeader" {
-            if let Some(value) = &self.copyright {
+            if let Some(value) = self.copyright {
                 return Ok(value.clone());
             }
         }
@@ -433,7 +484,7 @@ impl Engine {
         };
         if let Some(native) = &self.native_cpp {
             return native
-                .resolve(&self.graph, &resolver, &mode, &receiver)
+                .resolve(self.graph, &resolver, &mode, &receiver)
                 .map(|result| result.map(Value::String).unwrap_or(Value::Null));
         }
         if receiver.is_null() {
@@ -466,7 +517,7 @@ impl Engine {
     }
     fn predicate(&self, name: &str, receiver: &Value) -> Result<bool, String> {
         if self.native_predicates {
-            return native_controls::predicate(&self.graph, name, receiver);
+            return native_controls::predicate(self.graph, name, receiver);
         }
         self.hook(
             "predicates",
@@ -829,7 +880,7 @@ impl Engine {
                     .collect();
                 let sorter = self.hash(&e, "sorter", "")?;
                 let sorted = if self.native_sorters {
-                    Value::Array(native_controls::sort(&self.graph, &sorter, &values)?)
+                    Value::Array(native_controls::sort(self.graph, &sorter, &values)?)
                 } else {
                     self.hook(
                         "sorters",
@@ -1034,4 +1085,79 @@ fn indent_lines(value: &str, indent: &str) -> Result<String, String> {
         append_checked(&mut out, line)?;
     }
     Ok(out)
+}
+
+#[cfg(test)]
+mod prepared_tests {
+    use super::*;
+    use std::sync::atomic::{AtomicUsize, Ordering};
+
+    static NEXT: AtomicUsize = AtomicUsize::new(0);
+
+    #[test]
+    fn cached_partials_preserve_definitions_and_isolate_each_render() {
+        let root = std::env::temp_dir().join(format!(
+            "ruscodium-prepared-{}-{}",
+            std::process::id(),
+            NEXT.fetch_add(1, Ordering::Relaxed)
+        ));
+        fs::create_dir_all(&root).unwrap();
+        for (name, source) in [
+            ("disk", "disk-{{name}}"),
+            ("redefine", "{{+disk}}inline-{{name}}{{/disk}}"),
+            (
+                "first",
+                "{{>disk}}/{{>redefine}}{{>disk}}/{{#set name='local'}}{{>disk}}{{/set}}",
+            ),
+            ("second", "{{>disk}}/{{name}}"),
+        ] {
+            fs::write(root.join(format!("{name}.mustache")), source).unwrap();
+        }
+        let config = native_cpp::NativeCppConfig::default();
+        let mut prepared = PreparedRenderer::new(
+            &root,
+            Graph::default(),
+            None,
+            config.clone(),
+            Value::Null,
+            &json!({}),
+        )
+        .unwrap();
+        for (name, data) in [
+            ("first", json!({"name":"A"})),
+            ("second", json!({"name":"B"})),
+            ("first", json!({"name":"C"})),
+        ] {
+            let request = json!({"schema":"gluecodium.template.render-request","version":1,"template":name,"data":data,"native_cpp":{}});
+            let expected = render(&root, &request).unwrap();
+            assert_eq!(prepared.render(name, data).unwrap(), expected);
+        }
+        assert_eq!(
+            prepared.render("first", json!({"name":"A"})).unwrap(),
+            "disk-A/inline-A/inline-local"
+        );
+        assert_eq!(
+            prepared.render("second", json!({"name":"B"})).unwrap(),
+            "disk-B/B"
+        );
+        fs::write(root.join("disk.mustache"), "changed-{{name}}").unwrap();
+        assert_eq!(
+            prepared.render("second", json!({"name":"B"})).unwrap(),
+            "disk-B/B"
+        );
+        let mut another = PreparedRenderer::new(
+            &root,
+            Graph::default(),
+            None,
+            config,
+            Value::Null,
+            &json!({}),
+        )
+        .unwrap();
+        assert_eq!(
+            another.render("second", json!({"name":"B"})).unwrap(),
+            "changed-B/B"
+        );
+        fs::remove_dir_all(root).unwrap();
+    }
 }

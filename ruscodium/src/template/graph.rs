@@ -87,6 +87,7 @@ impl Graph {
             }
         }
         if let Some(absences) = absences {
+            let properties = graph.class_properties();
             for (id, names) in absences
                 .as_object()
                 .ok_or("absent_properties must be an object")?
@@ -107,9 +108,10 @@ impl Graph {
                     if !set.insert(name.to_string()) {
                         return Err(format!("duplicate absent property {name} on {id}"));
                     }
-                    if graph.nodes.values().any(|other| {
-                        other.class == node.class && other.properties.contains_key(name)
-                    }) {
+                    if properties
+                        .get(node.class.as_str())
+                        .is_some_and(|names| names.contains(name))
+                    {
                         return Err(format!(
                             "absent property {name} conflicts with stored property on class {}",
                             node.class
@@ -119,26 +121,35 @@ impl Graph {
                 graph.absent.insert(id.clone(), set);
             }
         }
-        let ids: BTreeSet<_> = graph.nodes.keys().cloned().collect();
         if let Some(root) = &graph.root {
-            validate_value(root, &ids, 0)?;
+            validate_value(root, &graph.nodes, 0)?;
             if reference(root).is_none() {
                 return Err("snapshot root must be a reference".into());
             }
         }
         for n in graph.nodes.values() {
             for v in n.properties.values() {
-                validate_value(v, &ids, 0)?;
+                validate_value(v, &graph.nodes, 0)?;
             }
         }
         Ok(graph)
+    }
+    pub(crate) fn class_properties(&self) -> BTreeMap<String, BTreeSet<String>> {
+        let mut classes: BTreeMap<String, BTreeSet<String>> = BTreeMap::new();
+        for node in self.nodes.values() {
+            classes
+                .entry(node.class.clone())
+                .or_default()
+                .extend(node.properties.keys().cloned());
+        }
+        classes
     }
     pub(crate) fn attach_raw_comments(&mut self, raw: &Value) -> Result<(), String> {
         self.raw_comments = Some(super::native_comments::import(self, raw)?);
         Ok(())
     }
     pub fn validate(&self, value: &Value) -> Result<(), String> {
-        validate_value(value, &self.nodes.keys().cloned().collect(), 0)
+        validate_value(value, &self.nodes, 0)
     }
     pub fn property(&self, value: &Value, key: &str) -> Result<Option<Value>, String> {
         if let Some(id) = reference(value) {
@@ -294,7 +305,11 @@ pub fn reference(v: &Value) -> Option<&str> {
         None
     }
 }
-fn validate_value(v: &Value, ids: &BTreeSet<String>, depth: usize) -> Result<(), String> {
+fn validate_value(
+    v: &Value,
+    nodes: &BTreeMap<String, ModelNode>,
+    depth: usize,
+) -> Result<(), String> {
     if depth > 128 {
         return Err("graph value nesting limit exceeded".into());
     }
@@ -305,18 +320,18 @@ fn validate_value(v: &Value, ids: &BTreeSet<String>, depth: usize) -> Result<(),
             }
             if m.contains_key("$ref") {
                 let id = reference(v).ok_or("invalid reference object")?;
-                if !ids.contains(id) {
+                if !nodes.contains_key(id) {
                     return Err(format!("dangling reference {id}"));
                 }
             } else {
                 for v in m.values() {
-                    validate_value(v, ids, depth + 1)?;
+                    validate_value(v, nodes, depth + 1)?;
                 }
             }
         }
         Value::Array(a) => {
             for v in a {
-                validate_value(v, ids, depth + 1)?;
+                validate_value(v, nodes, depth + 1)?;
             }
         }
         _ => {}

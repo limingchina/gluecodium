@@ -1186,6 +1186,17 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
         "iter",
         "constructorComment",
     ];
+    let mut class_properties: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
+    for node in &b.nodes {
+        let class = node["class"].as_str().unwrap();
+        class_properties.entry(class).or_default().extend(
+            node["properties"]
+                .as_object()
+                .unwrap()
+                .keys()
+                .map(String::as_str),
+        );
+    }
     for n in &b.nodes {
         let kind = n["class"].as_str().unwrap().rsplit('.').next().unwrap();
         if matches!(
@@ -1196,9 +1207,8 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
         }
         let mut absent = Vec::new();
         for name in absence_names {
-            if !b.nodes.iter().any(|other| {
-                other["class"] == n["class"] && other["properties"].get(name).is_some()
-            }) && !(kind == "LimeFieldConstructor" && name == "struct")
+            if !class_properties[n["class"].as_str().unwrap()].contains(name)
+                && !(kind == "LimeFieldConstructor" && name == "struct")
             {
                 absent.push(name);
             }

@@ -87,12 +87,12 @@ pub fn resolve(
 }
 
 /// A resolver with an index of actual named nodes from one graph.
-pub(super) struct NativeCppResolver {
+pub(crate) struct NativeCppResolver {
     config: NativeCppConfig,
     parents: BTreeMap<ModelPath, Vec<String>>,
 }
 impl NativeCppResolver {
-    pub(super) fn new(graph: &Graph, config: NativeCppConfig) -> Result<Self, String> {
+    pub(crate) fn new(graph: &Graph, config: NativeCppConfig) -> Result<Self, String> {
         let mut parents: BTreeMap<ModelPath, Vec<String>> = BTreeMap::new();
         let empty = BTreeMap::new();
         let ctx = Resolver {
@@ -132,7 +132,7 @@ impl NativeCppResolver {
         }
         Ok(Self { config, parents })
     }
-    pub(super) fn resolve(
+    pub(crate) fn resolve(
         &self,
         graph: &Graph,
         selector: &str,

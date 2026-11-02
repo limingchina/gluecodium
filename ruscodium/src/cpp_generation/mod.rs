@@ -295,6 +295,7 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
     let absence_map = absences
         .as_object_mut()
         .ok_or("invalid absent_properties")?;
+    let class_properties = graph.class_properties();
     for (id, node) in &graph.nodes {
         if node
             .class
@@ -303,10 +304,7 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             let entry = absence_map.entry(id).or_insert_with(|| json!([]));
             let values = entry.as_array_mut().ok_or("invalid absent property list")?;
             for name in ["contentTemplate", "cppRef", "cppNoexcept", "parentName"] {
-                if !graph
-                    .nodes
-                    .values()
-                    .any(|n| n.class == node.class && n.properties.contains_key(name))
+                if !class_properties[&node.class].contains(name)
                     && !values.iter().any(|v| v == name)
                 {
                     values.push(json!(name));
@@ -314,15 +312,26 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             }
         }
     }
-    let render = |name: &str, data: Value| -> Result<String, String> {
-        let req = json!({"schema":"gluecodium.template.render-request", "version":1, "template":name, "snapshot":job.snapshot, "property_overlays":overlays, "absent_properties":absences, "data":data, "native_cpp":{"root_namespace":config.root_namespace,"internal_namespace":config.internal_namespace,"predicates":true,"sorters":true}});
-        template::render_with_copyright(
-            templates.as_ref(),
-            &req,
-            json!(job.options.copyright_header),
-            job.raw_comments.as_ref(),
-        )
+    let mut renderer = None;
+    let mut render = |name: &str, data: Value| -> Result<String, String> {
+        if renderer.is_none() {
+            let render_graph =
+                Graph::import_with_absences(Some(&job.snapshot), Some(&overlays), Some(&absences))?;
+            renderer = Some(template::PreparedRenderer::new(
+                templates.as_ref(),
+                render_graph,
+                job.raw_comments.as_ref(),
+                config.clone(),
+                json!(job.options.copyright_header),
+                &data,
+            )?);
+        }
+        renderer
+            .as_mut()
+            .expect("renderer initialized")
+            .render(name, data)
     };
+    let mut collection = None;
     for element in roots {
         let kind = class(&graph, &element)?;
         let content = match kind {
@@ -333,8 +342,12 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             "LimeLambda" => "cpp/CppLambda",
             _ => return Err(format!("unsupported generation root {kind}")),
         };
-        let filename = collect::output_file_path(&graph, &config, &element)?;
-        let imports = collect::collect(&graph, &config, &element)?;
+        if collection.is_none() {
+            collection = Some(collect::Context::new(&graph, &config)?);
+        }
+        let context = collection.as_ref().expect("collector initialized");
+        let filename = context.output(&element)?;
+        let imports = collect::collect(context, &element)?;
         let path = field(&graph, &element, "path")?;
         let mut namespace = job.options.root_namespace.clone();
         namespace.extend(
@@ -1361,11 +1374,24 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
         predicates: true,
         sorters: true,
     };
+    let mut resolver = None;
+    let mut resolve = |mode: &str, value: &Value| {
+        if resolver.is_none() {
+            resolver = Some(template::native_cpp::NativeCppResolver::new(
+                graph,
+                config.clone(),
+            )?);
+        }
+        resolver
+            .as_ref()
+            .expect("resolver initialized")
+            .resolve(graph, "", mode, value)
+    };
     for (id, node) in &graph.nodes {
         let kind = node.class.rsplit('.').next().unwrap_or("");
         if matches!(kind, "LimeValue$Literal" | "LimeValue$Null") {
             let value = json!({"$ref":id});
-            template::native_cpp::resolve(graph, &config, "", "name", &value)?;
+            resolve("name", &value)?;
             if kind == "LimeValue$Literal" {
                 validate_literal(graph, &value)?;
             }
@@ -1376,8 +1402,7 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
         let this = json!({"$ref":id});
         let mut names = BTreeSet::new();
         for function in array(graph, &this, "functions")? {
-            let name = template::native_cpp::resolve(graph, &config, "", "name", &function)?
-                .ok_or("missing function name")?;
+            let name = resolve("name", &function)?.ok_or("missing function name")?;
             if !names.insert(name.clone()) {
                 return Err(format!("C++ overloads unsupported: {name}"));
             }
@@ -1387,8 +1412,7 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
                 if field(graph, &property, mode)?.is_null() {
                     continue;
                 }
-                let name = template::native_cpp::resolve(graph, &config, "", mode, &property)?
-                    .ok_or("missing accessor name")?;
+                let name = resolve(mode, &property)?.ok_or("missing accessor name")?;
                 if !names.insert(name.clone()) {
                     return Err(format!("C++ overloads unsupported: {name}"));
                 }

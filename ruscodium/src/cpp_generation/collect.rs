@@ -1,10 +1,13 @@
 //! Dependency collection for the guarded native C++ generator.
 use crate::template::{
-    native_cpp::{self, NativeCppConfig},
+    native_cpp::{NativeCppConfig, NativeCppResolver},
     Graph,
 };
 use serde_json::{json, Value};
-use std::collections::{BTreeMap, BTreeSet};
+use std::{
+    cell::RefCell,
+    collections::{BTreeMap, BTreeSet},
+};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(super) struct Include {
@@ -57,17 +60,19 @@ impl ModelPath {
         p
     }
 }
-struct Context<'a> {
+pub(super) struct Context<'a> {
     graph: &'a Graph,
     config: &'a NativeCppConfig,
     paths: BTreeMap<ModelPath, Vec<Value>>,
+    resolver: RefCell<Option<NativeCppResolver>>,
 }
 impl<'a> Context<'a> {
-    fn new(graph: &'a Graph, config: &'a NativeCppConfig) -> Result<Self, String> {
+    pub(super) fn new(graph: &'a Graph, config: &'a NativeCppConfig) -> Result<Self, String> {
         let mut c = Self {
             graph,
             config,
             paths: BTreeMap::new(),
+            resolver: RefCell::new(None),
         };
         for (id, n) in &graph.nodes {
             if n.properties.contains_key("path")
@@ -135,10 +140,17 @@ impl<'a> Context<'a> {
         }
     }
     fn name(&self, v: &Value) -> Result<String, String> {
-        native_cpp::resolve(self.graph, self.config, "C++", "name", v)?
+        let mut resolver = self.resolver.borrow_mut();
+        if resolver.is_none() {
+            *resolver = Some(NativeCppResolver::new(self.graph, self.config.clone())?);
+        }
+        resolver
+            .as_ref()
+            .expect("resolver initialized")
+            .resolve(self.graph, "C++", "name", v)?
             .ok_or_else(|| "missing native C++ name".into())
     }
-    fn output(&self, v: &Value) -> Result<String, String> {
+    pub(super) fn output(&self, v: &Value) -> Result<String, String> {
         let root = self.root(v)?;
         let p = self.path(&root)?;
         let name = self.name(&root)?;
@@ -466,19 +478,7 @@ impl<'a> Context<'a> {
     }
 }
 
-pub(super) fn output_file_path(
-    graph: &Graph,
-    config: &NativeCppConfig,
-    root: &Value,
-) -> Result<String, String> {
-    Context::new(graph, config)?.output(root)
-}
-pub(super) fn collect(
-    graph: &Graph,
-    config: &NativeCppConfig,
-    root: &Value,
-) -> Result<Collected, String> {
-    let c = Context::new(graph, config)?;
+pub(super) fn collect(c: &Context<'_>, root: &Value) -> Result<Collected, String> {
     let mut types = vec![];
     c.types(root, &mut types, &mut BTreeSet::new())?;
     let refs = c.refs(&types)?;
@@ -577,7 +577,7 @@ pub(super) fn collect(
     Ok(Collected {
         header_includes: header.into_iter().collect(),
         implementation_includes: implementation.into_iter().collect(),
-        forward_declarations: Value::Array(groups(&c, &candidates, 0)?),
+        forward_declarations: Value::Array(groups(c, &candidates, 0)?),
     })
 }
 
@@ -616,7 +616,7 @@ mod tests {
                 .unwrap()
             {
                 let path = c.output(&root).unwrap();
-                let result = collect(&graph, &config, &root).unwrap();
+                let result = collect(&c, &root).unwrap();
                 let expected = |kind: &str| -> Option<Vec<Include>> {
                     let (dir, ext) = if kind == "header" {
                         ("include", "h")
