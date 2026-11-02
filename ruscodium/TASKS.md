@@ -616,6 +616,67 @@ corrected results, chart, independent review and verification were pushed
 through `bb6fa7f59` to `origin/ruscodium/rust-port`; this checklist records that
 confirmed publication.
 
+## M14: remove repeated generation preparation
+
+Execute [the M14 contract](PLAN.md#m14-remove-repeated-generation-preparation--planned-bounded-optimization)
+from baseline `15b1db4c4`, preserving the current guarded subset and all
+315 production templates. Sol 6.1 max plans, Terra 6.1 xhigh implements and
+Sol 6.1 xhigh independently reviews. Keep M13 evidence intact and all new
+work under `ruscodium/` on `ruscodium/rust-port`.
+
+- [x] Inspect graph import, class-property absence derivation, template loading,
+  native resolver construction and dependency-collection indexes; define this
+  bounded contract and checklist before implementation.
+- [ ] Commit the M14 plan/checklist before implementation.
+- [ ] Confirm repeated preparation with a bounded profile or temporary
+  phase/count instrumentation; record source/commands and keep those runs
+  outside final timing evidence.
+- [ ] Prepare validated graph/raw comments/computed views and native resolver
+  per generation, sharing read-only state with fresh per-file engines rather
+  than rebuilding graph-sized render requests; preserve preparation order.
+- [ ] Reuse dependency/path indexes and its native name resolver where practical
+  without conflating original-model and computed rendering views.
+- [ ] Build class-property-name unions once per relevant view in graph import,
+  adapter and generation absence derivation, preserving overlay/null/same-class
+  conflict rules, unknown IDs, duplicate names and node-specific absences.
+- [ ] Cache lazy immutable file-partial syntax within a generation, preserving
+  dynamic inline-definition precedence, collection/redefinition semantics,
+  standalone calls, template-root checks and independent-call file freshness.
+- [ ] Remove large snapshot/AST clones required by these paths where practical;
+  retain schemas, hooks, validators, error boundaries and all supported features.
+- [ ] Add regressions for cross-file and cross-job state isolation, changed
+  templates/roots, inline-over-cached-file shadowing, forward/nested/later
+  definitions and repeated calls; preserve whitespace and recursion/output limits.
+- [ ] Add absence-index regressions for another same-class node's stored getter,
+  overlay-created/null getter, different classes and malformed absence entries;
+  retain rejected-job stdout/output preservation and path/symlink guards.
+- [ ] Pass formatting, offline all-target Clippy with warnings denied and Rust
+  tests; verify all 41 JVM template pairs and 315 unchanged templates, retained
+  whole-file/documentation goldens and native adapter/model/mutation/C++ checks.
+- [ ] Build separate baseline `15b1db4c4` and optimized release binaries; record
+  identities and use the same host, actual raw-LIME pipeline, options, templates,
+  output filesystem, JVM distribution and fresh-process measurement boundary.
+- [ ] Save the seeded schedule before timing: three baseline Rust samples for
+  each completed custom/default/10/100/125 case, eight optimized/JVM pairs for
+  all six cases, one baseline 500 attempt, and a 60-second cap on every run.
+- [ ] Establish six untimed JVM workload equivalence preflights, retain all
+  attempts and verify every completed output against complete
+  JVM inventories/exact bytes outside timers, including common/export files;
+  preserve baseline 500 timeout evidence without a censored speed ratio.
+- [ ] Publish new raw results, reproduction instructions and `OPTIMIZATION.md`
+  with wall/CPU/RSS counts/distributions, baseline/optimized medians, all six
+  workloads, failures, environment limits and bounded compatibility claims.
+- [ ] Obtain independent Sol 6.1 xhigh review of code, regressions and evidence;
+  resolve material findings and rerun affected checks only as needed.
+- [ ] Update plan/tasks/review and usage documentation, commit tested logical
+  increments and publish within the user's existing authorization.
+
+The current code inspection supplies concrete hypotheses, not measured
+bottleneck percentages. The performance objective is lower 100/125-struct
+cost and a completed parity-passing optimized 500-struct run. Record any
+remaining limits honestly; M13's historical 60-second timeout has no completed
+baseline parity or numeric speed ratio, and broader port parity remains open.
+
 ## Deferred full-parity work
 
 - [ ] Complete every upstream semantic validator, filters/tags, documentation

@@ -1283,6 +1283,132 @@ claim full compiler compatibility. Complete canonical/frontend validation,
 all-feature C++ and platform parity, further performance work and migration/
 cutover policy remain open in the roadmap below.
 
+### M14: remove repeated generation preparation — planned bounded optimization
+
+The user requested optimization after M13 measured native medians of 21.018
+seconds for 100 structs and 33.096 seconds for 125 structs, with the native
+500-struct pilot reaching its 60-second limit. The optimization baseline is
+`15b1db4c4` on `ruscodium/rust-port`. Retain M13's report, charts and raw results
+as immutable historical evidence; put new measurements and conclusions in a
+separate [optimization report](OPTIMIZATION.md) and new result files under
+`tools/performance/`. Keep every change under `ruscodium/` and preserve the
+315 original production templates. Roles remain Sol 6.1 max planning, Terra
+6.1 xhigh implementation and Sol 6.1 xhigh independent review. Commit this
+contract and its checklist before implementation.
+
+#### Diagnose and change the repeated work
+
+Code inspection identifies specific scaling candidates, rather than an
+established profile: `cpp_generation::generate` builds a whole render request
+and imports/validates its graph for every emitted file; each render constructs
+a native C++ resolver; `Graph::import_with_absences`, `cpp_adapter::build_job`
+and generation's derived absences scan all same-class nodes repeatedly; and
+`Engine::partial` reads and parses each file partial on every invocation.
+Dependency collection also rebuilds graph indexes, and its calls to the public
+native name resolver build an index for each lookup. First confirm these paths
+with a bounded profile or temporary phase/count instrumentation on admitted
+struct workloads. Record the command, source and observations; keep instrumented
+runs separate from final timings and avoid unsupported bottleneck percentages.
+
+Implement the following focused changes, preserving the admitted feature set:
+
+1. Prepare a validated, read-only rendering graph and native C++ resolver once
+   per whole-file generation job. Complete original-job validation, computed
+   overlays, derived absences and raw-comment attachment in the existing logical
+   order before finalizing rendering state. A bounded number of preparation
+   graphs is acceptable where original and computed views differ; graph imports
+   and resolver construction must no longer scale with emitted file count.
+   Borrow this state from fresh per-file engines instead of cloning snapshots
+   into synthetic render-request JSON. Reuse generation-scoped dependency/path
+   indexes and its name resolver where practical, keeping the original-model
+   collection view distinct from the derived rendering view when required.
+2. Replace repeated whole-node absence queries with a class-to-property-name
+   union built once per relevant model view. Include overlays in the union at
+   the same stage as the existing importer. Preserve the rule that an absent
+   getter cannot hide a stored getter on any node of the same exact class;
+   null values still count as stored properties. Keep node-specific absence
+   sets and existing unknown-ID, duplicate-name and conflict rejection.
+3. Cache immutable parsed Mustache syntax trees for file partials within one
+   generation. Load lazily, preserve path/symlink checks and parser preflight,
+   and keep independent calls able to observe changed files or template roots.
+   Cache syntax only: dynamic inline definitions must still take precedence
+   over disk partials and be collected with current forward-reference and
+   redefinition semantics on each encounter. Each output starts with fresh
+   definitions, frames/locals, iteration metadata, switch state, recursion
+   depth and output accounting. Do not cache rendered text or request data.
+4. Use borrowing or shared immutable syntax ownership to avoid large graph or
+   AST clones when needed by these changes. Defer unrelated representation,
+   parser, frontend, validator, CLI and dependency rewrites. Retain the public
+   standalone render request contract, native-name/hook restrictions and
+   generation job schema versions; any prepared renderer remains an internal
+   path reached only after the existing validation responsibilities succeed.
+
+#### Regression and compatibility acceptance
+
+Add targeted tests for the new reuse boundary: multiple files with different
+data/locals and inline definitions must agree with independent fresh renders;
+inline definitions must shadow an already cached disk partial and later
+definitions must replace earlier ones without leaking into another file/job.
+Cover forward definitions, nested partial definitions, repeated partial calls,
+independent calls with changed templates and two roots with the same partial
+name. Keep existing exact whitespace, recursion/output limits and symlink/path
+guards. Test same-class cross-node absence conflicts, overlay-introduced
+getters (including null), different-class independence and malformed absence
+entries so the faster index cannot weaken validation. Do not use timing
+thresholds in Rust tests; bounded operation counts can substantiate reuse.
+
+Run formatting, offline all-target Clippy with warnings denied and the Rust
+suite. Re-run the template oracle's 41 JVM pairs and 315-template identity
+check, retained whole-file/documentation goldens and the native frontend adapter
+oracle, including its real-input/model comparisons, admitted mutations,
+determinism, C++ consumers and rejected-input output-preservation checks.
+Reuse existing oracle tooling rather than expanding the supported subset to
+make a workload pass. Review prepared-path error handling and late-file
+failures: generation still completes in memory before writes, and existing
+outputs and stdout remain intact on rejected jobs. Exact byte parity on these
+cases remains bounded evidence, not full C++ or frontend parity.
+
+#### Bounded before/after measurement
+
+Measure rebuilt release binaries for both `15b1db4c4` and the optimized source
+in the same current environment with the actual JVM compiler as a third side.
+Reuse M13's custom fixture, corrected default copy and deterministic
+10/100/125/500 independent one-field-struct workloads, identical explicit
+options and unchanged templates. The native timing path remains raw-LIME
+`compile-cpp` through complete writes; builds, source preparation, logging setup,
+profiling and output verification stay outside timers. Use fresh destinations,
+the reviewed native supervisor, writable JVM homes, warm filesystem caches and
+sequential fresh processes. Record source/dirty state, binaries, jars,
+toolchains, environment, argv, inputs/options/templates and complete output
+inventories/hashes for every side.
+
+Predeclare and save a seeded randomized schedule before timed invocations:
+three baseline Rust samples each for custom, corrected default and
+10/100/125 structs; eight optimized-Rust/JVM pairs for all six workloads; and
+one baseline Rust 500-struct attempt capped at 60 seconds. Every invocation
+has the same 60-second cap. Establish six untimed JVM equivalence preflights
+for the workload baselines before admitting optimized timing comparisons.
+Retain every unsuccessful or mismatched attempt;
+do not select workloads by favorable timings or silently replace failed
+samples. Verify all completed output trees outside timers against complete
+JVM file inventories and exact bytes, including common/export files; baseline
+500 is censored unless it completes and passes the same gate. Report wall,
+CPU and peak RSS distributions/counts and actual before/after medians for
+completed cases, with explicit unequal baseline sample counts. A timed-out
+baseline supplies its elapsed limit, never a numeric baseline speed ratio.
+
+The desired outcome is a clear reduction at 100/125 structs and completion of
+the optimized 500-struct workload with exact JVM output. Report measured
+results even if that outcome is not achieved; do not infer asymptotic bounds
+or statistical significance from these few scales. Small-fixture results and
+memory costs remain visible. The M13 persistent API experiment is separate;
+do not attribute fresh-process gains to JIT behavior or promise a warmed API
+improvement without new evidence. Obtain independent review of source,
+regressions and reproducible measurements, resolve material findings, update
+this checklist and documentation, then commit and publish within the user's
+existing authorization. Broader compatibility and further optimization remain
+open in the roadmap.
+
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
 Extend M10's snapshot-driven C++ generation and M11's bounded documentation
