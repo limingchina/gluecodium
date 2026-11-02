@@ -792,7 +792,7 @@ removing the first exception guard alone does not establish compatibility.
 - [x] Update frontend/generation/oracle docs and measured limits, complete the
   independent Sol 6.1 xhigh review, fix material findings and rerun affected
   checks, then commit the verified bounded increment.
-- [ ] Publish the reviewed increment under the existing branch authorization
+- [x] Publish the reviewed increment under the existing branch authorization
   and verify the remote branch tip.
 
 Delivered evidence: production `3d07f3232`, focused oracle `b27701d3b`,
@@ -818,8 +818,9 @@ twelve guarded complete-group rejections, plus two exact isolated documentation
 files (64 accepted files). All fifteen case and environment provenance checks
 match M11. Moving six first exception guards exposes DART, constant references,
 Markdown and ASYNC; no additional complete-group parity is claimed. Broader
-frontend/C++/platform coverage remains deferred below. Publication is recorded
-separately after remote verification.
+frontend/C++/platform coverage remains deferred below. The reviewed increment
+was pushed through `06222eca6` to `origin/ruscodium/rust-port`, and the remote
+tip was verified before this publication record was committed.
 
 ## Deferred full-parity work
 

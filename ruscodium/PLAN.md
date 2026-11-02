@@ -1579,6 +1579,8 @@ establish additional whole-group parity. Aliased or non-enum payloads,
 throwing constructors/accessors/lambdas, async, full documentation processing,
 remaining model/attribute/value forms and other target backends remain open.
 M13/M14 measurements and the original templates remain unchanged.
+The reviewed increment was pushed through `06222eca6` to
+`origin/ruscodium/rust-port`, with its remote tip independently read back.
 
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
