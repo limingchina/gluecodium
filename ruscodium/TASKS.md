@@ -742,7 +742,7 @@ removing the first exception guard alone does not establish compatibility.
 - [x] Inspect the M11 smoke inventory, M12 adapter/graph boundary and upstream
   exception, throws, error-enum discovery, includes and category templates;
   choose the bounded direct-enum synchronous feature and document its limits.
-- [ ] Commit the concrete M15 plan/checklist before implementation.
+- [x] Commit the concrete M15 plan/checklist before implementation (`9caabcc88`).
 - [ ] Admit top-level/nested exceptions with direct nonnullable nonexternal
   enum payloads and direct nonnullable exception throws on ordinary synchronous
   instance/static class/interface/struct methods; retain all other guards.
@@ -772,7 +772,8 @@ removing the first exception guard alone does not establish compatibility.
   `Void`/value returns and instance/static methods.
 - [ ] Add live auxiliary-boundary and no-output name-collision comparisons,
   custom namespace coverage and fresh JVM comparisons after source name,
-  enum-value or throw-target mutations.
+  enum-value or throw-target mutations; include the existing safe `@Cpp("Name")`
+  profile on an exception without admitting another annotation family.
 - [ ] Compile and run library/CLI generated consumers with strict C++17 flags;
   exercise generated enum conversion/category/message and throwing-method
   `Return` success/error behavior, including configured namespaces.

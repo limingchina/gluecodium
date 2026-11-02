@@ -1444,7 +1444,10 @@ Aliases to enums, scalar/struct/collection payloads, external payloads and
 unsupported metadata remain explicit errors. A throwing method must resolve
 its nonnullable throws reference directly to one of those exceptions. Aliases
 to exceptions remain rejected. Existing enum/alias uses outside these new
-positions retain their current contracts.
+positions retain their current contracts. The existing bounded safe
+`@Cpp("Name")` profile may also annotate exception declarations, with fresh JVM
+proof of the model/no-output behavior; this adds no annotation family or
+exception output file.
 
 Admit throws only on ordinary synchronous instance/static functions in the
 existing class/interface/struct subset, with omitted/explicit `Void` or an
