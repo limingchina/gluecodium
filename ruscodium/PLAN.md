@@ -1416,21 +1416,22 @@ and further optimization remain open in the roadmap. The reviewed M14 commits
 were pushed through `347792270` to `origin/ruscodium/rust-port`; the remote tip
 was verified within the user's existing publication authorization.
 
-### M15 / P1c.1: enum-backed synchronous exceptions and throws — implementation contract
+### M15 / P1c.1: enum-backed synchronous exceptions and throws — bounded subset delivered
 
-Continue from `0dc5def39` by widening the actual native LIME-to-C++ pipeline
+The increment from `0dc5def39` widens the actual native LIME-to-C++ pipeline
 through one bounded runtime feature: exceptions with direct enum payloads and
 synchronous throwing methods. Sol 6.1 max plans, Terra 6.1 xhigh implements,
-and Sol 6.1 xhigh independently reviews the increment. Commit this contract and
-its checklist before implementation. All changes stay under `ruscodium/` on
+and Sol 6.1 xhigh independently reviews the increment. The contract and checklist
+were recorded in `9caabcc88` and clarified in `01d0f1223`.
+All changes stay under `ruscodium/` on
 `ruscodium/rust-port`; retain all 315 production templates unchanged.
 
 This is compiler capability work after the delivered M14 optimization. The
 M11 inventory reports `LimeException` as the first guard in six of twelve
 rejected complete C++ smoke groups, but a first guard can mask unrelated gaps.
 The native collector, predicates, naming and unchanged C++ return/category
-templates already contain parts of this feature. The adapter and strict graph
-boundary currently reject it, and generation supplies an empty `errorEnums`
+templates already contain parts of this feature. At the baseline the adapter
+and strict graph boundary rejected it, and generation supplied an empty `errorEnums`
 list. Complete the connected feature with live compatibility and executable
 runtime evidence; do not claim whole smoke groups or the calculator example
 become supported merely because their exception guard moves.
@@ -1542,6 +1543,42 @@ feature evidence. Update `FRONTEND_ADAPTER.md`, generation/oracle documentation,
 tasks and independent review with the measured boundary and any residual
 limitations. Existing M13/M14 performance results remain historical evidence;
 this milestone requires no new performance claim or platform backend work.
+
+#### Delivered evidence and remaining limits
+
+Implementation `3d07f3232` connects the native adapter, strict graph validation,
+main-only error-enum discovery and unchanged templates. The live oracle in
+`b27701d3b` compares eight fresh JVM cases: baseline and three source mutations
+at 26 files each, class/struct owners at 30, exception-only input at 18, and
+actual default/custom options at 22 each. All 196 paths, actual source sets,
+file bytes and explicit model projections match. Twelve strict C++17 consumer
+builds/runs cover JVM, library and Java-free CLI output for four cases. The
+recorded [evidence](tools/enum-errors-oracle/evidence.json) pins source/tool,
+input/options, binary, JVM and template identities plus complete file hashes.
+
+All 106 Rust tests, formatting, offline all-target Clippy with warnings denied,
+14 projection tests and four existing Python tool tests pass. Retained live
+checks pass 90 native-adapter baseline files and 23 source mutations, 50
+whole-file and 63 documentation captures with their consumers, all 41 template
+pairs and all 315 unchanged production templates.
+
+Independent Sol 6.1 xhigh review `f518651d6` reports no unresolved material
+finding within this scope. It independently reproduces the final focused
+oracle, verifies all 196 recorded output hashes, and adds 40 rejected CLI
+probes preserving complete existing outputs, two positive job-compatibility
+checks, four fresh JVM cases totaling 84 files and public-model cache mutation
+checks. The exact coverage and disposition are recorded in [REVIEW.md](REVIEW.md).
+
+The separate comparative smoke report in `77bdee61e` retains one exact complete
+group and twelve guarded complete-group rejections, plus two exact isolated
+documentation files (64 accepted files). All fifteen input/options/JVM
+inventories and recorded environment identities match M11. Six first guards
+advance to `DART`, three constant-value cases, Markdown and `ASYNC`; no row has
+an output mismatch or provenance/JVM/export failure. These changes do not
+establish additional whole-group parity. Aliased or non-enum payloads,
+throwing constructors/accessors/lambdas, async, full documentation processing,
+remaining model/attribute/value forms and other target backends remain open.
+M13/M14 measurements and the original templates remain unchanged.
 
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 

@@ -733,7 +733,7 @@ the confirmed publication.
 
 ## M15 / P1c.1: enum-backed synchronous exceptions and throws
 
-Execute [the M15 contract](PLAN.md#m15--p1c1-enum-backed-synchronous-exceptions-and-throws--implementation-contract)
+Execute [the M15 contract](PLAN.md#m15--p1c1-enum-backed-synchronous-exceptions-and-throws--bounded-subset-delivered)
 from baseline `0dc5def39`, preserving all 315 production templates and keeping
 changes under `ruscodium/`. Sol 6.1 max plans, Terra 6.1 xhigh implements and
 Sol 6.1 xhigh independently reviews. Checked boxes require recorded evidence;
@@ -742,56 +742,84 @@ removing the first exception guard alone does not establish compatibility.
 - [x] Inspect the M11 smoke inventory, M12 adapter/graph boundary and upstream
   exception, throws, error-enum discovery, includes and category templates;
   choose the bounded direct-enum synchronous feature and document its limits.
-- [x] Commit the concrete M15 plan/checklist before implementation (`9caabcc88`).
-- [ ] Admit top-level/nested exceptions with direct nonnullable nonexternal
+- [x] Record the concrete M15 plan/checklist in `9caabcc88`, with the existing
+  safe-name annotation clarification in `01d0f1223`.
+- [x] Admit top-level/nested exceptions with direct nonnullable nonexternal
   enum payloads and direct nonnullable exception throws on ordinary synchronous
   instance/static class/interface/struct methods; retain all other guards.
-- [ ] Validate payload/throws kinds and metadata across main and auxiliary
+- [x] Validate payload/throws kinds and metadata across main and auxiliary
   public models after clearing caches and fresh resolution; reject enum/exception
   aliases in these positions, scalar/struct payloads and throwing constructors.
-- [ ] Construct exception membership, payload/child-type edges, canonical
+- [x] Construct exception membership, payload/child-type edges, canonical
   ownership/reference maps, thrown wrappers/empty comments and native derived
   exception getters without JVM answers or supplied render decisions.
-- [ ] Extend original snapshot shape/value and semantic graph validation plus
+- [x] Extend original snapshot shape/value and semantic graph validation plus
   computed rendering views; check canonical targets, placement/nullability and
   consistency of stored/overlay exception getters instead of trusting classes.
-- [ ] Discover error enums through main roots/nested types exactly as the JVM
+- [x] Discover error enums through main roots/nested types exactly as the JVM
   does, including unused exceptions; preserve per-owner type order and dedupe
   shared payloads, with explicit auxiliary-ownership behavior.
-- [ ] Emit matching `std::error_code`, `Return<T, std::error_code>`, required
+- [x] Emit matching `std::error_code`, `Return<T, std::error_code>`, required
   includes, enum traits, category functions/messages and complete file sets using
   unchanged templates; preserve common/export outputs and source sets.
-- [ ] Keep exception declarations in model identity/ownership while emitting
+- [x] Keep exception declarations in model identity/ownership while emitting
   no exception files and reserving no exception output paths; retain collision
   checks for real emitted files.
-- [ ] Extend the explicit semantic projection and mutation tests for exception
+- [x] Extend the explicit semantic projection and mutation tests for exception
   payloads, thrown wrappers/comments and derived exception targets; ensure
   changed or contradictory links are detected.
-- [ ] Add fresh JVM whole-file/model comparisons for top-level/nested and
+- [x] Add fresh JVM whole-file/model comparisons for top-level/nested and
   cross-root enum errors, shared/unused exceptions, multiple enum ordering,
   `Void`/value returns and instance/static methods.
-- [ ] Add live auxiliary-boundary and no-output name-collision comparisons,
+- [x] Add live auxiliary-boundary and no-output name-collision comparisons,
   custom namespace coverage and fresh JVM comparisons after source name,
   enum-value or throw-target mutations; include the existing safe `@Cpp("Name")`
   profile on an exception without admitting another annotation family.
-- [ ] Compile and run library/CLI generated consumers with strict C++17 flags;
+- [x] Compile and run library/CLI generated consumers with strict C++17 flags;
   exercise generated enum conversion/category/message and throwing-method
   `Return` success/error behavior, including configured namespaces.
-- [ ] Prove actual `compile-cpp` execution from a temporary directory with
+- [x] Prove actual `compile-cpp` execution from a temporary directory with
   empty `PATH`/no `JAVA_HOME`, using only LIME, options and unchanged templates.
-- [ ] Probe unsupported payload/throws aliases, kinds/nullability, constructors,
+- [x] Probe unsupported payload/throws aliases, kinds/nullability, constructors,
   metadata, forged caches and malformed original/computed graph/getter links;
   preserve stdout and existing output inventories/sentinels on rejection.
-- [ ] Pass formatting, offline all-target Clippy with warnings denied, Rust
+- [x] Pass formatting, offline all-target Clippy with warnings denied, Rust
   and projection/tool tests, existing native adapter/model/consumer comparisons,
   retained C++ goldens, 41 template pairs and all 315 unchanged templates.
-- [ ] If the broader smoke matrix is rerun, keep its provenance/comparative
+- [x] If the broader smoke matrix is rerun, keep its provenance/comparative
   first-guard report separate from focused feature acceptance; report remaining
   guards rather than treating partial group progress as whole-group parity.
-- [ ] Update frontend/generation/oracle docs and measured limits, complete the
+- [x] Update frontend/generation/oracle docs and measured limits, complete the
   independent Sol 6.1 xhigh review, fix material findings and rerun affected
-  checks, then commit and publish the verified bounded increment under the
-  existing branch authorization.
+  checks, then commit the verified bounded increment.
+- [ ] Publish the reviewed increment under the existing branch authorization
+  and verify the remote branch tip.
+
+Delivered evidence: production `3d07f3232`, focused oracle `b27701d3b`,
+comparative report `77bdee61e` and independent review `f518651d6`. Eight fresh
+JVM cases compare 196 complete files and model projections; twelve strict
+C++17 consumers compile and run across JVM, native library and empty-PATH CLI
+outputs for four cases. This includes actual default/custom options, class/
+interface/struct methods, exception-only input, shared/unused and ordered nested
+enums, auxiliary discovery, safe exception names and three live source
+mutations. See the [oracle](tools/enum-errors-oracle/README.md) and its pinned
+[evidence](tools/enum-errors-oracle/evidence.json).
+
+All 106 Rust tests, formatting, offline all-target Clippy, fourteen projection
+and four existing Python tool tests pass. Retained live checks pass the 90-file/
+23-mutation frontend oracle, 50 whole-file and 63 documentation outputs with
+consumers, 41 template pairs and 315 unchanged production templates. Independent
+review reproduced the focused evidence, added forty rejection probes preserving
+whole output inventories, two positive job checks, four fresh JVM cases (84
+files) and public-model cache mutation checks. No material finding remains.
+
+The broader snapshot matrix keeps its original one exact complete group and
+twelve guarded complete-group rejections, plus two exact isolated documentation
+files (64 accepted files). All fifteen case and environment provenance checks
+match M11. Moving six first exception guards exposes DART, constant references,
+Markdown and ASYNC; no additional complete-group parity is claimed. Broader
+frontend/C++/platform coverage remains deferred below. Publication is recorded
+separately after remote verification.
 
 ## Deferred full-parity work
 
