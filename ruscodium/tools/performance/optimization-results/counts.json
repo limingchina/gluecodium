@@ -1,0 +1,51 @@
+{
+  "source_commit": "15b1db4c48ef0fbf7a86aefa6750f6ebcd5a5e88",
+  "instrument_script_sha256": "7d0ffeef191cdec3d7728ea9b159657fa0b9772e955e93a1615537cc60967724",
+  "instrumented_binary_sha256": "6f2b298545c77fed74617de6063e6b63f9d3c3ff354830e3d1bf5c0fa57e373d",
+  "runs": {
+    "structs-10": {
+      "argv": [
+        "/tmp/ruscodium-m14-count-source/ruscodium/target/release/ruscodium",
+        "compile-cpp",
+        "--input",
+        "/tmp/ruscodium-perf-m13-logging-fixed/inputs/structs-10.lime",
+        "--templates",
+        "/workspace/gluecodium/gluecodium/src/main/resources/templates",
+        "--output",
+        "/tmp/ruscodium-m14-counts/structs-10"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "absence_node_probes": 8089290,
+        "file_partial_parses": 204,
+        "graph_imports": 39,
+        "resolver_constructions": 58
+      },
+      "output_files": 38,
+      "output_sha256": "7c2b8b556a30abb4161314456760cfcd6c01856affaa02eddbc3cba9877bf8fb",
+      "matches_m13_jvm_manifest": true
+    },
+    "structs-100": {
+      "argv": [
+        "/tmp/ruscodium-m14-count-source/ruscodium/target/release/ruscodium",
+        "compile-cpp",
+        "--input",
+        "/tmp/ruscodium-perf-m13-logging-fixed/inputs/structs-100.lime",
+        "--templates",
+        "/workspace/gluecodium/gluecodium/src/main/resources/templates",
+        "--output",
+        "/tmp/ruscodium-m14-counts/structs-100"
+      ],
+      "exit_code": 0,
+      "counts": {
+        "absence_node_probes": 2183649930,
+        "file_partial_parses": 1734,
+        "graph_imports": 219,
+        "resolver_constructions": 418
+      },
+      "output_files": 218,
+      "output_sha256": "8c8dee63200b31a2929c7a6e89a923376cae82f9763c9688ca9ca6c470216049",
+      "matches_m13_jvm_manifest": true
+    }
+  }
+}
