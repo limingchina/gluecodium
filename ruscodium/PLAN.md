@@ -1416,6 +1416,130 @@ and further optimization remain open in the roadmap. The reviewed M14 commits
 were pushed through `347792270` to `origin/ruscodium/rust-port`; the remote tip
 was verified within the user's existing publication authorization.
 
+### M15 / P1c.1: enum-backed synchronous exceptions and throws — implementation contract
+
+Continue from `0dc5def39` by widening the actual native LIME-to-C++ pipeline
+through one bounded runtime feature: exceptions with direct enum payloads and
+synchronous throwing methods. Sol 6.1 max plans, Terra 6.1 xhigh implements,
+and Sol 6.1 xhigh independently reviews the increment. Commit this contract and
+its checklist before implementation. All changes stay under `ruscodium/` on
+`ruscodium/rust-port`; retain all 315 production templates unchanged.
+
+This is compiler capability work after the delivered M14 optimization. The
+M11 inventory reports `LimeException` as the first guard in six of twelve
+rejected complete C++ smoke groups, but a first guard can mask unrelated gaps.
+The native collector, predicates, naming and unchanged C++ return/category
+templates already contain parts of this feature. The adapter and strict graph
+boundary currently reject it, and generation supplies an empty `errorEnums`
+list. Complete the connected feature with live compatibility and executable
+runtime evidence; do not claim whole smoke groups or the calculator example
+become supported merely because their exception guard moves.
+
+#### Admitted native source and model facts
+
+Admit top-level exceptions and exceptions nested in otherwise supported
+classes, interfaces or structs. The exception payload must resolve **directly**
+to a nonnullable, nonexternal enumeration within the existing enum subset.
+Aliases to enums, scalar/struct/collection payloads, external payloads and
+unsupported metadata remain explicit errors. A throwing method must resolve
+its nonnullable throws reference directly to one of those exceptions. Aliases
+to exceptions remain rejected. Existing enum/alias uses outside these new
+positions retain their current contracts.
+
+Admit throws only on ordinary synchronous instance/static functions in the
+existing class/interface/struct subset, with omitted/explicit `Void` or an
+otherwise supported value return type. Throwing constructors, property
+accessors and lambdas remain guarded, as do async functions, inheritance,
+filtering and unrelated annotations. Preserve already admitted ordinary
+documentation on declarations; this increment adds no documentation syntax,
+throws blocks, directly attached throws/type comments or reference processing.
+Any unimplemented source metadata must still reject before writes.
+
+Construct native `LimeException.errorType`, ordered exception membership,
+child types, reference/file ownership, `LimeThrownType.typeRef` and its genuinely
+empty comment. Compute `LimeFunction.exception` from the thrown reference and
+compute the new type/getter views natively. Caller-supplied resolved-target
+caches, exception getters, rendered contexts, error-enum lists and generated
+inventories cannot substitute for those source/model facts. Validate public
+models across main and auxiliary inputs, clear relevant resolution caches and
+resolve afresh just as M12 does for the existing subset.
+
+Extend both original snapshot shape/value validation and semantic graph
+validation for these classes and edges. Keep nullability, canonical indexed
+targets, parent membership, ownership, payload kind and throw placement
+consistent. Validate supplied getter overlays against their derivation rather
+than accepting any exception with the right class or silently replacing a
+contradictory getter. Apply equivalent rules to the computed rendering views;
+stored fields, overlays and same-class/null getter variants must not bypass
+the boundary. Extend the enumerated model projection to compare exception
+payloads, thrown references/comments and the derived exception target.
+
+#### Exact C++ behavior and ownership
+
+Use the unchanged templates to emit `std::error_code` for enum-backed throwing
+`Void` methods and the configured internal `Return<T, std::error_code>` for
+value-returning methods. Reproduce header/implementation includes and their
+ordering, declarations, error-category functions, error-code enum traits,
+category names/messages and final whitespace byte for byte. Existing common
+and export files and their source sets remain part of every comparison.
+
+Match the JVM's discovery boundary: traverse **main** top-level elements and
+their nested types to collect direct enum payloads of declared exceptions,
+including unused exceptions. Auxiliary exceptions do not independently mark
+enums as error enums. A main exception may reference an auxiliary enum, but
+auxiliary ownership does not create an output file or a category implementation.
+For each emitted owning root, select its marked nested enums in the JVM's
+type-traversal order and deduplicate shared enum payloads. Cross-root declaration
+order or throws usage must not accidentally control whether a main enum gets
+its category machinery.
+
+Top-level exception declarations retain model identity, membership and source
+ownership while producing zero declaration/implementation files. Nested
+exceptions similarly add no invented C++ declaration. They do not reserve
+output paths or introduce collisions with a real emitted root whose C++ name
+matches. Preserve the existing collision checks for actual generated files;
+do not introduce broader file grouping or change unrelated name rules.
+
+#### Acceptance and failure evidence
+
+Add a focused fixture family to the native adapter oracle using fresh JVM
+loads of the same raw LIME and options. Compare complete output paths, actual
+`MAIN`/`COMMON` source sets and exact bytes, plus the explicit semantic model
+projection. At minimum cover top-level and nested exceptions, direct enums
+inside another owning root, multiple exceptions sharing an enum, an unused
+exception that still marks its enum, multiple marked enums with observable
+ordering, `Void` and value returns, instance/static functions, auxiliary lookup
+and ownership, and a no-output exception whose default C++ name collides with
+an emitted root. Live source mutations must change enum/package/member names,
+enum values or throw targets and be rechecked against a fresh JVM result.
+Expected captures may be retained for regressions but are never native inputs.
+
+Compile and run native library and CLI outputs with
+`-std=c++17 -Wall -Wextra -Werror`. A consumer must use generated enum-to-error
+conversion, compare error categories and messages, implement and call admitted
+throwing methods, and exercise success/error states of `Return`. Exercise
+custom root/internal namespaces as well as defaults. Run the actual CLI with
+empty `PATH` and no `JAVA_HOME` from a temporary directory to retain the native
+execution proof.
+
+Retain negative probes for payload aliases/non-enums/nullability, non-exception
+or nullable throws, aliases to exceptions, throwing constructors and unsupported
+metadata. Cover forged public-model caches and malformed snapshot/overlay
+links, including inconsistent derived exception targets. Library errors and
+CLI failures must precede all writes, leave stdout empty where required and
+preserve pre-existing output trees/sentinels. Do not silently ignore a rejected
+exception merely because it would own no generated file.
+
+Pass formatting, offline all-target Clippy with warnings denied, Rust tests,
+the extended projection/tool checks, existing adapter and C++ goldens/consumers,
+the 41 template oracle pairs and the unchanged 315-template checks. Broader
+smoke inventory may be rerun as a separate comparative report with new first
+guards and full provenance; its acceptance counts must not replace the focused
+feature evidence. Update `FRONTEND_ADAPTER.md`, generation/oracle documentation,
+tasks and independent review with the measured boundary and any residual
+limitations. Existing M13/M14 performance results remain historical evidence;
+this milestone requires no new performance claim or platform backend work.
+
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
 Extend M10's snapshot-driven C++ generation and M11's bounded documentation

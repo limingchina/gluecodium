@@ -731,6 +731,67 @@ implementation, measurements and verification were pushed through `347792270`
 to `origin/ruscodium/rust-port`, and the remote tip was verified. This records
 the confirmed publication.
 
+## M15 / P1c.1: enum-backed synchronous exceptions and throws
+
+Execute [the M15 contract](PLAN.md#m15--p1c1-enum-backed-synchronous-exceptions-and-throws--implementation-contract)
+from baseline `0dc5def39`, preserving all 315 production templates and keeping
+changes under `ruscodium/`. Sol 6.1 max plans, Terra 6.1 xhigh implements and
+Sol 6.1 xhigh independently reviews. Checked boxes require recorded evidence;
+removing the first exception guard alone does not establish compatibility.
+
+- [x] Inspect the M11 smoke inventory, M12 adapter/graph boundary and upstream
+  exception, throws, error-enum discovery, includes and category templates;
+  choose the bounded direct-enum synchronous feature and document its limits.
+- [ ] Commit the concrete M15 plan/checklist before implementation.
+- [ ] Admit top-level/nested exceptions with direct nonnullable nonexternal
+  enum payloads and direct nonnullable exception throws on ordinary synchronous
+  instance/static class/interface/struct methods; retain all other guards.
+- [ ] Validate payload/throws kinds and metadata across main and auxiliary
+  public models after clearing caches and fresh resolution; reject enum/exception
+  aliases in these positions, scalar/struct payloads and throwing constructors.
+- [ ] Construct exception membership, payload/child-type edges, canonical
+  ownership/reference maps, thrown wrappers/empty comments and native derived
+  exception getters without JVM answers or supplied render decisions.
+- [ ] Extend original snapshot shape/value and semantic graph validation plus
+  computed rendering views; check canonical targets, placement/nullability and
+  consistency of stored/overlay exception getters instead of trusting classes.
+- [ ] Discover error enums through main roots/nested types exactly as the JVM
+  does, including unused exceptions; preserve per-owner type order and dedupe
+  shared payloads, with explicit auxiliary-ownership behavior.
+- [ ] Emit matching `std::error_code`, `Return<T, std::error_code>`, required
+  includes, enum traits, category functions/messages and complete file sets using
+  unchanged templates; preserve common/export outputs and source sets.
+- [ ] Keep exception declarations in model identity/ownership while emitting
+  no exception files and reserving no exception output paths; retain collision
+  checks for real emitted files.
+- [ ] Extend the explicit semantic projection and mutation tests for exception
+  payloads, thrown wrappers/comments and derived exception targets; ensure
+  changed or contradictory links are detected.
+- [ ] Add fresh JVM whole-file/model comparisons for top-level/nested and
+  cross-root enum errors, shared/unused exceptions, multiple enum ordering,
+  `Void`/value returns and instance/static methods.
+- [ ] Add live auxiliary-boundary and no-output name-collision comparisons,
+  custom namespace coverage and fresh JVM comparisons after source name,
+  enum-value or throw-target mutations.
+- [ ] Compile and run library/CLI generated consumers with strict C++17 flags;
+  exercise generated enum conversion/category/message and throwing-method
+  `Return` success/error behavior, including configured namespaces.
+- [ ] Prove actual `compile-cpp` execution from a temporary directory with
+  empty `PATH`/no `JAVA_HOME`, using only LIME, options and unchanged templates.
+- [ ] Probe unsupported payload/throws aliases, kinds/nullability, constructors,
+  metadata, forged caches and malformed original/computed graph/getter links;
+  preserve stdout and existing output inventories/sentinels on rejection.
+- [ ] Pass formatting, offline all-target Clippy with warnings denied, Rust
+  and projection/tool tests, existing native adapter/model/consumer comparisons,
+  retained C++ goldens, 41 template pairs and all 315 unchanged templates.
+- [ ] If the broader smoke matrix is rerun, keep its provenance/comparative
+  first-guard report separate from focused feature acceptance; report remaining
+  guards rather than treating partial group progress as whole-group parity.
+- [ ] Update frontend/generation/oracle docs and measured limits, complete the
+  independent Sol 6.1 xhigh review, fix material findings and rerun affected
+  checks, then commit and publish the verified bounded increment under the
+  existing branch authorization.
+
 ## Deferred full-parity work
 
 - [ ] Complete every upstream semantic validator, filters/tags, documentation
