@@ -24,6 +24,22 @@ class OptimizationChecks(unittest.TestCase):
         pilot = [x for x in schedule if x['kind'] == 'censored-pilot']
         self.assertEqual([(x['workload'], x['side']) for x in pilot], [('structs-500', 'baseline')])
 
+    def test_commands_select_the_intended_binaries_and_options(self):
+        spec = {'input': '/input.lime', 'aux': '/aux.lime', 'native_options': '/options.json', 'copyright': '/copyright.txt'}
+        out = Path('/tmp/example-output')
+        binaries = {'baseline': Path('/baseline'), 'optimized': Path('/optimized')}
+        jvm = o.command(spec, out, 'jvm', binaries)
+        baseline = o.command(spec, out, 'baseline', binaries)
+        optimized = o.command(spec, out, 'optimized', binaries)
+        self.assertEqual(jvm[0], str(b.JAVA))
+        self.assertEqual(baseline[0], '/baseline')
+        self.assertEqual(optimized[0], '/optimized')
+        self.assertEqual(baseline[1:], optimized[1:])
+        self.assertIn('-auxinput', jvm)
+        self.assertIn('-cppnamespace', jvm)
+        self.assertIn('--auxinput', baseline)
+        self.assertIn('--options', baseline)
+
     def test_complete_manifest_gate_rejects_changes_and_failures(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
