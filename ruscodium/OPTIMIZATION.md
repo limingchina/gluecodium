@@ -59,4 +59,19 @@ python3 ruscodium/tools/performance/optimization.py --work /tmp/ruscodium-optimi
   --optimized ruscodium/target/release/ruscodium
 ```
 
-For the diagnostic source, use `python3 ruscodium/tools/performance/instrument-baseline.py --repo "$PWD" --work /tmp/ruscodium-count-source`; build that isolated tree and run the two synthetic fixtures as described by the recorded count commands. The instrumentation changes only the isolated source and the reproduction script verifies its expected insertion sites. Never substitute its instrumented binary for either timed executable.
+To reproduce the diagnostic counts from the repository root, generate the two inputs and compare the output inventories with M13. The diagnostic emits its counts on standard error:
+
+```sh
+python3 ruscodium/tools/performance/instrument-baseline.py --repo "$PWD" --work /tmp/ruscodium-count-source
+cargo build --offline --release --manifest-path /tmp/ruscodium-count-source/ruscodium/Cargo.toml
+PYTHONPATH=ruscodium/tools/performance python3 -c 'from pathlib import Path; import benchmark; benchmark.prepare(Path("/tmp/ruscodium-count-inputs"))'
+for n in 10 100; do
+  /tmp/ruscodium-count-source/ruscodium/target/release/ruscodium compile-cpp \
+    --input "/tmp/ruscodium-count-inputs/inputs/structs-$n.lime" \
+    --templates "$PWD/gluecodium/src/main/resources/templates" \
+    --output "/tmp/ruscodium-count-output-$n"
+done
+PYTHONPATH=ruscodium/tools/performance python3 -c 'from pathlib import Path; import benchmark, json; p=json.loads(Path("ruscodium/tools/performance/results/pilot.json").read_text()); assert all(benchmark.manifest(Path(f"/tmp/ruscodium-count-output-{n}")) == p["workloads"][f"structs-{n}"]["inventories"]["jvm"] for n in (10,100)); print("both manifests match")'
+```
+
+The instrumentation changes only the isolated source and the reproduction script verifies its expected insertion sites. Never substitute its instrumented binary for either timed executable.
