@@ -618,64 +618,115 @@ confirmed publication.
 
 ## M14: remove repeated generation preparation
 
-Execute [the M14 contract](PLAN.md#m14-remove-repeated-generation-preparation--planned-bounded-optimization)
+Delivered [the M14 contract](PLAN.md#m14-remove-repeated-generation-preparation--bounded-optimization-delivered)
 from baseline `15b1db4c4`, preserving the current guarded subset and all
-315 production templates. Sol 6.1 max plans, Terra 6.1 xhigh implements and
-Sol 6.1 xhigh independently reviews. Keep M13 evidence intact and all new
-work under `ruscodium/` on `ruscodium/rust-port`.
+315 production templates. Sol 6.1 max planned, Terra 6.1 xhigh implemented
+and Sol 6.1 xhigh independently reviewed. M13 evidence remains intact and
+all new work stays under `ruscodium/` on `ruscodium/rust-port`.
 
 - [x] Inspect graph import, class-property absence derivation, template loading,
   native resolver construction and dependency-collection indexes; define this
   bounded contract and checklist before implementation.
-- [ ] Commit the M14 plan/checklist before implementation.
-- [ ] Confirm repeated preparation with a bounded profile or temporary
+- [x] Commit the M14 plan/checklist before implementation.
+- [x] Confirm repeated preparation with a bounded profile or temporary
   phase/count instrumentation; record source/commands and keep those runs
   outside final timing evidence.
-- [ ] Prepare validated graph/raw comments/computed views and native resolver
+- [x] Prepare validated graph/raw comments/computed views and native resolver
   per generation, sharing read-only state with fresh per-file engines rather
   than rebuilding graph-sized render requests; preserve preparation order.
-- [ ] Reuse dependency/path indexes and its native name resolver where practical
+- [x] Reuse dependency/path indexes and its native name resolver where practical
   without conflating original-model and computed rendering views.
-- [ ] Build class-property-name unions once per relevant view in graph import,
+- [x] Build class-property-name unions once per relevant view in graph import,
   adapter and generation absence derivation, preserving overlay/null/same-class
   conflict rules, unknown IDs, duplicate names and node-specific absences.
-- [ ] Cache lazy immutable file-partial syntax within a generation, preserving
+- [x] Cache lazy immutable file-partial syntax within a generation, preserving
   dynamic inline-definition precedence, collection/redefinition semantics,
   standalone calls, template-root checks and independent-call file freshness.
-- [ ] Remove large snapshot/AST clones required by these paths where practical;
+- [x] Remove large snapshot/AST clones required by these paths where practical;
   retain schemas, hooks, validators, error boundaries and all supported features.
-- [ ] Add regressions for cross-file and cross-job state isolation, changed
+- [x] Add regressions for cross-file and cross-job state isolation, changed
   templates/roots, inline-over-cached-file shadowing, forward/nested/later
   definitions and repeated calls; preserve whitespace and recursion/output limits.
-- [ ] Add absence-index regressions for another same-class node's stored getter,
-  overlay-created/null getter, different classes and malformed absence entries;
+- [x] Add graph regressions and adversarial probes for another same-class stored
+  getter, overlay-created/null getter, different classes and malformed absences;
   retain rejected-job stdout/output preservation and path/symlink guards.
-- [ ] Pass formatting, offline all-target Clippy with warnings denied and Rust
+- [x] Pass formatting, offline all-target Clippy with warnings denied and Rust
   tests; verify all 41 JVM template pairs and 315 unchanged templates, retained
   whole-file/documentation goldens and native adapter/model/mutation/C++ checks.
-- [ ] Build separate baseline `15b1db4c4` and optimized release binaries; record
+- [x] Build separate baseline `15b1db4c4` and optimized release binaries; record
   identities and use the same host, actual raw-LIME pipeline, options, templates,
   output filesystem, JVM distribution and fresh-process measurement boundary.
-- [ ] Save the seeded schedule before timing: three baseline Rust samples for
+- [x] Save the seeded schedule before timing: three baseline Rust samples for
   each completed custom/default/10/100/125 case, eight optimized/JVM pairs for
   all six cases, one baseline 500 attempt, and a 60-second cap on every run.
-- [ ] Establish six untimed JVM workload equivalence preflights, retain all
-  attempts and verify every completed output against complete
+- [x] Establish six JVM workload equivalence preflights outside sample statistics,
+  retain all attempts and verify every completed output against complete
   JVM inventories/exact bytes outside timers, including common/export files;
   preserve baseline 500 timeout evidence without a censored speed ratio.
-- [ ] Publish new raw results, reproduction instructions and `OPTIMIZATION.md`
+- [x] Record new raw results, reproduction instructions and `OPTIMIZATION.md`
   with wall/CPU/RSS counts/distributions, baseline/optimized medians, all six
   workloads, failures, environment limits and bounded compatibility claims.
-- [ ] Obtain independent Sol 6.1 xhigh review of code, regressions and evidence;
+- [x] Obtain independent Sol 6.1 xhigh review of code, regressions and evidence;
   resolve material findings and rerun affected checks only as needed.
-- [ ] Update plan/tasks/review and usage documentation, commit tested logical
-  increments and publish within the user's existing authorization.
+- [x] Update plan/tasks/review and usage documentation and commit tested logical
+  increments.
+- [ ] Publish the reviewed M14 commits within the user's existing authorization.
 
-The current code inspection supplies concrete hypotheses, not measured
-bottleneck percentages. The performance objective is lower 100/125-struct
-cost and a completed parity-passing optimized 500-struct run. Record any
-remaining limits honestly; M13's historical 60-second timeout has no completed
-baseline parity or numeric speed ratio, and broader port parity remains open.
+Delivered evidence: contract `965a9ed96`; production changes `6ccea17bc`;
+additional prepared-renderer tests `ec381af93`; diagnostic counts `8888fb09c`;
+comparison tools `c2093ba80`, `a71c41f66` and `3f90a57a0`; report/raw results
+`412913187`; counter reproduction `67d16764b`; usage/verification documentation
+`0cd968bc4`; independent review `cbd13c4b0`. The implementation shares the
+final rendering graph, resolver and
+lazy immutable file syntax between fresh file engines, while collection retains
+its own reusable original-model context. Class-property unions replace repeated
+absence scans. Dynamic inline definitions retain precedence and are registered
+on every encounter; independent calls retain separate caches. Public Graph
+validation observes node-map mutations. Dynamic definition-body cloning remains
+outside this focused reduction.
+
+The isolated baseline diagnostic retains commands, source/executable hashes
+and full-output equality with M13: 10 structs require 39 graph imports,
+58 resolver constructions, 204 partial parses and 8,089,290 graph-import
+absence-node probes; 100 require 219, 418, 1,734 and 2,183,649,930 respectively.
+These are operation counts for the stated paths, not timed attribution or a
+bottleneck percentage. That binary was excluded from timing.
+
+All 112 scheduled attempts remain visible: 111 completed full-output matches
+and the expected baseline 500 timeout at 60.009 seconds. Six independent JVM
+preflights also pass. Baseline Rust has three samples per first five workloads;
+optimized Rust and JVM have eight each per all six. Clean optimized source is
+`ec381af93`; the baseline `15b1db4c4` executable matches M13's executable hash.
+Same-host baseline/optimized median seconds are 20.844/0.089 at 100 structs
+(234.7×) and 44.499/0.157 at 125 (283.2×). Optimized 500 median is 1.296 seconds
+versus JVM 2.776; its capped baseline has no completed parity or numeric ratio.
+Custom, corrected default and ten structs also improve; CPU/RSS distributions,
+identities, schedule and all output hashes remain in the new report/raw records.
+The historical M13 125-struct median is 33.096 seconds and is not used for these
+new same-host ratios.
+
+The initial full Rust suite passes 102 tests; the two additional tests and all
+three prepared-renderer unit tests subsequently pass, totaling 104 unique Rust
+tests checked across those runs. Final formatting and strict offline all-target
+Clippy pass. Independent review passes 47 focused Rust tests, all three prepared
+tests, 41 live JVM template pairs, 315-template identity and the full native
+adapter oracle: ninety baseline files, actual source sets, semantic projections,
+23 live mutations, deterministic output and strict library/empty-PATH CLI C++
+consumers. Eighteen adversarial CLI probes preserve existing bytes and empty
+stdout on rejection; they include malformed absences, cross-node stored and
+overlay-null getter conflicts, and different-class independence. Four final
+benchmark harness checks also pass.
+
+Independent evidence review rehashes 117 successful output trees containing
+28,786 files and recomputes 306 scalar statistics, eleven ratios and twelve
+displayed metric rows. The schedule, immutable identities, timeout handling and
+unequal sample counts agree with the report. No material finding remains within
+the bounded M14 contract. See [OPTIMIZATION.md](OPTIMIZATION.md) and
+[REVIEW.md](REVIEW.md) for scope and verification details. Shared-host variation,
+two-CPU quota, 8 GiB limit, buffered tmpfs writes, synthetic scales, broader JVM
+validation and fresh-process/JIT distinctions limit interpretation. M13 evidence,
+all templates, supported schemas and admission boundaries remain unchanged;
+full port parity and warmed-API performance remain open. Publication is pending.
 
 ## Deferred full-parity work
 

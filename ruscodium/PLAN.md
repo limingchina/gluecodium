@@ -1283,131 +1283,137 @@ claim full compiler compatibility. Complete canonical/frontend validation,
 all-feature C++ and platform parity, further performance work and migration/
 cutover policy remain open in the roadmap below.
 
-### M14: remove repeated generation preparation — planned bounded optimization
+### M14: remove repeated generation preparation — bounded optimization delivered
 
 The user requested optimization after M13 measured native medians of 21.018
 seconds for 100 structs and 33.096 seconds for 125 structs, with the native
 500-struct pilot reaching its 60-second limit. The optimization baseline is
-`15b1db4c4` on `ruscodium/rust-port`. Retain M13's report, charts and raw results
-as immutable historical evidence; put new measurements and conclusions in a
-separate [optimization report](OPTIMIZATION.md) and new result files under
-`tools/performance/`. Keep every change under `ruscodium/` and preserve the
-315 original production templates. Roles remain Sol 6.1 max planning, Terra
-6.1 xhigh implementation and Sol 6.1 xhigh independent review. Commit this
-contract and its checklist before implementation.
+`15b1db4c4` on `ruscodium/rust-port`. The contract and checklist were committed
+before implementation in `965a9ed96`; implementation is `6ccea17bc`, with
+additional prepared-renderer regressions in `ec381af93`. Sol 6.1 max planned,
+Terra 6.1 xhigh implemented and Sol 6.1 xhigh independently reviewed the
+bounded milestone. All changes stay under `ruscodium/`, all 315 production
+templates are unchanged, and M13's report, charts and raw results remain intact
+as historical evidence. The new [optimization report](OPTIMIZATION.md),
+[raw comparison](tools/performance/optimization-results/optimization.json) and
+[operation counts](tools/performance/optimization-results/counts.json) record
+the measured behavior and its limits separately.
 
-#### Diagnose and change the repeated work
+#### Measured repeated work and delivered changes
 
-Code inspection identifies specific scaling candidates, rather than an
-established profile: `cpp_generation::generate` builds a whole render request
-and imports/validates its graph for every emitted file; each render constructs
-a native C++ resolver; `Graph::import_with_absences`, `cpp_adapter::build_job`
-and generation's derived absences scan all same-class nodes repeatedly; and
-`Engine::partial` reads and parses each file partial on every invocation.
-Dependency collection also rebuilds graph indexes, and its calls to the public
-native name resolver build an index for each lookup. First confirm these paths
-with a bounded profile or temporary phase/count instrumentation on admitted
-struct workloads. Record the command, source and observations; keep instrumented
-runs separate from final timings and avoid unsupported bottleneck percentages.
+Separate baseline instrumentation in `8888fb09c` confirmed repeated preparation:
+10 structs produced 39 graph imports, 58 native resolver constructions, 204
+file-partial parses and 8,089,290 graph-import absence-node probes; 100 structs
+produced 219 imports, 418 resolvers, 1,734 parses and 2,183,649,930 such probes.
+Both diagnostic output trees matched M13's complete JVM inventories. The
+retained script and count records identify the original source, insertion
+sites, executable and commands. Successful imports have no early conflict
+return, permitting the counted `node count × absent-name count` probe total.
+These counts cover graph-import absence validation only and provide no sampled
+time attribution or bottleneck percentage. The diagnostic binary was excluded
+from timings.
 
-Implement the following focused changes, preserving the admitted feature set:
+The implementation preserves the admitted feature set and changes four paths:
 
-1. Prepare a validated, read-only rendering graph and native C++ resolver once
-   per whole-file generation job. Complete original-job validation, computed
-   overlays, derived absences and raw-comment attachment in the existing logical
-   order before finalizing rendering state. A bounded number of preparation
-   graphs is acceptable where original and computed views differ; graph imports
-   and resolver construction must no longer scale with emitted file count.
-   Borrow this state from fresh per-file engines instead of cloning snapshots
-   into synthetic render-request JSON. Reuse generation-scoped dependency/path
-   indexes and its name resolver where practical, keeping the original-model
-   collection view distinct from the derived rendering view when required.
-2. Replace repeated whole-node absence queries with a class-to-property-name
-   union built once per relevant model view. Include overlays in the union at
-   the same stage as the existing importer. Preserve the rule that an absent
-   getter cannot hide a stored getter on any node of the same exact class;
-   null values still count as stored properties. Keep node-specific absence
-   sets and existing unknown-ID, duplicate-name and conflict rejection.
-3. Cache immutable parsed Mustache syntax trees for file partials within one
-   generation. Load lazily, preserve path/symlink checks and parser preflight,
-   and keep independent calls able to observe changed files or template roots.
-   Cache syntax only: dynamic inline definitions must still take precedence
-   over disk partials and be collected with current forward-reference and
-   redefinition semantics on each encounter. Each output starts with fresh
-   definitions, frames/locals, iteration metadata, switch state, recursion
-   depth and output accounting. Do not cache rendered text or request data.
-4. Use borrowing or shared immutable syntax ownership to avoid large graph or
-   AST clones when needed by these changes. Defer unrelated representation,
-   parser, frontend, validator, CLI and dependency rewrites. Retain the public
-   standalone render request contract, native-name/hook restrictions and
-   generation job schema versions; any prepared renderer remains an internal
-   path reached only after the existing validation responsibilities succeed.
+1. A generation-scoped prepared renderer owns the validated rendering graph,
+   raw comments and native resolver. Fresh file engines borrow that read-only
+   state instead of building graph-sized JSON requests and reimporting them.
+   Original-job validation and derived-overlay preparation retain their order;
+   the original-model graph remains distinct from the final rendering graph.
+   A shared dependency-collection context reuses its path index and native
+   resolver across generated declarations. Preparation is lazy to preserve
+   existing error boundaries.
+2. Class-to-property-name unions replace repeated all-node absence scans in
+   graph import, native adaptation and derived generation absences. The importer
+   builds its union after overlays, preserving exact-class conflicts, stored
+   null getters, node-specific absences, unknown IDs and duplicate-name rejection.
+   Reference validation uses the current graph node map, so public node-map
+   mutations do not produce a stale ID cache.
+3. File-partial syntax is loaded lazily and cached within a generation. Dynamic
+   inline definitions retain precedence over cached disk partials and are
+   collected on every encounter, preserving forward references and replacement
+   semantics. Each output has fresh definitions, frames/locals, iteration
+   metadata, switch state and recursion/output accounting. Independent calls
+   and prepared renderers have separate caches and observe changed roots/files;
+   no rendered bytes or request data are cached.
+4. File syntax trees use shared immutable `Rc` ownership and engines borrow
+   graph/resolver state. Dynamic definition bodies still clone when registered;
+   this milestone does not replace every runtime value or AST allocation.
+   Standalone request schemas, hook restrictions, generation job versions,
+   validators and the supported subset remain intact. The prepared path is
+   internal and follows the existing validation responsibilities.
 
 #### Regression and compatibility acceptance
 
-Add targeted tests for the new reuse boundary: multiple files with different
-data/locals and inline definitions must agree with independent fresh renders;
-inline definitions must shadow an already cached disk partial and later
-definitions must replace earlier ones without leaking into another file/job.
-Cover forward definitions, nested partial definitions, repeated partial calls,
-independent calls with changed templates and two roots with the same partial
-name. Keep existing exact whitespace, recursion/output limits and symlink/path
-guards. Test same-class cross-node absence conflicts, overlay-introduced
-getters (including null), different-class independence and malformed absence
-entries so the faster index cannot weaken validation. Do not use timing
-thresholds in Rust tests; bounded operation counts can substantiate reuse.
+Three prepared-renderer unit tests compare shared-cache renders with fresh
+standalone renders and cover per-file locals/definitions, inline-over-file
+shadowing, replacement, forward/nested definitions, repeated partial encounters,
+changed files, different roots/copyright settings, iteration and switch state.
+An added graph regression covers a same-class overlay-null getter conflict,
+different-class independence and live node-map mutation; existing rejection,
+whitespace, recursion/output and symlink/path tests remain in force. Tests use
+behavioral assertions rather than wall-time thresholds.
 
-Run formatting, offline all-target Clippy with warnings denied and the Rust
-suite. Re-run the template oracle's 41 JVM pairs and 315-template identity
-check, retained whole-file/documentation goldens and the native frontend adapter
-oracle, including its real-input/model comparisons, admitted mutations,
-determinism, C++ consumers and rejected-input output-preservation checks.
-Reuse existing oracle tooling rather than expanding the supported subset to
-make a workload pass. Review prepared-path error handling and late-file
-failures: generation still completes in memory before writes, and existing
-outputs and stdout remain intact on rejected jobs. Exact byte parity on these
-cases remains bounded evidence, not full C++ or frontend parity.
+The 102-test Rust suite passed on the initial implementation, followed by all
+three prepared-renderer tests after the two additional tests in `ec381af93`.
+Final formatting and offline all-target Clippy with warnings denied passed.
+Independent checks reran the template oracle's 41 JVM pairs and 315-template
+identity gate, retained whole-file/documentation goldens and the native frontend
+adapter oracle, including four baseline native jobs, semantic model projections,
+23 live mutations, deterministic results, strict C++ consumers and output
+preservation on rejected inputs. Generation still completes in memory before
+writes. These cases establish bounded regression/output evidence; complete
+C++ and frontend parity remain open.
+
+The [independent review](REVIEW.md#m14-independent-optimization-review--2026-11-02)
+in `cbd13c4b0` reports no unresolved material finding. It also passes 47 focused
+integration tests, the three final prepared tests, eighteen adversarial CLI
+probes and four harness checks. The CLI probes include malformed absences and
+same-class cross-node stored null/string/false getters. Review independently
+rehashes all 117 successful output trees and 28,786 files, and recomputes all
+306 scalar statistics and eleven ratios against the displayed report tables.
 
 #### Bounded before/after measurement
 
-Measure rebuilt release binaries for both `15b1db4c4` and the optimized source
-in the same current environment with the actual JVM compiler as a third side.
-Reuse M13's custom fixture, corrected default copy and deterministic
-10/100/125/500 independent one-field-struct workloads, identical explicit
-options and unchanged templates. The native timing path remains raw-LIME
-`compile-cpp` through complete writes; builds, source preparation, logging setup,
-profiling and output verification stay outside timers. Use fresh destinations,
-the reviewed native supervisor, writable JVM homes, warm filesystem caches and
-sequential fresh processes. Record source/dirty state, binaries, jars,
-toolchains, environment, argv, inputs/options/templates and complete output
-inventories/hashes for every side.
+The rebuilt baseline `15b1db4c4` and optimized release at clean source
+`ec381af93` ran in the same environment alongside the actual JVM compiler.
+Tools are committed through `c2093ba80`, `a71c41f66` and `3f90a57a0`; report/raw
+evidence is `412913187`, with counter-reproduction documentation in `67d16764b`.
+M13's custom fixture, corrected default copy and independent one-field structs
+at 10/100/125/500 use the same explicit options and unchanged templates. Timing
+covers fresh raw-LIME `compile-cpp` through complete writes. Builds, fixture
+preparation, logging setup, diagnostics and output hashing stay outside timers.
+The retained records pin binaries, source/dirty state, jars, toolchains,
+environment, argv, inputs/options/templates and complete output inventories;
+identities matched again at completion.
 
-Predeclare and save a seeded randomized schedule before timed invocations:
-three baseline Rust samples each for custom, corrected default and
-10/100/125 structs; eight optimized-Rust/JVM pairs for all six workloads; and
-one baseline Rust 500-struct attempt capped at 60 seconds. Every invocation
-has the same 60-second cap. Establish six untimed JVM equivalence preflights
-for the workload baselines before admitting optimized timing comparisons.
-Retain every unsuccessful or mismatched attempt;
-do not select workloads by favorable timings or silently replace failed
-samples. Verify all completed output trees outside timers against complete
-JVM file inventories and exact bytes, including common/export files; baseline
-500 is censored unless it completes and passes the same gate. Report wall,
-CPU and peak RSS distributions/counts and actual before/after medians for
-completed cases, with explicit unequal baseline sample counts. A timed-out
-baseline supplies its elapsed limit, never a numeric baseline speed ratio.
+The predeclared seeded schedule contains three baseline Rust trials per first
+five workloads, eight balanced optimized-Rust/JVM pairs per all six, and one
+baseline 500-struct attempt. All 112 attempts are retained with the same
+60-second cap; 111 completed and matched complete reference inventories,
+including common/export files. Six separate successful JVM equivalence
+preflights are excluded from sample statistics. The one baseline 500 attempt
+was killed at 60.009 seconds without an output tree and has no completed parity
+or numeric baseline/optimized ratio. Output checks occur outside timers.
 
-The desired outcome is a clear reduction at 100/125 structs and completion of
-the optimized 500-struct workload with exact JVM output. Report measured
-results even if that outcome is not achieved; do not infer asymptotic bounds
-or statistical significance from these few scales. Small-fixture results and
-memory costs remain visible. The M13 persistent API experiment is separate;
-do not attribute fresh-process gains to JIT behavior or promise a warmed API
-improvement without new evidence. Obtain independent review of source,
-regressions and reproducible measurements, resolve material findings, update
-this checklist and documentation, then commit and publish within the user's
-existing authorization. Broader compatibility and further optimization remain
-open in the roadmap.
+Same-host baseline/optimized median wall time fell from 20.844/0.089 seconds
+at 100 structs (234.7×) and 44.499/0.157 seconds at 125 structs (283.2×).
+Optimized 500 structs completed in median 1.296 seconds versus JVM 2.776
+seconds, with all eight outputs per side passing the gate. Custom, corrected
+default and ten structs also improved, with medians and CPU/RSS distributions
+visible in the report. The earlier M13 125-struct median remains 33.096
+seconds; it is historical evidence, not the denominator of this same-host
+before/after comparison.
+
+The results meet the bounded performance objective. Shared-host variation,
+a two-CPU quota, an 8 GiB memory limit, buffered tmpfs writes, synthetic scales,
+three-versus-eight native sample counts and broader JVM validation remain
+explicit limits. These few scales do not establish asymptotic complexity,
+statistical significance or language/runtime overhead. Fresh filesystem-warm
+processes retain no JVM JIT state; M13's persistent API experiment remains
+separate and no new warmed-API improvement is claimed. Broader compatibility
+and further optimization remain open in the roadmap. Publication of the
+reviewed M14 commits remains pending within the user's existing authorization.
 
 ### P1b: complete JSON-consuming C++ compatibility backend — remaining work
 
