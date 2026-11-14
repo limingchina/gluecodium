@@ -1,0 +1,8 @@
+package review
+@Cpp("SafeType")
+struct `name.with.dots` {
+    value: Int
+}
+struct Holder {
+    item: `name.with.dots`
+}

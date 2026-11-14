@@ -1,0 +1,8 @@
+package review
+class Owner {
+    @Cpp("SafeNested")
+    struct `name.with.dots` {
+        value: Int
+    }
+    fun use(item: `name.with.dots`): `name.with.dots`
+}

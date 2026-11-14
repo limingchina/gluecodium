@@ -32,12 +32,12 @@ def main():
     before=identity();java=Path(os.environ['JAVA_HOME'])/'bin/java' if os.environ.get('JAVA_HOME') else 'java';javac=Path(os.environ['JAVA_HOME'])/'bin/javac' if os.environ.get('JAVA_HOME') else 'javac'
     if args.mode=='smoke':
         cases=sorted(p for p in SMOKE.iterdir() if p.is_dir()); cpp=[p for p in cases if cpp_reference(p)];strict=[p for p in cpp if (p/'input/validationfail.txt').exists()]
-        if len(cases)<49 or len(cpp)<38 or len(strict)!=2:raise SystemExit(f'incomplete inventory: {len(cases)} total, {len(cpp)} C++, {len(strict)} strict')
+        if len(cases)<49 or len(cpp)<38 or {p.name for p in strict}!={'strict_fail_immutable','strict_fail_internal'}:raise SystemExit(f'incomplete inventory: {len(cases)} total, {len(cpp)} C++, {len(strict)} strict')
         names=[p.name for p in cases]
     else:
         result=run([HERE/'functional-inventory','--output',capture/'inventory'])
         if result.returncode:raise SystemExit(result.stderr)
-        names=['functional','namerules','filtered-overloads','overflow','markdown']
+        names=['functional','namerules']+list(read(capture/'inventory/functional-inventory.json')['targeted_probes'])
     rows=[]
     with tempfile.TemporaryDirectory(prefix='cpp-completion-') as temp:
         classes=Path(temp)/'classes';classes.mkdir();logging=Path(temp)/'logging.properties';logging.write_text('handlers=java.util.logging.ConsoleHandler\n.level=WARNING\n')

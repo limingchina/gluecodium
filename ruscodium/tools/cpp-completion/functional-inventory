@@ -30,13 +30,14 @@ def main():
     test_headers = sorted((BASE / 'cpp/tests').rglob('*.h'))
     if len(features) != 45 or len(tests) != 10: raise SystemExit(f'unexpected counts: {len(features)} features, {len(tests)} tests')
     lime = sorted({p for f in features for p in f['lime']}); cpp = sorted({p for f in features for p in f['cpp']})
+    if len(lime) < 115 or len(cpp) < 105: raise SystemExit(f'incomplete functional inputs: {len(lime)} LIME, {len(cpp)} handwritten')
     opts = ['-input', rel(BASE / 'input/lime'), '-intnamespace', 'lorem_ipsum.test', '-tag', 'Lite', '-tag', 'ExperimentalFoo',
             '-copyright', 'functional-tests/config/COPYRIGHT', '-docsplaceholderslist', 'functional-tests/config/placeholders.properties']
     properties(args.output / 'functional.properties', lime, [], opts)
     names = ['functional-tests/namerules/input/lime/NameRules.lime']
     properties(args.output / 'namerules.properties', names, [], ['-input', names[0], '-intnamespace', 'lorem_ipsum.test',
                '-cppnamerules', 'functional-tests/namerules/input/namerules/cpp.properties'])
-    probes = {'filtered-overloads': 'FilteredOverloads.lime', 'overflow': 'Overflow.lime', 'markdown': 'Markdown.lime'}
+    probes = {'filtered-overloads': 'FilteredOverloads.lime', 'overflow': 'Overflow.lime', 'markdown': 'Markdown.lime', 'quoted-names': 'QuotedNames.lime', 'quoted-unicode': 'QuotedUnicode.lime', 'quoted-dots': 'QuotedDots.lime', 'quoted-dots-reference': 'QuotedDotsReference.lime', 'quoted-dots-nested': 'QuotedDotsNested.lime', 'open-interface': 'OpenInterface.lime', 'open-narrow-interface': 'OpenNarrowInterface.lime'}
     for name, filename in probes.items():
         path = rel(ROOT / 'ruscodium/tools/cpp-completion/fixtures' / filename)
         properties(args.output / f'{name}.properties', [path], [], ['-input', path, '-intnamespace', 'detail'])

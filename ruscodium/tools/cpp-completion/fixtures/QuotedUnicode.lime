@@ -1,0 +1,6 @@
+package review
+@Cpp("SafeType")
+struct `Café` {
+    @Cpp("safe_field")
+    `valueØ`: Int
+}
