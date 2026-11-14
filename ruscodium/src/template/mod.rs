@@ -115,6 +115,10 @@ pub(crate) struct PreparedRenderer {
     cache: BTreeMap<String, Rc<Vec<Node>>>,
 }
 impl PreparedRenderer {
+    pub(crate) fn diagnostics(&self) -> Vec<String> {
+        self.native_cpp.diagnostics()
+    }
+
     pub(crate) fn new(
         root: &Path,
         mut graph: Graph,

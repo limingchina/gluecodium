@@ -273,6 +273,23 @@ fn attribute_views_keep_case_insensitivity_without_changing_maps() {
 }
 
 #[test]
+fn external_descriptor_views_fold_case_without_changing_plain_maps() {
+    let d = Dir::new();
+    d.write("test", "{{external.cpp.getterName}}/{{external.cpp.GETTERNAME}}/{{external.cpp.setterName}}/{{plain.getterName}}/{{plain.gettername}}");
+    let mut r = req(
+        "test",
+        json!({"external":{"$ref":"e"},"plain":{"gettername":"ordinary"}}),
+    );
+    r["snapshot"] = json!({"schema":"gluecodium.reference-model.snapshot","version":1,"root":{"$ref":"e"},"nodes":[{"id":"e","class":"com.here.gluecodium.model.lime.LimeExternalDescriptor","properties":{"cpp":{"gettername":"get_value","SETTERNAME":"set_value"}}}]});
+    assert_eq!(
+        render(&d.0, &r).unwrap(),
+        "get_value/get_value/set_value//ordinary"
+    );
+    r["data"]["plain"] = json!({"$ruscodium.attribute-view":{"gettername":"forged"}});
+    assert!(render(&d.0, &r).is_err());
+}
+
+#[test]
 fn sort_does_not_create_iteration_metadata_and_secondary_objects_fail() {
     let d = Dir::new();
     d.write(

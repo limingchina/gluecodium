@@ -216,6 +216,20 @@ impl Graph {
                         _ => v.clone(),
                     }));
             }
+            if node.class == "com.here.gluecodium.model.lime.LimeExternalDescriptor"
+                && ["cpp", "java", "kotlin", "swift", "dart"].contains(&key)
+            {
+                if let Some(Value::Object(fields)) = node.properties.get(key) {
+                    let folded: Map<String, Value> = fields
+                        .iter()
+                        .map(|(name, value)| (name.to_lowercase(), value.clone()))
+                        .collect();
+                    return Ok(Some(Value::Object(Map::from_iter([(
+                        ATTRIBUTE_VIEW.to_owned(),
+                        Value::Object(folded),
+                    )]))));
+                }
+            }
             if self.absent.get(id).is_some_and(|names| names.contains(key)) {
                 return Ok(None);
             }
