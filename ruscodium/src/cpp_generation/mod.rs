@@ -1,11 +1,12 @@
 //! Guarded whole-file C++ generation from a full JVM reference-model snapshot.
 mod collect;
+mod filter;
 
 use crate::template::{self, native_cpp::NativeCppConfig, Graph};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{
-    collections::BTreeSet,
+    collections::{BTreeMap, BTreeSet},
     fs,
     path::{Component, Path, PathBuf},
 };
@@ -50,6 +51,14 @@ struct Options {
     export_common: Option<String>,
     #[serde(default)]
     copyright_header: Option<String>,
+    #[serde(default)]
+    tags: Vec<String>,
+    #[serde(default)]
+    name_rules: BTreeMap<String, String>,
+    #[serde(default)]
+    werror: Vec<String>,
+    #[serde(default, rename = "docs_placeholders")]
+    _docs_placeholders: BTreeMap<String, String>,
 }
 fn default_export() -> String {
     "_GLUECODIUM_CPP".into()
@@ -62,6 +71,10 @@ impl Default for Options {
             export: default_export(),
             export_common: None,
             copyright_header: None,
+            tags: vec![],
+            name_rules: BTreeMap::new(),
+            werror: vec![],
+            _docs_placeholders: BTreeMap::new(),
         }
     }
 }
@@ -163,6 +176,7 @@ fn cpp_identifier(s: &str) -> bool {
         .contains(&s)
 }
 fn check_options(options: &Options) -> Result<(), String> {
+    template::native_cpp::validate_cpp_name_rules(&options.name_rules)?;
     for name in options
         .root_namespace
         .iter()
@@ -228,9 +242,272 @@ fn array(graph: &Graph, value: &Value, key: &str) -> Result<Vec<Value>, String> 
         .ok_or_else(|| format!("{key} must be an array"))
 }
 
+fn attributes<'a>(
+    graph: &'a Graph,
+    value: &Value,
+) -> Result<&'a serde_json::Map<String, Value>, String> {
+    let attrs = field(graph, value, "attributes")?;
+    graph
+        .nodes
+        .get(ref_id(&attrs)?)
+        .and_then(|n| n.properties.get("attributes"))
+        .and_then(Value::as_object)
+        .ok_or_else(|| "invalid attributes".into())
+}
+fn external_cpp<'a>(
+    graph: &'a Graph,
+    value: &Value,
+) -> Result<Option<&'a serde_json::Map<String, Value>>, String> {
+    let external = field(graph, value, "external")?;
+    if external.is_null() {
+        return Ok(None);
+    }
+    let descriptors = graph
+        .nodes
+        .get(ref_id(&external)?)
+        .and_then(|n| n.properties.get("descriptors"))
+        .and_then(Value::as_object)
+        .ok_or("invalid external descriptor")?;
+    descriptors
+        .iter()
+        .find(|(k, _)| k.eq_ignore_ascii_case("cpp"))
+        .map(|(_, v)| v.as_object().ok_or_else(|| "invalid C++ descriptor".into()))
+        .transpose()
+}
+fn validate_cpp_skip(graph: &Graph) -> Result<(), String> {
+    for (id, node) in &graph.nodes {
+        let kind = node.class.rsplit('.').next().unwrap_or("");
+        if node.properties.contains_key("path")
+            && node.properties.contains_key("external")
+            && !matches!(kind, "LimeFieldConstructor" | "LimeConstant")
+        {
+            let value = json!({"$ref":id});
+            if attributes(graph, &value)?
+                .get("CPP")
+                .and_then(Value::as_object)
+                .and_then(|v| v.get("SKIP"))
+                .is_some_and(|v| !v.is_null() && v != &Value::Bool(false))
+            {
+                return Err(
+                    "@Cpp(Skip) can only be used on a field constructor or a constant".into(),
+                );
+            }
+        }
+    }
+    Ok(())
+}
+fn function_usings(
+    graph: &Graph,
+    config: &NativeCppConfig,
+    types: &[Value],
+) -> Result<Value, String> {
+    fn inherited(
+        graph: &Graph,
+        container: &Value,
+        seen: &mut BTreeSet<String>,
+    ) -> Result<Vec<Value>, String> {
+        if !seen.insert(ref_id(container)?.to_owned()) || seen.len() > 128 {
+            return Err("cyclic inheritance".into());
+        }
+        let mut result = Vec::new();
+        for parent in array(graph, container, "parents")? {
+            let mut ty = field(graph, &parent, "type")?;
+            let mut aliases = BTreeSet::new();
+            while class(graph, &ty)? == "LimeTypeAlias" {
+                if !aliases.insert(ref_id(&ty)?.to_owned()) || aliases.len() > 128 {
+                    return Err("cyclic alias".into());
+                }
+                ty = field(graph, &field(graph, &ty, "typeRef")?, "type")?;
+            }
+            if matches!(class(graph, &ty)?, "LimeClass" | "LimeInterface") {
+                result.extend(array(graph, &ty, "functions")?);
+                result.extend(inherited(graph, &ty, seen)?);
+            }
+        }
+        seen.remove(ref_id(container)?);
+        Ok(result)
+    }
+    let resolver = template::native_cpp::NativeCppResolver::new(graph, config.clone())?;
+    let mut result = serde_json::Map::new();
+    for ty in types {
+        if !matches!(class(graph, ty)?, "LimeClass" | "LimeInterface")
+            || array(graph, ty, "parents")?.is_empty()
+        {
+            continue;
+        }
+        let inherited = inherited(graph, ty, &mut BTreeSet::new())?;
+        let mut selected = Vec::new();
+        for function in array(graph, ty, "functions")? {
+            let name = resolver.resolve(graph, "", "name", &function)?;
+            for parent in &inherited {
+                if field(graph, parent, "isStatic")? == json!(false)
+                    && resolver.resolve(graph, "", "name", parent)? == name
+                {
+                    if !selected.contains(parent) {
+                        selected.push(parent.clone());
+                    }
+                    break;
+                }
+            }
+        }
+        let path = field(graph, ty, "path")?;
+        let parts = array(graph, &path, "head")?
+            .into_iter()
+            .chain(array(graph, &path, "tail")?)
+            .map(|v| v.as_str().map(str::to_owned).ok_or("invalid path"))
+            .collect::<Result<Vec<_>, _>>()?;
+        result.insert(parts.join("."), json!(selected));
+    }
+    Ok(Value::Object(result))
+}
+fn derive_enumerator_values(graph: &mut Graph) -> Result<(), String> {
+    let mut int_ref = graph.nodes.iter().find_map(|(id, n)| {
+        if !n.class.ends_with(".LimeBasicTypeRef") {
+            return None;
+        }
+        let target = n.properties.get("type")?;
+        (field(graph, target, "typeId").ok()?.get("name")?.as_str()? == "INT32")
+            .then(|| json!({"$ref":id}))
+    });
+    let enums = graph
+        .nodes
+        .iter()
+        .filter(|(_, n)| n.class.ends_with(".LimeEnumeration"))
+        .map(|(id, _)| json!({"$ref":id}))
+        .collect::<Vec<_>>();
+    if int_ref.is_none() && !enums.is_empty() {
+        let root = graph.root.clone().ok_or("missing model root")?;
+        let refs = field(graph, &root, "referenceMap")?;
+        let int = refs.get("Int").cloned().ok_or("missing integer builtin")?;
+        let attrs = field(graph, &enums[0], "attributes")?;
+        let id = "$ruscodium.enum-int-ref";
+        if graph.nodes.contains_key(id) {
+            return Err("reserved synthetic node id".into());
+        }
+        let mut node = graph.nodes.get(ref_id(&enums[0])?).unwrap().clone();
+        node.class = "com.here.gluecodium.model.lime.LimeBasicTypeRef".into();
+        node.properties = serde_json::Map::from_iter([
+            ("attributes".into(), attrs),
+            ("element".into(), int.clone()),
+            ("type".into(), int),
+            ("elementFullName".into(), json!("INT32")),
+            ("isNullable".into(), json!(false)),
+        ]);
+        graph.nodes.insert(id.into(), node);
+        int_ref = Some(json!({"$ref":id}));
+    }
+    for enumeration in enums {
+        let mut previous: Option<i32> = None;
+        for item in array(graph, &enumeration, "enumerators")? {
+            let explicit = field(graph, &item, "explicitValue")?;
+            let value = if explicit.is_null() {
+                let n = previous.map(|v| v.wrapping_add(1)).unwrap_or(0);
+                let id = format!("$ruscodium.enum-value.{}", ref_id(&item)?);
+                if graph.nodes.contains_key(&id) {
+                    return Err("reserved synthetic node id".into());
+                }
+                let type_ref = int_ref.clone().ok_or("missing integer type reference")?;
+                let attrs = field(graph, &item, "attributes")?;
+                let mut node = graph
+                    .nodes
+                    .get(ref_id(&item)?)
+                    .ok_or("missing enumerator")?
+                    .clone();
+                node.class = "com.here.gluecodium.model.lime.LimeValue$Literal".into();
+                node.properties = serde_json::Map::from_iter([
+                    ("attributes".into(), attrs),
+                    ("typeRef".into(), type_ref),
+                    ("value".into(), json!(n.to_string())),
+                ]);
+                graph.nodes.insert(id.clone(), node);
+                previous = Some(n);
+                json!({"$ref":id})
+            } else {
+                previous = if class(graph, &explicit)? == "LimeValue$Literal" {
+                    field(graph, &explicit, "value")?
+                        .as_str()
+                        .and_then(|s| s.parse().ok())
+                } else {
+                    None
+                };
+                explicit
+            };
+            graph
+                .nodes
+                .get_mut(ref_id(&item)?)
+                .ok_or("missing enumerator")?
+                .properties
+                .insert("value".into(), value);
+        }
+    }
+    let mut live = BTreeSet::new();
+    let mut pending = vec![graph.root.as_ref().ok_or("missing model root")?];
+    while let Some(value) = pending.pop() {
+        if let Ok(id) = ref_id(value) {
+            if !live.insert(id.to_owned()) {
+                continue;
+            }
+            let node = graph.nodes.get(id).ok_or("dangling model reference")?;
+            pending.extend(node.properties.values());
+        } else if let Some(items) = value.as_array() {
+            pending.extend(items);
+        } else if let Some(map) = value.as_object() {
+            pending.extend(map.values());
+        }
+    }
+    let positional = graph
+        .nodes
+        .iter()
+        .filter(|(id, n)| live.contains(*id) && n.class.ends_with(".LimePositionalEnumeratorRef"))
+        .map(|(id, _)| id.clone())
+        .collect::<Vec<_>>();
+    for id in positional {
+        let reference = json!({"$ref":id});
+        let index = field(graph, &reference, "index")?
+            .as_i64()
+            .ok_or("invalid positional enumerator index")?;
+        let mut ty = field(graph, &field(graph, &reference, "typeRef")?, "type")?;
+        let mut aliases = BTreeSet::new();
+        while class(graph, &ty)? == "LimeTypeAlias" {
+            if !aliases.insert(ref_id(&ty)?.to_owned()) || aliases.len() > 128 {
+                return Err("cyclic alias".into());
+            }
+            ty = field(graph, &field(graph, &ty, "typeRef")?, "type")?;
+        }
+        if class(graph, &ty)? != "LimeEnumeration" {
+            return Err("positional enumerator requires enumeration".into());
+        }
+        let mut matched = None;
+        for enumerator in array(graph, &ty, "enumerators")? {
+            let value = field(graph, &enumerator, "value")?;
+            if class(graph, &value)? == "LimeValue$Literal"
+                && field(graph, &value, "value")?
+                    .as_str()
+                    .and_then(|s| s.parse::<i64>().ok())
+                    == Some(index)
+            {
+                matched = Some(enumerator);
+                break;
+            }
+        }
+        graph.nodes.get_mut(&id).unwrap().properties.insert(
+            "element".into(),
+            matched.ok_or("positional enumerator not found")?,
+        );
+    }
+    Ok(())
+}
+
 /// Generate all files before any filesystem writes. No caller-supplied render
 /// contexts or replay hooks are accepted by the job schema.
 pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<GeneratedFile>, String> {
+    generate_with_diagnostics(templates, input).map(|(files, _)| files)
+}
+
+pub fn generate_with_diagnostics(
+    templates: impl AsRef<Path>,
+    input: &Value,
+) -> Result<(Vec<GeneratedFile>, Vec<String>), String> {
     let job: Job =
         serde_json::from_value(input.clone()).map_err(|e| format!("generation job: {e}"))?;
     if job.schema != "gluecodium.cpp-generation-job" || ![1, 2].contains(&job.version) {
@@ -263,17 +540,14 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             }
         }
         graph.attach_raw_comments(raw)?;
-        for (id, node) in &graph.nodes {
-            if node.class.ends_with(".LimeComment") {
-                let text = template::native_comments::selected(&graph, &json!({"$ref":id}))?
-                    .ok_or("missing raw comments")?;
-                template::native_comments::format(&text)?;
-            }
-        }
     }
     validate_graph(&graph, &job)?;
+    validate_cpp_skip(&graph)?;
+    filter::apply(&mut graph, &job.options.tags)?;
+    derive_enumerator_values(&mut graph)?;
     validate_type_cycles(&graph)?;
     validate_method_names(&graph, &job.options)?;
+    validate_values(&graph)?;
     let root = graph.root.as_ref().ok_or("missing model root")?;
     let roots = array(&graph, root, "topElements")?;
     let config = NativeCppConfig {
@@ -281,6 +555,9 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
         internal_namespace: job.options.internal_namespace.clone(),
         predicates: true,
         sorters: true,
+        name_rules: job.options.name_rules.clone(),
+        werror_doc_links: job.options.werror.iter().any(|v| v == "DocLinks"),
+        ..Default::default()
     };
     let common_export = job
         .options
@@ -303,7 +580,32 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
         {
             let entry = absence_map.entry(id).or_insert_with(|| json!([]));
             let values = entry.as_array_mut().ok_or("invalid absent property list")?;
-            for name in ["contentTemplate", "cppRef", "cppNoexcept", "parentName"] {
+            for name in [
+                "contentTemplate",
+                "cppRef",
+                "cppNoexcept",
+                "parentName",
+                "namespace",
+                "rootNamespace",
+                "structName",
+                "className",
+                "enum",
+                "enumName",
+                "thisEnum",
+                "functionUsings",
+                "equatables",
+                "errorEnums",
+                "internalNamespace",
+                "exportName",
+                "structElement",
+                "propertyElement",
+                "isVirtual",
+                "isConst",
+                "isAsyncHelper",
+                "storageQualifier",
+                "needsExport",
+                "iter",
+            ] {
                 if !class_properties[&node.class].contains(name)
                     && !values.iter().any(|v| v == name)
                 {
@@ -315,8 +617,40 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
     let mut renderer = None;
     let mut render = |name: &str, data: Value| -> Result<String, String> {
         if renderer.is_none() {
-            let render_graph =
-                Graph::import_with_absences(Some(&job.snapshot), Some(&overlays), Some(&absences))?;
+            let mut snapshot = job.snapshot.clone();
+            let nodes = snapshot["nodes"]
+                .as_array_mut()
+                .ok_or("invalid snapshot nodes")?;
+            let original_ids: BTreeSet<_> = nodes
+                .iter()
+                .filter_map(|n| n["id"].as_str().map(str::to_owned))
+                .collect();
+            for (id, node) in &graph.nodes {
+                if !original_ids.contains(id) {
+                    nodes.push(json!({"id":id,"class":node.class,"properties":node.properties}));
+                }
+            }
+            let mut render_graph =
+                Graph::import_with_absences(Some(&snapshot), Some(&overlays), Some(&absences))?;
+            for raw in job.snapshot["nodes"]
+                .as_array()
+                .ok_or("invalid snapshot nodes")?
+            {
+                let id = raw["id"].as_str().ok_or("invalid snapshot id")?;
+                let filtered = graph.nodes.get(id).ok_or("missing filtered node")?;
+                let node = render_graph
+                    .nodes
+                    .get_mut(id)
+                    .ok_or("missing render node")?;
+                for key in raw["properties"]
+                    .as_object()
+                    .ok_or("invalid snapshot properties")?
+                    .keys()
+                {
+                    node.properties
+                        .insert(key.clone(), filtered.properties[key].clone());
+                }
+            }
             renderer = Some(template::PreparedRenderer::new(
                 templates.as_ref(),
                 render_graph,
@@ -337,7 +671,12 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
         for ty in context.all_types(root)? {
             if class(&graph, &ty)? == "LimeException" {
                 let error = field(&graph, &ty, "errorType")?;
-                all_error_enums.insert(ref_id(&field(&graph, &error, "type")?)?.to_owned());
+                let target = field(&graph, &error, "type")?;
+                if class(&graph, &target)? == "LimeEnumeration"
+                    && external_cpp(&graph, &target)?.is_none()
+                {
+                    all_error_enums.insert(ref_id(&target)?.to_owned());
+                }
             }
         }
     }
@@ -358,6 +697,25 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             .into_iter()
             .filter(|v| ref_id(v).is_ok_and(|id| all_error_enums.contains(id)))
             .collect::<Vec<_>>();
+        let types = context.all_types(&element)?;
+        let mut equatables = Vec::new();
+        for ty in &types {
+            if external_cpp(&graph, ty)?.is_none()
+                && attributes(&graph, ty)?.contains_key("EQUATABLE")
+            {
+                equatables.push(ty.clone());
+            }
+        }
+        let function_usings = function_usings(&graph, &config, &types)?;
+        let needs_header = external_cpp(&graph, &element)?.is_none();
+        let needs_implementation = !error_enums.is_empty()
+            || matches!(
+                kind,
+                "LimeClass" | "LimeInterface" | "LimeStruct" | "LimeEnumeration"
+            );
+        if !needs_header && !needs_implementation {
+            continue;
+        }
         let imports = collect::collect(&context, &element, !error_enums.is_empty())?;
         let path = field(&graph, &element, "path")?;
         let mut namespace = job.options.root_namespace.clone();
@@ -380,21 +738,30 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
         header_includes.dedup();
         let header_path = format!("cpp/include/{filename}.h");
         header_includes.retain(|i| !header_path.ends_with(&i.file_name));
-        let mut data = json!({"namespace":namespace,"rootNamespace":job.options.root_namespace,"internalNamespace":job.options.internal_namespace,"exportName":job.options.export,"model":element,"equatables":[],"errorEnums":error_enums,"forwardDeclarations":imports.forward_declarations,"functionUsings":{},"includes":header_includes.iter().map(|i| json!({"fileName":i.file_name,"isSystem":i.is_system})).collect::<Vec<_>>(),"contentTemplate":content});
-        files.push(GeneratedFile {
-            path: header_path.into(),
-            source_set: SourceSet::MAIN,
-            contents: render("cpp/CppHeader", data.clone())?,
-        });
-        if matches!(
-            kind,
-            "LimeClass" | "LimeInterface" | "LimeStruct" | "LimeEnumeration"
-        ) {
-            let mut includes = imports.implementation_includes;
-            includes.push(collect::Include {
-                file_name: format!("{filename}.h"),
-                is_system: false,
+        let mut data = json!({"namespace":namespace,"rootNamespace":job.options.root_namespace,"internalNamespace":job.options.internal_namespace,"exportName":job.options.export,"model":element,"equatables":equatables,"errorEnums":error_enums,"forwardDeclarations":imports.forward_declarations,"functionUsings":function_usings,"includes":header_includes.iter().map(|i| json!({"fileName":i.file_name,"isSystem":i.is_system})).collect::<Vec<_>>(),"contentTemplate":content});
+        if needs_header {
+            files.push(GeneratedFile {
+                path: header_path.into(),
+                source_set: SourceSet::MAIN,
+                contents: render("cpp/CppHeader", data.clone())?,
             });
+        }
+        if needs_implementation {
+            let mut includes = imports.implementation_includes;
+            if needs_header {
+                includes.push(collect::Include {
+                    file_name: format!("{filename}.h"),
+                    is_system: false,
+                });
+            } else if let Some(include) = external_cpp(&graph, &element)?
+                .and_then(|d| d.iter().find(|(k, _)| k.eq_ignore_ascii_case("include")))
+                .and_then(|(_, v)| v.as_str())
+            {
+                includes.extend(include.split(',').map(|s| collect::Include {
+                    file_name: s.trim().into(),
+                    is_system: false,
+                }));
+            }
             includes.sort();
             includes.dedup();
             data["includes"] = json!(includes
@@ -478,7 +845,12 @@ pub fn generate(templates: impl AsRef<Path>, input: &Value) -> Result<Vec<Genera
             ));
         }
     }
-    Ok(files)
+    drop(render);
+    let diagnostics = renderer
+        .as_ref()
+        .map(|r| r.diagnostics())
+        .unwrap_or_default();
+    Ok((files, diagnostics))
 }
 fn join_path(prefix: &str, suffix: &str) -> String {
     if prefix.is_empty() {
@@ -630,7 +1002,7 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 format!(":{suffix}")
             }
         );
-        if *name != full {
+        if *name != full && !(name == full.split(':').next().unwrap_or("") && !suffix.is_empty()) {
             return Err(format!("referenceMap path mismatch: {name}"));
         }
         let owner = head
@@ -646,12 +1018,16 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             return Err(format!("unowned reference {name}"));
         }
         if tail.len() > 1 {
-            let parent = head
+            let mut parent = head
                 .iter()
                 .chain(tail.iter().take(tail.len() - 1))
                 .map(|v| v.as_str().unwrap_or(""))
                 .collect::<Vec<_>>()
                 .join(".");
+            if matches!(kind, "LimeParameter" | "LimeLambdaParameter") && !suffix.is_empty() {
+                parent.push(':');
+                parent.push_str(suffix);
+            }
             let parent_value = references
                 .get(&parent)
                 .ok_or_else(|| format!("missing parent {parent}"))?;
@@ -672,7 +1048,12 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 "LimeParameter" | "LimeLambdaParameter" => "parameters",
                 _ => return Err(format!("unsupported indexed declaration {kind}")),
             };
-            if !array(graph, parent_value, collection)?.contains(element) {
+            let stale_overloads = kind == "LimeFunction"
+                && array(graph, parent_value, collection)?.is_empty()
+                && references.keys().any(|candidate| {
+                    candidate.starts_with(&format!("{parent}.")) && candidate.contains(':')
+                });
+            if !array(graph, parent_value, collection)?.contains(element) && !stale_overloads {
                 return Err(format!(
                     "indexed declaration {name} is absent from its parent"
                 ));
@@ -696,7 +1077,8 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             if let Some(reference) = node.properties.get(key) {
                 if is_type_ref(class(graph, reference)?) {
                     let target = field(graph, reference, "type")?;
-                    if class(graph, &target)? == "LimeException"
+                    if !target.is_null()
+                        && class(graph, &target)? == "LimeException"
                         && !(kind == "LimeThrownType" && key == "typeRef")
                     {
                         return Err("exception cannot be used as a value type".into());
@@ -846,6 +1228,16 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             }
         }
     }
+    let mut path_is_comment = BTreeMap::<String, bool>::new();
+    for node in graph.nodes.values() {
+        if let Some(path) = node.properties.get("path").and_then(|v| ref_id(v).ok()) {
+            let is_comment = node.class.ends_with(".LimeComment");
+            path_is_comment
+                .entry(path.to_owned())
+                .and_modify(|v| *v &= is_comment)
+                .or_insert(is_comment);
+        }
+    }
     for (id, node) in &graph.nodes {
         let kind = node.class.rsplit('.').next().unwrap_or("");
         let v = json!({"$ref":id});
@@ -883,6 +1275,17 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 | "LimeLazyFieldRef"
                 | "LimeValue$Literal"
                 | "LimeValue$Null"
+                | "LimeValue$Special"
+                | "LimeValue$Duration"
+                | "LimeValue$Constant"
+                | "LimeValue$InitializerList"
+                | "LimeValue$StructInitializer"
+                | "LimeValue$KeyValuePair"
+                | "LimeExternalDescriptor"
+                | "LimePositionalTypeRef"
+                | "LimeAmbiguousConstantRef"
+                | "LimePositionalEnumeratorRef"
+                | "LimeLazyFunctionCall"
         ) {
             return Err(format!("unsupported snapshot class {kind}"));
         }
@@ -902,20 +1305,6 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 return Err(format!("generator projection {name} forbidden in snapshot"));
             }
         }
-        if node
-            .properties
-            .get("external")
-            .is_some_and(|v| !v.is_null())
-        {
-            return Err("external descriptors are unsupported".into());
-        }
-        if node
-            .properties
-            .get("parents")
-            .is_some_and(|v| v.as_array().is_none_or(|a| !a.is_empty()))
-        {
-            return Err("inheritance is unsupported".into());
-        }
         if matches!(kind, "LimeException" | "LimeEnumeration")
             && job
                 .property_overlays
@@ -933,20 +1322,9 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             let reference = field(graph, &v, "errorType")?;
             let target = field(graph, &reference, "type")?;
             if field(graph, &reference, "isNullable")? != json!(false)
-                || class(graph, &target)? != "LimeEnumeration"
-                || !all_references.contains(ref_id(&target)?)
+                || !is_type(class(graph, &target)?)
             {
-                return Err(
-                    "exception payload must be an indexed direct nonnullable enumeration".into(),
-                );
-            }
-        }
-        if kind == "LimeProperty" {
-            for key in ["getter", "setter"] {
-                let accessor = field(graph, &v, key)?;
-                if !accessor.is_null() && !field(graph, &accessor, "thrownType")?.is_null() {
-                    return Err("throwing property accessor is unsupported".into());
-                }
+                return Err("invalid exception payload".into());
             }
         }
         if kind == "LimeFunction" {
@@ -954,30 +1332,9 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             if !thrown.is_null() {
                 let reference = field(graph, &thrown, "typeRef")?;
                 let target = field(graph, &reference, "type")?;
-                let comment = field(graph, &thrown, "comment")?;
-                let comment_path = field(graph, &comment, "path")?;
-                let function_path = field(graph, &v, "path")?;
-                let same_path = ["head", "tail", "disambiguator"].iter().all(|key| {
-                    field(graph, &comment_path, key).ok() == field(graph, &function_path, key).ok()
-                });
-                let empty_comment = field(graph, &comment, "isEmpty")? == json!(true)
-                    && job.raw_comments.as_ref().is_none_or(|raw| {
-                        raw.get(ref_id(&comment).unwrap_or(""))
-                            .and_then(Value::as_array)
-                            .is_some_and(Vec::is_empty)
-                    });
-                if !same_path
-                    || !empty_comment
-                    || field(graph, &comment, "isExcluded")? != json!(false)
-                    || field(graph, &comment, "placeholders")? != json!({})
-                {
-                    return Err("throws comment must be empty and owned by its function".into());
-                }
                 if field(graph, &reference, "isNullable")? != json!(false)
                     || class(graph, &target)? != "LimeException"
                     || !all_references.contains(ref_id(&target)?)
-                    || !all_references.contains(id)
-                    || field(graph, &v, "isConstructor")? != json!(false)
                 {
                     return Err("unsupported throwing function".into());
                 }
@@ -1004,15 +1361,9 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 .get("attributes")
                 .and_then(Value::as_object)
                 .ok_or("invalid attributes")?;
-            for (group, value) in attrs {
-                if group != "CPP" {
-                    return Err(format!("unsupported attribute {group}"));
-                }
-                let cpp = value.as_object().ok_or("invalid CPP attribute")?;
-                for (key, value) in cpp {
-                    if key != "NAME" || !value.as_str().is_some_and(cpp_identifier) {
-                        return Err(format!("unsupported or unsafe CPP attribute {key}"));
-                    }
+            for value in attrs.values() {
+                if !value.is_object() {
+                    return Err("invalid attribute group".into());
                 }
             }
         }
@@ -1036,22 +1387,10 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             }
             let tail = array(graph, &v, "tail")?;
             for (i, part) in tail.iter().enumerate() {
-                let comment_only = job.version == 2
-                    && graph
-                        .nodes
-                        .values()
-                        .any(|owner| owner.properties.get("path") == Some(&v))
-                    && graph
-                        .nodes
-                        .values()
-                        .filter(|owner| owner.properties.get("path") == Some(&v))
-                        .all(|owner| owner.class.ends_with(".LimeComment"));
+                let comment_only = job.version == 2 && path_is_comment.get(id) == Some(&true);
                 if !part.as_str().is_some_and(|s| {
-                    identifier(s)
-                        || (s.is_empty() && i + 1 == tail.len())
-                        || (comment_only
-                            && i + 1 == tail.len()
-                            && s.strip_prefix('@').is_some_and(identifier))
+                    (!s.is_empty() && !s.chars().any(char::is_control))
+                        || (s.is_empty() && (i + 1 == tail.len() || comment_only))
                 }) {
                     return Err("invalid declaration path".into());
                 }
@@ -1063,10 +1402,6 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
             {
                 return Err("invalid path disambiguator".into());
             }
-        }
-        if kind.starts_with("LimeValue$") && !matches!(kind, "LimeValue$Literal" | "LimeValue$Null")
-        {
-            return Err(format!("unsupported value {kind}"));
         }
         for member in [
             "classes",
@@ -1172,6 +1507,28 @@ fn derived_overlays(graph: &Graph, job: &Job) -> Result<Value, String> {
             updates.insert("actualType".into(), target);
         }
         match kind {
+            "LimeExternalDescriptor" => {
+                let descriptors = node
+                    .properties
+                    .get("descriptors")
+                    .and_then(Value::as_object)
+                    .ok_or("invalid external descriptors")?;
+                for platform in ["cpp", "java", "kotlin", "swift", "dart"] {
+                    updates.insert(
+                        platform.into(),
+                        descriptors
+                            .iter()
+                            .find(|(name, _)| name.eq_ignore_ascii_case(platform))
+                            .map(|(_, v)| v.clone())
+                            .unwrap_or(Value::Null),
+                    );
+                }
+            }
+            "LimeEnumerator" => {
+                if let Some(value) = node.properties.get("value") {
+                    updates.insert("value".into(), value.clone());
+                }
+            }
             "LimeStruct" => {
                 let fields = array(graph, &this, "fields")?;
                 let mut uninitialized = Vec::new();
@@ -1306,6 +1663,16 @@ fn validate_snapshot_shape(snapshot: &Value) -> Result<(), String> {
             "LimeLazyFieldRef" => "attributes element",
             "LimeValue$Literal" => "attributes typeRef value",
             "LimeValue$Null" => "attributes typeRef",
+            "LimeValue$Special" => "attributes typeRef value",
+            "LimeValue$Duration" => "attributes timeUnit typeRef value",
+            "LimeValue$Constant" => "attributes typeRef valueRef",
+            "LimeValue$InitializerList" | "LimeValue$StructInitializer" => "attributes typeRef values",
+            "LimeValue$KeyValuePair" => "attributes key typeRef value",
+            "LimeExternalDescriptor" => "descriptors",
+            "LimePositionalTypeRef" => "attributes element isNullable type",
+            "LimeAmbiguousConstantRef" => "attributes element",
+            "LimePositionalEnumeratorRef" => "attributes element index typeRef",
+            "LimeLazyFunctionCall" => "element elementFullName parameters",
             _ => return Err(format!("unsupported snapshot class {kind}")),
         };
         let properties = node
@@ -1314,7 +1681,16 @@ fn validate_snapshot_shape(snapshot: &Value) -> Result<(), String> {
             .ok_or("invalid node properties")?;
         let expected: BTreeSet<_> = allowed.split_whitespace().collect();
         let actual: BTreeSet<_> = properties.keys().map(String::as_str).collect();
-        if expected != actual {
+        let extras: BTreeSet<_> =
+            if matches!(kind, "LimeAmbiguousTypeRef" | "LimeAmbiguousConstantRef") {
+                ["relativePath", "parentPaths", "imports"]
+                    .into_iter()
+                    .collect()
+            } else {
+                BTreeSet::new()
+            };
+        if !expected.is_subset(&actual) || !actual.difference(&expected).all(|p| extras.contains(p))
+        {
             return Err(format!(
                 "invalid stored properties on {kind}: missing {:?}, unknown {:?}",
                 expected.difference(&actual).collect::<Vec<_>>(),
@@ -1344,7 +1720,11 @@ fn is_type(kind: &str) -> bool {
 fn is_type_ref(kind: &str) -> bool {
     matches!(
         kind,
-        "LimeBasicTypeRef" | "LimeDirectTypeRef" | "LimeAmbiguousTypeRef" | "LimeLazyTypeRef"
+        "LimeBasicTypeRef"
+            | "LimeDirectTypeRef"
+            | "LimeAmbiguousTypeRef"
+            | "LimeLazyTypeRef"
+            | "LimePositionalTypeRef"
     )
 }
 fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), String> {
@@ -1357,7 +1737,7 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                     && class(graph, v).is_ok_and(|actual| match expected {
                         "type" => is_type(actual),
                         "typeRef" => is_type_ref(actual),
-                        "value" => matches!(actual, "LimeValue$Literal" | "LimeValue$Null"),
+                        "value" => actual.starts_with("LimeValue$"),
                         "root" => matches!(
                             actual,
                             "LimeClass"
@@ -1380,7 +1760,7 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                 | "isNamedParameter" | "isNullable" => value.is_boolean(),
                 "disambiguator" | "elementFullName" => value.is_string(),
                 "value" if kind == "LimeValue$Literal" => value.is_string(),
-                "head" | "tail" => value
+                "head" | "tail" | "relativePath" => value
                     .as_array()
                     .is_some_and(|a| a.iter().all(Value::is_string)),
                 "fileNameMap" => value
@@ -1395,7 +1775,17 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                     value.is_object()
                 }
                 "attributes" => target(value, "LimeAttributes"),
+                "descriptors" if kind == "LimeExternalDescriptor" => {
+                    value.as_object().is_some_and(|m| {
+                        m.values().all(|v| {
+                            v.as_object()
+                                .is_some_and(|m| m.values().all(Value::is_string))
+                        })
+                    })
+                }
+                "index" => value.is_i64() || value.is_u64(),
                 "path" => target(value, "LimePath"),
+                "parentPaths" | "imports" => list(value, "LimePath"),
                 "comment"
                 | "constructorComment"
                 | "valueComment"
@@ -1423,12 +1813,15 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                     },
                 ),
                 "fieldRefs" => list(value, "LimeLazyFieldRef"),
-                "parents" => value.as_array().is_some_and(Vec::is_empty),
+                "parents" => list(value, "typeRef"),
                 "exceptions" => list(value, "LimeException"),
                 "typeRef" | "errorType" | "structRef" | "elementType" | "keyType" | "valueType" => {
                     target(value, "typeRef")
                 }
                 "returnType" => target(value, "LimeReturnType"),
+                "type" if kind == "LimeAmbiguousTypeRef" && value.is_null() => {
+                    properties.contains_key("relativePath")
+                }
                 "type" => target(
                     value,
                     if kind == "LimeBasicTypeRef" {
@@ -1437,6 +1830,21 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                         "type"
                     },
                 ),
+                "element"
+                    if matches!(kind, "LimeAmbiguousTypeRef" | "LimeAmbiguousConstantRef")
+                        && value.is_null() =>
+                {
+                    properties.contains_key("relativePath")
+                }
+                "element"
+                    if matches!(
+                        kind,
+                        "LimeAmbiguousConstantRef" | "LimePositionalEnumeratorRef"
+                    ) =>
+                {
+                    target(value, "LimeConstant") || target(value, "LimeEnumerator")
+                }
+                "element" if kind == "LimeLazyFunctionCall" => target(value, "LimeFunction"),
                 "element" if kind == "LimeLazyFieldRef" => target(value, "LimeField"),
                 "element" => target(
                     value,
@@ -1449,7 +1857,31 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                 "getter" | "setter" => value.is_null() || target(value, "LimeFunction"),
                 "explicitValue" | "defaultValue" => value.is_null() || target(value, "value"),
                 "value" if kind == "LimeConstant" => target(value, "value"),
-                "external" => value.is_null(),
+                "external" => value.is_null() || target(value, "LimeExternalDescriptor"),
+                "valueRef" => {
+                    target(value, "LimeAmbiguousConstantRef")
+                        || target(value, "LimePositionalEnumeratorRef")
+                }
+                "values" => list(value, "value"),
+                "key" => target(value, "value"),
+                "value" if kind == "LimeValue$KeyValuePair" => target(value, "value"),
+                "value" if kind == "LimeValue$Duration" => value.is_string(),
+                "value" if kind == "LimeValue$Special" => value
+                    .get("name")
+                    .and_then(Value::as_str)
+                    .is_some_and(|s| ["NAN", "INFINITY", "NEGATIVE_INFINITY"].contains(&s)),
+                "timeUnit" => value.get("name").and_then(Value::as_str).is_some_and(|s| {
+                    [
+                        "DAY",
+                        "HOUR",
+                        "MINUTE",
+                        "SECOND",
+                        "MILLISECOND",
+                        "MICROSECOND",
+                        "NANOSECOND",
+                    ]
+                    .contains(&s)
+                }),
                 "thrownType" => value.is_null() || target(value, "LimeThrownType"),
                 "typeId" => {
                     value.get("enum").and_then(Value::as_str)
@@ -1527,48 +1959,53 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
         internal_namespace: options.internal_namespace.clone(),
         predicates: true,
         sorters: true,
+        name_rules: options.name_rules.clone(),
+        werror_doc_links: options.werror.iter().any(|v| v == "DocLinks"),
+        ..Default::default()
     };
-    let mut resolver = None;
-    let mut resolve = |mode: &str, value: &Value| {
-        if resolver.is_none() {
-            resolver = Some(template::native_cpp::NativeCppResolver::new(
-                graph,
-                config.clone(),
-            )?);
-        }
-        resolver
-            .as_ref()
-            .expect("resolver initialized")
-            .resolve(graph, "", mode, value)
-    };
-    for (id, node) in &graph.nodes {
+    let resolver = template::native_cpp::NativeCppResolver::new(graph, config)?;
+    let root = graph.root.as_ref().ok_or("missing root")?;
+    let references = field(graph, root, "referenceMap")?;
+    let indexed: BTreeSet<_> = references
+        .as_object()
+        .ok_or("invalid referenceMap")?
+        .values()
+        .filter_map(|v| ref_id(v).ok())
+        .collect();
+    for id in indexed {
+        let node = graph.nodes.get(id).ok_or("missing indexed node")?;
         let kind = node.class.rsplit('.').next().unwrap_or("");
-        if matches!(kind, "LimeValue$Literal" | "LimeValue$Null") {
-            let value = json!({"$ref":id});
-            resolve("name", &value)?;
-            if kind == "LimeValue$Literal" {
-                validate_literal(graph, &value)?;
-            }
-        }
         if !matches!(kind, "LimeClass" | "LimeInterface" | "LimeStruct") {
             continue;
         }
         let this = json!({"$ref":id});
-        let mut names = BTreeSet::new();
+        let mut signatures = BTreeSet::new();
         for function in array(graph, &this, "functions")? {
-            let name = resolve("name", &function)?.ok_or("missing function name")?;
-            if !names.insert(name.clone()) {
-                return Err(format!("C++ overloads unsupported: {name}"));
+            let name = resolver
+                .resolve(graph, "", "name", &function)?
+                .ok_or("missing function name")?;
+            let signature = resolver.signature(graph, &function)?;
+            if !signatures.insert((name.clone(), signature)) {
+                return Err(format!("C++ conflicting overloads: {name}"));
             }
         }
-        for property in array(graph, &this, "properties")? {
-            for mode in ["getter", "setter"] {
-                if field(graph, &property, mode)?.is_null() {
-                    continue;
+        if kind == "LimeStruct" {
+            let mut constructors = BTreeSet::new();
+            for constructor in array(graph, &this, "fieldConstructors")? {
+                let name = resolver
+                    .resolve(graph, "", "name", &constructor)?
+                    .ok_or("missing constructor name")?;
+                let mut signature = Vec::new();
+                for reference in array(graph, &constructor, "fieldRefs")? {
+                    let field_node = field(graph, &reference, "element")?;
+                    signature.push(
+                        resolver.signature_type(graph, &field(graph, &field_node, "typeRef")?)?,
+                    );
                 }
-                let name = resolve(mode, &property)?.ok_or("missing accessor name")?;
-                if !names.insert(name.clone()) {
-                    return Err(format!("C++ overloads unsupported: {name}"));
+                if !constructors.insert(signature.clone())
+                    || !signatures.insert((name.clone(), signature))
+                {
+                    return Err(format!("C++ conflicting constructor overloads: {name}"));
                 }
             }
         }
@@ -1623,6 +2060,53 @@ fn validate_type_cycles(graph: &Graph) -> Result<(), String> {
     Ok(())
 }
 
+fn validate_values(graph: &Graph) -> Result<(), String> {
+    fn visit(graph: &Graph, value: &Value, active: &mut BTreeSet<String>) -> Result<(), String> {
+        if value.is_null() {
+            return Ok(());
+        }
+        let id = ref_id(value)?.to_owned();
+        if !active.insert(id.clone()) || active.len() > 128 {
+            return Err("cyclic value".into());
+        }
+        match class(graph, value)? {
+            "LimeValue$Literal" => validate_literal(graph, value)?,
+            "LimeValue$InitializerList" | "LimeValue$StructInitializer" => {
+                for child in array(graph, value, "values")? {
+                    visit(graph, &child, active)?;
+                }
+            }
+            "LimeValue$KeyValuePair" => {
+                visit(graph, &field(graph, value, "key")?, active)?;
+                visit(graph, &field(graph, value, "value")?, active)?;
+            }
+            "LimeValue$Null" | "LimeValue$Special" | "LimeValue$Duration"
+            | "LimeValue$Constant" => (),
+            _ => return Err("invalid value class".into()),
+        }
+        active.remove(&id);
+        Ok(())
+    }
+    let root = graph.root.as_ref().ok_or("missing model root")?;
+    let references = field(graph, root, "referenceMap")?;
+    for id in references
+        .as_object()
+        .ok_or("invalid reference map")?
+        .values()
+        .map(ref_id)
+        .collect::<Result<BTreeSet<_>, _>>()?
+    {
+        let v = json!({"$ref":id});
+        let key = match class(graph, &v)? {
+            "LimeField" => "defaultValue",
+            "LimeConstant" => "value",
+            "LimeEnumerator" => "explicitValue",
+            _ => continue,
+        };
+        visit(graph, &field(graph, &v, key)?, &mut BTreeSet::new())?;
+    }
+    Ok(())
+}
 fn validate_literal(graph: &Graph, literal: &Value) -> Result<(), String> {
     let reference = field(graph, literal, "typeRef")?;
     let mut ty = field(graph, &reference, "type")?;
@@ -1644,7 +2128,7 @@ fn validate_literal(graph: &Graph, literal: &Value) -> Result<(), String> {
     // Kotlin retains digit separators in the model's literal token. Validate
     // the number without changing the token passed to the templates.
     let numeric = text.replace('_', "");
-    if id != "STRING"
+    if !matches!(id, "STRING" | "DATE" | "LOCALE")
         && text.contains('_')
         && !crate::valid_number(text.strip_prefix(['-', '+']).unwrap_or(text))
     {
@@ -1660,15 +2144,13 @@ fn validate_literal(graph: &Graph, literal: &Value) -> Result<(), String> {
         "UINT32" => numeric.parse::<u32>().is_ok(),
         "INT64" => numeric.parse::<i64>().is_ok(),
         "UINT64" => numeric.parse::<u64>().is_ok(),
-        "FLOAT" => {
-            numeric.contains(['.', 'e', 'E']) && numeric.parse::<f32>().is_ok_and(f32::is_finite)
-        }
-        "DOUBLE" => {
-            numeric.contains(['.', 'e', 'E']) && numeric.parse::<f64>().is_ok_and(f64::is_finite)
-        }
+        "FLOAT" => numeric.parse::<f32>().is_ok_and(f32::is_finite),
+        "DOUBLE" => numeric.parse::<f64>().is_ok_and(f64::is_finite),
         "STRING" => text
             .chars()
             .all(|c| !c.is_control() || ['\n', '\r', '\t', '\u{8}'].contains(&c)),
+        "DATE" => template::native_cpp::epoch_seconds(text).is_some(),
+        "LOCALE" => template::native_cpp::normalize_locale(text).is_some(),
         _ => false,
     };
     if !valid {

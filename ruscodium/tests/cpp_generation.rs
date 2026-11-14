@@ -653,24 +653,8 @@ fn version_two_rejects_invalid_raw_comments_and_unsupported_syntax() {
     node_mut(&mut job, &id)["properties"]["placeholders"] = json!({"self":{"$ref":id}});
     cases.push(job);
     let mut job = base.clone();
-    job["raw_comments"][&id] = json!([["", "See [Other]."]]);
-    cases.push(job);
-    let mut job = base.clone();
-    job["raw_comments"][&id] = json!([["", "**bold**"]]);
-    cases.push(job);
-    let mut job = base.clone();
-    let alias = node_id(&job, "LimeTypeAlias", "Labels");
-    let alias_comment = comment_id(&mut job, "LimeTypeAlias", "Labels");
-    let root = job["snapshot"]["root"]["$ref"].as_str().unwrap().to_owned();
-    node_mut(&mut job, &root)["properties"]["topElements"]
-        .as_array_mut()
-        .unwrap()
-        .retain(|item| item["$ref"] != alias);
-    node_mut(&mut job, &root)["properties"]["auxiliaryElements"]
-        .as_array_mut()
-        .unwrap()
-        .push(json!({"$ref":alias}));
-    job["raw_comments"][&alias_comment] = json!([["Cpp", "[unsupported auxiliary link]"]]);
+    job["options"]["werror"] = json!(["DocLinks"]);
+    job["raw_comments"][&id] = json!([["", "See [UnknownReference]."]]);
     cases.push(job);
     let mut job = base.clone();
     job["version"] = json!(1);
@@ -699,6 +683,8 @@ fn version_two_rejects_invalid_raw_comments_and_unsupported_syntax() {
     }
     let mut ignored = base;
     ignored["raw_comments"][&id] = json!([["Java", "[not cpp] **bold**"]]);
+    assert!(generate(TEMPLATES, &ignored).is_ok());
+    ignored["raw_comments"][&id] = json!([["Cpp", "**bold**"]]);
     assert!(generate(TEMPLATES, &ignored).is_ok());
 }
 
@@ -729,6 +715,7 @@ fn invalid_late_raw_documentation_preserves_existing_output() {
     let mut job = raw_comment_job();
     let id = comment_id(&mut job, "LimeTypeAlias", "Labels");
     job["raw_comments"][&id] = json!([["Cpp", "Invalid [reference]."]]);
+    job["options"]["werror"] = json!(["DocLinks"]);
     let path = dir.join("job.json");
     fs::write(&path, serde_json::to_vec(&job).unwrap()).unwrap();
     let result = Command::new(env!("CARGO_BIN_EXE_ruscodium"))
@@ -888,20 +875,10 @@ fn forged_enum_exception_graphs_fail_before_any_output() {
     let mut j = base.clone();
     node_mut(&mut j, &payload)["properties"]["isNullable"] = json!(true);
     cases.push(j);
-    let mut j = base.clone();
-    node_mut(&mut j, &function)["properties"]["isConstructor"] = json!(true);
-    cases.push(j);
-    let mut j = base.clone();
-    j["raw_comments"][&comment] = json!([["Cpp", "unsupported throws documentation"]]);
-    cases.push(j);
-    for sections in [
-        json!([["Java", "hidden documentation"]]),
-        json!([["Cpp", "   "]]),
-    ] {
-        let mut j = base.clone();
-        j["raw_comments"][&comment] = sections;
-        cases.push(j);
-    }
+    let mut valid = base.clone();
+    node_mut(&mut valid, &function)["properties"]["isConstructor"] = json!(true);
+    valid["raw_comments"][&comment] = json!([["Cpp", "Documented failure."]]);
+    assert!(generate(TEMPLATES, &valid).is_ok());
     let mut j = base.clone();
     let ret = node_mut(&mut j, &function)["properties"]["returnType"]["$ref"]
         .as_str()

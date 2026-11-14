@@ -153,7 +153,22 @@ impl<'a> Context<'a> {
     pub(super) fn output(&self, v: &Value) -> Result<String, String> {
         let root = self.root(v)?;
         let p = self.path(&root)?;
-        let name = self.name(&root)?;
+        let attrs = self.attrs(&root)?;
+        let name = if let Some(name) = attrs
+            .get("CPP")
+            .and_then(Value::as_object)
+            .and_then(|cpp| cpp.get("NAME"))
+            .and_then(Value::as_str)
+        {
+            name.to_owned()
+        } else {
+            crate::template::native_cpp::cpp_rule_name(
+                &self.config.name_rules,
+                "type",
+                p.tail.last().ok_or("missing root name")?,
+                false,
+            )?
+        };
         let mut pieces = self.config.root_namespace.clone();
         pieces.extend(p.head);
         pieces.push(name);
@@ -164,6 +179,36 @@ impl<'a> Context<'a> {
             file_name: format!("{}.h", self.output(v)?),
             is_system: false,
         })
+    }
+    fn includes(&self, v: &Value) -> Result<Vec<Include>, String> {
+        let mut current = v.clone();
+        loop {
+            if let Some(cpp) = super::external_cpp(self.graph, &current)? {
+                if let Some(include) = cpp
+                    .iter()
+                    .find(|(key, _)| key.eq_ignore_ascii_case("include"))
+                    .and_then(|(_, v)| v.as_str())
+                {
+                    return Ok(include
+                        .split(',')
+                        .map(|s| Include {
+                            file_name: s.trim().into(),
+                            is_system: false,
+                        })
+                        .collect());
+                }
+            }
+            let path = self.path(&current)?;
+            if path.tail.len() <= 1 {
+                return Ok(vec![self.inc(&current)?]);
+            }
+            current = self
+                .paths
+                .get(&path.parent())
+                .and_then(|v| v.first())
+                .cloned()
+                .ok_or("missing include parent")?;
+        }
     }
     fn internal(&self, name: &str) -> Include {
         let mut p = self.config.internal_namespace.clone();
@@ -285,6 +330,16 @@ impl<'a> Context<'a> {
                     }
                     for f in self.array(t, "functions")? {
                         self.function_refs(&f, &mut out)?;
+                        let thrown = self.get(&f, "thrownType")?;
+                        if !thrown.is_null() {
+                            let exception = self.get(&self.get(&thrown, "typeRef")?, "type")?;
+                            let error = self.get(&exception, "errorType")?;
+                            if self.class(&self.actual(&self.get(&error, "type")?)?)?
+                                != "LimeEnumeration"
+                            {
+                                out.push(error);
+                            }
+                        }
                     }
                     if self.class(t)? != "LimeStruct" {
                         for p in self.array(t, "properties")? {
@@ -339,6 +394,15 @@ impl<'a> Context<'a> {
         out: &mut BTreeSet<Include>,
         active: &mut BTreeSet<String>,
     ) -> Result<(), String> {
+        let attrs = self.attrs(t)?;
+        if let Some(cpp) = attrs.get("CPP").and_then(Value::as_object) {
+            if cpp.contains_key("TO_STRING") {
+                out.insert(self.internal("StringView.h"));
+            }
+            if cpp.contains_key("ENUM_VALUES") {
+                out.insert(Self::system("array"));
+            }
+        }
         match self.class(t)? {
             "LimeBasicType" => {
                 let id = self.get(t, "typeId")?;
@@ -409,12 +473,12 @@ impl<'a> Context<'a> {
                 out.insert(self.internal(internal));
             }
             "LimeLambda" => {
-                out.insert(self.inc(t)?);
+                out.extend(self.includes(t)?);
                 out.insert(Self::system("functional"));
             }
             "LimeStruct" | "LimeClass" | "LimeInterface" | "LimeEnumeration" | "LimeTypeAlias"
             | "LimeException" => {
-                out.insert(self.inc(t)?);
+                out.extend(self.includes(t)?);
             }
             other => return Err(format!("unsupported native C++ include type {other}")),
         }
@@ -431,13 +495,14 @@ impl<'a> Context<'a> {
             return Err("cyclic C++ value".into());
         }
         match self.class(v)? {
-            "LimeValue$Literal" | "LimeValue$Null" => (),
+            "LimeValue$Literal" => super::validate_literal(self.graph, v)?,
+            "LimeValue$Null" | "LimeValue$Duration" => (),
             "LimeValue$Special" => {
                 out.insert(Self::system("limits"));
             }
             "LimeValue$Constant" => {
                 let c = self.get(&self.get(v, "valueRef")?, "element")?;
-                out.insert(self.inc(&c)?);
+                out.extend(self.includes(&c)?);
             }
             "LimeValue$KeyValuePair" => {
                 self.values(&self.get(v, "key")?, out, active)?;
@@ -515,7 +580,18 @@ pub(super) fn collect(
         }
     }
     let root_path = c.path(root)?;
-    candidates.retain(|(p, _)| *p != root_path && !nesting.contains(p));
+    let mut parent_paths = BTreeSet::new();
+    if matches!(c.class(root)?, "LimeClass" | "LimeInterface") {
+        for parent in c.array(root, "parents")? {
+            parent_paths.insert(c.path(&c.get(&parent, "type")?)?);
+        }
+    }
+    candidates.retain(|(p, v)| {
+        *p != root_path
+            && !nesting.contains(p)
+            && !parent_paths.contains(p)
+            && super::external_cpp(c.graph, v).is_ok_and(|v| v.is_none())
+    });
     candidates.sort_by_key(|(p, _)| p.text());
     candidates.dedup_by(|a, b| a.0 == b.0);
     let mut header = BTreeSet::new();
@@ -527,8 +603,25 @@ pub(super) fn collect(
     for t in &types {
         if matches!(c.class(t)?, "LimeStruct" | "LimeClass" | "LimeInterface") {
             for function in c.array(t, "functions")? {
+                let attrs = c.attrs(&function)?;
+                if attrs.contains_key("ASYNC") {
+                    header.insert(Context::system("functional"));
+                }
                 if !c.get(&function, "thrownType")?.is_null() {
-                    header.insert(Context::system("system_error"));
+                    let thrown = c.get(&function, "thrownType")?;
+                    let exception = c.get(&c.get(&thrown, "typeRef")?, "type")?;
+                    let payload = c.actual(&c.get(&c.get(&exception, "errorType")?, "type")?)?;
+                    if c.class(&payload)? == "LimeEnumeration" {
+                        header.insert(Context::system("system_error"));
+                        if attrs.contains_key("ASYNC") {
+                            header.extend(c.includes(&payload)?);
+                        }
+                    } else {
+                        header.insert(c.internal("Return.h"));
+                        if c.class(&payload)? != "LimeBasicType" {
+                            header.extend(c.includes(&payload)?);
+                        }
+                    }
                     let ret = c.get(&function, "returnType")?;
                     let r = c.get(&ret, "typeRef")?;
                     let ty = c.actual(&c.get(&r, "type")?)?;
@@ -548,12 +641,31 @@ pub(super) fn collect(
     for r in &refs {
         c.ref_includes(r, &mut header, &mut BTreeSet::new())?;
         let t = c.get(r, "type")?;
-        if matches!(c.class(&t)?, "LimeClass" | "LimeInterface") && c.path(&t)?.tail.len() == 1 {
-            implementation.insert(c.inc(&t)?);
+        if matches!(c.class(&t)?, "LimeClass" | "LimeInterface")
+            && c.path(&t)?.tail.len() == 1
+            && super::external_cpp(c.graph, &t)?.is_none()
+        {
+            implementation.extend(c.includes(&t)?);
         }
     }
     for t in &types {
         c.type_includes(t, &mut header, &mut BTreeSet::new())?;
+        let attrs = c.attrs(t)?;
+        if attrs.contains_key("EQUATABLE") && super::external_cpp(c.graph, t)?.is_none() {
+            header.insert(c.internal("Hash.h"));
+        }
+        if matches!(c.class(t)?, "LimeClass" | "LimeInterface") {
+            for parent in c.array(t, "parents")? {
+                header.extend(c.includes(&c.get(&parent, "type")?)?);
+            }
+        }
+        if matches!(c.class(t)?, "LimeClass" | "LimeInterface" | "LimeStruct")
+            && super::external_cpp(c.graph, t)?.is_some()
+        {
+            implementation.insert(Context::system("type_traits"));
+            implementation.insert(Context::system("utility"));
+            implementation.extend(c.includes(t)?);
+        }
         match c.class(t)? {
             "LimeEnumeration" => {
                 header.insert(Context::system("cstdint"));
@@ -561,10 +673,17 @@ pub(super) fn collect(
             "LimeStruct" => {
                 implementation.insert(Context::system("utility"));
             }
-            "LimeInterface" => {
+            "LimeInterface"
+                if c.array(t, "parents")?.is_empty()
+                    && super::external_cpp(c.graph, t)?.is_none() =>
+            {
                 header.insert(c.internal("TypeRepository.h"));
             }
-            "LimeClass" if c.get(t, "isOpen")?.as_bool().ok_or("invalid isOpen")? => {
+            "LimeClass"
+                if c.get(t, "isOpen")?.as_bool().ok_or("invalid isOpen")?
+                    && c.array(t, "parents")?.is_empty()
+                    && super::external_cpp(c.graph, t)?.is_none() =>
+            {
                 header.insert(c.internal("TypeRepository.h"));
             }
             _ => (),
