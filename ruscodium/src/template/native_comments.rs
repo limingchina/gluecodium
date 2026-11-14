@@ -238,8 +238,8 @@ pub(crate) fn format_with_diagnostics(
     for (range, value) in replacements.into_iter().rev() {
         rewritten.replace_range(range, &value);
     }
-    rewritten = normalize_refdefs(&normalize_quotes(&normalize_misc(&normalize_blocks(
-        &rewritten,
+    rewritten = normalize_refdefs(&normalize_quotes(&normalize_misc(&normalize_loose_lists(
+        &normalize_blocks(&rewritten),
     ))));
 
     let mut boundaries = Vec::new();
@@ -437,7 +437,7 @@ fn normalize_blocks(text: &str) -> String {
                         tail[..marker_len].to_owned()
                     };
                     list.width = marker.len() + 1;
-                    let suffix = if spaces > 0 { " " } else { "" };
+                    let suffix = " ";
                     let original_indent = text[line_start..start + leading + marker_len + spaces]
                         .chars()
                         .fold(0, |col, ch| {
@@ -548,14 +548,93 @@ fn normalize_refdefs(text: &str) -> String {
     }
     apply_edits(text, edits)
 }
+/// Separate paragraph-only items when the Markdown list is loose.
+fn normalize_loose_lists(text: &str) -> String {
+    use pulldown_cmark::TagEnd;
+    #[derive(Default)]
+    struct List {
+        loose: bool,
+        nested: bool,
+        items: Vec<usize>,
+    }
+    let mut stack = Vec::new();
+    let mut active: Vec<List> = Vec::new();
+    let mut lists = Vec::new();
+    for (event, range) in Parser::new(text).into_offset_iter() {
+        match event {
+            Event::Start(tag) => {
+                match &tag {
+                    Tag::List(_) => {
+                        if stack.last() == Some(&TagEnd::Item) {
+                            if let Some(parent) = active.last_mut() {
+                                parent.nested = true;
+                            }
+                        }
+                        active.push(List::default());
+                    }
+                    Tag::Item => {
+                        if let Some(list) = active.last_mut() {
+                            list.items
+                                .push(text[..range.start].rfind('\n').map_or(0, |n| n + 1));
+                        }
+                    }
+                    Tag::Paragraph if stack.last() == Some(&TagEnd::Item) => {
+                        if let Some(list) = active.last_mut() {
+                            list.loose = true;
+                        }
+                    }
+                    Tag::BlockQuote(_) | Tag::CodeBlock(_) | Tag::HtmlBlock
+                        if stack.last() == Some(&TagEnd::Item) =>
+                    {
+                        if let Some(list) = active.last_mut() {
+                            list.nested = true;
+                        }
+                    }
+                    _ => {}
+                }
+                stack.push(tag.to_end());
+            }
+            Event::End(tag) => {
+                if matches!(tag, TagEnd::List(_)) {
+                    if let Some(list) = active.pop() {
+                        lists.push(list);
+                    }
+                }
+                stack.pop();
+            }
+            _ => {}
+        }
+    }
+    let mut positions = BTreeSet::new();
+    for list in lists.into_iter().filter(|list| list.loose && !list.nested) {
+        for position in list.items.into_iter().skip(1) {
+            if position > 0 && !text[..position].ends_with("\n\n") {
+                positions.insert(position);
+            }
+        }
+    }
+    apply_edits(
+        text,
+        positions
+            .into_iter()
+            .map(|pos| (pos..pos, "\n".into()))
+            .collect(),
+    )
+}
+
 fn normalize_misc(text: &str) -> String {
     use pulldown_cmark::CodeBlockKind;
     let mut edits: Vec<(std::ops::Range<usize>, String)> = Vec::new();
     let mut protected = Vec::new();
     let mut quotes = Vec::new();
     let mut quote_depth = 0usize;
+    let mut list_depth = 0usize;
     for (event, range) in Parser::new(text).into_offset_iter() {
         match event {
+            Event::Start(Tag::List(_)) => list_depth += 1,
+            Event::End(pulldown_cmark::TagEnd::List(_)) => {
+                list_depth = list_depth.saturating_sub(1);
+            }
             Event::Start(Tag::BlockQuote(_)) => {
                 if quote_depth == 0 {
                     quotes.push(range);
@@ -567,7 +646,7 @@ fn normalize_misc(text: &str) -> String {
             }
             Event::Start(Tag::CodeBlock(kind)) => {
                 protected.push(range.clone());
-                if matches!(kind, CodeBlockKind::Fenced(_)) {
+                if matches!(kind, CodeBlockKind::Fenced(_)) && list_depth == 0 {
                     let block = &text[range.clone()];
                     let lines: Vec<_> = block.split_inclusive('\n').collect();
                     let line_start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
@@ -1043,6 +1122,16 @@ mod tests {
             format("<table>\n\n  <tr>\n\n</table>").unwrap(),
             "<table>\n\n  <tr>\n\n</table>"
         );
+    }
+
+    #[test]
+    fn retains_nested_code_and_separates_loose_list_items() {
+        assert_eq!(
+            format("1.  foo\n\n    ```\n    bar\n    ```\n\n    baz").unwrap(),
+            "1. foo\n\n   ```\n   bar\n   ```\n\n   baz"
+        );
+        assert_eq!(format("- a\n- b\n\n- c").unwrap(), "- a\n\n- b\n\n- c");
+        assert_eq!(format("- foo\n-\n- bar").unwrap(), "- foo\n- \n- bar");
     }
     #[test]
     fn unresolved_references_are_returned_as_warnings_or_errors() {
