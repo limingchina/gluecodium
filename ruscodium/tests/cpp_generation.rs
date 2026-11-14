@@ -926,3 +926,18 @@ fn forged_enum_exception_graphs_fail_before_any_output() {
     }
     fs::remove_dir_all(dir).unwrap();
 }
+
+#[test]
+fn tag_filter_precedes_cpp_skip_validation() {
+    let mut job = fixture("default");
+    let id = node_id(&job, "LimeInterface", "Worker");
+    let attr = node_mut(&mut job, &id)["properties"]["attributes"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    node_mut(&mut job, &attr)["properties"]["attributes"] = json!({"CPP":{"SKIP":"inactive"}});
+    assert!(generate(TEMPLATES, &job).is_err());
+    node_mut(&mut job, &attr)["properties"]["attributes"] =
+        json!({"CPP":{"SKIP":"inactive"},"ENABLE_IF":{"TAG":"never"}});
+    assert!(generate(TEMPLATES, &job).is_ok());
+}

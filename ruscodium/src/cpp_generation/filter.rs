@@ -17,7 +17,12 @@ fn matches_tags(value: Option<&Value>, tags: &BTreeSet<&str>) -> Option<bool> {
         _ => None,
     }
 }
-fn retain(graph: &Graph, element: &Value, tags: &BTreeSet<&str>) -> Result<bool, String> {
+fn retain(
+    graph: &Graph,
+    element: &Value,
+    tags: &BTreeSet<&str>,
+    platform: bool,
+) -> Result<bool, String> {
     let attrs = field(graph, element, "attributes")?;
     let attrs = graph
         .nodes
@@ -30,6 +35,9 @@ fn retain(graph: &Graph, element: &Value, tags: &BTreeSet<&str>) -> Result<bool,
         ("SKIP", "", Some("TAG")),
         ("CPP", "ENABLE_IF", Some("SKIP")),
     ] {
+        if group == "CPP" && !platform {
+            continue;
+        }
         let values = attrs.get(group).and_then(Value::as_object);
         if !enable.is_empty()
             && matches_tags(values.and_then(|v| v.get(enable)), tags) == Some(false)
@@ -62,6 +70,7 @@ fn walk(
     graph: &Graph,
     element: &Value,
     tags: &BTreeSet<&str>,
+    platform: bool,
     retained: &mut BTreeSet<String>,
     updates: &mut BTreeMap<String, BTreeMap<String, Value>>,
 ) -> Result<(), String> {
@@ -70,7 +79,7 @@ fn walk(
     let kind = class(graph, element)?;
     if kind == "LimeProperty" {
         let setter = field(graph, element, "setter")?;
-        if !setter.is_null() && !retain(graph, &setter, tags)? {
+        if !setter.is_null() && !retain(graph, &setter, tags, platform)? {
             updates
                 .entry(id)
                 .or_default()
@@ -88,8 +97,8 @@ fn walk(
         if graph.nodes[&id].properties.contains_key(*key) {
             let mut members = Vec::new();
             for item in array(graph, element, key)? {
-                if retain(graph, &item, tags)? {
-                    walk(graph, &item, tags, retained, updates)?;
+                if retain(graph, &item, tags, platform)? {
+                    walk(graph, &item, tags, platform, retained, updates)?;
                     members.push(item);
                 }
             }
@@ -101,7 +110,11 @@ fn walk(
     }
     Ok(())
 }
-pub(super) fn apply(graph: &mut Graph, active_tags: &[String]) -> Result<(), String> {
+pub(super) fn apply(
+    graph: &mut Graph,
+    active_tags: &[String],
+    platform: bool,
+) -> Result<(), String> {
     let tags = active_tags
         .iter()
         .map(String::as_str)
@@ -113,8 +126,15 @@ pub(super) fn apply(graph: &mut Graph, active_tags: &[String]) -> Result<(), Str
     for key in ["topElements", "auxiliaryElements"] {
         let mut result = Vec::new();
         for element in array(graph, &root, key)? {
-            if retain(graph, &element, &tags)? {
-                walk(graph, &element, &tags, &mut retained, &mut updates)?;
+            if retain(graph, &element, &tags, platform)? {
+                walk(
+                    graph,
+                    &element,
+                    &tags,
+                    platform,
+                    &mut retained,
+                    &mut updates,
+                )?;
                 result.push(element);
             }
         }

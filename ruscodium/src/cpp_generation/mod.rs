@@ -275,9 +275,18 @@ fn external_cpp<'a>(
         .transpose()
 }
 fn validate_cpp_skip(graph: &Graph) -> Result<(), String> {
+    let root = graph.root.as_ref().ok_or("missing model root")?;
+    let refs = field(graph, root, "referenceMap")?;
+    let indexed: BTreeSet<_> = refs
+        .as_object()
+        .ok_or("invalid reference map")?
+        .values()
+        .map(ref_id)
+        .collect::<Result<_, _>>()?;
     for (id, node) in &graph.nodes {
         let kind = node.class.rsplit('.').next().unwrap_or("");
-        if node.properties.contains_key("path")
+        if indexed.contains(id.as_str())
+            && node.properties.contains_key("path")
             && node.properties.contains_key("external")
             && !matches!(kind, "LimeFieldConstructor" | "LimeConstant")
         {
@@ -542,8 +551,9 @@ pub fn generate_with_diagnostics(
         graph.attach_raw_comments(raw)?;
     }
     validate_graph(&graph, &job)?;
+    filter::apply(&mut graph, &job.options.tags, false)?;
     validate_cpp_skip(&graph)?;
-    filter::apply(&mut graph, &job.options.tags)?;
+    filter::apply(&mut graph, &job.options.tags, true)?;
     derive_enumerator_values(&mut graph)?;
     validate_type_cycles(&graph)?;
     validate_method_names(&graph, &job.options)?;
