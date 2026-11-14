@@ -17,7 +17,8 @@ def source_inventory(inventory):
  tests=sorted(ROOT/p for p in tests)
  if len(handwritten)!=92:raise ValueError(f'expected 92 handwritten C++ sources, found {len(handwritten)}')
  hashes=inventory.get('hashes',{})
- for path in handwritten+tests:
+ header_paths=sorted({ROOT/p for feature in features for p in feature['cpp'] if p.endswith('.h')})+[ROOT/p for p in inventory.get('test_headers',[])]
+ for path in handwritten+tests+header_paths:
   if not path.is_file() or not path.resolve().is_relative_to(ROOT.resolve()):raise ValueError(f'missing or unsafe source: {path}')
   if hashes.get(path.relative_to(ROOT).as_posix())!=digest(path):raise ValueError(f'source changed since inventory: {path}')
  return handwritten,tests

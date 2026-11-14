@@ -27,6 +27,7 @@ def main():
         features.append({'name': words[0], 'lime': [rel(p) for p in files if p.suffix == '.lime'],
                          'cpp': [rel(p) for p in files if p.suffix in ('.h', '.cpp')]})
     tests = sorted((BASE / 'cpp/tests').glob('*.cpp'))
+    test_headers = sorted((BASE / 'cpp/tests').rglob('*.h'))
     if len(features) != 45 or len(tests) != 10: raise SystemExit(f'unexpected counts: {len(features)} features, {len(tests)} tests')
     lime = sorted({p for f in features for p in f['lime']}); cpp = sorted({p for f in features for p in f['cpp']})
     opts = ['-input', rel(BASE / 'input/lime'), '-intnamespace', 'lorem_ipsum.test', '-tag', 'Lite', '-tag', 'ExperimentalFoo',
@@ -39,11 +40,11 @@ def main():
     for name, filename in probes.items():
         path = rel(ROOT / 'ruscodium/tools/cpp-completion/fixtures' / filename)
         properties(args.output / f'{name}.properties', [path], [], ['-input', path, '-intnamespace', 'detail'])
-    paths = [ROOT / p for p in lime + cpp] + tests + [ROOT / 'ruscodium/tools/cpp-completion/fixtures' / f for f in probes.values()] + [BASE / 'CMakeLists.txt', BASE / 'cpp/CMakeLists.txt',
+    paths = [ROOT / p for p in lime + cpp] + tests + test_headers + [ROOT / 'ruscodium/tools/cpp-completion/fixtures' / f for f in probes.values()] + [BASE / 'CMakeLists.txt', BASE / 'cpp/CMakeLists.txt',
         ROOT / 'functional-tests/config/COPYRIGHT', ROOT / 'functional-tests/config/placeholders.properties',
         ROOT / names[0], ROOT / 'functional-tests/namerules/input/namerules/cpp.properties', ROOT / 'functional-tests/namerules/cpp/NameRulesImpl.cpp']
     report = {'features': features, 'feature_count': len(features), 'lime_sources': lime, 'cpp_sources': cpp,
-              'test_sources': [rel(p) for p in tests], 'targeted_probes': probes, 'hashes': hashes(paths)}
+              'test_sources': [rel(p) for p in tests], 'test_headers': [rel(p) for p in test_headers], 'targeted_probes': probes, 'hashes': hashes(paths)}
     (args.output / 'functional-inventory.json').write_text(json.dumps(report, indent=2) + '\n')
     print(f'{len(features)} C++ features, {len(lime)} LIME files, {len(cpp)} handwritten files, {len(tests)} tests')
 if __name__ == '__main__': main()
