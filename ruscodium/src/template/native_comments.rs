@@ -238,14 +238,26 @@ pub(crate) fn format_with_diagnostics(
     for (range, value) in replacements.into_iter().rev() {
         rewritten.replace_range(range, &value);
     }
-    rewritten = normalize_quotes(&normalize_misc(&normalize_blocks(&rewritten)));
+    rewritten = normalize_refdefs(&normalize_quotes(&normalize_misc(&normalize_blocks(
+        &rewritten,
+    ))));
 
     let mut boundaries = Vec::new();
     let mut depth = 0usize;
     let mut previous_list = false;
+    let definitions: Vec<_> = Parser::new(&rewritten)
+        .reference_definitions()
+        .iter()
+        .map(|(_, def)| def.span.clone())
+        .collect();
     for (event, range) in Parser::new(&rewritten).into_offset_iter() {
         match event {
             Event::Start(tag) => {
+                let immediately_after_definition = definitions.iter().any(|definition| {
+                    definition.end <= range.start
+                        && rewritten[definition.end..range.start].trim().is_empty()
+                        && rewritten[definition.end..range.start].matches('\n').count() == 1
+                });
                 if depth == 0 && previous_list && matches!(tag, Tag::List(_)) {
                     boundaries.push(range.start);
                 }
@@ -257,11 +269,19 @@ pub(crate) fn format_with_diagnostics(
                             | Tag::BlockQuote(_)
                     )
                 {
-                    boundaries.push(range.start);
+                    if !immediately_after_definition || !matches!(tag, Tag::Heading { .. }) {
+                        boundaries.push(range.start);
+                    }
                     boundaries.push(range.end);
                 }
-                if depth == 0 && matches!(tag, Tag::HtmlBlock) {
+                if depth == 0 && matches!(tag, Tag::Paragraph) && immediately_after_definition {
                     boundaries.push(range.start);
+                }
+                if depth == 0 && matches!(tag, Tag::HtmlBlock) {
+                    let line_start = rewritten[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                    if line_start > 0 && !rewritten[..line_start].ends_with("\n\n") {
+                        boundaries.push(range.start);
+                    }
                     let html = rewritten[range.clone()].trim_end().to_ascii_lowercase();
                     if ["</pre>", "</script>", "</style>", "?>", "]]>"]
                         .iter()
@@ -497,6 +517,37 @@ fn apply_edits(text: &str, mut edits: Vec<(std::ops::Range<usize>, String)>) -> 
     }
     result
 }
+
+fn normalize_refdefs(text: &str) -> String {
+    let parser = Parser::new(text);
+    let mut edits = Vec::new();
+    for (_, definition) in parser.reference_definitions().iter() {
+        let range = definition.span.clone();
+        let line_start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+        if !text[line_start..range.start]
+            .trim_matches([' ', '\t'])
+            .is_empty()
+        {
+            continue;
+        }
+        let mut at = range.start;
+        for (index, line) in text[range.clone()].split_inclusive('\n').enumerate() {
+            if index > 0 {
+                let leading = line.len() - line.trim_start_matches([' ', '\t']).len();
+                if leading > 0 {
+                    edits.push((at..at + leading, String::new()));
+                }
+            }
+            at += line.len();
+        }
+        let last = &text[range.clone()];
+        let trailing = last.len() - last.trim_end_matches([' ', '\t']).len();
+        if trailing > 0 {
+            edits.push((range.end - trailing..range.end, String::new()));
+        }
+    }
+    apply_edits(text, edits)
+}
 fn normalize_misc(text: &str) -> String {
     use pulldown_cmark::CodeBlockKind;
     let mut edits: Vec<(std::ops::Range<usize>, String)> = Vec::new();
@@ -707,6 +758,8 @@ fn normalize_misc(text: &str) -> String {
         if !in_protected && line.trim().is_empty() {
             if blank {
                 edits.push((at..at + line.len(), String::new()));
+            } else if line.ends_with('\n') && line != "\n" {
+                edits.push((at..at + line.len(), "\n".into()));
             }
             blank = true;
         } else {
@@ -973,6 +1026,23 @@ mod tests {
         );
         assert_eq!(format("- - foo").unwrap(), "- - foo");
         assert_eq!(format("1. - 2. foo").unwrap(), "1. - 2. foo");
+    }
+
+    #[test]
+    fn formats_reference_definitions_and_surrounding_blocks() {
+        assert_eq!(
+            format("[foo]: /url\n\"title\" ok").unwrap(),
+            "[foo]: /url\n\n\"title\" ok"
+        );
+        assert_eq!(
+            format("[Foo\n  bar]: /url\n\n[Baz][Foo bar]").unwrap(),
+            "[Foo\nbar]: /url\n\n[Baz][Foo bar]"
+        );
+        assert_eq!(format("aaa\n  \n\n# aaa").unwrap(), "aaa\n\n# aaa");
+        assert_eq!(
+            format("<table>\n\n  <tr>\n\n</table>").unwrap(),
+            "<table>\n\n  <tr>\n\n</table>"
+        );
     }
     #[test]
     fn unresolved_references_are_returned_as_warnings_or_errors() {
