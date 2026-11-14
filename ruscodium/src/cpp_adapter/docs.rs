@@ -1,4 +1,4 @@
-//! Bounded parsing of the loader's line-comment documentation syntax.
+//! Parsing of the loader's documentation syntax.
 //!
 //! The adapter attaches paths and selects child comments. This module keeps
 //! the raw platform sections that the existing generator knows how to render.
@@ -22,16 +22,14 @@ pub(super) struct ParsedDocumentation {
 pub(super) fn parse_documentation(docs: &[String]) -> Result<ParsedDocumentation, String> {
     let mut lines = Vec::new();
     for doc in docs {
-        let line = doc
-            .strip_prefix("//")
-            .ok_or("block documentation comments are unsupported")?;
-        if line.contains(['\n', '\r']) {
-            return Err("multiline line-comment token is unsupported".into());
-        }
-        if line.chars().any(|ch| ch.is_control() && ch != '\t') {
-            return Err("control character in documentation is unsupported".into());
-        }
-        lines.push(line);
+        let text = if let Some(line) = doc.strip_prefix("//") {
+            line.trim_end_matches('\n')
+        } else if let Some(block) = doc.strip_prefix("/*").and_then(|s| s.strip_suffix("*/")) {
+            block
+        } else {
+            return Err("invalid documentation token".into());
+        };
+        lines.extend(text.split('\n'));
     }
     while lines.first().is_some_and(|line| line.trim().is_empty()) {
         lines.remove(0);
@@ -57,8 +55,11 @@ pub(super) fn parse_documentation(docs: &[String]) -> Result<ParsedDocumentation
         })
         .collect::<Vec<_>>()
         .join("\n");
-    reject_markdown(&normalized)?;
+    parse_text(&normalized)
+}
 
+/// Parse normalized comment text or a documentation placeholder.
+pub(super) fn parse_text(normalized: &str) -> Result<ParsedDocumentation, String> {
     let mut result = ParsedDocumentation::default();
     let mut current: Option<(String, String)> = None;
     let mut content = String::new();
@@ -66,11 +67,6 @@ pub(super) fn parse_documentation(docs: &[String]) -> Result<ParsedDocumentation
         let trimmed = line.trim_start_matches(char::is_whitespace);
         if trimmed.starts_with('@') {
             if let Some(key) = current.take() {
-                if content.is_empty() {
-                    return Err(
-                        "empty documentation block before another block is unsupported".into(),
-                    );
-                }
                 content.push('\n');
                 result.blocks.insert(key, parse_comment(&content, false)?);
             } else {
@@ -81,12 +77,16 @@ pub(super) fn parse_documentation(docs: &[String]) -> Result<ParsedDocumentation
             let (key, initial) = parse_block_header(trimmed)?;
             current = Some(key);
             content.clear();
-            content.push_str(initial);
+            append_block_content(initial, &mut current, &mut content, &mut result)?;
         } else {
             if index != 0 && (!content.is_empty() || current.is_some()) {
                 content.push('\n');
             }
-            content.push_str(line);
+            if current.is_some() {
+                append_block_content(line, &mut current, &mut content, &mut result)?;
+            } else {
+                content.push_str(line);
+            }
         }
     }
     if let Some(key) = current {
@@ -98,6 +98,46 @@ pub(super) fn parse_documentation(docs: &[String]) -> Result<ParsedDocumentation
     Ok(result)
 }
 
+fn append_block_content<'a>(
+    mut text: &'a str,
+    current: &mut Option<(String, String)>,
+    content: &mut String,
+    result: &mut ParsedDocumentation,
+) -> Result<(), String> {
+    loop {
+        let mut pos = 0;
+        let mut next = None;
+        while pos < text.len() {
+            let rest = &text[pos..];
+            if rest.starts_with("{@") {
+                pos += parse_inline(rest)?.0;
+            } else if rest.starts_with('\\') {
+                let escaped = rest[1..]
+                    .chars()
+                    .next()
+                    .ok_or("invalid documentation escape")?;
+                pos += 1 + escaped.len_utf8();
+            } else if rest.starts_with('@') {
+                next = Some(pos);
+                break;
+            } else {
+                pos += rest.chars().next().unwrap().len_utf8();
+            }
+        }
+        let Some(pos) = next else {
+            content.push_str(text);
+            return Ok(());
+        };
+        content.push_str(&text[..pos]);
+        let key = current.take().ok_or("missing documentation block")?;
+        result.blocks.insert(key, parse_comment(content, false)?);
+        content.clear();
+        let (key, remaining) = parse_block_header(&text[pos..])?;
+        *current = Some(key);
+        text = remaining;
+    }
+}
+
 fn parse_block_header(line: &str) -> Result<((String, String), &str), String> {
     let rest = &line[1..];
     let name_len = rest.bytes().take_while(u8::is_ascii_alphabetic).count();
@@ -105,20 +145,6 @@ fn parse_block_header(line: &str) -> Result<((String, String), &str), String> {
         return Err("invalid documentation block tag".into());
     }
     let name = &rest[..name_len];
-    if ![
-        "param",
-        "return",
-        "value",
-        "get",
-        "set",
-        "description",
-        "constructor",
-        "exclude",
-    ]
-    .contains(&name)
-    {
-        return Err(format!("unsupported documentation block tag @{name}"));
-    }
     let mut rest = &rest[name_len..];
     let mut parameter = "";
     if let Some(after) = rest.strip_prefix('[') {
@@ -135,9 +161,6 @@ fn parse_block_header(line: &str) -> Result<((String, String), &str), String> {
             return Err("invalid documentation block parameter".into());
         }
         rest = &after[end + 1..];
-    }
-    if (name == "param") != !parameter.is_empty() {
-        return Err(format!("invalid parameter for documentation block @{name}"));
     }
     if !rest.is_empty() {
         let first = rest.chars().next().unwrap();
@@ -184,11 +207,28 @@ fn parse_comment(text: &str, description: bool) -> Result<Comment, String> {
                 .chars()
                 .next()
                 .ok_or("invalid documentation escape")?;
-            if !matches!(next, '@' | '{' | '}' | '\\') {
-                return Err("unsupported documentation escape or Markdown".into());
+            if !matches!(
+                next,
+                '@' | '{'
+                    | '}'
+                    | '\\'
+                    | '`'
+                    | '*'
+                    | '_'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '#'
+                    | '+'
+                    | '-'
+                    | '.'
+                    | '!'
+            ) {
+                return Err("invalid documentation escape".into());
             }
             let n = 1 + next.len_utf8();
-            if first_word {
+            if first_word || !matches!(next, '@' | '{' | '}' | '\\') {
                 append(&mut result.sections, "", &rest[..n]);
             } else {
                 append(&mut result.sections, "", &rest[1..n]);
@@ -231,9 +271,6 @@ fn parse_inline(text: &str) -> Result<(usize, Vec<String>, String), String> {
             return Err("invalid inline documentation tag".into());
         }
         let tag = &text[pos..pos + n];
-        if tag == "Placeholder" {
-            return Err("documentation placeholders are unsupported (no placeholder map)".into());
-        }
         tags.push(tag.to_string());
         pos += n;
         let separator = text[pos..]
@@ -265,8 +302,28 @@ fn parse_inline(text: &str) -> Result<(usize, Vec<String>, String), String> {
                 .chars()
                 .next()
                 .ok_or("invalid inline documentation escape")?;
+            if !matches!(
+                next,
+                '@' | '{'
+                    | '}'
+                    | '\\'
+                    | '`'
+                    | '*'
+                    | '_'
+                    | '['
+                    | ']'
+                    | '('
+                    | ')'
+                    | '#'
+                    | '+'
+                    | '-'
+                    | '.'
+                    | '!'
+            ) {
+                return Err("invalid inline documentation escape".into());
+            }
             if !matches!(next, '@' | '{' | '}' | '\\') {
-                return Err("unsupported inline escape or Markdown".into());
+                value.push('\\');
             }
             value.push(next);
             pos += 1 + next.len_utf8();
@@ -276,32 +333,6 @@ fn parse_inline(text: &str) -> Result<(usize, Vec<String>, String), String> {
         }
     }
     Err("unterminated inline documentation tag".into())
-}
-
-fn reject_markdown(text: &str) -> Result<(), String> {
-    for line in text.lines() {
-        let s = line.trim_start();
-        let ordered_list = s.split_once('.').is_some_and(|(number, tail)| {
-            !number.is_empty()
-                && number.bytes().all(|b| b.is_ascii_digit())
-                && tail.starts_with(' ')
-        });
-        if s.starts_with("# ")
-            || s.starts_with("##")
-            || s.starts_with("> ")
-            || s.starts_with("- ")
-            || s.starts_with("* ")
-            || s.starts_with("+ ")
-            || s.contains('`')
-            || s.matches('*').count() >= 2
-            || s.contains("__")
-            || s.contains("](")
-            || ordered_list
-        {
-            return Err("structured Markdown documentation is unsupported".into());
-        }
-    }
-    Ok(())
 }
 
 #[cfg(test)]
@@ -378,38 +409,41 @@ mod tests {
     }
 
     #[test]
-    fn rejects_unsupported_and_malformed_forms() {
+    fn supports_markdown_placeholders_and_arbitrary_blocks() {
+        let doc = parse(&["/* Before **bold** {@Placeholder key}.\n @throws [Thing] failed */"]);
+        assert_eq!(
+            doc.description.sections,
+            vec![
+                ("".into(), "Before **bold** ".into()),
+                ("Placeholder".into(), "key".into()),
+                ("".into(), ".".into())
+            ]
+        );
+        assert_eq!(
+            text(&doc.blocks[&("throws".into(), "".into())]),
+            "[Thing] failed"
+        );
+        let blocks = parse(&["// @param[x] first @return second"]);
+        assert_eq!(
+            text(&blocks.blocks[&("param".into(), "x".into())]),
+            "first "
+        );
+        assert_eq!(
+            text(&blocks.blocks[&("return".into(), "".into())]),
+            "second"
+        );
+    }
+    #[test]
+    fn rejects_malformed_inline_tags() {
         for input in [
-            "/* block */",
-            "// {@Placeholder missing}",
             "// {@Cpp bad",
             "// {@Cpp bad {@Java nested}}",
             "// @param[] bad",
-            "// @other text",
-            "// **bold**",
-            "// [link](url)",
         ] {
             assert!(
                 parse_documentation(&[input.into()]).is_err(),
                 "accepted {input}"
             );
         }
-    }
-
-    #[test]
-    fn rejects_control_characters_before_normalization() {
-        for control in ['\0', '\u{b}', '\u{c}', '\u{7f}', '\u{85}'] {
-            for input in [
-                format!("//{control}Text"),
-                format!("// Text{control}"),
-                format!("// {{@Cpp{control}text}}"),
-            ] {
-                assert!(
-                    parse_documentation(std::slice::from_ref(&input)).is_err(),
-                    "accepted {input:?}"
-                );
-            }
-        }
-        assert_eq!(text(&parse(&["// A\tword."]).description), "A\tword.");
     }
 }

@@ -1,5 +1,6 @@
-//! Bounded native LimeComment selection and Doxygen plain-text formatting.
+//! Native LimeComment selection and Doxygen Markdown formatting.
 use super::graph::{reference, Graph};
+use pulldown_cmark::{BrokenLink, Event, LinkType, Options, Parser, Tag};
 use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -148,81 +149,723 @@ pub(crate) fn selected(graph: &Graph, value: &Value) -> Result<Option<String>, S
     expand(id, graph, raw, 0, &mut BTreeMap::new()).map(Some)
 }
 
+/// An unresolved documentation reference encountered while rendering.
+#[derive(Clone, Debug, Eq, Ord, PartialEq, PartialOrd)]
+pub struct DocWarning {
+    pub scope: String,
+    pub message: String,
+}
+
 pub(crate) fn format(text: &str) -> Result<String, String> {
+    format_with_references(text, "", &BTreeMap::new(), false)
+}
+
+pub(crate) fn format_with_references(
+    text: &str,
+    scope: &str,
+    names: &BTreeMap<String, String>,
+    werror: bool,
+) -> Result<String, String> {
+    format_with_diagnostics(text, scope, names, werror).map(|(text, _)| text)
+}
+
+/// Resolve links against the model and return warnings to the rendering caller.
+pub(crate) fn format_with_diagnostics(
+    text: &str,
+    scope: &str,
+    names: &BTreeMap<String, String>,
+    werror: bool,
+) -> Result<(String, Vec<DocWarning>), String> {
     let text = trim(text);
-    if text.contains("*/")
-        || text.chars().any(|c| {
-            matches!(
-                c,
-                '*' | '_' | '[' | ']' | '`' | '<' | '>' | '#' | '~' | '\\' | '|' | '{' | '}' | '&'
-            ) || (c.is_control() && c != '\n' && c != '\t')
-        })
-    {
-        return Err("unsupported C++ comment Markdown or control character".into());
-    }
-    let mut result = Vec::<String>::new();
-    let mut pending_blank = false;
-    let mut paragraph = false;
-    for line in text.split('\n') {
-        if line.trim_matches([' ', '\t']).is_empty() {
-            if result
-                .last()
-                .is_some_and(|previous| previous.ends_with("  "))
-            {
-                return Err("unsupported paragraph-final hard break".into());
+    let path: Vec<_> = if scope.is_empty() {
+        Vec::new()
+    } else {
+        scope.split('.').collect()
+    };
+    let mut replacements = Vec::new();
+    let mut missing = Vec::new();
+    let mut callback = |link: BrokenLink<'_>| {
+        if link.span.start > 0 && text.as_bytes()[link.span.start - 1] == b'!' {
+            return None;
+        }
+        let raw = link.reference.as_ref();
+        let mut normalized = raw.replace(' ', "");
+        if let Some((name, signature)) = normalized.split_once('(') {
+            let signature = signature.replace('(', "");
+            normalized = format!(
+                "{}({}",
+                name,
+                signature
+                    .split(',')
+                    .map(|x| x.rsplit('.').next().unwrap_or(x))
+                    .collect::<Vec<_>>()
+                    .join(",")
+            );
+        }
+        let target = (0..=path.len()).rev().find_map(|i| {
+            let mut key = path[..i].join(".");
+            if !key.is_empty() {
+                key.push('.');
             }
-            pending_blank = paragraph;
-            continue;
-        }
-        let leading = line.len() - line.trim_start_matches([' ', '\t']).len();
-        if !paragraph || pending_blank {
-            if leading >= 4 || line[..leading].contains('\t') {
-                return Err("unsupported C++ comment indented code".into());
-            }
-            if pending_blank {
-                result.push(String::new());
-            }
-        }
-        let line = line.trim_start_matches([' ', '\t']);
-        let marker = line.trim_end_matches([' ', '\t']);
-        if line
-            .chars()
-            .next()
-            .is_some_and(|c| c == '-' || c == '+' || c == '=')
-            && line.chars().nth(1).is_some_and(|c| c == ' ' || c == '\t')
-            || marker == "+"
-            || marker.chars().all(|c| c == '-')
-            || marker.chars().all(|c| c == '=')
-            || marker.split_once(['.', ')']).is_some_and(|(a, b)| {
-                !a.is_empty()
-                    && a.bytes().all(|x| x.is_ascii_digit())
-                    && (b.is_empty() || b.starts_with([' ', '\t']))
-            })
-        {
-            return Err("unsupported C++ comment list or heading".into());
-        }
-        let suffix = &line[line.trim_end_matches([' ', '\t']).len()..];
-        if suffix.contains('\t') {
-            return Err("unsupported C++ comment trailing tab".into());
-        }
-        let trailing = line.len() - line.trim_end_matches(' ').len();
-        let line = if trailing == 1 {
-            &line[..line.len() - 1]
+            key.push_str(&normalized);
+            names.get(&key)
+        });
+        if let Some(target) = target {
+            let original = &text[link.span.clone()];
+            let prefix = match link.link_type {
+                LinkType::Reference | LinkType::ReferenceUnknown => original
+                    .find("][")
+                    .map(|i| &original[..i + 1])
+                    .unwrap_or(""),
+                _ => "",
+            };
+            replacements.push((link.span, format!("{prefix}{target}")));
+            Some(("".into(), "".into()))
         } else {
-            line
-        };
-        result.push(line.to_owned());
-        paragraph = true;
-        pending_blank = false;
+            missing.push(raw.to_owned());
+            None
+        }
+    };
+    for _ in Parser::new_with_broken_link_callback(text, Options::empty(), Some(&mut callback)) {}
+    if werror && !missing.is_empty() {
+        return Err(format!(
+            "Failed to resolve documentation reference [{}]",
+            missing[0]
+        ));
     }
-    Ok(result.join("\n"))
+    let mut rewritten = text.to_owned();
+    replacements.sort_by_key(|(range, _)| range.start);
+    for (range, value) in replacements.into_iter().rev() {
+        rewritten.replace_range(range, &value);
+    }
+    rewritten = normalize_quotes(&normalize_misc(&normalize_blocks(&rewritten)));
+
+    let mut boundaries = Vec::new();
+    let mut depth = 0usize;
+    let mut previous_list = false;
+    for (event, range) in Parser::new(&rewritten).into_offset_iter() {
+        match event {
+            Event::Start(tag) => {
+                if depth == 0 && previous_list && matches!(tag, Tag::List(_)) {
+                    boundaries.push(range.start);
+                }
+                if depth == 0
+                    && matches!(
+                        tag,
+                        Tag::Heading { .. }
+                            | Tag::CodeBlock(pulldown_cmark::CodeBlockKind::Fenced(_))
+                            | Tag::BlockQuote(_)
+                    )
+                {
+                    boundaries.push(range.start);
+                    boundaries.push(range.end);
+                }
+                if depth == 0 && matches!(tag, Tag::HtmlBlock) {
+                    boundaries.push(range.start);
+                    let html = rewritten[range.clone()].trim_end().to_ascii_lowercase();
+                    if ["</pre>", "</script>", "</style>", "?>", "]]>"]
+                        .iter()
+                        .any(|end| html.ends_with(end))
+                    {
+                        boundaries.push(range.end);
+                    }
+                }
+                if depth == 0 {
+                    previous_list = false;
+                }
+                depth += 1;
+            }
+            Event::End(tag) => {
+                depth = depth.saturating_sub(1);
+                if depth == 0 {
+                    previous_list = matches!(tag, pulldown_cmark::TagEnd::List(_));
+                }
+            }
+            Event::Rule if depth == 0 => {
+                previous_list = false;
+                boundaries.push(range.start);
+                boundaries.push(range.end);
+            }
+            _ => {}
+        }
+    }
+    boundaries.sort_unstable();
+    boundaries.dedup();
+    for pos in boundaries.into_iter().rev() {
+        let line_start = rewritten[..pos].rfind('\n').map_or(0, |n| n + 1);
+        let before_pos = if rewritten[line_start..pos]
+            .trim_matches([' ', '\t'])
+            .is_empty()
+        {
+            line_start
+        } else {
+            pos
+        };
+        let before = rewritten[..before_pos].trim_end_matches('\n').len();
+        let after = pos + rewritten[pos..].len() - rewritten[pos..].trim_start_matches('\n').len();
+        if before > 0 && after < rewritten.len() {
+            rewritten.replace_range(before..after, "\n\n");
+        }
+    }
+    let diagnostics = missing
+        .into_iter()
+        .map(|name| DocWarning {
+            scope: scope.to_owned(),
+            message: format!("Failed to resolve documentation reference [{name}]"),
+        })
+        .collect();
+    Ok((trim(&rewritten).to_owned(), diagnostics))
+}
+
+fn normalize_blocks(text: &str) -> String {
+    struct List {
+        indent: usize,
+        next: Option<u64>,
+        width: usize,
+    }
+    struct Item {
+        range: std::ops::Range<usize>,
+        line_start: usize,
+        original_indent: usize,
+        output_indent: usize,
+    }
+    let mut lists: Vec<List> = Vec::new();
+    let mut items: Vec<Item> = Vec::new();
+    let mut edits: Vec<(std::ops::Range<usize>, String)> = Vec::new();
+    let inline_code: Vec<_> = Parser::new(text)
+        .into_offset_iter()
+        .filter_map(|(e, r)| matches!(e, Event::Code(_)).then_some(r))
+        .collect();
+    for (event, range) in Parser::new(text).into_offset_iter() {
+        match event {
+            Event::Start(Tag::Paragraph) if lists.is_empty() => {
+                let start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                let mut line_start = start;
+                for line in text[start..range.end].split_inclusive('\n') {
+                    let body = line.strip_suffix('\n').unwrap_or(line);
+                    let left = body.len() - body.trim_start_matches([' ', '\t']).len();
+                    if !body.trim().is_empty() && !body[left..].starts_with('>') {
+                        if left > 0
+                            && !inline_code
+                                .iter()
+                                .any(|r| r.start < line_start + left && line_start < r.end)
+                        {
+                            edits.push((line_start..line_start + left, String::new()));
+                        }
+                        let trailing = body.len() - body.trim_end_matches(' ').len();
+                        if trailing == 1
+                            && !inline_code.iter().any(|r| {
+                                r.start < line_start + body.len()
+                                    && line_start + body.len() - 1 < r.end
+                            })
+                        {
+                            edits.push((
+                                line_start + body.len() - 1..line_start + body.len(),
+                                String::new(),
+                            ));
+                        }
+                    }
+                    line_start += line.len();
+                }
+            }
+            Event::Start(Tag::List(first)) => {
+                let indent = lists.last().map_or(0, |l| l.indent + l.width);
+                lists.push(List {
+                    indent,
+                    next: first,
+                    width: 2,
+                });
+            }
+            Event::End(pulldown_cmark::TagEnd::List(_)) => {
+                lists.pop();
+            }
+            Event::Start(Tag::Item) => {
+                let line_start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                let nested_on_line = !text[line_start..range.start].trim().is_empty();
+                let start = if nested_on_line {
+                    range.start
+                } else {
+                    line_start
+                };
+                let line_end = text[range.start..]
+                    .find('\n')
+                    .map_or(text.len(), |n| range.start + n);
+                let line = &text[start..line_end];
+                let leading = line.len() - line.trim_start_matches([' ', '\t']).len();
+                let tail = &line[leading..];
+                let marker_len = if tail.starts_with(['-', '+', '*']) {
+                    1
+                } else {
+                    let digits = tail.bytes().take_while(u8::is_ascii_digit).count();
+                    if digits > 0 && matches!(tail.as_bytes().get(digits), Some(b'.' | b')')) {
+                        digits + 1
+                    } else {
+                        0
+                    }
+                };
+                if marker_len == 0 {
+                    continue;
+                }
+                let after = &tail[marker_len..];
+                let spaces = after.len() - after.trim_start_matches([' ', '\t']).len();
+                if let Some(list) = lists.last_mut() {
+                    let marker = if let Some(number) = list.next.as_mut() {
+                        let m = format!("{}{}", *number, tail.as_bytes()[marker_len - 1] as char);
+                        *number += 1;
+                        m
+                    } else {
+                        tail[..marker_len].to_owned()
+                    };
+                    list.width = marker.len() + 1;
+                    let suffix = if spaces > 0 { " " } else { "" };
+                    let original_indent = text[line_start..start + leading + marker_len + spaces]
+                        .chars()
+                        .fold(0, |col, ch| {
+                            if ch == '\t' {
+                                (col / 4 + 1) * 4
+                            } else {
+                                col + 1
+                            }
+                        });
+                    items.push(Item {
+                        range: range.clone(),
+                        line_start,
+                        original_indent,
+                        output_indent: list.indent + list.width,
+                    });
+                    let indent = if nested_on_line {
+                        String::new()
+                    } else {
+                        " ".repeat(list.indent)
+                    };
+                    edits.push((
+                        start..start + leading + marker_len + spaces,
+                        format!("{indent}{marker}{suffix}"),
+                    ));
+                }
+            }
+            Event::Start(Tag::BlockQuote(_)) if !lists.is_empty() => {
+                let start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                if start > 0
+                    && text[start..range.start].trim().is_empty()
+                    && !text[..start].ends_with("\n\n")
+                {
+                    edits.push((start..start, "\n".into()));
+                }
+            }
+            _ => {}
+        }
+    }
+    let item_lines: BTreeSet<_> = items.iter().map(|x| x.line_start).collect();
+    let mut at = 0;
+    for line in text.split_inclusive('\n') {
+        if !item_lines.contains(&at) && !line.trim().is_empty() {
+            if let Some(item) = items
+                .iter()
+                .filter(|x| x.line_start < at && at < x.range.end)
+                .max_by_key(|x| x.range.start)
+            {
+                let count = line
+                    .bytes()
+                    .take_while(|b| *b == b' ' || *b == b'\t')
+                    .count();
+                let original = line[..count].chars().fold(0, |col, ch| {
+                    if ch == '\t' {
+                        (col / 4 + 1) * 4
+                    } else {
+                        col + 1
+                    }
+                });
+                if original >= item.original_indent {
+                    let output = original - item.original_indent + item.output_indent;
+                    if line[..count] != " ".repeat(output) {
+                        edits.push((at..at + count, " ".repeat(output)));
+                    }
+                }
+            }
+        }
+        at += line.len();
+    }
+    apply_edits(text, edits)
+}
+
+fn apply_edits(text: &str, mut edits: Vec<(std::ops::Range<usize>, String)>) -> String {
+    edits.sort_by_key(|(r, _)| (r.start, r.end));
+    let mut result = text.to_owned();
+    for (range, value) in edits.into_iter().rev() {
+        result.replace_range(range, &value);
+    }
+    result
+}
+fn normalize_misc(text: &str) -> String {
+    use pulldown_cmark::CodeBlockKind;
+    let mut edits: Vec<(std::ops::Range<usize>, String)> = Vec::new();
+    let mut protected = Vec::new();
+    let mut quotes = Vec::new();
+    let mut quote_depth = 0usize;
+    for (event, range) in Parser::new(text).into_offset_iter() {
+        match event {
+            Event::Start(Tag::BlockQuote(_)) => {
+                if quote_depth == 0 {
+                    quotes.push(range);
+                }
+                quote_depth += 1;
+            }
+            Event::End(pulldown_cmark::TagEnd::BlockQuote(_)) => {
+                quote_depth = quote_depth.saturating_sub(1)
+            }
+            Event::Start(Tag::CodeBlock(kind)) => {
+                protected.push(range.clone());
+                if matches!(kind, CodeBlockKind::Fenced(_)) {
+                    let block = &text[range.clone()];
+                    let lines: Vec<_> = block.split_inclusive('\n').collect();
+                    let line_start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                    if !lines.is_empty()
+                        && text[line_start..range.start]
+                            .trim_matches([' ', '\t'])
+                            .is_empty()
+                        && lines[0].trim_start().starts_with(['`', '~'])
+                    {
+                        let open = lines[0].trim_end_matches('\n');
+                        let spaces = open.len() - open.trim_start_matches(' ').len();
+                        let ch = open.as_bytes()[spaces];
+                        let marker_len = open[spaces..].bytes().take_while(|b| *b == ch).count();
+                        let marker = (ch as char).to_string().repeat(marker_len);
+                        let info = &open[spaces + marker_len..];
+                        let info_spaces = info.len() - info.trim_start_matches([' ', '\t']).len();
+                        if spaces + info_spaces > 0 {
+                            edits.push((
+                                range.start..range.start + spaces + marker_len + info_spaces,
+                                marker.clone(),
+                            ));
+                        }
+                        let last = lines.last().unwrap().trim_end_matches('\n');
+                        let last_trim = last.trim_start_matches(' ');
+                        let indentation = last.len() - last_trim.len();
+                        let fence_len = last_trim.bytes().take_while(|b| *b == ch).count();
+                        let closed = lines.len() > 1
+                            && indentation <= 3
+                            && fence_len >= marker_len
+                            && last_trim[fence_len..].trim().is_empty();
+                        let content_end = lines.len() - usize::from(closed);
+                        let content = &lines[1..content_end];
+                        let indent = content
+                            .iter()
+                            .filter(|line| !line.trim().is_empty())
+                            .map(|line| line.bytes().take_while(|c| *c == b' ').count())
+                            .min()
+                            .unwrap_or(0);
+                        if indent > 0 {
+                            let mut at = range.start + lines[0].len();
+                            for line in content {
+                                let count =
+                                    line.bytes().take_while(|c| *c == b' ').count().min(indent);
+                                if count > 0 {
+                                    edits.push((at..at + count, String::new()));
+                                }
+                                at += line.len();
+                            }
+                        }
+                        if closed {
+                            let at = range.end - lines.last().unwrap().len();
+                            edits.push((at..at + last.len(), marker));
+                        } else {
+                            let prefix = if block.ends_with('\n') { "" } else { "\n" };
+                            let suffix = if range.end < text.len() { "\n" } else { "" };
+                            edits.push((range.end..range.end, format!("{prefix}{marker}{suffix}")));
+                        }
+                    }
+                }
+            }
+            Event::Start(Tag::HtmlBlock) => protected.push(range),
+            Event::Start(
+                Tag::Link {
+                    link_type: LinkType::Inline,
+                    ..
+                }
+                | Tag::Image {
+                    link_type: LinkType::Inline,
+                    ..
+                },
+            ) => {
+                let source = &text[range.clone()];
+                if (source.starts_with('[') || source.starts_with("![")) && source.ends_with(')') {
+                    if let Some(split) = source.find("](") {
+                        let image = source.starts_with('!');
+                        let label = source[usize::from(image) + 1..split]
+                            .trim_matches([' ', '\t', '\n', '\r']);
+                        let inner = source[split + 2..source.len() - 1]
+                            .trim_matches([' ', '\t', '\n', '\r']);
+                        let mut parts = inner.splitn(2, [' ', '\t', '\n', '\r']);
+                        let url = parts.next().unwrap_or("");
+                        let suffix = parts
+                            .next()
+                            .map(|s| s.trim_start_matches([' ', '\t', '\n', '\r']))
+                            .filter(|s| !s.is_empty());
+                        let image_prefix = if image { "!" } else { "" };
+                        let extra_angle = if image && url.starts_with('<') {
+                            "<"
+                        } else {
+                            ""
+                        };
+                        let formatted = match suffix {
+                            Some(suffix) => {
+                                format!("{image_prefix}[{label}]({extra_angle}{url} {suffix})")
+                            }
+                            None => format!("{image_prefix}[{label}]({extra_angle}{url})"),
+                        };
+                        if formatted != source {
+                            edits.push((range, formatted));
+                        }
+                    }
+                }
+            }
+            Event::Start(Tag::Heading { .. }) => {
+                let heading = &text[range.clone()];
+                let mut lines = heading.lines();
+                if let (Some(first), Some(last)) = (lines.next(), lines.next()) {
+                    let marker = last.trim();
+                    if !marker.is_empty()
+                        && (marker.bytes().all(|c| c == b'-') || marker.bytes().all(|c| c == b'='))
+                    {
+                        let at = range.start + first.len() + 1;
+                        let end = first.trim_end_matches([' ', '\t']).len();
+                        if end < first.len() {
+                            edits.push((
+                                range.start + end..range.start + first.len(),
+                                String::new(),
+                            ));
+                        }
+                        edits.push((
+                            at..at + last.len(),
+                            (marker.as_bytes()[0] as char)
+                                .to_string()
+                                .repeat(first.trim().chars().count().max(3)),
+                        ));
+                    }
+                } else if let Some(first) = heading.lines().next() {
+                    if first.starts_with('#') && !first.contains('[') {
+                        let open = first.bytes().take_while(|c| *c == b'#').count();
+                        let tail = first[open..].trim_matches([' ', '\t']);
+                        let closing = tail.len() - tail.trim_end_matches('#').len();
+                        let body = &tail[..tail.len() - closing];
+                        let has_close =
+                            closing > 0 && (body.is_empty() || body.ends_with([' ', '\t']));
+                        let formatted = if has_close {
+                            format!(
+                                "{} {} {}",
+                                &first[..open],
+                                body.trim_end_matches([' ', '\t']),
+                                "#".repeat(closing)
+                            )
+                        } else {
+                            format!("{} {}", &first[..open], tail)
+                        };
+                        if formatted != first {
+                            edits.push((range.start..range.start + first.len(), formatted));
+                        }
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
+    for range in quotes {
+        let start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+        let mut at = start;
+        for line in text[start..range.end].split_inclusive('\n') {
+            let end = at + line.len();
+            if !protected.iter().any(|r| r.start < end && at < r.end) {
+                let mut pos = line.len() - line.trim_start_matches([' ', '\t']).len();
+                while line.as_bytes().get(pos) == Some(&b'>') {
+                    let after = pos + 1;
+                    let count = line[after..]
+                        .bytes()
+                        .take_while(|b| *b == b' ' || *b == b'\t')
+                        .count();
+                    let remaining = &line[after + count..];
+                    if count < 5 {
+                        let wanted = if remaining.is_empty() || remaining == "\n" {
+                            ""
+                        } else {
+                            " "
+                        };
+                        if &line[after..after + count] != wanted {
+                            edits.push((at + after..at + after + count, wanted.into()));
+                        }
+                    }
+                    pos = after + count;
+                }
+            }
+            at = end;
+        }
+    }
+    let mut at = 0;
+    let mut blank = false;
+    for line in text.split_inclusive('\n') {
+        let in_protected = protected.iter().any(|r| r.start <= at && at < r.end);
+        if !in_protected && line.trim().is_empty() {
+            if blank {
+                edits.push((at..at + line.len(), String::new()));
+            }
+            blank = true;
+        } else {
+            blank = false;
+        }
+        at += line.len();
+    }
+    apply_edits(text, edits)
+}
+fn normalize_quotes(text: &str) -> String {
+    let mut ranges = Vec::new();
+    let mut code = Vec::new();
+    let mut headings = Vec::new();
+    let mut depth = 0usize;
+    let mut list_depth = 0usize;
+    let mut outside_list_depth = 0usize;
+    for (event, range) in Parser::new(text).into_offset_iter() {
+        match event {
+            Event::Start(Tag::List(_)) => list_depth += 1,
+            Event::End(pulldown_cmark::TagEnd::List(_)) => {
+                list_depth = list_depth.saturating_sub(1)
+            }
+            Event::Start(Tag::BlockQuote(_)) => {
+                depth += 1;
+                if depth == 1 && list_depth == 0 {
+                    outside_list_depth = depth;
+                }
+                if outside_list_depth != 0 {
+                    ranges.push((range, depth));
+                }
+            }
+            Event::End(pulldown_cmark::TagEnd::BlockQuote(_)) => {
+                if depth == 1 {
+                    outside_list_depth = 0;
+                }
+                depth = depth.saturating_sub(1);
+            }
+            Event::Start(Tag::Heading { .. }) if outside_list_depth != 0 => {
+                headings.push((range, depth))
+            }
+            Event::Start(Tag::CodeBlock(_)) if outside_list_depth != 0 => code.push((range, depth)),
+            _ => {}
+        }
+    }
+    if ranges.is_empty() {
+        return text.to_owned();
+    }
+    let roots: Vec<_> = ranges
+        .iter()
+        .filter(|(_, depth)| *depth == 1)
+        .map(|(r, _)| r.clone())
+        .collect();
+    let mut edits = Vec::new();
+    for root in roots {
+        let start = text[..root.start].rfind('\n').map_or(0, |n| n + 1);
+        let mut lines = Vec::new();
+        let mut at = start;
+        for line in text[start..root.end].split_inclusive('\n') {
+            let end = at + line.len();
+            let nesting = ranges
+                .iter()
+                .filter(|(r, _)| r.start < end && at < r.end)
+                .map(|(_, depth)| *depth)
+                .max()
+                .unwrap_or(1);
+            let mut pos = line.len() - line.trim_start_matches([' ', '\t']).len();
+            let mut count = 0;
+            let code_line = code.iter().any(|(r, _)| r.start < end && at < r.end);
+            while count < nesting && line.as_bytes().get(pos) == Some(&b'>') {
+                count += 1;
+                pos += 1;
+                if code_line {
+                    if matches!(line.as_bytes().get(pos), Some(b' ' | b'\t')) {
+                        pos += 1;
+                    }
+                } else {
+                    while matches!(line.as_bytes().get(pos), Some(b' ' | b'\t')) {
+                        pos += 1;
+                    }
+                }
+            }
+            if count == 0 {
+                pos = 0;
+            }
+            let blank = line[pos..].trim().is_empty();
+            lines.push((at, end, pos, nesting, blank));
+            at = end;
+        }
+        let first = lines.iter().position(|line| !line.4);
+        let last = lines.iter().rposition(|line| !line.4);
+        for (i, (at, end, pos, nesting, blank)) in lines.into_iter().enumerate() {
+            if first.is_none() || i < first.unwrap() || i > last.unwrap() {
+                let separator = if first.is_some() && i > last.unwrap() && root.end < text.len() {
+                    "\n"
+                } else {
+                    ""
+                };
+                edits.push((at..end, separator.into()));
+            } else {
+                let prefix = format!("{}{}", ">".repeat(nesting), if blank { "" } else { " " });
+                if text[at..at + pos] != prefix {
+                    edits.push((at..at + pos, prefix));
+                }
+            }
+        }
+        for (heading, nesting) in &headings {
+            if root.start <= heading.start && heading.end < root.end {
+                let next_end = text[heading.end..root.end]
+                    .find('\n')
+                    .map_or(root.end, |n| heading.end + n);
+                let next = text[heading.end..next_end].trim().trim_matches('>').trim();
+                if !next.is_empty() {
+                    edits.push((
+                        heading.end..heading.end,
+                        format!("{}\n", ">".repeat(*nesting)),
+                    ));
+                }
+            }
+        }
+        for (fence, nesting) in &code {
+            if root.start > fence.start || fence.end > root.end {
+                continue;
+            }
+            let block = &text[fence.clone()];
+            let Some(first) = block.lines().next() else {
+                continue;
+            };
+            let first = first.trim_start_matches(' ');
+            let Some(ch @ ('`' | '~')) = first.chars().next() else {
+                continue;
+            };
+            let length = first.chars().take_while(|c| *c == ch).count();
+            if length < 3 {
+                continue;
+            }
+            let closed = block.lines().skip(1).last().is_some_and(|line| {
+                let line = line.trim_start_matches([' ', '>']);
+                let count = line.chars().take_while(|c| *c == ch).count();
+                count >= length && line[count..].trim().is_empty()
+            });
+            if !closed {
+                let marker = ch.to_string().repeat(length);
+                let newline = if block.ends_with('\n') { "" } else { "\n" };
+                edits.push((
+                    fence.end..fence.end,
+                    format!("{newline}{} {marker}\n", ">".repeat(*nesting)),
+                ));
+            }
+        }
+    }
+    apply_edits(text, edits)
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{format, kotlin_space, selected};
+    use super::{format, format_with_diagnostics, format_with_references, kotlin_space, selected};
     use crate::template::Graph;
     use serde_json::json;
+    use std::collections::BTreeMap;
     #[test]
     fn global_emptiness_differs_from_selected_platform_text() {
         let snapshot = json!({"schema":"gluecodium.reference-model.snapshot","version":1,"root":{"$ref":"c"},"nodes":[{"id":"c","class":"com.here.gluecodium.model.lime.LimeComment","properties":{"isExcluded":false,"placeholders":{}}}]});
@@ -268,37 +911,94 @@ mod tests {
             .contains("size limit"));
     }
     #[test]
-    fn jvm_measured_plain_text_format_and_guards() {
+    fn renders_markdown_and_resolves_scoped_links() {
+        let names = BTreeMap::from([(
+            "smoke.Example.member".into(),
+            "::smoke::Example::member".into(),
+        )]);
         assert_eq!(
-            format(" hello  world\n indented\n\n\nnext ").unwrap(),
-            "hello  world\nindented\n\nnext"
+            format_with_references(
+                "See [member] and [label][member].",
+                "smoke.Example",
+                &names,
+                true
+            )
+            .unwrap(),
+            "See ::smoke::Example::member and [label]::smoke::Example::member."
         );
-        assert_eq!(format("one \ntwo  \nthree").unwrap(), "one\ntwo  \nthree");
         assert_eq!(
-            format("Bonjour café 中文\n\u{a0}continuation").unwrap(),
-            "Bonjour café 中文\n\u{a0}continuation"
+            format("**bold**\n\n# Heading\n## Next").unwrap(),
+            "**bold**\n\n# Heading\n\n## Next"
         );
-        for text in [
-            "prefix\n-- \nend",
-            "prefix\na\t  \nend",
-            "hello  \n\nworld",
-            "+\n  a",
-            "1.\n  a",
-            "hello\n\n \tworld",
-            "hello\n---",
-            "hello\n===",
-            "-\tentry",
-            "1.\tentry",
-            "1) entry",
-            "hello\t \nworld",
-            "[reference]",
-            "**bold**",
-            "before\n\n    code",
-        ] {
-            assert!(format(text).is_err(), "{text:?}");
-        }
+        assert!(format_with_references("[unknown]", "smoke", &names, true).is_err());
+        assert_eq!(
+            format_with_references(
+                "[external]\n\n[external]: https://example.com",
+                "smoke",
+                &names,
+                true
+            )
+            .unwrap(),
+            "[external]\n\n[external]: https://example.com"
+        );
         assert!(kotlin_space('\u{a0}'));
         assert!(kotlin_space('\u{1c}'));
         assert!(!kotlin_space('\u{85}'));
+    }
+    #[test]
+    fn formats_noncanonical_markdown_like_flexmark() {
+        assert_eq!(
+            format("-  a\n- b\n   -    nested\n\n1.  first\n7. second").unwrap(),
+            "- a\n- b\n  - nested\n\n1. first\n2. second"
+        );
+        assert_eq!(
+            format("#head\n\n# header  ##\nunder\n----").unwrap(),
+            "#head\n\n# header ##\n\nunder\n-----"
+        );
+        assert_eq!(
+            format("```cpp  extra\n int n;\n```\n\n    indented").unwrap(),
+            "```cpp  extra\nint n;\n```\n\n    indented"
+        );
+        assert_eq!(
+            format("a   \nb\\\nc\n\n\n\nlast").unwrap(),
+            "a   \nb\\\nc\n\nlast"
+        );
+        assert_eq!(
+            format(">quote\n>    x\n>\n> third").unwrap(),
+            "> quote\n> x\n>\n> third"
+        );
+        assert_eq!(
+            format("[ title ]( https://example.com  \" x \" )").unwrap(),
+            "[title](https://example.com \" x \")"
+        );
+        assert_eq!(format("- - foo").unwrap(), "- - foo");
+        assert_eq!(format("1. - 2. foo").unwrap(), "1. - 2. foo");
+    }
+    #[test]
+    fn unresolved_references_are_returned_as_warnings_or_errors() {
+        let names = BTreeMap::new();
+        let (rendered, warnings) = format_with_diagnostics(
+            "[first] and [second], with [external].\n\n[external]: https://example.com",
+            "smoke.Example",
+            &names,
+            false,
+        )
+        .unwrap();
+        assert!(rendered.contains("[first] and [second]"));
+        assert!(warnings.iter().all(|w| w.scope == "smoke.Example"));
+        assert_eq!(
+            warnings
+                .iter()
+                .map(|w| w.message.as_str())
+                .collect::<Vec<_>>(),
+            [
+                "Failed to resolve documentation reference [first]",
+                "Failed to resolve documentation reference [second]"
+            ]
+        );
+        assert_eq!(
+            format_with_diagnostics("[first]", "smoke.Example", &names, true).unwrap_err(),
+            warnings[0].message
+        );
     }
 }
