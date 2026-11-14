@@ -1,0 +1,8 @@
+package review
+interface Api {
+    fun use(value: Int)
+    @EnableIf("Missing")
+    fun use(removed: String)
+    // [use.removed:1]
+    fun docs()
+}

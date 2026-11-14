@@ -1,0 +1,32 @@
+package completion.docs
+// Markdown formatting probes.
+//
+// 1. First numbered item
+// 2. Second numbered item
+//    - Nested bullet
+//    - Another nested bullet
+//      1. Nested number
+//      2. Next number
+//
+// - First bullet
+// - Second bullet
+//   > Quoted text inside a bullet.
+//
+// > A block quote with **strong text**.
+// >
+// > Another quote paragraph with *emphasis*.
+//
+// ```cpp
+// auto value = 42;
+//     go(value);
+// ```
+//
+// First line with a hard break.  
+// Second line after break.
+//
+// A [reference link][label] and   irregular    whitespace.
+//
+// [label]: https://example.com/path "Title"
+interface Markdown {
+    fun probe()
+}

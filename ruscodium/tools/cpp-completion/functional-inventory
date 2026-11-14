@@ -1,0 +1,49 @@
+#!/usr/bin/env python3
+"""Discover upstream cpp-selected functional sources and write driver manifests."""
+import argparse, hashlib, json, re
+from pathlib import Path
+ROOT = Path(__file__).resolve().parents[3]
+BASE = ROOT / 'functional-tests/functional'
+def rel(p): return p.relative_to(ROOT).as_posix()
+def hashes(paths): return {rel(p): hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(set(paths))}
+def properties(path, main, aux, options):
+    def escape(s): return str(s).replace('\\', '\\\\').replace('\n', '\\n').replace('=', '\\=').replace(':', '\\:')
+    lines = []
+    for key, values in [('main', main), ('aux', aux), ('option', options)]:
+        lines.append(f'{key}.count={len(values)}')
+        lines.extend(f'{key}.{i}={escape(value)}' for i, value in enumerate(values))
+    path.write_text('\n'.join(lines) + '\n')
+def main():
+    parser = argparse.ArgumentParser(description=__doc__); parser.add_argument('--output', required=True, type=Path)
+    args = parser.parse_args(); args.output.mkdir(parents=True, exist_ok=True)
+    cmake = (BASE / 'CMakeLists.txt').read_text(); features = []
+    for match in re.finditer(r'(?m)^feature\(([^)]*)\)', cmake):
+        words = match.group(1).split()
+        if 'SOURCES' not in words: raise SystemExit('unrecognized feature ' + words[0])
+        idx = words.index('SOURCES')
+        if 'cpp' not in words[1:idx]: continue
+        files = [BASE / p for p in words[idx+1:]]
+        if any(not p.is_file() for p in files): raise SystemExit('missing feature source: ' + words[0])
+        features.append({'name': words[0], 'lime': [rel(p) for p in files if p.suffix == '.lime'],
+                         'cpp': [rel(p) for p in files if p.suffix in ('.h', '.cpp')]})
+    tests = sorted((BASE / 'cpp/tests').glob('*.cpp'))
+    if len(features) != 45 or len(tests) != 10: raise SystemExit(f'unexpected counts: {len(features)} features, {len(tests)} tests')
+    lime = sorted({p for f in features for p in f['lime']}); cpp = sorted({p for f in features for p in f['cpp']})
+    opts = ['-input', rel(BASE / 'input/lime'), '-intnamespace', 'lorem_ipsum.test', '-tag', 'Lite', '-tag', 'ExperimentalFoo',
+            '-copyright', 'functional-tests/config/COPYRIGHT', '-docsplaceholderslist', 'functional-tests/config/placeholders.properties']
+    properties(args.output / 'functional.properties', lime, [], opts)
+    names = ['functional-tests/namerules/input/lime/NameRules.lime']
+    properties(args.output / 'namerules.properties', names, [], ['-input', names[0], '-intnamespace', 'lorem_ipsum.test',
+               '-cppnamerules', 'functional-tests/namerules/input/namerules/cpp.properties'])
+    probes = {'filtered-overloads': 'FilteredOverloads.lime', 'overflow': 'Overflow.lime', 'markdown': 'Markdown.lime'}
+    for name, filename in probes.items():
+        path = rel(ROOT / 'ruscodium/tools/cpp-completion/fixtures' / filename)
+        properties(args.output / f'{name}.properties', [path], [], ['-input', path, '-intnamespace', 'detail'])
+    paths = [ROOT / p for p in lime + cpp] + tests + [ROOT / 'ruscodium/tools/cpp-completion/fixtures' / f for f in probes.values()] + [BASE / 'CMakeLists.txt', BASE / 'cpp/CMakeLists.txt',
+        ROOT / 'functional-tests/config/COPYRIGHT', ROOT / 'functional-tests/config/placeholders.properties',
+        ROOT / names[0], ROOT / 'functional-tests/namerules/input/namerules/cpp.properties', ROOT / 'functional-tests/namerules/cpp/NameRulesImpl.cpp']
+    report = {'features': features, 'feature_count': len(features), 'lime_sources': lime, 'cpp_sources': cpp,
+              'test_sources': [rel(p) for p in tests], 'targeted_probes': probes, 'hashes': hashes(paths)}
+    (args.output / 'functional-inventory.json').write_text(json.dumps(report, indent=2) + '\n')
+    print(f'{len(features)} C++ features, {len(lime)} LIME files, {len(cpp)} handwritten files, {len(tests)} tests')
+if __name__ == '__main__': main()

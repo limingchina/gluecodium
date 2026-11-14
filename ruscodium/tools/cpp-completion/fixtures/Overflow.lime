@@ -1,0 +1,9 @@
+package review
+enum Overflow {
+    MAX = 2147483647,
+    MIN,
+    NEXT
+}
+struct Holder {
+    value: Overflow = Overflow.MIN
+}
