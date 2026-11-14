@@ -1,6 +1,21 @@
-//! Native, deliberately bounded C++ name resolution over reference snapshots.
+//! Native C++ name resolution over reference snapshots.
+#[path = "native_cpp_rules.rs"]
+mod rules;
+pub use rules::parse_cpp_properties;
+pub(crate) fn validate_cpp_name_rules(rules: &BTreeMap<String, String>) -> Result<(), String> {
+    rules::validate(rules)
+}
+pub(crate) fn cpp_rule_name(
+    rules: &BTreeMap<String, String>,
+    category: &str,
+    input: &str,
+    boolean: bool,
+) -> Result<String, String> {
+    rules::name(rules, category, input, boolean)
+}
 use super::graph::{reference, Graph, ModelNode};
 use serde_json::Value;
+use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Clone, Debug, Default)]
@@ -9,6 +24,8 @@ pub struct NativeCppConfig {
     pub internal_namespace: Vec<String>,
     pub predicates: bool,
     pub sorters: bool,
+    pub name_rules: BTreeMap<String, String>,
+    pub werror_doc_links: bool,
 }
 impl NativeCppConfig {
     pub fn parse(value: &Value) -> Result<Self, String> {
@@ -19,6 +36,8 @@ impl NativeCppConfig {
                 "internal_namespace",
                 "predicates",
                 "sorters",
+                "name_rules",
+                "werror_doc_links",
             ]
             .contains(&k.as_str())
         }) {
@@ -48,12 +67,23 @@ impl NativeCppConfig {
                 })
                 .collect()
         };
-        Ok(Self {
+        let config = Self {
             root_namespace: parse("root_namespace")?,
             internal_namespace: parse("internal_namespace")?,
             predicates: flag(object, "predicates")?,
             sorters: flag(object, "sorters")?,
-        })
+            name_rules: object
+                .get("name_rules")
+                .map(|v| {
+                    serde_json::from_value(v.clone())
+                        .map_err(|_| "native_cpp.name_rules must be a string map".to_string())
+                })
+                .transpose()?
+                .unwrap_or_default(),
+            werror_doc_links: flag(object, "werror_doc_links")?,
+        };
+        rules::validate(&config.name_rules)?;
+        Ok(config)
     }
 }
 
@@ -90,9 +120,12 @@ pub fn resolve(
 pub(crate) struct NativeCppResolver {
     config: NativeCppConfig,
     parents: BTreeMap<ModelPath, Vec<String>>,
+    documentation: RefCell<Option<BTreeMap<String, String>>>,
+    diagnostics: RefCell<BTreeSet<super::native_comments::DocWarning>>,
 }
 impl NativeCppResolver {
     pub(crate) fn new(graph: &Graph, config: NativeCppConfig) -> Result<Self, String> {
+        validate_cpp_name_rules(&config.name_rules)?;
         let mut parents: BTreeMap<ModelPath, Vec<String>> = BTreeMap::new();
         let empty = BTreeMap::new();
         let ctx = Resolver {
@@ -130,7 +163,148 @@ impl NativeCppResolver {
                     .push(id.clone());
             }
         }
-        Ok(Self { config, parents })
+        Ok(Self {
+            config,
+            parents,
+            documentation: RefCell::new(None),
+            diagnostics: RefCell::new(BTreeSet::new()),
+        })
+    }
+    pub(crate) fn diagnostics(&self) -> Vec<String> {
+        self.diagnostics
+            .borrow()
+            .iter()
+            .map(|w| format!("{}: {}", w.scope, w.message))
+            .collect()
+    }
+    pub(crate) fn documentation_names(
+        &self,
+        graph: &Graph,
+    ) -> Result<BTreeMap<String, String>, String> {
+        let ctx = Resolver {
+            graph,
+            config: &self.config,
+            parents: &self.parents,
+        };
+        let root = graph.root.as_ref().ok_or("native C++ missing root")?;
+        let map = ctx
+            .get(root, "referenceMap")?
+            .as_object()
+            .ok_or("invalid reference map")?;
+        let mut result = BTreeMap::new();
+        for value in map.values() {
+            let class = ctx.class(value)?.rsplit('.').next().unwrap_or("");
+            if !matches!(
+                class,
+                "LimeField"
+                    | "LimeParameter"
+                    | "LimeFunction"
+                    | "LimeFieldConstructor"
+                    | "LimeConstant"
+                    | "LimeEnumerator"
+                    | "LimeEnumeration"
+                    | "LimeTypeAlias"
+                    | "LimeStruct"
+                    | "LimeClass"
+                    | "LimeInterface"
+                    | "LimeLambda"
+                    | "LimeProperty"
+                    | "LimeException"
+            ) {
+                continue;
+            }
+            let path = ctx.path(value)?;
+            let key = path
+                .head
+                .iter()
+                .chain(&path.tail)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(".");
+            match class {
+                "LimeException" => {
+                    result.insert(
+                        key,
+                        ctx.name(ctx.get(value, "errorType")?, &mut BTreeSet::new())?,
+                    );
+                }
+                "LimeParameter" => {
+                    let name = ctx.short_name(value)?;
+                    if path.disambiguator.is_empty() {
+                        result.insert(key, name);
+                    } else {
+                        result.insert(format!("{key}:{}", path.disambiguator), name.clone());
+                        if let Some((owner, parameter)) = key.rsplit_once('.') {
+                            result.insert(
+                                format!("{owner}:{}.{parameter}", path.disambiguator),
+                                name,
+                            );
+                        }
+                    }
+                }
+                "LimeProperty" => {
+                    let parent = ctx.parent(value)?.ok_or("property missing parent")?;
+                    let base = ctx.full_name(&parent, &mut BTreeSet::new())?;
+                    let getter = format!(
+                        "{base}::{}",
+                        ctx.accessor(value, "getter")?
+                            .ok_or("property missing getter")?
+                    );
+                    result.insert(key.clone(), getter.clone());
+                    result.insert(format!("{key}.get"), getter);
+                    if !ctx.get(value, "setter")?.is_null() {
+                        result.insert(
+                            format!("{key}.set"),
+                            format!(
+                                "{base}::{}",
+                                ctx.accessor(value, "setter")?
+                                    .ok_or("property missing setter")?
+                            ),
+                        );
+                    }
+                }
+                "LimeFunction" => {
+                    let name = ctx.reference_name(value)?;
+                    result.insert(key.clone(), name.clone());
+                    let params = ctx
+                        .get(value, "parameters")?
+                        .as_array()
+                        .ok_or("invalid parameters")?;
+                    let signature = params
+                        .iter()
+                        .map(|p| ctx.lime_ref_string(ctx.get(p, "typeRef")?))
+                        .collect::<Result<Vec<_>, _>>()?
+                        .join(",");
+                    result.insert(format!("{key}({signature})"), name);
+                }
+                _ => {
+                    result.insert(key, ctx.full_name(value, &mut BTreeSet::new())?);
+                }
+            }
+        }
+        Ok(result)
+    }
+    pub(crate) fn signature(&self, graph: &Graph, function: &Value) -> Result<Vec<String>, String> {
+        Resolver {
+            graph,
+            config: &self.config,
+            parents: &self.parents,
+        }
+        .signature(function)
+    }
+    pub(crate) fn signature_type(&self, graph: &Graph, tr: &Value) -> Result<String, String> {
+        let ctx = Resolver {
+            graph,
+            config: &self.config,
+            parents: &self.parents,
+        };
+        if let Some(t) = ctx.attr(tr, "CPP", "TYPE")? {
+            return t
+                .as_str()
+                .map(str::to_owned)
+                .ok_or_else(|| "invalid C++ Type attribute".into());
+        }
+        ctx.signature_type(tr, &mut BTreeSet::new())
     }
     pub(crate) fn resolve(
         &self,
@@ -156,6 +330,37 @@ impl NativeCppResolver {
             config: &self.config,
             parents: &self.parents,
         };
+        if mode == "name"
+            && selector != "FQN"
+            && ctx.class(receiver)? == "com.here.gluecodium.model.lime.LimeComment"
+        {
+            if let Some(text) = super::native_comments::selected(graph, receiver)? {
+                if self.documentation.borrow().is_none() {
+                    let map = self.documentation_names(graph)?;
+                    *self.documentation.borrow_mut() = Some(map);
+                }
+                let scope = ctx.path(receiver)?;
+                let mut scope_name = scope
+                    .head
+                    .iter()
+                    .chain(&scope.tail)
+                    .cloned()
+                    .collect::<Vec<_>>()
+                    .join(".");
+                if !scope.disambiguator.is_empty() {
+                    scope_name.push(':');
+                    scope_name.push_str(&scope.disambiguator);
+                }
+                let (formatted, warnings) = super::native_comments::format_with_diagnostics(
+                    &text,
+                    &scope_name,
+                    self.documentation.borrow().as_ref().unwrap(),
+                    self.config.werror_doc_links,
+                )?;
+                self.diagnostics.borrow_mut().extend(warnings);
+                return Ok(Some(formatted));
+            }
+        }
         if selector == "FQN" {
             if mode != "name" {
                 return Err(format!("FQN {mode} mode is unsupported"));
@@ -169,6 +374,8 @@ impl NativeCppResolver {
                 "com.here.gluecodium.model.lime.LimeBasicTypeRef"
                     | "com.here.gluecodium.model.lime.LimeDirectTypeRef"
                     | "com.here.gluecodium.model.lime.LimeAmbiguousTypeRef"
+                    | "com.here.gluecodium.model.lime.LimeLazyTypeRef"
+                    | "com.here.gluecodium.model.lime.LimePositionalTypeRef"
             ) {
                 v = ctx.get(&v, "type")?.clone();
             }
@@ -238,6 +445,194 @@ impl<'a> Resolver<'a> {
                 .into(),
         })
     }
+    fn lime_type_name(&self, ty: &Value) -> Result<String, String> {
+        let class = self.class(ty)?.rsplit('.').next().unwrap_or("");
+        if matches!(class, "LimeList" | "LimeSet" | "LimeMap") {
+            let id = reference(ty).ok_or("invalid generic type")?;
+            return self.generic_lime_name(ty, &mut BTreeSet::from([id.to_owned()]));
+        }
+        if class == "LimeBasicType" {
+            return Ok(match self
+                .get(ty, "typeId")?
+                .get("name")
+                .and_then(Value::as_str)
+                .ok_or("invalid basic type")?
+            {
+                "VOID" => "Void",
+                "INT8" => "Byte",
+                "UINT8" => "UByte",
+                "INT16" => "Short",
+                "UINT16" => "UShort",
+                "INT32" => "Int",
+                "UINT32" => "UInt",
+                "INT64" => "Long",
+                "UINT64" => "ULong",
+                "FLOAT" => "Float",
+                "DOUBLE" => "Double",
+                "BOOLEAN" => "Boolean",
+                "STRING" => "String",
+                "BLOB" => "Blob",
+                "DATE" => "Date",
+                "DURATION" => "Duration",
+                "LOCALE" => "Locale",
+                _ => return Err("invalid basic type".into()),
+            }
+            .into());
+        }
+        Ok(self.path(ty)?.tail.last().cloned().unwrap_or_default())
+    }
+    fn generic_lime_name(
+        &self,
+        ty: &Value,
+        active: &mut BTreeSet<String>,
+    ) -> Result<String, String> {
+        let part = |tr: &Value, active: &mut BTreeSet<String>| -> Result<String, String> {
+            let child = self.get(tr, "type")?;
+            let class = self.class(child)?.rsplit('.').next().unwrap_or("");
+            let name = if matches!(class, "LimeList" | "LimeSet" | "LimeMap") {
+                let id = reference(child).ok_or("invalid generic type")?.to_owned();
+                if !active.insert(id.clone()) || active.len() > 128 {
+                    return Err("cyclic generic type".into());
+                }
+                let n = self.generic_lime_name(child, active)?;
+                active.remove(&id);
+                n
+            } else {
+                self.lime_type_name(child)?
+            };
+            let nullable = self
+                .get(tr, "isNullable")?
+                .as_bool()
+                .ok_or("invalid nullable")?;
+            Ok(format!("{name}{}", if nullable { "?" } else { "" }))
+        };
+        match self.class(ty)?.rsplit('.').next().unwrap_or("") {
+            "LimeList" => Ok(format!(
+                "List<{}>",
+                part(self.get(ty, "elementType")?, active)?
+            )),
+            "LimeSet" => Ok(format!(
+                "Set<{}>",
+                part(self.get(ty, "elementType")?, active)?
+            )),
+            "LimeMap" => Ok(format!(
+                "Map<{}, {}>",
+                part(self.get(ty, "keyType")?, active)?,
+                part(self.get(ty, "valueType")?, active)?
+            )),
+            _ => Err("invalid generic type".into()),
+        }
+    }
+    fn lime_ref_string(&self, tr: &Value) -> Result<String, String> {
+        Ok(format!(
+            "{}{}",
+            self.lime_type_name(self.get(tr, "type")?)?,
+            if self
+                .get(tr, "isNullable")?
+                .as_bool()
+                .ok_or("invalid nullable")?
+            {
+                "?"
+            } else {
+                ""
+            }
+        ))
+    }
+    fn signature_type(&self, tr: &Value, active: &mut BTreeSet<String>) -> Result<String, String> {
+        let ty = self.get(tr, "type")?;
+        let id = reference(ty).ok_or("invalid signature type")?.to_owned();
+        if !active.insert(id.clone()) || active.len() > 128 {
+            return Err("cyclic signature type".into());
+        }
+        let class = self.class(ty)?.rsplit('.').next().unwrap_or("");
+        let name = match class {
+            "LimeTypeAlias" => self.signature_type(self.get(ty, "typeRef")?, active)?,
+            "LimeList" => format!(
+                "[{}]",
+                self.signature_type(self.get(ty, "elementType")?, active)?
+            ),
+            "LimeSet" => format!(
+                "[{}:]",
+                self.signature_type(self.get(ty, "elementType")?, active)?
+            ),
+            "LimeMap" => format!(
+                "[{}:{}]",
+                self.signature_type(self.get(ty, "keyType")?, active)?,
+                self.signature_type(self.get(ty, "valueType")?, active)?
+            ),
+            _ => self.lime_type_name(ty)?,
+        };
+        active.remove(&id);
+        let actual = self.actual(ty, &mut BTreeSet::new())?;
+        let suffix = if self
+            .get(tr, "isNullable")?
+            .as_bool()
+            .ok_or("invalid nullable")?
+            && !self.is_pointer(&actual)?
+        {
+            "?"
+        } else {
+            ""
+        };
+        Ok(format!("{name}{suffix}"))
+    }
+    fn signature(&self, function: &Value) -> Result<Vec<String>, String> {
+        self.get(function, "parameters")?
+            .as_array()
+            .ok_or("invalid parameters")?
+            .iter()
+            .map(|p| {
+                let tr = self.get(p, "typeRef")?;
+                if let Some(t) = self.attr(tr, "CPP", "TYPE")? {
+                    return t
+                        .as_str()
+                        .map(str::to_owned)
+                        .ok_or_else(|| "invalid C++ Type attribute".into());
+                }
+                self.signature_type(tr, &mut BTreeSet::new())
+            })
+            .collect()
+    }
+    fn reference_name(&self, function: &Value) -> Result<String, String> {
+        let mut name = self.full_name(function, &mut BTreeSet::new())?;
+        if let Some(parent) = self.parent(function)? {
+            let target = self.short_name(function)?;
+            let functions = self
+                .get(&parent, "functions")?
+                .as_array()
+                .ok_or("invalid functions")?;
+            let mut count = 0;
+            for f in functions {
+                if self.short_name(f)? == target {
+                    count += 1;
+                }
+            }
+            if count > 1 {
+                let params = self
+                    .get(function, "parameters")?
+                    .as_array()
+                    .ok_or("invalid parameters")?;
+                let mut rendered = Vec::new();
+                for p in params {
+                    let tr = self.get(p, "typeRef")?;
+                    let suffix =
+                        if super::native_controls::predicate(self.graph, "needsRefSuffix", tr)? {
+                            "&"
+                        } else {
+                            ""
+                        };
+                    rendered.push(format!(
+                        "const {}{suffix}",
+                        self.type_ref(tr, &mut BTreeSet::new())?
+                    ));
+                }
+                name.push('(');
+                name.push_str(&rendered.join(", "));
+                name.push(')');
+            }
+        }
+        Ok(name)
+    }
     fn attributes(&self, v: &Value) -> Result<&'a serde_json::Map<String, Value>, String> {
         let attrs = self.get(v, "attributes")?;
         self.get(attrs, "attributes")?
@@ -256,26 +651,55 @@ impl<'a> Resolver<'a> {
     }
     fn checked(&self, v: &Value) -> Result<(), String> {
         let node = self.node(v)?;
-        if node
-            .properties
-            .get("external")
-            .is_some_and(|v| !v.is_null())
-        {
-            return Err("native C++ external descriptor unsupported".into());
+        if node.properties.contains_key("external") {
+            self.external(v)?;
         }
         if node.properties.contains_key("attributes") {
-            let attrs = self.attributes(v)?;
-            if let Some(cpp) = attrs.get("CPP") {
-                let cpp = cpp.as_object().ok_or("invalid CPP attributes")?;
-                if let Some(key) = cpp
-                    .keys()
-                    .find(|k| !["NAME", "TYPE", "ACCESSORS", "CONST"].contains(&k.as_str()))
-                {
-                    return Err(format!("unsupported C++ attribute {key}"));
-                }
-            }
+            self.attributes(v)?;
         }
         Ok(())
+    }
+    fn external(&self, v: &Value) -> Result<Option<&'a serde_json::Map<String, Value>>, String> {
+        let external = self.get(v, "external")?;
+        if external.is_null() {
+            return Ok(None);
+        }
+        let descriptors = self
+            .get(external, "descriptors")?
+            .as_object()
+            .ok_or("invalid external descriptors")?;
+        let Some((_, cpp)) = descriptors
+            .iter()
+            .find(|(k, _)| k.eq_ignore_ascii_case("cpp"))
+        else {
+            return Ok(None);
+        };
+        Ok(Some(cpp.as_object().ok_or("invalid C++ descriptor")?))
+    }
+    fn external_name(&self, v: &Value, key: &str) -> Result<Option<&'a str>, String> {
+        self.external(v)?
+            .and_then(|m| {
+                m.iter()
+                    .find(|(k, _)| k.eq_ignore_ascii_case(key))
+                    .map(|(_, v)| v)
+            })
+            .map(|v| {
+                v.as_str()
+                    .ok_or_else(|| "invalid C++ external name".to_string())
+            })
+            .transpose()
+    }
+    fn is_external(&self, v: &Value, depth: usize) -> Result<bool, String> {
+        if depth > 128 {
+            return Err("native C++ parent depth limit exceeded".into());
+        }
+        if self.external(v)?.is_some() {
+            return Ok(true);
+        }
+        match self.parent(v)? {
+            Some(p) => self.is_external(&p, depth + 1),
+            None => Ok(false),
+        }
     }
     fn parent(&self, v: &Value) -> Result<Option<Value>, String> {
         let mut path = self.path(v)?;
@@ -313,10 +737,17 @@ impl<'a> Resolver<'a> {
                 | "LimeLambda"
                 | "LimeProperty"
                 | "LimeException"
+                | "LimeBasicType"
+                | "LimeList"
+                | "LimeSet"
+                | "LimeMap"
         ) {
             return Err(format!("unsupported native C++ named element {class}"));
         }
         self.get(v, "external")?;
+        if let Some(n) = self.external_name(v, "name")? {
+            return Ok(n.to_owned());
+        }
         if let Some(n) = self.attr(v, "CPP", "NAME")? {
             return n
                 .as_str()
@@ -324,22 +755,36 @@ impl<'a> Resolver<'a> {
                 .ok_or_else(|| "invalid C++ Name attribute".into());
         }
         let path = self.path(v)?;
-        let n = path
-            .tail
-            .last()
-            .ok_or("native C++ named element has empty path")?;
-        match class {
-            "LimeField" | "LimeParameter" | "LimeFunction" | "LimeFieldConstructor" => {
-                snake(n, false)
-            }
-            "LimeConstant" | "LimeEnumerator" => snake(n, true),
-            "LimeEnumeration" | "LimeTypeAlias" | "LimeStruct" | "LimeClass" | "LimeInterface"
-            | "LimeLambda" => upper_camel(n),
-            "LimeProperty" | "LimeException" => Err(format!(
-                "native C++ default name rule unsupported for {class}"
-            )),
-            _ => Err(format!("unsupported native C++ named element {class}")),
+        let type_name;
+        let n = if matches!(class, "LimeBasicType" | "LimeList" | "LimeSet" | "LimeMap") {
+            type_name = self.lime_type_name(v)?;
+            &type_name
+        } else {
+            path.tail
+                .last()
+                .ok_or("native C++ named element has empty path")?
+        };
+        if self.is_external(v, 0)? {
+            return Ok(n.to_owned());
         }
+        let rule = match class {
+            "LimeField" => "field",
+            "LimeParameter" => "parameter",
+            "LimeFunction" | "LimeFieldConstructor" => "method",
+            "LimeConstant" => "constant",
+            "LimeEnumerator" => "enumerator",
+            "LimeEnumeration" | "LimeTypeAlias" | "LimeStruct" | "LimeClass" | "LimeInterface"
+            | "LimeLambda" | "LimeBasicType" | "LimeList" | "LimeSet" | "LimeMap" => "type",
+            "LimeProperty" => "property",
+            "LimeException" => "error",
+            _ => return Err(format!("unsupported native C++ named element {class}")),
+        };
+        let boolean = if class == "LimeProperty" {
+            self.is_boolean(v)?
+        } else {
+            false
+        };
+        rules::name(&self.config.name_rules, rule, n, boolean)
     }
     fn full_name(&self, v: &Value, active: &mut BTreeSet<String>) -> Result<String, String> {
         let id = reference(v)
@@ -353,6 +798,10 @@ impl<'a> Resolver<'a> {
         }
         let path = self.path(v)?;
         let short = self.short_name(v)?;
+        if self.external_name(v, "name")?.is_some() {
+            active.remove(&id);
+            return Ok(short);
+        }
         let prefix = if let Some(parent) = self.parent(v)? {
             self.full_name(&parent, active)?
         } else {
@@ -564,9 +1013,11 @@ impl<'a> Resolver<'a> {
                 }
             }
             "LimeReturnType" => self.type_ref(self.get(v, "typeRef")?, active),
-            "LimeBasicTypeRef" | "LimeDirectTypeRef" | "LimeAmbiguousTypeRef" => {
-                self.type_ref(v, active)
-            }
+            "LimeBasicTypeRef"
+            | "LimeDirectTypeRef"
+            | "LimeAmbiguousTypeRef"
+            | "LimeLazyTypeRef"
+            | "LimePositionalTypeRef" => self.type_ref(v, active),
             "LimeValue$Literal" => {
                 let tr = self.get(v, "typeRef")?;
                 let actual = self.actual(self.get(tr, "type")?, &mut BTreeSet::new())?;
@@ -577,7 +1028,7 @@ impl<'a> Resolver<'a> {
                     .as_str()
                     .ok_or("invalid literal value")?;
                 if self.class(&actual)? != "com.here.gluecodium.model.lime.LimeBasicType" {
-                    return Err("unsupported native C++ nonbasic literal".into());
+                    return Ok(value.to_owned());
                 }
                 self.basic(self.get(&actual, "typeId")?, None)?;
                 let id = self
@@ -586,9 +1037,17 @@ impl<'a> Resolver<'a> {
                     .and_then(Value::as_str)
                     .ok_or("invalid literal type")?;
                 match id {
-                    "DATE" | "LOCALE" | "DURATION" => {
-                        Err(format!("unsupported native C++ {id} literal"))
-                    }
+                    "DATE" => Ok(format!(
+                        "::std::chrono::system_clock::from_time_t({})",
+                        epoch_seconds(value)
+                            .map(|n| n.to_string())
+                            .unwrap_or_else(|| "null".into())
+                    )),
+                    "LOCALE" => Ok(format!(
+                        "{}(std::string{{\"{}\"}})",
+                        self.internal("Locale"),
+                        normalize_locale(value).unwrap_or_else(|| "null".into())
+                    )),
                     "FLOAT" => Ok(format!("{value}f")),
                     "STRING" => Ok(format!(
                         "\"{}\"",
@@ -611,6 +1070,94 @@ impl<'a> Resolver<'a> {
                 "{}()",
                 self.type_ref(self.get(v, "typeRef")?, active)?
             )),
+            "LimeValue$Special" => {
+                let ty = self.get(self.get(v, "typeRef")?, "type")?;
+                let float = self.class(ty)?.ends_with(".LimeBasicType")
+                    && self.get(ty, "typeId")?.get("name").and_then(Value::as_str) == Some("FLOAT");
+                let value = self
+                    .get(v, "value")?
+                    .get("name")
+                    .and_then(Value::as_str)
+                    .ok_or("invalid special value")?;
+                let (sign, method) = match value {
+                    "NAN" => ("", "quiet_NaN"),
+                    "INFINITY" => ("", "infinity"),
+                    "NEGATIVE_INFINITY" => ("-", "infinity"),
+                    _ => return Err("invalid special value".into()),
+                };
+                Ok(format!(
+                    "{sign}std::numeric_limits<{}>::{method}()",
+                    if float { "float" } else { "double" }
+                ))
+            }
+            "LimeValue$InitializerList" | "LimeValue$StructInitializer" => {
+                let id = reference(v).ok_or("invalid value")?.to_owned();
+                if !active.insert(id.clone()) || active.len() > 128 {
+                    return Err("native C++ cyclic value dependency".into());
+                }
+                let values = self
+                    .get(v, "values")?
+                    .as_array()
+                    .ok_or("invalid initializer values")?
+                    .iter()
+                    .map(|x| self.name(x, active))
+                    .collect::<Result<Vec<_>, _>>()?
+                    .join(", ");
+                active.remove(&id);
+                let tr = self.get(v, "typeRef")?;
+                if class == "LimeValue$StructInitializer" {
+                    Ok(format!(
+                        "{}{{{values}}}",
+                        self.type_name(self.get(tr, "type")?, true, Some(tr), active)?
+                    ))
+                } else {
+                    let ty = self.actual(self.get(tr, "type")?, &mut BTreeSet::new())?;
+                    if self.class(&ty)?.ends_with(".LimeBasicType")
+                        && self.get(&ty, "typeId")?.get("name").and_then(Value::as_str)
+                            == Some("BLOB")
+                    {
+                        Ok(format!("::std::make_shared<::std::vector<uint8_t>>(::std::vector<uint8_t>({{{values}}}))"))
+                    } else {
+                        Ok(format!("{{{values}}}"))
+                    }
+                }
+            }
+            "LimeValue$KeyValuePair" => {
+                let id = reference(v).ok_or("invalid value")?.to_owned();
+                if !active.insert(id.clone()) || active.len() > 128 {
+                    return Err("native C++ cyclic value dependency".into());
+                }
+                let key = self.name(self.get(v, "key")?, active)?;
+                let value = self.name(self.get(v, "value")?, active)?;
+                active.remove(&id);
+                Ok(format!("{{{key}, {value}}}"))
+            }
+            "LimeValue$Duration" => {
+                let tr = self.get(v, "typeRef")?;
+                let ty = self.basic(&serde_json::json!({"enum":"com.here.gluecodium.model.lime.LimeBasicType$TypeId","name":"DURATION"}), Some(tr))?;
+                let unit = self
+                    .get(v, "timeUnit")?
+                    .get("name")
+                    .and_then(Value::as_str)
+                    .ok_or("invalid duration unit")?;
+                let (factory, suffix) = match unit {
+                    "DAY" => ("hours", " * 24"),
+                    "HOUR" => ("hours", ""),
+                    "MINUTE" => ("minutes", ""),
+                    "SECOND" => ("seconds", ""),
+                    "MILLISECOND" => ("milliseconds", ""),
+                    "MICROSECOND" => ("microseconds", ""),
+                    "NANOSECOND" => ("nanoseconds", ""),
+                    _ => return Err("invalid duration unit".into()),
+                };
+                let value = self
+                    .get(v, "value")?
+                    .as_str()
+                    .ok_or("invalid duration value")?;
+                Ok(format!(
+                    "::std::chrono::duration_cast<{ty}>(::std::chrono::{factory}({value}{suffix}))"
+                ))
+            }
             c if c.starts_with("LimeValue$") => Err(format!("unsupported native C++ value {c}")),
             "LimeBasicType" | "LimeException" | "LimeList" | "LimeSet" | "LimeMap"
             | "LimeEnumeration" | "LimeTypeAlias" | "LimeStruct" | "LimeClass"
@@ -625,6 +1172,16 @@ impl<'a> Resolver<'a> {
         self.checked(v)?;
         self.get(v, "external")?;
         let class = self.class(v)?.rsplit('.').next().unwrap_or("");
+        if let Some(name) = self.external_name(
+            v,
+            if mode == "getter" {
+                "getterName"
+            } else {
+                "setterName"
+            },
+        )? {
+            return Ok(Some(name.to_owned()));
+        }
         if class == "LimeField" {
             let parent = self.parent(v)?.ok_or("native C++ field missing parent")?;
             self.checked(&parent)?;
@@ -642,6 +1199,9 @@ impl<'a> Resolver<'a> {
             if !accessor.is_null() {
                 self.checked(accessor)?;
                 self.get(accessor, "external")?;
+                if let Some(name) = self.external_name(accessor, "name")? {
+                    return Ok(Some(name.to_owned()));
+                }
                 if let Some(name) = self.attr(accessor, "CPP", "NAME")? {
                     return name
                         .as_str()
@@ -654,75 +1214,414 @@ impl<'a> Resolver<'a> {
         }
         let path = self.path(v)?;
         let name = path.tail.last().ok_or("missing accessor name")?;
-        let prefix = if mode == "setter" {
-            "set"
-        } else {
-            let actual = self.actual(
-                self.get(self.get(v, "typeRef")?, "type")?,
-                &mut BTreeSet::new(),
-            )?;
-            if self.class(&actual)? == "com.here.gluecodium.model.lime.LimeBasicType" {
-                self.basic(self.get(&actual, "typeId")?, None)?;
-            }
-            if self.class(&actual)? == "com.here.gluecodium.model.lime.LimeBasicType"
+        let boolean = mode == "getter" && self.is_boolean(v)?;
+        Ok(Some(rules::name(
+            &self.config.name_rules,
+            mode,
+            name,
+            boolean,
+        )?))
+    }
+    fn is_boolean(&self, v: &Value) -> Result<bool, String> {
+        let actual = self.actual(
+            self.get(self.get(v, "typeRef")?, "type")?,
+            &mut BTreeSet::new(),
+        )?;
+        Ok(
+            self.class(&actual)? == "com.here.gluecodium.model.lime.LimeBasicType"
                 && self
                     .get(&actual, "typeId")?
                     .get("name")
                     .and_then(Value::as_str)
-                    == Some("BOOLEAN")
-            {
-                "is"
-            } else {
-                "get"
-            }
-        };
-        Ok(Some(format!("{prefix}_{}", snake(name, false)?)))
+                    == Some("BOOLEAN"),
+        )
     }
 }
-fn snake(input: &str, upper: bool) -> Result<String, String> {
-    if !input.is_ascii() {
-        return Err("native C++ Unicode casing unsupported".into());
+// Gregorian civil date conversion, matching Instant epoch seconds for ISO dates with an offset.
+pub(crate) fn epoch_seconds(s: &str) -> Option<i64> {
+    let split = s.find(['T', 't'])?;
+    let (date, rest) = s.split_at(split);
+    let time = &rest[1..];
+    let sign = if date.starts_with('-') { -1 } else { 1 };
+    let signed = date.starts_with(['-', '+']);
+    let unsigned = if signed { &date[1..] } else { date };
+    let mut d = unsigned.split('-');
+    let year = d.next()?;
+    let month = d.next()?;
+    let day = d.next()?;
+    if d.next().is_some()
+        || !(4..=9).contains(&year.len())
+        || !year.bytes().all(|c| c.is_ascii_digit())
+        || (!signed && year.len() != 4)
+        || (date.starts_with('+') && year.len() <= 4)
+        || (date.starts_with('-') && year.bytes().all(|c| c == b'0'))
+    {
+        return None;
     }
-    let mixed = input.bytes().any(|c| c.is_ascii_lowercase())
-        && input.bytes().any(|c| c.is_ascii_uppercase());
-    let mut s = String::new();
-    if !input.contains('_') && mixed {
-        for (i, c) in input.chars().enumerate() {
-            if c.is_ascii_uppercase() && i > 0 {
-                s.push('_');
-            }
-            s.push(c.to_ascii_lowercase());
+    let two = |v: &str| -> Option<i64> {
+        if v.len() != 2 || !v.bytes().all(|c| c.is_ascii_digit()) {
+            None
+        } else {
+            v.parse().ok()
         }
+    };
+    let y = sign * year.parse::<i64>().ok()?;
+    let m = two(month)?;
+    let day = two(day)?;
+    if !(1..=12).contains(&m) {
+        return None;
+    }
+    let leap = y % 4 == 0 && (y % 100 != 0 || y % 400 == 0);
+    let max_day = match m {
+        2 if leap => 29,
+        2 => 28,
+        4 | 6 | 9 | 11 => 30,
+        _ => 31,
+    };
+    if !(1..=max_day).contains(&day) {
+        return None;
+    }
+    let time = if let Some((head, zone)) = time.split_once('[') {
+        if !zone.ends_with(']') || zone.len() < 2 || zone[..zone.len() - 1].contains(['[', ']']) {
+            return None;
+        }
+        head
     } else {
-        s = input.to_ascii_lowercase();
+        time
+    };
+    let (clock, offset) = if let Some(c) = time.strip_suffix(['Z', 'z']) {
+        (c, 0)
+    } else {
+        let pos = time
+            .char_indices()
+            .skip(1)
+            .find(|(_, c)| *c == '+' || *c == '-')?
+            .0;
+        let sign = if &time[pos..pos + 1] == "+" { 1 } else { -1 };
+        let mut o = time[pos + 1..].split(':');
+        let h = two(o.next()?)?;
+        let m = two(o.next()?)?;
+        let sec = match o.next() {
+            Some(value) => two(value)?,
+            None => 0,
+        };
+        if o.next().is_some() || h > 18 || m > 59 || sec > 59 || (h == 18 && (m != 0 || sec != 0)) {
+            return None;
+        }
+        (&time[..pos], sign * (h * 3600 + m * 60 + sec))
+    };
+    let mut t = clock.split(':');
+    let h = two(t.next()?)?;
+    let min = two(t.next()?)?;
+    let sec = if let Some(s) = t.next() {
+        let (sec, fraction) = s.split_once('.').map_or((s, None), |(a, b)| (a, Some(b)));
+        if fraction.is_some_and(|f| f.len() > 9 || !f.bytes().all(|c| c.is_ascii_digit())) {
+            return None;
+        }
+        two(sec)?
+    } else {
+        0
+    };
+    if t.next().is_some() || h > 23 || min > 59 || sec > 59 {
+        return None;
     }
-    if upper {
-        s.make_ascii_uppercase();
-    }
-    Ok(s)
+    let y = y - i64::from(m <= 2);
+    let era = y.div_euclid(400);
+    let yoe = y - era * 400;
+    let mp = m + if m > 2 { -3 } else { 9 };
+    let days =
+        era * 146097 + yoe * 365 + yoe / 4 - yoe / 100 + (153 * mp + 2) / 5 + day - 1 - 719468;
+    Some(days * 86400 + h * 3600 + min * 60 + sec - offset)
 }
-fn upper_camel(input: &str) -> Result<String, String> {
-    if !input.is_ascii() {
-        return Err("native C++ Unicode casing unsupported".into());
+pub(crate) fn normalize_locale(s: &str) -> Option<String> {
+    let tag = s.trim();
+    if tag.eq_ignore_ascii_case("und") {
+        return Some("und".into());
     }
-    let mixed = input.bytes().any(|c| c.is_ascii_lowercase())
-        && input.bytes().any(|c| c.is_ascii_uppercase());
-    if input.contains('_') {
-        return Ok(input.split('_').map(capitalize).collect());
+    let lower = tag.to_ascii_lowercase();
+    let replacement = match lower.as_str() {
+        "art-lojban" => Some("jbo"),
+        "en-gb-oed" => Some("en-GB-x-oed"),
+        "i-default" => Some("en-x-i-default"),
+        "i-enochian" => Some("x-i-enochian"),
+        "i-mingo" => Some("see-x-i-mingo"),
+        "zh-min" => Some("nan-x-zh-min"),
+        "cel-gaulish" => Some("xtg-x-cel-gaulish"),
+        "i-ami" => Some("ami"),
+        "i-bnn" => Some("bnn"),
+        "i-hak" => Some("hak"),
+        "i-klingon" => Some("tlh"),
+        "i-lux" => Some("lb"),
+        "i-navajo" => Some("nv"),
+        "i-pwn" => Some("pwn"),
+        "i-tao" => Some("tao"),
+        "i-tay" => Some("tay"),
+        "i-tsu" => Some("tsu"),
+        "no-bok" => Some("nb"),
+        "no-nyn" => Some("nn"),
+        "sgn-be-fr" => Some("sfb"),
+        "sgn-be-nl" => Some("vgt"),
+        "sgn-ch-de" => Some("sgg"),
+        "zh-guoyu" => Some("cmn"),
+        "zh-hakka" => Some("hak"),
+        "zh-min-nan" => Some("nan"),
+        "zh-xiang" => Some("hsn"),
+        _ => None,
+    };
+    if let Some(v) = replacement {
+        return Some(v.into());
     }
-    if mixed {
-        let mut chars = input.chars();
-        return Ok(chars
-            .next()
-            .map(|c| c.to_ascii_uppercase().to_string() + chars.as_str())
-            .unwrap_or_default());
+    let parts: Vec<&str> = tag.split('-').collect();
+    let alpha = |p: &str| p.chars().all(|c| c.is_ascii_alphabetic());
+    let alnum = |p: &str| p.chars().all(|c| c.is_ascii_alphanumeric());
+    if parts.first()?.eq_ignore_ascii_case("x") {
+        let private: Vec<_> = parts
+            .iter()
+            .skip(1)
+            .take_while(|p| (1..=8).contains(&p.len()) && alnum(p))
+            .map(|p| p.to_ascii_lowercase())
+            .collect();
+        return (!private.is_empty()).then(|| format!("x-{}", private.join("-")));
     }
-    Ok(capitalize(input))
+    let first = parts[0];
+    if !(2..=8).contains(&first.len()) || !alpha(first) {
+        return None;
+    }
+    let mut language = first.to_ascii_lowercase();
+    let mut index = 1;
+    if first.len() <= 3 {
+        let mut extlangs = 0;
+        while index < parts.len() && extlangs < 3 && parts[index].len() == 3 && alpha(parts[index])
+        {
+            if extlangs == 0 {
+                language = parts[index].to_ascii_lowercase();
+            }
+            index += 1;
+            extlangs += 1;
+        }
+    }
+    language = match language.as_str() {
+        "iw" => "he".into(),
+        "ji" => "yi".into(),
+        "in" => "id".into(),
+        _ => language,
+    };
+    let mut output = Vec::new();
+    let has_language = language != "und";
+    if has_language {
+        output.push(language);
+    }
+    if index < parts.len() && parts[index].len() == 4 && alpha(parts[index]) {
+        let mut c = parts[index].chars();
+        let mut script = c.next()?.to_ascii_uppercase().to_string();
+        script.push_str(&c.as_str().to_ascii_lowercase());
+        output.push(script);
+        index += 1;
+    }
+    if index < parts.len()
+        && ((parts[index].len() == 2 && alpha(parts[index]))
+            || (parts[index].len() == 3 && parts[index].chars().all(|c| c.is_ascii_digit())))
+    {
+        output.push(parts[index].to_ascii_uppercase());
+        index += 1;
+    }
+    while index < parts.len() {
+        let p = parts[index];
+        if ((5..=8).contains(&p.len()) || (p.len() == 4 && p.as_bytes()[0].is_ascii_digit()))
+            && alnum(p)
+        {
+            output.push(p.to_owned());
+            index += 1;
+        } else {
+            break;
+        }
+    }
+    let mut extensions = BTreeMap::<String, Vec<String>>::new();
+    while index < parts.len() && parts[index].len() == 1 && alnum(parts[index]) {
+        let key = parts[index].to_ascii_lowercase();
+        index += 1;
+        let start = index;
+        while index < parts.len()
+            && (if key == "x" { 1..=8 } else { 2..=8 }).contains(&parts[index].len())
+            && alnum(parts[index])
+        {
+            index += 1;
+        }
+        if index == start {
+            break;
+        }
+        extensions.entry(key.clone()).or_insert_with(|| {
+            parts[start..index]
+                .iter()
+                .map(|p| p.to_ascii_lowercase())
+                .collect()
+        });
+        if key == "x" {
+            break;
+        }
+    }
+    for (key, values) in extensions {
+        output.push(key.clone());
+        if key == "u" {
+            let mut attrs = BTreeSet::new();
+            let mut keywords = BTreeMap::<String, Vec<String>>::new();
+            let mut i = 0;
+            while i < values.len() && values[i].len() >= 3 {
+                attrs.insert(values[i].clone());
+                i += 1;
+            }
+            while i < values.len() {
+                let keyword = values[i].clone();
+                i += 1;
+                let start = i;
+                while i < values.len() && values[i].len() >= 3 {
+                    i += 1;
+                }
+                keywords
+                    .entry(keyword)
+                    .or_insert_with(|| values[start..i].to_vec());
+            }
+            output.extend(attrs);
+            for (keyword, value) in keywords {
+                output.push(keyword);
+                output.extend(value);
+            }
+        } else {
+            output.extend(values);
+        }
+    }
+    if output.is_empty() {
+        None
+    } else {
+        if !has_language && output[0] != "x" {
+            output.insert(0, "und".into());
+        }
+        Some(output.join("-"))
+    }
 }
-fn capitalize(input: &str) -> String {
-    let mut chars = input.chars();
-    chars
-        .next()
-        .map(|c| c.to_ascii_uppercase().to_string() + &chars.as_str().to_ascii_lowercase())
-        .unwrap_or_default()
+#[cfg(test)]
+mod value_tests {
+    use super::{epoch_seconds, normalize_locale};
+    #[test]
+    fn date_offsets_and_locale_tags() {
+        assert_eq!(epoch_seconds("1970-01-01T00:00:00Z"), Some(0));
+        assert_eq!(epoch_seconds("1969-12-31T18:30:00-05:30"), Some(0));
+        assert_eq!(epoch_seconds("2000-02-29T00:00:00Z"), Some(951782400));
+        assert_eq!(epoch_seconds("not a date"), None);
+        assert_eq!(epoch_seconds("2020-1-1T0:00Z"), None);
+        assert_eq!(epoch_seconds("2020-01-01t00:00z"), Some(1577836800));
+        assert_eq!(epoch_seconds("2020-01-01T00:00:00+18:01"), None);
+        assert_eq!(
+            epoch_seconds("2020-01-01T00:00:00+01:02:03"),
+            Some(1577833077)
+        );
+        assert_eq!(epoch_seconds("2020-01-01T00:00:00.1234567890Z"), None);
+        assert_eq!(epoch_seconds("-0001-01-01T00:00Z"), Some(-62198755200));
+        assert_eq!(normalize_locale("EN-latn-us"), Some("en-Latn-US".into()));
+        assert_eq!(normalize_locale("und"), Some("und".into()));
+        assert_eq!(normalize_locale("und-US"), Some("und-US".into()));
+        assert_eq!(normalize_locale("iw-IL"), Some("he-IL".into()));
+        assert_eq!(normalize_locale("en-GB-oed"), Some("en-GB-x-oed".into()));
+        assert_eq!(normalize_locale("i-default"), Some("en-x-i-default".into()));
+        assert_eq!(normalize_locale("x-private"), Some("x-private".into()));
+        assert_eq!(normalize_locale("en-abc"), Some("abc".into()));
+        assert_eq!(normalize_locale("und-foo"), Some("foo".into()));
+        assert_eq!(
+            normalize_locale("en-u-nu-latn-ca-gregory"),
+            Some("en-u-ca-gregory-nu-latn".into())
+        );
+        assert_eq!(
+            normalize_locale("und-u-ca-gregory"),
+            Some("und-u-ca-gregory".into())
+        );
+        assert_eq!(
+            normalize_locale("en-419-FOOBAR"),
+            Some("en-419-FOOBAR".into())
+        );
+        assert_eq!(
+            normalize_locale("gsw-u-sd-chzh"),
+            Some("gsw-u-sd-chzh".into())
+        );
+    }
+}
+
+#[cfg(test)]
+mod documentation_tests {
+    use super::{NativeCppConfig, NativeCppResolver};
+    use crate::template::Graph;
+    use serde_json::{json, Value};
+
+    #[test]
+    fn overloaded_parameter_scope_and_rendered_warnings() {
+        let n = |id: &str, kind: &str, properties: Value| json!({"id":id,"class":format!("com.here.gluecodium.model.lime.{kind}"),"properties":properties});
+        let nodes = vec![
+            n(
+                "root",
+                "LimeModel",
+                json!({"referenceMap": {"smoke.Owner":{"$ref":"owner"}, "smoke.Owner.f:1":{"$ref":"fun"}, "smoke.Owner.f.stuff:1":{"$ref":"param"}}}),
+            ),
+            n("attrs", "LimeAttributes", json!({"attributes":{}})),
+            n(
+                "ownerPath",
+                "LimePath",
+                json!({"head":["smoke"],"tail":["Owner"],"disambiguator":""}),
+            ),
+            n(
+                "funPath",
+                "LimePath",
+                json!({"head":["smoke"],"tail":["Owner","f"],"disambiguator":"1"}),
+            ),
+            n(
+                "paramPath",
+                "LimePath",
+                json!({"head":["smoke"],"tail":["Owner","f","stuff"],"disambiguator":"1"}),
+            ),
+            n(
+                "owner",
+                "LimeClass",
+                json!({"path":{"$ref":"ownerPath"},"attributes":{"$ref":"attrs"},"external":null,"functions":[{"$ref":"fun"}]}),
+            ),
+            n(
+                "fun",
+                "LimeFunction",
+                json!({"path":{"$ref":"funPath"},"attributes":{"$ref":"attrs"},"external":null,"parameters":[{"$ref":"param"}]}),
+            ),
+            n(
+                "param",
+                "LimeParameter",
+                json!({"path":{"$ref":"paramPath"},"attributes":{"$ref":"attrs"},"external":null,"typeRef":{"$ref":"ref"}}),
+            ),
+            n(
+                "ref",
+                "LimeBasicTypeRef",
+                json!({"type":{"$ref":"type"},"attributes":{"$ref":"attrs"},"isNullable":false}),
+            ),
+            n(
+                "type",
+                "LimeBasicType",
+                json!({"typeId":{"enum":"com.here.gluecodium.model.lime.LimeBasicType$TypeId","name":"STRING"}}),
+            ),
+            n(
+                "comment",
+                "LimeComment",
+                json!({"path":{"$ref":"funPath"},"placeholders":{}}),
+            ),
+        ];
+        let snapshot = json!({"schema":"gluecodium.reference-model.snapshot","version":1,"root":{"$ref":"root"},"nodes":nodes});
+        let mut graph = Graph::import(Some(&snapshot), None).unwrap();
+        graph
+            .attach_raw_comments(&json!({"comment":[["", "[stuff] [missing]"]]}))
+            .unwrap();
+        let resolver = NativeCppResolver::new(&graph, NativeCppConfig::default()).unwrap();
+        let comment = json!({"$ref":"comment"});
+        assert_eq!(
+            resolver.resolve(&graph, "", "name", &comment).unwrap(),
+            Some("stuff [missing]".into())
+        );
+        resolver.resolve(&graph, "", "name", &comment).unwrap();
+        assert_eq!(
+            resolver.diagnostics(),
+            vec!["smoke.Owner.f:1: Failed to resolve documentation reference [missing]"]
+        );
+    }
 }

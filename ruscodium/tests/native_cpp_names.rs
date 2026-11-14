@@ -96,11 +96,7 @@ fn every_recorded_name_cell_is_compared_or_explicitly_unsupported() {
     assert_eq!(supported, 295);
     assert_eq!(
         unsupported,
-        BTreeMap::from([
-            ("Cpp Attribute", 2),
-            ("comment text", 4),
-            ("missing owner", 14)
-        ])
+        BTreeMap::from([("comment text", 4), ("missing owner", 16)])
     );
 }
 
@@ -269,12 +265,7 @@ fn unsupported_or_missing_naming_facts_do_not_succeed() {
     let original = request("native-enumeration");
     let receiver = original["data"].clone();
     let id = receiver["$ref"].as_str().unwrap();
-    for case in [
-        "missing-external",
-        "external",
-        "attribute",
-        "unsupported-class",
-    ] {
+    for case in ["missing-external", "external", "unsupported-class"] {
         let mut req = original.clone();
         let nodes = req["snapshot"]["nodes"].as_array_mut().unwrap();
         let i = nodes.iter().position(|n| n["id"] == id).unwrap();
