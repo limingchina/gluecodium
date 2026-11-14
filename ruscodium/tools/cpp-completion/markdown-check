@@ -1,0 +1,37 @@
+#!/usr/bin/env python3
+"""Compare 652 CommonMark examples with the JVM's exact Flexmark formatter."""
+import argparse, collections, hashlib, json, os, re, subprocess, tempfile
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[3]; HERE=Path(__file__).resolve().parent; FIX=HERE/'commonmark'; LIB=ROOT/'gluecodium/build/install/gluecodium/lib'
+SPEC_SHA='257c41ad946f7a1414a499aca402a1aa8fdac3678532266611348c1cf54f4b80'
+def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def run(command):subprocess.run([str(x) for x in command],cwd=ROOT,check=True)
+def main():
+ p=argparse.ArgumentParser(description=__doc__);p.add_argument('--capture',required=True,type=Path);p.add_argument('--report',required=True,type=Path);args=p.parse_args();out=args.capture.resolve()
+ if out.exists() and any(out.iterdir()):raise SystemExit('capture must be empty')
+ out.mkdir(parents=True,exist_ok=True);spec=FIX/'spec-0.31.2.txt'
+ if sha(spec)!=SPEC_SHA:raise SystemExit('CommonMark spec SHA-256 mismatch')
+ rows=[];section=''
+ for match in re.finditer(r'(?m)^#{1,6} ([^\n]+)$|^`{32} example\n(.*?)^\.\n(.*?)^`{32}$',spec.read_text(),re.S):
+  if match.group(1):section=match.group(1);continue
+  rows.append({'id':len(rows)+1,'section':section,'markdown':match.group(2).replace('→','\t')})
+ if len(rows)!=652:raise SystemExit(f'unexpected spec inventory: {len(rows)}')
+ inputs=out/'inputs';inputs.mkdir()
+ for row in rows:(inputs/f"{row['id']:03}.md").write_text(row['markdown'])
+ java=Path(os.environ['JAVA_HOME'])/'bin/java' if os.environ.get('JAVA_HOME') else 'java';javac=Path(os.environ['JAVA_HOME'])/'bin/javac' if os.environ.get('JAVA_HOME') else 'javac'
+ with tempfile.TemporaryDirectory(prefix='cpp-markdown-') as temp:
+  tmp=Path(temp);classes=tmp/'classes';classes.mkdir();src=tmp/'src';src.mkdir();graph=src/'graph.rs';comments=src/'native_comments.rs'
+  graph.write_bytes((ROOT/'ruscodium/src/template/graph.rs').read_bytes());comments.write_bytes((ROOT/'ruscodium/src/template/native_comments.rs').read_bytes());source_hashes={'graph.rs':sha(graph),'native_comments.rs':sha(comments)}
+  source=(FIX/'native-main.rs').read_text().replace('@GRAPH_SOURCE@',str(graph)).replace('@COMMENTS_SOURCE@',str(comments));(src/'main.rs').write_text(source)
+  (tmp/'Cargo.toml').write_text('[package]\nname="cpp-format-review"\nversion="0.1.0"\nedition="2021"\n[dependencies]\nserde_json="1"\npulldown-cmark={version="0.12.2",default-features=false}\n')
+  run([javac,'-cp',LIB/'*','-d',classes,FIX/'MarkdownBatch.java']);run([java,'-cp',f'{classes}:{LIB}/*','MarkdownBatch',inputs,out/'jvm']);run(['cargo','build','--offline','--manifest-path',tmp/'Cargo.toml']);run([tmp/'target/debug/cpp-format-review',inputs,out/'native'])
+ mismatches=[]
+ for row in rows:
+  f=f"{row['id']:03}.md";a=(out/'jvm'/f).read_bytes();path=out/'native'/f;b=path.read_bytes() if path.exists() else None
+  if a!=b:
+   error=path.with_suffix('.error');panic=path.with_suffix('.panic')
+   mismatches.append(dict(row,jvm=a.decode('utf-8'),native=b.decode('utf-8') if b is not None else None,error=error.read_text() if error.exists() else ('panic' if panic.exists() else None)))
+ report={'profile':'gluecodium.cpp-commonmark-formatter','version':1,'spec_sha256':sha(spec),'cases':len(rows),'matches':len(rows)-len(mismatches),'mismatches':mismatches,'mismatch_sections':dict(collections.Counter(x['section'] for x in mismatches)),'native_source_sha256':source_hashes,'jvm_jars_sha256':{p.name:sha(p) for p in sorted(LIB.glob('*.jar'))}}
+ args.report.parent.mkdir(parents=True,exist_ok=True);args.report.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n');print(f'{report["matches"]}/{len(rows)} formatter matches; report {args.report}',flush=True)
+ if mismatches:raise SystemExit(1)
+if __name__=='__main__':main()
