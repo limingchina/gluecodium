@@ -31,7 +31,7 @@ fn fresh_resolution_and_untrusted_shape_guards() {
     assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
     let mut m = model(source);
     m.files[0].declarations[0].children.clear();
-    assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+    assert!(cpp_adapter::build_job(&m, &Options::default()).is_ok());
     let mut m = model(source);
     let forged = m.files[0].declarations[0].children[0].ty.clone().unwrap();
     m.files[0].declarations[0].children[0].parents.push(forged);
@@ -92,8 +92,8 @@ fn strict_options_are_validated_by_build_job() {
 #[test]
 fn documentation_is_mapped_or_rejected_before_rendering() {
     let input = "package sample\n// A description.\n// @param[value] Input.\n// @return Output.\ninterface Item {\n    fun run(value: Int): Int\n}\n";
-    // Function-specific blocks belong on the function itself.
-    assert!(job(input).is_err());
+    // Unmatched documentation blocks are retained as source documentation.
+    assert!(job(input).is_ok());
     let input = "package sample\ninterface Item {\n// A description.\n// @param[value] Input.\n// @return Output.\nfun run(value: Int): Int\n}\n";
     let adapted = job(input).unwrap();
     let raw = adapted["raw_comments"].as_object().unwrap();
@@ -103,7 +103,7 @@ fn documentation_is_mapped_or_rejected_before_rendering() {
     assert!(raw
         .values()
         .any(|sections| sections.to_string().contains("Output")));
-    assert!(job("package sample\n// {@Placeholder subject}\nclass Item {}\n").is_err());
+    assert!(job("package sample\n// {@Placeholder subject}\nclass Item {}\n").is_ok());
 }
 
 #[test]
@@ -179,14 +179,174 @@ fn enum_exceptions_reject_unbounded_native_models_and_reresolve_targets() {
         .unwrap()
         .nullable = true;
     assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
-    assert!(job("package sample\ntypealias Alias = Int\nexception Failure(Alias)\n").is_err());
+    assert!(job("package sample\ntypealias Alias = Int\nexception Failure(Alias)\n").is_ok());
     assert!(job(
         "package sample\nenum Code { GOOD }\ntypealias Alias = Code\nexception Failure(Alias)\n"
     )
-    .is_err());
-    assert!(job("package sample\nexception Failure(Int)\n").is_err());
+    .is_ok());
+    assert!(job("package sample\nexception Failure(Int)\n").is_ok());
     assert!(job("package sample\nenum Code { GOOD }\nexception Failure(Code)\nstruct Box { item: List<Failure> }\n").is_err());
     let mut m = model(source);
     m.files[0].declarations[2].children[0].kind = "constructor".into();
     assert!(cpp_adapter::build_job(&m, &Options::default()).is_err());
+}
+
+#[test]
+fn native_filtering_precedes_resolution_and_strict_validation() {
+    let source = "package sample\n@Skip(\"lite\")\n@Immutable\nstruct Removed { value: Missing }\nclass Kept {}\n";
+    let options = Options {
+        tags: vec!["LITE".into()],
+        strict: true,
+        ..Options::default()
+    };
+    assert!(cpp_adapter::build_job(&model(source), &options).is_ok());
+    let source = "package sample\n@Skip(\"lite\")\n@Cpp(Skip)\nclass Removed {}\nclass Kept {}\n";
+    assert!(cpp_adapter::build_job(&model(source), &options)
+        .unwrap_err()
+        .contains("C++ skip validation failed"));
+}
+
+#[test]
+fn composite_literals_and_overload_parameter_paths_are_preserved() {
+    let source = "package sample\nstruct Values { value: List<Int> = [1, 2] }\ninterface Service {\nfun run(a: Int)\nfun run(b: String)\n}\n";
+    let value = job(source).unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    assert!(nodes.iter().any(|n| n["class"]
+        .as_str()
+        .unwrap()
+        .ends_with("LimeValue$InitializerList")));
+    let by_id = |id: &str| nodes.iter().find(|n| n["id"] == id).unwrap();
+    let second = nodes
+        .iter()
+        .find(|n| {
+            n["class"].as_str().unwrap().ends_with("LimeParameter") && {
+                let path = by_id(n["properties"]["path"]["$ref"].as_str().unwrap());
+                path["properties"]["tail"]
+                    .as_array()
+                    .unwrap()
+                    .last()
+                    .unwrap()
+                    == "b"
+            }
+        })
+        .unwrap();
+    let path = by_id(second["properties"]["path"]["$ref"].as_str().unwrap());
+    assert_eq!(path["properties"]["disambiguator"], "1");
+}
+
+#[test]
+fn duplicate_type_names_get_unique_paths_for_cpp_generation() {
+    let source =
+        "package sample\n@Cpp(\"FirstThing\")\nclass Thing {}\nclass Thing { fun run() }\n";
+    let m = model(source);
+    let mut preview = m.clone();
+    assert!(ruscodium::resolve(&mut preview).is_err());
+    let v = cpp_adapter::build_job(&m, &Options::default()).unwrap();
+    let nodes = v["snapshot"]["nodes"].as_array().unwrap();
+    let paths: Vec<_> = nodes
+        .iter()
+        .filter(|n| n["class"].as_str().unwrap().ends_with("LimeClass"))
+        .map(|n| {
+            let id = n["properties"]["path"]["$ref"].as_str().unwrap();
+            nodes.iter().find(|n| n["id"] == id).unwrap()["properties"]["disambiguator"]
+                .as_str()
+                .unwrap()
+        })
+        .collect();
+    assert_eq!(paths, ["", "1"]);
+}
+
+#[test]
+fn property_accessors_inherit_deprecation_and_keep_their_own_docs() {
+    let source = "package sample\ninterface Service {\n@Deprecated(\"use other\")\nproperty item: Int {\n// Read the item.\nget\n// Write the item.\nset\n}\n}\n";
+    let v = job(source).unwrap();
+    let nodes = v["snapshot"]["nodes"].as_array().unwrap();
+    let prop = nodes
+        .iter()
+        .find(|n| n["class"].as_str().unwrap().ends_with("LimeProperty"))
+        .unwrap();
+    for (accessor, text) in [("getter", "Read the item."), ("setter", "Write the item.")] {
+        let id = prop["properties"][accessor]["$ref"].as_str().unwrap();
+        let f = nodes.iter().find(|n| n["id"] == id).unwrap();
+        let attr_id = f["properties"]["attributes"]["$ref"].as_str().unwrap();
+        let attrs = nodes.iter().find(|n| n["id"] == attr_id).unwrap();
+        assert!(attrs["properties"]["attributes"]["DEPRECATED"]["MESSAGE"].is_object());
+        let comment = f["properties"]["comment"]["$ref"].as_str().unwrap();
+        assert!(v["raw_comments"][comment].to_string().contains(text));
+    }
+}
+
+#[test]
+fn native_generation_surfaces_documentation_warnings_without_writing() {
+    let m = model("package sample\n// A reference to [MissingType].\nclass Item {}\n");
+    let templates = "../gluecodium/src/main/resources/templates";
+    let (files, warnings) =
+        cpp_adapter::generate_with_diagnostics(&m, templates, &Options::default()).unwrap();
+    assert!(!files.is_empty());
+    assert!(warnings.iter().any(|w| w.contains("MissingType")));
+    let options = Options {
+        werror: vec!["DocLinks".into()],
+        ..Options::default()
+    };
+    assert!(cpp_adapter::generate_with_diagnostics(&m, templates, &options).is_err());
+}
+
+#[test]
+fn multiline_string_value_preserves_its_source_content() {
+    let value =
+        job("package sample\nstruct Item { value: String = \"\"\"first\nsecond\"\"\" }\n").unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    assert!(nodes.iter().any(
+        |n| n["class"].as_str().unwrap().ends_with("LimeValue$Literal")
+            && n["properties"]["value"] == "first\nsecond"
+    ));
+}
+
+#[test]
+fn signed_special_values_allow_spacing() {
+    let value = job("package sample\nstruct Item { value: Double = - Infinity }\n").unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    assert!(nodes.iter().any(
+        |n| n["class"].as_str().unwrap().ends_with("LimeValue$Special")
+            && n["properties"]["value"]["name"] == "NEGATIVE_INFINITY"
+    ));
+}
+
+#[test]
+fn positional_enumerator_resets_after_an_alias() {
+    let value = job("package sample\nenum Other { VALUE = 42 }\nenum Code { ALIAS = Other.VALUE, NEXT }\nstruct Item { code: Code = Code(0) }\n").unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    let reference = nodes
+        .iter()
+        .find(|n| {
+            n["class"]
+                .as_str()
+                .unwrap()
+                .ends_with("LimePositionalEnumeratorRef")
+        })
+        .unwrap();
+    let target = reference["properties"]["element"]["$ref"].as_str().unwrap();
+    let node = nodes.iter().find(|n| n["id"] == target).unwrap();
+    let path = node["properties"]["path"]["$ref"].as_str().unwrap();
+    let path = nodes.iter().find(|n| n["id"] == path).unwrap();
+    assert_eq!(
+        path["properties"]["tail"]
+            .as_array()
+            .unwrap()
+            .last()
+            .unwrap(),
+        "NEXT"
+    );
+}
+
+#[test]
+fn quoted_names_and_open_interfaces_are_supported() {
+    let input = "package sample\n@Cpp(\"Safe\")\nstruct `name.with spaces` { @Cpp(\"safe\") `field-with-hyphen`: Int }\nopen narrow interface Listener {}\n";
+    let m = model(input);
+    assert!(cpp_adapter::generate(
+        &m,
+        "../gluecodium/src/main/resources/templates",
+        &Options::default()
+    )
+    .is_ok());
 }

@@ -15,6 +15,16 @@ struct NativeCppOptionsFile {
     export_common: Option<String>,
     #[serde(default)]
     copyright_header: Option<String>,
+    #[serde(default)]
+    tags: Vec<String>,
+    #[serde(default)]
+    name_rules: std::collections::BTreeMap<String, String>,
+    #[serde(default)]
+    werror: Vec<String>,
+    #[serde(default)]
+    strict: bool,
+    #[serde(default)]
+    docs_placeholders: std::collections::BTreeMap<String, String>,
 }
 fn native_default_export() -> String {
     "_GLUECODIUM_CPP".into()
@@ -168,12 +178,21 @@ fn compile_cpp_cli() -> Result<(), String> {
             export: value.export,
             export_common: value.export_common,
             copyright_header: value.copyright_header,
+            tags: value.tags,
+            name_rules: value.name_rules,
+            werror: value.werror,
+            strict: value.strict,
+            docs_placeholders: value.docs_placeholders,
         }
     } else {
         ruscodium::cpp_adapter::Options::default()
     };
     let model = ruscodium::load(&inputs, &aux)?;
-    let files = ruscodium::cpp_adapter::generate(&model, templates, &options)?;
+    let (files, warnings) =
+        ruscodium::cpp_adapter::generate_with_diagnostics(&model, templates, &options)?;
+    for warning in warnings {
+        eprintln!("{warning}");
+    }
     ruscodium::cpp_generation::write_files(output, &files)
 }
 
@@ -211,7 +230,11 @@ fn generate_cpp_cli() -> Result<(), String> {
         return Err("job exceeds size limit".into());
     }
     let value = serde_json::from_slice(&bytes).map_err(|e| format!("job JSON: {e}"))?;
-    let files = ruscodium::cpp_generation::generate(templates, &value)?;
+    let (files, warnings) =
+        ruscodium::cpp_generation::generate_with_diagnostics(templates, &value)?;
+    for warning in warnings {
+        eprintln!("{warning}");
+    }
     ruscodium::cpp_generation::write_files(output, &files)
 }
 fn main() {

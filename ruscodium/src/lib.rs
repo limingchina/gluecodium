@@ -419,13 +419,6 @@ impl<'a> Parser<'a> {
         ];
         if self.t[self.i].kind == "id" && !RESERVED.contains(&self.peek()) {
             let text = self.next();
-            if text.starts_with('`') && text.contains('.') {
-                return Err(error(
-                    self.path,
-                    &self.t[self.i - 1].span,
-                    "quoted identifiers containing dots are not yet supported",
-                ));
-            }
             Ok(text.trim_matches('`').to_string())
         } else {
             Err(error(self.path, &self.span(), "expected identifier"))
@@ -624,11 +617,11 @@ impl<'a> Parser<'a> {
             ));
         }
         if modifiers.iter().any(|m| match m.as_str() {
-            "open" => kind != "class",
+            "open" => kind != "class" && kind != "interface",
             "narrow" => kind != "interface",
             "static" => kind != "fun" && kind != "property",
             _ => true,
-        }) || modifiers.len() > 1
+        }) || (modifiers.len() > 1 && !(kind == "interface" && modifiers == ["open", "narrow"]))
         {
             return Err(error(self.path, &span, "invalid declaration modifier"));
         }
@@ -1120,11 +1113,18 @@ const BUILTINS: &[&str] = &[
     "Float", "Double", "Blob", "Date", "Duration", "Locale", "Void", "List", "Map", "Set",
 ];
 pub fn resolve(model: &mut Model) -> Result<(), String> {
+    resolve_impl(model, false)
+}
+pub(crate) fn resolve_cpp(model: &mut Model) -> Result<(), String> {
+    resolve_impl(model, true)
+}
+fn resolve_impl(model: &mut Model, allow_duplicate_members: bool) -> Result<(), String> {
     fn index(
         ds: &[Decl],
         prefix: &str,
         map: &mut BTreeMap<String, String>,
         path: &str,
+        allow_duplicate_members: bool,
     ) -> Result<(), String> {
         for d in ds {
             if [
@@ -1139,21 +1139,28 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
             .contains(&d.kind.as_str())
             {
                 let name = format!("{prefix}.{}", d.name);
-                if map.insert(name.clone(), d.kind.clone()).is_some() {
+                if map.contains_key(&name) && !allow_duplicate_members {
                     return Err(error(
                         path,
                         &d.span,
                         &format!("duplicate declaration {name}"),
                     ));
                 }
-                index(&d.children, &name, map, path)?
+                map.entry(name.clone()).or_insert_with(|| d.kind.clone());
+                index(&d.children, &name, map, path, allow_duplicate_members)?
             }
         }
         Ok(())
     }
     let mut symbols = BTreeMap::new();
     for f in &model.files {
-        index(&f.declarations, &f.package, &mut symbols, &f.path)?
+        index(
+            &f.declarations,
+            &f.package,
+            &mut symbols,
+            &f.path,
+            allow_duplicate_members,
+        )?
     }
     fn find(
         name: &str,
@@ -1241,6 +1248,7 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
         imports: &[String],
         symbols: &BTreeMap<String, String>,
         path: &str,
+        allow_duplicate_members: bool,
     ) -> Result<(), String> {
         let mut members = BTreeSet::new();
         for d in ds {
@@ -1248,6 +1256,7 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
                 d.kind.as_str(),
                 "fun" | "constructor" | "field_constructor" | "parameter"
             ) && !members.insert(d.name.clone())
+                && !allow_duplicate_members
             {
                 return Err(error(
                     path,
@@ -1335,8 +1344,22 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
                     ));
                 }
             }
-            visit(&mut d.params, &inner, imports, symbols, path)?;
-            visit(&mut d.children, &inner, imports, symbols, path)?;
+            visit(
+                &mut d.params,
+                &inner,
+                imports,
+                symbols,
+                path,
+                allow_duplicate_members,
+            )?;
+            visit(
+                &mut d.children,
+                &inner,
+                imports,
+                symbols,
+                path,
+                allow_duplicate_members,
+            )?;
         }
         Ok(())
     }
@@ -1352,6 +1375,7 @@ pub fn resolve(model: &mut Model) -> Result<(), String> {
             &f.imports,
             &symbols,
             &f.path,
+            allow_duplicate_members,
         )?
     }
     fn edges(ds: &[Decl], scope: &str, graph: &mut BTreeMap<String, Vec<String>>) {

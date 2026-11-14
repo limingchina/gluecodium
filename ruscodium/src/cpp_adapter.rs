@@ -1,4 +1,4 @@
-//! Bounded native LIME to the existing C++ compatibility generator.
+//! Native LIME to the existing C++ compatibility generator.
 mod docs;
 use crate::{cpp_generation, Decl, Model, TypeRef};
 use serde::{Deserialize, Serialize};
@@ -21,6 +21,16 @@ pub struct Options {
     pub export_common: Option<String>,
     #[serde(default)]
     pub copyright_header: Option<String>,
+    #[serde(default)]
+    pub tags: Vec<String>,
+    #[serde(default)]
+    pub name_rules: BTreeMap<String, String>,
+    #[serde(default)]
+    pub werror: Vec<String>,
+    #[serde(default, skip_serializing)]
+    pub strict: bool,
+    #[serde(default, skip_serializing)]
+    pub docs_placeholders: BTreeMap<String, String>,
 }
 fn default_export() -> String {
     "_GLUECODIUM_CPP".into()
@@ -33,6 +43,11 @@ impl Default for Options {
             export: default_export(),
             export_common: None,
             copyright_header: None,
+            tags: vec![],
+            name_rules: BTreeMap::new(),
+            werror: vec![],
+            strict: false,
+            docs_placeholders: BTreeMap::new(),
         }
     }
 }
@@ -56,21 +71,240 @@ const BASIC: &[(&str, &str)] = &[
     ("UShort", "UINT16"),
     ("Void", "VOID"),
 ];
+// The parser strips LIME backticks, so model paths can contain spaces,
+// punctuation and Unicode even when their generated C++ names are overridden.
 fn valid_ident(s: &str) -> bool {
-    let mut c = s.chars();
-    c.next()
-        .is_some_and(|c| c.is_ascii_alphabetic() || c == '_')
-        && c.all(|c| c.is_ascii_alphanumeric() || c == '_')
+    !s.is_empty() && !s.chars().any(char::is_control)
 }
 fn valid_qualified(s: &str) -> bool {
     !s.is_empty() && s.split('.').all(valid_ident)
 }
+// Convert source annotations as the LIME loader does. Repeated values accumulate.
+fn annotation_map(annotations: &[crate::Annotation]) -> Result<Map<String, Value>, String> {
+    fn key(s: &str) -> String {
+        let mut out = String::new();
+        for (i, c) in s.chars().enumerate() {
+            if i > 0 && c.is_ascii_uppercase() {
+                out.push('_');
+            }
+            out.push(c.to_ascii_uppercase());
+        }
+        out
+    }
+    fn add(map: &mut Map<String, Value>, attribute: &str, value_key: &str, value: Value) {
+        let values = map
+            .entry(attribute.to_owned())
+            .or_insert_with(|| json!({}))
+            .as_object_mut()
+            .unwrap();
+        match values.get_mut(value_key) {
+            None => {
+                values.insert(value_key.into(), value);
+            }
+            Some(old) if *old == Value::Bool(true) => *old = value,
+            Some(old) => {
+                let mut list = match old.take() {
+                    Value::Array(a) => a,
+                    other => vec![other],
+                };
+                match value {
+                    Value::Array(a) => list.extend(a),
+                    other => list.push(other),
+                }
+                *old = Value::Array(list);
+            }
+        }
+    }
+    let mut attrs = Map::new();
+    for annotation in annotations {
+        let attr = key(&annotation.name);
+        if ![
+            "AFTER_CONSTRUCTION",
+            "CPP",
+            "JAVA",
+            "KOTLIN",
+            "SWIFT",
+            "DART",
+            "ASYNC",
+            "ASYNC_DECORATOR",
+            "ASYNC_TASK_HANDLE",
+            "CACHED",
+            "DEPRECATED",
+            "ENABLE_IF",
+            "EQUATABLE",
+            "IMMUTABLE",
+            "INTERNAL",
+            "NO_CACHE",
+            "OPTIMIZED",
+            "OVERLOADED",
+            "SERIALIZABLE",
+            "SKIP",
+        ]
+        .contains(&attr.as_str())
+        {
+            return Err(format!("unsupported annotation {}", annotation.name));
+        }
+        if annotation.values.is_empty() {
+            attrs.entry(attr).or_insert_with(|| json!({}));
+            continue;
+        }
+        for entry in &annotation.values {
+            let mut decoded = Vec::new();
+            for v in &entry.values {
+                let v: String = serde_json::from_str(v).map_err(|_| "invalid annotation string")?;
+                decoded.push(Value::String(
+                    if attr == "DEPRECATED" || attr == "AFTER_CONSTRUCTION" {
+                        v
+                    } else {
+                        v.trim().replace(['\r', '\n'], "")
+                    },
+                ));
+            }
+            let value = match decoded.len() {
+                0 => Value::Bool(true),
+                1 => decoded.remove(0),
+                _ => Value::Array(decoded),
+            };
+            if attr == "SKIP" || attr == "ENABLE_IF" || attr == "INTERNAL" {
+                let source = if entry
+                    .name
+                    .as_deref()
+                    .is_some_and(|s| !s.eq_ignore_ascii_case("tag"))
+                {
+                    Value::String(entry.name.clone().unwrap())
+                } else {
+                    value
+                };
+                let items = match source {
+                    Value::Array(a) => a,
+                    v => vec![v],
+                };
+                for item in items {
+                    if attr == "INTERNAL" && item == Value::Bool(true) {
+                        attrs.entry(attr.clone()).or_insert_with(|| json!({}));
+                        continue;
+                    }
+                    let Some(tag) = item.as_str() else { continue };
+                    let platform = tag.to_ascii_uppercase();
+                    if attr == "SKIP"
+                        && ["CPP", "JAVA", "KOTLIN", "SWIFT", "DART"].contains(&platform.as_str())
+                    {
+                        add(&mut attrs, &platform, "SKIP", json!(true));
+                    } else if attr == "INTERNAL"
+                        && ["CPP", "JAVA", "KOTLIN", "SWIFT", "DART"].contains(&platform.as_str())
+                    {
+                        add(&mut attrs, &platform, "INTERNAL", json!(true));
+                    } else if attr != "INTERNAL" {
+                        add(&mut attrs, &attr, "TAG", json!(tag));
+                    }
+                }
+                continue;
+            }
+            let value_key =
+                entry
+                    .name
+                    .as_ref()
+                    .map(|v| key(v))
+                    .unwrap_or_else(|| match attr.as_str() {
+                        "CPP" | "JAVA" | "KOTLIN" | "SWIFT" | "DART" | "ASYNC_TASK_HANDLE" => {
+                            "NAME".into()
+                        }
+                        "DEPRECATED" => "MESSAGE".into(),
+                        "AFTER_CONSTRUCTION" => "FUNCTION".into(),
+                        _ => "".into(),
+                    });
+            if value_key.is_empty() {
+                return Err(format!(
+                    "annotation {} does not support default values",
+                    annotation.name
+                ));
+            }
+            add(&mut attrs, &attr, &value_key, value);
+        }
+    }
+    Ok(attrs)
+}
+fn filter_declarations(decls: &mut Vec<Decl>, tags: &[String], cpp: bool) -> Result<(), String> {
+    fn matches(value: Option<&Value>, tags: &[String]) -> Option<bool> {
+        match value {
+            Some(Value::Bool(true)) => Some(true),
+            Some(Value::String(s)) => Some(tags.iter().any(|t| t.eq_ignore_ascii_case(s))),
+            Some(Value::Array(a)) => Some(
+                a.iter()
+                    .filter_map(Value::as_str)
+                    .any(|s| tags.iter().any(|t| t.eq_ignore_ascii_case(s))),
+            ),
+            _ => None,
+        }
+    }
+    let mut kept = Vec::new();
+    for mut d in decls.drain(..) {
+        let attrs = annotation_map(&d.annotations)?;
+        let get = |a: &str, k: &str| attrs.get(a).and_then(|v| v.get(k));
+        let keep = if cpp {
+            matches(get("CPP", "ENABLE_IF"), tags) != Some(false)
+                && matches(get("CPP", "SKIP"), tags) != Some(true)
+        } else {
+            matches(get("ENABLE_IF", "TAG"), tags) != Some(false)
+                && matches(get("SKIP", "TAG"), tags) != Some(true)
+        };
+        if keep {
+            if d.kind != "property" {
+                filter_declarations(&mut d.children, tags, cpp)?;
+            }
+            kept.push(d);
+        }
+    }
+    *decls = kept;
+    Ok(())
+}
+fn validate_cpp_skip(decls: &[Decl]) -> Result<(), String> {
+    for d in decls {
+        let attrs = annotation_map(&d.annotations)?;
+        let skip = attrs.get("CPP").and_then(|v| v.get("SKIP"));
+        if skip.is_some_and(|v| *v != Value::Bool(false))
+            && !matches!(d.kind.as_str(), "field_constructor" | "const")
+        {
+            return Err(format!(
+                "C++ skip validation failed: @Cpp(Skip) is invalid on {}",
+                d.name
+            ));
+        }
+        validate_cpp_skip(&d.children)?;
+        validate_cpp_skip(&d.params)?;
+    }
+    Ok(())
+}
+fn validate_strict(decls: &[Decl]) -> Result<(), String> {
+    for d in decls {
+        if d.kind == "struct"
+            && !d
+                .children
+                .iter()
+                .any(|c| matches!(c.kind.as_str(), "constructor" | "field_constructor"))
+        {
+            let attrs = annotation_map(&d.annotations)?;
+            if attrs.contains_key("IMMUTABLE") {
+                return Err(format!("strict validation failed: immutable struct {} requires an explicit constructor", d.name));
+            }
+            if !attrs.contains_key("INTERNAL") {
+                for field in d.children.iter().filter(|c| c.kind == "field") {
+                    if annotation_map(&field.annotations)?.contains_key("INTERNAL")
+                        && field.literal.is_none()
+                        && !field.ty.as_ref().is_some_and(|t| t.nullable)
+                    {
+                        return Err(format!("strict validation failed: struct {} has an internal field without a default or explicit constructor", d.name));
+                    }
+                }
+            }
+        }
+        validate_strict(&d.children)?;
+    }
+    Ok(())
+}
 fn guard_type(t: &mut TypeRef) -> Result<(), String> {
     if !t.docs.is_empty() {
-        return Err("type-position documentation is unsupported".into());
-    }
-    if !t.annotations.is_empty() {
-        return Err("type annotations are unsupported".into());
+        return Err("documentation is not valid inside a type reference".into());
     }
     let builtin = BASIC.iter().any(|(n, _)| *n == t.name)
         || ["List", "Set", "Map"].contains(&t.name.as_str());
@@ -137,52 +371,56 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
     if !(valid_ident(&d.name) || (parent == "lambda" && d.name.is_empty())) {
         return Err(format!("invalid {} name {:?}", d.kind, d.name));
     }
-    if !d.return_docs.is_empty()
-        || !d.throws_docs.is_empty()
-        || (matches!(d.kind.as_str(), "parameter" | "accessor") && !d.docs.is_empty())
-    {
-        return Err("documentation in this position is unsupported".into());
-    }
-    let doc = docs::parse_documentation(&d.docs)?;
-    if doc
-        .blocks
-        .get(&("exclude".into(), String::new()))
-        .is_some_and(|block| block.sections.iter().any(|(_, s)| !s.is_empty()))
-    {
-        return Err("@exclude does not accept text".into());
-    }
-    for (tag, name) in doc.blocks.keys() {
-        let supported = match tag.as_str() {
-            "exclude" => true,
-            // The loader selects a block by the actual parameter name. A
-            // recognized but unmatched @param block has no selected comment.
-            "param" if matches!(d.kind.as_str(), "fun" | "constructor" | "lambda") => true,
-            "return" => matches!(d.kind.as_str(), "fun" | "lambda") && d.ty.is_some(),
-            "constructor" => d.kind == "struct",
-            "value" | "description" | "get" | "set" => d.kind == "property",
-            _ => false,
-        };
-        if !supported {
-            return Err(format!(
-                "unsupported documentation block @{tag}[{name}] on {}",
-                d.kind
-            ));
+    docs::parse_documentation(&d.docs)?;
+    for annotation in &d.annotations {
+        let source = format!("package verify\n{}\nclass Example {{}}\n", annotation.raw);
+        let parsed = crate::parse("<annotation>", &source, false)
+            .map_err(|_| "invalid annotation source")?;
+        let actual = parsed
+            .declarations
+            .first()
+            .and_then(|d| d.annotations.first())
+            .ok_or("invalid annotation source")?;
+        if parsed.declarations.len() != 1
+            || actual.name != annotation.name
+            || actual.raw != annotation.raw
+            || actual.values.len() != annotation.values.len()
+            || actual
+                .values
+                .iter()
+                .zip(&annotation.values)
+                .any(|(a, b)| a.name != b.name || a.values != b.values)
+        {
+            return Err("inconsistent annotation source".into());
         }
     }
-    if !d.parents.is_empty() || d.descriptor.is_some() {
-        return Err("inheritance and external descriptors are unsupported".into());
+    if !d.parents.is_empty() && !matches!(d.kind.as_str(), "class" | "interface") {
+        return Err("invalid inheritance placement".into());
+    }
+    if parent == "lambda" && !d.annotations.is_empty() {
+        return Err("lambda parameter annotations belong on its type".into());
+    }
+    if d.kind == "exception" && d.ty.as_ref().is_some_and(|t| t.nullable) {
+        return Err("exception payload cannot be nullable".into());
+    }
+    for parent in &mut d.parents {
+        guard_type(parent)?;
     }
     if let Some(t) = &mut d.throws {
-        if d.kind != "fun" || !matches!(parent, "class" | "interface" | "struct") || t.nullable {
+        if !matches!(d.kind.as_str(), "fun" | "constructor")
+            || !matches!(parent, "class" | "interface" | "struct")
+            || t.nullable
+        {
             return Err("unsupported throws placement or nullability".into());
         }
         guard_type(t)?;
     }
-    if d.modifiers.len() > 1
+    if (d.modifiers.len() > 1 && !(d.kind == "interface" && d.modifiers == ["open", "narrow"]))
         || d.modifiers.iter().any(|m| {
             !matches!(
                 (d.kind.as_str(), m.as_str()),
                 ("class", "open")
+                    | ("interface", "open")
                     | ("interface", "narrow")
                     | ("fun", "static")
                     | ("property", "static")
@@ -190,60 +428,6 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
         })
     {
         return Err("unsupported modifier".into());
-    }
-    if d.annotations.len() > 1
-        || d.annotations.iter().any(|a| {
-            a.name != "Cpp"
-                || a.values.len() != 1
-                || a.values[0].name.is_some()
-                || a.values[0].values.len() != 1
-        })
-    {
-        return Err("unsupported annotation".into());
-    }
-    if let Some(a) = d.annotations.first() {
-        let source = format!("package verify\n{}\nclass Example {{}}\n", a.raw);
-        let parsed = crate::parse("<annotation>", &source, false)
-            .map_err(|_| "invalid annotation source")?;
-        if parsed.declarations.len() != 1 {
-            return Err("invalid annotation source".into());
-        }
-        let actual = &parsed.declarations[0].annotations;
-        if actual.len() != 1
-            || actual[0].raw != a.raw
-            || actual[0].name != a.name
-            || actual[0].values.len() != a.values.len()
-            || actual[0]
-                .values
-                .iter()
-                .zip(&a.values)
-                .any(|(x, y)| x.name != y.name || x.values != y.values)
-        {
-            return Err("inconsistent annotation source".into());
-        }
-    }
-    if matches!(parent, "field_constructor" | "lambda") && !d.annotations.is_empty() {
-        return Err("annotations on this parameter are unsupported".into());
-    }
-    if !d.annotations.is_empty()
-        && !matches!(
-            d.kind.as_str(),
-            "class"
-                | "interface"
-                | "struct"
-                | "enum"
-                | "typealias"
-                | "lambda"
-                | "exception"
-                | "field"
-                | "fun"
-                | "property"
-                | "parameter"
-                | "enumerator"
-                | "const"
-        )
-    {
-        return Err("unsupported annotation placement".into());
     }
     let needs_type = matches!(
         d.kind.as_str(),
@@ -269,9 +453,6 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
     ) && !d.children.is_empty()
     {
         return Err("unexpected child declarations".into());
-    }
-    if matches!(d.kind.as_str(), "struct" | "enum") && d.children.is_empty() {
-        return Err("empty struct or enum".into());
     }
     if d.kind == "property"
         && !(d.children.is_empty()
@@ -300,8 +481,18 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
         (Some(v), Some(l))
             if v == &l.raw
                 && l.name.is_none()
-                && l.children.is_empty()
-                && matches!(l.kind.as_str(), "number" | "boolean" | "string" | "null") => {}
+                && matches!(
+                    l.kind.as_str(),
+                    "number"
+                        | "boolean"
+                        | "string"
+                        | "null"
+                        | "reference"
+                        | "positional_enumerator"
+                        | "struct"
+                        | "list"
+                        | "map"
+                ) => {}
         _ => return Err("invalid or unsupported literal".into()),
     }
     if let Some(l) = &d.literal {
@@ -315,12 +506,19 @@ fn guard_decl(d: &mut Decl, parent: &str) -> Result<(), String> {
             .literal
             .as_ref()
             .ok_or("missing literal")?;
-        if actual.kind != l.kind || actual.raw != l.raw || !actual.children.is_empty() {
+        fn same_literal(a: &crate::Literal, b: &crate::Literal) -> bool {
+            a.kind == b.kind
+                && a.raw == b.raw
+                && a.name == b.name
+                && a.children.len() == b.children.len()
+                && a.children
+                    .iter()
+                    .zip(&b.children)
+                    .all(|(a, b)| same_literal(a, b))
+        }
+        if !same_literal(actual, l) {
             return Err("inconsistent literal source".into());
         }
-    }
-    if d.kind == "enumerator" && d.literal.as_ref().is_some_and(|l| l.kind != "number") {
-        return Err("unsupported enumerator value".into());
     }
     for p in &mut d.params {
         guard_decl(p, &d.kind)?;
@@ -344,11 +542,7 @@ fn check_literal_types(model: &Model) -> Result<(), String> {
     fn visit(decls: &[Decl], aliases: &BTreeMap<String, &TypeRef>) -> Result<(), String> {
         for d in decls {
             if let Some(l) = &d.literal {
-                if d.kind == "enumerator" {
-                    if l.kind != "number" {
-                        return Err("invalid enumerator literal".into());
-                    }
-                } else {
+                if d.kind != "enumerator" {
                     let mut ty = d.ty.as_ref().ok_or("literal has no type")?;
                     let mut nullable = ty.nullable;
                     let mut visited = BTreeSet::new();
@@ -360,13 +554,15 @@ fn check_literal_types(model: &Model) -> Result<(), String> {
                         nullable |= ty.nullable;
                     }
                     let expected = match ty.name.as_str() {
-                        "Boolean" => "boolean",
-                        "String" => "string",
+                        "Boolean" => Some("boolean"),
+                        "String" | "Date" | "Locale" => Some("string"),
                         "Byte" | "Short" | "Int" | "Long" | "UByte" | "UShort" | "UInt"
-                        | "ULong" | "Float" | "Double" => "number",
-                        _ => return Err("unsupported literal type".into()),
+                        | "ULong" | "Float" | "Double" | "Duration" => Some("number"),
+                        _ => None,
                     };
-                    if l.kind != expected && !(l.kind == "null" && nullable) {
+                    if expected.is_some_and(|e| {
+                        l.kind != e && l.kind != "reference" && !(l.kind == "null" && nullable)
+                    }) {
                         return Err("literal does not match its type".into());
                     }
                 }
@@ -393,6 +589,11 @@ struct Builder {
     overlays: Map<String, Value>,
     absences: Map<String, Value>,
     empty_path: Value,
+    placeholders: Map<String, Value>,
+    declarations: BTreeMap<String, Decl>,
+    imports: Vec<String>,
+    current_file: String,
+    decl_paths: BTreeMap<(String, usize), (String, String)>,
 }
 impl Builder {
     fn new() -> Self {
@@ -403,6 +604,11 @@ impl Builder {
             overlays: Map::new(),
             absences: Map::new(),
             empty_path: Value::Null,
+            placeholders: Map::new(),
+            declarations: BTreeMap::new(),
+            imports: Vec::new(),
+            current_file: String::new(),
+            decl_paths: BTreeMap::new(),
         }
     }
     fn reserve(&mut self, class: &str) -> Value {
@@ -427,25 +633,96 @@ impl Builder {
         )
     }
     fn attr(&mut self, d: Option<&Decl>) -> Result<Value, String> {
-        let mut a = Map::new();
-        if let Some(d) = d {
-            if let Some(c) = d.annotations.first() {
-                let raw = &c.values[0].values[0];
-                let name: String =
-                    serde_json::from_str(raw).map_err(|_| "invalid Cpp annotation string")?;
-                let name = name.trim().replace(['\r', '\n'], "");
-                if !valid_ident(&name) {
-                    return Err("invalid Cpp name".into());
+        self.attributes(d.map(|d| d.annotations.as_slice()).unwrap_or(&[]))
+    }
+    fn attributes(&mut self, annotations: &[crate::Annotation]) -> Result<Value, String> {
+        let attrs = annotation_map(annotations)?;
+        Ok(self.node("LimeAttributes", json!({"attributes":attrs})))
+    }
+    fn decl_attributes(
+        &mut self,
+        d: &Decl,
+        head: &[String],
+        names: &[String],
+    ) -> Result<Value, String> {
+        let mut attrs = annotation_map(&d.annotations)?;
+        if let Some(message) = attrs
+            .get("DEPRECATED")
+            .and_then(|v| v.get("MESSAGE"))
+            .and_then(Value::as_str)
+            .map(str::to_owned)
+        {
+            let parsed = docs::parse_text(&message)?;
+            let mut path = names.to_vec();
+            path.push("@deprecated".into());
+            let path = self.path(head, &path, "");
+            let comment = self.comment_data(&path, &parsed.description);
+            attrs.get_mut("DEPRECATED").unwrap()["MESSAGE"] = comment;
+        }
+        Ok(self.node("LimeAttributes", json!({"attributes":attrs})))
+    }
+    fn accessor_attributes(
+        &mut self,
+        accessor: Option<&Decl>,
+        parent: &Value,
+        head: &[String],
+        names: &[String],
+    ) -> Result<Value, String> {
+        let attrs = if let Some(d) = accessor {
+            self.decl_attributes(d, head, names)?
+        } else {
+            self.attr(None)?
+        };
+        let index = |v: &Value| v["$ref"].as_str().unwrap()[1..].parse::<usize>().unwrap() - 1;
+        let source = self.nodes[index(parent)]["properties"]["attributes"].clone();
+        let target = self.nodes[index(&attrs)]["properties"]["attributes"]
+            .as_object_mut()
+            .unwrap();
+        if let Some(message) = source.get("DEPRECATED").and_then(|v| v.get("MESSAGE")) {
+            let group = target.entry("DEPRECATED").or_insert_with(|| json!({}));
+            group
+                .as_object_mut()
+                .unwrap()
+                .entry("MESSAGE")
+                .or_insert_with(|| message.clone());
+        }
+        if source.get("INTERNAL").is_some() {
+            target.entry("INTERNAL").or_insert_with(|| json!({}));
+        }
+        for platform in ["JAVA", "SWIFT", "DART", "KOTLIN"] {
+            for key in ["INTERNAL", "PUBLIC"] {
+                if let Some(value) = source.get(platform).and_then(|v| v.get(key)) {
+                    target
+                        .entry(platform)
+                        .or_insert_with(|| json!({}))
+                        .as_object_mut()
+                        .unwrap()
+                        .entry(key)
+                        .or_insert_with(|| value.clone());
                 }
-                a.insert("CPP".into(), json!({"NAME":name}));
             }
         }
-        Ok(self.node("LimeAttributes", json!({"attributes":a})))
+        Ok(attrs)
+    }
+    fn external(&mut self, descriptor: Option<&crate::Descriptor>) -> Result<Value, String> {
+        let Some(descriptor) = descriptor else {
+            return Ok(Value::Null);
+        };
+        let mut result: BTreeMap<String, BTreeMap<String, String>> = BTreeMap::new();
+        for entry in &descriptor.values {
+            let value: String = serde_json::from_str(&entry.value)
+                .map_err(|_| "invalid external descriptor string")?;
+            result
+                .entry(entry.platform.to_ascii_lowercase())
+                .or_default()
+                .insert(entry.key.to_ascii_lowercase(), value);
+        }
+        Ok(self.node("LimeExternalDescriptor", json!({"descriptors":result})))
     }
     fn comment(&mut self, path: &Value) -> Value {
         let v = self.node(
             "LimeComment",
-            json!({"isExcluded":false,"path":path,"placeholders":{}}),
+            json!({"isExcluded":false,"path":path,"placeholders":self.placeholders}),
         );
         self.raw
             .insert(v["$ref"].as_str().unwrap().into(), json!([]));
@@ -497,7 +774,11 @@ impl Builder {
     }
     fn type_ref(&mut self, t: &TypeRef) -> Result<Value, String> {
         if BASIC.iter().any(|(n, _)| *n == t.name) {
-            return self.basic_ref(&t.name, t.nullable);
+            let r = self.basic_ref(&t.name, t.nullable)?;
+            let a = self.attributes(&t.annotations)?;
+            let i = r["$ref"].as_str().unwrap()[1..].parse::<usize>().unwrap() - 1;
+            self.nodes[i]["properties"]["attributes"] = a;
+            return Ok(r);
         }
         let target = if t.builtin {
             let args = t
@@ -524,7 +805,7 @@ impl Builder {
                 .ok_or("missing resolved type")?
                 .clone()
         };
-        let a = self.attr(None)?;
+        let a = self.attributes(&t.annotations)?;
         let kind = if t.builtin {
             "LimeDirectTypeRef"
         } else {
@@ -541,26 +822,43 @@ impl Builder {
         head: &[String],
         tail: &[String],
         field_index: &mut usize,
+        inherited_suffix: Option<&str>,
     ) -> Result<(), String> {
         let mut path = tail.to_vec();
+        path.push(if d.kind == "field_constructor" {
+            String::new()
+        } else {
+            d.name.clone()
+        });
+        let base = head
+            .iter()
+            .chain(&path)
+            .cloned()
+            .collect::<Vec<_>>()
+            .join(".");
         let suffix = if d.kind == "field_constructor" {
-            path.push(String::new());
             let i = *field_index;
             *field_index += 1;
             i.to_string()
+        } else if let Some(suffix) = inherited_suffix {
+            suffix.to_owned()
+        } else if self.refs.contains_key(&base) {
+            let mut i = 1;
+            while self.refs.contains_key(&format!("{base}:{i}")) {
+                i += 1;
+            }
+            i.to_string()
         } else {
-            path.push(d.name.clone());
             String::new()
         };
-        let full = format!(
-            "{}{}{}",
-            head.iter()
-                .chain(&path)
-                .cloned()
-                .collect::<Vec<_>>()
-                .join("."),
-            if suffix.is_empty() { "" } else { ":" },
-            suffix
+        let full = if suffix.is_empty() {
+            base
+        } else {
+            format!("{base}:{suffix}")
+        };
+        self.decl_paths.insert(
+            (self.current_file.clone(), d.span.start),
+            (full.clone(), suffix.clone()),
         );
         let class = match d.kind.as_str() {
             "class" => "LimeClass",
@@ -586,7 +884,7 @@ impl Builder {
         let mut nested_index = 0;
         for c in &d.children {
             if c.kind != "accessor" {
-                self.alloc(c, head, &path, &mut nested_index)?;
+                self.alloc(c, head, &path, &mut nested_index, None)?;
             }
         }
         for (i, p) in d.params.iter().enumerate() {
@@ -595,7 +893,7 @@ impl Builder {
                 if d.kind == "lambda" && p.name.is_empty() {
                     p.name = format!("p{i}");
                 }
-                self.alloc(&p, head, &path, &mut nested_index)?;
+                self.alloc(&p, head, &path, &mut nested_index, Some(&suffix))?;
             }
         }
         Ok(())
@@ -627,27 +925,285 @@ impl Builder {
         let ret = self.return_type(ty, &return_path)?;
         Ok(self.node("LimeFunction",json!({"attributes":a,"comment":c,"external":null,"isConstructor":is_constructor,"isStatic":is_static,"parameters":params,"path":path,"returnType":ret,"thrownType":null})))
     }
-    fn literal(&mut self, l: &crate::Literal, ty: &Value) -> Result<Value, String> {
+    fn find_value_target(&self, name: &str, scope: &str) -> Result<String, String> {
+        let mut candidates = BTreeSet::new();
+        for import in &self.imports {
+            let short = import.rsplit('.').next().unwrap_or(import);
+            if name == short || name.starts_with(&format!("{short}.")) {
+                let full = format!("{}{}", import, &name[short.len()..]);
+                if self.declarations.contains_key(&full) {
+                    candidates.insert(full);
+                }
+            }
+        }
+        let mut here = scope;
+        loop {
+            let full = if here.is_empty() {
+                name.to_owned()
+            } else {
+                format!("{here}.{name}")
+            };
+            if self.declarations.contains_key(&full) {
+                candidates.insert(full);
+            }
+            match here.rsplit_once('.') {
+                Some((p, _)) => here = p,
+                None if !here.is_empty() => here = "",
+                None => break,
+            }
+        }
+        if candidates.len() == 1 {
+            Ok(candidates.into_iter().next().unwrap())
+        } else {
+            Err(format!("unresolved or ambiguous value reference {name}"))
+        }
+    }
+    fn actual_source_type(&self, ty: &TypeRef) -> Result<TypeRef, String> {
+        let mut ty = ty.clone();
+        let mut seen = BTreeSet::new();
+        while let Some(name) = ty.resolved.clone() {
+            let Some(decl) = self.declarations.get(&name) else {
+                break;
+            };
+            if decl.kind != "typealias" {
+                break;
+            }
+            if !seen.insert(name) {
+                return Err("cyclic alias".into());
+            }
+            ty = decl.ty.clone().ok_or("missing alias type")?;
+        }
+        Ok(ty)
+    }
+    fn literal(
+        &mut self,
+        l: &crate::Literal,
+        ty: &Value,
+        source_ty: Option<&TypeRef>,
+        scope: &str,
+    ) -> Result<Value, String> {
         let a = self.attr(None)?;
-        if l.kind == "null" {
-            return Ok(self.node("LimeValue$Null", json!({"attributes":a,"typeRef":ty})));
+        match l.kind.as_str() {
+            "null" => return Ok(self.node("LimeValue$Null", json!({"attributes":a,"typeRef":ty}))),
+            "reference" | "positional_enumerator" => {
+                let (name, position) = if l.kind == "positional_enumerator" {
+                    let (n, npos) = l
+                        .raw
+                        .split_once('(')
+                        .ok_or("invalid positional enumerator")?;
+                    let index: i64 = npos
+                        .trim_end_matches(')')
+                        .replace('_', "")
+                        .parse()
+                        .map_err(|_| "invalid positional enumerator")?;
+                    (n.trim(), Some(index))
+                } else {
+                    (l.raw.trim(), None)
+                };
+                let clean_name = name.replace('`', "");
+                let mut target = self.find_value_target(&clean_name, scope)?;
+                let reference = if let Some(index) = position {
+                    let enum_decl = self
+                        .declarations
+                        .get(&target)
+                        .ok_or("unknown enumeration")?
+                        .clone();
+                    if enum_decl.kind != "enum" {
+                        return Err("positional value requires an enumeration".into());
+                    }
+                    let mut next = 0i32;
+                    let mut found = None;
+                    for item in enum_decl.children.iter().filter(|d| d.kind == "enumerator") {
+                        if let Some(literal) = &item.literal {
+                            if literal.kind != "number" {
+                                next = 0;
+                                continue;
+                            }
+                            let raw: String =
+                                literal.raw.chars().filter(|c| !c.is_whitespace()).collect();
+                            let raw = raw.strip_prefix('+').unwrap_or(&raw);
+                            if raw == index.to_string() {
+                                found = Some(item.name.clone());
+                                break;
+                            }
+                            next = raw
+                                .parse::<i32>()
+                                .ok()
+                                .and_then(|n| n.checked_add(1))
+                                .unwrap_or(0);
+                        } else {
+                            if i64::from(next) == index {
+                                found = Some(item.name.clone());
+                                break;
+                            }
+                            next = next.checked_add(1).unwrap_or(0);
+                        }
+                    }
+                    target.push('.');
+                    target.push_str(&found.ok_or("positional enumerator not found")?);
+                    let element = self.refs.get(&target).ok_or("missing enumerator")?.clone();
+                    let enum_target = target.rsplit_once('.').unwrap().0;
+                    let enum_ref = self
+                        .refs
+                        .get(enum_target)
+                        .ok_or("missing enumeration")?
+                        .clone();
+                    let attrs = self.attr(None)?;
+                    let enum_type = self.node("LimeAmbiguousTypeRef",json!({"attributes":attrs,"element":enum_ref,"isNullable":false,"type":enum_ref}));
+                    let attrs = self.attr(None)?;
+                    self.node("LimePositionalEnumeratorRef",json!({"attributes":attrs,"element":element,"typeRef":enum_type,"index":index}))
+                } else {
+                    let element = self
+                        .refs
+                        .get(&target)
+                        .ok_or("missing value target")?
+                        .clone();
+                    let decl = self
+                        .declarations
+                        .get(&target)
+                        .ok_or("missing value declaration")?;
+                    if !matches!(decl.kind.as_str(), "const" | "enumerator") {
+                        return Err("reference must name a constant or enumerator".into());
+                    }
+                    let attrs = self.attr(None)?;
+                    self.node(
+                        "LimeAmbiguousConstantRef",
+                        json!({"attributes":attrs,"element":element}),
+                    )
+                };
+                return Ok(self.node(
+                    "LimeValue$Constant",
+                    json!({"attributes":a,"typeRef":ty,"valueRef":reference}),
+                ));
+            }
+            "list" | "map" | "struct" => {
+                let source = self.actual_source_type(source_ty.ok_or("initializer lacks type")?)?;
+                let mut values = Vec::new();
+                if l.kind == "struct" {
+                    let decl = self
+                        .declarations
+                        .get(
+                            source
+                                .resolved
+                                .as_ref()
+                                .ok_or("struct initializer needs struct type")?,
+                        )
+                        .ok_or("unknown struct")?
+                        .clone();
+                    let fields: Vec<_> =
+                        decl.children.iter().filter(|f| f.kind == "field").collect();
+                    for (i, item) in l.children.iter().enumerate() {
+                        let field = if let Some(name) = &item.name {
+                            fields.iter().find(|f| &f.name == name).copied()
+                        } else {
+                            fields.get(i).copied()
+                        }
+                        .ok_or("too many struct initializer values")?;
+                        let field_ty = field.ty.as_ref().ok_or("field lacks type")?;
+                        let graph_ty = self.type_ref(field_ty)?;
+                        values.push(self.literal(item, &graph_ty, Some(field_ty), scope)?);
+                    }
+                } else {
+                    let types = if source.name == "Blob" {
+                        vec![TypeRef {
+                            name: "UByte".into(),
+                            builtin: true,
+                            args: vec![],
+                            nullable: false,
+                            docs: vec![],
+                            annotations: vec![],
+                            span: source.span.clone(),
+                            resolved: None,
+                        }]
+                    } else {
+                        source.args.clone()
+                    };
+                    if l.kind == "map" {
+                        if types.len() != 2 {
+                            return Err("map initializer requires a map type".into());
+                        }
+                        for pair in l.children.chunks_exact(2) {
+                            let kt = self.type_ref(&types[0])?;
+                            let vt = self.type_ref(&types[1])?;
+                            let key = self.literal(&pair[0], &kt, Some(&types[0]), scope)?;
+                            let value = self.literal(&pair[1], &vt, Some(&types[1]), scope)?;
+                            let attrs = self.attr(None)?;
+                            let void = self.basic_ref("Void", false)?;
+                            values.push(self.node(
+                                "LimeValue$KeyValuePair",
+                                json!({"attributes":attrs,"typeRef":void,"key":key,"value":value}),
+                            ));
+                        }
+                    } else {
+                        if !l.children.is_empty() && types.is_empty() {
+                            return Err("list initializer requires a collection type".into());
+                        }
+                        for item in &l.children {
+                            let child = &types[0];
+                            let graph_ty = self.type_ref(child)?;
+                            values.push(self.literal(item, &graph_ty, Some(child), scope)?);
+                        }
+                    }
+                }
+                let kind = if l.kind == "struct" {
+                    "LimeValue$StructInitializer"
+                } else {
+                    "LimeValue$InitializerList"
+                };
+                return Ok(self.node(kind, json!({"attributes":a,"typeRef":ty,"values":values})));
+            }
+            _ => (),
+        }
+        let normalized_number = if l.kind == "number" {
+            l.raw
+                .chars()
+                .filter(|c| !c.is_whitespace())
+                .collect::<String>()
+        } else {
+            String::new()
+        };
+        let raw = if l.kind == "number" {
+            normalized_number.as_str()
+        } else {
+            l.raw.trim()
+        };
+        if ["NaN", "Infinity", "+Infinity", "-Infinity"].contains(&raw) {
+            let name = match raw {
+                "NaN" => "NAN",
+                "-Infinity" => "NEGATIVE_INFINITY",
+                _ => "INFINITY",
+            };
+            return Ok(self.node("LimeValue$Special",json!({"attributes":a,"typeRef":ty,"value":{"enum":"com.here.gluecodium.model.lime.LimeValue$Special$ValueId","name":name}})));
+        }
+        if l.kind == "number" {
+            for (suffix, unit) in [
+                ("min", "MINUTE"),
+                ("ms", "MILLISECOND"),
+                ("us", "MICROSECOND"),
+                ("ns", "NANOSECOND"),
+                ("d", "DAY"),
+                ("h", "HOUR"),
+                ("s", "SECOND"),
+            ] {
+                if let Some(value) = raw.strip_suffix(suffix) {
+                    return Ok(self.node("LimeValue$Duration",json!({"attributes":a,"typeRef":ty,"value":value,"timeUnit":{"enum":"com.here.gluecodium.model.lime.LimeValue$Duration$TimeUnit","name":unit}})));
+                }
+            }
         }
         let value = match l.kind.as_str() {
             "string" => {
-                serde_json::from_str::<String>(&l.raw).map_err(|_| "unsupported string literal")?
+                if let Some(content) = l
+                    .raw
+                    .strip_prefix("\"\"\"")
+                    .and_then(|s| s.strip_suffix("\"\"\""))
+                {
+                    content.to_owned()
+                } else {
+                    serde_json::from_str::<String>(&l.raw).map_err(|_| "invalid string literal")?
+                }
             }
             "boolean" => l.raw.clone(),
-            "number" => {
-                let s = l.raw.trim();
-                let (negative, rest) = if let Some(s) = s.strip_prefix('-') {
-                    (true, s)
-                } else if let Some(s) = s.strip_prefix('+') {
-                    (false, s)
-                } else {
-                    (false, s)
-                };
-                format!("{}{}", if negative { "-" } else { "" }, rest.trim())
-            }
+            "number" => raw.strip_prefix('+').unwrap_or(raw).to_string(),
             _ => return Err("unsupported literal".into()),
         };
         Ok(self.node(
@@ -663,32 +1219,26 @@ impl Builder {
         field_index: &mut usize,
     ) -> Result<(), String> {
         let mut names = tail.to_vec();
-        let suffix = if d.kind == "field_constructor" {
-            names.push(String::new());
-            let i = *field_index;
-            *field_index += 1;
-            i.to_string()
-        } else {
-            names.push(d.name.clone());
+        names.push(if d.kind == "field_constructor" {
             String::new()
-        };
-        let key = format!(
-            "{}{}{}",
-            head.iter()
-                .chain(&names)
-                .cloned()
-                .collect::<Vec<_>>()
-                .join("."),
-            if suffix.is_empty() { "" } else { ":" },
-            suffix
-        );
+        } else {
+            d.name.clone()
+        });
+        if d.kind == "field_constructor" {
+            *field_index += 1;
+        }
+        let (key, suffix) = self
+            .decl_paths
+            .get(&(self.current_file.clone(), d.span.start))
+            .cloned()
+            .ok_or("missing declaration path")?;
         let v = self
             .refs
             .get(&key)
             .ok_or_else(|| format!("missing indexed declaration {key}"))?
             .clone();
         let path = self.path(head, &names, &suffix);
-        let attr = self.attr(Some(d))?;
+        let attr = self.decl_attributes(d, head, &names)?;
         let doc = docs::parse_documentation(&d.docs)?;
         let comment = self.comment_data(&path, &doc.description);
         let static_ = d.modifiers.iter().any(|m| m == "static");
@@ -699,23 +1249,12 @@ impl Builder {
                 continue;
             }
             self.populate(c, head, &names, &mut next)?;
-            let mut child = names.clone();
-            let suff = if c.kind == "field_constructor" {
-                child.push(String::new());
-                format!(":{}", next - 1)
-            } else {
-                child.push(c.name.clone());
-                String::new()
-            };
-            let k = format!(
-                "{}{}",
-                head.iter()
-                    .chain(&child)
-                    .cloned()
-                    .collect::<Vec<_>>()
-                    .join("."),
-                suff
-            );
+            let k = self
+                .decl_paths
+                .get(&(self.current_file.clone(), c.span.start))
+                .ok_or("missing child path")?
+                .0
+                .clone();
             let group = match c.kind.as_str() {
                 "class" => "classes",
                 "interface" => "interfaces",
@@ -744,9 +1283,12 @@ impl Builder {
                 p.name = format!("p{i}");
             }
             self.populate(&p, head, &names, &mut 0)?;
-            let mut n = names.clone();
-            n.push(p.name.clone());
-            let k = head.iter().chain(&n).cloned().collect::<Vec<_>>().join(".");
+            let k = self
+                .decl_paths
+                .get(&(self.current_file.clone(), p.span.start))
+                .ok_or("missing parameter path")?
+                .0
+                .clone();
             let pv = self.refs[&k].clone();
             if d.kind == "lambda" {
                 let idx = pv["$ref"].as_str().unwrap()[1..].parse::<usize>().unwrap() - 1;
@@ -765,6 +1307,15 @@ impl Builder {
                 .get(&("param".into(), p.name.clone()))
                 .filter(|c| c.sections.iter().any(|(_, s)| !s.is_empty()))
             {
+                if !p.docs.is_empty()
+                    && docs::parse_documentation(&p.docs)?
+                        .description
+                        .sections
+                        .iter()
+                        .any(|(_, s)| !s.is_empty())
+                {
+                    return Err("redundant parameter documentation".into());
+                }
                 let comment = self.nodes
                     [pv["$ref"].as_str().unwrap()[1..].parse::<usize>().unwrap() - 1]["properties"]
                     ["comment"]
@@ -778,7 +1329,8 @@ impl Builder {
             }
             params.push(pv);
         }
-        let mut p = json!({"attributes":attr,"comment":comment,"external":null,"path":path});
+        let external = self.external(d.descriptor.as_ref())?;
+        let mut p = json!({"attributes":attr,"comment":comment,"external":external,"path":path});
         match d.kind.as_str() {
             "class" | "interface" | "struct" => {
                 for group in [
@@ -819,7 +1371,11 @@ impl Builder {
                         self.empty_comment()
                     };
                 } else {
-                    p["parents"] = json!([]);
+                    p["parents"] = json!(d
+                        .parents
+                        .iter()
+                        .map(|p| self.type_ref(p))
+                        .collect::<Result<Vec<_>, _>>()?);
                     p["isOpen"] =
                         json!(d.kind == "interface" || d.modifiers.iter().any(|m| m == "open"));
                     if d.kind == "interface" {
@@ -886,6 +1442,23 @@ impl Builder {
                     path.clone()
                 };
                 p["returnType"] = self.return_type(ty, &return_path)?;
+                if !d.return_docs.is_empty() {
+                    let own = docs::parse_documentation(&d.return_docs)?.description;
+                    if doc
+                        .blocks
+                        .get(&("return".into(), String::new()))
+                        .is_some_and(|b| b.sections.iter().any(|(_, s)| !s.is_empty()))
+                        && own.sections.iter().any(|(_, s)| !s.is_empty())
+                    {
+                        return Err("redundant return documentation".into());
+                    }
+                    let i = p["returnType"]["$ref"].as_str().unwrap()[1..]
+                        .parse::<usize>()
+                        .unwrap()
+                        - 1;
+                    let c = self.nodes[i]["properties"]["comment"].clone();
+                    self.update_comment(&c, &path, &own);
+                }
                 if let Some(block) = doc
                     .blocks
                     .get(&("return".into(), String::new()))
@@ -901,7 +1474,22 @@ impl Builder {
                 }
                 p["thrownType"] = if let Some(throws) = &d.throws {
                     let reference = self.type_ref(throws)?;
-                    let comment = self.comment(&path);
+                    let own = docs::parse_documentation(&d.throws_docs)?.description;
+                    let block = doc
+                        .blocks
+                        .get(&("throws".into(), String::new()))
+                        .filter(|b| b.sections.iter().any(|(_, s)| !s.is_empty()));
+                    if block.is_some() && own.sections.iter().any(|(_, s)| !s.is_empty()) {
+                        return Err("redundant throws documentation".into());
+                    }
+                    let comment = if let Some(block) = block {
+                        let mut parts = names.clone();
+                        parts.push("@throws".into());
+                        let block_path = self.path(head, &parts, "");
+                        self.comment_data(&block_path, block)
+                    } else {
+                        self.comment_data(&path, &own)
+                    };
                     self.node(
                         "LimeThrownType",
                         json!({"typeRef":reference,"comment":comment}),
@@ -970,6 +1558,14 @@ impl Builder {
                     .parse::<usize>()
                     .unwrap()
                     - 1;
+                let getter = d.children.iter().find(|c| c.name == "get");
+                let attributes =
+                    self.accessor_attributes(getter, &p["attributes"], head, &names)?;
+                self.nodes[getter_index]["properties"]["attributes"] = attributes;
+                if let Some(accessor) = getter {
+                    let external = self.external(accessor.descriptor.as_ref())?;
+                    self.nodes[getter_index]["properties"]["external"] = external;
+                }
                 let ret = self.nodes[getter_index]["properties"]["returnType"].clone();
                 let ret_index = ret["$ref"].as_str().unwrap()[1..].parse::<usize>().unwrap() - 1;
                 self.nodes[ret_index]["properties"]["comment"] = accessor_comment.clone();
@@ -979,8 +1575,21 @@ impl Builder {
                     .get(&("get".into(), String::new()))
                     .cloned()
                     .unwrap_or_default();
+                let own_getter_doc = getter
+                    .map(|a| docs::parse_documentation(&a.docs).map(|d| d.description))
+                    .transpose()?
+                    .unwrap_or_default();
+                let own_getter_has_text =
+                    own_getter_doc.sections.iter().any(|(_, s)| !s.is_empty());
+                let block_getter_has_text = getter_doc.sections.iter().any(|(_, s)| !s.is_empty());
+                if own_getter_has_text && block_getter_has_text {
+                    return Err("redundant getter documentation".into());
+                }
+                if own_getter_has_text {
+                    getter_doc = own_getter_doc;
+                }
                 getter_doc.is_excluded = doc.description.is_excluded;
-                let getter_path = if getter_doc.sections.iter().any(|(_, s)| !s.is_empty()) {
+                let getter_path = if block_getter_has_text {
                     let mut parts = names.clone();
                     parts.push("@get".into());
                     self.path(head, &parts, "")
@@ -1004,14 +1613,36 @@ impl Builder {
                         .parse::<usize>()
                         .unwrap()
                         - 1;
+                    let setter = d.children.iter().find(|c| c.name == "set");
+                    let attributes =
+                        self.accessor_attributes(setter, &p["attributes"], head, &names)?;
+                    self.nodes[setter_index]["properties"]["attributes"] = attributes;
+                    if let Some(accessor) = setter {
+                        let external = self.external(accessor.descriptor.as_ref())?;
+                        self.nodes[setter_index]["properties"]["external"] = external;
+                    }
                     let setter_comment = self.nodes[setter_index]["properties"]["comment"].clone();
                     let mut setter_doc = doc
                         .blocks
                         .get(&("set".into(), String::new()))
                         .cloned()
                         .unwrap_or_default();
+                    let own_setter_doc = setter
+                        .map(|a| docs::parse_documentation(&a.docs).map(|d| d.description))
+                        .transpose()?
+                        .unwrap_or_default();
+                    let own_setter_has_text =
+                        own_setter_doc.sections.iter().any(|(_, s)| !s.is_empty());
+                    let block_setter_has_text =
+                        setter_doc.sections.iter().any(|(_, s)| !s.is_empty());
+                    if own_setter_has_text && block_setter_has_text {
+                        return Err("redundant setter documentation".into());
+                    }
+                    if own_setter_has_text {
+                        setter_doc = own_setter_doc;
+                    }
                     setter_doc.is_excluded = doc.description.is_excluded;
-                    let setter_path = if setter_doc.sections.iter().any(|(_, s)| !s.is_empty()) {
+                    let setter_path = if block_setter_has_text {
                         let mut parts = names.clone();
                         parts.push("@set".into());
                         self.path(head, &parts, "")
@@ -1033,7 +1664,7 @@ impl Builder {
                 let ty = self.type_ref(d.ty.as_ref().unwrap())?;
                 p["typeRef"] = ty.clone();
                 let value = if let Some(l) = &d.literal {
-                    self.literal(l, &ty)?
+                    self.literal(l, &ty, d.ty.as_ref(), &key)?
                 } else if d.kind == "field" && d.ty.as_ref().unwrap().nullable {
                     let a = self.attr(None)?;
                     self.node("LimeValue$Null", json!({"attributes":a,"typeRef":ty}))
@@ -1049,7 +1680,7 @@ impl Builder {
             "enumerator" => {
                 let value = if let Some(l) = &d.literal {
                     let ty = self.basic_ref("Int", false)?;
-                    self.literal(l, &ty)?
+                    self.literal(l, &ty, None, &key)?
                 } else {
                     Value::Null
                 };
@@ -1106,11 +1737,17 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
         {
             return Err("invalid native file metadata".into());
         }
+        validate_cpp_skip(&f.declarations)?;
+        filter_declarations(&mut f.declarations, &options.tags, false)?;
+        if options.strict {
+            validate_strict(&f.declarations)?;
+        }
+        filter_declarations(&mut f.declarations, &options.tags, true)?;
         for d in &mut f.declarations {
             guard_decl(d, "file")?;
         }
     }
-    crate::resolve(&mut model)?;
+    crate::resolve_cpp(&mut model)?;
     fn collect_kinds(decls: &[Decl], scope: &str, kinds: &mut BTreeMap<String, String>) {
         for d in decls {
             let name = format!("{scope}.{}", d.name);
@@ -1135,20 +1772,6 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
     }
     fn check_exceptions(decls: &[Decl], kinds: &BTreeMap<String, String>) -> Result<(), String> {
         for d in decls {
-            if d.kind == "exception" {
-                let ty = d.ty.as_ref().ok_or("missing exception payload")?;
-                if ty.nullable
-                    || ty.builtin
-                    || ty
-                        .resolved
-                        .as_ref()
-                        .and_then(|s| kinds.get(s))
-                        .map(String::as_str)
-                        != Some("enum")
-                {
-                    return Err("exception payload must be a direct nonnullable enumeration".into());
-                }
-            }
             if d.kind != "exception" {
                 if let Some(ty) = &d.ty {
                     check_value_type(ty, kinds)?;
@@ -1168,14 +1791,36 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
     }
     check_literal_types(&model)?;
     let mut b = Builder::new();
+    fn index_decls(decls: &[Decl], scope: &str, out: &mut BTreeMap<String, Decl>) {
+        for d in decls {
+            let name = format!("{scope}.{}", d.name);
+            out.insert(name.clone(), d.clone());
+            index_decls(&d.children, &name, out);
+        }
+    }
+    for f in &model.files {
+        index_decls(&f.declarations, &f.package, &mut b.declarations);
+    }
     let root = b.reserve("LimeModel");
     b.empty_path = b.path(&[], &[], "");
+    for (name, source) in &options.docs_placeholders {
+        let parsed = docs::parse_text(source)?;
+        let path = b.empty_path.clone();
+        let comment = b.comment_data(&path, &parsed.description);
+        let i = comment["$ref"].as_str().unwrap()[1..]
+            .parse::<usize>()
+            .unwrap()
+            - 1;
+        b.nodes[i]["properties"]["placeholders"] = json!({});
+        b.placeholders.insert(name.clone(), comment);
+    }
     b.basic()?;
     for f in &model.files {
         let head = f.package.split('.').map(str::to_owned).collect::<Vec<_>>();
+        b.current_file = f.path.clone();
         let mut index = 0;
         for d in &f.declarations {
-            b.alloc(d, &head, &[], &mut index)?;
+            b.alloc(d, &head, &[], &mut index, None)?;
         }
     }
     let mut top = Vec::new();
@@ -1183,10 +1828,12 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
     let mut files = BTreeMap::new();
     for f in &model.files {
         let head = f.package.split('.').map(str::to_owned).collect::<Vec<_>>();
+        b.imports = f.imports.clone();
+        b.current_file = f.path.clone();
         let mut index = 0;
         for d in &f.declarations {
             b.populate(d, &head, &[], &mut index)?;
-            let key = format!("{}.{}", f.package, d.name);
+            let key = b.decl_paths[&(f.path.clone(), d.span.start)].0.clone();
             let v = b.refs[&key].clone();
             if f.auxiliary {
                 aux.push(v)
@@ -1306,6 +1953,15 @@ pub fn generate(
     templates: impl AsRef<Path>,
     options: &Options,
 ) -> Result<Vec<cpp_generation::GeneratedFile>, String> {
+    generate_with_diagnostics(model, templates, options).map(|(files, _)| files)
+}
+
+/// Generate all files and return any non-fatal rendering diagnostics.
+pub fn generate_with_diagnostics(
+    model: &Model,
+    templates: impl AsRef<Path>,
+    options: &Options,
+) -> Result<(Vec<cpp_generation::GeneratedFile>, Vec<String>), String> {
     let job = build_job(model, options)?;
-    cpp_generation::generate(templates, &job)
+    cpp_generation::generate_with_diagnostics(templates, &job)
 }
