@@ -822,6 +822,148 @@ frontend/C++/platform coverage remains deferred below. The reviewed increment
 was pushed through `06222eca6` to `origin/ruscodium/rust-port`, and the remote
 tip was verified before this publication record was committed.
 
+## M16 / P1c completion: finish the native C++ generator port
+
+Execute [the completion contract](PLAN.md#m16--p1c-completion-finish-the-native-c-generator-port)
+from `cee48c815`. The current request is full C++ generator completion, not a
+further bounded feature increment. Keep M11/M15/performance evidence immutable,
+all committed work under `ruscodium/`, all 315 production templates unchanged,
+and the other target backends/general validator roadmap separately visible.
+Use Sol 6.1 max planning, Terra 6.1 xhigh implementation and independent
+Sol 6.1 xhigh review. Commits and pushes on `ruscodium/rust-port` are authorized.
+
+The workspace was replaced on 2026-11-14, losing unpublished local M16 commits.
+This checkpoint restores the full contract from planning commit `53bdde461`
+and retained tool history onto the published `cee48c815` baseline before source
+recovery. Reproduce validation on the replacement checkout; retain earlier M15
+and published historical evidence unchanged.
+
+- [x] Assess the remaining guards in the adapter, backend, native naming,
+  controls and documentation against upstream C++ generation.
+- [x] Inventory 49 smoke scenarios: 36 successful C++ scenarios, two strict
+  validation failures and eleven additional scenarios without C++ references;
+  identify all 45 cpp-selected functional feature groups and ten C++ test sources.
+- [x] Define full completion gates, ownership and shared graph/options interfaces
+  in PLAN before production implementation.
+- [x] Recover and commit this PLAN/TASKS contract before recovered production edits.
+
+### Native frontend and adaptation — `cpp_adapter_complete`
+
+- [ ] Adapt every C++-relevant raw declaration, annotated type, overload path,
+  parent/inheritance reference, external descriptor and literal tree.
+- [ ] Support quoted/escaped names, auxiliary definitions and all valid
+  constructor/property/accessor/parameter/return/throws/documentation positions.
+- [ ] Correct frontend over-rejections of valid C++ input and preserve attributes
+  that affect other platforms without treating them as C++ errors.
+- [ ] Share effective C++ options across native CLI and snapshot generation:
+  namespaces, exports, copyright, tags, custom naming properties and doc-warning
+  policy; load native documentation placeholders.
+- [ ] Derive native model facts without JVM hooks/computed projections; compare
+  the C++-relevant filtered native facts with independently loaded JVM models.
+  Native AST filtering before common resolution may handle platform alternatives
+  without requiring full unfiltered canonical frontend parity.
+
+### Native names and controls — `cpp_names_complete`
+
+- [ ] Complete default/configured C++ name rules, keyword handling, FQN/ref,
+  getter/setter/field accessors, external descriptors and C++ type overrides.
+- [ ] Port all value spelling: enum/constant references, null, special floats,
+  list/map/set/blob/struct initializers, escaped/multiline strings, dates,
+  normalized locales and every duration unit, including aliases and containers.
+- [ ] Cover C++ const/noexcept/reference/optimized/accessor attributes and every
+  accepted annotation placement using upstream behavior.
+- [ ] Complete predicates, inheritance/immutable/equatable traversals and exact
+  stable declaration sorting from raw facts; preserve anti-replay checks.
+
+### Backend generation — `cpp_backend_complete`
+
+- [ ] Implement upstream C++ skip validation, tag/Skip/EnableIf filtering and
+  post-filter platform signature/overload validation.
+- [ ] Complete multiple inheritance and derived inherited overload `using`
+  declarations, overrides, statics and constructor behavior.
+- [ ] Derive equality/error-enum sets and runtime generation for throwing/async
+  methods and accepted accessors/constructors, including external/alias payloads.
+- [ ] Complete header/implementation selection, external omission, constants,
+  value-dependent includes, all include/forward collectors and nested traversal.
+- [ ] Match complete paths, helper/export files and MAIN/COMMON assignments for
+  ordinary, external-only and exception-only/no-output models.
+- [ ] Preserve render-before-write, path/collision/cycle/ownership diagnostics,
+  determinism and existing output/stdout on rejection throughout feature closure.
+
+### Documentation — `cpp_docs_complete`
+
+- [ ] Parse full upstream Limedoc tags, raw blocks, positions, platform sections,
+  placeholders, links, exclusions and deprecation metadata.
+- [ ] Match configured CommonMark/Doxygen formatting, including code,
+  headings/lists, emphasis, tables/HTML and exact final whitespace.
+- [ ] Derive documentation references from native names/paths; match unresolved
+  link warnings and requested warning-as-error behavior.
+- [ ] Cover parameter/return/throws/constructor/property/getter/setter comments,
+  platform selection and namespace/naming overrides in complete file comparisons.
+
+### Template integration — parent/integrator
+
+- [ ] Supply every C++ template getter/helper with typed or raw-derived model
+  behavior, including inherited members, full value forms and new model classes.
+- [ ] Preserve existing Trimou scope, missing/null handling, whitespace,
+  indentation and cache correctness; keep native generation free of replay.
+- [ ] Coordinate common options/naming configuration and dependencies without
+  editing upstream Kotlin, production Mustache or functional sources.
+
+### Exhaustive acceptance — `cpp_completion_oracle` and integrator
+
+- [ ] Add a reproducible completion runner under `tools/cpp-completion` that
+  dynamically inventories all upstream smoke directories and asserts the
+  49/38/36+2 baseline with explicit outcomes for the remaining eleven scenarios.
+- [ ] Reproduce exact upstream smoke input/auxiliary/option-file/default/tag/
+  placeholder/name-rule behavior using the live unchanged JVM compiler.
+- [ ] Require snapshot/library and native-LIME complete path/byte/source-set
+  equality for all 36 successful upstream C++ scenarios; no normalizing,
+  omitted helper files, captured computed answers, skips or accepted guards.
+- [ ] Match `strict_fail_immutable` and `strict_fail_internal` validation failure
+  boundaries with no output writes; distinguish general validator parity from
+  C++ generator-specific validation without excusing valid-input failures.
+- [ ] Inventory all 45 cpp-selected functional feature groups from CMake and
+  compare the coherent complete generated model with actual internal namespace,
+  tags, copyright/placeholders and external includes against live JVM output.
+  Reproduce recovered counts: 115 LIME files, 92 handwritten C++ sources,
+  ten C++ test sources and 786 generated files, with complete hashed manifests.
+- [ ] Compile all functional generated implementations and relevant upstream
+  handwritten C++ sources; execute all ten existing functional C++ test sources
+  against native generated code without modifying or dropping upstream cases.
+- [ ] Compare and compile the separate functional custom-namerules input,
+  `cpp.properties` and handwritten implementation.
+- [ ] Add targeted live-JVM option/filter/name/external/inheritance/value/async/
+  equality/documentation combinations where full suites leave a surface unproved.
+- [ ] Compile and execute strict C++17 consumers with `-Wall -Wextra -Werror`
+  across the completed public API/runtime features; record any actual identical
+  upstream compiler problem explicitly instead of silently relaxing checks.
+- [ ] Separately report functional strict failures from upstream reorder,
+  unused-parameter and sign-compare warnings or missing `cstdint`; label any
+  warning-demoted/forced-include run with its exact compatibility flags and
+  affected sources, without claiming it passes the strict gate.
+- [ ] Mutate raw source/model facts and demonstrate corresponding native changes;
+  verify hooks/overlays cannot substitute recorded generator answers.
+- [ ] Preserve previous smoke and performance reports; write fresh evidence with
+  exact inputs/options, native revision/binary/compiler, JVM jars/version,
+  template hashes, complete manifests and compiler/runtime commands.
+- [ ] Make completion checks fail nonzero on unexpected rejections, missing
+  scenarios, source-set/file/byte differences or failed consumers.
+
+### Final review and publication
+
+- [ ] Pass formatting, offline all-target Clippy with warnings denied, all Rust
+  and Python tests, release builds, all retained oracles, the 345-input corpus,
+  strict consumers, and all 315 unchanged-template checks.
+- [ ] Obtain independent Sol 6.1 xhigh review of full native C++ derivation,
+  acceptance completeness, negative behavior and evidence reproducibility.
+- [ ] Fix material findings and rerun relevant checks on the integrated result.
+- [ ] Update README/TEMPLATES/REVIEW and completion evidence to the actual final
+  capability; leave non-C++/general-frontend/tooling parity visibly open.
+- [ ] Commit tested logical increments, push the authorized branch and verify
+  the remote tip. Mark completion only after all required gates pass; report any
+  exact blocked gate instead of claiming another bounded increment finishes C++.
+
 ## Deferred full-parity work
 
 - [ ] Complete every upstream semantic validator, filters/tags, documentation

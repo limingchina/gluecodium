@@ -1582,7 +1582,208 @@ M13/M14 measurements and the original templates remain unchanged.
 The reviewed increment was pushed through `06222eca6` to
 `origin/ruscodium/rust-port`, with its remote tip independently read back.
 
-### P1b: complete JSON-consuming C++ compatibility backend — remaining work
+### M16 / P1c completion: finish the native C++ generator port
+
+The user's next instruction is to update the plan and **complete the C++
+generator port**, starting from clean `cee48c815` on `ruscodium/rust-port`.
+This is the completion contract for the current work. It supersedes the earlier
+recommendation to stop after another bounded P1b/P1c increment. M15 and all
+earlier reports remain historical evidence; their limited coverage must not be
+rewritten as full parity. Sol 6.1 at max effort owns this plan, Terra 6.1 at
+xhigh effort implements it, and Sol 6.1 at xhigh effort independently reviews
+the final integrated result. Commit this plan/checklist before production edits.
+All committed changes remain under `ruscodium/`, all 315 production Mustache
+templates stay unchanged, and the user's authorization covers incremental
+commits and pushes to `origin/ruscodium/rust-port`.
+
+Recovery checkpoint, 2026-11-14: the managed workspace was replaced before the
+local M16 commits were published. The parent restored the published branch at
+`cee48c815`; this section and its checklist recover planning commit
+`53bdde461d6d4feaf637e51a534ee193c1f3f79f` from retained tool history, with the
+functional inventory/compiler clarifications below. Recovered implementation
+patches follow this new planning commit. Earlier local test results are not
+evidence for the replacement checkout: rebuild and reproduce the completion
+gates, then publish checkpoints promptly for persistence.
+
+#### Definition of completion
+
+The production path is native LIME inputs plus auxiliary inputs and effective
+C++ options through `compile-cpp`, without invoking the JVM, into the unchanged
+templates and all generated `MAIN`/`COMMON` files. A snapshot-only success,
+removed guard, parser success, isolated partial, renamed API or compiled header
+does not complete this contract. The snapshot/library API remains useful as an
+independent backend boundary and must pass the same output checks. Native
+names, predicates, sorting, comments, filtering, includes and inherited-member
+views derive from actual source/model facts. Recorded helper answers, sorted
+orders, includes, rendered comments, generator contexts or JVM computed getter
+projections cannot supply native behavior. Existing legacy replay requests may
+remain explicitly separate for compatibility with old renderer fixtures.
+
+Port the behavior of upstream `CppGenerator`, `CppNameResolver`,
+`CppFullNameResolver`, `CppNameCache`, `CppNameRules`, `CppSignatureResolver`,
+the four include/forward collectors, `CppGeneratorPredicates`,
+`CppSkipAttributesValidator`, `LimeModelFilter`, `LimeModelSkipPredicates`,
+the shared name rules/helpers and Doxygen comments processor as exercised by
+the complete C++ surface. Unsupported feature guards on valid upstream C++
+inputs are remaining implementation work, not acceptable completion results.
+Retain malformed-model/configuration diagnostics, cycle/ownership checks,
+hook isolation, output-path collision checks and render-before-write behavior.
+
+This finishes the C++ generator and its native frontend adaptation for accepted
+C++ models. It does not claim completion of JNI/Java/Kotlin, CBridge/Swift,
+FFI/Dart, all upstream general invalid-input validators, all-platform CLI/build
+integration, caching/distribution or a JVM compiler replacement. General
+validator parity stays separately tracked in P3; C++ skip/signature validation,
+strict C++ scenario outcomes and frontend semantics needed to correctly load
+and generate valid C++ models are mandatory here. A frontend over-rejection of
+a valid C++ fixture cannot be excused by that separate validator boundary.
+
+#### Workstreams and shared interfaces
+
+| Owner | Files and responsibility | Required integration boundary |
+| --- | --- | --- |
+| `cpp_adapter_complete` | `cpp_adapter.rs`, `lib.rs`, `main.rs`: full native model adaptation, frontend corrections and C++ CLI/options | Build authoritative paths, annotations/type attributes, resolved references, literal trees, parents, external descriptors, inherited facts and raw documentation; preserve auxiliary ownership and overload identities |
+| `cpp_backend_complete` | `cpp_generation/mod.rs`, `collect.rs`, new filtering/signature helpers | Apply C++ validation/filtering and derive all file selection, includes, forwards, equality/error enums and inherited overload usings from that graph |
+| `cpp_names_complete` | `template/native_cpp.rs`, `native_controls.rs`, naming-rule helpers | Native configured names/references/values, external/accessor resolution, all C++ predicates and declaration ordering; expose a shared native naming configuration |
+| `cpp_docs_complete` | `template/native_comments.rs`, `cpp_adapter/docs.rs` | Complete Limedoc raw blocks/platform sections and CommonMark/Doxygen processing, references/placeholders and warning behavior |
+| `cpp_completion_oracle` | New `tools/cpp-completion` runner and test-only JVM/export support | Exhaustive live-JVM comparison of native frontend and backend, complete output/source-set inventories and functional compile/runtime evidence |
+| Parent/integrator | `template/mod.rs`, `graph.rs`, Cargo dependency coordination and integration | Correct typed/raw-derived model views and template scope semantics; integrate shared options and run final gates |
+
+Keep graph identity/reference ownership and the public generated-file result
+stable. Extend model/raw-comment shapes additively where possible. Both the
+native options file and snapshot job must express every C++-affecting option:
+root/internal namespaces, export/common-export, copyright contents, active
+tags, custom C++ name-rule properties and documentation warning policy. Native
+loading also receives documentation placeholders. Use one effective option
+meaning across the adapter, backend and resolver; coordinate any shared Rust
+configuration changes before editing another owner's files. Test-only JVM
+export must capture raw facts and effective options, rather than weakening
+production strictness to admit recorded answers.
+
+#### Required capability closure
+
+1. **Model and filtering.** Support all valid C++ declaration/annotation/type
+   positions, explicit/nested/auxiliary references, inherited members, open and
+   narrow types, quoted identifiers and overload disambiguators. Preserve
+   C++-irrelevant platform attributes without rejecting a valid C++ model.
+   Implement generic/platform `Skip`, `EnableIf`, active tags, ancestor
+   retention and referenced-element checks at the same stages as upstream.
+   Match C++-specific skip and signature/overload validation after filtering.
+2. **Names, attributes and external types.** Port configurable rule files and
+   every C++ attribute (`Name`, `Type`, `Accessors`, getter/setter overrides,
+   const/noexcept/reference behavior and their actual placement semantics),
+   default casing/escaping and FQN/reference modes. Resolve external C++ names,
+   headers, namespaces and field accessors; omit external definitions while
+   retaining required includes. Do not reject legal names merely because their
+   original LIME spelling is a C++ keyword; apply upstream naming rules.
+3. **Values.** Adapt and render all `LimeValue` forms: literals, enum/constant
+   references, null, NaN/infinities, initializer lists/key-value pairs, struct
+   initializers, blobs, date/locale/duration values and all time units, including
+   aliases/nullability, multiline/escaped strings and nested containers.
+   Derive value-dependent includes and defaults/constant emission exactly.
+4. **Inheritance and runtime features.** Complete multiple inheritance,
+   inherited overload `using` declarations, override/static/constructor
+   signatures, field constructors, immutable/accessor/equatable/hash behavior,
+   listeners, nested generics, throwing methods/accessors/constructors and
+   async where upstream C++ accepts them. Follow upstream exception payload and
+   error-enum selection, including external/aliased payload distinctions;
+   do not invent a runtime API for models upstream rejects. Generate matching
+   optional, Return/error category, future/async and runtime type support.
+5. **Documentation.** Parse all upstream Limedoc positions, tags, platform
+   sections, links and placeholders. Match CommonMark formatting and Doxygen
+   link/name resolution, code blocks, headings/lists, emphasis, tables/HTML and
+   whitespace wherever accepted by the configured JVM processor. Retain
+   exclusion/deprecation/getter/setter/return/throws comments and match
+   unresolved-link warnings versus requested warning-as-error behavior.
+6. **Whole generation.** Match top-level header/implementation eligibility,
+   external/exception-only/no-output cases, helper/export files, path naming,
+   includes and forward ordering, all nested traversal and source sets.
+   Maintain deterministic complete in-memory results before writes, reject
+   unsafe/colliding paths, and leave existing outputs/stdout intact on failures.
+   Keep the legacy standalone preview clearly distinct from `compile-cpp`.
+
+#### Exact acceptance gates
+
+The completion runner first inventories upstream scenarios dynamically and
+asserts the checkout baseline: **49** smoke directories, **38** with non-ignored
+`output/cpp` references, of which **36** are successful C++ `SmokeTest` scenarios
+and **2** (`strict_fail_immutable`, `strict_fail_internal`) carry
+`validationfail.txt`. These are not the earlier thirteen selected groups.
+Record the remaining eleven scenarios with their live C++ loader/generator
+outcome and actual options; lack of checked-in C++ output is not an implicit
+success or silent exclusion. New inventories may grow with explained source
+changes, but must never shrink the acceptance set.
+
+For every successful C++ scenario, use the same full input/auxiliary sets,
+`commandlineoptions.txt` interpretation, placeholders, naming files, tags and
+defaults as upstream `SmokeTest`. Run both snapshot/library and native
+`compile-cpp` paths and compare the **entire path set, every UTF-8 byte and
+every MAIN/COMMON source set** against a fresh unchanged JVM `CppGenerator`.
+Do not normalize whitespace, drop helper files, compare only checked-in API
+headers, or count a rejection as parity. The strict scenarios must fail at the
+correct validation boundary with no output changes. C++ generator failures in
+other scenarios must match upstream and be separately classified from loader,
+frontend/general-validation, exporter, infrastructure and output failures.
+Native loading may filter the raw LIME AST before common resolution when
+platform alternatives reuse a declaration name, provided its resulting C++
+facts and outputs match upstream filtering. Full unfiltered canonical frontend
+parity is not a prerequisite for C++ generation parity.
+Keep M11/M15 reports immutable and create new completion evidence.
+
+Read `functional-tests/functional/CMakeLists.txt` and inventory all **45**
+`feature(...)` groups selecting `cpp`, retaining their coherent LIME sources
+and handwritten C++ dependencies. The recovered inventory identifies **115**
+LIME files, **92** handwritten C++ sources, **10** upstream C++ test sources
+and **786** generated files for the complete functional model; reproduce these
+counts and their manifests on the restored checkout rather than treating the
+recovered counts as new test results. Generate the complete cpp-selected model
+with its actual `lorem_ipsum::test` internal namespace, tags,
+copyright/placeholders and external headers, then require JVM/native complete
+output and source-set equality. Compile every generated implementation and
+relevant upstream handwritten C++ source, and execute the **10** existing
+`functional/cpp/tests` sources against native generated code. Exercise the
+separate `functional-tests/namerules` custom `cpp.properties` model and
+handwritten implementation as well. Use local available test dependencies or a
+reproducible equivalent harness under `ruscodium/`; do not edit upstream tests
+or delete troublesome features to get a pass. Record compiler/toolchain,
+include paths, defines and any actual upstream JVM consumer failure separately.
+
+Recovered functional checks exposed upstream compiler compatibility issues:
+reorder, unused-parameter and sign-compare warnings, plus a missing `cstdint`
+include. Reproduce and report the strict compiler outcome for unchanged JVM
+and native outputs separately. Any compatibility run that demotes these
+warnings or supplies the missing include must list its exact flags and affected
+sources and be labeled as such; it is not a strict `-Werror` success. Preserve
+byte equality and the strict-consumer evidence independently of such a run.
+
+Add focused live-JVM comparisons for combinations not proved by those suites:
+default/custom namespaces and exports, custom name rules, external aliases,
+tag combinations, skipped inherited overloads, equality in containers,
+all value kinds, async/throws combinations and full documentation/reference
+warning policy. Native raw-fact mutations must change the matching result;
+no adapter success may depend on JVM-generated semantic answers. Compile and
+run strict C++17 consumers (`-Wall -Wextra -Werror`) covering these public API
+and runtime behaviors, with any upstream warning/compiler compatibility issue
+recorded identically for both generators rather than silently relaxing a gate.
+
+Final gates also retain every earlier oracle, all 315-template identity checks,
+345-input parser corpus, output failure/determinism/path guards, formatting,
+offline all-target Clippy with warnings denied, all Rust/Python tooling tests
+and release builds. Pin native revision and binary hashes, JVM jars/version,
+315 template hashes, scenario inputs/options, manifests and consumer commands.
+The runner must exit nonzero on unexpected failures or an incomplete inventory;
+an informational JSON report alone is insufficient. Independent Sol 6.1 xhigh
+review checks native derivation, scenario completeness, strict failure behavior,
+runtime consumers and evidence reproducibility, then material findings are fixed
+and relevant gates rerun before the completion commit/push.
+
+Completion is declared only when these gates pass. If an actual environment or
+upstream defect prevents a gate, identify its exact reproducer and distinguish
+it from remaining port work; do not mark M16 complete or substitute another
+bounded milestone. P2/P3 remain visible after C++ completion without implying
+that all Gluecodium backends or general frontend validation have been ported.
+
+### P1b: historical JSON-consuming C++ compatibility roadmap
 
 Extend M10's snapshot-driven C++ generation and M11's bounded documentation
 profile alongside M12's delivered bounded native adapter toward complete
