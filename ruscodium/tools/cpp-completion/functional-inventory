@@ -37,7 +37,7 @@ def main():
     names = ['functional-tests/namerules/input/lime/NameRules.lime']
     properties(args.output / 'namerules.properties', names, [], ['-input', names[0], '-intnamespace', 'lorem_ipsum.test',
                '-cppnamerules', 'functional-tests/namerules/input/namerules/cpp.properties'])
-    probes = {'filtered-overloads': 'FilteredOverloads.lime', 'overflow': 'Overflow.lime', 'markdown': 'Markdown.lime', 'quoted-names': 'QuotedNames.lime', 'quoted-unicode': 'QuotedUnicode.lime', 'quoted-dots': 'QuotedDots.lime', 'quoted-dots-reference': 'QuotedDotsReference.lime', 'quoted-dots-nested': 'QuotedDotsNested.lime', 'open-interface': 'OpenInterface.lime', 'open-narrow-interface': 'OpenNarrowInterface.lime'}
+    probes = {'filtered-overloads': 'FilteredOverloads.lime', 'overflow': 'Overflow.lime', 'markdown': 'Markdown.lime', 'quoted-names': 'QuotedNames.lime', 'quoted-unicode': 'QuotedUnicode.lime', 'quoted-dots': 'QuotedDots.lime', 'quoted-dots-reference': 'QuotedDotsReference.lime', 'quoted-dots-nested': 'QuotedDotsNested.lime', 'open-interface': 'OpenInterface.lime', 'open-narrow-interface': 'OpenNarrowInterface.lime', 'raw-newline-string': 'RawNewlineString.lime', 'raw-tab-string': 'RawTabString.lime'}
     for name, filename in probes.items():
         path = rel(ROOT / 'ruscodium/tools/cpp-completion/fixtures' / filename)
         properties(args.output / f'{name}.properties', [path], [], ['-input', path, '-intnamespace', 'detail'])
