@@ -239,7 +239,7 @@ pub(crate) fn format_with_diagnostics(
         rewritten.replace_range(range, &value);
     }
     rewritten = normalize_refdefs(&normalize_quotes(&normalize_misc(&normalize_loose_lists(
-        &normalize_blocks(&normalize_list_leading_blocks(&rewritten)),
+        &normalize_blocks(&rewritten),
     ))));
 
     let mut boundaries = Vec::new();
@@ -327,6 +327,7 @@ pub(crate) fn format_with_diagnostics(
             rewritten.replace_range(before..after, "\n\n");
         }
     }
+    rewritten = normalize_list_leading_blocks(&rewritten);
     let diagnostics = missing
         .into_iter()
         .map(|name| DocWarning {
@@ -396,8 +397,19 @@ fn normalize_list_leading_blocks(text: &str) -> String {
                                 let gap = &text[item.marker_end..range.start];
                                 if gap.trim().is_empty() {
                                     if let Some(indent) = block_indent {
+                                        let extra = if matches!(
+                                            tag,
+                                            Tag::CodeBlock(CodeBlockKind::Indented)
+                                        ) {
+                                            text[range.start..range.end]
+                                                .bytes()
+                                                .take_while(|b| *b == b' ')
+                                                .count()
+                                        } else {
+                                            0
+                                        };
                                         edits.push((
-                                            item.marker_end..range.start,
+                                            item.marker_end..range.start + extra,
                                             format!(" \n\n{}", " ".repeat(indent)),
                                         ));
                                     } else if matches!(tag, Tag::Paragraph)
@@ -468,6 +480,25 @@ fn normalize_blocks(text: &str) -> String {
         .into_offset_iter()
         .filter_map(|(e, r)| matches!(e, Event::Code(_)).then_some(r))
         .collect();
+    let mut marker_lines_with_indented_code = BTreeSet::new();
+    let mut item_stack = Vec::new();
+    for (event, range) in Parser::new(text).into_offset_iter() {
+        match event {
+            Event::Start(Tag::Item) => item_stack.push(range.start),
+            Event::End(pulldown_cmark::TagEnd::Item) => {
+                item_stack.pop();
+            }
+            Event::Start(Tag::CodeBlock(pulldown_cmark::CodeBlockKind::Indented)) => {
+                if let Some(start) = item_stack.last() {
+                    if !text[*start..range.start].contains('\n') {
+                        marker_lines_with_indented_code
+                            .insert(text[..*start].rfind('\n').map_or(0, |n| n + 1));
+                    }
+                }
+            }
+            _ => {}
+        }
+    }
     let code_blocks: Vec<_> = Parser::new(text)
         .into_offset_iter()
         .filter_map(|(event, range)| match event {
@@ -574,7 +605,8 @@ fn normalize_blocks(text: &str) -> String {
                             } else {
                                 col + 1
                             }
-                        });
+                        })
+                        + usize::from(spaces == 0);
                     items.push(Item {
                         range: range.clone(),
                         line_start,
@@ -586,10 +618,12 @@ fn normalize_blocks(text: &str) -> String {
                     } else {
                         " ".repeat(list.indent)
                     };
-                    edits.push((
-                        start..start + leading + marker_len + spaces,
-                        format!("{indent}{marker}{suffix}"),
-                    ));
+                    if !marker_lines_with_indented_code.contains(&line_start) {
+                        edits.push((
+                            start..start + leading + marker_len + spaces,
+                            format!("{indent}{marker}{suffix}"),
+                        ));
+                    }
                 }
             }
             Event::Start(Tag::BlockQuote(_)) if !lists.is_empty() => {
@@ -1282,6 +1316,14 @@ mod tests {
         assert_eq!(format(" -    one\n\n      two").unwrap(), "- one\n\n  two");
         assert_eq!(format("-\n  foo").unwrap(), "- foo");
         assert_eq!(format("-   \n  foo").unwrap(), "- foo");
+        assert_eq!(
+            format("- a\n- ```\n  b\n  ```\n- c").unwrap(),
+            "- a\n- \n\n  ```\n  b\n  ```\n- c"
+        );
+        assert_eq!(
+            format("1.      indented code\n\n   paragraph\n\n       more code").unwrap(),
+            "1. \n\n       indented code\n\n   paragraph\n\n       more code"
+        );
     }
     #[test]
     fn unresolved_references_are_returned_as_warnings_or_errors() {
