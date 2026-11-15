@@ -79,11 +79,11 @@ impl Default for Options {
     }
 }
 fn identifier(s: &str) -> bool {
-    let mut bytes = s.bytes();
-    bytes
+    let mut chars = s.chars();
+    chars
         .next()
-        .is_some_and(|c| c.is_ascii_alphabetic() || c == b'_')
-        && bytes.all(|c| c.is_ascii_alphanumeric() || c == b'_')
+        .is_some_and(|c| c == '_' || unicode_ident::is_xid_start(c))
+        && chars.all(|c| c == '_' || unicode_ident::is_xid_continue(c))
 }
 fn cpp_identifier(s: &str) -> bool {
     identifier(s)

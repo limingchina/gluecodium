@@ -970,3 +970,21 @@ fn skipped_unresolved_alias_is_not_resolved_for_cpp() {
     node_mut(&mut job, &attrs)["properties"]["attributes"] = json!({});
     assert!(generate(TEMPLATES, &job).is_err());
 }
+
+#[test]
+fn unicode_namespaces_generate_valid_paths_and_scopes() {
+    let mut job = fixture("default");
+    rename_package(&mut job, ["oracle", "basic"], ["réview", "内部"]);
+    job["options"]["root_namespace"] = json!(["équipe"]);
+    job["options"]["internal_namespace"] = json!(["内部"]);
+    let generated = generate(TEMPLATES, &job).unwrap();
+    let header = generated
+        .iter()
+        .find(|f| f.path == Path::new("cpp/include/équipe/réview/内部/Data.h"))
+        .unwrap();
+    assert!(header.contents.contains("namespace équipe {"));
+    assert!(header.contents.contains("namespace réview {"));
+    assert!(header.contents.contains("namespace 内部 {"));
+    job["options"]["root_namespace"] = json!(["invalid/path"]);
+    assert!(generate(TEMPLATES, &job).is_err());
+}
