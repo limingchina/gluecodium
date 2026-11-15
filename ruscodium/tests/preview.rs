@@ -338,9 +338,8 @@ fn numeric_and_cr_newline_edges() {
     }
     let e = parse("x", "package x\r# comment\rstruct S { v: }\r", false).unwrap_err();
     assert!(e.contains("x:3:"), "{e}");
-    assert!(parse("x", "package x\nstruct `a.b` { v: Int }\n", false)
-        .unwrap_err()
-        .contains("containing dots"));
+    let quoted = parse("x", "package x\nstruct `a.b` { v: Int }\n", false).unwrap();
+    assert_eq!(quoted.declarations[0].name, "a.b");
 }
 #[test]
 fn cpp_function_overloads() {

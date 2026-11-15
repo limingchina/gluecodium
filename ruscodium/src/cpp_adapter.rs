@@ -1122,7 +1122,7 @@ impl Builder {
                         if types.len() != 2 {
                             return Err("map initializer requires a map type".into());
                         }
-                        for pair in l.children.chunks_exact(2) {
+                        for pair in l.children.as_chunks::<2>().0 {
                             let kt = self.type_ref(&types[0])?;
                             let vt = self.type_ref(&types[1])?;
                             let key = self.literal(&pair[0], &kt, Some(&types[0]), scope)?;
@@ -1694,7 +1694,7 @@ impl Builder {
                         .get(&key)
                         .ok_or("unknown field constructor field")?
                         .clone();
-                    let a = self.attr(None)?;
+                    let a = self.attributes(&param.annotations)?;
                     fields.push(self.node("LimeLazyFieldRef", json!({"attributes":a,"element":f})));
                 }
                 p["fieldRefs"] = json!(fields);

@@ -361,3 +361,18 @@ fn lime_strings_accept_literal_newlines_and_tabs() {
             && n["properties"]["value"] == "line one\nline\ttwo"
     ));
 }
+
+#[test]
+fn field_constructor_reference_retains_annotations() {
+    let value = job("package sample\nstruct Item {\nvalue: Int\nfield constructor(@Cpp(\"renamed\") value)\n}\n").unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    let field_ref = nodes
+        .iter()
+        .find(|n| n["class"].as_str().unwrap().ends_with("LimeLazyFieldRef"))
+        .unwrap();
+    let id = field_ref["properties"]["attributes"]["$ref"]
+        .as_str()
+        .unwrap();
+    let attrs = nodes.iter().find(|n| n["id"] == id).unwrap();
+    assert_eq!(attrs["properties"]["attributes"]["CPP"]["NAME"], "renamed");
+}
