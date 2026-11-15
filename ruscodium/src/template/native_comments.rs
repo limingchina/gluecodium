@@ -530,7 +530,15 @@ fn normalize_blocks(text: &str) -> String {
                     let body = line.strip_suffix('\n').unwrap_or(line);
                     let left = body.len() - body.trim_start_matches([' ', '\t']).len();
                     if !body.trim().is_empty() && !body[left..].starts_with('>') {
+                        let after_open_bracket = line_start > 0
+                            && text[..line_start]
+                                .trim_end_matches('\n')
+                                .rsplit('\n')
+                                .next()
+                                == Some("[")
+                            && body[left..].starts_with(']');
                         if left > 0
+                            && !after_open_bracket
                             && !inline_code
                                 .iter()
                                 .any(|r| r.start < line_start + left && line_start < r.end)
@@ -728,6 +736,49 @@ fn normalize_refdefs(text: &str) -> String {
         if trailing > 0 {
             edits.push((range.end - trailing..range.end, String::new()));
         }
+        let after = &text[range.end..];
+        let trailing = after
+            .bytes()
+            .take_while(|b| *b == b' ' || *b == b'\t')
+            .count();
+        if trailing > 0
+            && (range.end + trailing == text.len() || after[trailing..].starts_with('\n'))
+        {
+            edits.push((range.end..range.end + trailing, String::new()));
+        }
+    }
+    // Flexmark groups consecutive reference definitions, including repeated
+    // labels. Pulldown's reference map keeps only the first definition.
+    let protected: Vec<_> = Parser::new(text)
+        .into_offset_iter()
+        .filter_map(|(event, range)| {
+            matches!(event, Event::Start(Tag::CodeBlock(_) | Tag::HtmlBlock)).then_some(range)
+        })
+        .collect();
+    let mut at = 0;
+    let mut previous: Option<usize> = None;
+    for line in text.split_inclusive('\n') {
+        let body = line.trim();
+        if body.is_empty() {
+            at += line.len();
+            continue;
+        }
+        let label = body.strip_prefix('[').and_then(|s| s.split_once("]:"));
+        let definition = !protected
+            .iter()
+            .any(|range| range.start <= at && at < range.end)
+            && label.is_some_and(|(name, _)| parser.reference_definitions().get(name).is_some());
+        if definition {
+            if let Some(end) = previous {
+                if text[end..at].matches('\n').count() > 1 {
+                    edits.push((end..at, "\n".into()));
+                }
+            }
+            previous = Some(at + line.trim_end_matches('\n').len());
+        } else {
+            previous = None;
+        }
+        at += line.len();
     }
     apply_edits(text, edits)
 }
@@ -935,8 +986,22 @@ fn normalize_misc(text: &str) -> String {
             }
             Event::Start(Tag::Heading { .. }) => {
                 let heading = &text[range.clone()];
-                let mut lines = heading.lines();
-                if let (Some(first), Some(last)) = (lines.next(), lines.next()) {
+                let lines: Vec<_> = heading.lines().collect();
+                if lines.len() > 2 {
+                    let last = lines.last().unwrap().trim();
+                    if !last.is_empty()
+                        && (last.bytes().all(|c| c == b'-') || last.bytes().all(|c| c == b'='))
+                    {
+                        let mut at = range.start;
+                        for line in &lines[..lines.len() - 1] {
+                            let end = line.trim_end_matches([' ', '\t']).len();
+                            if end < line.len() {
+                                edits.push((at + end..at + line.len(), String::new()));
+                            }
+                            at += line.len() + 1;
+                        }
+                    }
+                } else if let [first, last] = lines.as_slice() {
                     let marker = last.trim();
                     if !marker.is_empty()
                         && (marker.bytes().all(|c| c == b'-') || marker.bytes().all(|c| c == b'='))
@@ -1312,6 +1377,18 @@ mod tests {
         assert_eq!(
             format("<table>\n\n  <tr>\n\n</table>").unwrap(),
             "<table>\n\n  <tr>\n\n</table>"
+        );
+        assert_eq!(
+            format("[foo]: /url1\n\n[foo]: /url2\n\n[bar][foo]").unwrap(),
+            "[foo]: /url1\n[foo]: /url2\n\n[bar][foo]"
+        );
+        assert_eq!(
+            format("[\n ]\n\n[\n ]: /uri").unwrap(),
+            "[\n ]\n\n[\n ]: /uri"
+        );
+        assert_eq!(
+            format("Foo *bar\nbaz*\t\n====").unwrap(),
+            "Foo *bar\nbaz*\n===="
         );
     }
 
