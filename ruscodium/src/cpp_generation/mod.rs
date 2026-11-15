@@ -2193,3 +2193,54 @@ fn validate_literal(graph: &Graph, literal: &Value) -> Result<(), String> {
     }
     Ok(())
 }
+
+#[cfg(test)]
+mod model_tests {
+    use super::*;
+
+    #[test]
+    fn signature_names_follow_cpp_rules_even_for_external_functions() {
+        let bytes = std::fs::read(
+            std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+                .join("tests/cpp-generation-goldens/default/job.json"),
+        )
+        .unwrap();
+        let job: Value = serde_json::from_slice(&bytes).unwrap();
+        let mut graph = Graph::import_with_absences(
+            job.get("snapshot"),
+            job.get("property_overlays"),
+            job.get("absent_properties"),
+        )
+        .unwrap();
+        let function = json!({"$ref":"n36"});
+        let mut descriptor = graph.nodes["n94"].clone();
+        descriptor.class = "com.here.gluecodium.model.lime.LimeExternalDescriptor".into();
+        descriptor.properties = serde_json::Map::from_iter([(
+            "descriptors".into(),
+            json!({"cpp":{"name":"external_name"}}),
+        )]);
+        graph
+            .nodes
+            .insert("signature-test-descriptor".into(), descriptor);
+        graph.nodes.get_mut("n36").unwrap().properties.insert(
+            "external".into(),
+            json!({"$ref":"signature-test-descriptor"}),
+        );
+        let config = NativeCppConfig::default();
+        assert_eq!(
+            function_signature_name(&graph, &config, &function).unwrap(),
+            "run"
+        );
+        let attributes = field(&graph, &function, "attributes").unwrap();
+        graph
+            .nodes
+            .get_mut(ref_id(&attributes).unwrap())
+            .unwrap()
+            .properties
+            .insert("attributes".into(), json!({"CPP":{"NAME":"renamed"}}));
+        assert_eq!(
+            function_signature_name(&graph, &config, &function).unwrap(),
+            "renamed"
+        );
+    }
+}
