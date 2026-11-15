@@ -249,7 +249,14 @@ fn filter_declarations(decls: &mut Vec<Decl>, tags: &[String], cpp: bool) -> Res
                 && matches(get("SKIP", "TAG"), tags) != Some(true)
         };
         if keep {
-            if d.kind != "property" {
+            if d.kind == "property" {
+                if d.children.len() == 2 {
+                    let setter = d.children.pop().unwrap();
+                    let mut selected = vec![setter];
+                    filter_declarations(&mut selected, tags, cpp)?;
+                    d.children.extend(selected);
+                }
+            } else {
                 filter_declarations(&mut d.children, tags, cpp)?;
             }
             kept.push(d);
@@ -260,6 +267,10 @@ fn filter_declarations(decls: &mut Vec<Decl>, tags: &[String], cpp: bool) -> Res
 }
 fn validate_cpp_skip(decls: &[Decl]) -> Result<(), String> {
     for d in decls {
+        // Getter and setter functions are not in the loader's reference map.
+        if d.kind == "accessor" {
+            continue;
+        }
         let attrs = annotation_map(&d.annotations)?;
         let skip = attrs.get("CPP").and_then(|v| v.get("SKIP"));
         if skip.is_some_and(|v| *v != Value::Bool(false))
@@ -1707,9 +1718,6 @@ impl Builder {
                     };
                     self.update_comment(&setter_comment, &setter_path, &setter_doc);
                 } else {
-                    if doc.blocks.contains_key(&("set".into(), String::new())) {
-                        return Err("setter documentation on readonly property".into());
-                    }
                     p["setter"] = Value::Null;
                 }
             }

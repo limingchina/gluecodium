@@ -403,3 +403,20 @@ fn constructor_after_construction_retains_resolved_call_and_parameters() {
     )
     .is_ok());
 }
+
+#[test]
+fn property_filter_keeps_getter_and_filters_setter() {
+    let source = "package sample\ninterface Service {\nproperty value: Int {\n@Cpp(Skip)\nget\n@Skip(\"lite\")\nset\n}\n}\n";
+    let options = Options {
+        tags: vec!["lite".into()],
+        ..Options::default()
+    };
+    let value = cpp_adapter::build_job(&model(source), &options).unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    let prop = nodes
+        .iter()
+        .find(|n| n["class"].as_str().unwrap().ends_with("LimeProperty"))
+        .unwrap();
+    assert!(prop["properties"]["getter"].is_object());
+    assert!(prop["properties"]["setter"].is_null());
+}
