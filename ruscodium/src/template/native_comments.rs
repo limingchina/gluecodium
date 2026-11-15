@@ -412,6 +412,12 @@ fn normalize_list_leading_blocks(text: &str) -> String {
                                             item.marker_end..range.start + extra,
                                             format!(" \n\n{}", " ".repeat(indent)),
                                         ));
+                                        if matches!(tag, Tag::Heading { .. } | Tag::HtmlBlock)
+                                            && range.end < text.len()
+                                            && !text[range.end..].starts_with('\n')
+                                        {
+                                            edits.push((range.end..range.end, "\n".into()));
+                                        }
                                     } else if matches!(tag, Tag::Paragraph)
                                         && gap.matches('\n').count() == 1
                                     {
@@ -945,9 +951,17 @@ fn normalize_misc(text: &str) -> String {
                         }
                         edits.push((
                             at..at + last.len(),
-                            (marker.as_bytes()[0] as char)
-                                .to_string()
-                                .repeat(first.trim().chars().count().max(3)),
+                            format!(
+                                "{}{}",
+                                if list_depth > 0 {
+                                    &last[..last.len() - last.trim_start_matches([' ', '\t']).len()]
+                                } else {
+                                    ""
+                                },
+                                (marker.as_bytes()[0] as char)
+                                    .to_string()
+                                    .repeat(first.trim().chars().count().max(3)),
+                            ),
                         ));
                     }
                 } else if let Some(first) = heading.lines().next() {
@@ -1324,6 +1338,11 @@ mod tests {
             format("1.      indented code\n\n   paragraph\n\n       more code").unwrap(),
             "1. \n\n       indented code\n\n   paragraph\n\n       more code"
         );
+        assert_eq!(
+            format("- # Foo\n- Bar\n  ---\n  baz").unwrap(),
+            "- \n\n  # Foo\n\n- \n\n  Bar\n  ---\n\n  baz"
+        );
+        assert_eq!(format("- <div>\n- foo").unwrap(), "- \n\n  <div>\n\n- foo");
     }
     #[test]
     fn unresolved_references_are_returned_as_warnings_or_errors() {
