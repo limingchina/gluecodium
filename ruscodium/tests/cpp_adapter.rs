@@ -420,3 +420,43 @@ fn property_filter_keeps_getter_and_filters_setter() {
     assert!(prop["properties"]["getter"].is_object());
     assert!(prop["properties"]["setter"].is_null());
 }
+
+#[test]
+fn imports_validate_before_tag_filter_and_types_resolve_after_it() {
+    let main = parse(
+        "main.lime",
+        "package sample\nimport hidden.Hidden\nclass Item {}\n",
+        false,
+    )
+    .unwrap();
+    let hidden = parse(
+        "hidden.lime",
+        "package hidden\n@Skip(\"lite\")\nclass Hidden {}\n",
+        false,
+    )
+    .unwrap();
+    let options = Options {
+        tags: vec!["lite".into()],
+        ..Options::default()
+    };
+    let m = Model {
+        schema_version: 1,
+        files: vec![main, hidden],
+    };
+    assert!(cpp_adapter::build_job(&m, &options).is_ok());
+    let mut missing = m.clone();
+    missing.files[0].imports[0] = "hidden.Missing".into();
+    assert!(cpp_adapter::build_job(&missing, &options)
+        .unwrap_err()
+        .contains("unresolved import"));
+    let mut used = m.clone();
+    used.files[0] = parse(
+        "main.lime",
+        "package sample\nimport hidden.Hidden\nstruct Item { value: Hidden }\n",
+        false,
+    )
+    .unwrap();
+    assert!(cpp_adapter::build_job(&used, &options)
+        .unwrap_err()
+        .contains("unresolved type"));
+}

@@ -1791,6 +1791,30 @@ pub fn build_job(model: &Model, options: &Options) -> Result<Value, String> {
     if model.files.is_empty() || model.files.iter().all(|f| f.auxiliary) {
         return Err("at least one main file is required".into());
     }
+    // The JVM validates imports against the original unfiltered loader model.
+    // Resolve actual type references later against the retained C++ declarations.
+    fn index_imports(decls: &[Decl], scope: &str, out: &mut BTreeSet<String>) {
+        for d in decls {
+            if d.name.is_empty() || matches!(d.kind.as_str(), "accessor" | "field_constructor") {
+                continue;
+            }
+            let name = format!("{scope}.{}", d.name);
+            out.insert(name.clone());
+            index_imports(&d.params, &name, out);
+            index_imports(&d.children, &name, out);
+        }
+    }
+    let mut original_names = BTreeSet::new();
+    for f in &model.files {
+        index_imports(&f.declarations, &f.package, &mut original_names);
+    }
+    for f in &model.files {
+        for import in &f.imports {
+            if !original_names.contains(import) {
+                return Err(format!("{}: unresolved import {import}", f.path));
+            }
+        }
+    }
     let mut paths = BTreeSet::new();
     for f in &mut model.files {
         if f.path.is_empty()

@@ -1395,7 +1395,7 @@ fn resolve_impl(model: &mut Model, allow_duplicate_members: bool) -> Result<(), 
     }
     for f in &mut model.files {
         for i in &f.imports {
-            if !symbols.contains_key(i) {
+            if !allow_duplicate_members && !symbols.contains_key(i) {
                 return Err(format!("{}: unresolved import {i}", f.path));
             }
         }
