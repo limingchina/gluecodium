@@ -151,7 +151,7 @@ fn annotation_map(annotations: &[crate::Annotation]) -> Result<Map<String, Value
         for entry in &annotation.values {
             let mut decoded = Vec::new();
             for v in &entry.values {
-                let v: String = serde_json::from_str(v).map_err(|_| "invalid annotation string")?;
+                let v = crate::decode_lime_string(v).map_err(|_| "invalid annotation string")?;
                 decoded.push(Value::String(
                     if attr == "DEPRECATED" || attr == "AFTER_CONSTRUCTION" {
                         v
@@ -710,7 +710,7 @@ impl Builder {
         };
         let mut result: BTreeMap<String, BTreeMap<String, String>> = BTreeMap::new();
         for entry in &descriptor.values {
-            let value: String = serde_json::from_str(&entry.value)
+            let value = crate::decode_lime_string(&entry.value)
                 .map_err(|_| "invalid external descriptor string")?;
             result
                 .entry(entry.platform.to_ascii_lowercase())
@@ -1191,17 +1191,7 @@ impl Builder {
             }
         }
         let value = match l.kind.as_str() {
-            "string" => {
-                if let Some(content) = l
-                    .raw
-                    .strip_prefix("\"\"\"")
-                    .and_then(|s| s.strip_suffix("\"\"\""))
-                {
-                    content.to_owned()
-                } else {
-                    serde_json::from_str::<String>(&l.raw).map_err(|_| "invalid string literal")?
-                }
-            }
+            "string" => crate::decode_lime_string(&l.raw)?,
             "boolean" => l.raw.clone(),
             "number" => raw.strip_prefix('+').unwrap_or(raw).to_string(),
             _ => return Err("unsupported literal".into()),

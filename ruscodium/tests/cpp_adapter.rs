@@ -350,3 +350,14 @@ fn quoted_names_and_open_interfaces_are_supported() {
     )
     .is_ok());
 }
+
+#[test]
+fn lime_strings_accept_literal_newlines_and_tabs() {
+    let value =
+        job("package sample\nstruct Item { value: String = \"line one\nline\ttwo\" }\n").unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    assert!(nodes.iter().any(
+        |n| n["class"].as_str().unwrap().ends_with("LimeValue$Literal")
+            && n["properties"]["value"] == "line one\nline\ttwo"
+    ));
+}

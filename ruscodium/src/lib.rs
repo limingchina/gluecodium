@@ -128,6 +128,39 @@ fn valid_number(s: &str) -> bool {
     digits(mantissa) && (exp.is_some() || mantissa.len() == 1 || !mantissa.starts_with('0'))
 }
 
+/// Decode a LIME string literal. LIME permits literal tabs and newlines in
+/// ordinary quoted strings, unlike JSON, and has a smaller set of escapes.
+pub(crate) fn decode_lime_string(raw: &str) -> Result<String, String> {
+    if let Some(value) = raw
+        .strip_prefix("\"\"\"")
+        .and_then(|s| s.strip_suffix("\"\"\""))
+    {
+        return Ok(value.to_owned());
+    }
+    let value = raw
+        .strip_prefix('"')
+        .and_then(|s| s.strip_suffix('"'))
+        .ok_or("invalid string literal")?;
+    let mut result = String::new();
+    let mut chars = value.chars();
+    while let Some(c) = chars.next() {
+        if c != '\\' {
+            result.push(c);
+            continue;
+        }
+        result.push(match chars.next() {
+            Some('t') => '\t',
+            Some('b') => '\u{8}',
+            Some('r') => '\r',
+            Some('n') => '\n',
+            Some('"') => '"',
+            Some('\\') => '\\',
+            _ => return Err("invalid string escape".into()),
+        });
+    }
+    Ok(result)
+}
+
 pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
     let mut out = Vec::new();
     let mut i = 0;
@@ -202,9 +235,6 @@ pub fn lex(path: &str, src: &str) -> Result<Vec<Token>, String> {
                             "invalid string escape",
                         ));
                     }
-                }
-                if b[n] == b'\n' || b[n] == b'\r' {
-                    break;
                 }
                 n += 1;
             }
