@@ -1394,9 +1394,64 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                 .get("attributes")
                 .and_then(Value::as_object)
                 .ok_or("invalid attributes")?;
-            for value in attrs.values() {
-                if !value.is_object() {
-                    return Err("invalid attribute group".into());
+            const GROUPS: &[&str] = &[
+                "AFTER_CONSTRUCTION",
+                "CPP",
+                "JAVA",
+                "KOTLIN",
+                "SWIFT",
+                "DART",
+                "ASYNC",
+                "ASYNC_DECORATOR",
+                "ASYNC_TASK_HANDLE",
+                "CACHED",
+                "DEPRECATED",
+                "ENABLE_IF",
+                "EQUATABLE",
+                "IMMUTABLE",
+                "INTERNAL",
+                "NO_CACHE",
+                "OPTIMIZED",
+                "OVERLOADED",
+                "SERIALIZABLE",
+                "SKIP",
+            ];
+            const KEYS: &[&str] = &[
+                "NAME",
+                "ACCESSORS",
+                "ATTRIBUTE",
+                "CALLBACK",
+                "CONST",
+                "DEFAULT",
+                "ENABLE_IF",
+                "ENUM_VALUES",
+                "ERROR",
+                "FULL_NAME",
+                "FUNCTION_NAME",
+                "FUNCTION",
+                "INTERNAL",
+                "LABEL",
+                "MESSAGE",
+                "NOEXCEPT",
+                "OPTION_SET",
+                "PARAMETER_DEFAULTS",
+                "POSITIONAL_DEFAULTS",
+                "PUBLIC",
+                "REF",
+                "RESULT",
+                "SKIP",
+                "TAG",
+                "TYPE",
+                "TO_STRING",
+                "WEAK",
+            ];
+            for (group, value) in attrs {
+                if !GROUPS.contains(&group.as_str()) {
+                    return Err(format!("invalid attribute group {group}"));
+                }
+                let entries = value.as_object().ok_or("invalid attribute group")?;
+                if let Some(key) = entries.keys().find(|k| !KEYS.contains(&k.as_str())) {
+                    return Err(format!("invalid attribute key {key}"));
                 }
             }
         }

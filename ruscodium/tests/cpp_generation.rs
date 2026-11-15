@@ -988,3 +988,17 @@ fn unicode_namespaces_generate_valid_paths_and_scopes() {
     job["options"]["root_namespace"] = json!(["invalid/path"]);
     assert!(generate(TEMPLATES, &job).is_err());
 }
+
+#[test]
+fn rejects_unknown_raw_attribute_groups_and_keys() {
+    let mut job = fixture("default");
+    let id = node_id(&job, "LimeStruct", "Data");
+    let attr = node_mut(&mut job, &id)["properties"]["attributes"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    node_mut(&mut job, &attr)["properties"]["attributes"] = json!({"NOT_AN_ATTRIBUTE":{}});
+    assert!(generate(TEMPLATES, &job).is_err());
+    node_mut(&mut job, &attr)["properties"]["attributes"] = json!({"CPP":{"NOT_A_VALUE":true}});
+    assert!(generate(TEMPLATES, &job).is_err());
+}
