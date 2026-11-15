@@ -16,7 +16,7 @@ def main():
  for label,output in [('jvm','files'),('native','lime-files')]:
   functional=capture/'functional';base=[HERE/'compile-functional.py','--inventory',functional/'inventory/functional-inventory.json','--generated',functional/'functional'/output,'--expected-inventory',functional/'functional/manifest.json','--gtest-source',args.gtest_source.resolve(),'--jobs',args.jobs,'--collect-errors']
   call('consumer-'+label+'-strict',[*base,'--output',capture/('consumer-'+label+'-strict'),'--label',label+'-strict'])
-  call('consumer-'+label+'-compatibility',[*base,'--output',capture/('consumer-'+label+'-compatibility'),'--label',label+'-compatibility','--upstream-warning','reorder','--upstream-warning','unused-parameter','--upstream-warning','sign-compare','--upstream-warning','unused-result','--upstream-include','cstdint'])
+  call('consumer-'+label+'-compatibility',[*base,'--output',capture/('consumer-'+label+'-compatibility'),'--label',label+'-compatibility','--upstream-warning','reorder','--upstream-warning','unused-parameter','--upstream-warning','sign-compare','--upstream-warning','unused-result','--upstream-warning','unused-variable','--upstream-include','cstdint'])
   call('namerules-consumer-'+label,[HERE/'compile-namerules.py','--generated',functional/'namerules'/output,'--output',capture/('namerules-consumer-'+label),'--label',label])
  print('Completion gate results:',', '.join(f'{name}={status}' for name,status in statuses),flush=True)
  if any(status for _,status in statuses):raise SystemExit(1)
