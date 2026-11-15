@@ -46,7 +46,7 @@ def main():
  p=argparse.ArgumentParser(description=__doc__)
  for name in ('inventory','generated','expected-inventory','gtest-source','output'):p.add_argument('--'+name,required=True,type=Path)
  p.add_argument('--label',required=True);p.add_argument('--compiler',default=os.environ.get('CXX','c++'));p.add_argument('--jobs',type=int,default=2)
- p.add_argument('--upstream-warning',action='append',default=[],choices=('reorder','unused-parameter','sign-compare'))
+ p.add_argument('--upstream-warning',action='append',default=[],choices=('reorder','unused-parameter','sign-compare','unused-result'))
  p.add_argument('--upstream-include',action='append',default=[],choices=('cstdint',));p.add_argument('--collect-errors',action='store_true');args=p.parse_args()
  if args.jobs<1:p.error('--jobs must be positive')
  generated=args.generated.resolve();gtest=args.gtest_source.resolve();compiler=shutil.which(args.compiler)

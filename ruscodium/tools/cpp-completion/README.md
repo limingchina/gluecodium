@@ -34,7 +34,7 @@ compiles all generated and upstream handwritten functional C++ and all ten
 upstream GTest sources. The pinned CommonMark specification attribution is in
 `commonmark/ATTRIBUTION.md`. Strict builds and compatibility builds are separate:
 the latter record explicit upstream warning exceptions (`reorder`,
-`unused-parameter`, `sign-compare`) and forced `<cstdint>` for known JVM output
+`unused-parameter`, `sign-compare`, `unused-result`) and forced `<cstdint>` for known JVM output
 and source issues. Strict failures remain failures when compatibility succeeds.
 The naming consumer similarly records an upstream unused-parameter warning and
 runs a separately labeled compatibility compile.
