@@ -239,7 +239,7 @@ pub(crate) fn format_with_diagnostics(
         rewritten.replace_range(range, &value);
     }
     rewritten = normalize_refdefs(&normalize_quotes(&normalize_misc(&normalize_loose_lists(
-        &normalize_blocks(&rewritten),
+        &normalize_blocks(&normalize_list_leading_blocks(&rewritten)),
     ))));
 
     let mut boundaries = Vec::new();
@@ -335,6 +335,118 @@ pub(crate) fn format_with_diagnostics(
         })
         .collect();
     Ok((trim(&rewritten).to_owned(), diagnostics))
+}
+
+/// Put a leading block on its own line inside a list item, and join a simple
+/// continuation paragraph to an otherwise empty marker.
+fn normalize_list_leading_blocks(text: &str) -> String {
+    use pulldown_cmark::{CodeBlockKind, TagEnd};
+    struct Item {
+        marker_end: usize,
+        indent: usize,
+        first: bool,
+    }
+    let mut stack = Vec::new();
+    let mut items: Vec<Option<Item>> = Vec::new();
+    let mut edits = Vec::new();
+    for (event, range) in Parser::new(text).into_offset_iter() {
+        match event {
+            Event::Start(tag) => {
+                if matches!(tag, Tag::Item) {
+                    let line_start = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                    let prefix = &text[line_start..range.start];
+                    let candidate = if prefix.trim().is_empty() {
+                        let line_end = text[range.start..]
+                            .find('\n')
+                            .map_or(text.len(), |n| range.start + n);
+                        let line = &text[line_start..line_end];
+                        let leading = line.len() - line.trim_start_matches([' ', '\t']).len();
+                        let tail = &line[leading..];
+                        let digits = tail.bytes().take_while(u8::is_ascii_digit).count();
+                        let marker_len = if tail.starts_with(['-', '+', '*']) {
+                            1
+                        } else if digits > 0
+                            && matches!(tail.as_bytes().get(digits), Some(b'.' | b')'))
+                        {
+                            digits + 1
+                        } else {
+                            0
+                        };
+                        (marker_len > 0).then_some(Item {
+                            marker_end: line_start + leading + marker_len,
+                            indent: leading + marker_len + 1,
+                            first: true,
+                        })
+                    } else {
+                        None
+                    };
+                    items.push(candidate);
+                } else if stack.last() == Some(&TagEnd::Item) {
+                    if let Some(Some(item)) = items.last_mut() {
+                        if item.first {
+                            item.first = false;
+                            let block_indent = match &tag {
+                                Tag::CodeBlock(CodeBlockKind::Indented) => Some(item.indent + 4),
+                                Tag::CodeBlock(_) | Tag::Heading { .. } | Tag::HtmlBlock => {
+                                    Some(item.indent)
+                                }
+                                _ => None,
+                            };
+                            if range.start >= item.marker_end {
+                                let gap = &text[item.marker_end..range.start];
+                                if gap.trim().is_empty() {
+                                    if let Some(indent) = block_indent {
+                                        edits.push((
+                                            item.marker_end..range.start,
+                                            format!(" \n\n{}", " ".repeat(indent)),
+                                        ));
+                                    } else if matches!(tag, Tag::Paragraph)
+                                        && gap.matches('\n').count() == 1
+                                    {
+                                        edits.push((item.marker_end..range.start, " ".into()));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                stack.push(tag.to_end());
+            }
+            Event::Text(_) if stack.last() == Some(&TagEnd::Item) => {
+                if let Some(Some(item)) = items.last_mut() {
+                    if item.first && range.start >= item.marker_end {
+                        item.first = false;
+                        let gap = &text[item.marker_end..range.start];
+                        if gap.trim().is_empty() && gap.matches('\n').count() == 1 {
+                            edits.push((item.marker_end..range.start, " ".into()));
+                        }
+                    }
+                }
+            }
+            Event::Rule if stack.last() == Some(&TagEnd::Item) => {
+                if let Some(Some(item)) = items.last_mut() {
+                    if item.first && range.start >= item.marker_end {
+                        item.first = false;
+                        let gap = &text[item.marker_end..range.start];
+                        if gap.trim().is_empty() {
+                            edits.push((
+                                item.marker_end..range.start,
+                                format!(" \n\n{}", " ".repeat(item.indent)),
+                            ));
+                        }
+                    }
+                }
+            }
+            Event::End(tag) => {
+                if matches!(tag, TagEnd::Item) {
+                    items.pop();
+                }
+                stack.pop();
+            }
+            _ => {}
+        }
+    }
+    apply_edits(text, edits)
 }
 
 fn normalize_blocks(text: &str) -> String {
@@ -1168,6 +1280,8 @@ mod tests {
             "1. A paragraph\n   with two lines.\n\n       indented code\n\n   > A block quote."
         );
         assert_eq!(format(" -    one\n\n      two").unwrap(), "- one\n\n  two");
+        assert_eq!(format("-\n  foo").unwrap(), "- foo");
+        assert_eq!(format("-   \n  foo").unwrap(), "- foo");
     }
     #[test]
     fn unresolved_references_are_returned_as_warnings_or_errors() {
