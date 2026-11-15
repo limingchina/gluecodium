@@ -37,7 +37,10 @@ the latter record explicit upstream warning exceptions (`reorder`,
 `unused-parameter`, `sign-compare`, `unused-result`, `unused-variable`) and forced `<cstdint>` for known JVM output
 and source issues. Strict failures remain failures when compatibility succeeds.
 The naming consumer similarly records an upstream unused-parameter warning and
-runs a separately labeled compatibility compile.
+runs a separately labeled compatibility compile. The aggregate gate accepts
+these strict failures only after `consumer-parity.py` matches the known
+source, line, and diagnostic catalog and compares every JVM/native compilation
+and runtime result. The strict reports themselves remain failed.
 
 Use `functional-inventory --output DIR` to regenerate the feature/source
 inventory and Java-properties manifests. Individual `run`, `functional-check`,

@@ -18,6 +18,17 @@ def main():
   call('consumer-'+label+'-strict',[*base,'--output',capture/('consumer-'+label+'-strict'),'--label',label+'-strict'])
   call('consumer-'+label+'-compatibility',[*base,'--output',capture/('consumer-'+label+'-compatibility'),'--label',label+'-compatibility','--upstream-warning','reorder','--upstream-warning','unused-parameter','--upstream-warning','sign-compare','--upstream-warning','unused-result','--upstream-warning','unused-variable','--upstream-include','cstdint'])
   call('namerules-consumer-'+label,[HERE/'compile-namerules.py','--generated',functional/'namerules'/output,'--output',capture/('namerules-consumer-'+label),'--label',label])
+ functional=capture/'functional'
+ call('consumer-parity',[HERE/'consumer-parity.py','--functional-report',capture/'functional.json',
+  '--jvm-strict',capture/'consumer-jvm-strict/report.json','--native-strict',capture/'consumer-native-strict/report.json',
+  '--jvm-compat',capture/'consumer-jvm-compatibility/report.json','--native-compat',capture/'consumer-native-compatibility/report.json',
+  '--jvm-generated',functional/'functional/files','--native-generated',functional/'functional/lime-files',
+  '--jvm-names',capture/'namerules-consumer-jvm/report.json','--native-names',capture/'namerules-consumer-native/report.json',
+  '--jvm-names-generated',functional/'namerules/files','--native-names-generated',functional/'namerules/lime-files',
+  '--report',capture/'consumer-parity.json'])
  print('Completion gate results:',', '.join(f'{name}={status}' for name,status in statuses),flush=True)
- if any(status for _,status in statuses):raise SystemExit(1)
+ # Strict commands intentionally fail for catalogued upstream diagnostics.
+ # Only the independently checked parity result can accept these failures.
+ expected_strict={'consumer-jvm-strict','consumer-native-strict','namerules-consumer-jvm','namerules-consumer-native'}
+ if any(status for name,status in statuses if name not in expected_strict):raise SystemExit(1)
 if __name__=='__main__':main()

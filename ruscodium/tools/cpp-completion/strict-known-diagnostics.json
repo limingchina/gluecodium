@@ -1,0 +1,182 @@
+{
+  "schema": "gluecodium.cpp-upstream-strict-diagnostics",
+  "version": 1,
+  "compiler_sha256": "6b3696e4dcb85e1c949c732a02befa50e3983ecf94ce7e8e58d9d503b954b79d",
+  "compiler_version": "c++ (Debian 14.2.0-19) 14.2.0\nCopyright (C) 2024 Free Software Foundation, Inc.\nThis is free software; see the source for copying conditions.  There is NO\nwarranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n",
+  "translation_units": 493,
+  "failures": {
+    "@GENERATED@/cpp/src/test/FieldConstructorsAllDefaults.cpp": [
+      "@GENERATED@/cpp/include/test/FieldConstructorsAllDefaults.h:33:13: error: ‘test::FieldConstructorsAllDefaults::int_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsAllDefaults.h:32:19: error:   ‘std::string test::FieldConstructorsAllDefaults::string_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsAllDefaults.cpp:41:1: error:   when initialized here [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsAllDefaults.h:34:10: error: ‘test::FieldConstructorsAllDefaults::bool_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsAllDefaults.h:33:13: error:   ‘int32_t test::FieldConstructorsAllDefaults::int_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsAllDefaults.cpp:47:1: error:   when initialized here [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsAllDefaults.h:33:13: error: ‘test::FieldConstructorsAllDefaults::int_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsAllDefaults.h:32:19: error:   ‘std::string test::FieldConstructorsAllDefaults::string_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsAllDefaults.cpp:47:1: error:   when initialized here [-Werror=reorder]"
+    ],
+    "@GENERATED@/cpp/src/test/FieldConstructorsInternal.cpp": [
+      "@GENERATED@/cpp/include/test/FieldConstructorsInternal.h:32:12: error: ‘test::FieldConstructorsInternal::internal_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsInternal.h:31:19: error:   ‘std::string test::FieldConstructorsInternal::public_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsInternal.cpp:47:1: error:   when initialized here [-Werror=reorder]"
+    ],
+    "@GENERATED@/cpp/src/test/FieldConstructorsInternalFields.cpp": [
+      "@GENERATED@/cpp/include/test/FieldConstructorsInternalFields.h:33:13: error: ‘test::FieldConstructorsInternalFields::int_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsInternalFields.h:32:19: error:   ‘std::string test::FieldConstructorsInternalFields::string_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsInternalFields.cpp:35:1: error:   when initialized here [-Werror=reorder]"
+    ],
+    "@GENERATED@/cpp/src/test/FieldConstructorsPartialDefaults.cpp": [
+      "@GENERATED@/cpp/include/test/FieldConstructorsPartialDefaults.h:33:13: error: ‘test::FieldConstructorsPartialDefaults::int_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsPartialDefaults.h:32:19: error:   ‘std::string test::FieldConstructorsPartialDefaults::string_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsPartialDefaults.cpp:35:1: error:   when initialized here [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsPartialDefaults.h:34:10: error: ‘test::FieldConstructorsPartialDefaults::bool_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsPartialDefaults.h:33:13: error:   ‘int32_t test::FieldConstructorsPartialDefaults::int_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsPartialDefaults.cpp:41:1: error:   when initialized here [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsPartialDefaults.h:33:13: error: ‘test::FieldConstructorsPartialDefaults::int_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/FieldConstructorsPartialDefaults.h:32:19: error:   ‘std::string test::FieldConstructorsPartialDefaults::string_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/FieldConstructorsPartialDefaults.cpp:41:1: error:   when initialized here [-Werror=reorder]"
+    ],
+    "@GENERATED@/cpp/src/test/ImmutableStructWithClash.cpp": [
+      "@GENERATED@/cpp/include/test/ImmutableStructWithClash.h:34:16: error: ‘test::ImmutableStructWithClash::bool_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/ImmutableStructWithClash.h:33:19: error:   ‘const int32_t test::ImmutableStructWithClash::int_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/ImmutableStructWithClash.cpp:35:1: error:   when initialized here [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/ImmutableStructWithClash.h:33:19: error: ‘test::ImmutableStructWithClash::int_field’ will be initialized after [-Werror=reorder]",
+      "@GENERATED@/cpp/include/test/ImmutableStructWithClash.h:32:25: error:   ‘const std::string test::ImmutableStructWithClash::string_field’ [-Werror=reorder]",
+      "@GENERATED@/cpp/src/test/ImmutableStructWithClash.cpp:35:1: error:   when initialized here [-Werror=reorder]"
+    ],
+    "@GENERATED@/cpp/src/test/MyClass.cpp": [
+      "@GENERATED@/cpp/src/test/MyClass.cpp:31:9: error: ‘int32_t’ was not declared in this scope",
+      "@GENERATED@/cpp/src/test/MyClass.cpp:33:5: error: template argument 1 is invalid"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/AsyncWithSkips.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/AsyncWithSkips.cpp:37:57: error: unused parameter ‘android_context’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/ChildClassImpl.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/ChildClassImpl.cpp:61:92: error: unused parameter ‘input’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/Comments.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/Comments.cpp:28:49: error: unused parameter ‘input’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/ComplexListener.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/ComplexListener.cpp:32:24: error: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<test::NamedPoint3D>::size_type’ {aka ‘long unsigned int’} [-Werror=sign-compare]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/ConvolutedRoundTrip.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/ConvolutedRoundTrip.cpp:37:53: error: unused parameter ‘some’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/CrossPackageInheritance.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/CrossPackageInheritance.cpp:41:42: error: unused parameter ‘number’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/CrossPackageInheritance.cpp:57:42: error: unused parameter ‘number’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/Durations.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/Durations.cpp:61:52: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/Durations.cpp:66:57: error: unused parameter ‘input’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/EnableIfEnabled.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/EnableIfEnabled.cpp:33:55: error: unused parameter ‘value’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/ErrorsWithNonTrivialType.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/ErrorsWithNonTrivialType.cpp:26:75: error: unused parameter ‘callback’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/ErrorsWithNonTrivialType.cpp:32:83: error: unused parameter ‘callback’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/GrandchildClassImpl.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/GrandchildClassImpl.cpp:61:55: error: unused parameter ‘value’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/GrandchildClassImpl.cpp:68:51: error: unused parameter ‘input’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/Inheritance.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/Inheritance.cpp:46:37: error: unused parameter ‘s’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/Lambdas.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/Lambdas.cpp:63:23: error: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<std::function<std::__cxx11::basic_string<char>(const std::__cxx11::basic_string<char>&, const std::__cxx11::basic_string<char>&)> >::size_type’ {aka ‘long unsigned int’} [-Werror=sign-compare]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:28:41: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:34:43: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:40:51: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:46:60: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:52:41: error: unused parameter ‘input1’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:53:43: error: unused parameter ‘input2’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:54:51: error: unused parameter ‘input3’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:55:60: error: unused parameter ‘input4’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:61:66: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:67:63: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:73:64: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:79:61: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:99:50: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:105:36: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:111:50: error: unused parameter ‘string_input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:111:69: error: unused parameter ‘boolean_input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:117:60: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MethodOverloads.cpp:123:46: error: unused parameter ‘input’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/MultipleInheritance.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/MultipleInheritance.cpp:41:48: error: unused parameter ‘value’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MultipleInheritance.cpp:44:49: error: unused parameter ‘value’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MultipleInheritance.cpp:47:55: error: unused parameter ‘value’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MultipleInheritance.cpp:58:48: error: unused parameter ‘value’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MultipleInheritance.cpp:61:49: error: unused parameter ‘value’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/MultipleInheritance.cpp:64:55: error: unused parameter ‘value’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/PlatformNames.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/PlatformNames.cpp:50:40: error: unused parameter ‘makeParameter’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/PlatformNames.cpp:56:49: error: unused parameter ‘FooParameter’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/StructsWithMethodsDeclarationOrder.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/StructsWithMethodsDeclarationOrder.cpp:26:59: error: unused parameter ‘input’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/TopLevelTypes.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/TopLevelTypes.cpp:33:50: error: unused parameter ‘point’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/TopLevelTypes.cpp:33:76: error: unused parameter ‘mode’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/UseUnderscorePackage.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/UseUnderscorePackage.cpp:31:57: error: unused parameter ‘input’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/input/src/cpp/UseUnderscorePackage.cpp:37:83: error: unused parameter ‘input’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/input/src/cpp/src/ExternalTypes.cpp": [
+      "@REPO@/functional-tests/functional/input/src/cpp/src/ExternalTypes.cpp:88:49: error: unused parameter ‘input_bool’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/cpp/tests/OptionalTest.cpp": [
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableNonTrivial.h:58:53: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableNonTrivial.h:63:48: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableNonTrivial.h:68:54: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableNonTrivial.h:74:43: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableNonTrivial.h:80:38: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableNonTrivial.h:86:44: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableTrivial.h:59:47: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableTrivial.h:64:42: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableTrivial.h:69:48: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableTrivial.h:75:40: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableTrivial.h:81:35: error: unused parameter ‘other’ [-Werror=unused-parameter]",
+      "@REPO@/functional-tests/functional/cpp/tests/optional_types/ThrowableTrivial.h:87:41: error: unused parameter ‘other’ [-Werror=unused-parameter]"
+    ],
+    "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp": [
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:160:15: error: unused variable ‘c’ [-Werror=unused-variable]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:256:29: error: ignoring return value of ‘constexpr const std::basic_string_view<_CharT, _Traits>::value_type& std::basic_string_view<_CharT, _Traits>::at(size_type) const [with _CharT = char; _Traits = std::char_traits<char>; const_reference = const char&; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:257:29: error: ignoring return value of ‘constexpr const std::basic_string_view<_CharT, _Traits>::value_type& std::basic_string_view<_CharT, _Traits>::at(size_type) const [with _CharT = char; _Traits = std::char_traits<char>; const_reference = const char&; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:258:29: error: ignoring return value of ‘constexpr const std::basic_string_view<_CharT, _Traits>::value_type& std::basic_string_view<_CharT, _Traits>::at(size_type) const [with _CharT = char; _Traits = std::char_traits<char>; const_reference = const char&; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:267:29: error: ignoring return value of ‘constexpr const std::basic_string_view<_CharT, _Traits>::value_type& std::basic_string_view<_CharT, _Traits>::at(size_type) const [with _CharT = char; _Traits = std::char_traits<char>; const_reference = const char&; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:268:29: error: ignoring return value of ‘constexpr const std::basic_string_view<_CharT, _Traits>::value_type& std::basic_string_view<_CharT, _Traits>::at(size_type) const [with _CharT = char; _Traits = std::char_traits<char>; const_reference = const char&; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:315:16: error: unused variable ‘size_before_second_removal’ [-Werror=unused-variable]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:435:32: error: ignoring return value of ‘constexpr std::basic_string_view<_CharT, _Traits> std::basic_string_view<_CharT, _Traits>::substr(size_type, size_type) const [with _CharT = char; _Traits = std::char_traits<char>; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:436:32: error: ignoring return value of ‘constexpr std::basic_string_view<_CharT, _Traits> std::basic_string_view<_CharT, _Traits>::substr(size_type, size_type) const [with _CharT = char; _Traits = std::char_traits<char>; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:437:32: error: ignoring return value of ‘constexpr std::basic_string_view<_CharT, _Traits> std::basic_string_view<_CharT, _Traits>::substr(size_type, size_type) const [with _CharT = char; _Traits = std::char_traits<char>; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]",
+      "@REPO@/functional-tests/functional/cpp/tests/StringViewTest.cpp:501:33: error: ignoring return value of ‘constexpr std::basic_string_view<_CharT, _Traits> std::basic_string_view<_CharT, _Traits>::substr(size_type, size_type) const [with _CharT = char; _Traits = std::char_traits<char>; size_type = long unsigned int]’, declared with attribute ‘nodiscard’ [-Werror=unused-result]"
+    ]
+  },
+  "evidence": {
+    "capture": "Nov 14 JVM strict compilation, 493 units; 27 known failing units",
+    "jvm_14_2_2_output_files": 786,
+    "generated_file_hashes_sha256": "1fe28dce8118edacfde7015302591377a58f0dd0c611e9570e321cbac37187f3",
+    "comparison": "provisional JVM and rebuilt 14.2.2 outputs matched in paths and bytes",
+    "compatibility_warning_exceptions": [
+      "reorder",
+      "unused-parameter",
+      "sign-compare",
+      "unused-result",
+      "unused-variable"
+    ],
+    "compatibility_include_exceptions": [
+      "cstdint"
+    ]
+  }
+}
