@@ -356,6 +356,22 @@ fn normalize_blocks(text: &str) -> String {
         .into_offset_iter()
         .filter_map(|(e, r)| matches!(e, Event::Code(_)).then_some(r))
         .collect();
+    let code_blocks: Vec<_> = Parser::new(text)
+        .into_offset_iter()
+        .filter_map(|(event, range)| match event {
+            Event::Start(Tag::CodeBlock(pulldown_cmark::CodeBlockKind::Indented)) => {
+                let leading = text[range.clone()]
+                    .bytes()
+                    .take_while(|b| *b == b' ')
+                    .count();
+                Some((range, Some(leading)))
+            }
+            Event::Start(Tag::CodeBlock(pulldown_cmark::CodeBlockKind::Fenced(_))) => {
+                Some((range, None))
+            }
+            _ => None,
+        })
+        .collect();
     for (event, range) in Parser::new(text).into_offset_iter() {
         match event {
             Event::Start(Tag::Paragraph) if lists.is_empty() => {
@@ -489,18 +505,33 @@ fn normalize_blocks(text: &str) -> String {
                     .bytes()
                     .take_while(|b| *b == b' ' || *b == b'\t')
                     .count();
-                let original = line[..count].chars().fold(0, |col, ch| {
+                let original = line[..count].chars().fold(0usize, |col, ch| {
                     if ch == '\t' {
                         (col / 4 + 1) * 4
                     } else {
                         col + 1
                     }
                 });
-                if original >= item.original_indent {
-                    let output = original - item.original_indent + item.output_indent;
-                    if line[..count] != " ".repeat(output) {
-                        edits.push((at..at + count, " ".repeat(output)));
+                let block = code_blocks
+                    .iter()
+                    .find(|(r, _)| r.start < at + line.len() && at < r.end);
+                let output = match block {
+                    Some((_, Some(extra))) => {
+                        item.output_indent
+                            + 4
+                            + original.saturating_sub(item.original_indent + 4 + extra)
                     }
+                    Some((_, None)) => {
+                        original.saturating_sub(item.original_indent) + item.output_indent
+                    }
+                    None => item.output_indent,
+                };
+                if line[..count] != " ".repeat(output)
+                    && !inline_code
+                        .iter()
+                        .any(|r| r.start < at + count && at < r.end)
+                {
+                    edits.push((at..at + count, " ".repeat(output)));
                 }
             }
         }
@@ -1132,6 +1163,11 @@ mod tests {
         );
         assert_eq!(format("- a\n- b\n\n- c").unwrap(), "- a\n\n- b\n\n- c");
         assert_eq!(format("- foo\n-\n- bar").unwrap(), "- foo\n- \n- bar");
+        assert_eq!(
+            format("  1.  A paragraph\n      with two lines.\n\n          indented code\n\n      > A block quote.").unwrap(),
+            "1. A paragraph\n   with two lines.\n\n       indented code\n\n   > A block quote."
+        );
+        assert_eq!(format(" -    one\n\n      two").unwrap(), "- one\n\n  two");
     }
     #[test]
     fn unresolved_references_are_returned_as_warnings_or_errors() {

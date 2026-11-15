@@ -98,8 +98,8 @@ pub(super) fn parse_text(normalized: &str) -> Result<ParsedDocumentation, String
     Ok(result)
 }
 
-fn append_block_content<'a>(
-    mut text: &'a str,
+fn append_block_content(
+    mut text: &str,
     current: &mut Option<(String, String)>,
     content: &mut String,
     result: &mut ParsedDocumentation,
@@ -111,8 +111,8 @@ fn append_block_content<'a>(
             let rest = &text[pos..];
             if rest.starts_with("{@") {
                 pos += parse_inline(rest)?.0;
-            } else if rest.starts_with('\\') {
-                let escaped = rest[1..]
+            } else if let Some(escaped) = rest.strip_prefix('\\') {
+                let escaped = escaped
                     .chars()
                     .next()
                     .ok_or("invalid documentation escape")?;
