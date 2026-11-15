@@ -1756,6 +1756,20 @@ warnings or supplies the missing include must list its exact flags and affected
 sources and be labeled as such; it is not a strict `-Werror` success. Preserve
 byte equality and the strict-consumer evidence independently of such a run.
 
+For these independently reproduced upstream failures, the functional compiler
+gate requires **diagnostic parity plus runtime parity**, rather than a claim
+that either strict build succeeds. Compile all 493 translation units on both
+outputs with the identical compiler and strict flags. Require matching exits
+and diagnostic sequences, categories, source locations and messages for every
+unit, allowing only replacement of the known generated/build directory prefixes.
+Every failure must belong to an explicit upstream issue catalogue; an unknown
+warning or error fails the gate. The catalogue also includes the independently
+reproduced `unused-result` and `unused-variable` test warnings. Retain the strict
+failure reports unchanged. Separately require both complete builds, linking and
+all runtime tests to succeed with the same explicitly named warning exceptions
+and `cstdint` include. This policy does not replace the clean strict C++17
+consumers, generated-byte/source-set comparisons or any other completion gate.
+
 Add focused live-JVM comparisons for combinations not proved by those suites:
 default/custom namespaces and exports, custom name rules, external aliases,
 tag combinations, skipped inherited overloads, equality in containers,

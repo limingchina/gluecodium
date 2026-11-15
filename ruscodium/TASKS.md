@@ -942,6 +942,12 @@ and published historical evidence unchanged.
   unused-parameter and sign-compare warnings or missing `cstdint`; label any
   warning-demoted/forced-include run with its exact compatibility flags and
   affected sources, without claiming it passes the strict gate.
+- [ ] Verify expected upstream diagnostic parity for all 493 strict translation
+  units: identical exits and diagnostics after only known output-root path
+  mapping, no uncatalogued failure, plus complete matching compatibility builds
+  and runtime tests. Keep strict failures explicit and retain clean strict
+  consumers independently; include evidenced unused-result/unused-variable
+  warnings in the bounded upstream catalogue.
 - [ ] Mutate raw source/model facts and demonstrate corresponding native changes;
   verify hooks/overlays cannot substitute recorded generator answers.
 - [ ] Preserve previous smoke and performance reports; write fresh evidence with
