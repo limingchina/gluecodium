@@ -659,6 +659,72 @@ impl Builder {
             let comment = self.comment_data(&path, &parsed.description);
             attrs.get_mut("DEPRECATED").unwrap()["MESSAGE"] = comment;
         }
+        if d.kind == "constructor" {
+            if let Some(raw) = attrs
+                .get("AFTER_CONSTRUCTION")
+                .and_then(|v| v.get("FUNCTION"))
+                .and_then(Value::as_str)
+                .map(str::to_owned)
+            {
+                let (function, rest) = raw
+                    .split_once('(')
+                    .ok_or("@AfterConstruction missing open bracket")?;
+                let arguments = rest
+                    .strip_suffix(')')
+                    .ok_or("@AfterConstruction missing close bracket")?;
+                let owner_parts = &names[..names.len().saturating_sub(1)];
+                let owner = head
+                    .iter()
+                    .chain(owner_parts)
+                    .cloned()
+                    .collect::<Vec<_>>()
+                    .join(".");
+                let full = format!("{owner}.{function}");
+                let target = self
+                    .refs
+                    .get(&full)
+                    .ok_or_else(|| format!("@AfterConstruction function {full} was not found"))?
+                    .clone();
+                let mut parameters = Vec::new();
+                for name in arguments
+                    .split(',')
+                    .map(str::trim)
+                    .filter(|n| !n.is_empty())
+                {
+                    let ty = if name == "this" {
+                        let target = self
+                            .refs
+                            .get(&owner)
+                            .ok_or("@AfterConstruction missing owner")?
+                            .clone();
+                        let attrs = self.attr(None)?;
+                        self.node("LimeLazyTypeRef", json!({"attributes":attrs,"element":target,"elementFullName":owner,"isNullable":false,"type":target}))
+                    } else {
+                        let param = d.params.iter().find(|p| p.name == name).ok_or_else(|| {
+                            format!("@AfterConstruction unknown constructor parameter {name}")
+                        })?;
+                        self.type_ref(
+                            param
+                                .ty
+                                .as_ref()
+                                .ok_or("constructor parameter lacks type")?,
+                        )?
+                    };
+                    let mut param_path = owner_parts.to_vec();
+                    param_path.push(function.to_owned());
+                    param_path.push(name.to_owned());
+                    let path = self.path(head, &param_path, "");
+                    let attrs = self.attr(None)?;
+                    let comment = self.empty_comment();
+                    parameters.push(self.node("LimeParameter", json!({"attributes":attrs,"comment":comment,"external":null,"path":path,"typeRef":ty})));
+                }
+                let call = self.node(
+                    "LimeLazyFunctionCall",
+                    json!({"element":target,"elementFullName":full,"parameters":parameters}),
+                );
+                attrs.get_mut("AFTER_CONSTRUCTION").unwrap()["FUNCTION"] = call;
+            }
+        }
         Ok(self.node("LimeAttributes", json!({"attributes":attrs})))
     }
     fn accessor_attributes(

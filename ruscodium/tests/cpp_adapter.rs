@@ -376,3 +376,30 @@ fn field_constructor_reference_retains_annotations() {
     let attrs = nodes.iter().find(|n| n["id"] == id).unwrap();
     assert_eq!(attrs["properties"]["attributes"]["CPP"]["NAME"], "renamed");
 }
+
+#[test]
+fn constructor_after_construction_retains_resolved_call_and_parameters() {
+    let source = "package sample\nclass Item {\n@AfterConstruction(\"setup(this, value)\")\nconstructor make(value: Int)\nstatic fun setup(item: Item, value: Int)\n}\n";
+    let value = job(source).unwrap();
+    let nodes = value["snapshot"]["nodes"].as_array().unwrap();
+    let call = nodes
+        .iter()
+        .find(|n| {
+            n["class"]
+                .as_str()
+                .unwrap()
+                .ends_with("LimeLazyFunctionCall")
+        })
+        .unwrap();
+    assert_eq!(call["properties"]["elementFullName"], "sample.Item.setup");
+    assert_eq!(
+        call["properties"]["parameters"].as_array().unwrap().len(),
+        2
+    );
+    assert!(cpp_adapter::generate(
+        &model(source),
+        "../gluecodium/src/main/resources/templates",
+        &Options::default()
+    )
+    .is_ok());
+}
