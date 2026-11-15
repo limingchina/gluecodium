@@ -274,6 +274,27 @@ fn external_cpp<'a>(
         .map(|(_, v)| v.as_object().ok_or_else(|| "invalid C++ descriptor".into()))
         .transpose()
 }
+fn function_signature_name(
+    graph: &Graph,
+    config: &NativeCppConfig,
+    function: &Value,
+) -> Result<String, String> {
+    if let Some(name) = attributes(graph, function)?
+        .get("CPP")
+        .and_then(Value::as_object)
+        .and_then(|v| v.get("NAME"))
+        .and_then(Value::as_str)
+    {
+        return Ok(name.to_owned());
+    }
+    let path = field(graph, function, "path")?;
+    let tail = array(graph, &path, "tail")?;
+    let name = tail
+        .last()
+        .and_then(Value::as_str)
+        .ok_or("missing function name")?;
+    template::native_cpp::cpp_rule_name(&config.name_rules, "method", name, false)
+}
 fn validate_cpp_skip(graph: &Graph) -> Result<(), String> {
     let root = graph.root.as_ref().ok_or("missing model root")?;
     let refs = field(graph, root, "referenceMap")?;
@@ -336,7 +357,6 @@ fn function_usings(
         seen.remove(ref_id(container)?);
         Ok(result)
     }
-    let resolver = template::native_cpp::NativeCppResolver::new(graph, config.clone())?;
     let mut result = serde_json::Map::new();
     for ty in types {
         if !matches!(class(graph, ty)?, "LimeClass" | "LimeInterface")
@@ -347,10 +367,10 @@ fn function_usings(
         let inherited = inherited(graph, ty, &mut BTreeSet::new())?;
         let mut selected = Vec::new();
         for function in array(graph, ty, "functions")? {
-            let name = resolver.resolve(graph, "", "name", &function)?;
+            let name = function_signature_name(graph, config, &function)?;
             for parent in &inherited {
                 if field(graph, parent, "isStatic")? == json!(false)
-                    && resolver.resolve(graph, "", "name", parent)? == name
+                    && function_signature_name(graph, config, parent)? == name
                 {
                     if !selected.contains(parent) {
                         selected.push(parent.clone());
@@ -369,7 +389,26 @@ fn function_usings(
     }
     Ok(Value::Object(result))
 }
+fn live_nodes(graph: &Graph) -> Result<BTreeSet<String>, String> {
+    let mut live = BTreeSet::new();
+    let mut pending = vec![graph.root.as_ref().ok_or("missing model root")?];
+    while let Some(value) = pending.pop() {
+        if let Ok(id) = ref_id(value) {
+            if !live.insert(id.to_owned()) {
+                continue;
+            }
+            let node = graph.nodes.get(id).ok_or("dangling model reference")?;
+            pending.extend(node.properties.values());
+        } else if let Some(items) = value.as_array() {
+            pending.extend(items);
+        } else if let Some(map) = value.as_object() {
+            pending.extend(map.values());
+        }
+    }
+    Ok(live)
+}
 fn derive_enumerator_values(graph: &mut Graph) -> Result<(), String> {
+    let live = live_nodes(graph)?;
     let mut int_ref = graph.nodes.iter().find_map(|(id, n)| {
         if !n.class.ends_with(".LimeBasicTypeRef") {
             return None;
@@ -381,7 +420,7 @@ fn derive_enumerator_values(graph: &mut Graph) -> Result<(), String> {
     let enums = graph
         .nodes
         .iter()
-        .filter(|(_, n)| n.class.ends_with(".LimeEnumeration"))
+        .filter(|(id, n)| live.contains(*id) && n.class.ends_with(".LimeEnumeration"))
         .map(|(id, _)| json!({"$ref":id}))
         .collect::<Vec<_>>();
     if int_ref.is_none() && !enums.is_empty() {
@@ -449,21 +488,7 @@ fn derive_enumerator_values(graph: &mut Graph) -> Result<(), String> {
                 .insert("value".into(), value);
         }
     }
-    let mut live = BTreeSet::new();
-    let mut pending = vec![graph.root.as_ref().ok_or("missing model root")?];
-    while let Some(value) = pending.pop() {
-        if let Ok(id) = ref_id(value) {
-            if !live.insert(id.to_owned()) {
-                continue;
-            }
-            let node = graph.nodes.get(id).ok_or("dangling model reference")?;
-            pending.extend(node.properties.values());
-        } else if let Some(items) = value.as_array() {
-            pending.extend(items);
-        } else if let Some(map) = value.as_object() {
-            pending.extend(map.values());
-        }
-    }
+    let live = live_nodes(graph)?;
     let positional = graph
         .nodes
         .iter()
@@ -551,7 +576,6 @@ pub fn generate_with_diagnostics(
         graph.attach_raw_comments(raw)?;
     }
     validate_graph(&graph, &job)?;
-    filter::apply(&mut graph, &job.options.tags, false)?;
     validate_cpp_skip(&graph)?;
     filter::apply(&mut graph, &job.options.tags, true)?;
     derive_enumerator_values(&mut graph)?;
@@ -567,7 +591,6 @@ pub fn generate_with_diagnostics(
         sorters: true,
         name_rules: job.options.name_rules.clone(),
         werror_doc_links: job.options.werror.iter().any(|v| v == "DocLinks"),
-        ..Default::default()
     };
     let common_export = job
         .options
@@ -1471,7 +1494,11 @@ fn ref_id(value: &Value) -> Result<&str, String> {
 fn derived_overlays(graph: &Graph, job: &Job) -> Result<Value, String> {
     let mut result = job.property_overlays.clone().unwrap_or_else(|| json!({}));
     let map = result.as_object_mut().ok_or("invalid property overlays")?;
+    let live = live_nodes(graph)?;
     for (id, node) in &graph.nodes {
+        if !live.contains(id) {
+            continue;
+        }
         let kind = node.class.rsplit('.').next().unwrap_or("");
         let this = json!({"$ref":id});
         let mut updates = serde_json::Map::new();
@@ -1971,9 +1998,8 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
         sorters: true,
         name_rules: options.name_rules.clone(),
         werror_doc_links: options.werror.iter().any(|v| v == "DocLinks"),
-        ..Default::default()
     };
-    let resolver = template::native_cpp::NativeCppResolver::new(graph, config)?;
+    let resolver = template::native_cpp::NativeCppResolver::new(graph, config.clone())?;
     let root = graph.root.as_ref().ok_or("missing root")?;
     let references = field(graph, root, "referenceMap")?;
     let indexed: BTreeSet<_> = references
@@ -1991,9 +2017,7 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
         let this = json!({"$ref":id});
         let mut signatures = BTreeSet::new();
         for function in array(graph, &this, "functions")? {
-            let name = resolver
-                .resolve(graph, "", "name", &function)?
-                .ok_or("missing function name")?;
+            let name = function_signature_name(graph, &config, &function)?;
             let signature = resolver.signature(graph, &function)?;
             if !signatures.insert((name.clone(), signature)) {
                 return Err(format!("C++ conflicting overloads: {name}"));
@@ -2002,9 +2026,7 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
         if kind == "LimeStruct" {
             let mut constructors = BTreeSet::new();
             for constructor in array(graph, &this, "fieldConstructors")? {
-                let name = resolver
-                    .resolve(graph, "", "name", &constructor)?
-                    .ok_or("missing constructor name")?;
+                let name = function_signature_name(graph, &config, &constructor)?;
                 let mut signature = Vec::new();
                 for reference in array(graph, &constructor, "fieldRefs")? {
                     let field_node = field(graph, &reference, "element")?;
@@ -2059,11 +2081,14 @@ fn validate_type_cycles(graph: &Graph) -> Result<(), String> {
         Ok(())
     }
     let mut done = BTreeSet::new();
+    let live = live_nodes(graph)?;
     for (id, node) in &graph.nodes {
-        if matches!(
-            node.class.rsplit('.').next().unwrap_or(""),
-            "LimeTypeAlias" | "LimeList" | "LimeSet" | "LimeMap"
-        ) {
+        if live.contains(id)
+            && matches!(
+                node.class.rsplit('.').next().unwrap_or(""),
+                "LimeTypeAlias" | "LimeList" | "LimeSet" | "LimeMap"
+            )
+        {
             visit(graph, &json!({"$ref":id}), &mut BTreeSet::new(), &mut done)?;
         }
     }

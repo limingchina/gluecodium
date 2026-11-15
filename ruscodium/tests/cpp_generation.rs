@@ -928,7 +928,7 @@ fn forged_enum_exception_graphs_fail_before_any_output() {
 }
 
 #[test]
-fn tag_filter_precedes_cpp_skip_validation() {
+fn cpp_skip_validation_precedes_tag_filter() {
     let mut job = fixture("default");
     let id = node_id(&job, "LimeInterface", "Worker");
     let attr = node_mut(&mut job, &id)["properties"]["attributes"]["$ref"]
@@ -939,5 +939,34 @@ fn tag_filter_precedes_cpp_skip_validation() {
     assert!(generate(TEMPLATES, &job).is_err());
     node_mut(&mut job, &attr)["properties"]["attributes"] =
         json!({"CPP":{"SKIP":"inactive"},"ENABLE_IF":{"TAG":"never"}});
+    assert!(generate(TEMPLATES, &job).is_err());
+}
+
+#[test]
+fn skipped_unresolved_alias_is_not_resolved_for_cpp() {
+    let mut job = fixture("default");
+    let alias = node_id(&job, "LimeTypeAlias", "LaterAlias");
+    let attrs = node_mut(&mut job, &alias)["properties"]["attributes"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let reference = node_mut(&mut job, &alias)["properties"]["typeRef"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    node_mut(&mut job, &attrs)["properties"]["attributes"] =
+        json!({"ENABLE_IF":{"TAG":"inactive"}});
+    let node = node_mut(&mut job, &reference);
+    node["properties"]["element"] = Value::Null;
+    node["properties"]["type"] = Value::Null;
+    node["properties"]["relativePath"] = json!(["Missing"]);
+    node["properties"]["parentPaths"] = json!([]);
+    node["properties"]["imports"] = json!([]);
+    job["property_overlays"][&alias]
+        .as_object_mut()
+        .unwrap()
+        .remove("actualType");
     assert!(generate(TEMPLATES, &job).is_ok());
+    node_mut(&mut job, &attrs)["properties"]["attributes"] = json!({});
+    assert!(generate(TEMPLATES, &job).is_err());
 }
