@@ -398,7 +398,18 @@ fn live_nodes(graph: &Graph) -> Result<BTreeSet<String>, String> {
                 continue;
             }
             let node = graph.nodes.get(id).ok_or("dangling model reference")?;
-            pending.extend(node.properties.values());
+            let constructor = node.class.ends_with(".LimeFieldConstructor");
+            pending.extend(node.properties.iter().filter_map(|(key, value)| {
+                let computed = matches!(
+                    key.as_str(),
+                    "actualType"
+                        | "uniqueEnumerators"
+                        | "uninitializedFields"
+                        | "exception"
+                        | "struct"
+                ) || (constructor && key == "fields");
+                (!computed).then_some(value)
+            }));
         } else if let Some(items) = value.as_array() {
             pending.extend(items);
         } else if let Some(map) = value.as_object() {
@@ -2082,6 +2093,9 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
         let this = json!({"$ref":id});
         let mut signatures = BTreeSet::new();
         for function in array(graph, &this, "functions")? {
+            if !filter::retained_for_signature(graph, &function)? {
+                continue;
+            }
             let name = function_signature_name(graph, &config, &function)?;
             let signature = resolver.signature(graph, &function)?;
             if !signatures.insert((name.clone(), signature)) {
@@ -2099,8 +2113,11 @@ fn validate_method_names(graph: &Graph, options: &Options) -> Result<(), String>
                         resolver.signature_type(graph, &field(graph, &field_node, "typeRef")?)?,
                     );
                 }
-                if !constructors.insert(signature.clone())
-                    || !signatures.insert((name.clone(), signature))
+                if !constructors.insert(signature.clone()) {
+                    return Err(format!("C++ conflicting constructor overloads: {name}"));
+                }
+                if filter::retained_for_signature(graph, &constructor)?
+                    && !signatures.insert((name.clone(), signature))
                 {
                     return Err(format!("C++ conflicting constructor overloads: {name}"));
                 }

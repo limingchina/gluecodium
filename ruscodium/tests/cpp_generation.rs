@@ -966,6 +966,8 @@ fn skipped_unresolved_alias_is_not_resolved_for_cpp() {
         .as_object_mut()
         .unwrap()
         .remove("actualType");
+    let retained_alias = node_id(&job, "LimeTypeAlias", "Labels");
+    job["property_overlays"][&retained_alias]["actualType"] = json!({"$ref":alias});
     assert!(generate(TEMPLATES, &job).is_ok());
     node_mut(&mut job, &attrs)["properties"]["attributes"] = json!({});
     assert!(generate(TEMPLATES, &job).is_err());

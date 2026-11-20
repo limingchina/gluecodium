@@ -51,6 +51,11 @@ fn retain(
     }
     Ok(true)
 }
+// CppSignatureResolver constructs its platform signature resolver with no
+// active tags, even when generation itself was given a nonempty tag set.
+pub(super) fn retained_for_signature(graph: &Graph, element: &Value) -> Result<bool, String> {
+    retain(graph, element, &BTreeSet::new(), true)
+}
 const MEMBERS: &[&str] = &[
     "structs",
     "enumerations",
