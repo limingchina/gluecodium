@@ -238,10 +238,24 @@ pub(crate) fn format_with_diagnostics(
     for (range, value) in replacements.into_iter().rev() {
         rewritten.replace_range(range, &value);
     }
+    rewritten = normalize_block_boundaries(&rewritten);
     rewritten = normalize_refdefs(&normalize_quotes(&normalize_misc(&normalize_loose_lists(
         &normalize_blocks(&rewritten),
     ))));
 
+    rewritten = normalize_list_leading_blocks(&rewritten);
+    let diagnostics = missing
+        .into_iter()
+        .map(|name| DocWarning {
+            scope: scope.to_owned(),
+            message: format!("Failed to resolve documentation reference [{name}]"),
+        })
+        .collect();
+    Ok((trim(&rewritten).to_owned(), diagnostics))
+}
+
+fn normalize_block_boundaries(input: &str) -> String {
+    let mut rewritten = input.to_owned();
     let mut boundaries = Vec::new();
     let mut depth = 0usize;
     let mut previous_list = false;
@@ -327,15 +341,7 @@ pub(crate) fn format_with_diagnostics(
             rewritten.replace_range(before..after, "\n\n");
         }
     }
-    rewritten = normalize_list_leading_blocks(&rewritten);
-    let diagnostics = missing
-        .into_iter()
-        .map(|name| DocWarning {
-            scope: scope.to_owned(),
-            message: format!("Failed to resolve documentation reference [{name}]"),
-        })
-        .collect();
-    Ok((trim(&rewritten).to_owned(), diagnostics))
+    rewritten
 }
 
 /// Put a leading block on its own line inside a list item, and join a simple
@@ -1239,7 +1245,11 @@ fn normalize_quotes(text: &str) -> String {
         let last = lines.iter().rposition(|line| !line.4);
         for (i, (at, end, pos, nesting, blank)) in lines.into_iter().enumerate() {
             if first.is_none() || i < first.unwrap() || i > last.unwrap() {
-                let separator = if first.is_some() && i > last.unwrap() && root.end < text.len() {
+                let separator = if first.is_some()
+                    && i > last.unwrap()
+                    && root.end < text.len()
+                    && !text[root.end..].starts_with('\n')
+                {
                     "\n"
                 } else {
                     ""
@@ -1413,6 +1423,13 @@ mod tests {
         );
         assert_eq!(format("- - foo").unwrap(), "- - foo");
         assert_eq!(format("1. - 2. foo").unwrap(), "1. - 2. foo");
+        assert_eq!(format("Foo\n    ***").unwrap(), "Foo\n***");
+        assert_eq!(format("foo\n    # bar").unwrap(), "foo\n# bar");
+        assert_eq!(
+            format("    ```\n    aaa\n    ```").unwrap(),
+            "```\naaa\n```\n```"
+        );
+        assert_eq!(format("> bar\n>\nbaz").unwrap(), "> bar\n\nbaz");
     }
 
     #[test]
