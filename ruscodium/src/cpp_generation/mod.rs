@@ -1102,6 +1102,22 @@ fn validate_graph(graph: &Graph, job: &Job) -> Result<(), String> {
                     "indexed declaration {name} is absent from its parent"
                 ));
             }
+            if kind == "LimeFieldConstructor" {
+                let struct_ref = field(graph, element, "structRef")?;
+                if field(graph, &struct_ref, "type")? != *parent_value {
+                    return Err(format!(
+                        "field constructor {name} refers to a different struct"
+                    ));
+                }
+                let fields = array(graph, parent_value, "fields")?;
+                for reference in array(graph, element, "fieldRefs")? {
+                    if !fields.contains(&field(graph, &reference, "element")?) {
+                        return Err(format!(
+                            "field constructor {name} refers to a field of another struct"
+                        ));
+                    }
+                }
+            }
         }
     }
     // Exception references are valid solely as the owned throws clause of an

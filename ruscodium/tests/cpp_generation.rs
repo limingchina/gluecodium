@@ -1032,3 +1032,33 @@ fn rejects_forged_value_enum_types() {
     nodes(&mut job).last_mut().unwrap()["properties"]["timeUnit"]["enum"] = json!("forged.Type");
     assert!(generate(TEMPLATES, &job).is_err());
 }
+
+#[test]
+fn rejects_field_constructor_with_foreign_struct_reference() {
+    let source = "package sample\nstruct First {\n value: Int\n field constructor(value)\n}\nstruct Second {\n value: Int\n}\n";
+    let model = ruscodium::Model {
+        schema_version: 1,
+        files: vec![ruscodium::parse("constructors.lime", source, false).unwrap()],
+    };
+    let mut job =
+        ruscodium::cpp_adapter::build_job(&model, &ruscodium::cpp_adapter::Options::default())
+            .unwrap();
+    assert!(generate(TEMPLATES, &job).is_ok());
+    let first = node_id(&job, "LimeStruct", "First");
+    let second = node_id(&job, "LimeStruct", "Second");
+    let ctor = node_mut(&mut job, &first)["properties"]["fieldConstructors"][0]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let reference = node_mut(&mut job, &ctor)["properties"]["structRef"]["$ref"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let props = &mut node_mut(&mut job, &reference)["properties"];
+    props["element"] = json!({"$ref":second});
+    props["type"] = json!({"$ref":second});
+    if props.get("elementFullName").is_some() {
+        props["elementFullName"] = json!("sample.Second");
+    }
+    assert!(generate(TEMPLATES, &job).is_err());
+}
