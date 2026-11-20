@@ -37,6 +37,12 @@ class StrictParityTests(unittest.TestCase):
     def test_symmetric_missing_strict_flag_rejected(self):
         for report in (self.a,self.b):report['compilations'][0]['command'].remove('-Werror')
         with self.assertRaises(ValueError):self.verify()
+    def test_symmetric_standard_override_rejected(self):
+        for report in (self.a,self.b):report['compilations'][0]['command'].append('-std=c++14')
+        with self.assertRaises(ValueError):self.verify()
+    def test_symmetric_warning_suppression_rejected(self):
+        for report in (self.a,self.b):report['compilations'][0]['command'].append('-w')
+        with self.assertRaises(ValueError):self.verify()
     def test_uncompiled_unit_rejected(self):
         self.b['compilations'].pop()
         with self.assertRaises(ValueError):self.verify()
@@ -102,6 +108,9 @@ class RuntimeInventoryTests(unittest.TestCase):
         builder=importlib.util.module_from_spec(source);source.loader.exec_module(builder)
         env=builder.sanitized_gtest_env({'GTEST_FILTER':'A.*','GTEST_TOTAL_SHARDS':'2','GTEST_SHARD_INDEX':'0','PATH':'safe'})
         self.assertEqual(env,{'PATH':'safe'})
+    def test_additional_filter_fails(self):
+        for report in (self.a,self.b):report['run']['command'].append('--gtest_filter=EnumTest.*')
+        with self.assertRaises(ValueError):self.verify()
     def test_unsanitized_environment_fails(self):
         for report in (self.a,self.b):report['gtest_environment_sanitized']=False
         with self.assertRaises(ValueError):self.verify()

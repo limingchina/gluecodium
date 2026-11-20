@@ -36,7 +36,10 @@ def verify_compile_flags(entries,compatibility):
     required={'-std=c++17','-Wall','-Wextra','-Werror','-pthread','-DTEST_CPP_VERSION=Cxx17'}
     for name,entry in entries.items():
         command=entry['command'];require(required.issubset(command),'missing strict compiler flags: '+name)
+        require([arg for arg in command if arg.startswith('-std=')]==['-std=c++17'],'unexpected language standard: '+name)
+        require('-w' not in command and '-Wno-error' not in command,'unbounded warning suppression: '+name)
         actual=[arg for arg in command if arg.startswith('-Wno-error=')]
+        require(all(not arg.startswith('-Wno-') or arg in actual for arg in command),'unexpected warning suppression: '+name)
         require(actual==([f'-Wno-error={flag}' for flag in FLAGS] if compatibility else []),'unexpected warning exceptions: '+name)
         includes=[command[i+1] for i,arg in enumerate(command[:-1]) if arg=='-include']
         require(includes==(['cstdint'] if compatibility else []),'unexpected forced includes: '+name)
@@ -71,7 +74,9 @@ def verify_compat(a,b,gen_a,gen_b,build_a,build_b,count):
         require(report['upstream_warning_exceptions']==FLAGS and report['upstream_include_exceptions']==['cstdint'],'compatibility exceptions differ')
         require(report['link']['exit']==report['run']['exit']==0,'compatibility link or test run failed')
         require(report.get('gtest_environment_sanitized') is True and report.get('gtest_inventory_match') is True,'unfiltered GTest inventory not verified')
-        require('--gtest_filter=*' in report['run']['command'] and '--gtest_filter=*' in report['gtest_list']['command'] and '--gtest_list_tests' in report['gtest_list']['command'] and report['gtest_list']['exit']==0,'GTest unfiltered commands missing')
+        run_filters=[x for x in report['run']['command'] if x.startswith('--gtest_filter=')]
+        list_filters=[x for x in report['gtest_list']['command'] if x.startswith('--gtest_filter=')]
+        require(run_filters==list_filters==['--gtest_filter=*'] and '--gtest_list_tests' in report['gtest_list']['command'] and report['gtest_list']['exit']==0,'GTest unfiltered commands missing')
     entries=common(a,b,gen_a,gen_b,build_a,build_b,count)
     verify_compile_flags(entries,True)
     require(all(not x['exit'] for x in entries.values()),'compatibility compilation failed')
