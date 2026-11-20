@@ -838,6 +838,18 @@ and retained tool history onto the published `cee48c815` baseline before source
 recovery. Reproduce validation on the replacement checkout; retain earlier M15
 and published historical evidence unchanged.
 
+Progress checkpoint, 2026-11-20: recovered native and snapshot pipelines match
+the interim 49-scenario smoke inventory and all 786 functional files, naming
+fixtures and targeted cases. Both functional compatibility builds compile all
+493 units and run the full 216-case GTest inventory successfully; strict builds
+retain 27 upstream failing units and are checked through the separate explicit
+diagnostic-parity gate. Unicode consumers compile and run with strict C++17
+warnings and no exceptions. Retained frontend, whole-file, documentation and
+template comparisons pass. These interim results do not close M16: Markdown
+formatter differences remain, and frozen-source final evidence, complete Rust
+checks and the final independent review are still required. Tested increments
+are pushed regularly so recovery no longer depends on unpublished local work.
+
 - [x] Assess the remaining guards in the adapter, backend, native naming,
   controls and documentation against upstream C++ generation.
 - [x] Inventory 49 smoke scenarios: 36 successful C++ scenarios, two strict
