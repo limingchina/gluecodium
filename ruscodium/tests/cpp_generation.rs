@@ -1002,3 +1002,31 @@ fn rejects_unknown_raw_attribute_groups_and_keys() {
     node_mut(&mut job, &attr)["properties"]["attributes"] = json!({"CPP":{"NOT_A_VALUE":true}});
     assert!(generate(TEMPLATES, &job).is_err());
 }
+
+#[test]
+fn rejects_forged_value_enum_types() {
+    let mut job = fixture("default");
+    let literal = nodes(&mut job)
+        .iter()
+        .find(|n| n["class"].as_str().unwrap().ends_with("LimeValue$Literal"))
+        .unwrap()
+        .clone();
+    let mut special = literal.clone();
+    special["id"] = json!("forged-special");
+    special["class"] = json!("com.here.gluecodium.model.lime.LimeValue$Special");
+    special["properties"]["value"] =
+        json!({"enum":"com.here.gluecodium.model.lime.LimeValue$Special$ValueId", "name":"NAN"});
+    nodes(&mut job).push(special);
+    assert!(generate(TEMPLATES, &job).is_ok());
+    nodes(&mut job).last_mut().unwrap()["properties"]["value"]["enum"] = json!("forged.Type");
+    assert!(generate(TEMPLATES, &job).is_err());
+    nodes(&mut job).pop();
+    let mut duration = literal;
+    duration["id"] = json!("forged-duration");
+    duration["class"] = json!("com.here.gluecodium.model.lime.LimeValue$Duration");
+    duration["properties"]["timeUnit"] = json!({"enum":"com.here.gluecodium.model.lime.LimeValue$Duration$TimeUnit", "name":"SECOND"});
+    nodes(&mut job).push(duration);
+    assert!(generate(TEMPLATES, &job).is_ok());
+    nodes(&mut job).last_mut().unwrap()["properties"]["timeUnit"]["enum"] = json!("forged.Type");
+    assert!(generate(TEMPLATES, &job).is_err());
+}

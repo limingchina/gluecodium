@@ -1820,6 +1820,14 @@ fn is_type_ref(kind: &str) -> bool {
     )
 }
 fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), String> {
+    fn enum_value(value: &Value, class: &str, names: &[&str]) -> bool {
+        value.as_object().is_some_and(|m| m.len() == 2)
+            && value.get("enum").and_then(Value::as_str) == Some(class)
+            && value
+                .get("name")
+                .and_then(Value::as_str)
+                .is_some_and(|name| names.contains(&name))
+    }
     for raw in snapshot["nodes"].as_array().ok_or("invalid nodes")? {
         let kind = raw["class"].as_str().unwrap().rsplit('.').next().unwrap();
         let properties = raw["properties"].as_object().ok_or("invalid properties")?;
@@ -1958,12 +1966,15 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                 "key" => target(value, "value"),
                 "value" if kind == "LimeValue$KeyValuePair" => target(value, "value"),
                 "value" if kind == "LimeValue$Duration" => value.is_string(),
-                "value" if kind == "LimeValue$Special" => value
-                    .get("name")
-                    .and_then(Value::as_str)
-                    .is_some_and(|s| ["NAN", "INFINITY", "NEGATIVE_INFINITY"].contains(&s)),
-                "timeUnit" => value.get("name").and_then(Value::as_str).is_some_and(|s| {
-                    [
+                "value" if kind == "LimeValue$Special" => enum_value(
+                    value,
+                    "com.here.gluecodium.model.lime.LimeValue$Special$ValueId",
+                    &["NAN", "INFINITY", "NEGATIVE_INFINITY"],
+                ),
+                "timeUnit" => enum_value(
+                    value,
+                    "com.here.gluecodium.model.lime.LimeValue$Duration$TimeUnit",
+                    &[
                         "DAY",
                         "HOUR",
                         "MINUTE",
@@ -1971,9 +1982,8 @@ fn validate_snapshot_values(graph: &Graph, snapshot: &Value) -> Result<(), Strin
                         "MILLISECOND",
                         "MICROSECOND",
                         "NANOSECOND",
-                    ]
-                    .contains(&s)
-                }),
+                    ],
+                ),
                 "thrownType" => value.is_null() || target(value, "LimeThrownType"),
                 "typeId" => {
                     value.get("enum").and_then(Value::as_str)
