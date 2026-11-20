@@ -55,11 +55,11 @@ impl NativeCppConfig {
                     let s = v
                         .as_str()
                         .ok_or_else(|| format!("native_cpp.{key} components must be strings"))?;
-                    let mut chars = s.bytes();
+                    let mut chars = s.chars();
                     if !chars
                         .next()
-                        .is_some_and(|c| c.is_ascii_alphabetic() || c == b'_')
-                        || !chars.all(|c| c.is_ascii_alphanumeric() || c == b'_')
+                        .is_some_and(|c| c == '_' || unicode_ident::is_xid_start(c))
+                        || !chars.all(|c| c == '_' || unicode_ident::is_xid_continue(c))
                     {
                         return Err(format!("invalid namespace component {s:?}"));
                     }
@@ -593,17 +593,28 @@ impl<'a> Resolver<'a> {
             })
             .collect()
     }
+    fn signature_name(&self, function: &Value) -> Result<String, String> {
+        if let Some(value) = self.attr(function, "CPP", "NAME")? {
+            return value
+                .as_str()
+                .map(str::to_owned)
+                .ok_or_else(|| "invalid C++ Name attribute".into());
+        }
+        let path = self.path(function)?;
+        let name = path.tail.last().ok_or("missing function name")?;
+        rules::name(&self.config.name_rules, "method", name, false)
+    }
     fn reference_name(&self, function: &Value) -> Result<String, String> {
         let mut name = self.full_name(function, &mut BTreeSet::new())?;
         if let Some(parent) = self.parent(function)? {
-            let target = self.short_name(function)?;
+            let target = self.signature_name(function)?;
             let functions = self
                 .get(&parent, "functions")?
                 .as_array()
                 .ok_or("invalid functions")?;
             let mut count = 0;
             for f in functions {
-                if self.short_name(f)? == target {
+                if self.signature_name(f)? == target {
                     count += 1;
                 }
             }
@@ -1623,5 +1634,36 @@ mod documentation_tests {
             resolver.diagnostics(),
             vec!["smoke.Owner.f:1: Failed to resolve documentation reference [missing]"]
         );
+    }
+    #[test]
+    fn overload_names_ignore_external_descriptor_names() {
+        use super::Resolver;
+        use std::collections::BTreeMap;
+        let node = |id: &str, kind: &str, properties: Value| json!({"id":id,"class":format!("com.here.gluecodium.model.lime.{kind}"),"properties":properties});
+        let snapshot = json!({"schema":"gluecodium.reference-model.snapshot","version":1,"root":{"$ref":"root"},"nodes":[
+            node("root", "LimeModel", json!({})),
+            node("path", "LimePath", json!({"head":["smoke"],"tail":["Owner","doWork"],"disambiguator":""})),
+            node("attrs", "LimeAttributes", json!({"attributes":{"CPP":{"NAME":"mapped"}}})),
+            node("external", "LimeExternalDescriptor", json!({"descriptors":{"cpp":{"name":"External::renamed"}}})),
+            node("function", "LimeFunction", json!({"path":{"$ref":"path"},"attributes":{"$ref":"attrs"},"external":{"$ref":"external"}}))
+        ]});
+        let mut graph = Graph::import(Some(&snapshot), None).unwrap();
+        let config = NativeCppConfig::default();
+        let parents = BTreeMap::new();
+        let function = json!({"$ref":"function"});
+        let resolver = Resolver {
+            graph: &graph,
+            config: &config,
+            parents: &parents,
+        };
+        assert_eq!(resolver.short_name(&function).unwrap(), "External::renamed");
+        assert_eq!(resolver.signature_name(&function).unwrap(), "mapped");
+        graph.nodes.get_mut("attrs").unwrap().properties["attributes"] = json!({});
+        let resolver = Resolver {
+            graph: &graph,
+            config: &config,
+            parents: &parents,
+        };
+        assert_eq!(resolver.signature_name(&function).unwrap(), "do_work");
     }
 }

@@ -101,6 +101,23 @@ fn every_recorded_name_cell_is_compared_or_explicitly_unsupported() {
 }
 
 #[test]
+fn namespace_configuration_accepts_unicode_identifiers() {
+    let config = NativeCppConfig::parse(&json!({
+        "root_namespace": ["équipe", "réview"],
+        "internal_namespace": ["内部", "e\u{301}"]
+    }))
+    .unwrap();
+    assert_eq!(config.root_namespace, ["équipe", "réview"]);
+    assert_eq!(config.internal_namespace, ["内部", "e\u{301}"]);
+    for invalid in ["", "1é", "\u{301}e", "é::quipe", "é-quipe"] {
+        assert!(
+            NativeCppConfig::parse(&json!({"root_namespace": [invalid]})).is_err(),
+            "{invalid}"
+        );
+    }
+}
+
+#[test]
 fn unchanged_cpp_partials_render_with_native_names() {
     for name in [
         "native-enumeration",
