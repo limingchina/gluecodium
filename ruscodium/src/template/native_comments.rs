@@ -243,7 +243,7 @@ pub(crate) fn format_with_diagnostics(
         &normalize_blocks(&rewritten),
     ))));
 
-    rewritten = normalize_list_leading_blocks(&rewritten);
+    rewritten = normalize_nested_quotes(&normalize_list_leading_blocks(&rewritten));
     let diagnostics = missing
         .into_iter()
         .map(|name| DocWarning {
@@ -342,6 +342,61 @@ fn normalize_block_boundaries(input: &str) -> String {
         }
     }
     rewritten
+}
+
+/// Keep quote markers and sibling blocks inside their containing list item.
+fn normalize_nested_quotes(text: &str) -> String {
+    use pulldown_cmark::TagEnd;
+    let mut stack = Vec::new();
+    let mut items: Vec<bool> = Vec::new();
+    let mut edits = Vec::new();
+    for (event, range) in Parser::new(text).into_offset_iter() {
+        match event {
+            Event::Start(tag) => {
+                match tag {
+                    Tag::Item => items.push(false),
+                    Tag::BlockQuote(_) if stack.last() == Some(&TagEnd::Item) => {
+                        if let Some(last_quote) = items.last_mut() {
+                            *last_quote = true;
+                        }
+                        let before_end = text[..range.end].trim_end_matches('\n').len();
+                        let line_start = text[..before_end].rfind('\n').map_or(0, |n| n + 1);
+                        if text[line_start..before_end].trim() == ">" {
+                            let replacement = if range.end < text.len() { "\n" } else { "" };
+                            edits.push((line_start..range.end, replacement.into()));
+                        }
+                    }
+                    Tag::CodeBlock(_) if stack.last() == Some(&TagEnd::Item) => {
+                        if let Some(last_quote) = items.last_mut() {
+                            if *last_quote {
+                                let line_start =
+                                    text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                                if line_start > 0 && !text[..line_start].ends_with("\n\n") {
+                                    edits.push((line_start..line_start, "\n".into()));
+                                }
+                            }
+                            *last_quote = false;
+                        }
+                    }
+                    _ => {}
+                }
+                stack.push(tag.to_end());
+            }
+            Event::End(tag) => {
+                if matches!(tag, TagEnd::Item) {
+                    items.pop();
+                }
+                stack.pop();
+            }
+            Event::Text(_) if stack.last() == Some(&TagEnd::Item) => {
+                if let Some(last_quote) = items.last_mut() {
+                    *last_quote = false;
+                }
+            }
+            _ => {}
+        }
+    }
+    apply_edits(text, edits)
 }
 
 /// Put a leading block on its own line inside a list item, and join a simple
@@ -900,10 +955,10 @@ fn normalize_loose_lists(text: &str) -> String {
                 if position - start > 1 {
                     removals.insert((start, position));
                 }
-            } else if (list.loose && !list.nested) || (!list.loose && before.loose_child) {
-                if !text[..position].ends_with("\n\n") {
-                    insertions.insert(position);
-                }
+            } else if ((list.loose && !list.nested) || (!list.loose && before.loose_child))
+                && !text[..position].ends_with("\n\n")
+            {
+                insertions.insert(position);
             }
         }
     }
@@ -1564,6 +1619,14 @@ mod tests {
         assert_eq!(
             format("- a\n  - b\n  - c\n\n- d\n  - e\n  - f").unwrap(),
             "- a\n\n  - b\n  - c\n- d\n\n  - e\n  - f"
+        );
+        assert_eq!(
+            format("* a\n  > b\n  >\n* c").unwrap(),
+            "* a\n\n  > b\n\n* c"
+        );
+        assert_eq!(
+            format("- a\n  > b\n  ```\n  c\n  ```\n- d").unwrap(),
+            "- a\n\n  > b\n\n  ```\n  c\n  ```\n- d"
         );
         assert_eq!(format("- <div>\n- foo").unwrap(), "- \n\n  <div>\n\n- foo");
     }
