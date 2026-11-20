@@ -788,14 +788,21 @@ fn normalize_refdefs(text: &str) -> String {
     }
     apply_edits(text, edits)
 }
-/// Separate paragraph-only items when the Markdown list is loose.
+/// Reproduce Flexmark's separation of loose list items and nested lists.
 fn normalize_loose_lists(text: &str) -> String {
     use pulldown_cmark::TagEnd;
+    #[derive(Default)]
+    struct Item {
+        start: usize,
+        nested: Vec<usize>,
+        ends_in_list: bool,
+        loose_child: bool,
+    }
     #[derive(Default)]
     struct List {
         loose: bool,
         nested: bool,
-        items: Vec<usize>,
+        items: Vec<Item>,
     }
     let mut stack = Vec::new();
     let mut active: Vec<List> = Vec::new();
@@ -808,19 +815,29 @@ fn normalize_loose_lists(text: &str) -> String {
                         if stack.last() == Some(&TagEnd::Item) {
                             if let Some(parent) = active.last_mut() {
                                 parent.nested = true;
+                                if let Some(item) = parent.items.last_mut() {
+                                    item.nested
+                                        .push(text[..range.start].rfind('\n').map_or(0, |n| n + 1));
+                                    item.ends_in_list = true;
+                                }
                             }
                         }
                         active.push(List::default());
                     }
                     Tag::Item => {
                         if let Some(list) = active.last_mut() {
-                            list.items
-                                .push(text[..range.start].rfind('\n').map_or(0, |n| n + 1));
+                            list.items.push(Item {
+                                start: text[..range.start].rfind('\n').map_or(0, |n| n + 1),
+                                ..Item::default()
+                            });
                         }
                     }
                     Tag::Paragraph if stack.last() == Some(&TagEnd::Item) => {
                         if let Some(list) = active.last_mut() {
                             list.loose = true;
+                            if let Some(item) = list.items.last_mut() {
+                                item.ends_in_list = false;
+                            }
                         }
                     }
                     Tag::BlockQuote(_) | Tag::CodeBlock(_) | Tag::HtmlBlock
@@ -828,15 +845,30 @@ fn normalize_loose_lists(text: &str) -> String {
                     {
                         if let Some(list) = active.last_mut() {
                             list.nested = true;
+                            if let Some(item) = list.items.last_mut() {
+                                item.ends_in_list = false;
+                            }
                         }
                     }
                     _ => {}
                 }
                 stack.push(tag.to_end());
             }
+            Event::Text(_) if stack.last() == Some(&TagEnd::Item) => {
+                if let Some(item) = active.last_mut().and_then(|list| list.items.last_mut()) {
+                    item.ends_in_list = false;
+                }
+            }
             Event::End(tag) => {
                 if matches!(tag, TagEnd::List(_)) {
                     if let Some(list) = active.pop() {
+                        if let Some(item) =
+                            active.last_mut().and_then(|parent| parent.items.last_mut())
+                        {
+                            if item.ends_in_list {
+                                item.loose_child |= list.loose;
+                            }
+                        }
                         lists.push(list);
                     }
                 }
@@ -845,21 +877,42 @@ fn normalize_loose_lists(text: &str) -> String {
             _ => {}
         }
     }
-    let mut positions = BTreeSet::new();
-    for list in lists.into_iter().filter(|list| list.loose && !list.nested) {
-        for position in list.items.into_iter().skip(1) {
-            if position > 0 && !text[..position].ends_with("\n\n") {
-                positions.insert(position);
+    let mut insertions = BTreeSet::new();
+    let mut removals = BTreeSet::new();
+    for list in lists {
+        if list.loose && list.nested {
+            for item in &list.items {
+                for &position in &item.nested {
+                    if position > item.start && !text[..position].ends_with("\n\n") {
+                        insertions.insert(position);
+                    }
+                }
+            }
+        }
+        for pair in list.items.windows(2) {
+            let (before, after) = (&pair[0], &pair[1]);
+            let position = after.start;
+            if position == 0 {
+                continue;
+            }
+            if list.loose && before.ends_in_list {
+                let start = text[..position].trim_end_matches('\n').len();
+                if position - start > 1 {
+                    removals.insert((start, position));
+                }
+            } else if (list.loose && !list.nested) || (!list.loose && before.loose_child) {
+                if !text[..position].ends_with("\n\n") {
+                    insertions.insert(position);
+                }
             }
         }
     }
-    apply_edits(
-        text,
-        positions
-            .into_iter()
-            .map(|pos| (pos..pos, "\n".into()))
-            .collect(),
-    )
+    let mut edits: Vec<_> = removals
+        .into_iter()
+        .map(|(start, end)| (start..end, "\n".into()))
+        .collect();
+    edits.extend(insertions.into_iter().map(|pos| (pos..pos, "\n".into())));
+    apply_edits(text, edits)
 }
 
 fn normalize_misc(text: &str) -> String {
@@ -1503,6 +1556,14 @@ mod tests {
         assert_eq!(
             format("- # Foo\n- Bar\n  ---\n  baz").unwrap(),
             "- \n\n  # Foo\n\n- \n\n  Bar\n  ---\n\n  baz"
+        );
+        assert_eq!(
+            format("- a\n  - b\n\n    c\n- d").unwrap(),
+            "- a\n  - b\n\n    c\n\n- d"
+        );
+        assert_eq!(
+            format("- a\n  - b\n  - c\n\n- d\n  - e\n  - f").unwrap(),
+            "- a\n\n  - b\n  - c\n- d\n\n  - e\n  - f"
         );
         assert_eq!(format("- <div>\n- foo").unwrap(), "- \n\n  <div>\n\n- foo");
     }
