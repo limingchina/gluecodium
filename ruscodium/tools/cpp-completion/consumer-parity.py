@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Verify known upstream strict failures and separately passing runtime parity."""
-import argparse, json, sys
+import argparse, hashlib, json, sys
 from pathlib import Path
 import xml.etree.ElementTree as ET
 ROOT=Path(__file__).resolve().parents[3];HERE=Path(__file__).resolve().parent
@@ -32,11 +32,22 @@ def common(a,b,gen_a,gen_b,build_a,build_b,expected_count):
     for name in x:require(x[name]==y[name],'compiler result differs: '+name)
     require(sum(v['kind']=='test' for v in x.values())==10,'ten upstream test sources not compiled')
     return x
+def verify_compile_flags(entries,compatibility):
+    required={'-std=c++17','-Wall','-Wextra','-Werror','-pthread','-DTEST_CPP_VERSION=Cxx17'}
+    for name,entry in entries.items():
+        command=entry['command'];require(required.issubset(command),'missing strict compiler flags: '+name)
+        actual=[arg for arg in command if arg.startswith('-Wno-error=')]
+        require(actual==([f'-Wno-error={flag}' for flag in FLAGS] if compatibility else []),'unexpected warning exceptions: '+name)
+        includes=[command[i+1] for i,arg in enumerate(command[:-1]) if arg=='-include']
+        require(includes==(['cstdint'] if compatibility else []),'unexpected forced includes: '+name)
 def verify_strict(a,b,gen_a,gen_b,build_a,build_b,catalog):
     require(a['strict'] and b['strict'] and not a['complete'] and not b['complete'],'strict failure reports required')
     require(a['compiler_sha256']==catalog['compiler_sha256'] and a['compiler']['stdout']==catalog['compiler_version'],'compiler differs from strict upstream catalog')
     require(not a['upstream_warning_exceptions'] and not b['upstream_warning_exceptions'] and not a['upstream_include_exceptions'] and not b['upstream_include_exceptions'],'strict report has exceptions')
     entries=common(a,b,gen_a,gen_b,build_a,build_b,catalog['translation_units'])
+    verify_compile_flags(entries,False)
+    tree_hash=hashlib.sha256(json.dumps(a['generated_sha256'],sort_keys=True,separators=(',',':')).encode()).hexdigest()
+    require(tree_hash==catalog['evidence']['generated_file_hashes_sha256'],'generated files differ from strict JVM baseline')
     failures={canonical(name):[canonical(line) for line in x['stderr'].splitlines() if ': error:' in line] for name,x in entries.items() if x['exit']}
     require(failures==catalog['failures'],'strict failures differ from known upstream source/location/message catalog')
     return {'translation_units':len(entries),'known_failing_units':len(failures),'strict_passed':False,'diagnostic_parity':True}
@@ -44,14 +55,25 @@ def xml_cases(path):
     root=ET.parse(path).getroot();result=[]
     for suite in root.iter('testsuite'):
         for case in suite.findall('testcase'):
-            result.append((suite.get('name'),case.get('name'),case.get('status'),case.get('result'),len(case.findall('failure')),len(case.findall('skipped'))))
+            source=Path(case.get('file','')).resolve().relative_to(ROOT.resolve()).as_posix()
+            result.append((suite.get('name'),case.get('name'),source,int(case.get('line','0')),case.get('status'),case.get('result'),len(case.findall('failure')),len(case.findall('skipped'))))
+    return sorted(result)
+def listed_tests(output):
+    suite=None;result=[]
+    for line in output.splitlines():
+        line=line.split('  #',1)[0].rstrip()
+        if line and not line[0].isspace() and line.endswith('.'):suite=line[:-1]
+        elif line.startswith('  ') and suite:result.append((suite,line.strip()))
     return sorted(result)
 def verify_compat(a,b,gen_a,gen_b,build_a,build_b,count):
     for report in (a,b):
         require(not report['strict'] and report['complete'],'compatibility run incomplete')
         require(report['upstream_warning_exceptions']==FLAGS and report['upstream_include_exceptions']==['cstdint'],'compatibility exceptions differ')
         require(report['link']['exit']==report['run']['exit']==0,'compatibility link or test run failed')
+        require(report.get('gtest_environment_sanitized') is True and report.get('gtest_inventory_match') is True,'unfiltered GTest inventory not verified')
+        require('--gtest_filter=*' in report['run']['command'] and '--gtest_filter=*' in report['gtest_list']['command'] and '--gtest_list_tests' in report['gtest_list']['command'] and report['gtest_list']['exit']==0,'GTest unfiltered commands missing')
     entries=common(a,b,gen_a,gen_b,build_a,build_b,count)
+    verify_compile_flags(entries,True)
     require(all(not x['exit'] for x in entries.values()),'compatibility compilation failed')
     la,lb=a['link'],b['link']
     for key in ('command','stdout','stderr'):
@@ -59,9 +81,15 @@ def verify_compat(a,b,gen_a,gen_b,build_a,build_b,count):
         if isinstance(xa,list):xa=[normalized(t,gen_a,build_a) for t in xa];xb=[normalized(t,gen_b,build_b) for t in xb]
         else:xa=normalized(xa,gen_a,build_a);xb=normalized(xb,gen_b,build_b)
         require(xa==xb,'link '+key+' differs')
+    expected=read(HERE/'gtest-inventory.json')['cases']
+    names=sorted((x['suite'],x['name']) for x in expected)
+    require(len(expected)==216 and listed_tests(a['gtest_list']['stdout'])==listed_tests(b['gtest_list']['stdout'])==names,'GTest listed inventory differs from baseline')
+    for report,build in ((a,build_a),(b,build_b)):
+        require(hashlib.sha256((build/'tests.xml').read_bytes()).hexdigest()==report['gtest_xml_sha256'],'GTest XML hash differs from report')
     xa,xb=xml_cases(build_a/'tests.xml'),xml_cases(build_b/'tests.xml')
-    require(xa and xa==xb,'GTest case inventories or outcomes differ')
-    require(a.get('gtest_tests')==b.get('gtest_tests')==len(xa),'GTest test counts differ')
+    wanted=sorted((x['suite'],x['name'],x['file'],x['line'],'run','completed',0,0) for x in expected)
+    require(xa==xb==wanted,'GTest case inventories or outcomes differ from baseline')
+    require(a.get('gtest_tests')==b.get('gtest_tests')==len(xa)==216,'GTest test counts differ')
     require(a.get('gtest_failures')==b.get('gtest_failures')==0,'GTest failures')
     return {'translation_units':len(entries),'test_sources':10,'gtest_cases':len(xa),'runtime_parity':True,'warning_exceptions':FLAGS,'include_exceptions':['cstdint']}
 def verify_names(a,b,gen_a,gen_b,build_a,build_b):

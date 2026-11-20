@@ -7,8 +7,8 @@ ROOT=Path(__file__).resolve().parents[3]
 GTEST_COMMIT='6910c9d9165801d8827d628cb72eb7ea9dd538c5'
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def tree(path):return {p.relative_to(path).as_posix():digest(p) for p in sorted(path.rglob('*')) if p.is_file()}
-def command(args):
- a=[str(x) for x in args];p=subprocess.run(a,cwd=ROOT,text=True,capture_output=True)
+def command(args,env=None):
+ a=[str(x) for x in args];p=subprocess.run(a,cwd=ROOT,text=True,capture_output=True,env=env)
  return {'command':a,'exit':p.returncode,'stdout':p.stdout,'stderr':p.stderr}
 def source_inventory(inventory):
  features=inventory.get('features',[]);tests=inventory.get('test_sources',[])
@@ -42,6 +42,23 @@ def compile_all(tasks,jobs,collect):
    if collect or not failed:
     while len(running)<jobs and submit():pass
  return sorted(results,key=lambda x:x['index'])
+def sanitized_gtest_env(env):return {k:v for k,v in env.items() if not k.startswith('GTEST_')}
+def listed_tests(output):
+ suite=None;result=[]
+ for line in output.splitlines():
+  line=line.split('  #',1)[0].rstrip()
+  if line and not line[0].isspace() and line.endswith('.'):suite=line[:-1]
+  elif line.startswith('  ') and suite:result.append((suite,line.strip()))
+ return sorted(result)
+def xml_inventory(path):
+ root=ET.parse(path).getroot();cases=[]
+ for suite in root.iter('testsuite'):
+  for case in suite.findall('testcase'):
+   file=Path(case.get('file','')).resolve().relative_to(ROOT.resolve()).as_posix()
+   cases.append({'suite':suite.get('name'),'name':case.get('name'),'file':file,'line':int(case.get('line','0'))})
+   if case.get('status')!='run' or case.get('result')!='completed' or case.findall('failure') or case.findall('skipped'):
+    raise ValueError('GTest case did not complete successfully')
+ return sorted(cases,key=lambda x:(x['suite'],x['name']))
 def main():
  p=argparse.ArgumentParser(description=__doc__)
  for name in ('inventory','generated','expected-inventory','gtest-source','output'):p.add_argument('--'+name,required=True,type=Path)
@@ -81,10 +98,18 @@ def main():
   if len(report['compilations'])!=len(tasks) or any(x['exit'] for x in report['compilations']):return 1
   exe=args.output/'functional-tests';report['link']=command([compiler,'-pthread',*[args.output/f'{i:04}.o' for i in range(len(tasks))],'-o',exe])
   if report['link']['exit']:print(report['link']['stderr'],file=sys.stderr);return 1
-  xml=args.output/'tests.xml';report['run']=command([exe,f'--gtest_output=xml:{xml}']);print(report['run']['stdout'],end='',flush=True)
+  clean_env=sanitized_gtest_env(os.environ);report['gtest_environment_sanitized']=True
+  expected_cases=json.loads((Path(__file__).parent/'gtest-inventory.json').read_text())['cases']
+  report['gtest_list']=command([exe,'--gtest_filter=*','--gtest_list_tests'],env=clean_env)
+  expected_names=sorted((x['suite'],x['name']) for x in expected_cases)
+  if report['gtest_list']['exit'] or listed_tests(report['gtest_list']['stdout'])!=expected_names:
+   report['gtest_inventory_error']='GTest list differs from 216-case upstream inventory';return 1
+  xml=args.output/'tests.xml';report['run']=command([exe,'--gtest_filter=*',f'--gtest_output=xml:{xml}'],env=clean_env);print(report['run']['stdout'],end='',flush=True)
   if xml.exists():
    root=ET.parse(xml).getroot();report['gtest_xml_sha256']=digest(xml);report['gtest_tests']=int(root.attrib.get('tests','0'));report['gtest_failures']=int(root.attrib.get('failures','0'))
-  report['complete']=report['run']['exit']==0 and report.get('gtest_tests',0)>0 and report.get('gtest_failures',-1)==0
+   try:report['gtest_inventory_match']=xml_inventory(xml)==expected_cases
+   except (ValueError,TypeError):report['gtest_inventory_match']=False
+  report['complete']=report['run']['exit']==0 and report.get('gtest_tests')==len(expected_cases)==216 and report.get('gtest_failures',-1)==0 and report.get('gtest_inventory_match',False)
   return 0 if report['complete'] else 1
  finally:report_path.write_text(json.dumps(report,indent=2)+'\n')
 if __name__=='__main__':sys.exit(main())

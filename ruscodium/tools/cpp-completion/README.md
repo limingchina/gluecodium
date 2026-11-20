@@ -46,3 +46,14 @@ Use `functional-inventory --output DIR` to regenerate the feature/source
 inventory and Java-properties manifests. Individual `run`, `functional-check`,
 `markdown-check`, `compile-functional.py` and `compile-namerules.py` commands
 can be invoked independently. Historical M11/M15 reports remain unchanged.
+
+The strict diagnostic catalog is tied to the recorded compiler executable hash
+and version. A different compiler, changed diagnostic, new failing source or
+uncompiled translation unit fails the parity gate until independently examined;
+the comparator never removes whitespace, source locations, or diagnostic text.
+Only the explicitly supplied generated-output and build-root prefixes are mapped
+when comparing the JVM and native runs.
+
+Runtime verification strips inherited `GTEST_*` variables, requests an explicit
+`--gtest_filter=*`, compares `--gtest_list_tests` with the checked-in 216-case
+inventory, and verifies every case ran and completed without a skip.
