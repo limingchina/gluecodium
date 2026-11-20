@@ -860,6 +860,7 @@ fn normalize_misc(text: &str) -> String {
     use pulldown_cmark::CodeBlockKind;
     let mut edits: Vec<(std::ops::Range<usize>, String)> = Vec::new();
     let mut protected = Vec::new();
+    let mut indented_code = Vec::new();
     let mut quotes = Vec::new();
     let mut quote_depth = 0usize;
     let mut list_depth = 0usize;
@@ -880,6 +881,24 @@ fn normalize_misc(text: &str) -> String {
             }
             Event::Start(Tag::CodeBlock(kind)) => {
                 protected.push(range.clone());
+                if matches!(kind, CodeBlockKind::Indented) && list_depth == 0 && quote_depth == 0 {
+                    indented_code.push(range.clone());
+                    let block = &text[range.clone()];
+                    let extra = block.bytes().take_while(|b| *b == b' ').count();
+                    if extra > 0 {
+                        let mut at = text[..range.start].rfind('\n').map_or(0, |n| n + 1);
+                        for line in text[at..range.end].split_inclusive('\n') {
+                            if !line.trim().is_empty() {
+                                let leading = line.bytes().take_while(|b| *b == b' ').count();
+                                let remove = extra.min(leading.saturating_sub(4));
+                                if remove > 0 {
+                                    edits.push((at..at + remove, String::new()));
+                                }
+                            }
+                            at += line.len();
+                        }
+                    }
+                }
                 if matches!(kind, CodeBlockKind::Fenced(_)) && list_depth == 0 {
                     let block = &text[range.clone()];
                     let lines: Vec<_> = block.split_inclusive('\n').collect();
@@ -941,7 +960,34 @@ fn normalize_misc(text: &str) -> String {
                     }
                 }
             }
-            Event::Start(Tag::HtmlBlock) => protected.push(range),
+            Event::Start(Tag::HtmlBlock) => {
+                protected.push(range.clone());
+                let html = &text[range.clone()];
+                if html.starts_with("<!--") {
+                    let mut at = range.start;
+                    for (index, line) in html.split_inclusive('\n').enumerate() {
+                        if index > 0 {
+                            let leading = line.len() - line.trim_start_matches([' ', '\t']).len();
+                            if leading > 0 {
+                                edits.push((at..at + leading, String::new()));
+                            }
+                        }
+                        if let Some(close) = line.find("-->") {
+                            let end = line.trim_end_matches('\n').len();
+                            if close + 3 < end {
+                                let replace = line[..end]
+                                    .char_indices()
+                                    .rev()
+                                    .nth(2)
+                                    .map(|(i, _)| i)
+                                    .unwrap_or(0);
+                                edits.push((at + replace..at + end, "-->".into()));
+                            }
+                        }
+                        at += line.len();
+                    }
+                }
+            }
             Event::Start(
                 Tag::Link {
                     link_type: LinkType::Inline,
@@ -1090,7 +1136,13 @@ fn normalize_misc(text: &str) -> String {
     let mut blank = false;
     for line in text.split_inclusive('\n') {
         let in_protected = protected.iter().any(|r| r.start <= at && at < r.end);
-        if !in_protected && line.trim().is_empty() {
+        let in_indented_code = indented_code
+            .iter()
+            .any(|r| r.start < at + line.len() && at < r.end);
+        if in_indented_code && line.trim().is_empty() && line.ends_with('\n') && line != "\n" {
+            edits.push((at..at + line.len(), "\n".into()));
+            blank = false;
+        } else if !in_protected && line.trim().is_empty() {
             if blank {
                 edits.push((at..at + line.len(), String::new()));
             } else if line.ends_with('\n') && line != "\n" {
@@ -1389,6 +1441,22 @@ mod tests {
         assert_eq!(
             format("Foo *bar\nbaz*\t\n====").unwrap(),
             "Foo *bar\nbaz*\n===="
+        );
+    }
+
+    #[test]
+    fn formats_html_comments_and_indented_code_blocks() {
+        assert_eq!(
+            format("<!-- X\n   y\n   z -->\nnext").unwrap(),
+            "<!-- X\ny\nz -->\nnext"
+        );
+        assert_eq!(
+            format("<!-- hi -->abcdef\nnext").unwrap(),
+            "<!-- hi -->abc-->\nnext"
+        );
+        assert_eq!(
+            format("    chunk1\n      \n      chunk2").unwrap(),
+            "chunk1\n\n    chunk2"
         );
     }
 
